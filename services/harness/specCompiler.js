@@ -41,6 +41,10 @@ function detectTimeColumn(columns = []) {
   return columns.find((column) => /(_at|date|time|timestamp)$/i.test(column.name))?.name || null;
 }
 
+function quoteIdentifier(value) {
+  return `\`${String(value).replace(/`/g, '')}\``;
+}
+
 function detectDimensionColumns(columns = []) {
   return columns
     .filter((column) => ['STRING', 'BOOL', 'BOOLEAN'].includes(String(column.type || '').toUpperCase()))
@@ -236,24 +240,51 @@ export function mergeBindings(templateBindings, existingBindings = null) {
   return merged;
 }
 
-function buildMetricSql(dataset, tableName, binding) {
+function buildMetricSql(dataset, tableName, binding, widgetType) {
   const tableRef = `\`${dataset}.${tableName}\``;
-  if (binding.metricColumn) {
-    if (binding.timeColumn) {
-      return `SELECT TIMESTAMP_TRUNC(${binding.timeColumn}, DAY) AS bucket, ${String(binding.aggregation || 'sum').toUpperCase()}(${binding.metricColumn}) AS value FROM ${tableRef} GROUP BY bucket ORDER BY bucket DESC LIMIT 30`;
+  const aggregation = String(binding.aggregation || 'sum').toUpperCase();
+  const metricExpression = binding.metricColumn ? `${aggregation}(${quoteIdentifier(binding.metricColumn)})` : 'COUNT(*)';
+  const timeColumn = binding.timeColumn ? quoteIdentifier(binding.timeColumn) : null;
+
+  if (widgetType === 'metric') {
+    if (timeColumn) {
+      return `SELECT
+  COALESCE(${binding.metricColumn ? `${aggregation}(CASE WHEN ${timeColumn} >= $__timeFrom AND ${timeColumn} < $__timeTo THEN ${quoteIdentifier(binding.metricColumn)} END)` : `COUNT(CASE WHEN ${timeColumn} >= $__timeFrom AND ${timeColumn} < $__timeTo THEN 1 END)`}, 0) AS value,
+  COALESCE(${binding.metricColumn ? `${aggregation}(CASE WHEN ${timeColumn} >= $__previousTimeFrom AND ${timeColumn} < $__previousTimeTo THEN ${quoteIdentifier(binding.metricColumn)} END)` : `COUNT(CASE WHEN ${timeColumn} >= $__previousTimeFrom AND ${timeColumn} < $__previousTimeTo THEN 1 END)`}, 0) AS previous_value
+FROM ${tableRef}`;
     }
-    return `SELECT ${String(binding.aggregation || 'sum').toUpperCase()}(${binding.metricColumn}) AS value FROM ${tableRef}`;
+
+    if (binding.metricColumn) {
+      return `SELECT ${metricExpression} AS value FROM ${tableRef}`;
+    }
+
+    return `SELECT COUNT(*) AS value FROM ${tableRef}`;
   }
-  if (binding.timeColumn) {
-    return `SELECT TIMESTAMP_TRUNC(${binding.timeColumn}, DAY) AS bucket, COUNT(*) AS value FROM ${tableRef} GROUP BY bucket ORDER BY bucket DESC LIMIT 30`;
+
+  if (timeColumn) {
+    return `SELECT bucket, value
+FROM (
+  SELECT TIMESTAMP_TRUNC(${timeColumn}, DAY) AS bucket, ${metricExpression} AS value
+  FROM ${tableRef}
+  WHERE ${timeColumn} >= $__timeFrom AND ${timeColumn} < $__timeTo
+  GROUP BY bucket
+  ORDER BY bucket DESC
+  LIMIT 30
+)
+ORDER BY bucket ASC`;
   }
+
+  if (binding.metricColumn) {
+    return `SELECT ${metricExpression} AS value FROM ${tableRef}`;
+  }
+
   return `SELECT COUNT(*) AS value FROM ${tableRef}`;
 }
 
 function buildDimensionSql(dataset, tableName, binding) {
   const tableRef = `\`${dataset}.${tableName}\``;
-  const dimension = binding.dimensionColumn || binding.metricColumn || 'value';
-  const metricExpression = binding.metricColumn ? `${String(binding.aggregation || 'sum').toUpperCase()}(${binding.metricColumn})` : 'COUNT(*)';
+  const dimension = quoteIdentifier(binding.dimensionColumn || binding.metricColumn || 'value');
+  const metricExpression = binding.metricColumn ? `${String(binding.aggregation || 'sum').toUpperCase()}(${quoteIdentifier(binding.metricColumn)})` : 'COUNT(*)';
   return `SELECT ${dimension} AS label, ${metricExpression} AS value FROM ${tableRef} GROUP BY label ORDER BY value DESC LIMIT 10`;
 }
 
@@ -261,7 +292,7 @@ function buildInsightSql(dataset, tableName, binding) {
   const tableRef = `\`${dataset}.${tableName}\``;
   const summaryColumns = [binding.dimensionColumn, binding.metricColumn, binding.timeColumn].filter(Boolean);
   if (summaryColumns.length > 0) {
-    return `SELECT ${summaryColumns.join(', ')} FROM ${tableRef} LIMIT 20`;
+    return `SELECT ${summaryColumns.map((column) => quoteIdentifier(column)).join(', ')} FROM ${tableRef}${binding.timeColumn ? ` ORDER BY ${quoteIdentifier(binding.timeColumn)} DESC` : ''} LIMIT 20`;
   }
   return `SELECT * FROM ${tableRef} LIMIT 20`;
 }
@@ -278,12 +309,12 @@ function compileQuery(dataset, binding, widgetType) {
   }
 
   let template = 'SELECT 0 AS value';
-  if (widgetType === 'text-insight') {
+  if (widgetType === 'text-insight' || widgetType === 'record-list') {
     template = buildInsightSql(dataset, binding.table, binding);
   } else if (widgetType === 'progress-list' || widgetType === 'pie-chart' || widgetType === 'status-list' || widgetType === 'segmented-bar') {
     template = buildDimensionSql(dataset, binding.table, binding);
   } else {
-    template = buildMetricSql(dataset, binding.table, binding);
+    template = buildMetricSql(dataset, binding.table, binding, widgetType);
   }
 
   const params = [];

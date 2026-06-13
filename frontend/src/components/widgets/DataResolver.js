@@ -2,7 +2,6 @@ import { generateMockData } from './widget-spec';
 import { analyticsService } from '@/services/AnalyticsService';
 import { executeDirectQuery } from '@/services/DirectQueryService';
 import { cacheService } from '@/services/CacheService';
-import { config } from '@/config';
 
 /**
  * Data Resolver — decides whether to use mock data or fetch from backend.
@@ -23,6 +22,8 @@ function substituteParams(template, params, context) {
     sql = sql.replace(/\$timeRange/g, `${minutes}m`);
     sql = sql.replace(/\$__timeFrom/g, `TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL ${minutes} MINUTE)`);
     sql = sql.replace(/\$__timeTo/g, 'CURRENT_TIMESTAMP()');
+    sql = sql.replace(/\$__previousTimeFrom/g, `TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL ${minutes * 2} MINUTE)`);
+    sql = sql.replace(/\$__previousTimeTo/g, `TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL ${minutes} MINUTE)`);
   }
   return sql;
 }
@@ -47,8 +48,54 @@ function transformBigQueryResult(rows, widgetType) {
   const firstRow = rows[0];
   const columns = Object.keys(firstRow);
 
+  if (widgetType === 'metric') {
+    const value = Number(firstRow.value ?? firstRow[columns[0]] ?? 0);
+    const previousValue = Number(firstRow.previous_value ?? firstRow.previousValue ?? Number.NaN);
+    const trend = Number.isFinite(previousValue)
+      ? (previousValue === 0 ? (value === 0 ? 0 : 100) : ((value - previousValue) / Math.abs(previousValue)) * 100)
+      : 0;
+
+    return {
+      value,
+      previousValue: Number.isFinite(previousValue) ? previousValue : undefined,
+      trend: Number.isFinite(trend) ? trend.toFixed(1) : '0',
+    };
+  }
+
+  if (widgetType === 'text-insight') {
+    const preview = rows.slice(0, 3).map((row) => (
+      Object.entries(row)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ')
+    )).join(' • ');
+    return { text: preview || 'No data available.' };
+  }
+
+  if (widgetType === 'record-list') {
+    return {
+      rows,
+      items: rows.map((row, index) => ({
+        id: index,
+        label: row.label ?? row.name ?? row.title ?? Object.values(row)[0] ?? `Row ${index + 1}`,
+        value: row.value ?? row.count ?? Object.values(row)[1] ?? null,
+        raw: row,
+      })),
+    };
+  }
+
   if (rows.length === 1 && columns.length === 1) {
     return { value: firstRow[columns[0]], trend: '0' };
+  }
+
+  if (widgetType === 'sparkline' && rows.length > 1 && columns.length >= 2) {
+    return {
+      sparklineData: rows.map((row) => Number(row[columns[1]]) || 0),
+      labels: rows.map((row) => String(row[columns[0]] ?? '')),
+      items: rows.map((row) => ({
+        label: row[columns[0]],
+        value: row[columns[1]],
+      })),
+    };
   }
 
   if (rows.length > 1 && columns.length >= 2) {
@@ -86,6 +133,8 @@ function emptyDataForType(widgetType) {
       return { cells: [] };
     case 'text-insight':
       return { text: 'No data available.' };
+    case 'record-list':
+      return { rows: [], items: [] };
     case 'active-deployments':
       return { deployments: [] };
     default:

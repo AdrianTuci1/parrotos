@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowUpRight, ChevronDown, Clock3, Maximize2, RefreshCw } from "lucide-react";
 import { analyticsViews } from "@/components/app-shared";
 import { useAppStore } from "@/stores/useAppStore";
+import { useGeneratedViewData } from "@/components/shell/useGeneratedViewData";
 import "@/styles/dashboard.css";
 
 const summaryMetrics = [
@@ -111,12 +112,12 @@ function MarketingPanelShell({ title, icon: Icon, children, className = "" }) {
   );
 }
 
-function RevenueChart() {
+function RevenueChart({ pointsData = revenuePoints, totals = { today: 243.65, yesterday: 208.19, growth: 17.0 } }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const max = Math.max(...revenuePoints.map((point) => point.today + point.yesterday));
+  const max = Math.max(...pointsData.map((point) => point.today + point.yesterday));
   const highlightIndex = hoveredIndex ?? 1;
-  const highlightPoint = revenuePoints[highlightIndex];
-  const tooltipOffset = ((highlightIndex + 0.5) / revenuePoints.length) * 100;
+  const highlightPoint = pointsData[highlightIndex];
+  const tooltipOffset = ((highlightIndex + 0.5) / pointsData.length) * 100;
 
   return (
     <div className="marketing-revenue-card">
@@ -126,7 +127,7 @@ function RevenueChart() {
             <span className="marketing-revenue-dot today" />
             Today
           </div>
-          <div className="marketing-revenue-amount">{formatCurrency(243.65)}</div>
+          <div className="marketing-revenue-amount">{formatCurrency(totals.today)}</div>
         </div>
 
         <div className="marketing-revenue-summary-group">
@@ -134,14 +135,14 @@ function RevenueChart() {
             <span className="marketing-revenue-dot yesterday" />
             Yesterday
           </div>
-          <div className="marketing-revenue-amount">{formatCurrency(208.19)}</div>
+          <div className="marketing-revenue-amount">{formatCurrency(totals.yesterday)}</div>
         </div>
 
         <div className="marketing-revenue-growth">
           <span className="marketing-revenue-growth-pill">
             <ArrowUpRight size={12} />
           </span>
-          17.0%
+          {totals.growth.toFixed(1)}%
         </div>
       </div>
 
@@ -179,7 +180,7 @@ function RevenueChart() {
           className="marketing-revenue-bars-grid"
           onMouseLeave={() => setHoveredIndex(null)}
         >
-          {revenuePoints.map((point, index) => (
+          {pointsData.map((point, index) => (
             <button
               key={point.label}
               type="button"
@@ -214,20 +215,19 @@ function RevenueChart() {
   );
 }
 
-function BudgetCard() {
-  const percentUsed = 47;
+function BudgetCard({ usedValue = 223.65, allowanceValue = 480, percentUsed = 47 }) {
 
   return (
     <div className="marketing-budget-card">
       <div className="marketing-budget-metrics">
         <div className="marketing-budget-metric">
           <span className="marketing-budget-label">Used today</span>
-          <span className="marketing-budget-value">{formatCurrency(223.65)}</span>
+          <span className="marketing-budget-value">{formatCurrency(usedValue)}</span>
         </div>
         <div className="marketing-budget-divider" />
         <div className="marketing-budget-metric align-right">
           <span className="marketing-budget-label">Today's allowance</span>
-          <span className="marketing-budget-value">{formatCurrency(480)}</span>
+          <span className="marketing-budget-value">{formatCurrency(allowanceValue)}</span>
         </div>
       </div>
 
@@ -245,18 +245,18 @@ function BudgetCard() {
   );
 }
 
-function PeakHoursCard() {
-  const max = Math.max(...peakHoursBars);
+function PeakHoursCard({ bars = peakHoursBars, title = "11 AM – 1 PM", subtitle = "~8% of orders in the busiest hour" }) {
+  const max = Math.max(...bars);
 
   return (
     <div className="marketing-peak-card">
       <div className="marketing-peak-copy">
-        <div className="marketing-peak-title">11 AM – 1 PM</div>
-        <div className="marketing-peak-subtitle">~8% of orders in the busiest hour</div>
+        <div className="marketing-peak-title">{title}</div>
+        <div className="marketing-peak-subtitle">{subtitle}</div>
       </div>
 
       <div className="marketing-peak-chart">
-        {peakHoursBars.map((value, index) => (
+        {bars.map((value, index) => (
           <div key={index} className="marketing-peak-slot">
             <div className="marketing-peak-gridline" />
             <div
@@ -272,7 +272,78 @@ function PeakHoursCard() {
 
 export function MarketingView() {
   const { activeAnalyticsView, setActiveAnalyticsView, timeRange, setTimeRange } = useAppStore();
+  const { widgetMap, widgetDataMap } = useGeneratedViewData("marketing");
   const marketingTimeRange = ["24h", "7d", "30d", "90d"].includes(timeRange) ? timeRange : "24h";
+
+  const resolvedSummaryMetrics = useMemo(() => {
+    const widgetIds = ["active-campaigns-total", "posts-published", "total-reach", "avg-engagement"];
+    return summaryMetrics.map((fallbackMetric, index) => {
+      const widgetId = widgetIds[index];
+      const widget = widgetMap.get(widgetId);
+      const data = widgetDataMap[widgetId] || {};
+      const rawValue = Number(data.value);
+      return {
+        ...fallbackMetric,
+        label: widget?.title || fallbackMetric.label,
+        value: Number.isFinite(rawValue) ? rawValue : fallbackMetric.value,
+        trend: Number.isFinite(Number(data.trend)) ? Number(data.trend) : fallbackMetric.trend,
+      };
+    });
+  }, [widgetDataMap, widgetMap]);
+
+  const resolvedRevenueChart = useMemo(() => {
+    const items = widgetDataMap["gross-revenue"]?.items || [];
+    if (!items.length) {
+      return {
+        points: revenuePoints,
+        totals: { today: 243.65, yesterday: 208.19, growth: 17.0 },
+      };
+    }
+
+    const points = items.slice(0, 12).map((item, index) => {
+      const value = Number(item.value) || 0;
+      return {
+        label: item.label || `T${index + 1}`,
+        today: value,
+        yesterday: value * 0.84,
+      };
+    });
+    const todayTotal = points.reduce((sum, point) => sum + point.today, 0);
+    const yesterdayTotal = points.reduce((sum, point) => sum + point.yesterday, 0);
+    const growth = yesterdayTotal > 0 ? ((todayTotal - yesterdayTotal) / yesterdayTotal) * 100 : 0;
+    return {
+      points,
+      totals: { today: todayTotal, yesterday: yesterdayTotal, growth },
+    };
+  }, [widgetDataMap]);
+
+  const resolvedBudget = useMemo(() => {
+    const items = widgetDataMap["todays-budget"]?.items || [];
+    const [used, allowance] = items;
+    const usedValue = Number(used?.value) || 223.65;
+    const allowanceValue = Number(allowance?.value) || 480;
+    const percentUsed = allowanceValue > 0 ? Math.min(100, Math.round((usedValue / allowanceValue) * 100)) : 47;
+    return { usedValue, allowanceValue, percentUsed };
+  }, [widgetDataMap]);
+
+  const resolvedPeakHours = useMemo(() => {
+    const items = widgetDataMap["peak-hours"]?.items || [];
+    if (!items.length) {
+      return {
+        bars: peakHoursBars,
+        title: "11 AM – 1 PM",
+        subtitle: "~8% of orders in the busiest hour",
+      };
+    }
+    const bars = items.map((item) => Number(item.value) || 0);
+    const maxValue = Math.max(...bars);
+    const peakIndex = bars.findIndex((value) => value === maxValue);
+    return {
+      bars,
+      title: items[peakIndex]?.label || "Peak hour",
+      subtitle: `${Math.round((maxValue / Math.max(bars.reduce((sum, value) => sum + value, 0), 1)) * 100)}% of activity in the busiest interval`,
+    };
+  }, [widgetDataMap]);
 
   return (
     <div className="marketing-dashboard">
@@ -315,22 +386,22 @@ export function MarketingView() {
 
       <div className="marketing-dashboard-body">
         <div className="marketing-metrics-grid">
-          {summaryMetrics.map((metric) => (
+          {resolvedSummaryMetrics.map((metric) => (
             <MarketingMetricCard key={metric.label} metric={metric} />
           ))}
         </div>
 
         <div className="marketing-feature-grid">
-          <MarketingPanelShell title="Gross Revenue" icon={ArrowUpRight} className="marketing-panel-revenue">
-            <RevenueChart />
+          <MarketingPanelShell title={widgetMap.get("gross-revenue")?.title || "Gross Revenue"} icon={ArrowUpRight} className="marketing-panel-revenue">
+            <RevenueChart pointsData={resolvedRevenueChart.points} totals={resolvedRevenueChart.totals} />
           </MarketingPanelShell>
 
-          <MarketingPanelShell title="Today's budget" icon={Clock3} className="marketing-panel-budget">
-            <BudgetCard />
+          <MarketingPanelShell title={widgetMap.get("todays-budget")?.title || "Today's budget"} icon={Clock3} className="marketing-panel-budget">
+            <BudgetCard {...resolvedBudget} />
           </MarketingPanelShell>
 
-          <MarketingPanelShell title="Peak hours" icon={Clock3} className="marketing-panel-peak">
-            <PeakHoursCard />
+          <MarketingPanelShell title={widgetMap.get("peak-hours")?.title || "Peak hours"} icon={Clock3} className="marketing-panel-peak">
+            <PeakHoursCard {...resolvedPeakHours} />
           </MarketingPanelShell>
         </div>
       </div>
