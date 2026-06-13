@@ -28,8 +28,7 @@ export class AuthService {
       id: userId,
       email: dto.email,
       passwordHash,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
+      username: dto.username,
       roles: ['user'],
       createdAt: now,
       updatedAt: now,
@@ -91,12 +90,57 @@ export class AuthService {
     );
   }
 
+  async findOrCreateOAuthUser(oauthData) {
+    const snapshot = await this.usersCollection
+      .where('email', '==', oauthData.email)
+      .limit(1)
+      .get();
+
+    let user;
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+      user = User.fromFirestore(doc.id, data);
+
+      // Update OAuth provider info if missing
+      if (!data.provider) {
+        await this.usersCollection.doc(doc.id).update({
+          provider: oauthData.provider,
+          providerId: oauthData.providerId,
+          picture: oauthData.picture || data.picture,
+          updatedAt: new Date().toISOString(),
+        });
+      }
+    } else {
+      const userId = CryptoService.generateId();
+      const now = new Date().toISOString();
+
+      user = new User({
+        id: userId,
+        email: oauthData.email,
+        username: oauthData.username,
+        picture: oauthData.picture,
+        provider: oauthData.provider,
+        providerId: oauthData.providerId,
+        roles: ['user'],
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      await this.usersCollection.doc(userId).set(user.toFirestore());
+    }
+
+    const token = this.generateToken(user);
+    return { token, user: this.sanitizeUser(user) };
+  }
+
   sanitizeUser(user) {
     return {
       id: user.id,
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      username: user.username,
+      picture: user.picture,
       roles: user.roles,
       orgMemberships: user.orgMemberships,
     };

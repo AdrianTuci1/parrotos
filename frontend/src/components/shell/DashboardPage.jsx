@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/app-shell";
 import { AnalyticsView } from "@/components/shell/AnalyticsView";
 import { IntegrationsView } from "@/components/shell/IntegrationsView";
+import { StorageView } from "@/components/shell/StorageView";
 import { GraphView } from "@/components/shell/GraphView";
 import { SettingsView } from "@/components/shell/SettingsView";
 import { ChatView } from "@/components/shell/ChatView";
@@ -26,6 +27,7 @@ const sectionComponents = {
   "create-project": CreateProjectView,
   analytics: AnalyticsView,
   integrations: IntegrationsView,
+  storage: StorageView,
   graph: GraphView,
   settings: SettingsView,
   chat: ChatView,

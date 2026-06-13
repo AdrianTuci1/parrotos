@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { BarChart3, Plug, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { cn } from "@/lib/utils";
+import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connectorAuthFields";
 
 // ═══════════════════════════════════════════════
 // CHAT PANEL — scrollable messages + inline composers
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
  * When an inline composer is pending (waiting for user input),
  * the parent should hide the main ChatComposer.
  */
-export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef }) {
+export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
   const containerRef = useRef(null);
 
   // When pending action appears, scroll chat to bottom
@@ -21,7 +22,7 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
     if (pendingAction && containerRef.current) {
       containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: "smooth" });
     }
-  }, [pendingAction?.key]);
+  }, [pendingAction]);
 
   return (
     <div ref={containerRef} className="chat-messages-container">
@@ -40,7 +41,7 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                 const calls = message.toolCalls || [];
                 const result = [];
                 let smallGroup = [];
-const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !== "4x2";
+                const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !== "4x2";
 
                 const flushGroup = () => {
                   if (smallGroup.length === 0) return;
@@ -55,6 +56,7 @@ const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !==
                           approvalState={approvalStates[`${message.id}-${idx}`] || tool.status || "pending"}
                           onApprove={onApprove}
                           onReject={onReject}
+                          connectorAuthFields={connectorAuthFields}
                         />
                       ))}
                     </div>
@@ -76,6 +78,7 @@ const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !==
                         approvalState={approvalStates[`${message.id}-${idx}`] || tool.status || "pending"}
                         onApprove={onApprove}
                         onReject={onReject}
+                        connectorAuthFields={connectorAuthFields}
                       />
                     );
                   }
@@ -88,7 +91,6 @@ const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !==
                   tool={message.toolCalls.find(t => t.type === "suggestion")}
                   msgId={message.id}
                   onApprove={onApprove}
-                  onReject={onReject}
                 />
               )}
             </div>
@@ -114,6 +116,7 @@ const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !==
             action={pendingAction}
             onApprove={onApprove}
             onReject={onReject}
+            connectorAuthFields={connectorAuthFields}
           />
         </div>
       )}
@@ -125,7 +128,7 @@ const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !==
 // TOOL RESULT DISPATCHER
 // ═══════════════════════════════════════════════
 
-function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) {
+function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
   const key = `${msgId}-${tcIdx}`;
 
   if (tool.type === "widget") {
@@ -160,6 +163,7 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) 
         status={approvalState}
         onApprove={onApprove}
         onReject={onReject}
+        connectorAuthFields={connectorAuthFields}
       />
     );
   }
@@ -175,24 +179,13 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) 
 // PENDING ACTION BAR — sticky at bottom, Approve/Deny in header
 // ═══════════════════════════════════════════════
 
-const CONNECTOR_AUTH_FIELDS = {
-  'Stripe':     { method: 'API Key', fields: [{ key: 'apiKey', label: 'Secret Key', type: 'password', placeholder: 'sk_live_...' }], help: 'Get keys at dashboard.stripe.com/apikeys' },
-  'Shopify':    { method: 'API Key', fields: [{ key: 'shopDomain', label: 'Shop Domain', type: 'text', placeholder: 'my-store.myshopify.com' }, { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'shpat_...' }], help: 'Create custom app in Shopify Admin' },
-  'GA4':        { method: 'OAuth 2.0', fields: [{ key: 'propertyId', label: 'Property ID', type: 'text', placeholder: '123456789' }], help: 'BigQuery Data Transfer — zero code' },
-  'HubSpot':    { method: 'API Key', fields: [{ key: 'apiKey', label: 'Private App Token', type: 'password', placeholder: 'pat-...' }], help: 'Create private app in HubSpot Settings' },
-  'PostHog':    { method: 'API Key', fields: [{ key: 'apiKey', label: 'Personal API Key', type: 'password', placeholder: 'phx_...' }, { key: 'projectId', label: 'Project ID', type: 'text', placeholder: '12345' }], help: 'PostHog → Settings → Personal API Keys' },
-  'Klaviyo':    { method: 'API Key', fields: [{ key: 'apiKey', label: 'Private API Key', type: 'password', placeholder: 'pk_...' }], help: 'Klaviyo → Settings → API Keys' },
-  'Google Ads': { method: 'OAuth 2.0', fields: [{ key: 'customerId', label: 'Customer ID', type: 'text', placeholder: '123-456-7890' }], help: 'BigQuery Data Transfer in GCP Console' },
-  'Sentry':     { method: 'API Key', fields: [{ key: 'authToken', label: 'Auth Token', type: 'password', placeholder: 'sntrys_...' }, { key: 'orgSlug', label: 'Organization Slug', type: 'text', placeholder: 'my-org' }], help: 'Sentry → Settings → Auth Tokens' },
-};
 
-const DEFAULT_FIELDS = { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter key...' }], help: '' };
 
-function PendingActionBar({ action, onApprove, onReject }) {
+function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
   const tc = action.toolCall;
   const isKeyInput = tc.action === "open_integration_modal";
   const connector = tc.connector || "integration";
-  const auth = isKeyInput ? (CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS) : null;
+  const auth = isKeyInput ? (connectorAuthFields[connector] || DEFAULT_FIELDS) : null;
   const firstField = auth?.fields?.[0] || null;
 
   return (
@@ -252,10 +245,10 @@ function PendingActionBar({ action, onApprove, onReject }) {
  * variant="key-input"  → form fields (API keys, domain, etc.) + Approve/Cancel
  * variant="choice"     → list of clickable option buttons
  */
-function InlineActionComposer({ variant, connector, approvalKey, status, onApprove, onReject, choices, title, subtitle }) {
+function InlineActionComposer({ variant, connector, approvalKey, status, onApprove, onReject, choices, title, subtitle, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
   // --- KEY-INPUT variant (connector auth form) ---
   if (variant === "key-input") {
-    const auth = CONNECTOR_AUTH_FIELDS[connector] || { ...DEFAULT_FIELDS, method: `${connector} API` };
+    const auth = connectorAuthFields[connector] || { ...DEFAULT_FIELDS, method: `${connector} API` };
 
     if (status === "approved") {
       return (
@@ -404,7 +397,7 @@ function InlineActionComposer({ variant, connector, approvalKey, status, onAppro
 // CONNECTOR SUGGESTIONS
 // ═══════════════════════════════════════════════
 
-function ConnectorSuggestions({ tool, msgId, onApprove, onReject }) {
+function ConnectorSuggestions({ tool, msgId, onApprove }) {
   if (!tool) return null;
   return (
     <div className="chat-suggestions">

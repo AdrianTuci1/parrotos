@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/useAppStore';
 import { ViewFrame } from '@/components/shell/ViewFrame';
@@ -36,8 +36,6 @@ export function OrganizationOrganizationsView() {
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [creating, setCreating] = useState(false);
 
-  const [localOrgs, setLocalOrgs] = useState(organizations);
-
   // Inline editing fields
   const [editName, setEditName] = useState('');
   const [editPlan, setEditPlan] = useState('');
@@ -51,9 +49,6 @@ export function OrganizationOrganizationsView() {
   const handleEditSave = async (id, data) => {
     try {
       await updateOrganization(id, data);
-      // Sync local state from store
-      const updated = useAppStore.getState().organizations;
-      setLocalOrgs(updated);
       setSelectedOrg((prev) => prev ? { ...prev, ...data } : prev);
       setDirty(false);
     } catch (err) {
@@ -62,31 +57,26 @@ export function OrganizationOrganizationsView() {
   };
 
   const handleDelete = async (id) => {
-    const org = localOrgs.find((o) => o.id === id);
+    const org = organizations.find((o) => o.id === id);
     if (org?.isDefault) return;
     try {
       await deleteOrganization(id);
-      const updated = useAppStore.getState().organizations;
-      setLocalOrgs(updated);
       setSelectedOrg(null);
     } catch (err) {
       alert('Failed to delete organization: ' + err.message);
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!createName.trim()) return;
-    const newOrg = {
-      id: `org_${Date.now()}`,
-      name: createName.trim(),
-      plan: createPlan,
-      owner: 'you@example.com',
-    };
-    setLocalOrgs((prev) => [...prev, newOrg]);
-    storeCreateOrg(createName.trim());
-    setCreating(false);
-    setCreateName('');
-    setCreatePlan('Starter');
+    try {
+      await storeCreateOrg(createName.trim());
+      setCreating(false);
+      setCreateName('');
+      setCreatePlan('Starter');
+    } catch (err) {
+      alert('Failed to create organization: ' + err.message);
+    }
   };
 
   const openDetail = (org) => {
@@ -291,7 +281,7 @@ export function OrganizationOrganizationsView() {
       </div>
 
       <div className="org-stack">
-        {localOrgs.map((org) => {
+        {organizations.map((org) => {
           const isCurrent = org.id === currentOrganization.id;
           return (
             <div

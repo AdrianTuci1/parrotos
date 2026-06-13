@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '@/stores/useAppStore';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import {
@@ -16,14 +16,22 @@ import '@/styles/organization-views.css';
 import '@/styles/settings.css';
 
 export function OrganizationSettingsView() {
-  const { currentOrganization, organizationMetrics, updateOrganization } = useAppStore();
+  const { currentOrganization, organizationMetrics, updateOrganization, fetchSubscription } = useAppStore();
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
 
   // Interactive local states for simplified metrics cycling
-  const [defaultRole, setDefaultRole] = useState('Member');
-  const [retention, setRetention] = useState('90 days');
-  const [autoInvite, setAutoInvite] = useState(false);
+  const [defaultRole, setDefaultRole] = useState(currentOrganization?.settings?.defaultRole || 'Member');
+  const [retention, setRetention] = useState(currentOrganization?.settings?.retention || '90 days');
+  const [autoInvite, setAutoInvite] = useState(currentOrganization?.settings?.autoInviteDomains?.length > 0 || false);
+
+  useEffect(() => {
+    if (currentOrganization?.id) {
+      setDefaultRole(currentOrganization?.settings?.defaultRole || 'Member');
+      setRetention(currentOrganization?.settings?.retention || '90 days');
+      setAutoInvite((currentOrganization?.settings?.autoInviteDomains || []).length > 0);
+    }
+  }, [currentOrganization]);
 
   const handleSaveName = async () => {
     if (!nameValue.trim()) return;
@@ -35,11 +43,23 @@ export function OrganizationSettingsView() {
     }
   };
 
+  const handleSaveSettings = async (key, value) => {
+    try {
+      const settings = {
+        ...currentOrganization.settings,
+        [key]: value,
+      };
+      await updateOrganization(currentOrganization.id, { settings });
+    } catch (err) {
+      alert('Failed to update settings: ' + err.message);
+    }
+  };
+
   return (
     <ViewFrame
       title="Organization Settings"
       description="Configure account-level defaults, governance rules, and managed infrastructure preferences."
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="max-w-3xl"
     >
       <div className="org-metrics-row">
         <div className="org-metric-item">
@@ -148,7 +168,9 @@ export function OrganizationSettingsView() {
               style={{ cursor: "pointer" }}
               onClick={() => {
                 const rolesCycle = { 'Member': 'Admin', 'Admin': 'Viewer', 'Viewer': 'Member' };
-                setDefaultRole(rolesCycle[defaultRole]);
+                const newRole = rolesCycle[defaultRole];
+                setDefaultRole(newRole);
+                handleSaveSettings('defaultRole', newRole);
               }}
             >
               <div className="org-card-left">
@@ -170,7 +192,9 @@ export function OrganizationSettingsView() {
               style={{ cursor: "pointer" }}
               onClick={() => {
                 const retentionCycle = { '90 days': '180 days', '180 days': '365 days', '365 days': '30 days', '30 days': '90 days' };
-                setRetention(retentionCycle[retention]);
+                const newRetention = retentionCycle[retention];
+                setRetention(newRetention);
+                handleSaveSettings('retention', newRetention);
               }}
             >
               <div className="org-card-left">
@@ -190,7 +214,11 @@ export function OrganizationSettingsView() {
             <div
               className="org-card-item"
               style={{ cursor: "pointer" }}
-              onClick={() => setAutoInvite(!autoInvite)}
+              onClick={() => {
+                const newAutoInvite = !autoInvite;
+                setAutoInvite(newAutoInvite);
+                handleSaveSettings('autoInviteDomains', newAutoInvite ? [currentOrganization?.domain || 'example.com'] : []);
+              }}
             >
               <div className="org-card-left">
                 <ToggleLeft size={16} className="org-card-folder-icon" />

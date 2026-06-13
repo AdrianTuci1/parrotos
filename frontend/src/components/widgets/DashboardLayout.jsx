@@ -20,7 +20,14 @@ const layoutSpecs = {
   'marketing-performance': marketingSpec,
 };
 
-export function DashboardLayout({ layoutId, className, isNested = true }) {
+const layoutToViewId = {
+  'server-monitor': 'servers',
+  analytics: 'web',
+  'campaign-sales': 'sales',
+  'marketing-performance': 'marketing',
+};
+
+export function DashboardLayout({ layoutId, specViewId, className, isNested = true }) {
   const {
     activeAnalyticsView,
     setActiveAnalyticsView,
@@ -38,6 +45,7 @@ export function DashboardLayout({ layoutId, className, isNested = true }) {
   const [specError, setSpecError] = useState(null);
 
   const hardcodedSpec = layoutSpecs[layoutId] || serverMonitorSpec;
+  const resolvedViewId = specViewId || layoutToViewId[layoutId] || 'servers';
   const spec = demoMode ? hardcodedSpec : (remoteSpec || hardcodedSpec);
 
   // Fetch spec from backend when project context changes
@@ -49,7 +57,7 @@ export function DashboardLayout({ layoutId, className, isNested = true }) {
     setLoadingSpec(true);
     setSpecError(null);
 
-    specService.getSpec(currentOrganization.id, currentWorkspace.id)
+    specService.getSpec(currentOrganization.id, currentWorkspace.id, resolvedViewId)
       .then((data) => {
         if (!cancelled) {
           setRemoteSpec(data);
@@ -66,7 +74,7 @@ export function DashboardLayout({ layoutId, className, isNested = true }) {
       });
 
     return () => { cancelled = true; };
-  }, [demoMode, currentOrganization?.id, currentWorkspace?.id]);
+  }, [demoMode, currentOrganization?.id, currentWorkspace?.id, resolvedViewId]);
 
   const handleGenerateSpec = async () => {
     if (!currentOrganization?.id || !currentWorkspace?.id) return;

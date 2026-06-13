@@ -6,7 +6,12 @@ export class Organization {
     this.slug = data.slug || '';
     this.plan = data.plan || 'free'; // free, team, enterprise
     this.status = data.status || 'active';
-    this.settings = data.settings || {};
+    this.settings = data.settings || {
+      notifications: { email: true, slack: false, slackWebhook: null },
+      retention: '90 days',
+      autoInviteDomains: [],
+      defaultRole: 'Member',
+    };
     this.stats = data.stats || {
       projectsCount: 0,
       membersCount: 0,
@@ -20,8 +25,9 @@ export class Organization {
 
   getDefaultLimits(plan) {
     const limits = {
-      free: { maxProjects: 2, maxStorage: 1073741824, maxQueries: 1000 },
-      team: { maxProjects: 10, maxStorage: 10737418240, maxQueries: 10000 },
+      free: { maxProjects: 1, maxStorage: 21474836480, maxQueries: 1000 }, // 20 GB
+      launch: { maxProjects: 5, maxStorage: 161061273600, maxQueries: 10000 }, // 150 GB
+      scale: { maxProjects: 20, maxStorage: 536870912000, maxQueries: 50000 }, // 500 GB
       enterprise: { maxProjects: -1, maxStorage: -1, maxQueries: -1 },
     };
     return limits[plan] || limits.free;

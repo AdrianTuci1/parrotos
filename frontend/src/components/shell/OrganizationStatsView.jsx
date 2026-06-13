@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Building2, BarChart3, Database, ShieldCheck } from 'lucide-react';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
@@ -19,11 +20,20 @@ function MetricTile({ label, value, detail, trend }) {
 const emptyOrg = { id: '__empty__', name: 'My Organization', slug: 'my-org', plan: 'Starter' };
 
 export function OrganizationStatsView() {
-  const { currentOrganization, workspaces, organizationMetrics } = useAppStore();
+  const { currentOrganization, workspaces, organizationMetrics, fetchDashboardMetrics, demoMode, devMode } = useAppStore();
   const org = currentOrganization || emptyOrg;
   const orgProjects = workspaces.filter(
     (w) => w.organizationId === org.id
   );
+
+  // Fetch real metrics from backend when not in demo mode
+  useEffect(() => {
+    if (!devMode && !demoMode && org.id && orgProjects.length > 0) {
+      // Fetch metrics for the first project as org-level aggregate
+      fetchDashboardMetrics(org.id, orgProjects[0].id);
+    }
+  }, [devMode, demoMode, org.id, orgProjects.length]);
+
   const totalEvents = orgProjects.reduce((sum, w) => {
     const num = parseInt(w.monthlyEvents.replace(/[^0-9.]/g, ''));
     const mult = w.monthlyEvents.includes('K') ? 1000 : 1;

@@ -13,16 +13,20 @@
 │  Zero code. Scheduled automatically by GCP.              │
 │  ─────────────────────────────────────                   │
 │                                                          │
-│  Third-party sources (Stripe, Shopify, HubSpot)          │
+│  Ecommerce / SaaS / Ads (Stripe, Shopify, WooCommerce,    │
+│  HubSpot, Meta Ads, TikTok Ads)                           │
 │  ─────────────────────────────────────                   │
 │  Cloud Function + Cloud Scheduler                        │
 │  sources/stripe/index.js  →  Stripe API  → BigQuery      │
 │  sources/shopify/index.js →  Shopify API → BigQuery      │
+│  sources/woocommerce/index.js → WooCommerce API → BQ     │
+│  sources/meta_ads/index.js → Meta Ads API → BigQuery     │
+│  sources/tiktok_ads/index.js → TikTok Ads API → BQ       │
 │  ─────────────────────────────────────                   │
 │                                                          │
-│  Streaming sources (Sentry, PostHog)                     │
+│  Databases & Infra (MongoDB, PostgreSQL, MySQL, Prometheus, Sentry)│
 │  ─────────────────────────────────────                   │
-│  Webhook → Cloud Function → Pub/Sub → BigQuery           │
+│  Cloud Function / CDC / REST → BigQuery                   │
 │                                                          │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -54,6 +58,14 @@ connector/
 │   │   └── index.js      # Stripe → BigQuery
 │   ├── shopify/
 │   │   └── index.js      # Shopify → BigQuery
+│   ├── woocommerce/
+│   │   └── index.js      # WooCommerce → BigQuery
+│   ├── postgresql/
+│   │   └── index.js      # PostgreSQL → BigQuery
+│   ├── mysql/
+│   │   └── index.js      # MySQL → BigQuery
+│   ├── mongodb/
+│   │   └── index.js      # MongoDB → BigQuery
 │   └── _template/
 │       └── index.js      # Template for new connectors
 └── deploy.sh             # Deploy all connectors

@@ -5,6 +5,14 @@ import { projectService } from '@/services/ProjectService';
 import { agentService } from '@/services/AgentService';
 import { integrationService } from '@/services/IntegrationService';
 import { authService } from '@/services/AuthService';
+import { serviceAccountService } from '@/services/ServiceAccountService';
+import { billingService } from '@/services/BillingService';
+import { alertService } from '@/services/AlertService';
+import { connectorAuthService } from '@/services/ConnectorAuthService';
+import { apiClient } from '@/services/ApiClient';
+import connectorsData from '@/data/connectors.json';
+import { analyticsService } from '@/services/AnalyticsService';
+import { specService } from '@/services/SpecService';
 
 const transientOrganizationSections = new Set(['create-project']);
 
@@ -136,8 +144,8 @@ toolCalls: [
           {
             id: 'tc_s1_4',
             type: 'suggestion',
-            reason: 'See which traffic channels drive the most revenue.',
-            connectors: ['GA4', 'Google Ads'],
+            reason: 'See which traffic channels and landing pages drive the most revenue.',
+            connectors: ['GA4', 'Search Console', 'Google Ads'],
           },
         ],
       },
@@ -223,7 +231,6 @@ toolCalls: [
             choices: [
               { label: 'HubSpot', description: 'Deals, contacts, companies — full CRM suite' },
               { label: 'Salesforce', description: 'Opportunities, accounts, leads — enterprise CRM' },
-              { label: 'Pipedrive', description: 'Deal stages, activities — lightweight pipeline' },
             ],
           },
         ],
@@ -621,6 +628,444 @@ export const useAppStore = create((set, get) => ({
       set({ error: err.message, isLoading: false });
       throw err;
     }
+  },
+
+  // ═══════════════════════════════════════════════
+  // SERVICE ACCOUNTS
+  // ═══════════════════════════════════════════════
+
+  fetchServiceAccounts: async (orgId) => {
+    if (get().devMode) return;
+    set({ isLoading: true });
+    try {
+      const accounts = await serviceAccountService.list(orgId);
+      set({ serviceAccounts: accounts, isLoading: false });
+      return accounts;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  createServiceAccount: async (orgId, dto) => {
+    if (get().devMode) {
+      const id = `sa_${Date.now()}`;
+      const sa = { id, saId: `sa_${dto.name}_${Math.random().toString(36).substring(2, 6)}`, ...dto, status: 'Active', clientSecret: `sec_live_${Math.random().toString(36).substring(2, 14)}` };
+      set((state) => ({ serviceAccounts: [...(state.serviceAccounts || []), sa] }));
+      return sa;
+    }
+    set({ isLoading: true });
+    try {
+      const sa = await serviceAccountService.create(orgId, dto);
+      set((state) => ({ serviceAccounts: [...(state.serviceAccounts || []), sa], isLoading: false }));
+      return sa;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  updateServiceAccount: async (orgId, saId, dto) => {
+    if (get().devMode) {
+      set((state) => ({
+        serviceAccounts: (state.serviceAccounts || []).map((sa) => sa.id === saId ? { ...sa, ...dto } : sa),
+      }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      const updated = await serviceAccountService.update(orgId, saId, dto);
+      set((state) => ({
+        serviceAccounts: (state.serviceAccounts || []).map((sa) => sa.id === saId ? { ...sa, ...updated } : sa),
+        isLoading: false,
+      }));
+      return updated;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  deleteServiceAccount: async (orgId, saId) => {
+    if (get().devMode) {
+      set((state) => ({
+        serviceAccounts: (state.serviceAccounts || []).filter((sa) => sa.id !== saId),
+      }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await serviceAccountService.delete(orgId, saId);
+      set((state) => ({
+        serviceAccounts: (state.serviceAccounts || []).filter((sa) => sa.id !== saId),
+        isLoading: false,
+      }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // ACCOUNT METRICS
+  // ═══════════════════════════════════════════════
+
+  fetchAccountMetrics: async () => {
+    if (get().devMode) return get().organizationMetrics;
+    try {
+      const response = await apiClient.get('/organizations/account/metrics');
+      set({ accountMetrics: response.data });
+      return response.data;
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // BILLING
+  // ═══════════════════════════════════════════════
+
+  fetchSubscription: async (orgId) => {
+    if (get().devMode) return { plan: 'free', status: 'active' };
+    try {
+      const sub = await billingService.getSubscription(orgId);
+      set({ subscription: sub });
+      return sub;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  checkoutPlan: async (orgId, plan) => {
+    const successUrl = `${window.location.origin}/organizations/${orgId}/billing?success=true`;
+    const cancelUrl = `${window.location.origin}/organizations/${orgId}/billing?canceled=true`;
+    const result = await billingService.createCheckoutSession(orgId, plan, successUrl, cancelUrl);
+    window.location.href = result.url;
+  },
+
+  manageBilling: async (orgId) => {
+    const returnUrl = `${window.location.origin}/organizations/${orgId}/billing`;
+    const result = await billingService.createPortalSession(orgId, returnUrl);
+    window.location.href = result.url;
+  },
+
+  // ═══════════════════════════════════════════════
+  // ALERTS
+  // ═══════════════════════════════════════════════
+
+  fetchAlerts: async (orgId, projectId, limit = 20) => {
+    if (get().devMode) return [];
+    set({ isLoading: true });
+    try {
+      const alerts = await alertService.list(orgId, projectId, limit);
+      set({ alertsData: alerts, isLoading: false });
+      return alerts;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  acknowledgeAlert: async (orgId, projectId, alertId) => {
+    if (get().devMode) return { acknowledged: true };
+    try {
+      const result = await alertService.acknowledge(orgId, projectId, alertId);
+      set((state) => ({
+        alertsData: (state.alertsData || []).map((a) =>
+          a.id === alertId ? { ...a, acknowledged: true, acknowledgedAt: new Date().toISOString() } : a
+        ),
+      }));
+      return result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  fetchHealthReport: async (orgId, projectId) => {
+    if (get().devMode) return { status: 'unknown', message: 'No health report yet.' };
+    try {
+      const report = await alertService.getHealthReport(orgId, projectId);
+      set({ healthReport: report });
+      return report;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // PROJECT SETTINGS & GCS
+  // ═══════════════════════════════════════════════
+
+  fetchProjectSettings: async (orgId, projectId) => {
+    if (get().devMode) return {};
+    set({ isLoading: true });
+    try {
+      const settings = await projectService.getSettings(orgId, projectId);
+      set({ projectSettings: settings, isLoading: false });
+      return settings;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  updateProjectSettings: async (orgId, projectId, settings) => {
+    if (get().devMode) {
+      set({ projectSettings: { ...(get().projectSettings || {}), ...settings } });
+      return get().projectSettings;
+    }
+    set({ isLoading: true });
+    try {
+      const updated = await projectService.updateSettings(orgId, projectId, settings);
+      set({ projectSettings: updated, isLoading: false });
+      return updated;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  getGcsSignedUrl: async (orgId, projectId, filename, action = 'read') => {
+    if (get().devMode) return `https://storage.googleapis.com/mock-bucket/${filename}`;
+    try {
+      const url = await projectService.getGcsSignedUrl(orgId, projectId, filename, action);
+      return url;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // INTEGRATION AUTH & DEPLOY
+  // ═══════════════════════════════════════════════
+
+  fetchIntegrationCatalog: async (orgId, projectId) => {
+    if (get().devMode) return connectorsData;
+    try {
+      return await integrationService.getCatalog(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  fetchConnectorAuthConfig: async (orgId, projectId, connectorName) => {
+    if (get().devMode) {
+      const mockConfigs = {
+        Stripe: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Secret Key', type: 'password' }] },
+        GA4: { method: 'OAuth 2.0', fields: [{ key: 'propertyId', label: 'Property ID', type: 'text' }] },
+        'Search Console': { method: 'OAuth 2.0', fields: [{ key: 'siteUrl', label: 'Site URL', type: 'text' }] },
+        'Google Ads': { method: 'OAuth 2.0', fields: [{ key: 'customerId', label: 'Customer ID', type: 'text' }] },
+        'Meta Ads': { method: 'OAuth 2.0', fields: [{ key: 'adAccountId', label: 'Ad Account ID', type: 'text' }, { key: 'accessToken', label: 'Access Token', type: 'password' }] },
+        'TikTok Ads': { method: 'OAuth 2.0', fields: [{ key: 'advertiserId', label: 'Advertiser ID', type: 'text' }, { key: 'accessToken', label: 'Access Token', type: 'password' }] },
+        Shopify: { method: 'API Key', fields: [{ key: 'shopDomain', label: 'Shop Domain', type: 'text' }, { key: 'apiKey', label: 'API Key', type: 'password' }] },
+        WooCommerce: { method: 'API Key', fields: [{ key: 'storeUrl', label: 'Store URL', type: 'text' }, { key: 'consumerKey', label: 'Consumer Key', type: 'password' }, { key: 'consumerSecret', label: 'Consumer Secret', type: 'password' }] },
+        HubSpot: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Private App Token', type: 'password' }] },
+        Salesforce: { method: 'OAuth 2.0', fields: [{ key: 'clientId', label: 'Client ID', type: 'text' }, { key: 'clientSecret', label: 'Client Secret', type: 'password' }, { key: 'instanceUrl', label: 'Instance URL', type: 'text' }] },
+        PostHog: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Personal API Key', type: 'password' }, { key: 'projectId', label: 'Project ID', type: 'text' }] },
+        Klaviyo: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Private API Key', type: 'password' }] },
+        Sentry: { method: 'API Key', fields: [{ key: 'authToken', label: 'Auth Token', type: 'password' }, { key: 'organizationSlug', label: 'Organization Slug', type: 'text' }] },
+        PostgreSQL: { method: 'Database Credentials', fields: [{ key: 'host', label: 'Host', type: 'text' }, { key: 'port', label: 'Port', type: 'text' }, { key: 'database', label: 'Database', type: 'text' }, { key: 'username', label: 'Username', type: 'text' }, { key: 'password', label: 'Password', type: 'password' }] },
+        MySQL: { method: 'Database Credentials', fields: [{ key: 'host', label: 'Host', type: 'text' }, { key: 'port', label: 'Port', type: 'text' }, { key: 'database', label: 'Database', type: 'text' }, { key: 'username', label: 'Username', type: 'text' }, { key: 'password', label: 'Password', type: 'password' }] },
+        MongoDB: { method: 'Database Credentials', fields: [{ key: 'uri', label: 'Connection URI', type: 'text' }, { key: 'database', label: 'Database', type: 'text' }] },
+        Prometheus: { method: 'None', fields: [{ key: 'url', label: 'Prometheus URL', type: 'text' }] },
+        BigQuery: { method: 'Service Account', fields: [{ key: 'serviceAccountKey', label: 'Service Account JSON', type: 'textarea' }] },
+      };
+      return mockConfigs[connectorName] || { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password' }] };
+    }
+    try {
+      return await connectorAuthService.getAuthConfig(orgId, projectId, connectorName);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  deployConnector: async (orgId, projectId, connectorName, credentials) => {
+    if (get().devMode) return { deployed: true, connectorName };
+    set({ isLoading: true });
+    try {
+      const result = await connectorAuthService.deployConnector(orgId, projectId, connectorName, credentials);
+      set({ isLoading: false });
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // AGENT CREDENTIALS
+  // ═══════════════════════════════════════════════
+
+  fetchAgentCredentials: async (orgId, projectId) => {
+    if (get().devMode) return { bucket: 'mock-bucket', prefix: `specs/${orgId}/${projectId}` };
+    try {
+      return await agentService.getCredentials(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // ANALYTICS
+  // ═══════════════════════════════════════════════
+
+  fetchDashboardMetrics: async (orgId, projectId) => {
+    if (get().devMode) return get().organizationMetrics;
+    set({ isLoading: true });
+    try {
+      const metrics = await analyticsService.getDashboardMetrics(orgId, projectId);
+      set({ analyticsData: metrics, isLoading: false });
+      return metrics;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  runAnalyticsQuery: async (orgId, projectId, sql) => {
+    if (get().devMode) return { rows: [], columns: [] };
+    try {
+      return await analyticsService.query(orgId, projectId, sql);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // SPECS / DATA CATALOG
+  // ═══════════════════════════════════════════════
+
+  fetchSpec: async (orgId, projectId, viewId = 'servers') => {
+    if (get().devMode) return null;
+    try {
+      return await specService.getSpec(orgId, projectId, viewId);
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  generateSpec: async (orgId, projectId) => {
+    if (get().devMode) return { message: 'Demo mode — spec generation simulated' };
+    try {
+      return await specService.generateSpec(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  fetchDataCatalog: async (orgId, projectId) => {
+    if (get().devMode) return null;
+    try {
+      return await specService.getDataCatalog(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  fetchMindmap: async (orgId, projectId) => {
+    if (get().devMode) return null;
+    try {
+      return await specService.getMindmap(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  fetchViewBindings: async (orgId, projectId) => {
+    if (get().devMode) return null;
+    try {
+      return await specService.getBindings(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  updateViewBindings: async (orgId, projectId, patch) => {
+    if (get().devMode) return { updated: true };
+    try {
+      return await specService.updateBindings(orgId, projectId, patch);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  invalidateSpec: async (orgId, projectId) => {
+    if (get().devMode) return { invalidated: true };
+    try {
+      return await specService.invalidateSpec(orgId, projectId);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // SERVICE ACCOUNTS (extra methods)
+  // ═══════════════════════════════════════════════
+
+  getServiceAccount: async (orgId, saId) => {
+    if (get().devMode) return (get().serviceAccounts || []).find((sa) => sa.id === saId);
+    try {
+      return await serviceAccountService.get(orgId, saId);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  regenerateServiceAccountSecret: async (orgId, saId) => {
+    if (get().devMode) {
+      const newSecret = `sec_live_${Math.random().toString(36).substring(2, 14)}`;
+      set((state) => ({
+        serviceAccounts: (state.serviceAccounts || []).map((sa) =>
+          sa.id === saId ? { ...sa, clientSecret: newSecret } : sa
+        ),
+      }));
+      return { clientSecret: newSecret };
+    }
+    try {
+      const result = await serviceAccountService.regenerateSecret(orgId, saId);
+      set((state) => ({
+        serviceAccounts: (state.serviceAccounts || []).map((sa) =>
+          sa.id === saId ? { ...sa, clientSecret: result.clientSecret || result.secret } : sa
+        ),
+      }));
+      return result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // CHAT TOOL RESPONSE
+  // ═══════════════════════════════════════════════
+
+  submitToolResponse: async (orgId, projectId, toolCallId, toolName, payload) => {
+    if (get().devMode) {
+      return { success: true, data: { toolCallId, result: { type: 'mock', message: 'Demo mode — tool response simulated' } } };
+    }
+    const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/chat/tool-response`, {
+      toolCallId,
+      toolName,
+      payload,
+    });
+    return response.data;
   },
 
   createChatSession: (title = 'New Chat') => { const session = { id: `chat_${Date.now()}`, title, messages: [], createdAt: new Date().toISOString() }; set((state) => ({ chatSessions: [...state.chatSessions, session], activeChatId: session.id })); return session; },

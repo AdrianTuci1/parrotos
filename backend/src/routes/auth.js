@@ -9,8 +9,7 @@ const authService = new AuthService();
 const registerSchema = {
   email: { required: true, type: 'string', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
   password: { required: true, type: 'string', minLength: 8 },
-  firstName: { required: true, type: 'string', minLength: 1 },
-  lastName: { required: true, type: 'string', minLength: 1 },
+  username: { required: true, type: 'string', minLength: 1 },
 };
 
 const loginSchema = {

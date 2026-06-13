@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import {
   Check,
@@ -364,28 +364,43 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
 }
 
 export function OrganizationAccessView() {
-  const { workspaces, currentOrganization } = useAppStore();
+  const { workspaces, currentOrganization, serviceAccounts, fetchServiceAccounts, createServiceAccount, updateServiceAccount, deleteServiceAccount, devMode, demoMode } = useAppStore();
   
   // Filter workspaces belonging to the active organization (or default to all if none match)
   const orgWorkspaces = workspaces.filter(w => w.organizationId === currentOrganization?.id) || workspaces;
 
-  const [members, setMembers] = useState(DEFAULT_SERVICE_ACCOUNTS);
+  // Use mock data in dev/demo mode when store has no service accounts
+  const effectiveServiceAccounts = (devMode || demoMode) && (!serviceAccounts || serviceAccounts.length === 0)
+    ? DEFAULT_SERVICE_ACCOUNTS
+    : (serviceAccounts || []);
+
+  const [members, setMembers] = useState(effectiveServiceAccounts);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
 
-  const handleSaveMember = (member) => {
+  useEffect(() => {
+    if (currentOrganization?.id && !devMode && !demoMode) {
+      fetchServiceAccounts(currentOrganization.id);
+    }
+  }, [currentOrganization?.id, devMode, demoMode]);
+
+  useEffect(() => {
+    setMembers(effectiveServiceAccounts);
+  }, [serviceAccounts, devMode, demoMode]);
+
+  const handleSaveMember = async (member) => {
     if (editingMember) {
-      setMembers((prev) => prev.map((m) => (m.id === member.id ? member : m)));
+      await updateServiceAccount(currentOrganization?.id, member.id, member);
     } else {
-      setMembers((prev) => [...prev, member]);
+      await createServiceAccount(currentOrganization?.id, member);
     }
     setEditingMember(null);
     setIsEditingMode(false);
   };
 
-  const handleDeleteMember = (memberId) => {
+  const handleDeleteMember = async (memberId) => {
     if (confirm("Are you sure you want to delete this service account? Access keys will be invalidated immediately.")) {
-      setMembers((prev) => prev.filter((m) => m.id !== memberId));
+      await deleteServiceAccount(currentOrganization?.id, memberId);
       setEditingMember(null);
       setIsEditingMode(false);
     }
@@ -405,7 +420,7 @@ export function OrganizationAccessView() {
     <ViewFrame
       title="Access Management"
       description="Manage organization API service accounts, telemetry keys, and project access credentials."
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="max-w-3xl"
     >
       {isEditingMode ? (
         <ServiceAccountEditPage

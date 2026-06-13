@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import FeatureMindMap from "@/components/mindmap/DetachedMindMap";
 import { ProjectEmptyState, isProjectEmpty } from "@/components/shell/ProjectEmptyState";
@@ -458,7 +458,21 @@ const combinedMindMapData = {
 };
 
 export function GraphView() {
-  const { currentWorkspace } = useAppStore();
+  const { currentWorkspace, currentOrganization, fetchMindmap, demoMode, devMode } = useAppStore();
+  const [mindmapData, setMindmapData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!devMode && !demoMode && currentOrganization?.id && currentWorkspace?.id) {
+      setLoading(true);
+      fetchMindmap(currentOrganization.id, currentWorkspace.id)
+        .then((data) => {
+          if (data) setMindmapData(data);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
+  }, [devMode, demoMode, currentOrganization?.id, currentWorkspace?.id, fetchMindmap]);
 
   if (isProjectEmpty(currentWorkspace)) {
     return (
@@ -470,8 +484,12 @@ export function GraphView() {
 
   return (
     <div className="flex-1 w-full min-h-0 relative flex flex-col bg-[#0F1012] overflow-hidden">
-      {/* MindMap canvas displaying the complete merged architecture topography */}
-      <FeatureMindMap customData={combinedMindMapData} />
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="text-white text-sm">Loading graph artifact...</div>
+        </div>
+      )}
+      <FeatureMindMap customData={mindmapData || combinedMindMapData} />
     </div>
   );
 }

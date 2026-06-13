@@ -23,7 +23,7 @@ export class IntegrationService {
       id: integrationId,
       orgId,
       projectId,
-      type: dto.type, // meltano, webhook, api, etc.
+      type: dto.type, // webhook, api, database
       name: dto.name,
       config: dto.config || {},
       status: 'active',
@@ -83,25 +83,5 @@ export class IntegrationService {
       updatedAt: new Date().toISOString(),
     });
     return newStats;
-  }
-
-  async getMeltanoConfig(orgId, projectId, integrationId) {
-    const integration = await this.findById(orgId, projectId, integrationId);
-    if (integration.type !== 'meltano') {
-      throw new NotFoundError('Integration is not a Meltano integration');
-    }
-
-    // Generate temporary GCS credentials for Meltano
-    const gcsToken = await this.gcp.generateTemporaryToken(orgId, projectId);
-    const landingZonePrefix = this.gcp.getLandingZonePrefix(orgId, projectId);
-
-    return {
-      ...integration.config,
-      credentials: {
-        gcsToken,
-        bucketName: config.gcsBucketName,
-        landingZonePrefix,
-      },
-    };
   }
 }

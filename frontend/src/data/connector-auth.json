@@ -19,12 +19,43 @@
       "deploy": "bigquery_transfer",
       "setup_url": "https://console.cloud.google.com/bigquery/transfers"
     },
+    "Search Console": {
+      "auth": "OAuth 2.0",
+      "fields": [
+        { "key": "siteUrl", "label": "Site URL", "placeholder": "https://example.com", "type": "text" }
+      ],
+      "help": "Uses BigQuery Data Transfer (zero code). Configure in GCP Console → Data Transfers → Search Console.",
+      "deploy": "bigquery_transfer",
+      "setup_url": "https://console.cloud.google.com/bigquery/transfers"
+    },
     "Google Ads": {
       "auth": "OAuth 2.0",
-      "fields": [],
+      "fields": [
+        { "key": "customerId", "label": "Customer ID", "placeholder": "123-456-7890", "type": "text" }
+      ],
       "help": "Native BigQuery Data Transfer. Configure in GCP Console → Data Transfers → Google Ads.",
       "deploy": "bigquery_transfer",
       "setup_url": "https://console.cloud.google.com/bigquery/transfers"
+    },
+    "Meta Ads": {
+      "auth": "OAuth 2.0",
+      "fields": [
+        { "key": "adAccountId", "label": "Ad Account ID", "placeholder": "act_123456789", "type": "text" },
+        { "key": "accessToken", "label": "Access Token", "placeholder": "EAAB...", "type": "password" }
+      ],
+      "help": "Use the Meta Marketing API for ad metrics, audiences, and activation sync.",
+      "deploy": "cloud_function",
+      "schedule": "1h"
+    },
+    "TikTok Ads": {
+      "auth": "OAuth 2.0",
+      "fields": [
+        { "key": "advertiserId", "label": "Advertiser ID", "placeholder": "1234567890123456789", "type": "text" },
+        { "key": "accessToken", "label": "Access Token", "placeholder": "tiktok_...", "type": "password" }
+      ],
+      "help": "Use the TikTok Marketing API for spend, conversions, and audience sync.",
+      "deploy": "cloud_function",
+      "schedule": "1h"
     },
     "Shopify": {
       "auth": "API Key",
@@ -34,6 +65,17 @@
         { "key": "shopDomain", "label": "Shop Domain", "placeholder": "mystore.myshopify.com", "type": "text" }
       ],
       "help": "Create a custom app in Shopify Admin → Settings → Apps → Develop apps. Needs read_orders and read_customers scopes.",
+      "deploy": "cloud_function",
+      "schedule": "1h"
+    },
+    "WooCommerce": {
+      "auth": "API Key",
+      "fields": [
+        { "key": "storeUrl", "label": "Store URL", "placeholder": "https://store.example.com", "type": "text" },
+        { "key": "consumerKey", "label": "Consumer Key", "placeholder": "ck_...", "type": "password" },
+        { "key": "consumerSecret", "label": "Consumer Secret", "placeholder": "cs_...", "type": "password" }
+      ],
+      "help": "Connect the WooCommerce REST API from WordPress. Use a read-only key pair for orders and products.",
       "deploy": "cloud_function",
       "schedule": "1h"
     },
@@ -67,15 +109,6 @@
       "deploy": "cloud_function",
       "schedule": "1h"
     },
-    "Prometheus": {
-      "auth": "None",
-      "fields": [
-        { "key": "url", "label": "Prometheus URL", "placeholder": "http://prometheus:9090", "type": "text" }
-      ],
-      "help": "Direct Prometheus API access. No authentication if on same network. For external, use basic auth or token.",
-      "deploy": "direct",
-      "schedule": "30s"
-    },
     "Klaviyo": {
       "auth": "API Key",
       "fields": [
@@ -84,15 +117,6 @@
       "help": "Get your key at Klaviyo → Settings → API Keys.",
       "deploy": "cloud_function",
       "schedule": "1h"
-    },
-    "BigQuery": {
-      "auth": "Service Account",
-      "fields": [
-        { "key": "serviceAccountKey", "label": "Service Account JSON", "placeholder": "Paste service account key JSON", "type": "textarea" }
-      ],
-      "help": "Create a service account with BigQuery Data Editor role. Download the JSON key.",
-      "deploy": "direct",
-      "schedule": "manual"
     },
     "Sentry": {
       "auth": "API Key",
@@ -103,6 +127,60 @@
       "help": "Get your token at Sentry → Settings → Account → API → Auth Tokens. Needs event:read, project:read.",
       "deploy": "cloud_function",
       "schedule": "5m"
+    },
+    "PostgreSQL": {
+      "auth": "Database Credentials",
+      "fields": [
+        { "key": "host", "label": "Host", "placeholder": "db.example.com", "type": "text" },
+        { "key": "port", "label": "Port", "placeholder": "5432", "type": "text" },
+        { "key": "database", "label": "Database", "placeholder": "analytics", "type": "text" },
+        { "key": "username", "label": "Username", "placeholder": "readonly", "type": "text" },
+        { "key": "password", "label": "Password", "placeholder": "••••••••", "type": "password" }
+      ],
+      "help": "Connect a read-only PostgreSQL user for change-data capture or scheduled extracts.",
+      "deploy": "cloud_function",
+      "schedule": "1h"
+    },
+    "MySQL": {
+      "auth": "Database Credentials",
+      "fields": [
+        { "key": "host", "label": "Host", "placeholder": "db.example.com", "type": "text" },
+        { "key": "port", "label": "Port", "placeholder": "3306", "type": "text" },
+        { "key": "database", "label": "Database", "placeholder": "analytics", "type": "text" },
+        { "key": "username", "label": "Username", "placeholder": "readonly", "type": "text" },
+        { "key": "password", "label": "Password", "placeholder": "••••••••", "type": "password" }
+      ],
+      "help": "Connect a read-only MySQL user for ingestion from operational databases or hosted stores.",
+      "deploy": "cloud_function",
+      "schedule": "1h"
+    },
+    "MongoDB": {
+      "auth": "Database Credentials",
+      "fields": [
+        { "key": "uri", "label": "Connection URI", "placeholder": "mongodb+srv://...", "type": "text" },
+        { "key": "database", "label": "Database", "placeholder": "analytics", "type": "text" }
+      ],
+      "help": "Connect a read-only MongoDB URI for app events, content, or operational document data.",
+      "deploy": "cloud_function",
+      "schedule": "1h"
+    },
+    "Prometheus": {
+      "auth": "None",
+      "fields": [
+        { "key": "url", "label": "Prometheus URL", "placeholder": "http://prometheus:9090", "type": "text" }
+      ],
+      "help": "Direct Prometheus API access. No authentication if on same network. For external, use basic auth or token.",
+      "deploy": "direct",
+      "schedule": "30s"
+    },
+    "BigQuery": {
+      "auth": "Service Account",
+      "fields": [
+        { "key": "serviceAccountKey", "label": "Service Account JSON", "placeholder": "Paste service account key JSON", "type": "textarea" }
+      ],
+      "help": "Create a service account with BigQuery Data Editor role. Download the JSON key.",
+      "deploy": "direct",
+      "schedule": "manual"
     }
   }
 }

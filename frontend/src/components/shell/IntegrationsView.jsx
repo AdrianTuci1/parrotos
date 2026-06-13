@@ -1,26 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  AlertCircle,
-  ArrowRightLeft,
   Check,
-  Database,
   Plus,
   Trash2,
 } from 'lucide-react';
-import { IntegrationConnectionModal } from '@/components/shell/IntegrationConnectionModal';
+import { IntegrationConnectionPage } from '@/components/shell/IntegrationConnectionPage';
 import { ViewFrame } from '@/components/shell/ViewFrame';
-import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/stores/useAppStore';
-import { cn } from '@/lib/utils';
 import connectorsData from '@/data/connectors.json';
 import '@/styles/integrations.css';
 
-const {
-  connectedSources: defaultConnectedSources,
-  connectedDestinations: defaultConnectedDestinations,
-  sourceCategories,
-  destinationCategories,
-} = connectorsData;
+const EMPTY_CATALOG = {
+  connectedSources: [],
+  connectedDestinations: [],
+  sourceCategories: [],
+  destinationCategories: [],
+  featuredIntegrations: [],
+};
 
 const authOptions = ['OAuth', 'API Key', 'Service Account', 'Database Credentials', 'Webhook Token'];
 
@@ -76,105 +72,79 @@ function buildConnectionRecord(formState, selectedConnector) {
   };
 }
 
-const FEATURED_INTEGRATIONS = [
-  {
-    name: 'Stripe',
-    connectorName: 'Stripe',
-    description: 'Subscriptions, invoices, MRR, failed payments, and paid account states.',
-    flow: 'source',
-  },
-  {
-    name: 'PostHog',
-    connectorName: 'PostHog',
-    description: 'Events, active users, cohorts, and free-to-paid activation signals.',
-    flow: 'source',
-  },
-  {
-    name: 'Shopify',
-    connectorName: 'Shopify',
-    description: 'Orders, AOV, repeat purchase rate, refunds, and product-level revenue.',
-    flow: 'source',
-  },
-  {
-    name: 'Prometheus',
-    connectorName: 'Prometheus',
-    description: 'Low-latency service metrics used directly for operational dashboards.',
-    flow: 'source',
-  },
-  {
-    name: 'HubSpot',
-    connectorName: 'HubSpot',
-    description: 'Accounts, lifecycle stages, deal context, and customer enrichment.',
-    flow: 'source',
-  },
-  {
-    name: 'Google Ads',
-    connectorName: 'Google Ads',
-    description: 'Campaign spend, budget, and marketing performance.',
-    flow: 'source',
-  },
-  {
-    name: 'Slack',
-    connectorName: 'Slack',
-    description: 'Push insights, anomaly alerts, and scheduled summaries into team channels.',
-    flow: 'destination',
-  },
-  {
-    name: 'Salesforce',
-    connectorName: 'Salesforce',
-    description: 'Send segments, health signals, and revenue context back into customer systems.',
-    flow: 'destination',
-  },
-  {
-    name: 'Discord',
-    connectorName: 'Discord',
-    description: 'Push real-time alerts and channel updates.',
-    flow: 'destination',
-  },
-  {
-    name: 'PostgreSQL',
-    connectorName: 'PostgreSQL',
-    description: 'Relational database storage and query ingestion.',
-    flow: 'source',
-  },
-  {
-    name: 'Snowflake',
-    connectorName: 'Snowflake',
-    description: 'Cloud data warehousing for analytics and reporting.',
-    flow: 'source',
-  },
-  {
-    name: 'BigQuery',
-    connectorName: 'BigQuery',
-    description: 'Serverless, highly scalable cloud data warehouse.',
-    flow: 'source',
-  },
-];
-
 export function IntegrationsView() {
   const {
     currentOrganization,
     currentWorkspace,
+    devMode,
+    demoMode,
     integrationsData,
     fetchIntegrations,
+    fetchIntegrationCatalog,
     createIntegration,
     deleteIntegration,
   } = useAppStore();
+  const isMockMode = devMode || demoMode;
 
-  const [connectedSources, setConnectedSources] = useState(defaultConnectedSources);
-  const [connectedDestinations, setConnectedDestinations] = useState(defaultConnectedDestinations);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [catalog, setCatalog] = useState(() => (isMockMode ? connectorsData : EMPTY_CATALOG));
+  const [connectedSources, setConnectedSources] = useState(
+    () => (isMockMode ? connectorsData.connectedSources : [])
+  );
+  const [connectedDestinations, setConnectedDestinations] = useState(
+    () => (isMockMode ? connectorsData.connectedDestinations : [])
+  );
+  const [detailOpen, setDetailOpen] = useState(false);
   const [flowType, setFlowType] = useState('source');
 
   // Fetch integrations from API on mount, fall back to defaults
   useEffect(() => {
-    if (currentOrganization?.id && currentWorkspace?.id) {
+    if (!isMockMode && currentOrganization?.id && currentWorkspace?.id) {
       fetchIntegrations(currentOrganization.id, currentWorkspace.id);
     }
-  }, [currentOrganization?.id, currentWorkspace?.id]);
+  }, [currentOrganization?.id, currentWorkspace?.id, isMockMode, fetchIntegrations]);
+
+  useEffect(() => {
+    if (isMockMode) {
+      Promise.resolve().then(() => {
+        setCatalog(connectorsData);
+        setConnectedSources(connectorsData.connectedSources);
+        setConnectedDestinations(connectorsData.connectedDestinations);
+      });
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadCatalog() {
+      if (!currentOrganization?.id || !currentWorkspace?.id) {
+        return;
+      }
+
+      try {
+        const nextCatalog = await fetchIntegrationCatalog(currentOrganization.id, currentWorkspace.id);
+        if (!cancelled && nextCatalog) {
+          setCatalog(nextCatalog);
+        }
+      } catch {
+        if (!cancelled) {
+          setCatalog(EMPTY_CATALOG);
+        }
+      }
+    }
+
+    loadCatalog();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentOrganization?.id, currentWorkspace?.id, isMockMode, fetchIntegrationCatalog]);
 
   // Sync local state from store
   useEffect(() => {
+    if (isMockMode) {
+      return;
+    }
+
     if (integrationsData && integrationsData.length > 0) {
       const sources = integrationsData
         .filter((i) => i.flow === 'source' || !i.flow)
@@ -182,15 +152,29 @@ export function IntegrationsView() {
       const destinations = integrationsData
         .filter((i) => i.flow === 'destination')
         .map(mapApiIntegrationToUI);
-      if (sources.length > 0) setConnectedSources(sources);
-      if (destinations.length > 0) setConnectedDestinations(destinations);
+      Promise.resolve().then(() => {
+        if (sources.length > 0) setConnectedSources(sources);
+        if (destinations.length > 0) setConnectedDestinations(destinations);
+      });
     }
-  }, [integrationsData]);
+  }, [integrationsData, isMockMode]);
 
-  const sourceOptions = useMemo(() => buildConnectorOptions(sourceCategories, 'source'), []);
+  const effectiveCatalog = isMockMode ? connectorsData : catalog;
+  const effectiveConnectedSources = isMockMode ? connectorsData.connectedSources : connectedSources;
+  const effectiveConnectedDestinations = isMockMode ? connectorsData.connectedDestinations : connectedDestinations;
+
+  const sourceCategoriesData = effectiveCatalog?.sourceCategories || EMPTY_CATALOG.sourceCategories;
+  const destinationCategoriesData = effectiveCatalog?.destinationCategories || EMPTY_CATALOG.destinationCategories;
+  const featuredIntegrations = effectiveCatalog?.featuredIntegrations || EMPTY_CATALOG.featuredIntegrations;
+  const hasFeaturedIntegrations = featuredIntegrations.length > 0;
+
+  const sourceOptions = useMemo(
+    () => buildConnectorOptions(sourceCategoriesData, 'source'),
+    [sourceCategoriesData]
+  );
   const destinationOptions = useMemo(
-    () => buildConnectorOptions(destinationCategories, 'destination'),
-    []
+    () => buildConnectorOptions(destinationCategoriesData, 'destination'),
+    [destinationCategoriesData]
   );
 
   const [selectedConnectorId, setSelectedConnectorId] = useState(sourceOptions[0]?.id ?? '');
@@ -235,7 +219,7 @@ export function IntegrationsView() {
 
   const openSheet = (flow, connectorName = '') => {
     setModalFlowType(flow, connectorName);
-    setSheetOpen(true);
+    setDetailOpen(true);
   };
 
   const handleFormChange = (field, value) => {
@@ -288,7 +272,7 @@ export function IntegrationsView() {
       }
     }
 
-    setSheetOpen(false);
+    setDetailOpen(false);
   };
 
   const handleRemoveConnection = async (flow, id) => {
@@ -308,15 +292,15 @@ export function IntegrationsView() {
   };
 
   const getConnection = (connectorName) => {
-    const source = connectedSources.find(
+    const source = effectiveConnectedSources.find(
       (c) => c.connectorName?.toLowerCase() === connectorName.toLowerCase()
     );
-    if (source) return { isConnected: true, flow: 'source', id: source.id };
+    if (source) return { isConnected: true, flow: 'source', id: source.id, record: source };
 
-    const dest = connectedDestinations.find(
+    const dest = effectiveConnectedDestinations.find(
       (c) => c.connectorName?.toLowerCase() === connectorName.toLowerCase()
     );
-    if (dest) return { isConnected: true, flow: 'destination', id: dest.id };
+    if (dest) return { isConnected: true, flow: 'destination', id: dest.id, record: dest };
 
     return { isConnected: false };
   };
@@ -324,71 +308,98 @@ export function IntegrationsView() {
   return (
     <>
       <ViewFrame
-        title="Integrations"
-        description="Connect business data sources, then route modeled insights into the destinations your teams already use."
+        title={detailOpen ? null : "Integrations"}
+        description={detailOpen ? null : "Connect business data sources, then route modeled insights into the destinations your teams already use."}
         maxWidthClassName="max-w-3xl"
       >
-        <div className="integrations-wrapper">
-          <div className="integrations-section-head">
-            <h3 className="available-integrations-title">Featured</h3>
+        {detailOpen ? (
+          <IntegrationConnectionPage
+            flowType={flowType}
+            onFlowTypeChange={setModalFlowType}
+            connectorSelectOptions={connectorSelectOptions}
+            selectedConnectorId={selectedConnectorId}
+            onConnectorChange={handleConnectorChange}
+            authSelectOptions={authSelectOptions}
+            formState={formState}
+            onFormChange={handleFormChange}
+            onSubmit={handleSubmit}
+            onBack={() => setDetailOpen(false)}
+            selectedConnector={selectedConnector}
+          />
+        ) : (
+          <div className="integrations-wrapper">
+            <div className="integrations-section-head">
+              <h3 className="available-integrations-title">Featured</h3>
+            </div>
+
+            {hasFeaturedIntegrations ? (
+              <div className="integrations-grid">
+                {featuredIntegrations.map((integration) => {
+                  const { isConnected, flow, id } = getConnection(integration.connectorName);
+
+                  const openDetail = () => openSheet(integration.flow, integration.name);
+
+                  return (
+                    <div
+                      key={integration.name}
+                      className="integration-item"
+                      role="button"
+                      tabIndex={0}
+                      onClick={openDetail}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          openDetail();
+                        }
+                      }}
+                    >
+                      <div className="integration-icon-container is-empty" />
+
+                      <div className="integration-info">
+                        <span className="integration-name">{integration.name}</span>
+                        <span className="integration-description">{integration.description}</span>
+                      </div>
+
+                      <div className="integration-action-cell">
+                        {isConnected ? (
+                          <button
+                            className="integration-connected-btn"
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleRemoveConnection(flow, id);
+                            }}
+                            title="Disconnect"
+                          >
+                            <Check size={16} className="check-icon" />
+                            <Trash2 size={14} className="trash-icon" />
+                          </button>
+                        ) : (
+                          <button
+                            className="integration-plus-btn"
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              openDetail();
+                            }}
+                            title="Open"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="integration-empty-copy">
+                No featured integrations are configured yet.
+              </p>
+            )}
           </div>
-
-          <div className="integrations-grid">
-            {FEATURED_INTEGRATIONS.map((integration) => {
-              const { isConnected, flow, id } = getConnection(integration.connectorName);
-
-              return (
-                <div key={integration.name} className="integration-item">
-                  <div className="integration-icon-container is-empty" />
-
-                  <div className="integration-info">
-                    <span className="integration-name">{integration.name}</span>
-                    <span className="integration-description">{integration.description}</span>
-                  </div>
-
-                  <div className="integration-action-cell">
-                    {isConnected ? (
-                      <button
-                        className="integration-connected-btn"
-                        type="button"
-                        onClick={() => handleRemoveConnection(flow, id)}
-                        title="Disconnect"
-                      >
-                        <Check size={16} className="check-icon" />
-                        <Trash2 size={14} className="trash-icon" />
-                      </button>
-                    ) : (
-                      <button
-                        className="integration-plus-btn"
-                        type="button"
-                        onClick={() => openSheet(integration.flow, integration.name)}
-                        title="Connect"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        )}
       </ViewFrame>
-      <IntegrationConnectionModal
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        flowType={flowType}
-        onFlowTypeChange={setModalFlowType}
-        connectorSelectOptions={connectorSelectOptions}
-        selectedConnectorId={selectedConnectorId}
-        onConnectorChange={handleConnectorChange}
-        authSelectOptions={authSelectOptions}
-        formState={formState}
-        onFormChange={handleFormChange}
-        onSubmit={handleSubmit}
-        selectedConnector={selectedConnector}
-      />
     </>
   );
 }
-

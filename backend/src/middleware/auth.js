@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/index.js';
 import { UnauthorizedError } from '../utils/errors.js';
+import { serviceAccountService } from '../services/ServiceAccountService.js';
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -11,8 +12,26 @@ export const authenticate = async (req, res, next) => {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, config.jwtSecret);
 
+    // Try service account token first (sec_live_***)
+    if (token.startsWith('sec_live_')) {
+      try {
+        const sa = await serviceAccountService.validateToken(token);
+        req.user = {
+          userId: sa.id,
+          email: sa.saId,
+          roles: ['service_account'],
+          orgId: sa.orgId,
+          serviceAccount: sa,
+        };
+        return next();
+      } catch {
+        // Not a valid service account token, fall through to JWT
+      }
+    }
+
+    // JWT user token
+    const decoded = jwt.verify(token, config.jwtSecret);
     req.user = {
       userId: decoded.sub,
       email: decoded.email,
@@ -43,13 +62,40 @@ export const requireRole = (...roles) => {
 
 export const requireOrgAccess = (req, res, next) => {
   const orgId = req.params.orgId || req.body.orgId;
-  
+
   if (!orgId) {
     return next(new UnauthorizedError('Organization ID required'));
   }
 
-  // In a real implementation, check user's org memberships
-  // For now, we trust the JWT token which is scoped
+  // Service accounts must belong to the org
+  if (req.user.serviceAccount) {
+    if (req.user.orgId !== orgId) {
+      return next(new UnauthorizedError('Service account does not have access to this organization'));
+    }
+    return next();
+  }
+
+  // For regular users, check org membership from JWT
+  if (req.user.orgId && req.user.orgId !== orgId) {
+    return next(new UnauthorizedError('User does not have access to this organization'));
+  }
+
   req.user.orgId = orgId;
+  next();
+};
+
+export const requireProjectAccess = (req, res, next) => {
+  const projectId = req.params.projectId;
+  if (!projectId) return next();
+
+  // Service account project scoping
+  if (req.user.serviceAccount) {
+    const sa = req.user.serviceAccount;
+    const hasAccess = serviceAccountService.hasProjectAccess(sa, projectId, 'write');
+    if (!hasAccess) {
+      return next(new UnauthorizedError('Service account does not have access to this project'));
+    }
+  }
+
   next();
 };

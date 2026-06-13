@@ -1,9 +1,6 @@
 import { useAppStore } from "@/stores/useAppStore";
 import { DashboardLayout } from "@/components/widgets/DashboardLayout";
 import { ViewFrame } from "@/components/shell/ViewFrame";
-import { MarketingView } from "@/components/shell/MarketingView";
-import { SalesView } from "@/components/shell/SalesView";
-import { FinancialView } from "@/components/shell/FinancialView";
 import { ProjectEmptyState, isProjectEmpty } from "@/components/shell/ProjectEmptyState";
 
 const viewLayouts = {
@@ -23,14 +20,8 @@ export function AnalyticsView() {
     <ViewFrame>
       {shouldShowEmptyState ? (
         <ProjectEmptyState mode="analytics" />
-      ) : activeAnalyticsView === "marketing" ? (
-        <MarketingView />
-      ) : activeAnalyticsView === "sales" ? (
-        <SalesView />
-      ) : activeAnalyticsView === "financial" ? (
-        <FinancialView />
       ) : (
-        <DashboardLayout layoutId={layoutId} isNested={false} />
+        <DashboardLayout layoutId={layoutId} specViewId={activeAnalyticsView} isNested={false} />
       )}
     </ViewFrame>
   );

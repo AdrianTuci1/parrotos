@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { config } from '../config/index.js';
+import { ConnectorService } from '../services/ConnectorService.js';
 
 const router = Router();
 
@@ -70,6 +71,74 @@ router.post('/message', authenticate, async (req, res) => {
     } else {
       res.end();
     }
+  }
+});
+
+/**
+ * POST /chat/tool-response — receive user input for a pending tool call
+ *
+ * Frontend sends the user's response to a tool call (e.g., credentials entered,
+ * choice selected). Backend executes the tool and returns the result.
+ */
+router.post('/tool-response', authenticate, async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const { toolCallId, toolName, payload } = req.body;
+    const userToken = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!toolCallId || !toolName || !payload) {
+      return res.status(400).json({ error: 'toolCallId, toolName, and payload are required' });
+    }
+
+    let result;
+
+    switch (toolName) {
+      case 'open_integration_modal': {
+        const { connector_type, credentials } = payload;
+        if (!connector_type || !credentials) {
+          return res.status(400).json({ error: 'connector_type and credentials required' });
+        }
+        const connectorService = new ConnectorService();
+        result = await connectorService.deployConnector(orgId, projectId, connector_type, credentials);
+        break;
+      }
+
+      case 'show_widget': {
+        result = { type: 'widget', queryRef: payload.widget_query_ref, title: payload.title };
+        break;
+      }
+
+      case 'suggest_connectors': {
+        result = { type: 'suggestion', reason: payload.reason, connectors: payload.connectors };
+        break;
+      }
+
+      case 'run_analytics_query': {
+        const response = await fetch(
+          `${config.apiPrefix}/organizations/${orgId}/projects/${projectId}/analytics/query`,
+          {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${userToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sql: payload.sql }),
+          }
+        );
+        const data = await response.json();
+        result = { type: 'query_result', question: payload.question, result: data.data };
+        break;
+      }
+
+      case 'navigate_to': {
+        result = { type: 'action', action: 'navigate', section: payload.section };
+        break;
+      }
+
+      default:
+        return res.status(400).json({ error: `Unknown tool: ${toolName}` });
+    }
+
+    res.json({ success: true, data: { toolCallId, result } });
+  } catch (err) {
+    next(err);
   }
 });
 

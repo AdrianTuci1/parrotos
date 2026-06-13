@@ -5,4 +5,5 @@ export { ProjectService } from './ProjectService.js';
 export { AgentService } from './AgentService.js';
 export { IntegrationService } from './IntegrationService.js';
 export { AnalyticsService } from './AnalyticsService.js';
-export { MeltanoService } from './MeltanoService.js';
+export { ServiceAccountService, serviceAccountService } from './ServiceAccountService.js';
+export { BillingService, billingService } from './BillingService.js';

@@ -3,8 +3,10 @@ export class User {
     this.id = data.id || null;
     this.email = data.email || '';
     this.passwordHash = data.passwordHash || '';
-    this.firstName = data.firstName || '';
-    this.lastName = data.lastName || '';
+    this.username = data.username || '';
+    this.picture = data.picture || '';
+    this.provider = data.provider || '';
+    this.providerId = data.providerId || '';
     this.roles = data.roles || ['user'];
     this.orgMemberships = data.orgMemberships || []; // [{ orgId, role }]
     this.createdAt = data.createdAt || new Date().toISOString();
@@ -12,7 +14,7 @@ export class User {
   }
 
   getFullName() {
-    return `${this.firstName} ${this.lastName}`.trim() || this.email;
+    return this.username || this.email;
   }
 
   getOrgRole(orgId) {
@@ -25,16 +27,19 @@ export class User {
   }
 
   toFirestore() {
-    return {
+    const data = {
       email: this.email,
-      passwordHash: this.passwordHash,
-      firstName: this.firstName,
-      lastName: this.lastName,
+      username: this.username,
       roles: this.roles,
       orgMemberships: this.orgMemberships,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
+    if (this.passwordHash) data.passwordHash = this.passwordHash;
+    if (this.picture) data.picture = this.picture;
+    if (this.provider) data.provider = this.provider;
+    if (this.providerId) data.providerId = this.providerId;
+    return data;
   }
 
   static fromFirestore(id, data) {

@@ -66,7 +66,7 @@ export function SettingsView() {
     <ViewFrame
       title="Settings"
       description="Manage workspace access permissions, link generation, re-analysis execution, and project removal."
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="max-w-3xl"
     >
       <div className="settings-wrapper">
         {/* Section 1: Access Links & Re-analysis */}

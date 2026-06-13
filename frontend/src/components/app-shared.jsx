@@ -29,6 +29,7 @@ export const projectNavigationGroups = [
     items: [
       { id: 'analytics', title: 'Analytics', icon: 'bar-chart-3' },
       { id: 'integrations', title: 'Integrations', icon: 'plug' },
+      { id: 'storage', title: 'Storage', icon: 'database' },
       { id: 'graph', title: 'Graph', icon: 'git-branch' },
       { id: 'settings', title: 'Project Settings', icon: 'settings' },
     ],
@@ -65,4 +66,4 @@ export function findSectionById(scope, sectionId) {
 export const accountSections = ['home', 'organizations', 'billing'];
 // Org items (with org in URL): /app/:orgSlug/stats, etc.
 export const orgSections = ['stats', 'access', 'settings', 'create-project'];
-export const projectSections = ['analytics', 'integrations', 'graph', 'settings', 'chat'];
+export const projectSections = ['analytics', 'integrations', 'storage', 'graph', 'settings', 'chat'];

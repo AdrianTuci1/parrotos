@@ -1,8 +1,9 @@
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { apiClient } from "@/services/ApiClient";
 import { cn } from "@/lib/utils";
 import { ChatPanel } from "@/components/shell/ChatPanel";
+import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connectorAuthFields";
 import { ChatComposer } from "@/components/shell/ChatComposer";
 import "@/styles/chat.css";
 
@@ -21,12 +22,15 @@ export function ChatView() {
     demoMode,
     currentOrganization,
     currentWorkspace,
+    fetchConnectorAuthConfig,
+    submitToolResponse,
   } = useAppStore();
 
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [streamContent, setStreamContent] = useState("");
   const [approvalStates, setApprovalStates] = useState({});
+  const [connectorAuthFields, setConnectorAuthFields] = useState({});
   const [demoBannerVisible, setDemoBannerVisible] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -34,7 +38,7 @@ export function ChatView() {
   const messages = activeChat?.messages || [];
 
   // Find the first pending action toolCall across all messages
-  const pendingAction = useMemo(() => {
+  const pendingAction = (() => {
     for (const msg of messages) {
       if (!msg.toolCalls) continue;
       for (let idx = 0; idx < msg.toolCalls.length; idx++) {
@@ -50,7 +54,49 @@ export function ChatView() {
       }
     }
     return null;
-  }, [messages, approvalStates]);
+  })();
+
+  const pendingConnector = pendingAction?.toolCall?.connector;
+
+  useEffect(() => {
+    const connector = pendingConnector;
+    if (!connector || demoMode || !currentOrganization?.id || !currentWorkspace?.id) {
+      return;
+    }
+    if (connectorAuthFields[connector]) {
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const config = await fetchConnectorAuthConfig(currentOrganization.id, currentWorkspace.id, connector);
+        if (!cancelled && config) {
+          setConnectorAuthFields((current) => ({ ...current, [connector]: config }));
+        }
+      } catch (error) {
+        void error;
+        if (!cancelled) {
+          setConnectorAuthFields((current) => ({
+            ...current,
+            [connector]: CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS,
+          }));
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    pendingConnector,
+    demoMode,
+    currentOrganization?.id,
+    currentWorkspace?.id,
+    fetchConnectorAuthConfig,
+    connectorAuthFields,
+  ]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -118,14 +164,17 @@ export function ChatView() {
             if (event.type === "text") { fullContent += event.content; setStreamContent(fullContent); }
             else if (event.type === "tool_result") toolResults.push(event);
             else if (event.type === "error") { fullContent = event.message; setStreamContent(fullContent); }
-          } catch {}
+          } catch (error) {
+            void error;
+          }
         }
       }
 
       if (fullContent || toolResults.length > 0) {
         addMessage(currentChatId, { role: "assistant", content: fullContent || null, toolCalls: toolResults.length > 0 ? toolResults : undefined });
       }
-    } catch (err) {
+    } catch (error) {
+      void error;
       addMessage(currentChatId, { role: "assistant", content: "Sorry, I couldn\u2019t reach the AI service." });
     }
 
@@ -137,12 +186,49 @@ export function ChatView() {
   // INLINE ACTION HANDLERS
   // ═══════════════════════════════════════════════
 
-  const handleApprove = useCallback((key) => {
+  const handleApprove = useCallback(async (key) => {
     setApprovalStates(prev => ({ ...prev, [key]: "executing" }));
-    setTimeout(() => {
+
+    const pending = pendingAction;
+    if (!pending) return;
+
+    const tc = pending.toolCall;
+    const isKeyInput = tc.action === "open_integration_modal";
+
+    try {
+      let payload = {};
+
+      if (isKeyInput) {
+        const connector = tc.connector || "integration";
+        const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
+        const fields = authConfig.fields || DEFAULT_FIELDS.fields;
+        const values = {};
+        // Extract values from input fields in the DOM
+        const container = document.querySelector('.chat-pending-action-fields');
+        if (container) {
+          const inputs = container.querySelectorAll('input');
+          inputs.forEach((input, idx) => {
+            if (fields[idx]) values[fields[idx].key] = input.value;
+          });
+        }
+        payload = { connector_type: connector, credentials: values };
+      } else if (tc.type === "choice" || tc.action === "show_choices") {
+        payload = { selected: tc.choices?.[0]?.label };
+      }
+
+      await submitToolResponse(
+        currentOrganization?.id,
+        currentWorkspace?.id,
+        tc.id,
+        isKeyInput ? "open_integration_modal" : (tc.type === "choice" ? "show_choices" : tc.action),
+        payload
+      );
+
       setApprovalStates(prev => ({ ...prev, [key]: "approved" }));
-    }, 1200);
-  }, []);
+    } catch {
+      setApprovalStates(prev => ({ ...prev, [key]: "rejected" }));
+    }
+  }, [pendingAction, currentOrganization, currentWorkspace, connectorAuthFields, submitToolResponse]);
 
   const handleReject = useCallback((key) => {
     setApprovalStates(prev => ({ ...prev, [key]: "rejected" }));
@@ -188,6 +274,7 @@ export function ChatView() {
             onApprove={handleApprove}
             onReject={handleReject}
             messagesEndRef={messagesEndRef}
+            connectorAuthFields={connectorAuthFields}
           />
           {!pendingAction && (
             <ChatComposer
@@ -211,30 +298,4 @@ export function ChatView() {
       )}
     </div>
   );
-}
-
-// ═══════════════════════════════════════════════
-// MOCK RESPONSE (demo mode only)
-// ═══════════════════════════════════════════════
-
-function getMockResponse(text) {
-  const lower = text.toLowerCase();
-
-  if (lower.includes("stripe") || lower.includes("connect")) {
-    return "To connect Stripe, I'll need your API keys. Click below to open the connection form, or go to Integrations in the sidebar.";
-  }
-  if (lower.includes("data") || lower.includes("source")) {
-    return "Your current data sources are shown in the Analytics dashboard. Would you like me to suggest new connectors based on your stack? Common ones: Stripe (payments), GA4 (web analytics), Shopify (e-commerce).";
-  }
-  if (lower.includes("metric") || lower.includes("analytics") || lower.includes("show")) {
-    return "Check the Analytics tab for real-time widgets. I can embed specific metrics here in chat — just ask about a particular metric like 'show me visitor count'.";
-  }
-  if (lower.includes("widget") || lower.includes("chart")) {
-    return "Widgets are auto-generated from your data. Each table gets its own widget type based on the data shape. When you connect a new source, new widgets appear automatically.";
-  }
-  if (lower.includes("how") || lower.includes("start") || lower.includes("begin")) {
-    return "Welcome! Here's how to get started:\n1. Connect a data source (Stripe, GA4, etc.)\n2. Wait for data to sync to your warehouse\n3. AI generates dashboard widgets automatically\n4. Explore analytics in the Analytics tab\n\nStart by going to Integrations and clicking 'Connect'.";
-  }
-
-  return "I can help you connect data sources, explore analytics, and get insights. Try asking: 'Connect Stripe', 'Show me my data', or 'What metrics do I have?'";
 }

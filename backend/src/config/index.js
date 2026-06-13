@@ -27,21 +27,21 @@ export const config = {
   modalWebhookSecret: process.env.MODAL_WEBHOOK_SECRET,
   modalApiUrl: process.env.MODAL_API_URL,
   
-  // Meltano
-  meltanoApiUrl: process.env.MELTANO_API_URL,
-  meltanoWebhookSecret: process.env.MELTANO_WEBHOOK_SECRET,
-  
   // Stripe
   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   
   // Feature Flags
-  enableModalAgents: process.env.ENABLE_MODAL_AGENTS === 'true',
-  enableMeltanoIngestion: process.env.ENABLE_MELTANO_INGESTION === 'true',
   enableBigQueryAnalytics: process.env.ENABLE_BIGQUERY_ANALYTICS === 'true',
 
   // Services (Cloud Run / Docker Compose)
   chatServiceUrl: process.env.CHAT_SERVICE_URL || 'http://localhost:8080',
   harnessServiceUrl: process.env.HARNESS_SERVICE_URL || 'http://localhost:8081',
   internalToken: process.env.INTERNAL_TOKEN || 'dev-internal-token',
+
+  // Google OAuth
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleRedirectUri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/api/v1/auth/google/callback',
+  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
 };

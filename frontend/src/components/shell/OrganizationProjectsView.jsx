@@ -1,11 +1,20 @@
+import { useEffect } from 'react';
 import { Briefcase, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
 
 export function OrganizationProjectsView() {
-  const { currentOrganization, workspaces } = useAppStore();
+  const { currentOrganization, workspaces, fetchProjects } = useAppStore();
   const navigate = useNavigate();
+
+  // Fetch projects from backend when not in demo mode
+  useEffect(() => {
+    if (currentOrganization?.id) {
+      fetchProjects(currentOrganization.id);
+    }
+  }, [currentOrganization?.id]);
+
   const organizationProjects = workspaces.filter(
     (workspace) => workspace.organizationId === currentOrganization.id
   );

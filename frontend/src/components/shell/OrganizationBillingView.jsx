@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Check,
   Minus,
@@ -103,7 +103,7 @@ function formatStorage(totalGb) {
 }
 
 export function OrganizationBillingView() {
-  const { organizations, workspaces } = useAppStore();
+  const { organizations, workspaces, currentOrganization, subscription, fetchSubscription } = useAppStore();
 
   const totalProjects = workspaces.length;
   const totalStorageGb = workspaces.reduce(
@@ -115,8 +115,16 @@ export function OrganizationBillingView() {
   const [activeTab, setActiveTab] = useState('plans'); // 'plans', 'billings'
   const [notification, setNotification] = useState(null);
 
-  // Default active plan key to 'free' per user request
-  const activePlanKey = 'free';
+  // Fetch real subscription from backend
+  const [fetchedSub, setFetchedSub] = useState(false);
+  useEffect(() => {
+    if (currentOrganization?.id && !fetchedSub) {
+      fetchSubscription(currentOrganization.id).then(() => setFetchedSub(true)).catch(() => setFetchedSub(true));
+    }
+  }, [currentOrganization?.id, fetchSubscription, fetchedSub]);
+
+  // Use real subscription plan if available, fallback to 'free'
+  const activePlanKey = subscription?.plan || 'free';
 
   const triggerNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -201,16 +209,45 @@ export function OrganizationBillingView() {
     { id: 'INV-2026-002', date: 'February 12, 2026', amount: '$0.00', status: 'Paid' }
   ];
 
-  const handleCheckoutStripe = (planName) => {
-    triggerNotification(`Redirecting to Stripe secure checkout for the ${planName} Plan...`, 'success');
+  const { checkoutPlan, manageBilling } = useAppStore();
+
+  const handleCheckoutStripe = async (planKey) => {
+    if (!currentOrganization?.id) {
+      triggerNotification('No organization selected.', 'error');
+      return;
+    }
+    try {
+      triggerNotification(`Redirecting to Stripe secure checkout...`, 'success');
+      await checkoutPlan(currentOrganization.id, planKey);
+    } catch (err) {
+      triggerNotification('Checkout failed: ' + err.message, 'error');
+    }
   };
 
-  const handleManageStripe = () => {
-    triggerNotification('Redirecting to Stripe billing portal to update details...', 'success');
+  const handleManageStripe = async () => {
+    if (!currentOrganization?.id) {
+      triggerNotification('No organization selected.', 'error');
+      return;
+    }
+    try {
+      triggerNotification('Redirecting to Stripe billing portal...', 'success');
+      await manageBilling(currentOrganization.id);
+    } catch (err) {
+      triggerNotification('Portal failed: ' + err.message, 'error');
+    }
   };
 
-  const handleCancelSubscriptionStripe = () => {
-    triggerNotification('Redirecting to Stripe customer portal to process cancellation...', 'success');
+  const handleCancelSubscriptionStripe = async () => {
+    if (!currentOrganization?.id) {
+      triggerNotification('No organization selected.', 'error');
+      return;
+    }
+    try {
+      triggerNotification('Redirecting to Stripe customer portal...', 'success');
+      await manageBilling(currentOrganization.id);
+    } catch (err) {
+      triggerNotification('Portal failed: ' + err.message, 'error');
+    }
   };
 
   const downloadInvoice = (invoiceId) => {

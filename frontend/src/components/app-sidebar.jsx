@@ -13,6 +13,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import {
   Plus, LayoutDashboard, BarChart3, Briefcase, Plug, Settings,
   BookOpen, Rocket, GitBranch, MessageSquare, Undo2, Users, CreditCard, Power,
+  Database,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -24,7 +25,7 @@ const sectionIcons = {
   "bar-chart-3": BarChart3, briefcase: Briefcase, "credit-card": CreditCard,
   "git-branch": GitBranch, "layout-dashboard": LayoutDashboard,
   "message-square": MessageSquare, plug: Plug, rocket: Rocket,
-  settings: Settings, users: Users,
+  settings: Settings, users: Users, database: Database,
 };
 
 const accountSections = ['home', 'organizations', 'billing'];

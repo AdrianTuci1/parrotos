@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Building2, Database, BarChart3, ShieldCheck } from 'lucide-react';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
@@ -17,7 +18,15 @@ function AccountTile({ label, value, detail, trend }) {
 }
 
 export function OrganizationHomeView() {
-  const { organizations, workspaces } = useAppStore();
+  const { organizations, workspaces, accountMetrics, fetchAccountMetrics, demoMode, devMode } = useAppStore();
+
+  // Fetch account-level metrics from backend when not in demo mode
+  useEffect(() => {
+    if (!devMode && !demoMode) {
+      fetchAccountMetrics();
+    }
+  }, [devMode, demoMode]);
+
   const totalOrgs = organizations.length;
   const totalProjects = workspaces.length;
   const totalEvents = workspaces.reduce((sum, w) => {
@@ -27,6 +36,14 @@ export function OrganizationHomeView() {
   }, 0);
   const healthyProjects = workspaces.filter((w) => w.status === 'Healthy').length;
   const uniqueConnectors = [...new Set(workspaces.flatMap((w) => w.connectors || []))];
+
+  // Use backend metrics if available
+  const metrics = accountMetrics || {};
+  const displayOrgs = metrics.organizations ?? totalOrgs;
+  const displayProjects = metrics.totalProjects ?? totalProjects;
+  const displayHealthy = metrics.healthyProjects ?? healthyProjects;
+  const displayEvents = metrics.totalEvents ?? totalEvents;
+  const displayConnectors = metrics.uniqueConnectors ?? uniqueConnectors.length;
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
@@ -52,14 +69,14 @@ export function OrganizationHomeView() {
             <div className="organization-panel-split">
               <AccountTile
                 label="Organizations"
-                value={String(totalOrgs)}
+                value={String(displayOrgs)}
                 detail={`${organizations.filter((o) => o.plan !== 'Starter').length} on paid plans`}
                 trend="+1 this quarter"
               />
               <AccountTile
                 label="Projects"
-                value={String(totalProjects)}
-                detail={`${healthyProjects} healthy`}
+                value={String(displayProjects)}
+                detail={`${displayHealthy} healthy`}
                 trend="+2 this month"
               />
             </div>
@@ -75,13 +92,13 @@ export function OrganizationHomeView() {
             <div className="organization-panel-split">
               <AccountTile
                 label="Total monthly events"
-                value={totalEvents >= 1000 ? `${(totalEvents / 1000).toFixed(1)}K` : String(totalEvents)}
+                value={displayEvents >= 1000 ? `${(displayEvents / 1000).toFixed(1)}K` : String(displayEvents)}
                 detail="Across all projects"
                 trend="+15.3%"
               />
               <AccountTile
                 label="Active connectors"
-                value={String(uniqueConnectors.length)}
+                value={String(displayConnectors)}
                 detail="Unique connector types deployed"
                 trend="+3 this quarter"
               />
@@ -98,13 +115,13 @@ export function OrganizationHomeView() {
             <div className="organization-panel-split">
               <AccountTile
                 label="Healthy projects"
-                value={`${Math.round((healthyProjects / totalProjects) * 100)}%`}
-                detail={`${healthyProjects} of ${totalProjects} projects`}
+                value={`${Math.round((displayProjects > 0 ? (displayHealthy / displayProjects) : 0) * 100)}%`}
+                detail={`${displayHealthy} of ${displayProjects} projects`}
                 trend="Stable"
               />
               <AccountTile
                 label="Data sources"
-                value={String(uniqueConnectors.length * 2 + 3)}
+                value={String(displayConnectors * 2 + 3)}
                 detail="Connected across all orgs"
                 trend="+7.3%"
               />

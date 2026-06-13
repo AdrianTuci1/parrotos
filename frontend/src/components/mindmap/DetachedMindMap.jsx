@@ -608,6 +608,9 @@ const FeatureMindMap = observer(({ onNodeClick, showCosts = false, customData })
             if (customData.adjustedData) workspaceStore.data.adjustedData = customData.adjustedData;
             if (customData.group) workspaceStore.data.group = customData.group;
             if (customData.insight) workspaceStore.data.insight = customData.insight;
+            if (customData.mindmapManifest) workspaceStore.data.mindmapManifest = customData.mindmapManifest;
+            if (customData.mindmapYaml !== undefined) workspaceStore.data.mindmapYaml = customData.mindmapYaml;
+            if (customData.sourceMetadata) workspaceStore.data.sourceMetadata = customData.sourceMetadata;
         }
     }, [customData, workspaceStore]);
 

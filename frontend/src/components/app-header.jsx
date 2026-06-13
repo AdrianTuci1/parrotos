@@ -1,6 +1,7 @@
 import { useAppStore } from "@/stores/useAppStore";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { findSectionById } from "@/components/app-shared";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import {
   Bell,
   LayoutGrid,
@@ -84,6 +85,7 @@ export function AppHeader() {
         </div>
 
         <div className="header-right-side">
+          <ThemeSwitcher />
           <DropdownMenu>
             <DropdownMenuTrigger
               render={

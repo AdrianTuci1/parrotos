@@ -6,15 +6,31 @@
       "type": "billing",
       "status": "connected",
       "lastSync": "3 min ago",
-      "note": "Subscriptions, invoices, MRR, failed payments, and paid account states."
+      "note": "Subscriptions, invoices, MRR, failed payments, and payment state."
     },
     {
-      "id": "product",
-      "name": "PostHog",
-      "type": "product analytics",
+      "id": "web",
+      "name": "GA4",
+      "type": "web analytics",
       "status": "connected",
       "lastSync": "5 min ago",
-      "note": "Events, active users, cohorts, and free-to-paid activation signals."
+      "note": "Sessions, events, conversions, and acquisition performance."
+    },
+    {
+      "id": "seo",
+      "name": "Search Console",
+      "type": "seo",
+      "status": "connected",
+      "lastSync": "7 min ago",
+      "note": "Queries, clicks, impressions, and landing page coverage."
+    },
+    {
+      "id": "ads",
+      "name": "Google Ads",
+      "type": "marketing",
+      "status": "connected",
+      "lastSync": "9 min ago",
+      "note": "Campaign spend, budgets, pacing, and paid acquisition efficiency."
     },
     {
       "id": "commerce",
@@ -22,15 +38,23 @@
       "type": "ecommerce",
       "status": "connected",
       "lastSync": "8 min ago",
-      "note": "Orders, AOV, repeat purchase rate, refunds, and product-level revenue."
+      "note": "Orders, refunds, AOV, and product-level revenue."
     },
     {
-      "id": "observability",
-      "name": "Prometheus",
-      "type": "observability",
+      "id": "woocommerce",
+      "name": "WooCommerce",
+      "type": "wordpress ecommerce",
       "status": "connected",
-      "lastSync": "30 sec ago",
-      "note": "Low-latency service metrics used directly for operational dashboards."
+      "lastSync": "14 min ago",
+      "note": "WordPress storefront orders, customers, and checkout flow."
+    },
+    {
+      "id": "product",
+      "name": "PostHog",
+      "type": "product analytics",
+      "status": "connected",
+      "lastSync": "6 min ago",
+      "note": "Feature usage, activation funnels, and retention cohorts."
     },
     {
       "id": "crm",
@@ -38,74 +62,78 @@
       "type": "crm",
       "status": "connected",
       "lastSync": "11 min ago",
-      "note": "Accounts, lifecycle stages, deal context, and customer enrichment."
+      "note": "Contacts, lifecycle stages, companies, and deal context."
     },
     {
-      "id": "ads",
-      "name": "Google Ads",
-      "type": "ads",
-      "status": "error",
-      "lastSync": "42 min ago",
-      "note": "Campaign spend sync is paused due to a credentials refresh requirement."
+      "id": "sre",
+      "name": "Sentry",
+      "type": "observability",
+      "status": "connected",
+      "lastSync": "2 min ago",
+      "note": "Exception volume, release health, and error trends."
     }
   ],
-  "connectedDestinations": [],
+  "connectedDestinations": [
+    {
+      "id": "collab",
+      "name": "Slack",
+      "type": "collaboration",
+      "status": "connected",
+      "lastSync": "just now",
+      "note": "Push alerts, summaries, and anomaly digests into team channels."
+    },
+    {
+      "id": "crm-activation",
+      "name": "Salesforce",
+      "type": "crm activation",
+      "status": "connected",
+      "lastSync": "4 min ago",
+      "note": "Push health signals and segments back into sales workflows."
+    },
+    {
+      "id": "lifecycle",
+      "name": "Klaviyo",
+      "type": "lifecycle",
+      "status": "connected",
+      "lastSync": "13 min ago",
+      "note": "Send audiences and event triggers into lifecycle campaigns."
+    }
+  ],
   "sourceCategories": [
     {
-      "id": "billing-finance",
-      "title": "Billing & Finance",
-      "description": "Recurring revenue, invoices, subscriptions, and payment state.",
-      "icon": "sync",
-      "connectors": ["Stripe", "Chargebee", "Paddle", "Recurly", "Zuora", "QuickBooks", "NetSuite", "Xero"]
-    },
-    {
-      "id": "commerce",
-      "title": "Ecommerce",
-      "description": "Orders, catalog, refunds, repeat purchase rate, and merchandising data.",
-      "icon": "storage",
-      "connectors": ["Shopify", "WooCommerce", "Magento", "BigCommerce"]
-    },
-    {
-      "id": "product-analytics",
-      "title": "Product & Web Analytics",
-      "description": "Behavioral events, retention, cohorts, active users, and attribution context.",
+      "id": "web-product",
+      "title": "Web & Product Analytics",
+      "description": "Traffic, behavior, conversions, and retention across web and app surfaces.",
       "icon": "signal",
-      "connectors": ["PostHog", "Mixpanel", "Amplitude", "GA4", "Segment", "RudderStack"]
+      "connectors": ["GA4", "Search Console", "PostHog"]
     },
     {
-      "id": "crm-sales",
-      "title": "CRM & Sales",
-      "description": "Accounts, pipeline, deal stages, lifecycle, and customer enrichment.",
-      "icon": "database",
-      "connectors": ["Salesforce", "HubSpot", "Pipedrive"]
-    },
-    {
-      "id": "ads-lifecycle",
-      "title": "Marketing, Ads & Lifecycle",
-      "description": "Spend, budgets, campaign pacing, acquisition efficiency, and messaging.",
+      "id": "marketing",
+      "title": "Marketing & Acquisition",
+      "description": "Spend, attribution, campaign pacing, and paid channel performance.",
       "icon": "sync",
-      "connectors": ["Google Ads", "Meta Ads", "LinkedIn Ads", "TikTok Ads", "Klaviyo", "Braze", "Mailchimp"]
+      "connectors": ["Google Ads", "Meta Ads", "TikTok Ads", "Klaviyo"]
     },
     {
-      "id": "observability",
-      "title": "Observability & Infra",
-      "description": "Operational metrics, incidents, traces, exceptions, and release impact.",
-      "icon": "signal",
-      "connectors": ["Prometheus", "Sentry", "Datadog", "New Relic", "CloudWatch", "Grafana", "OpenTelemetry"]
-    },
-    {
-      "id": "databases",
-      "title": "Databases & Warehouses",
-      "description": "Operational databases and customer-owned warehouses used as source systems.",
-      "icon": "database",
-      "connectors": ["PostgreSQL", "MySQL", "Snowflake", "BigQuery", "Redshift", "ClickHouse", "Databricks"]
-    },
-    {
-      "id": "streams-files",
-      "title": "Streams & File Feeds",
-      "description": "Event streams, exports, and file-based ingestion when a business runs on raw feeds.",
+      "id": "commerce-billing",
+      "title": "Ecommerce & Billing",
+      "description": "Revenue, orders, subscriptions, refunds, and commercial KPIs.",
       "icon": "storage",
-      "connectors": ["Kafka", "S3", "GCS", "CSV Uploads"]
+      "connectors": ["Stripe", "Shopify", "WooCommerce"]
+    },
+    {
+      "id": "saas-crm",
+      "title": "SaaS & CRM",
+      "description": "Accounts, contacts, pipeline, lifecycle stage, and customer context.",
+      "icon": "database",
+      "connectors": ["HubSpot", "Salesforce"]
+    },
+    {
+      "id": "infra-warehouse",
+      "title": "Warehouses & Infra",
+      "description": "Warehouse backfills, databases, and server-side telemetry.",
+      "icon": "signal",
+      "connectors": ["BigQuery", "MongoDB", "PostgreSQL", "MySQL", "Prometheus", "Sentry"]
     }
   ],
   "destinationCategories": [
@@ -114,21 +142,95 @@
       "title": "Collaboration & Alerts",
       "description": "Push insights, anomaly alerts, and scheduled summaries into team channels.",
       "icon": "signal",
-      "connectors": ["Slack", "Microsoft Teams", "Discord", "Email"]
+      "connectors": ["Slack", "Email", "Discord"]
     },
     {
       "id": "crm-activation",
-      "title": "CRM & Customer Ops",
+      "title": "CRM & Lifecycle",
       "description": "Send segments, health signals, and revenue context back into customer systems.",
       "icon": "sync",
-      "connectors": ["Salesforce", "HubSpot", "Pipedrive", "Zendesk", "Intercom"]
+      "connectors": ["Salesforce", "HubSpot", "Klaviyo"]
     },
     {
       "id": "marketing-activation",
       "title": "Marketing Activation",
-      "description": "Push audiences and lifecycle triggers into campaign and messaging platforms.",
+      "description": "Sync audiences and conversion-ready segments back to ad platforms.",
       "icon": "storage",
-      "connectors": ["Klaviyo", "Braze", "Mailchimp", "Meta Ads", "Google Ads"]
+      "connectors": ["Meta Ads", "TikTok Ads"]
+    }
+  ],
+  "featuredIntegrations": [
+    {
+      "name": "Stripe",
+      "connectorName": "Stripe",
+      "description": "Subscriptions, invoices, MRR, failed payments, and payment state.",
+      "flow": "source"
+    },
+    {
+      "name": "GA4",
+      "connectorName": "GA4",
+      "description": "Sessions, events, conversions, and acquisition performance.",
+      "flow": "source"
+    },
+    {
+      "name": "Search Console",
+      "connectorName": "Search Console",
+      "description": "Queries, clicks, impressions, and landing page coverage.",
+      "flow": "source"
+    },
+    {
+      "name": "Google Ads",
+      "connectorName": "Google Ads",
+      "description": "Campaign spend, budgets, pacing, and paid acquisition efficiency.",
+      "flow": "source"
+    },
+    {
+      "name": "Shopify",
+      "connectorName": "Shopify",
+      "description": "Orders, refunds, AOV, and product-level revenue.",
+      "flow": "source"
+    },
+    {
+      "name": "WooCommerce",
+      "connectorName": "WooCommerce",
+      "description": "WordPress storefront orders, products, customers, and checkout flow.",
+      "flow": "source"
+    },
+    {
+      "name": "PostHog",
+      "connectorName": "PostHog",
+      "description": "Feature usage, activation funnels, and retention cohorts.",
+      "flow": "source"
+    },
+    {
+      "name": "HubSpot",
+      "connectorName": "HubSpot",
+      "description": "Contacts, lifecycle stages, companies, and deal context.",
+      "flow": "source"
+    },
+    {
+      "name": "Salesforce",
+      "connectorName": "Salesforce",
+      "description": "Accounts, pipeline, deals, and customer enrichment.",
+      "flow": "source"
+    },
+    {
+      "name": "Prometheus",
+      "connectorName": "Prometheus",
+      "description": "Low-latency service metrics for operational dashboards.",
+      "flow": "source"
+    },
+    {
+      "name": "BigQuery",
+      "connectorName": "BigQuery",
+      "description": "Warehouse landing zone for modeled analytics and backfills.",
+      "flow": "source"
+    },
+    {
+      "name": "MongoDB",
+      "connectorName": "MongoDB",
+      "description": "Document stores for product apps, content systems, and operational data.",
+      "flow": "source"
     }
   ]
 }
