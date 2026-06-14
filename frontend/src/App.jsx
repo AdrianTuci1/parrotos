@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginView } from "@/components/shell/LoginView";
 import { DashboardPage } from "@/components/shell/DashboardPage";
+import { PublicAnalyticsPage } from "@/components/shell/PublicAnalyticsPage";
 import { useAppStore } from "@/stores/useAppStore";
 
 function ProtectedRoute({ children }) {
@@ -19,6 +20,9 @@ export default function App() {
         <Route path="/" element={<Navigate to={defaultRoute} replace />} />
         <Route path="/login" element={<LoginView />} />
         <Route path="/app" element={<Navigate to="/app/home" replace />} />
+
+        {/* Public analytics link: /p/:token */}
+        <Route path="/p/:token" element={<PublicAnalyticsPage />} />
 
         {/* Account (no org): /app/home, /app/organizations, /app/billing */}
         <Route path="/app/:section" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />

@@ -34,6 +34,11 @@ export class IntegrationService {
     const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/integrations/${integrationId}/sync`, telemetry);
     return response.data?.data ?? response.data;
   }
+
+  async triggerSync(orgId, projectId, integrationId) {
+    const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/integrations/${integrationId}/trigger-sync`);
+    return response.data?.data ?? response.data;
+  }
 }
 
 export const integrationService = new IntegrationService();

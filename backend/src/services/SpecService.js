@@ -1,5 +1,6 @@
 import { gcpService } from './GcpService.js';
 import { config } from '../config/index.js';
+import { internalServiceClient } from './InternalServiceClient.js';
 
 export class SpecService {
   constructor() {
@@ -61,11 +62,10 @@ export class SpecService {
   async generateSpec(orgId, projectId, options = {}) {
     const dataset = this.gcp.getDatasetName(orgId, projectId);
 
-    const response = await fetch(`${this.harnessUrl}/generate`, {
+    const response = await internalServiceClient.fetch(`${this.harnessUrl}/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Internal-Token': config.internalToken || '',
       },
       body: JSON.stringify({ orgId, projectId, dataset, ...options }),
     });
@@ -81,11 +81,10 @@ export class SpecService {
   async updateBindings(orgId, projectId, patch) {
     const dataset = this.gcp.getDatasetName(orgId, projectId);
 
-    const response = await fetch(`${this.harnessUrl}/bindings`, {
+    const response = await internalServiceClient.fetch(`${this.harnessUrl}/bindings`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-Internal-Token': config.internalToken || '',
       },
       body: JSON.stringify({ orgId, projectId, dataset, patch }),
     });
@@ -114,5 +113,90 @@ export class SpecService {
     } catch (err) {
       return { invalidated: false, error: err.message };
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PROJECT PREFERENCES
+  // ═══════════════════════════════════════════════════════════════
+
+  async getPreferences(orgId, projectId) {
+    return await this.readArtifact(orgId, projectId, 'project_preferences.json') || {
+      version: 1,
+      views: {},
+      widgets: {},
+      global: { autoHarness: true },
+    };
+  }
+
+  async setViewPreference(orgId, projectId, viewId, preference) {
+    const prefs = await this.getPreferences(orgId, projectId);
+
+    prefs.views[viewId] = {
+      ...(prefs.views[viewId] || {}),
+      ...preference,
+    };
+    prefs.updatedAt = new Date().toISOString();
+
+    await this.writeArtifact(orgId, projectId, 'project_preferences.json', prefs);
+    return prefs.views[viewId];
+  }
+
+  async setWidgetPreference(orgId, projectId, widgetId, preference) {
+    const prefs = await this.getPreferences(orgId, projectId);
+
+    prefs.widgets[widgetId] = {
+      ...(prefs.widgets[widgetId] || {}),
+      ...preference,
+    };
+    prefs.updatedAt = new Date().toISOString();
+
+    await this.writeArtifact(orgId, projectId, 'project_preferences.json', prefs);
+    return prefs.widgets[widgetId];
+  }
+
+  async removeViewPreference(orgId, projectId, viewId) {
+    const prefs = await this.getPreferences(orgId, projectId);
+
+    if (prefs.views[viewId]) {
+      delete prefs.views[viewId];
+      prefs.updatedAt = new Date().toISOString();
+      await this.writeArtifact(orgId, projectId, 'project_preferences.json', prefs);
+    }
+
+    return prefs;
+  }
+
+  async removeWidgetPreference(orgId, projectId, widgetId) {
+    const prefs = await this.getPreferences(orgId, projectId);
+
+    if (prefs.widgets[widgetId]) {
+      delete prefs.widgets[widgetId];
+      prefs.updatedAt = new Date().toISOString();
+      await this.writeArtifact(orgId, projectId, 'project_preferences.json', prefs);
+    }
+
+    return prefs;
+  }
+
+  async setGlobalPreference(orgId, projectId, preference) {
+    const prefs = await this.getPreferences(orgId, projectId);
+
+    prefs.global = {
+      ...(prefs.global || { autoHarness: true }),
+      ...preference,
+    };
+    prefs.updatedAt = new Date().toISOString();
+
+    await this.writeArtifact(orgId, projectId, 'project_preferences.json', prefs);
+    return prefs.global;
+  }
+
+  async writeArtifact(orgId, projectId, filename, payload) {
+    const prefix = this.getSpecsPrefix(orgId, projectId);
+    const bucket = this.gcp.storage.bucket(config.gcsBucketName);
+    await bucket.file(`${prefix}/${filename}`).save(JSON.stringify(payload, null, 2), {
+      contentType: 'application/json',
+    });
+    return `gs://${config.gcsBucketName}/${prefix}/${filename}`;
   }
 }

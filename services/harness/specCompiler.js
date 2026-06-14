@@ -158,11 +158,26 @@ function buildDefaultTitle(widget, table) {
   return `${sourcePrefix}${widget.title}`.trim();
 }
 
-function buildBindingFromTable(widget, table) {
+function buildBindingFromTable(widget, table, additionalTables = []) {
   const metricColumn = chooseMetricColumn(table, widget);
   const dimensionColumn = chooseDimensionColumn(table, widget);
   const timeColumn = table.timeColumn;
   const defaultAggregation = metricColumn ? (widget.type === 'metric' ? 'sum' : 'avg') : 'count';
+
+  // Build multi-source config if we have additional tables from same group
+  const multiSource = additionalTables.length > 0 ? {
+    enabled: true,
+    sources: [
+      { table: table.short_name, sourceId: table.source.id, metricColumn, dimensionColumn, timeColumn },
+      ...additionalTables.map(t => ({
+        table: t.short_name,
+        sourceId: t.source.id,
+        metricColumn: chooseMetricColumn(t, widget),
+        dimensionColumn: chooseDimensionColumn(t, widget),
+        timeColumn: t.timeColumn,
+      })),
+    ],
+  } : null;
 
   return {
     id: widget.id,
@@ -176,6 +191,7 @@ function buildBindingFromTable(widget, table) {
     timeColumn,
     aggregation: defaultAggregation,
     queryIntent: widget.intent,
+    multiSource,
   };
 }
 
@@ -183,8 +199,22 @@ export function buildDefaultBindings(catalog) {
   const tables = (catalog.tables || []).map(summarizeTable);
   const bindings = { version: 1, views: {} };
 
+  // Detect active sources from tables
+  const activeSources = new Set();
+  const activeGroups = new Set();
+  for (const table of tables) {
+    activeSources.add(table.source.id);
+    activeGroups.add(table.groupId);
+  }
+
   for (const viewId of VIEW_ORDER) {
     const template = VIEW_TEMPLATES[viewId];
+    
+    // Skip views that don't have any data sources
+    if (!activeGroups.has(template.groupId)) {
+      continue;
+    }
+    
     const eligibleTables = tables.filter((table) => table.groupId === template.groupId);
     const fallbackTables = eligibleTables.length > 0 ? eligibleTables : tables;
 
@@ -195,21 +225,31 @@ export function buildDefaultBindings(catalog) {
           .map((table) => ({ table, score: scoreTableForWidget({ ...widget, viewId }, table) }))
           .sort((left, right) => right.score - left.score);
         const bestTable = scored[0]?.table || null;
-        return bestTable
-          ? buildBindingFromTable({ ...widget, viewId }, bestTable)
-          : {
-              id: widget.id,
-              title: widget.title,
-              queryRef: widget.id,
-              table: null,
-              sourceId: null,
-              groupId: template.groupId,
-              metricColumn: null,
-              dimensionColumn: null,
-              timeColumn: null,
-              aggregation: 'count',
-              queryIntent: widget.intent,
-            };
+        
+        if (!bestTable) {
+          return {
+            id: widget.id,
+            title: widget.title,
+            queryRef: widget.id,
+            table: null,
+            sourceId: null,
+            groupId: template.groupId,
+            metricColumn: null,
+            dimensionColumn: null,
+            timeColumn: null,
+            aggregation: 'count',
+            queryIntent: widget.intent,
+          };
+        }
+        
+        // Find additional tables from same group for multi-source aggregation
+        const additionalTables = scored
+          .slice(1)
+          .filter(({ table }) => table.groupId === template.groupId && table.source.id !== bestTable.source.id)
+          .map(({ table }) => table)
+          .slice(0, 2); // Limit to 2 additional sources to avoid too many queries
+        
+        return buildBindingFromTable({ ...widget, viewId }, bestTable, additionalTables);
       }),
     };
   }
@@ -226,14 +266,21 @@ export function mergeBindings(templateBindings, existingBindings = null) {
     const templateView = templateBindings.views[viewId];
     const existingView = existingBindings.views[viewId];
     const existingWidgetsById = new Map((existingView?.widgets || []).map((widget) => [widget.id, widget]));
+    const templateWidgets = templateView?.widgets || [];
+    const widgetIds = templateWidgets.length > 0
+      ? templateWidgets.map((widget) => widget.id)
+      : Array.from(existingWidgetsById.keys());
 
     merged.views[viewId] = {
-      title: existingView?.title || templateView.title,
-      widgets: templateView.widgets.map((widget) => ({
-        ...widget,
-        ...existingWidgetsById.get(widget.id),
-        id: widget.id,
-      })),
+      title: existingView?.title || templateView?.title || VIEW_TEMPLATES[viewId].title,
+      widgets: widgetIds.map((widgetId) => {
+        const templateWidget = templateWidgets.find((widget) => widget.id === widgetId) || { id: widgetId };
+        return {
+          ...templateWidget,
+          ...existingWidgetsById.get(widgetId),
+          id: widgetId,
+        };
+      }),
     };
   }
 
@@ -308,6 +355,50 @@ function compileQuery(dataset, binding, widgetType) {
     };
   }
 
+  // If multi-source is enabled, generate a query for each source
+  if (binding.multiSource?.enabled) {
+    const queries = [];
+    
+    for (const source of binding.multiSource.sources) {
+      let template = 'SELECT 0 AS value';
+      if (widgetType === 'text-insight' || widgetType === 'record-list') {
+        template = buildInsightSql(dataset, source.table, {
+          ...binding,
+          metricColumn: source.metricColumn,
+          dimensionColumn: source.dimensionColumn,
+          timeColumn: source.timeColumn,
+        });
+      } else if (widgetType === 'progress-list' || widgetType === 'pie-chart' || widgetType === 'status-list' || widgetType === 'segmented-bar') {
+        template = buildDimensionSql(dataset, source.table, {
+          ...binding,
+          metricColumn: source.metricColumn,
+          dimensionColumn: source.dimensionColumn,
+        });
+      } else {
+        template = buildMetricSql(dataset, source.table, {
+          ...binding,
+          metricColumn: source.metricColumn,
+          timeColumn: source.timeColumn,
+        }, widgetType);
+      }
+      
+      const params = [];
+      if (source.timeColumn) params.push('timeRange');
+      
+      queries.push({
+        id: `${binding.queryRef}-${source.sourceId}`,
+        source: 'warehouse',
+        template,
+        params,
+        refresh: widgetType === 'metric' ? '60s' : '300s',
+        sourceId: source.sourceId,
+      });
+    }
+    
+    return queries;
+  }
+
+  // Single source query
   let template = 'SELECT 0 AS value';
   if (widgetType === 'text-insight' || widgetType === 'record-list') {
     template = buildInsightSql(dataset, binding.table, binding);
@@ -344,16 +435,30 @@ export function compileDashboardSpecs(dataset, bindings) {
       timeRange: template.timeRange,
       widgets: template.widgets.map((widget) => {
         const binding = bindingMap.get(widget.id) || { id: widget.id, title: widget.title, queryRef: widget.id };
-        const query = compileQuery(dataset, binding, widget.type);
-        queries.push(query);
-        return {
-          id: widget.id,
-          type: widget.type,
-          size: widget.size,
-          title: binding.title || widget.title,
-          queryRef: binding.queryRef || widget.id,
-          config: {},
-        };
+        const queryResult = compileQuery(dataset, binding, widget.type);
+        
+        // Handle both single query and array of queries
+        if (Array.isArray(queryResult)) {
+          queries.push(...queryResult);
+          return {
+            id: widget.id,
+            type: widget.type,
+            size: widget.size,
+            title: binding.title || widget.title,
+            queryRef: binding.queryRef || widget.id,
+            config: { multiSource: true },
+          };
+        } else {
+          queries.push(queryResult);
+          return {
+            id: widget.id,
+            type: widget.type,
+            size: widget.size,
+            title: binding.title || widget.title,
+            queryRef: binding.queryRef || widget.id,
+            config: {},
+          };
+        }
       }),
       queries,
     };

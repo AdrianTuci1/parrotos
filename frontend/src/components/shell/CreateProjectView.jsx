@@ -12,7 +12,9 @@ import "@/styles/settings.css";
 const defaultModules = {
   onboarding: false,
   analytics: true,
-  integrations: true,
+  sources: true,
+  destinations: true,
+  storage: true,
   graph: true,
   chat: true,
 };

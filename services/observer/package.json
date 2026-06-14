@@ -1,0 +1,17 @@
+{
+  "name": "sentry-observer-service",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Technical observer agent for data health, schema drift, and query checks",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.0.0",
+    "@google-cloud/storage": "^7.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}

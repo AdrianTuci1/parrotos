@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import { useAppStore } from "@/stores/useAppStore";
@@ -15,19 +15,44 @@ import {
 import "@/styles/settings.css";
 
 export function SettingsView() {
-  const { currentOrganization, currentWorkspace, deleteProject } = useAppStore();
+  const {
+    currentOrganization,
+    currentWorkspace,
+    deleteProject,
+    generatePublicLink,
+    revokePublicLink,
+    regeneratePublicLink,
+    isLoading,
+  } = useAppStore();
   const navigate = useNavigate();
-
-
 
   const [publicShareLink, setPublicShareLink] = useState("");
   const [copiedPublic, setCopiedPublic] = useState(false);
   const [reanalyzing, setReanalyzing] = useState(false);
+  const [generatingLink, setGeneratingLink] = useState(false);
 
-  const generatePublicLink = () => {
-    const slug = currentWorkspace?.slug || "project";
-    const randomId = Math.random().toString(36).substring(2, 8);
-    setPublicShareLink(`https://app.nexahub.io/public/analytics/${slug}-${randomId}`);
+  // Sync cu publicLink din workspace când se schimbă
+  useEffect(() => {
+    if (currentWorkspace?.publicLink?.url) {
+      setPublicShareLink(currentWorkspace.publicLink.url);
+    } else {
+      setPublicShareLink("");
+    }
+  }, [currentWorkspace?.publicLink]);
+
+  const handleGeneratePublicLink = async () => {
+    if (!currentOrganization || !currentWorkspace) return;
+    setGeneratingLink(true);
+    try {
+      const result = await generatePublicLink(currentOrganization.id, currentWorkspace.id);
+      if (result?.url) {
+        setPublicShareLink(result.url);
+      }
+    } catch (err) {
+      alert('Failed to generate public link: ' + err.message);
+    } finally {
+      setGeneratingLink(false);
+    }
   };
 
   const copyPublicLink = () => {
@@ -37,9 +62,33 @@ export function SettingsView() {
     setTimeout(() => setCopiedPublic(false), 2000);
   };
 
-  const cancelPublicLink = () => {
-    setPublicShareLink("");
-    alert("Public share link has been revoked. Analytics dashboard is no longer accessible publicly.");
+  const handleRevokePublicLink = async () => {
+    if (!currentOrganization || !currentWorkspace) return;
+    if (!confirm("Are you sure you want to revoke the public link? This will immediately disable public access to the analytics dashboard.")) {
+      return;
+    }
+    try {
+      await revokePublicLink(currentOrganization.id, currentWorkspace.id);
+      setPublicShareLink("");
+    } catch (err) {
+      alert('Failed to revoke public link: ' + err.message);
+    }
+  };
+
+  const handleRegeneratePublicLink = async () => {
+    if (!currentOrganization || !currentWorkspace) return;
+    setGeneratingLink(true);
+    try {
+      const result = await regeneratePublicLink(currentOrganization.id, currentWorkspace.id);
+      if (result?.url) {
+        setPublicShareLink(result.url);
+        setCopiedPublic(false);
+      }
+    } catch (err) {
+      alert('Failed to regenerate public link: ' + err.message);
+    } finally {
+      setGeneratingLink(false);
+    }
   };
 
   const handleReanalyze = () => {
@@ -86,9 +135,13 @@ export function SettingsView() {
               </div>
               <div className="settings-action-row" style={{ marginTop: "4px", display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
                 {!publicShareLink ? (
-                  <button onClick={generatePublicLink} className="settings-btn-secondary">
+                  <button
+                    onClick={handleGeneratePublicLink}
+                    disabled={generatingLink || isLoading}
+                    className="settings-btn-secondary"
+                  >
                     <LinkIcon size={14} />
-                    Generate Public Link
+                    {generatingLink ? "Generating..." : "Generate Public Link"}
                   </button>
                 ) : (
                   <>
@@ -98,7 +151,20 @@ export function SettingsView() {
                         {copiedPublic ? <Check size={14} style={{ color: "#3b82f6" }} /> : <Copy size={14} />}
                       </button>
                     </div>
-                    <button onClick={cancelPublicLink} className="settings-btn-danger" style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "12px" }}>
+                    <button
+                      onClick={handleRegeneratePublicLink}
+                      disabled={generatingLink}
+                      className="settings-btn-secondary"
+                      style={{ padding: "8px 12px", borderRadius: "8px", fontSize: "12px" }}
+                      title="Regenerate Link"
+                    >
+                      <RefreshCw size={14} className={generatingLink ? "animate-spin" : ""} />
+                    </button>
+                    <button
+                      onClick={handleRevokePublicLink}
+                      className="settings-btn-danger"
+                      style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "12px" }}
+                    >
                       Disable Public Link
                     </button>
                   </>

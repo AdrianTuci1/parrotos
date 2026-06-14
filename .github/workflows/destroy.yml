@@ -1,0 +1,313 @@
+name: 💥 Destroy Complete Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type DESTROY to confirm deletion of all resources'
+        required: true
+        default: ''
+      environment:
+        description: 'Environment to destroy'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - staging
+
+env:
+  VPS_HOST: ${{ secrets.VPS_HOST }}
+  VPS_USER: ${{ secrets.VPS_USER }}
+  VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: europe-west1
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+  DOMAIN: ${{ vars.DOMAIN || 'sentrydata.io' }}
+
+jobs:
+  confirm:
+    if: github.event_name == 'workflow_dispatch'
+    name: ⚠️ Confirm Destruction
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirmation }}" != "DESTROY" ]; then
+            echo "❌ You must type DESTROY to confirm deletion of all resources"
+            exit 1
+          fi
+          echo "✅ Confirmation received - proceeding with destruction"
+
+  destroy-cloud-run-services:
+    if: github.event_name == 'workflow_dispatch'
+    name: ☁️ Destroy Cloud Run Services
+    needs: confirm
+    runs-on: ubuntu-latest
+    outputs:
+      cloud_run_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: 🔐 Authenticate to GCP
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: 🗑️ Delete Chat Service
+        id: delete_chat
+        run: |
+          echo "Attempting to delete sentry-chat..."
+          gcloud run services delete sentry-chat \
+            --region=${{ env.GCP_REGION }} \
+            --quiet || echo "Service not found or already deleted"
+
+      - name: 🗑️ Delete Harness Service
+        id: delete_harness
+        run: |
+          echo "Attempting to delete sentry-harness..."
+          gcloud run services delete sentry-harness \
+            --region=${{ env.GCP_REGION }} \
+            --quiet || echo "Service not found or already deleted"
+
+      - name: 🗑️ Delete Observer Service
+        id: delete_observer
+        run: |
+          echo "Attempting to delete sentry-observer..."
+          gcloud run services delete sentry-observer \
+            --region=${{ env.GCP_REGION }} \
+            --quiet || echo "Service not found or already deleted"
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.delete_chat.outcome }}" == "success" ] && \
+             [ "${{ steps.delete_harness.outcome }}" == "success" ] && \
+             [ "${{ steps.delete_observer.outcome }}" == "success" ]; then
+            echo "status=✅ DESTROYED" >> $GITHUB_OUTPUT
+          else
+            echo "status=⚠️ PARTIAL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 Cloud Run Destroy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  ☁️  CLOUD RUN SERVICES DESTROYED                           │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Delete Chat:     ${{ steps.delete_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Delete Harness:  ${{ steps.delete_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Delete Observer: ${{ steps.delete_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  destroy-vps:
+    if: github.event_name == 'workflow_dispatch'
+    name: 🖥️ Destroy VPS Resources
+    needs: confirm
+    runs-on: ubuntu-latest
+    outputs:
+      vps_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: 🔐 Setup SSH
+        id: ssh
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: 🔍 Add VPS to known hosts
+        id: known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🛑 Stop Docker Services
+        id: stop_docker
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'STOP'
+            cd /opt/sentry-data 2>/dev/null || exit 0
+            docker-compose down 2>/dev/null || true
+            docker system prune -af --volumes 2>/dev/null || true
+          STOP
+
+      - name: 🗑️ Remove Files
+        id: remove_files
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'REMOVE'
+            rm -rf /opt/sentry-data 2>/dev/null || true
+            rm -f /etc/systemd/system/sentry-data.service 2>/dev/null || true
+            systemctl daemon-reload 2>/dev/null || true
+          REMOVE
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.stop_docker.outcome }}" == "success" ] && \
+             [ "${{ steps.remove_files.outcome }}" == "success" ]; then
+            echo "status=✅ DESTROYED" >> $GITHUB_OUTPUT
+          else
+            echo "status=⚠️ PARTIAL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 VPS Destroy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  🖥️  VPS RESOURCES DESTROYED                                │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Stop Docker:     ${{ steps.stop_docker.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Remove Files:    ${{ steps.remove_files.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  Removed:                                                   │"
+          echo "│    ✅ Docker containers (backend, sync, nginx)              │"
+          echo "│    ✅ Docker images                                         │"
+          echo "│    ✅ Docker volumes                                        │"
+          echo "│    ✅ /opt/sentry-data directory                            │"
+          echo "│    ✅ Systemd service                                       │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  destroy-gcp-infrastructure:
+    if: github.event_name == 'workflow_dispatch'
+    name: 📦 Destroy GCP Infrastructure
+    needs: [destroy-cloud-run-services, destroy-vps]
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_region: ${{ env.GCP_REGION }}
+      TF_VAR_environment: ${{ github.event.inputs.environment }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      TF_VAR_domain: ${{ env.DOMAIN }}
+      TF_VAR_vps_host: ${{ secrets.VPS_HOST }}
+      TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+      TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}
+      TF_VAR_llm_api_key: ${{ secrets.LLM_API_KEY }}
+    outputs:
+      gcp_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Authenticate to GCP
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: 🏗️ Terraform Init
+        id: init
+        run: |
+          cd terraform
+          terraform init -no-color
+
+      - name: 💥 Terraform Destroy
+        id: destroy
+        run: |
+          cd terraform
+          terraform destroy -auto-approve -no-color
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.init.outcome }}" == "success" ] && \
+             [ "${{ steps.destroy.outcome }}" == "success" ]; then
+            echo "status=✅ DESTROYED" >> $GITHUB_OUTPUT
+          else
+            echo "status=⚠️ PARTIAL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 GCP Destroy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  📦 GCP INFRASTRUCTURE DESTROYED                             │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Terraform Init:  ${{ steps.init.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Terraform Destroy: ${{ steps.destroy.outcome == 'success' && '✅' || '❌' }}                                      │"
+          echo "│                                                             │"
+          echo "│  Destroyed:                                                 │"
+          echo "│    ✅ Firestore Database                                    │"
+          echo "│    ✅ BigQuery Dataset                                      │"
+          echo "│    ✅ Cloud Storage Bucket                                  │"
+          echo "│    ✅ Pub/Sub Topics                                        │"
+          echo "│    ✅ Secret Manager Secrets                                │"
+          echo "│    ✅ Service Accounts                                      │"
+          echo "│    ✅ Cloud Run service definitions                         │"
+          echo "│    ✅ Cloud Scheduler API + invoker IAM                     │"
+          echo "│    ✅ Cloudflare DNS Records                                │"
+          echo "│                                                             │"
+          echo "│  ⚠️  Note: Terraform state bucket is preserved               │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  final-summary:
+    name: 📊 Final Destroy Summary
+    needs: [destroy-cloud-run-services, destroy-vps, destroy-gcp-infrastructure]
+    if: always() && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📊 Generate Summary
+        run: |
+          echo "::group::💥 DESTROY SUMMARY"
+          echo ""
+          echo "╔═══════════════════════════════════════════════════════════════╗"
+          echo "║          💥 SENTRY DATA PLATFORM - DESTROY RESULTS            ║"
+          echo "╠═══════════════════════════════════════════════════════════════╣"
+          echo "║                                                               ║"
+          echo "║  ☁️  Cloud Run Services: ${{ needs.destroy-cloud-run-services.outputs.cloud_run_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  🖥️  VPS Resources:      ${{ needs.destroy-vps.outputs.vps_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  📦 GCP Infrastructure:  ${{ needs.destroy-gcp-infrastructure.outputs.gcp_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║                                                               ║"
+          echo "╠═══════════════════════════════════════════════════════════════╣"
+          echo "║  ⚠️  ALL RESOURCES HAVE BEEN DESTROYED                        ║"
+          echo "║                                                               ║"
+          echo "║  The following have been removed:                             ║"
+          echo "║    ✅ Cloud Run Services (Chat, Harness)                      ║"
+          echo "║    ✅ VPS Docker Containers & Images                          ║"
+          echo "║    ✅ Firestore, BigQuery, Storage, Pub/Sub                   ║"
+          echo "║    ✅ Secrets, Service Accounts, IAM Roles                    ║"
+          echo "║    ✅ Cloudflare DNS Records                                  ║"
+          echo "║                                                               ║"
+          echo "║  ⚠️  The following are preserved:                             ║"
+          echo "║    ℹ️  Terraform state bucket (GCS)                           ║"
+          echo "║    ℹ️  Cloudflare account & zone                              ║"
+          echo "║    ℹ️  GCP project (must delete manually)                     ║"
+          echo "║    ℹ️  VPS server (must cancel with Contabo)                  ║"
+          echo "║                                                               ║"
+          echo "╚═══════════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "::endgroup::"
+
+      - name: 🎉 Destroy Complete
+        if: needs.destroy-cloud-run-services.result == 'success' && needs.destroy-vps.result == 'success' && needs.destroy-gcp-infrastructure.result == 'success'
+        run: |
+          echo "✅✅✅ ALL RESOURCES DESTROYED SUCCESSFULLY ✅✅✅"
+
+      - name: ⚠️ Partial Destroy
+        if: failure()
+        run: |
+          echo "⚠️⚠️⚠️ SOME RESOURCES MAY NOT HAVE BEEN DESTROYED - CHECK LOGS ⚠️⚠️⚠️"

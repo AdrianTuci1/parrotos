@@ -13,6 +13,7 @@ import { apiClient } from '@/services/ApiClient';
 import connectorsData from '@/data/connectors.json';
 import { analyticsService } from '@/services/AnalyticsService';
 import { specService } from '@/services/SpecService';
+import { storageService } from '@/services/StorageService';
 
 const transientOrganizationSections = new Set(['create-project']);
 
@@ -45,38 +46,79 @@ const mockOrganizations = [
 ];
 
 const mockWorkspaces = [
-  { id: 'pixtooth', organizationId: 'nexa-org', name: 'Pixtooth', slug: 'pixtooth', domain: 'pixtooth.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', lastUpdated: '4 min ago', connectors: ['Stripe', 'PostHog', 'HubSpot'] },
-  { id: 'octomus', organizationId: 'octomus-org', name: 'Octomus', slug: 'octomus', domain: 'octomus.dev', status: 'Healthy', monthlyEvents: '2.7K', dataConsumption: '421 GB', lastUpdated: '11 min ago', connectors: ['Stripe', 'Sentry', 'GA4'] },
-  { id: 'staticlabs', organizationId: 'staticlabs-org', name: 'Staticlabs', slug: 'staticlabs', domain: 'staticlabs.ro', status: 'Monitoring', monthlyEvents: '1.9K', dataConsumption: '286 GB', lastUpdated: '18 min ago', connectors: ['Shopify', 'Klaviyo', 'PostHog'] },
+  { id: 'pixtooth', organizationId: 'nexa-org', name: 'Pixtooth', slug: 'pixtooth', domain: 'pixtooth.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', lastUpdated: '4 min ago', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
+  { id: 'octomus', organizationId: 'octomus-org', name: 'Octomus', slug: 'octomus', domain: 'octomus.dev', status: 'Healthy', monthlyEvents: '2.7K', dataConsumption: '421 GB', lastUpdated: '11 min ago', connectors: ['Stripe', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL'] },
+  { id: 'staticlabs', organizationId: 'staticlabs-org', name: 'Staticlabs', slug: 'staticlabs', domain: 'staticlabs.ro', status: 'Monitoring', monthlyEvents: '1.9K', dataConsumption: '286 GB', lastUpdated: '18 min ago', connectors: ['Shopify', 'Klaviyo', 'PostHog', 'Meta Ads', 'TikTok Ads', 'MongoDB'] },
   { id: 'nexa', organizationId: 'nexa-org', name: 'Nexa', slug: 'nexa', domain: 'nexa.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] },
 ];
 
 const mockMetrics = {
-  managedOrganizations: { value: '18', detail: '6 active, 12 monitored', trend: '+3 this quarter' },
-  activeProjects: { value: '7', detail: '4 billable, 3 internal', trend: '+2 this month' },
-  warehouseConsumption: { value: '3.8 TB', detail: 'across raw + modeled layers', trend: '+12.4%' },
-  monthlyCompute: { value: '$2.4k', detail: 'BigQuery + orchestration', trend: '-8.1%' },
-  connectedSources: { value: '41', detail: '94.8% healthy', trend: '+7.3%' },
-  topConnector: { value: 'Stripe', detail: 'used in 6 projects', trend: '62% adoption' },
-  connectorUsage: [
-    { name: 'Stripe', count: 6, share: 86 }, { name: 'PostHog', count: 5, share: 72 },
-    { name: 'HubSpot', count: 4, share: 58 }, { name: 'BigQuery', count: 3, share: 41 },
+  // Account-level metrics (for OrganizationHomeView)
+  organizations: 3,
+  totalProjects: 4,
+  healthyProjects: 3,
+  totalEvents: 17600,
+  totalStorage: 1319,
+  uniqueConnectors: 12,
+  connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL', 'Shopify', 'Klaviyo', 'Meta Ads', 'TikTok Ads'],
+  orgsList: [
+    { id: 'nexa-org', name: 'Nexa', slug: 'nexa', plan: 'Agency', projectCount: 2 },
+    { id: 'staticlabs-org', name: 'Staticlabs', slug: 'staticlabs', plan: 'Growth', projectCount: 1 },
+    { id: 'octomus-org', name: 'Octomus', slug: 'octomus', plan: 'Scale', projectCount: 1 },
   ],
   recentActivity: [
-    { title: 'Staticlabs sync latency improved', meta: 'Warehouse jobs down 14% after cache tuning.' },
-    { title: 'Octomus enabled Salesforce push', meta: 'Destination activation is now live for deal health alerts.' },
-    { title: 'Pixtooth added two new sources', meta: 'GA4 and Sentry were connected in the last 24 hours.' },
+    { title: 'Project updated', meta: 'Pixtooth in Nexa' },
+    { title: 'Connector active', meta: 'Stripe connected to Pixtooth' },
+    { title: 'New project created', meta: 'Nexa added to Nexa' },
+  ],
+  // Org-level metrics (for OrganizationStatsView) - default for first org
+  org: { id: 'nexa-org', name: 'Nexa', slug: 'nexa', plan: 'Agency' },
+  projects: { total: 2, healthy: 1, monitoring: 1 },
+  events: { total: 13000, formatted: '13K' },
+  storage: { total: 612, formatted: '612 GB' },
+  compute: { value: '30.6 GB', detail: 'BigQuery + orchestration', trend: '-8.1%' },
+  connectedSources: { value: '5', detail: 'Stripe most used', trend: '+12%' },
+  topConnector: { value: 'Stripe', detail: '2 projects', trend: '+5%' },
+  connectorUsage: [
+    { name: 'Stripe', count: 2, share: 100 },
+    { name: 'PostHog', count: 1, share: 50 },
+    { name: 'HubSpot', count: 1, share: 50 },
+    { name: 'GitHub', count: 1, share: 50 },
+    { name: 'MongoDB', count: 1, share: 50 },
+  ],
+  projectList: [
+    { id: 'pixtooth', name: 'Pixtooth', slug: 'pixtooth', domain: 'pixtooth.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
+    { id: 'nexa', name: 'Nexa', slug: 'nexa', domain: 'nexa.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', connectors: [] },
+  ],
+  recentActivity: [
+    { title: 'Project updated', meta: 'Pixtooth configuration changed' },
+    { title: 'Connector synced', meta: 'Stripe data refreshed' },
+    { title: 'Project created', meta: 'Nexa added to organization' },
   ],
 };
 
 const emptyMetrics = {
-  managedOrganizations: { value: '0', detail: '', trend: '' },
-  activeProjects: { value: '0', detail: '', trend: '' },
-  warehouseConsumption: { value: '0', detail: '', trend: '' },
-  monthlyCompute: { value: '$0', detail: '', trend: '' },
+  // Account-level
+  organizations: 0,
+  totalProjects: 0,
+  healthyProjects: 0,
+  totalEvents: 0,
+  totalStorage: 0,
+  uniqueConnectors: 0,
+  connectors: [],
+  orgsList: [],
+  recentActivity: [],
+  // Org-level
+  org: { id: '', name: '', slug: '', plan: 'Starter' },
+  projects: { total: 0, healthy: 0, monitoring: 0 },
+  events: { total: 0, formatted: '0' },
+  storage: { total: 0, formatted: '0 GB' },
+  compute: { value: '0 GB', detail: '', trend: '' },
   connectedSources: { value: '0', detail: '', trend: '' },
   topConnector: { value: '-', detail: '', trend: '' },
-  connectorUsage: [], recentActivity: [],
+  connectorUsage: [],
+  projectList: [],
+  recentActivity: [],
 };
 
 function getOrganizationNameFromEmail(email) {
@@ -343,6 +385,7 @@ export const useAppStore = create((set, get) => ({
   chatSessions: config.devMode ? mockChatSessions : [], activeChatId: null, isChatPanelOpen: true,
   organizationsData: [], projectsData: [], agentsData: [],
   integrationsData: [], analyticsData: null, currentUser: null,
+  storageVolumes: [],
   isLoading: false, error: null,
   organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
 
@@ -631,6 +674,96 @@ export const useAppStore = create((set, get) => ({
   },
 
   // ═══════════════════════════════════════════════
+  // STORAGE
+  // ═══════════════════════════════════════════════
+
+  fetchStorageVolumes: async (orgId, projectId) => {
+    if (get().devMode || get().demoMode) return;
+    set({ isLoading: true });
+    try {
+      const volumes = await storageService.listVolumes(orgId, projectId);
+      set({ storageVolumes: volumes, isLoading: false });
+      return volumes;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  deleteStorageVolume: async (orgId, projectId, volumeName) => {
+    if (get().devMode || get().demoMode) {
+      set((state) => ({
+        storageVolumes: (state.storageVolumes || []).filter((v) => v.name !== volumeName),
+      }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await storageService.deleteVolume(orgId, projectId, volumeName);
+      set((state) => ({
+        storageVolumes: (state.storageVolumes || []).filter((v) => v.name !== volumeName),
+        isLoading: false,
+      }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  deleteStorageFile: async (orgId, projectId, volumeName, filePath) => {
+    if (get().devMode || get().demoMode) return;
+    set({ isLoading: true });
+    try {
+      await storageService.deleteFile(orgId, projectId, volumeName, filePath);
+      set({ isLoading: false });
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  createStorageFolder: async (orgId, projectId, volumeName, folderPath) => {
+    if (get().devMode || get().demoMode) return;
+    set({ isLoading: true });
+    try {
+      await storageService.createFolder(orgId, projectId, volumeName, folderPath);
+      set({ isLoading: false });
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  getStorageUploadUrl: async (orgId, projectId, volumeName, filePath) => {
+    if (get().devMode || get().demoMode) return { url: null };
+    return storageService.getUploadUrl(orgId, projectId, volumeName, filePath);
+  },
+
+  getStorageDownloadUrl: async (orgId, projectId, volumeName, filePath) => {
+    if (get().devMode || get().demoMode) return { url: null };
+    return storageService.getDownloadUrl(orgId, projectId, volumeName, filePath);
+  },
+
+  // ═══════════════════════════════════════════════
+  // CONNECTOR SYNC
+  // ═══════════════════════════════════════════════
+
+  triggerConnectorSync: async (orgId, projectId, integrationId) => {
+    if (get().devMode || get().demoMode) {
+      return { status: 'triggered', message: 'Mock sync triggered' };
+    }
+    set({ isLoading: true });
+    try {
+      const result = await integrationService.triggerSync(orgId, projectId, integrationId);
+      set({ isLoading: false });
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
   // SERVICE ACCOUNTS
   // ═══════════════════════════════════════════════
 
@@ -712,12 +845,26 @@ export const useAppStore = create((set, get) => ({
 
   fetchAccountMetrics: async () => {
     if (get().devMode) return get().organizationMetrics;
+    set({ isLoading: true });
     try {
-      const response = await apiClient.get('/organizations/account/metrics');
-      set({ accountMetrics: response.data });
-      return response.data;
+      const metrics = await analyticsService.getAccountMetrics();
+      set({ accountMetrics: metrics, isLoading: false });
+      return metrics;
     } catch (err) {
-      set({ error: err.message });
+      set({ error: err.message, isLoading: false });
+      return null;
+    }
+  },
+
+  fetchOrgMetrics: async (orgId) => {
+    if (get().devMode) return get().organizationMetrics;
+    set({ isLoading: true });
+    try {
+      const metrics = await analyticsService.getOrgMetrics(orgId);
+      set({ organizationMetrics: metrics, isLoading: false });
+      return metrics;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
       return null;
     }
   },
@@ -836,6 +983,105 @@ export const useAppStore = create((set, get) => ({
       return url;
     } catch (err) {
       set({ error: err.message });
+      throw err;
+    }
+  },
+
+  generatePublicLink: async (orgId, projectId) => {
+    if (get().devMode) {
+      const mockToken = 'mock_' + Math.random().toString(36).substring(2, 10);
+      const mockUrl = `${window.location.origin}/p/${mockToken}`;
+      const mockLink = { token: mockToken, url: mockUrl, createdAt: new Date().toISOString() };
+      set({
+        workspaces: get().workspaces.map(w =>
+          w.id === projectId ? { ...w, publicLink: mockLink } : w
+        ),
+        currentWorkspace: get().currentWorkspace?.id === projectId
+          ? { ...get().currentWorkspace, publicLink: mockLink }
+          : get().currentWorkspace,
+      });
+      return mockLink;
+    }
+    set({ isLoading: true });
+    try {
+      const result = await projectService.generatePublicLink(orgId, projectId);
+      set({
+        workspaces: get().workspaces.map(w =>
+          w.id === projectId ? { ...w, publicLink: result } : w
+        ),
+        currentWorkspace: get().currentWorkspace?.id === projectId
+          ? { ...get().currentWorkspace, publicLink: result }
+          : get().currentWorkspace,
+        isLoading: false,
+      });
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  revokePublicLink: async (orgId, projectId) => {
+    if (get().devMode) {
+      set({
+        workspaces: get().workspaces.map(w =>
+          w.id === projectId ? { ...w, publicLink: null } : w
+        ),
+        currentWorkspace: get().currentWorkspace?.id === projectId
+          ? { ...get().currentWorkspace, publicLink: null }
+          : get().currentWorkspace,
+      });
+      return { revoked: true };
+    }
+    set({ isLoading: true });
+    try {
+      const result = await projectService.revokePublicLink(orgId, projectId);
+      set({
+        workspaces: get().workspaces.map(w =>
+          w.id === projectId ? { ...w, publicLink: null } : w
+        ),
+        currentWorkspace: get().currentWorkspace?.id === projectId
+          ? { ...get().currentWorkspace, publicLink: null }
+          : get().currentWorkspace,
+        isLoading: false,
+      });
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  regeneratePublicLink: async (orgId, projectId) => {
+    if (get().devMode) {
+      const mockToken = 'mock_' + Math.random().toString(36).substring(2, 10);
+      const mockUrl = `${window.location.origin}/p/${mockToken}`;
+      const mockLink = { token: mockToken, url: mockUrl, createdAt: new Date().toISOString() };
+      set({
+        workspaces: get().workspaces.map(w =>
+          w.id === projectId ? { ...w, publicLink: mockLink } : w
+        ),
+        currentWorkspace: get().currentWorkspace?.id === projectId
+          ? { ...get().currentWorkspace, publicLink: mockLink }
+          : get().currentWorkspace,
+      });
+      return mockLink;
+    }
+    set({ isLoading: true });
+    try {
+      const result = await projectService.regeneratePublicLink(orgId, projectId);
+      set({
+        workspaces: get().workspaces.map(w =>
+          w.id === projectId ? { ...w, publicLink: result } : w
+        ),
+        currentWorkspace: get().currentWorkspace?.id === projectId
+          ? { ...get().currentWorkspace, publicLink: result }
+          : get().currentWorkspace,
+        isLoading: false,
+      });
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
       throw err;
     }
   },

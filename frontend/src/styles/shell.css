@@ -155,6 +155,74 @@
   }
 }
 
+/* Public Shell Styles */
+.public-shell {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: #0B0D0E;
+  padding: 8px;
+}
+
+.public-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  border-radius: 28px;
+  border: 1px solid #25282C;
+  background-color: #090A0B;
+  margin-top: 8px;
+}
+
+.public-content-inner {
+  width: 100%;
+  max-width: 80rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.public-loading,
+.public-error {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background-color: #0B0D0E;
+  color: #E3E3E3;
+}
+
+.public-error h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #F3F4F6;
+  margin: 0;
+}
+
+.public-error p {
+  font-size: 14px;
+  color: #8E918F;
+  margin: 0;
+  text-align: center;
+  max-width: 400px;
+}
+
+.public-analytics-view {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Flat content container for views inside ViewFrame (e.g. ChatView) */
 .flat-content-container {
   display: flex;

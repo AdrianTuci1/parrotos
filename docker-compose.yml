@@ -16,12 +16,15 @@ services:
       - CORS_ORIGIN=${CORS_ORIGIN:-*}
       - CHAT_SERVICE_URL=${CHAT_SERVICE_URL:-http://chat:8080}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
+      - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - CLOUD_RUN_AUTH_MODE=${CLOUD_RUN_AUTH_MODE:-disabled}
       - ENABLE_MODAL_AGENTS=false
       - ENABLE_BIGQUERY_ANALYTICS=${ENABLE_BIGQUERY_ANALYTICS:-true}
     depends_on:
       - chat
       - harness
+      - observer
     restart: unless-stopped
 
   chat:
@@ -45,6 +48,20 @@ services:
       - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+    volumes:
+      - ${GCP_KEY_PATH:-~/.config/gcloud/application_default_credentials.json}:/secrets/gcp-key.json:ro
+    restart: unless-stopped
+
+  observer:
+    build: ./services/observer
+    environment:
+      - PORT=8082
+      - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
+      - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+      - BQ_LOCATION=${BIGQUERY_LOCATION:-EU}
     volumes:
       - ${GCP_KEY_PATH:-~/.config/gcloud/application_default_credentials.json}:/secrets/gcp-key.json:ro
     restart: unless-stopped

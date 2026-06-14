@@ -7,3 +7,4 @@ export { IntegrationService } from './IntegrationService.js';
 export { AnalyticsService } from './AnalyticsService.js';
 export { ServiceAccountService, serviceAccountService } from './ServiceAccountService.js';
 export { BillingService, billingService } from './BillingService.js';
+export { ObserverService, observerService } from './ObserverService.js';

@@ -14,10 +14,18 @@ export class Project {
     this.modules = data.modules || {
       onboarding: true,
       analytics: true,
-      integrations: true,
+      sources: true,
+      destinations: true,
+      storage: true,
       graph: false,
       chat: true,
     };
+    this.publicLink = data.publicLink || null;
+    this.status = data.status || 'Healthy';
+    this.monthlyEvents = data.monthlyEvents || '0';
+    this.dataConsumption = data.dataConsumption || '0GB';
+    this.connectors = data.connectors || [];
+    this.domain = data.domain || '';
     this.stats = data.stats || {
       sessionsCount: 0,
       dataSourcesCount: 0,
@@ -44,6 +52,12 @@ export class Project {
       status: this.status,
       settings: this.settings,
       modules: this.modules,
+      publicLink: this.publicLink,
+      status: this.status,
+      monthlyEvents: this.monthlyEvents,
+      dataConsumption: this.dataConsumption,
+      connectors: this.connectors,
+      domain: this.domain,
       stats: this.stats,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

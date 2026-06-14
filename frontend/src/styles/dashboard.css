@@ -233,22 +233,53 @@
 
 .dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-total-visitors {
   grid-column: 1 / span 2;
+  grid-row: 1;
 }
 
 .dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-visitors-online {
   grid-column: 3 / span 2;
+  grid-row: 1;
 }
 
 .dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-top-pages {
   grid-column: 1 / span 2;
+  grid-row: 2;
 }
 
 .dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-top-countries {
   grid-column: 3 / span 2;
+  grid-row: 2;
+}
+
+.dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-sessions-by-source {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-audience-mix {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-browsers {
+  grid-column: 3;
+  grid-row: 3;
+}
+
+.dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-referrers {
+  grid-column: 4;
+  grid-row: 3;
 }
 
 .dashboard-layout-container[data-layout-id="analytics"] .widget-card.widget-id-core-web-vitals {
   grid-column: 1 / -1;
+  grid-row: 4;
+}
+
+.dashboard-layout-container[data-layout-id="analytics"] .dashboard-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: 140px 240px 240px minmax(280px, auto);
+  grid-auto-rows: auto;
 }
 
 /* Widget Card styling */
@@ -286,6 +317,34 @@
 .widget-content-body {
   flex: 1;
   overflow: hidden;
+}
+
+/* Widget Unavailable State */
+.widget-unavailable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  gap: 8px;
+  text-align: center;
+}
+
+.widget-unavailable-icon {
+  color: #4B4D51;
+  margin-bottom: 4px;
+}
+
+.widget-unavailable-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8E918F;
+}
+
+.widget-unavailable-desc {
+  font-size: 11px;
+  color: #4B4D51;
 }
 
 /* ==========================================================================

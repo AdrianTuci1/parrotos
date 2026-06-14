@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  backend:
+    image: sentry-backend:latest
+    container_name: sentry-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCP_REGION=${GCP_REGION:-europe-west1}
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+      - BIGQUERY_DATASET_PREFIX=${BIGQUERY_DATASET_PREFIX:-sentry_dataset}
+      - BIGQUERY_LOCATION=${BIGQUERY_LOCATION:-EU}
+      - JWT_SECRET=${JWT_SECRET}
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - CHAT_SERVICE_URL=${CHAT_SERVICE_URL}
+      - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL}
+      - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL}
+      - CLOUD_RUN_AUTH_MODE=${CLOUD_RUN_AUTH_MODE:-required}
+      - CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL=${CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL}
+      - ENABLE_BIGQUERY_ANALYTICS=${ENABLE_BIGQUERY_ANALYTICS:-true}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://app.sentrydata.io}
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+    volumes:
+      - ./secrets:/secrets:ro
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  nginx:
+    image: nginx:alpine
+    container_name: sentry-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites:/etc/nginx/sites-enabled:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot-data:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    networks:
+      - sentry-network
+    depends_on:
+      - backend
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    container_name: sentry-certbot
+    restart: unless-stopped
+    volumes:
+      - certbot-data:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  # Optional: Sync worker (can also be Cloud Run Job)
+  sync-worker:
+    image: sentry-sync-worker:latest
+    container_name: sentry-sync-worker
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCP_REGION=${GCP_REGION:-europe-west1}
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+      - BIGQUERY_DATASET_PREFIX=${BIGQUERY_DATASET_PREFIX:-sentry_dataset}
+      - BIGQUERY_LOCATION=${BIGQUERY_LOCATION:-EU}
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+    volumes:
+      - ./secrets:/secrets:ro
+    networks:
+      - sentry-network
+    command: ["node", "src/worker/syncWorker.js"]
+    # Run every 5 minutes via cron
+    # Or use a scheduler container
+
+  scheduler:
+    image: mcuadros/ofelia:latest
+    container_name: sentry-scheduler
+    restart: unless-stopped
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - sentry-network
+    labels:
+      ofelia.job-run.sync-worker.schedule: "*/5 * * * *"
+      ofelia.job-run.sync-worker.container: "sentry-sync-worker"
+
+networks:
+  sentry-network:
+    driver: bridge
+
+volumes:
+  certbot-data:
+  certbot-www:

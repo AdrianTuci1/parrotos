@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { OrganizationService } from '../services/OrganizationService.js';
+import { OrganizationMetricsService } from '../services/OrganizationMetricsService.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
@@ -7,6 +8,7 @@ import { gcpService } from '../services/GcpService.js';
 
 const router = Router();
 const orgService = new OrganizationService();
+const metricsService = new OrganizationMetricsService();
 
 const createSchema = {
   name: { required: true, type: 'string', minLength: 1, maxLength: 100 },
@@ -75,38 +77,22 @@ router.delete('/:orgId', requireRole('admin', 'owner'), async (req, res, next) =
 router.get('/account/metrics', async (req, res, next) => {
   try {
     const userId = req.user.userId;
-    const orgs = await orgService.findByAccount(userId);
+    const metrics = await metricsService.getAccountMetrics(userId);
+    success(res, metrics);
+  } catch (err) {
+    next(err);
+  }
+});
 
-    // Aggregate metrics across all orgs
-    let totalProjects = 0;
-    let totalEvents = 0;
-    let totalStorage = 0;
-    let healthyProjects = 0;
-    const uniqueConnectors = new Set();
+// ═══════════════════════════════════════════════
+// ORG-LEVEL METRICS (for OrganizationStatsView)
+// ═══════════════════════════════════════════════
 
-    for (const org of orgs) {
-      const projects = await orgService.findProjectsByOrg(org.id);
-      totalProjects += projects.length;
-      for (const project of projects) {
-        if (project.status === 'Healthy') healthyProjects++;
-        const events = parseInt(project.monthlyEvents?.replace(/[^0-9.]/g, '') || '0');
-        const mult = project.monthlyEvents?.includes('K') ? 1000 : 1;
-        totalEvents += isNaN(events) ? 0 : events * mult;
-        const storage = parseInt(project.dataConsumption?.replace(/[^0-9.]/g, '') || '0');
-        totalStorage += isNaN(storage) ? 0 : storage;
-        (project.connectors || []).forEach((c) => uniqueConnectors.add(c));
-      }
-    }
-
-    success(res, {
-      organizations: orgs.length,
-      totalProjects,
-      healthyProjects,
-      totalEvents,
-      totalStorage,
-      uniqueConnectors: uniqueConnectors.size,
-      connectors: Array.from(uniqueConnectors),
-    });
+router.get('/:orgId/metrics', async (req, res, next) => {
+  try {
+    const { orgId } = req.params;
+    const metrics = await metricsService.getOrgMetrics(orgId);
+    success(res, metrics);
   } catch (err) {
     next(err);
   }

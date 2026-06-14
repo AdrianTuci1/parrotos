@@ -9,7 +9,6 @@ const specService = new SpecService();
 
 router.use(authenticate);
 
-// GET /specs/:orgId/:projectId — return cached spec
 router.get('/', async (req, res, next) => {
   try {
     const { orgId, projectId } = req.params;

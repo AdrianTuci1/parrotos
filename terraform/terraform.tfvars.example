@@ -1,0 +1,24 @@
+# GCP Configuration
+project_id = "sentry-data-prod"
+region     = "europe-west1"
+
+# Environment
+environment = "prod"
+
+# Cloudflare
+domain               = "sentrydata.io"
+vps_host             = "203.0.113.10"
+cloudflare_zone_id   = "your-zone-id-here"
+cloudflare_api_token = "your-api-token-here"
+
+# Secrets (generate strong secrets!)
+jwt_secret     = "generate-a-256-bit-secret-here"
+internal_token = "generate-a-128-bit-secret-here"
+llm_api_key    = "AIzaSy-your-gemini-api-key"
+
+# Stripe (optional for now)
+# stripe_secret_key    = "sk_live_..."
+# stripe_webhook_secret = "whsec_..."
+
+# Features
+enable_bigquery_analytics = true

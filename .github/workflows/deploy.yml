@@ -1,0 +1,583 @@
+name: 🚀 Deploy Complete Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - staging
+
+env:
+  VPS_HOST: ${{ secrets.VPS_HOST }}
+  VPS_USER: ${{ secrets.VPS_USER }}
+  VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: europe-west1
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  DOMAIN: ${{ vars.DOMAIN || 'sentrydata.io' }}
+
+jobs:
+  deploy-gcp-infrastructure:
+    if: github.event_name == 'workflow_dispatch'
+    name: 📦 Deploy GCP Infrastructure
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_region: ${{ env.GCP_REGION }}
+      TF_VAR_environment: ${{ github.event.inputs.environment }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      TF_VAR_domain: ${{ env.DOMAIN }}
+      TF_VAR_vps_host: ${{ secrets.VPS_HOST }}
+      TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+      TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}
+      TF_VAR_llm_api_key: ${{ secrets.LLM_API_KEY }}
+    outputs:
+      gcp_status: ${{ steps.status.outputs.status }}
+      chat_url: ${{ steps.outputs.outputs.chat_url }}
+      harness_url: ${{ steps.outputs.outputs.harness_url }}
+      observer_url: ${{ steps.outputs.outputs.observer_url }}
+      scheduler_invoker_sa: ${{ steps.outputs.outputs.scheduler_invoker_sa }}
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Authenticate to GCP
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: 🏗️ Terraform Init
+        id: init
+        run: |
+          cd terraform
+          terraform init -no-color
+        continue-on-error: false
+
+      - name: 📋 Terraform Plan
+        id: plan
+        run: |
+          cd terraform
+          terraform plan -out=tfplan -no-color
+        continue-on-error: false
+
+      - name: 🚀 Terraform Apply
+        id: apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve tfplan -no-color
+        continue-on-error: false
+
+      - name: 📊 Capture Outputs
+        id: outputs
+        if: success()
+        run: |
+          cd terraform
+          echo "backend_url=$(terraform output -raw backend_url)" >> $GITHUB_OUTPUT
+          echo "frontend_url=$(terraform output -raw frontend_url)" >> $GITHUB_OUTPUT
+          echo "chat_url=$(terraform output -raw chat_service_url)" >> $GITHUB_OUTPUT
+          echo "harness_url=$(terraform output -raw harness_service_url)" >> $GITHUB_OUTPUT
+          echo "observer_url=$(terraform output -raw observer_service_url)" >> $GITHUB_OUTPUT
+          echo "scheduler_invoker_sa=$(terraform output -raw scheduler_invoker_service_account_email)" >> $GITHUB_OUTPUT
+          echo "gcs_bucket=$(terraform output -raw gcs_bucket)" >> $GITHUB_OUTPUT
+          echo "bq_dataset=$(terraform output -raw bigquery_dataset)" >> $GITHUB_OUTPUT
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.init.outcome }}" == "success" ] && \
+             [ "${{ steps.plan.outcome }}" == "success" ] && \
+             [ "${{ steps.apply.outcome }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+            echo "✅ GCP Infrastructure deployed successfully!"
+            echo "   - Firestore Database"
+            echo "   - BigQuery Dataset"
+            echo "   - Cloud Storage Bucket"
+            echo "   - Secret Manager"
+            echo "   - Service Accounts"
+            echo "   - Cloud Run service definitions"
+            echo "   - Cloud Scheduler API + invoker IAM"
+          else
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "❌ GCP Infrastructure deployment failed!"
+            exit 1
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 GCP Infrastructure Deploy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  📦 GCP INFRASTRUCTURE                                      │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Terraform Init:  ${{ steps.init.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Terraform Plan:   ${{ steps.plan.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Terraform Apply:  ${{ steps.apply.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  Resources:                                                 │"
+          echo "│    ✅ Firestore Database                                    │"
+          echo "│    ✅ BigQuery Dataset                                      │"
+          echo "│    ✅ Cloud Storage Bucket                                  │"
+          echo "│    ✅ Secret Manager (3 secrets)                            │"
+          echo "│    ✅ Service Accounts (5)                                  │"
+          echo "│    ✅ Cloud Run Services (chat, harness, observer)          │"
+          echo "│    ✅ Cloud Scheduler API + invoker IAM                     │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  deploy-vps-backend:
+    if: github.event_name == 'workflow_dispatch'
+    name: 🖥️ Deploy Backend to VPS
+    needs: deploy-gcp-infrastructure
+    runs-on: ubuntu-latest
+    outputs:
+      vps_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Setup SSH
+        id: ssh
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: 🔍 Add VPS to known hosts
+        id: known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🐳 Build Docker Images
+        id: build
+        run: |
+          echo "::group::🔨 Building Docker Images"
+          docker build -t sentry-backend:${{ github.sha }} ./backend
+          docker build -t sentry-sync-worker:${{ github.sha }} -f ./backend/Dockerfile.worker ./backend
+          echo "::endgroup::"
+
+      - name: 💾 Save Docker Images
+        id: save
+        run: |
+          echo "::group::💾 Saving Docker Images"
+          docker save sentry-backend:${{ github.sha }} > backend-image.tar
+          docker save sentry-sync-worker:${{ github.sha }} > sync-worker-image.tar
+          echo "::endgroup::"
+
+      - name: 📤 Copy Images to VPS
+        id: copy_images
+        run: |
+          echo "::group::📤 Copying Images to VPS"
+          scp backend-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          scp sync-worker-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          echo "::endgroup::"
+
+      - name: 📋 Copy Config Files
+        id: copy_config
+        run: |
+          echo "::group::📋 Copying Config Files"
+          scp vps/docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          scp -r vps/nginx ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          
+          # Create .env file on VPS
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
+            cat > /opt/sentry-data/.env << 'ENVFILE'
+            GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
+            GCP_REGION=europe-west1
+            GCS_BUCKET_NAME=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }}
+            BIGQUERY_DATASET_PREFIX=sentry_dataset
+            BIGQUERY_LOCATION=EU
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }}
+            LLM_PROVIDER=gemini
+            LLM_API_KEY=${{ secrets.LLM_API_KEY }}
+            LLM_MODEL=gemini-2.5-flash
+            ENABLE_BIGQUERY_ANALYTICS=true
+            CORS_ORIGIN=https://app.${{ env.DOMAIN }}
+            CHAT_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.chat_url }}
+            HARNESS_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.harness_url }}
+            OBSERVER_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.observer_url }}
+            CLOUD_RUN_AUTH_MODE=required
+            CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL=${{ needs.deploy-gcp-infrastructure.outputs.scheduler_invoker_sa }}
+            GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+            ENVFILE
+
+            mkdir -p /opt/sentry-data/secrets
+            cat > /opt/sentry-data/secrets/gcp-key.json << 'GCPKEY'
+            ${{ secrets.GCP_SA_KEY }}
+            GCPKEY
+          EOF
+          echo "::endgroup::"
+
+      - name: 🚀 Deploy on VPS
+        id: deploy
+        run: |
+          echo "::group::🚀 Deploying on VPS"
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'DEPLOY'
+            cd /opt/sentry-data
+            
+            # Load new images
+            docker load < backend-image.tar
+            docker load < sync-worker-image.tar
+            
+            # Tag as latest
+            docker tag sentry-backend:${{ github.sha }} sentry-backend:latest
+            docker tag sentry-sync-worker:${{ github.sha }} sentry-sync-worker:latest
+            
+            # Restart services
+            docker-compose down
+            docker-compose up -d
+            
+            # Cleanup
+            docker system prune -f
+            rm -f *.tar
+            
+            # Wait for services to start
+            sleep 15
+          DEPLOY
+          echo "::endgroup::"
+
+      - name: 🏥 Health Check
+        id: health
+        run: |
+          echo "::group::🏥 Health Check"
+          sleep 10
+          curl -sf http://${{ secrets.VPS_HOST }}:3000/api/v1/health || exit 1
+          curl -sf http://${{ secrets.VPS_HOST }}:3000/api/v1/health/ready || exit 1
+          echo "✅ Backend is healthy!"
+          echo "::endgroup::"
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.build.outcome }}" == "success" ] && \
+             [ "${{ steps.deploy.outcome }}" == "success" ] && \
+             [ "${{ steps.health.outcome }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 VPS Backend Deploy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  🖥️  VPS BACKEND                                            │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  SSH Setup:       ${{ steps.ssh.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Build Images:    ${{ steps.build.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Copy Images:     ${{ steps.copy_images.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Copy Config:     ${{ steps.copy_config.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Deploy:          ${{ steps.deploy.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Health Check:    ${{ steps.health.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  Services:                                                  │"
+          echo "│    ✅ Backend API (port 3000)                               │"
+          echo "│    ✅ Sync Worker (cron every 15 min)                       │"
+          echo "│    ✅ Nginx (reverse proxy + SSL)                           │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+      - name: 🧹 Cleanup
+        if: always()
+        run: |
+          rm -f backend-image.tar sync-worker-image.tar
+
+  deploy-cloud-run-services:
+    if: github.event_name == 'workflow_dispatch'
+    name: ☁️ Deploy Cloud Run Services
+    needs: deploy-gcp-infrastructure
+    runs-on: ubuntu-latest
+    outputs:
+      cloud_run_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Authenticate to GCP
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ⚙️ Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: 🐳 Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: 🔨 Build Chat Image
+        id: build_chat
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }} ./services/chat
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }}
+
+      - name: 🔨 Build Harness Image
+        id: build_harness
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }} ./services/harness
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }}
+
+      - name: 🔨 Build Observer Image
+        id: build_observer
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-observer:${{ github.sha }} ./services/observer
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-observer:${{ github.sha }}
+
+      - name: 🚀 Deploy Chat Service
+        id: deploy_chat
+        run: |
+          gcloud run deploy sentry-chat \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }} \
+            --region=${{ env.GCP_REGION }} \
+            --service-account=sentry-chat@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars=LLM_PROVIDER=gemini \
+            --set-env-vars=LLM_API_KEY=${{ secrets.LLM_API_KEY }} \
+            --set-env-vars=LLM_MODEL=gemini-2.5-flash \
+            --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
+            --memory=512Mi \
+            --cpu=1 \
+            --max-instances=5 \
+            --min-instances=0 \
+            --ingress=all \
+            --no-allow-unauthenticated \
+            --quiet
+
+      - name: 🚀 Deploy Harness Service
+        id: deploy_harness
+        run: |
+          gcloud run deploy sentry-harness \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }} \
+            --region=${{ env.GCP_REGION }} \
+            --service-account=sentry-harness@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars=LLM_PROVIDER=gemini \
+            --set-env-vars=LLM_API_KEY=${{ secrets.LLM_API_KEY }} \
+            --set-env-vars=LLM_MODEL=gemini-2.5-flash \
+            --set-env-vars=GCS_BUCKET=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }} \
+            --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
+            --memory=1Gi \
+            --cpu=2 \
+            --max-instances=3 \
+            --min-instances=0 \
+            --ingress=all \
+            --no-allow-unauthenticated \
+            --quiet
+
+      - name: 🚀 Deploy Observer Service
+        id: deploy_observer
+        run: |
+          gcloud run deploy sentry-observer \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-observer:${{ github.sha }} \
+            --region=${{ env.GCP_REGION }} \
+            --service-account=sentry-observer@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars=GCS_BUCKET=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }} \
+            --set-env-vars=BACKEND_URL=https://api.${{ env.DOMAIN }}/api/v1 \
+            --set-env-vars=HARNESS_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.harness_url }} \
+            --set-env-vars=BQ_LOCATION=EU \
+            --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
+            --memory=1Gi \
+            --cpu=1 \
+            --max-instances=2 \
+            --min-instances=0 \
+            --ingress=all \
+            --no-allow-unauthenticated \
+            --quiet
+
+      - name: 🏥 Health Check Chat
+        id: health_chat
+        run: |
+          CHAT_URL=$(gcloud run services describe sentry-chat --region=${{ env.GCP_REGION }} --format='value(status.url)')
+          TOKEN=$(gcloud auth print-identity-token --audiences="$CHAT_URL")
+          curl -sf -H "Authorization: Bearer $TOKEN" -H "X-Internal-Token: ${{ secrets.INTERNAL_TOKEN }}" $CHAT_URL/health || exit 1
+
+      - name: 🏥 Health Check Harness
+        id: health_harness
+        run: |
+          HARNESS_URL=$(gcloud run services describe sentry-harness --region=${{ env.GCP_REGION }} --format='value(status.url)')
+          TOKEN=$(gcloud auth print-identity-token --audiences="$HARNESS_URL")
+          curl -sf -H "Authorization: Bearer $TOKEN" -H "X-Internal-Token: ${{ secrets.INTERNAL_TOKEN }}" $HARNESS_URL/health || exit 1
+
+      - name: 🏥 Health Check Observer
+        id: health_observer
+        run: |
+          OBSERVER_URL=$(gcloud run services describe sentry-observer --region=${{ env.GCP_REGION }} --format='value(status.url)')
+          TOKEN=$(gcloud auth print-identity-token --audiences="$OBSERVER_URL")
+          curl -sf -H "Authorization: Bearer $TOKEN" -H "X-Internal-Token: ${{ secrets.INTERNAL_TOKEN }}" $OBSERVER_URL/health || exit 1
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.build_chat.outcome }}" == "success" ] && \
+             [ "${{ steps.build_harness.outcome }}" == "success" ] && \
+             [ "${{ steps.build_observer.outcome }}" == "success" ] && \
+             [ "${{ steps.deploy_chat.outcome }}" == "success" ] && \
+             [ "${{ steps.deploy_harness.outcome }}" == "success" ] && \
+             [ "${{ steps.deploy_observer.outcome }}" == "success" ] && \
+             [ "${{ steps.health_chat.outcome }}" == "success" ] && \
+             [ "${{ steps.health_harness.outcome }}" == "success" ] && \
+             [ "${{ steps.health_observer.outcome }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 Cloud Run Services Deploy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  ☁️  CLOUD RUN SERVICES                                     │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Build Chat:      ${{ steps.build_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Build Harness:   ${{ steps.build_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Build Observer:  ${{ steps.build_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Deploy Chat:     ${{ steps.deploy_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Deploy Harness:  ${{ steps.deploy_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Deploy Observer: ${{ steps.deploy_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Health Chat:     ${{ steps.health_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Health Harness:  ${{ steps.health_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Health Observer: ${{ steps.health_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  Services:                                                  │"
+          echo "│    ✅ Chat Service (on-demand, pay-per-use)                 │"
+          echo "│    ✅ Harness Service (on-demand, pay-per-use)              │"
+          echo "│    ✅ Observer Service (scheduled + manual)                 │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  deploy-frontend:
+    if: github.event_name == 'workflow_dispatch'
+    name: 🌐 Deploy Frontend
+    needs: deploy-vps-backend
+    runs-on: ubuntu-latest
+    outputs:
+      frontend_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package.json
+
+      - name: 🔨 Build Frontend
+        id: build
+        run: |
+          cd frontend
+          echo "VITE_API_URL=https://api.${{ env.DOMAIN }}/api/v1" > .env.production
+          npm ci
+          npm run build
+
+      - name: 🚀 Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sentry-frontend
+          directory: frontend/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.build.outcome }}" == "success" ] && \
+             [ "${{ steps.deploy.outcome }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 Frontend Deploy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  🌐 FRONTEND                                                │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Build:           ${{ steps.build.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Deploy:          ${{ steps.deploy.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  Platform:  Cloudflare Pages (CDN Global)                     │"
+          echo "│  URL:       https://app.${{ env.DOMAIN }}                              │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  final-summary:
+    name: 📊 Final Summary
+    needs: [deploy-gcp-infrastructure, deploy-vps-backend, deploy-cloud-run-services, deploy-frontend]
+    if: always() && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📊 Generate Summary
+        run: |
+          echo "::group::🎉 DEPLOY SUMMARY"
+          echo ""
+          echo "╔═══════════════════════════════════════════════════════════════╗"
+          echo "║          🚀 SENTRY DATA PLATFORM - DEPLOY RESULTS             ║"
+          echo "╠═══════════════════════════════════════════════════════════════╣"
+          echo "║                                                               ║"
+          echo "║  📦 GCP Infrastructure:  ${{ needs.deploy-gcp-infrastructure.outputs.gcp_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  🖥️  VPS Backend:        ${{ needs.deploy-vps-backend.outputs.vps_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  ☁️  Cloud Run Services:  ${{ needs.deploy-cloud-run-services.outputs.cloud_run_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  🌐 Frontend:            ${{ needs.deploy-frontend.outputs.frontend_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║                                                               ║"
+          echo "╠═══════════════════════════════════════════════════════════════╣"
+          echo "║  URLs:                                                        ║"
+          echo "║    🌐 Frontend:  https://app.${{ env.DOMAIN }}                            ║"
+          echo "║    🔌 API:       https://api.${{ env.DOMAIN }}                            ║"
+          echo "║                                                               ║"
+          echo "╠═══════════════════════════════════════════════════════════════╣"
+          echo "║  Resources:                                                   ║"
+          echo "║    ✅ GCP Project: ${{ secrets.GCP_PROJECT_ID }}                            ║"
+          echo "║    ✅ VPS: ${{ secrets.VPS_HOST }}                                          ║"
+          echo "║    ✅ Cloudflare Zone: ${{ secrets.CLOUDFLARE_ZONE_ID }}                    ║"
+          echo "║                                                               ║"
+          echo "╚═══════════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "::endgroup::"
+
+      - name: 🎉 Success Notification
+        if: needs.deploy-gcp-infrastructure.result == 'success' && needs.deploy-vps-backend.result == 'success' && needs.deploy-cloud-run-services.result == 'success' && needs.deploy-frontend.result == 'success'
+        run: |
+          echo "🎉🎉🎉 ALL SYSTEMS DEPLOYED SUCCESSFULLY! 🎉🎉🎉"
+
+      - name: ❌ Failure Notification
+        if: failure()
+        run: |
+          echo "❌❌❌ DEPLOY FAILED - CHECK LOGS ABOVE ❌❌❌"

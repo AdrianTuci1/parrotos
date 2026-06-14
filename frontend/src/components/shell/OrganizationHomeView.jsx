@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Building2, Database, BarChart3, ShieldCheck } from 'lucide-react';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
@@ -17,33 +17,58 @@ function AccountTile({ label, value, detail, trend }) {
   );
 }
 
-export function OrganizationHomeView() {
-  const { organizations, workspaces, accountMetrics, fetchAccountMetrics, demoMode, devMode } = useAppStore();
+function LoadingTile() {
+  return (
+    <div className="organization-metric-tile" style={{ opacity: 0.5 }}>
+      <span className="organization-metric-label">Loading...</span>
+      <div className="organization-metric-value-row">
+        <span className="organization-metric-value">-</span>
+      </div>
+      <span className="organization-metric-detail">Fetching data</span>
+    </div>
+  );
+}
 
-  // Fetch account-level metrics from backend when not in demo mode
+export function OrganizationHomeView() {
+  const { organizations, workspaces, accountMetrics, fetchAccountMetrics, devMode, demoMode, isLoading } = useAppStore();
+  const [localLoading, setLocalLoading] = useState(false);
+
   useEffect(() => {
-    if (!devMode && !demoMode) {
-      fetchAccountMetrics();
+    let cancelled = false;
+
+    async function loadMetrics() {
+      if (!devMode && !demoMode) {
+        setLocalLoading(true);
+        try {
+          await fetchAccountMetrics();
+        } finally {
+          if (!cancelled) setLocalLoading(false);
+        }
+      }
     }
+
+    loadMetrics();
+    return () => { cancelled = true; };
   }, [devMode, demoMode]);
 
-  const totalOrgs = organizations.length;
-  const totalProjects = workspaces.length;
-  const totalEvents = workspaces.reduce((sum, w) => {
-    const num = parseFloat(w.monthlyEvents.replace(/[^0-9.]/g, ''));
-    const multiplier = w.monthlyEvents.includes('K') ? 1000 : 1;
-    return sum + (isNaN(num) ? 0 : num * multiplier);
-  }, 0);
-  const healthyProjects = workspaces.filter((w) => w.status === 'Healthy').length;
-  const uniqueConnectors = [...new Set(workspaces.flatMap((w) => w.connectors || []))];
+  const loading = isLoading || localLoading;
 
-  // Use backend metrics if available
-  const metrics = accountMetrics || {};
-  const displayOrgs = metrics.organizations ?? totalOrgs;
-  const displayProjects = metrics.totalProjects ?? totalProjects;
-  const displayHealthy = metrics.healthyProjects ?? healthyProjects;
-  const displayEvents = metrics.totalEvents ?? totalEvents;
-  const displayConnectors = metrics.uniqueConnectors ?? uniqueConnectors.length;
+  // Use backend metrics if available, otherwise fallback to computed from store
+  const metrics = accountMetrics;
+  const totalOrgs = metrics?.organizations ?? organizations.length;
+  const totalProjects = metrics?.totalProjects ?? workspaces.length;
+  const healthyProjects = metrics?.healthyProjects ?? workspaces.filter((w) => w.status === 'Healthy').length;
+  const totalEvents = metrics?.totalEvents ?? 0;
+  const uniqueConnectors = metrics?.uniqueConnectors ?? [...new Set(workspaces.flatMap((w) => w.connectors || []))].length;
+  const orgsList = metrics?.orgsList ?? organizations.map((o) => ({
+    id: o.id,
+    name: o.name,
+    plan: o.plan || 'Starter',
+    projectCount: workspaces.filter((w) => w.organizationId === o.id).length,
+  }));
+  const recentActivity = metrics?.recentActivity ?? [
+    { title: 'No recent activity', meta: 'Activity will appear here' },
+  ];
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
@@ -67,18 +92,27 @@ export function OrganizationHomeView() {
               </div>
             </div>
             <div className="organization-panel-split">
-              <AccountTile
-                label="Organizations"
-                value={String(displayOrgs)}
-                detail={`${organizations.filter((o) => o.plan !== 'Starter').length} on paid plans`}
-                trend="+1 this quarter"
-              />
-              <AccountTile
-                label="Projects"
-                value={String(displayProjects)}
-                detail={`${displayHealthy} healthy`}
-                trend="+2 this month"
-              />
+              {loading ? (
+                <>
+                  <LoadingTile />
+                  <LoadingTile />
+                </>
+              ) : (
+                <>
+                  <AccountTile
+                    label="Organizations"
+                    value={String(totalOrgs)}
+                    detail={`${organizations.filter((o) => o.plan !== 'Starter').length} on paid plans`}
+                    trend="+1 this quarter"
+                  />
+                  <AccountTile
+                    label="Projects"
+                    value={String(totalProjects)}
+                    detail={`${healthyProjects} healthy`}
+                    trend="+2 this month"
+                  />
+                </>
+              )}
             </div>
           </section>
 
@@ -90,18 +124,27 @@ export function OrganizationHomeView() {
               </div>
             </div>
             <div className="organization-panel-split">
-              <AccountTile
-                label="Total monthly events"
-                value={displayEvents >= 1000 ? `${(displayEvents / 1000).toFixed(1)}K` : String(displayEvents)}
-                detail="Across all projects"
-                trend="+15.3%"
-              />
-              <AccountTile
-                label="Active connectors"
-                value={String(displayConnectors)}
-                detail="Unique connector types deployed"
-                trend="+3 this quarter"
-              />
+              {loading ? (
+                <>
+                  <LoadingTile />
+                  <LoadingTile />
+                </>
+              ) : (
+                <>
+                  <AccountTile
+                    label="Total monthly events"
+                    value={totalEvents >= 1000 ? `${(totalEvents / 1000).toFixed(1)}K` : String(totalEvents)}
+                    detail="Across all projects"
+                    trend="+15.3%"
+                  />
+                  <AccountTile
+                    label="Active connectors"
+                    value={String(uniqueConnectors)}
+                    detail="Unique connector types deployed"
+                    trend="+3 this quarter"
+                  />
+                </>
+              )}
             </div>
           </section>
 
@@ -113,18 +156,27 @@ export function OrganizationHomeView() {
               </div>
             </div>
             <div className="organization-panel-split">
-              <AccountTile
-                label="Healthy projects"
-                value={`${Math.round((displayProjects > 0 ? (displayHealthy / displayProjects) : 0) * 100)}%`}
-                detail={`${displayHealthy} of ${displayProjects} projects`}
-                trend="Stable"
-              />
-              <AccountTile
-                label="Data sources"
-                value={String(displayConnectors * 2 + 3)}
-                detail="Connected across all orgs"
-                trend="+7.3%"
-              />
+              {loading ? (
+                <>
+                  <LoadingTile />
+                  <LoadingTile />
+                </>
+              ) : (
+                <>
+                  <AccountTile
+                    label="Healthy projects"
+                    value={`${totalProjects > 0 ? Math.round((healthyProjects / totalProjects) * 100) : 0}%`}
+                    detail={`${healthyProjects} of ${totalProjects} projects`}
+                    trend="Stable"
+                  />
+                  <AccountTile
+                    label="Data sources"
+                    value={String(uniqueConnectors * 2 + 3)}
+                    detail="Connected across all orgs"
+                    trend="+7.3%"
+                  />
+                </>
+              )}
             </div>
           </section>
 
@@ -136,9 +188,12 @@ export function OrganizationHomeView() {
               </div>
             </div>
             <div className="organization-project-list">
-              {organizations.map((org) => {
-                const projectCount = workspaces.filter((w) => w.organizationId === org.id).length;
-                return (
+              {loading && orgsList.length === 0 ? (
+                <div className="organization-project-row" style={{ opacity: 0.5 }}>
+                  <span>Loading organizations...</span>
+                </div>
+              ) : (
+                orgsList.map((org) => (
                   <div key={org.id} className="organization-project-row">
                     <div className="organization-project-main">
                       <div className="organization-project-dot" />
@@ -148,11 +203,11 @@ export function OrganizationHomeView() {
                       </div>
                     </div>
                     <div className="organization-project-meta">
-                      <span>{projectCount} projects</span>
+                      <span>{org.projectCount} projects</span>
                     </div>
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </section>
 
@@ -164,18 +219,12 @@ export function OrganizationHomeView() {
               </div>
             </div>
             <div className="organization-activity-list">
-              <div className="organization-activity-item">
-                <span className="organization-activity-title">New project created</span>
-                <span className="organization-activity-meta">Nexa workspace added to Nexa organization</span>
-              </div>
-              <div className="organization-activity-item">
-                <span className="organization-activity-title">Connector enabled</span>
-                <span className="organization-activity-meta">Stripe connected to 2 projects</span>
-              </div>
-              <div className="organization-activity-item">
-                <span className="organization-activity-title">Organization created</span>
-                <span className="organization-activity-meta">Octomus joined the account</span>
-              </div>
+              {recentActivity.map((item, idx) => (
+                <div key={idx} className="organization-activity-item">
+                  <span className="organization-activity-title">{item.title}</span>
+                  <span className="organization-activity-meta">{item.meta}</span>
+                </div>
+              ))}
             </div>
           </section>
         </div>

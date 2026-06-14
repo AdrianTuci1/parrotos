@@ -111,6 +111,26 @@ router.post('/deploy', async (req, res, next) => {
   }
 });
 
+// POST /:integrationId/trigger-sync — trigger a manual sync for an existing connector
+router.post('/:integrationId/trigger-sync', async (req, res, next) => {
+  try {
+    const { orgId, projectId, integrationId } = req.params;
+    const integration = await integrationService.findById(orgId, projectId, integrationId);
+
+    if (!integration) {
+      return res.status(404).json({ error: 'Integration not found' });
+    }
+
+    const { ConnectorService } = await import('../services/ConnectorService.js');
+    const connectorService = new ConnectorService();
+    const result = await connectorService.triggerManualSync(orgId, projectId, integration.connectorName || integration.name);
+
+    success(res, result, 202);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /auth/:connectorName — get auth config for a connector
 router.get('/auth/:connectorName', async (req, res, next) => {
   try {
@@ -119,6 +139,39 @@ router.get('/auth/:connectorName', async (req, res, next) => {
       return res.status(404).json({ error: 'Unknown connector' });
     }
     success(res, config);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /webhook/sync-complete — receive Pub/Sub push notifications when sync completes
+router.post('/webhook/sync-complete', async (req, res, next) => {
+  try {
+    const message = req.body.message;
+    if (!message || !message.data) {
+      return res.status(400).json({ error: 'Invalid Pub/Sub message' });
+    }
+
+    const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    const { connector, dataset, results, syncedAt } = data;
+
+    // Update integration sync stats in Firestore
+    const { IntegrationService } = await import('../services/IntegrationService.js');
+    const integrationService = new IntegrationService();
+    
+    // Find integration by connector name and dataset
+    const integrations = await integrationService.findByProject(req.params.orgId, req.params.projectId);
+    const integration = integrations.find(i => i.name === connector || i.connectorName === connector);
+    
+    if (integration) {
+      await integrationService.updateSyncStats(req.params.orgId, req.params.projectId, integration.id, {
+        lastSyncAt: syncedAt,
+        status: 'success',
+        recordsProcessed: results.reduce((sum, r) => sum + (r.records || 0), 0),
+      });
+    }
+
+    success(res, { received: true, connector, dataset });
   } catch (err) {
     next(err);
   }

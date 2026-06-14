@@ -108,4 +108,35 @@ router.post('/:projectId/gcs-url', async (req, res, next) => {
   }
 });
 
+// Public Link endpoints
+router.post('/:projectId/public-link', async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const result = await projectService.generatePublicLink(orgId, projectId);
+    success(res, result, 201);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/:projectId/public-link', async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const result = await projectService.revokePublicLink(orgId, projectId);
+    success(res, result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/:projectId/public-link/regenerate', async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const result = await projectService.regeneratePublicLink(orgId, projectId);
+    success(res, result, 201);
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install --production
 
-COPY index.js ./
+COPY . ./
 
 ENV PORT=8081
 ENV NODE_ENV=production

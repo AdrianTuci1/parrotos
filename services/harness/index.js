@@ -204,17 +204,114 @@ async function enhanceBindingsWithLlm(dataset, catalog, bindings) {
   }
 }
 
+function cloneJson(value) {
+  return value ? JSON.parse(JSON.stringify(value)) : value;
+}
+
+function filterBindingToAllowedSources(binding, allowedSources) {
+  if (!binding || !Array.isArray(allowedSources) || allowedSources.length === 0) {
+    return binding;
+  }
+
+  const allowed = new Set(allowedSources.filter(Boolean));
+  if (allowed.size === 0) return binding;
+
+  if (binding.multiSource?.enabled && Array.isArray(binding.multiSource.sources)) {
+    const filteredSources = binding.multiSource.sources.filter((source) => allowed.has(source.sourceId));
+    if (filteredSources.length > 0) {
+      const primarySource = filteredSources[0];
+      return {
+        ...binding,
+        sourceId: primarySource.sourceId,
+        table: primarySource.table,
+        metricColumn: primarySource.metricColumn ?? binding.metricColumn,
+        dimensionColumn: primarySource.dimensionColumn ?? binding.dimensionColumn,
+        timeColumn: primarySource.timeColumn ?? binding.timeColumn,
+        multiSource: filteredSources.length > 1
+          ? { ...binding.multiSource, sources: filteredSources }
+          : null,
+      };
+    }
+  }
+
+  if (!binding.sourceId || allowed.has(binding.sourceId)) {
+    return binding;
+  }
+
+  return binding;
+}
+
+function applyPreferencesToBindings(bindings, preferences) {
+  const nextBindings = cloneJson(bindings) || { version: 1, views: {} };
+
+  for (const viewId of Object.keys(nextBindings.views || {})) {
+    const viewBinding = nextBindings.views[viewId];
+    const viewPreference = preferences.views?.[viewId];
+    const scopedSources = Array.isArray(viewPreference?.sources) && viewPreference.sources.length > 0
+      ? viewPreference.sources
+      : null;
+
+    if (viewPreference?.title) {
+      viewBinding.title = viewPreference.title;
+    }
+
+    viewBinding.widgets = (viewBinding.widgets || []).map((widgetBinding) => {
+      let nextWidgetBinding = widgetBinding;
+      const widgetPreference = preferences.widgets?.[widgetBinding.id];
+
+      if (scopedSources) {
+        nextWidgetBinding = filterBindingToAllowedSources(nextWidgetBinding, scopedSources);
+      }
+
+      if (Array.isArray(widgetPreference?.sources) && widgetPreference.sources.length > 0) {
+        nextWidgetBinding = filterBindingToAllowedSources(nextWidgetBinding, widgetPreference.sources);
+      }
+
+      if (widgetPreference?.title) {
+        nextWidgetBinding = {
+          ...nextWidgetBinding,
+          title: widgetPreference.title,
+        };
+      }
+
+      return nextWidgetBinding;
+    });
+  }
+
+  return nextBindings;
+}
+
 async function compileProjectArtifacts({ orgId, projectId, dataset, forceFull = false, bindingPatch = null }) {
   const existingBindings = forceFull ? null : await readJsonArtifact(orgId, projectId, 'view_bindings.json');
+  const preferences = forceFull
+    ? { version: 1, views: {}, widgets: {}, global: { autoHarness: true } }
+    : await readJsonArtifact(orgId, projectId, 'project_preferences.json') || { version: 1, views: {}, widgets: {}, global: { autoHarness: true } };
   const catalog = await discoverData(dataset);
   await writeJsonArtifact(orgId, projectId, 'data_catalog.json', catalog);
+  const generatedBindings = buildDefaultBindings(catalog);
 
-  let bindings = mergeBindings(buildDefaultBindings(catalog), existingBindings);
-  bindings = await enhanceBindingsWithLlm(dataset, catalog, bindings);
+  let bindings;
+  if (existingBindings && !forceFull) {
+    bindings = cloneJson(existingBindings);
+
+    for (const viewId of VIEW_ORDER) {
+      if (!bindings.views?.[viewId] && generatedBindings.views?.[viewId]) {
+        bindings.views[viewId] = generatedBindings.views[viewId];
+      }
+    }
+  } else {
+    bindings = generatedBindings;
+  }
+
+  if (!existingBindings || forceFull || preferences.global?.autoHarness !== false) {
+    bindings = await enhanceBindingsWithLlm(dataset, catalog, bindings);
+  }
 
   if (bindingPatch?.views) {
     bindings = mergeBindings(bindings, { version: 1, views: bindingPatch.views });
   }
+
+  bindings = applyPreferencesToBindings(bindings, preferences);
 
   const specs = compileDashboardSpecs(dataset, bindings);
   const mindmap = compileMindmapArtifact(catalog, bindings, specs);

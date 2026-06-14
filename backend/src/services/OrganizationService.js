@@ -78,6 +78,21 @@ export class OrganizationService {
     return newStats;
   }
 
+  async findProjectsByOrg(orgId) {
+    const snapshot = await gcpService.firestore
+      .collection('organizations')
+      .doc(orgId)
+      .collection('projects')
+      .get();
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+      };
+    });
+  }
+
   async checkProjectLimit(orgId) {
     const org = await this.findById(orgId);
     if (!org.canAddProject()) {

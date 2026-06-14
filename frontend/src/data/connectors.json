@@ -33,6 +33,22 @@
       "note": "Campaign spend, budgets, pacing, and paid acquisition efficiency."
     },
     {
+      "id": "meta-ads",
+      "name": "Meta Ads",
+      "type": "marketing",
+      "status": "connected",
+      "lastSync": "6 min ago",
+      "note": "Facebook, Instagram, Messenger, and Audience Network campaigns."
+    },
+    {
+      "id": "tiktok-ads",
+      "name": "TikTok Ads",
+      "type": "marketing",
+      "status": "connected",
+      "lastSync": "8 min ago",
+      "note": "TikTok video ads, spark ads, and shopping campaigns."
+    },
+    {
       "id": "commerce",
       "name": "Shopify",
       "type": "ecommerce",
@@ -71,6 +87,14 @@
       "status": "connected",
       "lastSync": "2 min ago",
       "note": "Exception volume, release health, and error trends."
+    },
+    {
+      "id": "vcs",
+      "name": "GitHub",
+      "type": "version control",
+      "status": "connected",
+      "lastSync": "1 min ago",
+      "note": "Deployments, commits, pull requests, and repository health."
     }
   ],
   "connectedDestinations": [
@@ -133,7 +157,7 @@
       "title": "Warehouses & Infra",
       "description": "Warehouse backfills, databases, and server-side telemetry.",
       "icon": "signal",
-      "connectors": ["BigQuery", "MongoDB", "PostgreSQL", "MySQL", "Prometheus", "Sentry"]
+      "connectors": ["BigQuery", "MongoDB", "PostgreSQL", "MySQL", "Prometheus", "Sentry", "GitHub"]
     }
   ],
   "destinationCategories": [
@@ -185,6 +209,18 @@
       "flow": "source"
     },
     {
+      "name": "Meta Ads",
+      "connectorName": "Meta Ads",
+      "description": "Facebook, Instagram, Messenger, and Audience Network campaigns.",
+      "flow": "source"
+    },
+    {
+      "name": "TikTok Ads",
+      "connectorName": "TikTok Ads",
+      "description": "TikTok video ads, spark ads, and shopping campaigns.",
+      "flow": "source"
+    },
+    {
       "name": "Shopify",
       "connectorName": "Shopify",
       "description": "Orders, refunds, AOV, and product-level revenue.",
@@ -230,6 +266,12 @@
       "name": "MongoDB",
       "connectorName": "MongoDB",
       "description": "Document stores for product apps, content systems, and operational data.",
+      "flow": "source"
+    },
+    {
+      "name": "GitHub",
+      "connectorName": "GitHub",
+      "description": "Deployments, commits, pull requests, and repository health.",
       "flow": "source"
     }
   ]

@@ -4,8 +4,6 @@ import { useAppStore } from "@/stores/useAppStore";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import {
   Database,
-  Layers,
-  BookOpen,
   Search,
   ChevronDown,
   Copy,
@@ -40,13 +38,11 @@ const parseSize = (sizeStr) => {
 
 export function StorageView() {
   const { projectSlug } = useParams();
-  const { currentWorkspace } = useAppStore();
+  const { currentWorkspace, currentOrganization, demoMode, devMode, storageVolumes, fetchStorageVolumes, deleteStorageVolume, deleteStorageFile, createStorageFolder, getStorageUploadUrl, getStorageDownloadUrl } = useAppStore();
+  const isMockMode = devMode || demoMode;
 
   // Active view: list or detail
   const [selectedVolumeId, setSelectedVolumeId] = useState(null);
-  
-  // Tabs: volumes, queues, dicts
-  const [activeTab, setActiveTab] = useState("volumes");
   
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,8 +57,15 @@ export function StorageView() {
   // Toast notifications state
   const [toasts, setToasts] = useState([]);
 
-  // Mock workspace storage states
+  // Mock workspace storage states (only for demo/dev)
   const [workspaceStorages, setWorkspaceStorages] = useState({});
+
+  // Fetch volumes from backend when not in mock mode
+  useEffect(() => {
+    if (!isMockMode && currentOrganization?.id && currentWorkspace?.id) {
+      fetchStorageVolumes(currentOrganization.id, currentWorkspace.id);
+    }
+  }, [currentOrganization?.id, currentWorkspace?.id, isMockMode, fetchStorageVolumes]);
 
   const showToast = (message, type = "success") => {
     const id = Date.now();
@@ -214,16 +217,19 @@ export function StorageView() {
 
   // Get active list of volumes for the workspace
   const volumes = useMemo(() => {
-    if (!workspaceStorages[workspaceKey]) {
-      // Initialize if not present
-      setWorkspaceStorages((prev) => ({
-        ...prev,
-        [workspaceKey]: initialVolumes,
-      }));
-      return initialVolumes;
+    if (isMockMode) {
+      if (!workspaceStorages[workspaceKey]) {
+        setWorkspaceStorages((prev) => ({
+          ...prev,
+          [workspaceKey]: initialVolumes,
+        }));
+        return initialVolumes;
+      }
+      return workspaceStorages[workspaceKey];
     }
-    return workspaceStorages[workspaceKey];
-  }, [workspaceStorages, workspaceKey, initialVolumes]);
+    // Backend mode: use storageVolumes from store
+    return storageVolumes || [];
+  }, [workspaceStorages, workspaceKey, initialVolumes, isMockMode, storageVolumes]);
 
   const activeVolume = useMemo(() => {
     if (!selectedVolumeId) return null;
@@ -237,12 +243,16 @@ export function StorageView() {
   }, [selectedVolumeId, workspaceKey]);
 
   // Handle Delete Volume
-  const handleDeleteVolume = (volId, volName) => {
+  const handleDeleteVolume = async (volId, volName) => {
     if (confirm(`Are you sure you want to delete the volume "${volName}"? This action is permanent.`)) {
-      setWorkspaceStorages((prev) => ({
-        ...prev,
-        [workspaceKey]: prev[workspaceKey].filter((v) => v.id !== volId),
-      }));
+      if (isMockMode) {
+        setWorkspaceStorages((prev) => ({
+          ...prev,
+          [workspaceKey]: prev[workspaceKey].filter((v) => v.id !== volId),
+        }));
+      } else if (currentOrganization?.id && currentWorkspace?.id) {
+        await deleteStorageVolume(currentOrganization.id, currentWorkspace.id, volName);
+      }
       if (selectedVolumeId === volId) {
         setSelectedVolumeId(null);
       }
@@ -335,108 +345,153 @@ export function StorageView() {
   };
 
   // Mock Download File
-  const handleDownloadFile = (fileName) => {
-    showToast(`Initializing download for "${fileName}"...`, "info");
-    setTimeout(() => {
-      showToast(`File "${fileName}" downloaded successfully`, "success");
-    }, 1200);
+  const handleDownloadFile = async (fileName) => {
+    if (isMockMode) {
+      showToast(`Initializing download for "${fileName}"...`, "info");
+      setTimeout(() => {
+        showToast(`File "${fileName}" downloaded successfully`, "success");
+      }, 1200);
+      return;
+    }
+    // Backend mode: get signed URL and download
+    if (currentOrganization?.id && currentWorkspace?.id && activeVolume) {
+      const filePath = currentPath.length > 0 ? `${currentPath.join("/")}/${fileName}` : fileName;
+      try {
+        const { url } = await getStorageDownloadUrl(currentOrganization.id, currentWorkspace.id, activeVolume.name, filePath);
+        if (url) {
+          window.open(url, "_blank");
+          showToast(`Download started for "${fileName}"`, "success");
+        } else {
+          showToast(`Could not generate download URL for "${fileName}"`, "destructive");
+        }
+      } catch (err) {
+        showToast(`Download failed: ${err.message}`, "destructive");
+      }
+    }
   };
 
   // Mock Delete File
-  const handleDeleteFile = (fileName) => {
+  const handleDeleteFile = async (fileName) => {
     if (!activeVolume) return;
     const pathString = currentPath.join("/");
     
-    setWorkspaceStorages((prev) => {
-      const updatedList = prev[workspaceKey].map((vol) => {
-        if (vol.id !== activeVolume.id) return vol;
+    if (isMockMode) {
+      setWorkspaceStorages((prev) => {
+        const updatedList = prev[workspaceKey].map((vol) => {
+          if (vol.id !== activeVolume.id) return vol;
 
-        const updatedFiles = { ...vol.files };
-        const currentDirFiles = updatedFiles[pathString] || [];
-        
-        // Filter out the deleted file
-        updatedFiles[pathString] = currentDirFiles.filter((f) => f.name !== fileName);
-        
-        // Recalculate filesCount and size
-        let newCount = vol.filesCount - 1;
-        let totalSize = parseSize(vol.size);
-        const deletedFile = currentDirFiles.find((f) => f.name === fileName);
-        if (deletedFile) {
-          totalSize = Math.max(0, totalSize - parseSize(deletedFile.size));
-        }
+          const updatedFiles = { ...vol.files };
+          const currentDirFiles = updatedFiles[pathString] || [];
+          
+          // Filter out the deleted file
+          updatedFiles[pathString] = currentDirFiles.filter((f) => f.name !== fileName);
+          
+          // Recalculate filesCount and size
+          let newCount = vol.filesCount - 1;
+          let totalSize = parseSize(vol.size);
+          const deletedFile = currentDirFiles.find((f) => f.name === fileName);
+          if (deletedFile) {
+            totalSize = Math.max(0, totalSize - parseSize(deletedFile.size));
+          }
 
-        // Convert back to string
-        const sizes = ["B", "KiB", "MiB", "GiB", "TiB"];
-        const idx = totalSize === 0 ? 0 : Math.floor(Math.log(totalSize) / Math.log(1024));
-        const newSizeStr = totalSize === 0 ? "0 B" : `${(totalSize / Math.pow(1024, idx)).toFixed(1)} ${sizes[idx]}`;
+          // Convert back to string
+          const sizes = ["B", "KiB", "MiB", "GiB", "TiB"];
+          const idx = totalSize === 0 ? 0 : Math.floor(Math.log(totalSize) / Math.log(1024));
+          const newSizeStr = totalSize === 0 ? "0 B" : `${(totalSize / Math.pow(1024, idx)).toFixed(1)} ${sizes[idx]}`;
+
+          return {
+            ...vol,
+            size: newSizeStr,
+            filesCount: newCount,
+            files: updatedFiles,
+          };
+        });
 
         return {
-          ...vol,
-          size: newSizeStr,
-          filesCount: newCount,
-          files: updatedFiles,
+          ...prev,
+          [workspaceKey]: updatedList,
         };
       });
-
-      return {
-        ...prev,
-        [workspaceKey]: updatedList,
-      };
-    });
+    } else if (currentOrganization?.id && currentWorkspace?.id) {
+      const filePath = currentPath.length > 0 ? `${currentPath.join("/")}/${fileName}` : fileName;
+      try {
+        await deleteStorageFile(currentOrganization.id, currentWorkspace.id, activeVolume.name, filePath);
+        showToast(`File "${fileName}" deleted`, "destructive");
+        // Refresh volumes
+        await fetchStorageVolumes(currentOrganization.id, currentWorkspace.id);
+        return;
+      } catch (err) {
+        showToast(`Delete failed: ${err.message}`, "destructive");
+        return;
+      }
+    }
 
     showToast(`File "${fileName}" deleted`, "destructive");
   };
 
   // Mock Create Folder
-  const handleCreateFolder = () => {
+  const handleCreateFolder = async () => {
     const folderName = prompt("Enter folder name:");
     if (!folderName || !folderName.trim()) return;
     const cleanName = folderName.trim().replace(/[^a-zA-Z0-9_-]/g, "_");
     const pathString = currentPath.join("/");
 
-    setWorkspaceStorages((prev) => {
-      return {
-        ...prev,
-        [workspaceKey]: prev[workspaceKey].map((vol) => {
-          if (vol.id !== activeVolume.id) return vol;
+    if (isMockMode) {
+      setWorkspaceStorages((prev) => {
+        return {
+          ...prev,
+          [workspaceKey]: prev[workspaceKey].map((vol) => {
+            if (vol.id !== activeVolume.id) return vol;
 
-          const updatedFiles = { ...vol.files };
-          const currentDirFiles = [...(updatedFiles[pathString] || [])];
-          
-          if (currentDirFiles.some((f) => f.name === cleanName)) {
-            alert("A folder or file with this name already exists.");
-            return vol;
-          }
+            const updatedFiles = { ...vol.files };
+            const currentDirFiles = [...(updatedFiles[pathString] || [])];
+            
+            if (currentDirFiles.some((f) => f.name === cleanName)) {
+              alert("A folder or file with this name already exists.");
+              return vol;
+            }
 
-          currentDirFiles.push({
-            name: cleanName,
-            type: "Folder",
-            lastModified: "just now",
-            size: "--",
-          });
-          
-          updatedFiles[pathString] = currentDirFiles;
-          
-          const newPathString = pathString ? `${pathString}/${cleanName}` : cleanName;
-          updatedFiles[newPathString] = [];
+            currentDirFiles.push({
+              name: cleanName,
+              type: "Folder",
+              lastModified: "just now",
+              size: "--",
+            });
+            
+            updatedFiles[pathString] = currentDirFiles;
+            
+            const newPathString = pathString ? `${pathString}/${cleanName}` : cleanName;
+            updatedFiles[newPathString] = [];
 
-          return {
-            ...vol,
-            files: updatedFiles,
-            filesCount: vol.filesCount + 1,
-          };
-        }),
-      };
-    });
+            return {
+              ...vol,
+              files: updatedFiles,
+              filesCount: vol.filesCount + 1,
+            };
+          }),
+        };
+      });
+    } else if (currentOrganization?.id && currentWorkspace?.id && activeVolume) {
+      const folderPath = currentPath.length > 0 ? `${currentPath.join("/")}/${cleanName}` : cleanName;
+      try {
+        await createStorageFolder(currentOrganization.id, currentWorkspace.id, activeVolume.name, folderPath);
+        showToast(`Folder "${cleanName}" created`, "success");
+        await fetchStorageVolumes(currentOrganization.id, currentWorkspace.id);
+        return;
+      } catch (err) {
+        showToast(`Create folder failed: ${err.message}`, "destructive");
+        return;
+      }
+    }
 
     showToast(`Folder "${cleanName}" created`, "success");
   };
 
   // Mock Upload File
-  const handleUploadFile = () => {
+  const handleUploadFile = async () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
-    fileInput.onchange = (e) => {
+    fileInput.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
@@ -449,45 +504,65 @@ export function StorageView() {
 
       showToast(`Uploading "${file.name}"...`, "info");
 
-      setTimeout(() => {
-        setWorkspaceStorages((prev) => {
-          return {
-            ...prev,
-            [workspaceKey]: prev[workspaceKey].map((vol) => {
-              if (vol.id !== activeVolume.id) return vol;
+      if (isMockMode) {
+        setTimeout(() => {
+          setWorkspaceStorages((prev) => {
+            return {
+              ...prev,
+              [workspaceKey]: prev[workspaceKey].map((vol) => {
+                if (vol.id !== activeVolume.id) return vol;
 
-              const updatedFiles = { ...vol.files };
-              const currentDirFiles = [...(updatedFiles[pathString] || [])];
+                const updatedFiles = { ...vol.files };
+                const currentDirFiles = [...(updatedFiles[pathString] || [])];
 
-              if (currentDirFiles.some((f) => f.name === file.name)) {
-                return vol;
-              }
+                if (currentDirFiles.some((f) => f.name === file.name)) {
+                  return vol;
+                }
 
-              currentDirFiles.push({
-                name: file.name,
-                type: "File",
-                lastModified: "just now",
-                size: sizeStr,
-              });
+                currentDirFiles.push({
+                  name: file.name,
+                  type: "File",
+                  lastModified: "just now",
+                  size: sizeStr,
+                });
 
-              updatedFiles[pathString] = currentDirFiles;
+                updatedFiles[pathString] = currentDirFiles;
 
-              const newTotalBytes = parseSize(vol.size) + sizeBytes;
-              const idx = Math.floor(Math.log(newTotalBytes) / Math.log(1024));
-              const newSizeStr = `${(newTotalBytes / Math.pow(1024, idx)).toFixed(1)} ${sizes[idx]}`;
+                const newTotalBytes = parseSize(vol.size) + sizeBytes;
+                const idx = Math.floor(Math.log(newTotalBytes) / Math.log(1024));
+                const newSizeStr = `${(newTotalBytes / Math.pow(1024, idx)).toFixed(1)} ${sizes[idx]}`;
 
-              return {
-                ...vol,
-                size: newSizeStr,
-                filesCount: vol.filesCount + 1,
-                files: updatedFiles,
-              };
-            }),
-          };
-        });
+                return {
+                  ...vol,
+                  size: newSizeStr,
+                  filesCount: vol.filesCount + 1,
+                  files: updatedFiles,
+                };
+              }),
+            };
+          });
 
-        showToast(`File "${file.name}" uploaded successfully`, "success");
-      }, 1500);
+          showToast(`File "${file.name}" uploaded successfully`, "success");
+        }, 1500);
+      } else if (currentOrganization?.id && currentWorkspace?.id && activeVolume) {
+        const filePath = currentPath.length > 0 ? `${currentPath.join("/")}/${file.name}` : file.name;
+        try {
+          const { url } = await getStorageUploadUrl(currentOrganization.id, currentWorkspace.id, activeVolume.name, filePath);
+          if (url) {
+            await fetch(url, {
+              method: "PUT",
+              body: file,
+              headers: { "Content-Type": "application/octet-stream" },
+            });
+            showToast(`File "${file.name}" uploaded successfully`, "success");
+            await fetchStorageVolumes(currentOrganization.id, currentWorkspace.id);
+          } else {
+            showToast(`Could not get upload URL`, "destructive");
+          }
+        } catch (err) {
+          showToast(`Upload failed: ${err.message}`, "destructive");
+        }
+      }
     };
     fileInput.click();
   };

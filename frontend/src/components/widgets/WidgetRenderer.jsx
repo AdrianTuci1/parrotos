@@ -64,13 +64,14 @@ export function WidgetRenderer({ spec, layoutSpec }) {
         orgId: currentOrganization?.id,
         projectId: currentWorkspace?.id,
         demoMode,
+        workspace: currentWorkspace,
       }
     ).then((result) => {
       if (!cancelled) setData(result);
     });
 
     return () => { cancelled = true; };
-  }, [type, config, queryRef, id, timeRange, demoMode, currentOrganization?.id, currentWorkspace?.id, layoutSpec]);
+  }, [type, config, queryRef, id, timeRange, demoMode, currentOrganization?.id, currentWorkspace, layoutSpec]);
 
   const WidgetComponent = widgetComponents[type];
   if (!WidgetComponent) {
@@ -98,7 +99,20 @@ export function WidgetRenderer({ spec, layoutSpec }) {
       )}
       {/* Widget Content */}
       <div className="widget-content-body">
-        {data ? (
+        {data?.unavailable ? (
+          <div className="widget-unavailable">
+            <div className="widget-unavailable-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                <line x1="6" y1="18" x2="6.01" y2="18"/>
+              </svg>
+            </div>
+            <div className="widget-unavailable-title">{data.connector} not connected</div>
+            <div className="widget-unavailable-desc">Connect {data.connector} to see this data</div>
+          </div>
+        ) : data ? (
           <WidgetComponent data={data} config={config} />
         ) : (
           <div className="widget-loading">Loading...</div>

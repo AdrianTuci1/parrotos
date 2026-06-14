@@ -2,48 +2,40 @@ import { gcpService } from './GcpService.js';
 import { config } from '../config/index.js';
 
 /**
- * ConnectorService — manages GCP-native data connectors.
+ * ConnectorService
  *
- * Handles:
- *  - Storing credentials in Secret Manager
- *  - Deploying Cloud Functions (for API-based connectors)
- *  - Configuring BigQuery Data Transfer (for Google-native connectors)
- *  - Cloud Scheduler setup
+ * Production model:
+ * - one sync queue in Firestore
+ * - one multi-tenant sync worker on the VPS
+ * - local scheduler executes the worker periodically
  */
-
 export class ConnectorService {
   constructor() {
     this.gcp = gcpService;
   }
 
   /**
-   * Deploy a connector. Routes to the right deploy method based on connector type.
-   *
-   * @param {string} orgId
-   * @param {string} projectId
-   * @param {string} connectorName - "Stripe", "GA4", etc.
-   * @param {object} credentials - { apiKey, accountId, ... }
+   * Deploy a connector. Stores credentials and either:
+   * - hands Google-native transfers back to the operator, or
+   * - queues the connector for the VPS sync worker.
    */
   async deployConnector(orgId, projectId, connectorName, credentials) {
-    const authConfig = CONNECTOR_DEPLOY[connectorName];
-    if (!authConfig) {
+    const connectorConfig = CONNECTOR_DEPLOY[connectorName];
+    if (!connectorConfig) {
       throw new Error(`Unknown connector: ${connectorName}`);
     }
 
-    // 1. Store credentials in Secret Manager
     const secretId = `connector-${orgId}-${projectId}-${connectorName.toLowerCase()}`;
     await this.storeCredentials(secretId, credentials);
 
-    // 2. Deploy based on type
-    if (authConfig.type === 'bigquery_transfer') {
-      return this.setupBigQueryTransfer(orgId, projectId, connectorName, credentials);
+    if (connectorConfig.type === 'bigquery_transfer') {
+      return this.setupBigQueryTransfer(orgId, projectId, connectorName);
     }
 
-    if (authConfig.type === 'cloud_function') {
-      return this.deployCloudFunction(orgId, projectId, connectorName, secretId, authConfig);
+    if (connectorConfig.type === 'worker') {
+      return this.deployQueuedConnector(orgId, projectId, connectorName, secretId, connectorConfig);
     }
 
-    // Direct sources (Prometheus, BigQuery) — just store credentials, no deploy
     return {
       status: 'connected',
       method: 'direct',
@@ -51,43 +43,38 @@ export class ConnectorService {
     };
   }
 
-  /**
-   * Store credentials in GCP Secret Manager.
-   */
   async storeCredentials(secretId, credentials) {
     const secretManager = this.gcp.secretManager;
     if (!secretManager) {
-      console.warn('[ConnectorService] Secret Manager not available — credentials stored in Firestore only');
+      console.warn('[ConnectorService] Secret Manager not available');
       return;
     }
 
     const parent = `projects/${config.gcpProjectId}`;
 
     try {
-      // Create secret if it doesn't exist
       await secretManager.createSecret({
         parent,
         secretId,
         secret: { replication: { automatic: {} } },
       });
     } catch (err) {
-      // Already exists — fine
-      if (!err.message?.includes('AlreadyExists')) throw err;
+      if (!err.message?.includes('AlreadyExists')) {
+        throw err;
+      }
     }
 
-    // Add new version
     await secretManager.addSecretVersion({
       parent: `projects/${config.gcpProjectId}/secrets/${secretId}`,
       payload: { data: Buffer.from(JSON.stringify(credentials)).toString('base64') },
     });
   }
 
-  /**
-   * Read credentials from Secret Manager.
-   */
   async getCredentials(secretId) {
     const secretManager = this.gcp.secretManager;
-    if (!secretManager) return null;
+    if (!secretManager) {
+      return null;
+    }
 
     try {
       const [version] = await secretManager.accessSecretVersion({
@@ -99,11 +86,7 @@ export class ConnectorService {
     }
   }
 
-  /**
-   * Google-native connectors (GA4, Ads, Search Console).
-   * BigQuery Data Transfer — configured in GCP Console. We just store the link.
-   */
-  async setupBigQueryTransfer(orgId, projectId, connectorName, credentials) {
+  async setupBigQueryTransfer(orgId, projectId, connectorName) {
     const dataset = this.gcp.getDatasetName(orgId, projectId);
 
     return {
@@ -116,82 +99,108 @@ export class ConnectorService {
     };
   }
 
-  /**
-   * Deploy a Cloud Function connector.
-   * Sets up: Cloud Function + Cloud Scheduler.
-   */
-  async deployCloudFunction(orgId, projectId, connectorName, secretId, authConfig) {
-    const functionName = `sentry-connector-${orgId}-${projectId}-${connectorName.toLowerCase()}`;
-    const topicName = `connector-trigger-${orgId}-${projectId}-${connectorName.toLowerCase()}`;
-    const dataset = this.gcp.getDatasetName(orgId, projectId);
+  async deployQueuedConnector(orgId, projectId, connectorName, secretId, connectorConfig) {
+    await this.addToSyncQueue(orgId, projectId, connectorName, secretId, connectorConfig);
+    await this.triggerImmediateSync(orgId, projectId, connectorName);
 
-    // In production, this would call Cloud Build or Cloud Functions API.
-    // For now, return instructions and store the intent.
     return {
-      status: 'pending_deploy',
-      method: 'cloud_function',
-      functionName,
-      deployCommand: [
-        `gcloud functions deploy ${functionName}`,
-        `  --runtime nodejs22`,
-        `  --trigger-topic ${topicName}`,
-        `  --entry-point ingest`,
-        `  --source connector/sources/${connectorName.toLowerCase()}`,
-        `  --set-secrets CONNECTOR_TOKEN=${secretId}:latest`,
-        `  --set-env-vars BIGQUERY_DATASET=${dataset}`,
-        `  --region ${config.gcpRegion}`,
-      ].join(' \\\n'),
-      scheduleCommand: [
-        `gcloud scheduler jobs create pubsub ${functionName}-trigger`,
-        `  --schedule "${authConfig.schedule || 'every 1 hour'}"`,
-        `  --topic ${topicName}`,
-        `  --message-body '{"action":"ingest"}'`,
-        `  --region ${config.gcpRegion}`,
-      ].join(' \\\n'),
+      status: 'queued',
+      method: 'vps_worker',
+      message: `Connector ${connectorName} added to the VPS sync queue. First sync is eligible immediately.`,
     };
   }
 
-  /**
-   * Remove a connector — delete Cloud Function, Scheduler job, and credentials.
-   */
+  async addToSyncQueue(orgId, projectId, connectorName, secretId, connectorConfig) {
+    const db = this.gcp.firestore;
+    if (!db) {
+      return;
+    }
+
+    const queueRef = db.collection('sync_queue').doc(`${orgId}_${projectId}_${connectorName}`);
+    const existing = await queueRef.get();
+    const now = new Date().toISOString();
+
+    await queueRef.set({
+      orgId,
+      projectId,
+      connectorName,
+      secretId,
+      schedule: connectorConfig.schedule || 'every 1 hour',
+      status: existing.exists ? (existing.data()?.status || 'pending') : 'pending',
+      lastSyncAt: existing.exists ? (existing.data()?.lastSyncAt || null) : null,
+      nextSyncAt: now,
+      createdAt: existing.exists ? (existing.data()?.createdAt || now) : now,
+      updatedAt: now,
+    });
+  }
+
+  async triggerImmediateSync(orgId, projectId, connectorName) {
+    const db = this.gcp.firestore;
+    if (!db) {
+      return;
+    }
+
+    await db.collection('sync_queue').doc(`${orgId}_${projectId}_${connectorName}`).set({
+      status: 'pending',
+      nextSyncAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }, { merge: true });
+  }
+
+  async triggerManualSync(orgId, projectId, connectorName) {
+    await this.triggerImmediateSync(orgId, projectId, connectorName);
+    return {
+      status: 'triggered',
+      message: 'Sync queued on the VPS worker. Check BigQuery in a few minutes.',
+    };
+  }
+
   async removeConnector(orgId, projectId, connectorName) {
-    const functionName = `sentry-connector-${orgId}-${projectId}-${connectorName.toLowerCase()}`;
     const secretId = `connector-${orgId}-${projectId}-${connectorName.toLowerCase()}`;
 
-    // Delete secret
     try {
       await this.gcp.secretManager?.deleteSecret({
         name: `projects/${config.gcpProjectId}/secrets/${secretId}`,
       });
     } catch {}
 
+    try {
+      const db = this.gcp.firestore;
+      if (db) {
+        await db.collection('sync_queue').doc(`${orgId}_${projectId}_${connectorName}`).delete();
+      }
+    } catch {}
+
     return {
       status: 'removed',
       message: `Connector ${connectorName} removed.`,
-      cleanup: `gcloud functions delete ${functionName} --quiet`,
     };
   }
 }
 
-// Connector deploy configuration
 const CONNECTOR_DEPLOY = {
-  'Stripe':       { type: 'cloud_function', schedule: 'every 1 hour' },
-  'Shopify':      { type: 'cloud_function', schedule: 'every 1 hour' },
-  'WooCommerce':  { type: 'cloud_function', schedule: 'every 1 hour' },
-  'HubSpot':      { type: 'cloud_function', schedule: 'every 1 hour' },
-  'Salesforce':   { type: 'cloud_function', schedule: 'every 1 hour' },
-  'PostHog':      { type: 'cloud_function', schedule: 'every 1 hour' },
-  'Klaviyo':      { type: 'cloud_function', schedule: 'every 1 hour' },
-  'Sentry':       { type: 'cloud_function', schedule: 'every 5 minutes' },
-  'PostgreSQL':   { type: 'cloud_function', schedule: 'every 1 hour' },
-  'MySQL':        { type: 'cloud_function', schedule: 'every 1 hour' },
-  'MongoDB':      { type: 'cloud_function', schedule: 'every 1 hour' },
-  'GA4':          { type: 'bigquery_transfer' },
-  'Google Ads':   { type: 'bigquery_transfer' },
-  'Meta Ads':     { type: 'cloud_function', schedule: 'every 1 hour' },
-  'TikTok Ads':   { type: 'cloud_function', schedule: 'every 1 hour' },
-  'Search Console': { type: 'bigquery_transfer' },
-  'YouTube':      { type: 'bigquery_transfer' },
-  'Prometheus':   { type: 'direct' },
-  'BigQuery':     { type: 'direct' },
+  'Stripe': { type: 'worker', schedule: 'every 5 minutes' },
+  'Sentry': { type: 'worker', schedule: 'every 5 minutes' },
+  'Prometheus': { type: 'direct', schedule: 'real-time' },
+  'BigQuery': { type: 'direct', schedule: 'real-time' },
+
+  'Shopify': { type: 'worker', schedule: 'every 15 minutes' },
+  'WooCommerce': { type: 'worker', schedule: 'every 15 minutes' },
+  'Meta Ads': { type: 'worker', schedule: 'every 15 minutes' },
+  'TikTok Ads': { type: 'worker', schedule: 'every 15 minutes' },
+  'Google Ads': { type: 'worker', schedule: 'every 15 minutes' },
+  'GA4': { type: 'worker', schedule: 'every 15 minutes' },
+  'PostHog': { type: 'worker', schedule: 'every 15 minutes' },
+  'Klaviyo': { type: 'worker', schedule: 'every 15 minutes' },
+
+  'HubSpot': { type: 'worker', schedule: 'every 30 minutes' },
+  'Salesforce': { type: 'worker', schedule: 'every 30 minutes' },
+  'PostgreSQL': { type: 'worker', schedule: 'every 30 minutes' },
+  'MySQL': { type: 'worker', schedule: 'every 30 minutes' },
+  'MongoDB': { type: 'worker', schedule: 'every 30 minutes' },
+  'Firestore': { type: 'worker', schedule: 'every 30 minutes' },
+  'Facebook': { type: 'worker', schedule: 'every 30 minutes' },
+
+  'Search Console': { type: 'bigquery_transfer', schedule: 'daily' },
+  'YouTube': { type: 'bigquery_transfer', schedule: 'daily' },
 };

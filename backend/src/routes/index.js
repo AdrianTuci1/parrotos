@@ -12,11 +12,18 @@ import chatRoutes from './chat.js';
 import serviceAccountRoutes from './serviceAccounts.js';
 import billingRoutes from './billing.js';
 import stripeWebhookRoutes from './stripeWebhook.js';
+import storageRoutes from './storage.js';
+import healthRoutes from './health.js';
+import preferencesRoutes from './preferences.js';
+import observerRoutes from './observer.js';
+import publicRoutes from './public.js';
 
 const router = Router();
 
+router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/auth', oauthRoutes);
+router.use('/public', publicRoutes);
 router.use('/organizations', orgRoutes);
 router.use('/organizations/:orgId/projects', projectRoutes);
 router.use('/organizations/:orgId/projects/:projectId/agents', agentRoutes);
@@ -25,6 +32,9 @@ router.use('/organizations/:orgId/projects/:projectId/analytics', analyticsRoute
 router.use('/organizations/:orgId/projects/:projectId/specs', specsRoutes);
 router.use('/organizations/:orgId/projects/:projectId/alerts', alertsRoutes);
 router.use('/organizations/:orgId/projects/:projectId/chat', chatRoutes);
+router.use('/organizations/:orgId/projects/:projectId/storage', storageRoutes);
+router.use('/organizations/:orgId/projects/:projectId/preferences', preferencesRoutes);
+router.use('/organizations/:orgId/projects/:projectId/observer', observerRoutes);
 router.use('/organizations/:orgId/service-accounts', serviceAccountRoutes);
 router.use('/organizations/:orgId/billing', billingRoutes);
 router.use('/stripe/webhook', stripeWebhookRoutes);

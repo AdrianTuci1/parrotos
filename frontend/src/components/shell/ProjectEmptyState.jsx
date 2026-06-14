@@ -86,7 +86,7 @@ export function ProjectEmptyState({ mode = "analytics" }) {
           <button
             type="button"
             className="project-empty-action-row"
-            onClick={() => goTo("integrations")}
+            onClick={() => goTo("sources")}
           >
             Add connectors so you can see live data.
           </button>

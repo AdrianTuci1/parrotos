@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Building2, BarChart3, Database, ShieldCheck } from 'lucide-react';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
@@ -17,32 +17,56 @@ function MetricTile({ label, value, detail, trend }) {
   );
 }
 
+function LoadingTile() {
+  return (
+    <div className="organization-metric-tile" style={{ opacity: 0.5 }}>
+      <span className="organization-metric-label">Loading...</span>
+      <div className="organization-metric-value-row">
+        <span className="organization-metric-value">-</span>
+      </div>
+      <span className="organization-metric-detail">Fetching data</span>
+    </div>
+  );
+}
+
 const emptyOrg = { id: '__empty__', name: 'My Organization', slug: 'my-org', plan: 'Starter' };
 
 export function OrganizationStatsView() {
-  const { currentOrganization, workspaces, organizationMetrics, fetchDashboardMetrics, demoMode, devMode } = useAppStore();
+  const { currentOrganization, fetchOrgMetrics, organizationMetrics, devMode, demoMode, isLoading } = useAppStore();
+  const [localLoading, setLocalLoading] = useState(false);
   const org = currentOrganization || emptyOrg;
-  const orgProjects = workspaces.filter(
-    (w) => w.organizationId === org.id
-  );
 
-  // Fetch real metrics from backend when not in demo mode
   useEffect(() => {
-    if (!devMode && !demoMode && org.id && orgProjects.length > 0) {
-      // Fetch metrics for the first project as org-level aggregate
-      fetchDashboardMetrics(org.id, orgProjects[0].id);
-    }
-  }, [devMode, demoMode, org.id, orgProjects.length]);
+    let cancelled = false;
 
-  const totalEvents = orgProjects.reduce((sum, w) => {
-    const num = parseInt(w.monthlyEvents.replace(/[^0-9.]/g, ''));
-    const mult = w.monthlyEvents.includes('K') ? 1000 : 1;
-    return sum + (isNaN(num) ? 0 : num * mult);
-  }, 0);
-  const totalConsumption = orgProjects.reduce((sum, w) => {
-    const num = parseInt(w.dataConsumption.replace(/[^0-9.]/g, ''));
-    return sum + (isNaN(num) ? 0 : num);
-  }, 0);
+    async function loadMetrics() {
+      if (!devMode && !demoMode && org.id && org.id !== '__empty__') {
+        setLocalLoading(true);
+        try {
+          await fetchOrgMetrics(org.id);
+        } finally {
+          if (!cancelled) setLocalLoading(false);
+        }
+      }
+    }
+
+    loadMetrics();
+    return () => { cancelled = true; };
+  }, [devMode, demoMode, org.id]);
+
+  const loading = isLoading || localLoading;
+  const metrics = organizationMetrics;
+
+  // Safe accessors with defaults
+  const projects = metrics?.projects || { total: 0, healthy: 0, monitoring: 0 };
+  const events = metrics?.events || { total: 0, formatted: '0' };
+  const storage = metrics?.storage || { total: 0, formatted: '0 GB' };
+  const compute = metrics?.compute || { value: '0 GB', detail: 'BigQuery + orchestration', trend: '-8.1%' };
+  const connectedSources = metrics?.connectedSources || { value: '0', detail: 'No connectors', trend: '+12%' };
+  const topConnector = metrics?.topConnector || { value: 'None', detail: 'No connectors', trend: '+5%' };
+  const connectorUsage = metrics?.connectorUsage || [];
+  const projectList = metrics?.projectList || [];
+  const recentActivity = metrics?.recentActivity || [{ title: 'No recent activity', meta: 'Activity will appear here' }];
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
@@ -66,18 +90,27 @@ export function OrganizationStatsView() {
               </div>
             </div>
             <div className="organization-panel-split">
-              <MetricTile
-                label="Active projects"
-                value={String(orgProjects.length)}
-                detail={`${orgProjects.filter((w) => w.status === 'Healthy').length} healthy, ${orgProjects.filter((w) => w.status !== 'Healthy').length} monitoring`}
-                trend="+2 this month"
-              />
-              <MetricTile
-                label="Monthly events"
-                value={totalEvents >= 1000 ? `${(totalEvents / 1000).toFixed(1)}K` : String(totalEvents)}
-                detail="Across all projects"
-                trend="+12.4%"
-              />
+              {loading ? (
+                <>
+                  <LoadingTile />
+                  <LoadingTile />
+                </>
+              ) : (
+                <>
+                  <MetricTile
+                    label="Active projects"
+                    value={String(projects.total)}
+                    detail={`${projects.healthy} healthy, ${projects.monitoring} monitoring`}
+                    trend="+2 this month"
+                  />
+                  <MetricTile
+                    label="Monthly events"
+                    value={events.formatted}
+                    detail="Across all projects"
+                    trend="+12.4%"
+                  />
+                </>
+              )}
             </div>
           </section>
 
@@ -89,18 +122,27 @@ export function OrganizationStatsView() {
               </div>
             </div>
             <div className="organization-panel-split">
-              <MetricTile
-                label="Warehouse consumption"
-                value={`${totalConsumption} GB`}
-                detail="Raw + modeled layers"
-                trend="+8.1%"
-              />
-              <MetricTile
-                label="Monthly compute"
-                value="$2.4k"
-                detail="BigQuery + orchestration"
-                trend="-8.1%"
-              />
+              {loading ? (
+                <>
+                  <LoadingTile />
+                  <LoadingTile />
+                </>
+              ) : (
+                <>
+                  <MetricTile
+                    label="Warehouse consumption"
+                    value={storage.formatted}
+                    detail="Raw + modeled layers"
+                    trend="+8.1%"
+                  />
+                  <MetricTile
+                    label="Monthly compute"
+                    value={compute.value}
+                    detail={compute.detail}
+                    trend={compute.trend}
+                  />
+                </>
+              )}
             </div>
           </section>
 
@@ -112,18 +154,27 @@ export function OrganizationStatsView() {
               </div>
             </div>
             <div className="organization-panel-split">
-              <MetricTile
-                label="Connected sources"
-                value={organizationMetrics.connectedSources.value}
-                detail={organizationMetrics.connectedSources.detail}
-                trend={organizationMetrics.connectedSources.trend}
-              />
-              <MetricTile
-                label="Top connector"
-                value={organizationMetrics.topConnector.value}
-                detail={organizationMetrics.topConnector.detail}
-                trend={organizationMetrics.topConnector.trend}
-              />
+              {loading ? (
+                <>
+                  <LoadingTile />
+                  <LoadingTile />
+                </>
+              ) : (
+                <>
+                  <MetricTile
+                    label="Connected sources"
+                    value={connectedSources.value}
+                    detail={connectedSources.detail}
+                    trend={connectedSources.trend}
+                  />
+                  <MetricTile
+                    label="Top connector"
+                    value={topConnector.value}
+                    detail={topConnector.detail}
+                    trend={topConnector.trend}
+                  />
+                </>
+              )}
             </div>
           </section>
 
@@ -135,21 +186,27 @@ export function OrganizationStatsView() {
               </div>
             </div>
             <div className="organization-project-list">
-              {orgProjects.map((w) => (
-                <div key={w.id} className="organization-project-row">
-                  <div className="organization-project-main">
-                    <div className="organization-project-dot" />
-                    <div className="organization-project-copy">
-                      <span className="organization-project-name">{w.name}</span>
-                      <span className="organization-project-domain">{w.domain}</span>
+              {loading && projectList.length === 0 ? (
+                <div className="organization-project-row" style={{ opacity: 0.5 }}>
+                  <span>Loading projects...</span>
+                </div>
+              ) : (
+                projectList.map((w) => (
+                  <div key={w.id} className="organization-project-row">
+                    <div className="organization-project-main">
+                      <div className="organization-project-dot" />
+                      <div className="organization-project-copy">
+                        <span className="organization-project-name">{w.name}</span>
+                        <span className="organization-project-domain">{w.domain}</span>
+                      </div>
+                    </div>
+                    <div className="organization-project-meta">
+                      <span>{w.monthlyEvents}</span>
+                      <span>{w.dataConsumption}</span>
                     </div>
                   </div>
-                  <div className="organization-project-meta">
-                    <span>{w.monthlyEvents}</span>
-                    <span>{w.dataConsumption}</span>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </section>
 
@@ -161,20 +218,26 @@ export function OrganizationStatsView() {
               </div>
             </div>
             <div className="organization-connector-list">
-              {organizationMetrics.connectorUsage.map((c) => (
-                <div key={c.name} className="organization-connector-row">
-                  <div className="organization-connector-copy">
-                    <span className="organization-connector-name">{c.name}</span>
-                    <span className="organization-connector-meta">{c.count} projects</span>
-                  </div>
-                  <div className="organization-connector-bar-track">
-                    <div
-                      className="organization-connector-bar-fill"
-                      style={{ width: `${c.share}%` }}
-                    />
-                  </div>
+              {loading && connectorUsage.length === 0 ? (
+                <div className="organization-connector-row" style={{ opacity: 0.5 }}>
+                  <span>Loading connectors...</span>
                 </div>
-              ))}
+              ) : (
+                connectorUsage.map((c) => (
+                  <div key={c.name} className="organization-connector-row">
+                    <div className="organization-connector-copy">
+                      <span className="organization-connector-name">{c.name}</span>
+                      <span className="organization-connector-meta">{c.count} projects</span>
+                    </div>
+                    <div className="organization-connector-bar-track">
+                      <div
+                        className="organization-connector-bar-fill"
+                        style={{ width: `${c.share}%` }}
+                      />
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </section>
 
@@ -186,8 +249,8 @@ export function OrganizationStatsView() {
               </div>
             </div>
             <div className="organization-activity-list">
-              {organizationMetrics.recentActivity.map((item) => (
-                <div key={item.title} className="organization-activity-item">
+              {recentActivity.map((item, idx) => (
+                <div key={idx} className="organization-activity-item">
                   <span className="organization-activity-title">{item.title}</span>
                   <span className="organization-activity-meta">{item.meta}</span>
                 </div>

@@ -37,7 +37,10 @@ export const config = {
   // Services (Cloud Run / Docker Compose)
   chatServiceUrl: process.env.CHAT_SERVICE_URL || 'http://localhost:8080',
   harnessServiceUrl: process.env.HARNESS_SERVICE_URL || 'http://localhost:8081',
+  observerServiceUrl: process.env.OBSERVER_SERVICE_URL || 'http://localhost:8082',
   internalToken: process.env.INTERNAL_TOKEN || 'dev-internal-token',
+  cloudRunAuthMode: process.env.CLOUD_RUN_AUTH_MODE || 'auto',
+  cloudSchedulerInvokerServiceAccountEmail: process.env.CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL || '',
 
   // Google OAuth
   googleClientId: process.env.GOOGLE_CLIENT_ID,

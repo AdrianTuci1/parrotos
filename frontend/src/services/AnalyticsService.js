@@ -6,6 +6,11 @@ export class AnalyticsService {
     return response.data;
   }
 
+  async queryDatabase(orgId, projectId, source, query) {
+    const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/analytics/database`, { source, query });
+    return response.data;
+  }
+
   async getSchema(orgId, projectId) {
     const response = await apiClient.get(`/organizations/${orgId}/projects/${projectId}/analytics/schema`);
     return response.data;
@@ -13,6 +18,16 @@ export class AnalyticsService {
 
   async getDashboardMetrics(orgId, projectId) {
     const response = await apiClient.get(`/organizations/${orgId}/projects/${projectId}/analytics/dashboard`);
+    return response.data;
+  }
+
+  async getAccountMetrics() {
+    const response = await apiClient.get('/organizations/account/metrics');
+    return response.data;
+  }
+
+  async getOrgMetrics(orgId) {
+    const response = await apiClient.get(`/organizations/${orgId}/metrics`);
     return response.data;
   }
 

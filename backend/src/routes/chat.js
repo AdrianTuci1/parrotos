@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { config } from '../config/index.js';
 import { ConnectorService } from '../services/ConnectorService.js';
+import { internalServiceClient } from '../services/InternalServiceClient.js';
 
 const router = Router();
 
@@ -25,11 +26,10 @@ router.post('/message', authenticate, async (req, res) => {
     }
 
     // Forward to Chat Service with SSE streaming
-    const response = await fetch(`${config.chatServiceUrl}/internal/message`, {
+    const response = await internalServiceClient.fetch(`${config.chatServiceUrl}/internal/message`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Internal-Token': config.internalToken,
       },
       body: JSON.stringify({
         orgId,

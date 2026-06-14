@@ -70,6 +70,24 @@ export class AnalyticsService {
     await table.insert(rows);
   }
 
+  async queryDatabase(orgId, projectId, source, query) {
+    // In a real implementation, this would connect to the actual database
+    // For now, we route through BigQuery which has the data synced
+    if (!config.enableBigQueryAnalytics) {
+      throw new NotFoundError('Database analytics is disabled');
+    }
+
+    const datasetName = this.gcp.getDatasetName(orgId, projectId);
+    const fullQuery = query.replace(/\$\{dataset\}/g, datasetName);
+
+    const [rows] = await this.gcp.bigQuery.query({
+      query: fullQuery,
+      location: config.bigQueryLocation,
+    });
+
+    return rows;
+  }
+
   async getDashboardMetrics(orgId, projectId) {
     const queries = {
       totalEvents: `SELECT COUNT(*) as count FROM \`${config.gcpProjectId}.${this.gcp.getDatasetName(orgId, projectId)}.events\``,

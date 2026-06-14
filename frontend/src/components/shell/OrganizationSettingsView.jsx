@@ -73,7 +73,7 @@ export function OrganizationSettingsView() {
         <div className="org-metric-item">
           <span className="org-metric-label">Warehouse</span>
           <span className="org-metric-value">
-            {organizationMetrics?.warehouseConsumption?.value || '3.8 TB'}
+            {organizationMetrics?.storage?.formatted || '0 GB'}
           </span>
         </div>
       </div>

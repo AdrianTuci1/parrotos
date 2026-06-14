@@ -11,6 +11,11 @@ const querySchema = {
   sql: { required: true, type: 'string', minLength: 1 },
 };
 
+const databaseQuerySchema = {
+  source: { required: true, type: 'string', enum: ['mongodb', 'postgresql', 'mysql'] },
+  query: { required: true, type: 'string', minLength: 1 },
+};
+
 router.use(authenticate);
 
 router.post('/query', validate(querySchema), async (req, res, next) => {
@@ -59,6 +64,17 @@ router.post('/tables/:tableId/rows', async (req, res, next) => {
     const { orgId, projectId, tableId } = req.params;
     await analyticsService.insertRows(orgId, projectId, tableId, req.body.rows);
     success(res, { inserted: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/database', validate(databaseQuerySchema), async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const { source, query } = req.body;
+    const rows = await analyticsService.queryDatabase(orgId, projectId, source, query);
+    success(res, rows);
   } catch (err) {
     next(err);
   }

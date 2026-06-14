@@ -39,6 +39,21 @@ export class ProjectService {
     const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/gcs-url`, { filename, action });
     return response.data?.url;
   }
+
+  async generatePublicLink(orgId, projectId) {
+    const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/public-link`);
+    return response.data;
+  }
+
+  async revokePublicLink(orgId, projectId) {
+    const response = await apiClient.delete(`/organizations/${orgId}/projects/${projectId}/public-link`);
+    return response.data;
+  }
+
+  async regeneratePublicLink(orgId, projectId) {
+    const response = await apiClient.post(`/organizations/${orgId}/projects/${projectId}/public-link/regenerate`);
+    return response.data;
+  }
 }
 
 export const projectService = new ProjectService();
