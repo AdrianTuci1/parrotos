@@ -84,6 +84,7 @@ export class AuthService {
         sub: user.id,
         email: user.email,
         roles: user.roles,
+        provider: user.provider || '',
       },
       config.jwtSecret,
       { expiresIn: '24h' }
@@ -141,6 +142,7 @@ export class AuthService {
       email: user.email,
       username: user.username,
       picture: user.picture,
+      provider: user.provider || '',
       roles: user.roles,
       orgMemberships: user.orgMemberships,
     };

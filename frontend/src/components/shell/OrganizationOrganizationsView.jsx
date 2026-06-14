@@ -14,6 +14,7 @@ import {
   Mail,
   CreditCard,
   Folder,
+  X,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -36,6 +37,10 @@ export function OrganizationOrganizationsView() {
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [creating, setCreating] = useState(false);
 
+  // Deletion confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteInputText, setDeleteInputText] = useState('');
+
   // Inline editing fields
   const [editName, setEditName] = useState('');
   const [editPlan, setEditPlan] = useState('');
@@ -53,6 +58,20 @@ export function OrganizationOrganizationsView() {
       setDirty(false);
     } catch (err) {
       alert('Failed to update organization: ' + err.message);
+    }
+  };
+
+  const handleMakeDefault = async () => {
+    try {
+      await updateOrganization(selectedOrg.id, { isDefault: true });
+      const updatedOrgs = useAppStore.getState().organizations.map((o) =>
+        o.id === selectedOrg.id ? { ...o, isDefault: true } : { ...o, isDefault: false }
+      );
+      useAppStore.setState({ organizations: updatedOrgs });
+      setSelectedOrg((prev) => prev ? { ...prev, isDefault: true } : prev);
+      setDirty(false);
+    } catch (err) {
+      alert('Failed to set default organization: ' + err.message);
     }
   };
 
@@ -89,12 +108,11 @@ export function OrganizationOrganizationsView() {
 
   // Detail / inline edit view
   if (selectedOrg) {
-    const plans = ['Starter', 'Growth', 'Scale', 'Agency'];
     return (
       <ViewFrame
         title={selectedOrg.name}
         description="Edit organization details and settings."
-        maxWidthClassName="max-w-7xl"
+        maxWidthClassName="max-w-3xl"
       >
         <div className="org-detail-shell">
           <button className="org-back-btn" onClick={() => setSelectedOrg(null)}>
@@ -118,43 +136,43 @@ export function OrganizationOrganizationsView() {
               <div className="org-detail-save-bar">
                 <span className="org-save-hint">Unsaved changes</span>
                 <div className="org-detail-save-actions">
-                  <button className="org-btn-secondary" onClick={() => { setEditName(selectedOrg.name); setEditPlan(selectedOrg.plan); setEditOwner(selectedOrg.owner); setDirty(false); }}>Cancel</button>
-                  <button className="org-btn-primary" onClick={() => { handleEditSave(selectedOrg.id, { name: editName, plan: editPlan, owner: editOwner }); setDirty(false); }}><Check size={14} /> Save</button>
+                  <button className="org-btn-secondary" onClick={() => { setEditName(selectedOrg.name); setEditOwner(selectedOrg.owner); setDirty(false); }}>Cancel</button>
+                  <button className="org-btn-primary" onClick={() => { handleEditSave(selectedOrg.id, { name: editName, owner: editOwner }); setDirty(false); }}><Check size={14} /> Save</button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Plan */}
+          {/* Default Organization Setting */}
           <div className="org-edit-section">
             <div className="org-edit-header">
-              <CreditCard size={14} />
-              <span>Plan</span>
+              <Check size={14} />
+              <span>Default Organization</span>
             </div>
             <div className="org-edit-fields">
-              <label className="org-modal-field">
-                <span className="org-modal-field-label">Subscription plan</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    className="org-edit-dropdown-trigger"
+              {selectedOrg.isDefault ? (
+                <div className="overlay-connection-badge" style={{ backgroundColor: 'rgba(59, 130, 246, 0.08)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
+                  <Check size={14} style={{ color: '#3b82f6', marginRight: '6px' }} />
+                  <span style={{ fontSize: '13px', color: '#ffffff' }}>This is your default organization</span>
+                </div>
+              ) : (
+                <div className="org-edit-danger-row" style={{ border: 'none', padding: 0 }}>
+                  <div style={{ flex: 1 }}>
+                    <div className="org-edit-danger-label" style={{ color: '#ffffff' }}>Set as default organization</div>
+                    <div className="org-edit-danger-desc">
+                      This organization will load automatically when you sign in.
+                    </div>
+                  </div>
+                  <button
+                    className="org-btn-secondary"
+                    type="button"
+                    style={{ flexShrink: 0 }}
+                    onClick={handleMakeDefault}
                   >
-                    <span>{editPlan}</span>
-                    <ChevronDown size={14} />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="org-edit-dropdown-content">
-                    {plans.map((p) => (
-                      <DropdownMenuItem
-                        key={p}
-                        onClick={() => { setEditPlan(p); setDirty(true); }}
-                        className="org-edit-dropdown-item"
-                      >
-                        {editPlan === p && <Check size={13} />}
-                        <span style={editPlan === p ? { color: '#f3f4f6' } : {}}>{p}</span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </label>
+                    Make default
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -198,13 +216,62 @@ export function OrganizationOrganizationsView() {
                   className="org-btn-danger"
                   disabled={selectedOrg.isDefault}
                   style={selectedOrg.isDefault ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
-                  onClick={() => { if (window.confirm(`Delete "${selectedOrg.name}"?`)) handleDelete(selectedOrg.id); }}
+                  onClick={() => {
+                    setDeleteConfirmOpen(true);
+                    setDeleteInputText('');
+                  }}
                 >
                   <Trash2 size={14} /> Delete
                 </button>
               </div>
             </div>
           </div>
+
+          {deleteConfirmOpen && (
+            <div className="overlay-backdrop" onClick={() => setDeleteConfirmOpen(false)}>
+              <div className="overlay-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="overlay-close-btn" onClick={() => setDeleteConfirmOpen(false)}>
+                  <X size={16} />
+                </button>
+                <div className="overlay-header">
+                  <h3 className="overlay-title">Are you sure?</h3>
+                  <p className="overlay-description" style={{ color: '#ef4444', fontWeight: 500 }}>
+                    This action is permanent and cannot be undone. All projects and telemetry data associated with this organization will be permanently deleted.
+                  </p>
+                </div>
+                <div className="overlay-body">
+                  <div className="overlay-form-group">
+                    <label className="overlay-form-label" style={{ color: '#8e918f', marginBottom: '8px' }}>
+                      Please type <strong style={{ color: '#ffffff' }}>{selectedOrg.name}</strong> to confirm:
+                    </label>
+                    <input
+                      type="text"
+                      className="overlay-input"
+                      value={deleteInputText}
+                      onChange={(e) => setDeleteInputText(e.target.value)}
+                      placeholder="Type organization name"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                <div className="overlay-footer">
+                  <button className="overlay-cancel-btn" onClick={() => setDeleteConfirmOpen(false)}>
+                    Cancel
+                  </button>
+                  <button
+                    className="overlay-delete-btn"
+                    disabled={deleteInputText !== selectedOrg.name}
+                    onClick={() => {
+                      handleDelete(selectedOrg.id);
+                      setDeleteConfirmOpen(false);
+                    }}
+                  >
+                    Delete Organization
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </ViewFrame>
     );
@@ -216,7 +283,7 @@ export function OrganizationOrganizationsView() {
       <ViewFrame
         title="New organization"
         description="Set up a new organization for your account."
-        maxWidthClassName="max-w-7xl"
+        maxWidthClassName="max-w-3xl"
       >
         <div className="org-detail-shell">
           <button className="org-back-btn" onClick={() => { setCreating(false); setCreateName(''); setCreatePlan('Starter'); }}>
@@ -229,15 +296,6 @@ export function OrganizationOrganizationsView() {
               <label className="org-modal-field">
                 <span className="org-modal-field-label">Name</span>
                 <Input className="org-modal-input" value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder="Organization name" />
-              </label>
-              <label className="org-modal-field">
-                <span className="org-modal-field-label">Plan</span>
-                <select className="org-form-select" value={createPlan} onChange={(e) => setCreatePlan(e.target.value)}>
-                  <option value="Starter">Starter</option>
-                  <option value="Growth">Growth</option>
-                  <option value="Scale">Scale</option>
-                  <option value="Agency">Agency</option>
-                </select>
               </label>
             </div>
             <div className="org-edit-actions">
@@ -271,7 +329,7 @@ export function OrganizationOrganizationsView() {
           </a>
         </span>
       }
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="max-w-3xl"
     >
       <div className="org-list-header-row">
         <span className="org-list-select-label">Select an organization</span>

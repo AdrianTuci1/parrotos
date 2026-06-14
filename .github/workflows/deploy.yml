@@ -17,7 +17,7 @@ env:
   VPS_USER: ${{ secrets.VPS_USER }}
   VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GCP_REGION: europe-west1
+  GCP_REGION: ${{ vars.GCP_REGION || 'europe-west1' }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
@@ -31,11 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
-      TF_VAR_region: ${{ env.GCP_REGION }}
+      TF_VAR_region: ${{ vars.GCP_REGION || 'europe-west1' }}
       TF_VAR_environment: ${{ github.event.inputs.environment }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-      TF_VAR_domain: ${{ env.DOMAIN }}
+      TF_VAR_domain: ${{ vars.DOMAIN || 'sentrydata.io' }}
       TF_VAR_vps_host: ${{ secrets.VPS_HOST }}
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
       TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}

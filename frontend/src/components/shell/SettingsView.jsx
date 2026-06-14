@@ -10,7 +10,8 @@ import {
   Check,
   Copy,
   ChevronDown,
-  Pencil
+  Pencil,
+  X
 } from "lucide-react";
 import "@/styles/settings.css";
 
@@ -30,6 +31,10 @@ export function SettingsView() {
   const [copiedPublic, setCopiedPublic] = useState(false);
   const [reanalyzing, setReanalyzing] = useState(false);
   const [generatingLink, setGeneratingLink] = useState(false);
+
+  // Deletion confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteInputText, setDeleteInputText] = useState("");
 
   // Sync cu publicLink din workspace când se schimbă
   useEffect(() => {
@@ -101,13 +106,11 @@ export function SettingsView() {
 
   const handleDelete = async () => {
     if (!currentWorkspace || !currentOrganization) return;
-    if (confirm("Are you sure you want to delete this project? This action is permanent and cannot be undone.")) {
-      try {
-        await deleteProject(currentOrganization.id, currentWorkspace.id);
-        navigate('/app', { replace: true });
-      } catch (err) {
-        alert('Failed to delete project: ' + err.message);
-      }
+    try {
+      await deleteProject(currentOrganization.id, currentWorkspace.id);
+      navigate('/app', { replace: true });
+    } catch (err) {
+      alert('Failed to delete project: ' + err.message);
     }
   };
 
@@ -207,13 +210,65 @@ export function SettingsView() {
               Permanently delete Sentry Observability Hub telemetry configurations, database integrations, and logs. This action is irreversible.
             </p>
             <div style={{ marginTop: "4px" }}>
-              <button onClick={handleDelete} className="settings-btn-danger">
+              <button
+                onClick={() => {
+                  setDeleteConfirmOpen(true);
+                  setDeleteInputText('');
+                }}
+                className="settings-btn-danger"
+              >
                 Delete Project
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {deleteConfirmOpen && currentWorkspace && (
+        <div className="overlay-backdrop" onClick={() => setDeleteConfirmOpen(false)}>
+          <div className="overlay-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="overlay-close-btn" onClick={() => setDeleteConfirmOpen(false)}>
+              <X size={16} />
+            </button>
+            <div className="overlay-header">
+              <h3 className="overlay-title">Are you sure?</h3>
+              <p className="overlay-description" style={{ color: '#ef4444', fontWeight: 500 }}>
+                This action is permanent and cannot be undone. All database integrations, Sentry Observability Hub telemetry configurations, and logs for this project will be permanently deleted.
+              </p>
+            </div>
+            <div className="overlay-body">
+              <div className="overlay-form-group">
+                <label className="overlay-form-label" style={{ color: '#8e918f', marginBottom: '8px' }}>
+                  Please type <strong style={{ color: '#ffffff' }}>{currentWorkspace.name}</strong> to confirm:
+                </label>
+                <input
+                  type="text"
+                  className="overlay-input"
+                  value={deleteInputText}
+                  onChange={(e) => setDeleteInputText(e.target.value)}
+                  placeholder="Type project name"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="overlay-footer">
+              <button className="overlay-cancel-btn" onClick={() => setDeleteConfirmOpen(false)}>
+                Cancel
+              </button>
+              <button
+                className="overlay-delete-btn"
+                disabled={deleteInputText !== currentWorkspace.name}
+                onClick={() => {
+                  handleDelete();
+                  setDeleteConfirmOpen(false);
+                }}
+              >
+                Delete Project
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ViewFrame>
   );
 }

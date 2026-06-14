@@ -274,5 +274,55 @@
       "description": "Deployments, commits, pull requests, and repository health.",
       "flow": "source"
     }
+  ],
+  "featuredDestinations": [
+    {
+      "name": "Slack",
+      "connectorName": "Slack",
+      "description": "Push alerts, summaries, and anomaly digests into team channels.",
+      "flow": "destination"
+    },
+    {
+      "name": "Salesforce",
+      "connectorName": "Salesforce",
+      "description": "Push health signals and segments back into sales workflows.",
+      "flow": "destination"
+    },
+    {
+      "name": "Klaviyo",
+      "connectorName": "Klaviyo",
+      "description": "Send audiences and event triggers into lifecycle campaigns.",
+      "flow": "destination"
+    },
+    {
+      "name": "HubSpot",
+      "connectorName": "HubSpot",
+      "description": "Send audiences and contact lists to HubSpot CRM.",
+      "flow": "destination"
+    },
+    {
+      "name": "Meta Ads",
+      "connectorName": "Meta Ads",
+      "description": "Sync custom audiences and conversion events to Facebook.",
+      "flow": "destination"
+    },
+    {
+      "name": "Discord",
+      "connectorName": "Discord",
+      "description": "Post notifications and channel updates for key alerts.",
+      "flow": "destination"
+    },
+    {
+      "name": "Email",
+      "connectorName": "Email",
+      "description": "Send scheduled digests, alerts, and reports via SMTP.",
+      "flow": "destination"
+    },
+    {
+      "name": "TikTok Ads",
+      "connectorName": "TikTok Ads",
+      "description": "Sync audiences and conversions for ad campaigns.",
+      "flow": "destination"
+    }
   ]
 }

@@ -11,10 +11,15 @@ import connectorsData from '@/data/connectors.json';
 import '@/styles/integrations.css';
 
 const EMPTY_CATALOG = {
+  connectedSources: [],
   connectedDestinations: [],
+  sourceCategories: [],
   destinationCategories: [],
+  featuredIntegrations: [],
   featuredDestinations: [],
 };
+
+const authOptions = ['OAuth', 'API Key', 'Service Account', 'Database Credentials', 'Webhook Token'];
 
 function slugify(value) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -48,164 +53,361 @@ function buildConnectorOptions(categories, flow) {
   );
 }
 
+function buildConnectionRecord(formState, selectedConnector) {
+  const displayName = formState.displayName.trim() || selectedConnector.name;
+  const scope = formState.scope.trim();
+  const note = formState.notes.trim();
+
+  return {
+    id: `${selectedConnector.flow}-${slugify(displayName)}-${Date.now()}`,
+    name: displayName,
+    type: selectedConnector.categoryTitle,
+    status: 'connected',
+    lastSync: 'just now',
+    note:
+      note ||
+      `${selectedConnector.name} connected via ${formState.authMethod}${scope ? ` for ${scope}` : ''}.`,
+    authMethod: formState.authMethod,
+    scope,
+    connectorName: selectedConnector.name,
+  };
+}
+
 export function DestinationsView() {
   const {
     currentOrganization,
     currentWorkspace,
-    integrationsData,
-    fetchIntegrationCatalog,
-    catalog,
-    deployConnector,
-    deleteConnector,
-    isLoading,
     devMode,
     demoMode,
+    integrationsData,
+    fetchIntegrations,
+    fetchIntegrationCatalog,
+    createIntegration,
+    deleteIntegration,
   } = useAppStore();
-
   const isMockMode = devMode || demoMode;
 
-  const [connectedDestinations, setConnectedDestinations] = useState([]);
+  const [catalog, setCatalog] = useState(() => (isMockMode ? connectorsData : EMPTY_CATALOG));
+  const [connectedSources, setConnectedSources] = useState(
+    () => (isMockMode ? connectorsData.connectedSources : [])
+  );
+  const [connectedDestinations, setConnectedDestinations] = useState(
+    () => (isMockMode ? connectorsData.connectedDestinations : [])
+  );
   const [detailOpen, setDetailOpen] = useState(false);
-  const [detailItem, setDetailItem] = useState(null);
+  const [flowType, setFlowType] = useState('destination');
 
-  // Fetch catalog on mount
+  // Fetch integrations from API on mount, fall back to defaults
   useEffect(() => {
     if (!isMockMode && currentOrganization?.id && currentWorkspace?.id) {
-      fetchIntegrationCatalog(currentOrganization.id, currentWorkspace.id);
+      fetchIntegrations(currentOrganization.id, currentWorkspace.id);
     }
+  }, [currentOrganization?.id, currentWorkspace?.id, isMockMode, fetchIntegrations]);
+
+  useEffect(() => {
+    if (isMockMode) {
+      Promise.resolve().then(() => {
+        setCatalog(connectorsData);
+        setConnectedSources(connectorsData.connectedSources);
+        setConnectedDestinations(connectorsData.connectedDestinations);
+      });
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadCatalog() {
+      if (!currentOrganization?.id || !currentWorkspace?.id) {
+        return;
+      }
+
+      try {
+        const nextCatalog = await fetchIntegrationCatalog(currentOrganization.id, currentWorkspace.id);
+        if (!cancelled && nextCatalog) {
+          setCatalog(nextCatalog);
+        }
+      } catch {
+        if (!cancelled) {
+          setCatalog(EMPTY_CATALOG);
+        }
+      }
+    }
+
+    loadCatalog();
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentOrganization?.id, currentWorkspace?.id, isMockMode, fetchIntegrationCatalog]);
 
   // Sync local state from store
   useEffect(() => {
-    if (isMockMode) return;
+    if (isMockMode) {
+      return;
+    }
+
     if (integrationsData && integrationsData.length > 0) {
+      const sources = integrationsData
+        .filter((i) => i.flow === 'source' || !i.flow)
+        .map(mapApiIntegrationToUI);
       const destinations = integrationsData
         .filter((i) => i.flow === 'destination')
         .map(mapApiIntegrationToUI);
-      if (destinations.length > 0) setConnectedDestinations(destinations);
+      Promise.resolve().then(() => {
+        if (sources.length > 0) setConnectedSources(sources);
+        if (destinations.length > 0) setConnectedDestinations(destinations);
+      });
     }
   }, [integrationsData, isMockMode]);
 
   const effectiveCatalog = isMockMode ? connectorsData : catalog;
-  const effectiveConnectedDestinations = isMockMode
-    ? connectorsData.connectedDestinations || []
-    : connectedDestinations;
+  const effectiveConnectedSources = isMockMode ? connectorsData.connectedSources : connectedSources;
+  const effectiveConnectedDestinations = isMockMode ? connectorsData.connectedDestinations : connectedDestinations;
 
+  const sourceCategoriesData = effectiveCatalog?.sourceCategories || EMPTY_CATALOG.sourceCategories;
   const destinationCategoriesData = effectiveCatalog?.destinationCategories || EMPTY_CATALOG.destinationCategories;
-  const featuredDestinations = effectiveCatalog?.featuredDestinations || [];
+  const featuredDestinations = effectiveCatalog?.featuredDestinations || EMPTY_CATALOG.featuredDestinations;
   const hasFeaturedDestinations = featuredDestinations.length > 0;
 
+  const sourceOptions = useMemo(
+    () => buildConnectorOptions(sourceCategoriesData, 'source'),
+    [sourceCategoriesData]
+  );
   const destinationOptions = useMemo(
     () => buildConnectorOptions(destinationCategoriesData, 'destination'),
     [destinationCategoriesData]
   );
 
-  const getConnection = (connectorName) => {
-    const match = effectiveConnectedDestinations.find(
-      (d) => d.connectorName === connectorName || d.name === connectorName
-    );
-    return match
-      ? { isConnected: true, flow: 'destination', id: match.id }
-      : { isConnected: false, flow: 'destination', id: null };
+  const [selectedConnectorId, setSelectedConnectorId] = useState('');
+
+  useEffect(() => {
+    if (destinationOptions.length > 0 && !selectedConnectorId) {
+      setSelectedConnectorId(destinationOptions[0].id);
+    }
+  }, [destinationOptions, selectedConnectorId]);
+
+  const [formState, setFormState] = useState({
+    displayName: '',
+    scope: '',
+    authMethod: authOptions[0],
+    credentials: '',
+    notes: '',
+  });
+
+  const connectorOptions = flowType === 'source' ? sourceOptions : destinationOptions;
+  const selectedConnector =
+    connectorOptions.find((connector) => connector.id === selectedConnectorId) ??
+    connectorOptions[0] ??
+    null;
+  const connectorSelectOptions = connectorOptions.map((connector) => ({
+    value: connector.id,
+    label: connector.name,
+    hint: connector.categoryTitle,
+  }));
+  const authSelectOptions = authOptions.map((option) => ({
+    value: option,
+    label: option,
+  }));
+
+  const setModalFlowType = (flow, connectorName = '') => {
+    const options = flow === 'source' ? sourceOptions : destinationOptions;
+    const matchedConnector =
+      options.find((item) => item.name === connectorName) ?? options[0] ?? null;
+
+    setFlowType(flow);
+    setSelectedConnectorId(matchedConnector?.id ?? '');
+    setFormState({
+      displayName: matchedConnector?.name ?? '',
+      scope: '',
+      authMethod: authOptions[0],
+      credentials: '',
+      notes: '',
+    });
   };
 
-  const openSheet = (connectorName) => {
-    setDetailItem({ connectorName, flow: 'destination' });
+  const openSheet = (flow, connectorName = '') => {
+    setModalFlowType(flow, connectorName);
     setDetailOpen(true);
   };
 
-  const handleRemoveConnection = (flow, id) => {
-    if (!currentOrganization || !currentWorkspace || !id) return;
-    deleteConnector(currentOrganization.id, currentWorkspace.id, id);
-    setConnectedDestinations((prev) => prev.filter((d) => d.id !== id));
+  const handleFormChange = (field, value) => {
+    setFormState((current) => ({
+      ...current,
+      [field]: value,
+    }));
   };
 
-  if (detailOpen && detailItem) {
-    return (
-      <IntegrationConnectionPage
-        connectorName={detailItem.connectorName}
-        flow="destination"
-        onBack={() => setDetailOpen(false)}
-      />
+  const handleConnectorChange = (value) => {
+    const connector = connectorOptions.find((item) => item.id === value);
+    setSelectedConnectorId(value);
+    if (connector) {
+      setFormState((current) => ({
+        ...current,
+        displayName: current.displayName === '' ? connector.name : current.displayName,
+      }));
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!selectedConnector) {
+      return;
+    }
+
+    const record = buildConnectionRecord(formState, selectedConnector);
+
+    // Add to local state immediately for responsive UI
+    if (flowType === 'source') {
+      setConnectedSources((current) => [record, ...current]);
+    } else {
+      setConnectedDestinations((current) => [record, ...current]);
+    }
+
+    // Persist to backend
+    if (currentOrganization?.id && currentWorkspace?.id) {
+      try {
+        await createIntegration(currentOrganization.id, currentWorkspace.id, {
+          name: record.name,
+          flow: flowType,
+          type: record.type,
+          connectorName: record.connectorName,
+          authMethod: record.authMethod,
+          scope: record.scope,
+          note: record.note,
+        });
+      } catch (err) {
+        alert('Failed to save integration: ' + err.message);
+      }
+    }
+
+    setDetailOpen(false);
+  };
+
+  const handleRemoveConnection = async (flow, id) => {
+    if (flow === 'source') {
+      setConnectedSources((current) => current.filter((item) => item.id !== id));
+    } else {
+      setConnectedDestinations((current) => current.filter((item) => item.id !== id));
+    }
+
+    if (currentOrganization?.id && currentWorkspace?.id) {
+      try {
+        await deleteIntegration(currentOrganization.id, currentWorkspace.id, id);
+      } catch (err) {
+        alert('Failed to remove integration: ' + err.message);
+      }
+    }
+  };
+
+  const getConnection = (connectorName) => {
+    const source = effectiveConnectedSources.find(
+      (c) => c.connectorName?.toLowerCase() === connectorName.toLowerCase()
     );
-  }
+    if (source) return { isConnected: true, flow: 'source', id: source.id, record: source };
+
+    const dest = effectiveConnectedDestinations.find(
+      (c) => c.connectorName?.toLowerCase() === connectorName.toLowerCase()
+    );
+    if (dest) return { isConnected: true, flow: 'destination', id: dest.id, record: dest };
+
+    return { isConnected: false };
+  };
 
   return (
-    <ViewFrame
-      title="Destinations"
-      description="Manage data destinations — where your processed data is sent."
-      maxWidthClassName="max-w-6xl"
-    >
-      <div className="integrations-wrapper">
-        <div className="integrations-section-head">
-          <h3 className="available-integrations-title">Available Destinations</h3>
-        </div>
-
-        {hasFeaturedDestinations ? (
-          <div className="integrations-grid">
-            {featuredDestinations.map((integration) => {
-              const { isConnected, flow, id } = getConnection(integration.connectorName);
-              const openDetail = () => openSheet(integration.name);
-
-              return (
-                <div
-                  key={integration.name}
-                  className="integration-item"
-                  role="button"
-                  tabIndex={0}
-                  onClick={openDetail}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault();
-                      openDetail();
-                    }
-                  }}
-                >
-                  <div className="integration-icon-container is-empty" />
-
-                  <div className="integration-info">
-                    <span className="integration-name">{integration.name}</span>
-                    <span className="integration-description">{integration.description}</span>
-                  </div>
-
-                  <div className="integration-action-cell">
-                    {isConnected ? (
-                      <button
-                        className="integration-connected-btn"
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleRemoveConnection(flow, id);
-                        }}
-                        title="Disconnect"
-                      >
-                        <Check size={16} className="check-icon" />
-                        <Trash2 size={14} className="trash-icon" />
-                      </button>
-                    ) : (
-                      <button
-                        className="integration-plus-btn"
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          openDetail();
-                        }}
-                        title="Open"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+    <>
+      <ViewFrame
+        title={detailOpen ? null : "Destinations"}
+        description={detailOpen ? null : "Manage data destinations — where your processed data is sent."}
+        maxWidthClassName="max-w-3xl"
+      >
+        {detailOpen ? (
+          <IntegrationConnectionPage
+            flowType={flowType}
+            onFlowTypeChange={setModalFlowType}
+            connectorSelectOptions={connectorSelectOptions}
+            selectedConnectorId={selectedConnectorId}
+            onConnectorChange={handleConnectorChange}
+            authSelectOptions={authSelectOptions}
+            formState={formState}
+            onFormChange={handleFormChange}
+            onSubmit={handleSubmit}
+            onBack={() => setDetailOpen(false)}
+            selectedConnector={selectedConnector}
+          />
         ) : (
-          <p className="integration-empty-copy">
-            No featured destinations are configured yet.
-          </p>
+          <div className="integrations-wrapper">
+            <div className="integrations-section-head">
+              <h3 className="available-integrations-title">Featured</h3>
+            </div>
+
+            {hasFeaturedDestinations ? (
+              <div className="integrations-grid">
+                {featuredDestinations.map((integration) => {
+                  const { isConnected, flow, id } = getConnection(integration.connectorName);
+
+                  const openDetail = () => openSheet(integration.flow, integration.name);
+
+                  return (
+                    <div
+                      key={integration.name}
+                      className="integration-item"
+                      role="button"
+                      tabIndex={0}
+                      onClick={openDetail}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          openDetail();
+                        }
+                      }}
+                    >
+                      <div className="integration-icon-container is-empty" />
+
+                      <div className="integration-info">
+                        <span className="integration-name">{integration.name}</span>
+                        <span className="integration-description">{integration.description}</span>
+                      </div>
+
+                      <div className="integration-action-cell">
+                        {isConnected ? (
+                          <button
+                            className="integration-connected-btn"
+                            type="button"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handleRemoveConnection(flow, id);
+                              }}
+                            title="Disconnect"
+                          >
+                            <Check size={16} className="check-icon" />
+                            <Trash2 size={14} className="trash-icon" />
+                          </button>
+                        ) : (
+                          <button
+                            className="integration-plus-btn"
+                            type="button"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                openDetail();
+                              }}
+                            title="Open"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="integration-empty-copy">
+                No featured destinations are configured yet.
+              </p>
+            )}
+          </div>
         )}
-      </div>
-    </ViewFrame>
+      </ViewFrame>
+    </>
   );
 }

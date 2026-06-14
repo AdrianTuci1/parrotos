@@ -1,5 +1,4 @@
 import { useAppStore } from "@/stores/useAppStore";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import "@/styles/header.css";
 
 export function PublicHeader({ projectName }) {
@@ -23,7 +22,6 @@ export function PublicHeader({ projectName }) {
         </div>
 
         <div className="header-right-side">
-          <ThemeSwitcher />
         </div>
       </div>
     </header>
