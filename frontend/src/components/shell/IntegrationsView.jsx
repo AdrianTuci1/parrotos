@@ -8,6 +8,7 @@ import { IntegrationConnectionPage } from '@/components/shell/IntegrationConnect
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
 import connectorsData from '@/data/connectors.json';
+import { getConnectorImage } from '@/components/shell/IntegrationLogos';
 import '@/styles/integrations.css';
 
 const EMPTY_CATALOG = {
@@ -52,23 +53,19 @@ function buildConnectorOptions(categories, flow) {
   );
 }
 
-function buildConnectionRecord(formState, selectedConnector) {
-  const displayName = formState.displayName.trim() || selectedConnector.name;
-  const scope = formState.scope.trim();
+function buildConnectionRecord(formState, connector) {
   const note = formState.notes.trim();
 
   return {
-    id: `${selectedConnector.flow}-${slugify(displayName)}-${Date.now()}`,
-    name: displayName,
-    type: selectedConnector.categoryTitle,
+    id: `${connector.flow}-${slugify(connector.name)}-${Date.now()}`,
+    name: connector.name,
+    type: connector.categoryTitle,
     status: 'connected',
     lastSync: 'just now',
-    note:
-      note ||
-      `${selectedConnector.name} connected via ${formState.authMethod}${scope ? ` for ${scope}` : ''}.`,
+    note: note || `${connector.name} connected via ${formState.authMethod}.`,
     authMethod: formState.authMethod,
-    scope,
-    connectorName: selectedConnector.name,
+    scope: '',
+    connectorName: connector.name,
   };
 }
 
@@ -160,8 +157,8 @@ export function IntegrationsView() {
   }, [integrationsData, isMockMode]);
 
   const effectiveCatalog = isMockMode ? connectorsData : catalog;
-  const effectiveConnectedSources = isMockMode ? connectorsData.connectedSources : connectedSources;
-  const effectiveConnectedDestinations = isMockMode ? connectorsData.connectedDestinations : connectedDestinations;
+  const effectiveConnectedSources = connectedSources;
+  const effectiveConnectedDestinations = connectedDestinations;
 
   const sourceCategoriesData = effectiveCatalog?.sourceCategories || EMPTY_CATALOG.sourceCategories;
   const destinationCategoriesData = effectiveCatalog?.destinationCategories || EMPTY_CATALOG.destinationCategories;
@@ -177,48 +174,30 @@ export function IntegrationsView() {
     [destinationCategoriesData]
   );
 
-  const [selectedConnectorId, setSelectedConnectorId] = useState(sourceOptions[0]?.id ?? '');
+  const connectorOptions = flowType === 'source' ? sourceOptions : destinationOptions;
+  const [selectedConnector, setSelectedConnector] = useState(null);
   const [formState, setFormState] = useState({
-    displayName: '',
-    scope: '',
     authMethod: authOptions[0],
     credentials: '',
     notes: '',
   });
 
-  const connectorOptions = flowType === 'source' ? sourceOptions : destinationOptions;
-  const selectedConnector =
-    connectorOptions.find((connector) => connector.id === selectedConnectorId) ??
-    connectorOptions[0] ??
-    null;
-  const connectorSelectOptions = connectorOptions.map((connector) => ({
-    value: connector.id,
-    label: connector.name,
-    hint: connector.categoryTitle,
-  }));
   const authSelectOptions = authOptions.map((option) => ({
     value: option,
     label: option,
   }));
 
-  const setModalFlowType = (flow, connectorName = '') => {
+  const openSheet = (flow, connectorName = '') => {
     const options = flow === 'source' ? sourceOptions : destinationOptions;
-    const matchedConnector =
-      options.find((item) => item.name === connectorName) ?? options[0] ?? null;
+    const matched = options.find((item) => item.name === connectorName) ?? options[0] ?? null;
 
     setFlowType(flow);
-    setSelectedConnectorId(matchedConnector?.id ?? '');
+    setSelectedConnector(matched);
     setFormState({
-      displayName: matchedConnector?.name ?? '',
-      scope: '',
       authMethod: authOptions[0],
       credentials: '',
       notes: '',
     });
-  };
-
-  const openSheet = (flow, connectorName = '') => {
-    setModalFlowType(flow, connectorName);
     setDetailOpen(true);
   };
 
@@ -227,17 +206,6 @@ export function IntegrationsView() {
       ...current,
       [field]: value,
     }));
-  };
-
-  const handleConnectorChange = (value) => {
-    const connector = connectorOptions.find((item) => item.id === value);
-    setSelectedConnectorId(value);
-    if (connector) {
-      setFormState((current) => ({
-        ...current,
-        displayName: current.displayName === '' ? connector.name : current.displayName,
-      }));
-    }
   };
 
   const handleSubmit = async (event) => {
@@ -292,17 +260,29 @@ export function IntegrationsView() {
   };
 
   const getConnection = (connectorName) => {
+    const key = connectorName.toLowerCase();
     const source = effectiveConnectedSources.find(
-      (c) => c.connectorName?.toLowerCase() === connectorName.toLowerCase()
+      (c) => (c.connectorName || c.name)?.toLowerCase() === key
     );
     if (source) return { isConnected: true, flow: 'source', id: source.id, record: source };
 
     const dest = effectiveConnectedDestinations.find(
-      (c) => c.connectorName?.toLowerCase() === connectorName.toLowerCase()
+      (c) => (c.connectorName || c.name)?.toLowerCase() === key
     );
     if (dest) return { isConnected: true, flow: 'destination', id: dest.id, record: dest };
 
     return { isConnected: false };
+  };
+
+  const connectionMeta = useMemo(() => {
+    if (!selectedConnector) return { isConnected: false, flow: null, id: null };
+    return getConnection(selectedConnector.name);
+  }, [selectedConnector, effectiveConnectedSources, effectiveConnectedDestinations]);
+
+  const handleDisconnect = () => {
+    if (connectionMeta.isConnected) {
+      handleRemoveConnection(connectionMeta.flow, connectionMeta.id);
+    }
   };
 
   return (
@@ -315,16 +295,14 @@ export function IntegrationsView() {
         {detailOpen ? (
           <IntegrationConnectionPage
             flowType={flowType}
-            onFlowTypeChange={setModalFlowType}
-            connectorSelectOptions={connectorSelectOptions}
-            selectedConnectorId={selectedConnectorId}
-            onConnectorChange={handleConnectorChange}
+            isConnected={connectionMeta.isConnected}
+            selectedConnector={selectedConnector}
             authSelectOptions={authSelectOptions}
             formState={formState}
             onFormChange={handleFormChange}
             onSubmit={handleSubmit}
+            onDisconnect={connectionMeta.isConnected ? handleDisconnect : null}
             onBack={() => setDetailOpen(false)}
-            selectedConnector={selectedConnector}
           />
         ) : (
           <div className="integrations-wrapper">
@@ -352,42 +330,51 @@ export function IntegrationsView() {
                           openDetail();
                         }
                       }}
-                    >
-                      <div className="integration-icon-container is-empty" />
+                  >
+                    {(() => {
+                      const imgSrc = getConnectorImage(integration.name);
+                      return imgSrc ? (
+                        <div className="integration-icon-container">
+                          <img src={imgSrc} alt={integration.name} className="integration-icon-img" />
+                        </div>
+                      ) : (
+                        <div className="integration-icon-container is-empty" />
+                      );
+                    })()}
 
-                      <div className="integration-info">
-                        <span className="integration-name">{integration.name}</span>
-                        <span className="integration-description">{integration.description}</span>
-                      </div>
+                    <div className="integration-info">
+                      <span className="integration-name">{integration.name}</span>
+                      <span className="integration-description">{integration.description}</span>
+                    </div>
 
-                      <div className="integration-action-cell">
-                        {isConnected ? (
-                          <button
-                            className="integration-connected-btn"
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleRemoveConnection(flow, id);
-                            }}
-                            title="Disconnect"
-                          >
-                            <Check size={16} className="check-icon" />
-                            <Trash2 size={14} className="trash-icon" />
-                          </button>
-                        ) : (
-                          <button
-                            className="integration-plus-btn"
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              openDetail();
-                            }}
-                            title="Open"
-                          >
-                            <Plus size={16} />
-                          </button>
-                        )}
-                      </div>
+                    <div className="integration-action-cell">
+                      {isConnected ? (
+                        <button
+                          className="integration-connected-btn"
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleRemoveConnection(flow, id);
+                          }}
+                          title="Disconnect"
+                        >
+                          <Check size={16} className="check-icon" />
+                          <Trash2 size={14} className="trash-icon" />
+                        </button>
+                      ) : (
+                        <button
+                          className="integration-plus-btn"
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openDetail();
+                          }}
+                          title="Open"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      )}
+                    </div>
                     </div>
                   );
                 })}

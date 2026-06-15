@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Check, ChevronsUpDown } from 'lucide-react';
+import { ArrowLeft, Check, ChevronsUpDown, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { getIntegrationLogo } from '@/components/shell/IntegrationLogos';
+import { getConnectorImage } from '@/components/shell/IntegrationLogos';
 
 function ModalSelect({ label, value, options, onChange }) {
   const [open, setOpen] = useState(false);
@@ -79,107 +78,58 @@ function ModalSelect({ label, value, options, onChange }) {
 
 export function IntegrationConnectionPage({
   flowType,
-  onFlowTypeChange,
-  connectorSelectOptions,
-  selectedConnectorId,
-  onConnectorChange,
+  isConnected,
   authSelectOptions,
   formState,
   onFormChange,
   onSubmit,
+  onDisconnect,
   onBack,
   selectedConnector,
 }) {
-  const integrationLogo = getIntegrationLogo(selectedConnector?.name);
   const integrationLabel = selectedConnector?.name ?? 'Integration';
+  const connectorImg = getConnectorImage(selectedConnector?.name);
 
   return (
     <div className="integration-connection-page">
-      <div className="integration-connection-toolbar">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="integration-back-btn"
-          onClick={onBack}
-        >
-          <ArrowLeft size={14} />
-          Back
-        </Button>
-
-        <div className="integration-connection-identity">
-          <div
-            className="integration-connection-logo"
-            style={integrationLogo?.bg ? { backgroundColor: integrationLogo.bg } : undefined}
+      <div className="integration-connection-layout">
+        <aside className="integration-connection-sidebar">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="integration-back-btn"
+            onClick={onBack}
           >
-            {integrationLogo?.svg ?? (
-              <span className="integration-connection-logo-fallback">
-                {integrationLabel.slice(0, 1)}
-              </span>
-            )}
-          </div>
-          <div className="integration-connection-identity-copy">
-            <span className="integration-connection-source-name">{integrationLabel}</span>
-            <span className="integration-connection-source-subtitle">
-              {flowType === 'source' ? 'Source' : 'Destination'}
-            </span>
-          </div>
-        </div>
-      </div>
+            <ArrowLeft size={14} />
+            Back
+          </Button>
+        </aside>
 
-      <div className="integration-connection-card">
-        <form className="integration-sheet-form" onSubmit={onSubmit}>
-          <div className="integration-form-grid">
-            <div className="integration-field">
-              <span className="integration-field-label">Connection type</span>
-              <div className="integration-toggle-group">
-                <button
-                  className={`integration-toggle-btn ${flowType === 'source' ? 'is-active' : ''}`}
-                  type="button"
-                  onClick={() => onFlowTypeChange('source')}
-                >
-                  Source
-                </button>
-                <button
-                  className={`integration-toggle-btn ${flowType === 'destination' ? 'is-active' : ''
-                    }`}
-                  type="button"
-                  onClick={() => onFlowTypeChange('destination')}
-                >
-                  Destination
-                </button>
+        <div className="integration-connection-main">
+          <div className="integration-connection-toolbar">
+            <div className="integration-connection-identity">
+              <div className="integration-connection-logo">
+                {connectorImg ? (
+                  <img src={connectorImg} alt={integrationLabel} className="integration-icon-img" />
+                ) : (
+                  <span className="integration-connection-logo-fallback">
+                    {integrationLabel.slice(0, 1)}
+                  </span>
+                )}
+              </div>
+              <div className="integration-connection-identity-copy">
+                <span className="integration-connection-source-name">{integrationLabel}</span>
+                <span className="integration-connection-source-subtitle">
+                  {flowType === 'source' ? 'Source' : 'Destination'}
+                </span>
               </div>
             </div>
+          </div>
 
-            <ModalSelect
-              label="Connector"
-              value={selectedConnectorId}
-              options={connectorSelectOptions}
-              onChange={onConnectorChange}
-            />
-
-            <label className="integration-field">
-              <span className="integration-field-label">Connection name</span>
-              <Input
-                className="integration-input"
-                value={formState.displayName}
-                onChange={(event) => onFormChange('displayName', event.target.value)}
-                placeholder={selectedConnector?.name ?? 'Stripe Production'}
-              />
-            </label>
-
-            <label className="integration-field">
-              <span className="integration-field-label">
-                {flowType === 'source' ? 'Workspace / account' : 'Target workspace'}
-              </span>
-              <Input
-                className="integration-input"
-                value={formState.scope}
-                onChange={(event) => onFormChange('scope', event.target.value)}
-                placeholder={flowType === 'source' ? 'prod-store-eu' : '#revenue-alerts'}
-              />
-            </label>
-
+          <div className="integration-connection-card">
+        <form className="integration-sheet-form" onSubmit={onSubmit}>
+          <div className="integration-form-grid">
             <ModalSelect
               label="Auth method"
               value={formState.authMethod}
@@ -209,11 +159,24 @@ export function IntegrationConnectionPage({
           </div>
 
           <div className="integration-sheet-footer">
+            {isConnected && onDisconnect ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="integration-modal-secondary-btn"
+                onClick={() => { onDisconnect(); onBack(); }}
+              >
+                <Trash2 size={14} />
+                Disconnect
+              </Button>
+            ) : null}
             <Button type="submit" className="integration-modal-primary-btn">
-              Connect
+              {isConnected ? 'Update' : 'Connect'}
             </Button>
           </div>
         </form>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ export function OrganizationHomeView() {
             <span className="organization-home-kicker">Account home</span>
             <h1 className="organization-home-title">Overview</h1>
             <p className="organization-home-copy">
-              Account-wide metrics across all organizations, projects, and connectors.
+              Account-wide metrics across all workspaces, projects, and connectors.
             </p>
           </div>
         </div>
@@ -100,7 +100,7 @@ export function OrganizationHomeView() {
               ) : (
                 <>
                   <AccountTile
-                    label="Organizations"
+                    label="Workspaces"
                     value={String(totalOrgs)}
                     detail={`${organizations.filter((o) => o.plan !== 'Starter').length} on paid plans`}
                     trend="+1 this quarter"
@@ -172,7 +172,7 @@ export function OrganizationHomeView() {
                   <AccountTile
                     label="Data sources"
                     value={String(uniqueConnectors * 2 + 3)}
-                    detail="Connected across all orgs"
+                    detail="Connected across all workspaces"
                     trend="+7.3%"
                   />
                 </>
@@ -180,17 +180,17 @@ export function OrganizationHomeView() {
             </div>
           </section>
 
-          <section className="organization-card" style={{ gridColumn: 'span 2' }}>
+          <section className="organization-card organization-card-wide">
             <div className="organization-card-header">
               <div className="organization-panel-title-row">
                 <Building2 size={18} />
-                <span>Organizations</span>
+                <span>Workspaces</span>
               </div>
             </div>
             <div className="organization-project-list">
               {loading && orgsList.length === 0 ? (
                 <div className="organization-project-row" style={{ opacity: 0.5 }}>
-                  <span>Loading organizations...</span>
+                  <span>Loading workspaces...</span>
                 </div>
               ) : (
                 orgsList.map((org) => (

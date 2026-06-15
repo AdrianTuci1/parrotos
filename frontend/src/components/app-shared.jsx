@@ -5,14 +5,14 @@ export const organizationNavigationGroups = [
     id: 'account-general',
     label: 'Account',
     items: [
-      { id: 'home', title: 'Home', icon: 'layout-dashboard' },
-      { id: 'organizations', title: 'Organizations', icon: 'briefcase' },
+      { id: 'home', title: 'Home', icon: 'house' },
+      { id: 'organizations', title: 'Workspace', icon: 'briefcase' },
       { id: 'billing', title: 'Billing', icon: 'credit-card' },
     ],
   },
   {
     id: 'organization-management',
-    label: 'Organization',
+    label: 'Workspace',
     items: [
       { id: 'stats', title: 'Stats', icon: 'bar-chart-3' },
       { id: 'access', title: 'Access Management', icon: 'users' },

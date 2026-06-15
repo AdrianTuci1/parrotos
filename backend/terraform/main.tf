@@ -100,11 +100,6 @@ resource "google_project_iam_member" "backend_bigquery_job" {
   member  = "serviceAccount:${google_service_account.sentry_backend.email}"
 }
 
-resource "google_project_iam_member" "backend_iam" {
-  project = var.gcp_project_id
-  role    = "roles/iam.serviceAccountTokenCreator"
-  member  = "serviceAccount:${google_service_account.sentry_backend.email}"
-}
 
 # Service Account for Modal agents
 resource "google_service_account" "sentry_agents" {
@@ -131,79 +126,6 @@ resource "google_project_iam_member" "agent_bigquery_job" {
   member  = "serviceAccount:${google_service_account.sentry_agents.email}"
 }
 
-# Cloud Run service for backend
-resource "google_cloud_run_service" "sentry_backend" {
-  name     = "sentry-backend"
-  location = var.gcp_region
-
-  template {
-    spec {
-      service_account_name = google_service_account.sentry_backend.email
-      
-      containers {
-        image = var.backend_image
-        
-        ports {
-          container_port = 3000
-        }
-        
-        env {
-          name  = "NODE_ENV"
-          value = "production"
-        }
-        
-        env {
-          name  = "PORT"
-          value = "3000"
-        }
-        
-        env {
-          name  = "GCP_PROJECT_ID"
-          value = var.gcp_project_id
-        }
-        
-        env {
-          name  = "GCS_BUCKET_NAME"
-          value = google_storage_bucket.sentry_data.name
-        }
-        
-        env {
-          name  = "BIGQUERY_LOCATION"
-          value = var.bigquery_location
-        }
-        
-        env {
-          name = "JWT_SECRET"
-          value_from {
-            secret_key_ref {
-              name = google_secret_manager_secret.jwt_secret.secret_id
-              key  = "latest"
-            }
-          }
-        }
-        
-        resources {
-          limits = {
-            cpu    = "2"
-            memory = "1Gi"
-          }
-        }
-      }
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-}
-
-resource "google_cloud_run_service_iam_member" "backend_public" {
-  service  = google_cloud_run_service.sentry_backend.name
-  location = google_cloud_run_service.sentry_backend.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
 
 # Secret Manager for JWT secret
 resource "google_secret_manager_secret" "jwt_secret" {

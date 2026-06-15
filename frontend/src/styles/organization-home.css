@@ -15,6 +15,10 @@
   gap: 20px;
 }
 
+.organization-card-wide {
+  grid-column: span 2;
+}
+
 .organization-home-kicker {
   display: inline-block;
   font-size: 13px;
@@ -230,11 +234,58 @@
   .organization-home-grid {
     grid-template-columns: 1fr;
   }
+
+  .organization-card-wide {
+    grid-column: span 1;
+  }
 }
 
 @media (max-width: 720px) {
+  .organization-home-frame {
+    padding-top: 10px;
+  }
+
+  .organization-home-shell {
+    gap: 16px;
+  }
+
+  .organization-home-hero {
+    gap: 12px;
+  }
+
+  .organization-home-title {
+    font-size: clamp(1.7rem, 9vw, 2.35rem);
+    line-height: 1.04;
+  }
+
+  .organization-home-copy {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .organization-home-grid {
+    gap: 14px;
+  }
+
   .organization-panel-split {
     grid-template-columns: 1fr;
+  }
+
+  .organization-panel-header,
+  .organization-card-header,
+  .organization-metric-tile,
+  .organization-project-row,
+  .organization-activity-item,
+  .organization-connector-row {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .organization-panel-header,
+  .organization-card-header {
+    padding-top: 14px;
+    padding-bottom: 12px;
   }
 
   .organization-metric-tile + .organization-metric-tile {
@@ -242,15 +293,28 @@
     border-top: 1px solid #25282c;
   }
 
+  .organization-metric-value-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .organization-metric-value {
+    font-size: 1.7rem;
+  }
+
   .organization-connector-row {
     grid-template-columns: 1fr;
   }
 
-  .organization-project-row {
+  .organization-project-row,
+  .organization-activity-item {
     flex-direction: column;
+    gap: 10px;
   }
 
   .organization-project-meta {
     align-items: flex-start;
+    white-space: normal;
   }
 }

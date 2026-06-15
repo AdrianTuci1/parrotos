@@ -4,6 +4,7 @@ import { ViewFrame } from "@/components/shell/ViewFrame";
 import { MarketingView } from "@/components/shell/MarketingView";
 import { SalesView } from "@/components/shell/SalesView";
 import { FinancialView } from "@/components/shell/FinancialView";
+import { ProjectEmptyState, isProjectEmpty } from "@/components/shell/ProjectEmptyState";
 
 const viewLayouts = {
   servers: "server-monitor",
@@ -14,7 +15,16 @@ const viewLayouts = {
 };
 
 export function AnalyticsView() {
-  const { activeAnalyticsView } = useAppStore();
+  const { activeAnalyticsView, currentWorkspace } = useAppStore();
+
+  if (isProjectEmpty(currentWorkspace)) {
+    return (
+      <ViewFrame>
+        <ProjectEmptyState mode="analytics" />
+      </ViewFrame>
+    );
+  }
+
   const layoutId = viewLayouts[activeAnalyticsView] || "server-monitor";
 
   return (

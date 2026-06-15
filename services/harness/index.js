@@ -27,6 +27,64 @@ function requireInternalToken(req, res, next) {
 
 app.use(requireInternalToken);
 
+// ═══════════════════════════════════════════════════
+// GENERATION STATE (in-memory progress tracking)
+// ═══════════════════════════════════════════════════
+
+const STARTED_AT = new Date().toISOString();
+const generationState = {
+  currentJob: null,   // { orgId, projectId, stage, startedAt, tablesDiscovered, tablesTotal, _token }
+  lastJob: null,      // { orgId, projectId, completedAt, durationMs, tablesProcessed, viewsUpdated, success, error }
+  pendingTrigger: null, // { orgId, projectId, queuedAt } — another request arrived while busy
+  uptime: () => Math.floor((Date.now() - new Date(STARTED_AT).getTime()) / 1000),
+};
+
+function setGenerationStage(stage, meta = {}) {
+  if (!generationState.currentJob) return;
+  generationState.currentJob.stage = stage;
+  if (meta.tablesDiscovered !== undefined) generationState.currentJob.tablesDiscovered = meta.tablesDiscovered;
+  if (meta.tablesTotal !== undefined) generationState.currentJob.tablesTotal = meta.tablesTotal;
+}
+
+function tryStartJob(orgId, projectId, forceFull) {
+  if (generationState.currentJob) {
+    // Already running — queue the new request as pending
+    generationState.pendingTrigger = { orgId, projectId, queuedAt: new Date().toISOString() };
+    return null; // caller must return 409
+  }
+  const token = Math.random().toString(36).slice(2);
+  generationState.pendingTrigger = null;
+  generationState.currentJob = {
+    orgId,
+    projectId,
+    forceFull: Boolean(forceFull),
+    stage: 'discovering',
+    startedAt: new Date().toISOString(),
+    tablesDiscovered: 0,
+    tablesTotal: 0,
+    _token: token,
+  };
+  return token;
+}
+
+function finishJob(token, success, result = null, error = null) {
+  if (!generationState.currentJob) return;
+  // Only finish if this token matches the current job (prevents stale finishes)
+  if (token !== null && generationState.currentJob._token !== token) return;
+  const job = generationState.currentJob;
+  generationState.lastJob = {
+    orgId: job.orgId,
+    projectId: job.projectId,
+    completedAt: new Date().toISOString(),
+    durationMs: Date.now() - new Date(job.startedAt).getTime(),
+    tablesProcessed: result?.catalog?.total_tables ?? job.tablesDiscovered,
+    viewsUpdated: result?.specs ? Object.keys(result.specs).length : 0,
+    success,
+    error: error?.message || null,
+  };
+  generationState.currentJob = null;
+}
+
 function getStorage() {
   return new Storage();
 }
@@ -282,11 +340,13 @@ function applyPreferencesToBindings(bindings, preferences) {
 }
 
 async function compileProjectArtifacts({ orgId, projectId, dataset, forceFull = false, bindingPatch = null }) {
+  setGenerationStage('discovering');
   const existingBindings = forceFull ? null : await readJsonArtifact(orgId, projectId, 'view_bindings.json');
   const preferences = forceFull
     ? { version: 1, views: {}, widgets: {}, global: { autoHarness: true } }
     : await readJsonArtifact(orgId, projectId, 'project_preferences.json') || { version: 1, views: {}, widgets: {}, global: { autoHarness: true } };
   const catalog = await discoverData(dataset);
+  setGenerationStage('building-bindings', { tablesDiscovered: catalog.total_tables, tablesTotal: catalog.total_tables });
   await writeJsonArtifact(orgId, projectId, 'data_catalog.json', catalog);
   const generatedBindings = buildDefaultBindings(catalog);
 
@@ -304,6 +364,7 @@ async function compileProjectArtifacts({ orgId, projectId, dataset, forceFull = 
   }
 
   if (!existingBindings || forceFull || preferences.global?.autoHarness !== false) {
+    setGenerationStage('enhancing-with-llm');
     bindings = await enhanceBindingsWithLlm(dataset, catalog, bindings);
   }
 
@@ -313,9 +374,11 @@ async function compileProjectArtifacts({ orgId, projectId, dataset, forceFull = 
 
   bindings = applyPreferencesToBindings(bindings, preferences);
 
+  setGenerationStage('compiling-specs');
   const specs = compileDashboardSpecs(dataset, bindings);
   const mindmap = compileMindmapArtifact(catalog, bindings, specs);
 
+  setGenerationStage('writing-artifacts');
   await writeJsonArtifact(orgId, projectId, 'view_bindings.json', bindings);
   await Promise.all(VIEW_ORDER.map((viewId) => writeJsonArtifact(orgId, projectId, `dashboard_specs/${viewId}.json`, specs[viewId])));
   await writeJsonArtifact(orgId, projectId, 'mindmap_manifest.json', mindmap);
@@ -334,13 +397,25 @@ app.post('/generate', async (req, res) => {
     return res.status(400).json({ error: 'orgId, projectId, dataset required' });
   }
 
+  const token = tryStartJob(orgId, projectId, forceFull);
+  if (!token) {
+    return res.status(409).json({
+      error: 'A generation is already in progress',
+      currentJob: generationState.currentJob,
+      pendingTrigger: generationState.pendingTrigger,
+      retryAfterSeconds: 5,
+    });
+  }
+
   try {
     const artifacts = await compileProjectArtifacts({ orgId, projectId, dataset, forceFull });
+    finishJob(token, true, artifacts);
     return res.json({
       status: 'completed',
       provider: hasLlm() ? LLM_PROVIDER : 'deterministic-fallback',
       views: Object.fromEntries(VIEW_ORDER.map((viewId) => [viewId, artifacts.specs[viewId].widgets.length])),
       totalTables: artifacts.catalog.total_tables,
+      durationMs: generationState.lastJob?.durationMs || 0,
       specUrls: Object.fromEntries(VIEW_ORDER.map((viewId) => [
         viewId,
         `gs://${GCS_BUCKET}/${artifactPath(orgId, projectId, `dashboard_specs/${viewId}.json`)}`,
@@ -349,7 +424,8 @@ app.post('/generate', async (req, res) => {
     });
   } catch (error) {
     console.error('[HARNESS]', error);
-    return res.status(500).json({ error: error.message });
+    finishJob(token, false, null, error);
+    return res.status(500).json({ error: error.message, stage: generationState.lastJob?.error ? 'failed' : 'crashed' });
   }
 });
 
@@ -373,6 +449,32 @@ app.patch('/bindings', async (req, res) => {
     return res.status(400).json({ error: 'orgId, projectId, dataset, and patch.views required' });
   }
 
+  // Validate that view_ids exist in the template catalog
+  for (const viewId of Object.keys(patch.views || {})) {
+    if (!VIEW_ORDER.includes(viewId)) {
+      return res.status(400).json({ error: `Unknown view ID: "${viewId}". Available: ${VIEW_ORDER.join(', ')}` });
+    }
+    const widgets = patch.views[viewId]?.widgets;
+    if (!Array.isArray(widgets)) {
+      return res.status(400).json({ error: `view "${viewId}" must have a "widgets" array` });
+    }
+    for (const widget of widgets) {
+      if (!widget.id || typeof widget.id !== 'string') {
+        return res.status(400).json({ error: `Each widget in view "${viewId}" must have a string "id"` });
+      }
+    }
+  }
+
+  const token = tryStartJob(orgId, projectId, false);
+  if (!token) {
+    return res.status(409).json({
+      error: 'A generation is already in progress',
+      currentJob: generationState.currentJob,
+      pendingTrigger: generationState.pendingTrigger,
+      retryAfterSeconds: 5,
+    });
+  }
+
   try {
     const artifacts = await compileProjectArtifacts({
       orgId,
@@ -381,22 +483,46 @@ app.patch('/bindings', async (req, res) => {
       forceFull: false,
       bindingPatch: patch,
     });
+    finishJob(token, true, artifacts);
     return res.json({
       status: 'updated',
       bindings: artifacts.bindings,
+      durationMs: generationState.lastJob?.durationMs || 0,
       mindmapUrl: `gs://${GCS_BUCKET}/${artifactPath(orgId, projectId, 'mindmap_manifest.json')}`,
     });
   } catch (error) {
     console.error('[HARNESS]', error);
+    finishJob(token, false, null, error);
     return res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/health', (_, res) => {
+app.get('/status', (_, res) => {
   res.json({
-    status: 'ok',
+    status: generationState.currentJob ? 'generating' : 'idle',
+    uptimeSeconds: generationState.uptime(),
     provider: hasLlm() ? LLM_PROVIDER : 'deterministic-fallback',
     model: LLM_MODEL,
+    currentJob: generationState.currentJob || null,
+    lastJob: generationState.lastJob || null,
+    pendingTrigger: generationState.pendingTrigger || null,
+    locked: generationState.currentJob !== null,
+  });
+});
+
+app.get('/health', (_, res) => {
+  const busy = Boolean(generationState.currentJob);
+  res.json({
+    status: busy ? 'generating' : 'ok',
+    busy,
+    provider: hasLlm() ? LLM_PROVIDER : 'deterministic-fallback',
+    model: LLM_MODEL,
+    generation: generationState.currentJob
+      ? { stage: generationState.currentJob.stage, orgId: generationState.currentJob.orgId, projectId: generationState.currentJob.projectId }
+      : (generationState.lastJob
+        ? { lastCompleted: generationState.lastJob.completedAt, lastDurationMs: generationState.lastJob.durationMs }
+        : null),
+    uptimeSeconds: generationState.uptime(),
   });
 });
 

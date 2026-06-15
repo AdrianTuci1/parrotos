@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { OrganizationService } from '../services/OrganizationService.js';
 import { OrganizationMetricsService } from '../services/OrganizationMetricsService.js';
-import { authenticate, requireRole } from '../middleware/auth.js';
+import { authenticate, requireOrganizationOwner } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
 import { gcpService } from '../services/GcpService.js';
@@ -43,7 +43,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:orgId', async (req, res, next) => {
+router.get('/:orgId', requireOrganizationOwner, async (req, res, next) => {
   try {
     const org = await orgService.findById(req.params.orgId);
     success(res, org);
@@ -52,7 +52,7 @@ router.get('/:orgId', async (req, res, next) => {
   }
 });
 
-router.patch('/:orgId', validate(updateSchema), async (req, res, next) => {
+router.patch('/:orgId', requireOrganizationOwner, validate(updateSchema), async (req, res, next) => {
   try {
     const org = await orgService.update(req.params.orgId, req.body);
     success(res, org);
@@ -61,7 +61,7 @@ router.patch('/:orgId', validate(updateSchema), async (req, res, next) => {
   }
 });
 
-router.delete('/:orgId', requireRole('admin', 'owner'), async (req, res, next) => {
+router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
   try {
     await orgService.delete(req.params.orgId);
     success(res, { deleted: true });
@@ -88,7 +88,7 @@ router.get('/account/metrics', async (req, res, next) => {
 // ORG-LEVEL METRICS (for OrganizationStatsView)
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId/metrics', async (req, res, next) => {
+router.get('/:orgId/metrics', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const metrics = await metricsService.getOrgMetrics(orgId);

@@ -4,6 +4,9 @@ import { ThemeProvider } from 'next-themes'
 import './index.css'
 import App from './App.jsx'
 
+// Remove the static splash once React takes over
+document.getElementById('parrot-splash')?.remove()
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

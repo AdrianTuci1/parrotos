@@ -2,6 +2,7 @@ import { gcpService } from './GcpService.js';
 import { Project } from '../models/Project.js';
 import { NotFoundError, ConflictError } from '../utils/errors.js';
 import { config } from '../config/index.js';
+import { dataDeletionService } from './DataDeletionService.js';
 
 export class ProjectService {
   constructor() {
@@ -90,28 +91,7 @@ export class ProjectService {
   }
 
   async delete(orgId, projectId) {
-    await this.findById(orgId, projectId);
-    
-    // Delete BigQuery dataset
-    if (config.enableBigQueryAnalytics) {
-      try {
-        await this.gcp.deleteDataset(orgId, projectId);
-      } catch (err) {
-        // Dataset might not exist, continue
-      }
-    }
-
-    // Delete GCS prefix contents
-    try {
-      const bucket = this.gcp.getBucket();
-      const prefix = this.gcp.getProjectPrefix(orgId, projectId);
-      const [files] = await bucket.getFiles({ prefix: prefix + '/' });
-      await Promise.all(files.map(file => file.delete()));
-    } catch (err) {
-      // Continue even if GCS deletion fails
-    }
-
-    await this.getCollection(orgId).doc(projectId).delete();
+    await dataDeletionService.deleteProject(orgId, projectId);
   }
 
   async getSettings(orgId, projectId) {

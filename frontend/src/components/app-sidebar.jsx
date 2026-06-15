@@ -13,7 +13,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import {
   Plus, LayoutDashboard, BarChart3, Briefcase, Plug, Settings,
   BookOpen, Rocket, GitBranch, MessageSquare, Undo2, Users, CreditCard, Power,
-  Database, ArrowRightFromLine,
+  Database, ArrowRightFromLine, House,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -24,6 +24,7 @@ import "@/styles/sidebar.css";
 const sectionIcons = {
   "bar-chart-3": BarChart3, briefcase: Briefcase, "credit-card": CreditCard,
   "git-branch": GitBranch, "layout-dashboard": LayoutDashboard,
+  house: House,
   "message-square": MessageSquare, plug: Plug, rocket: Rocket,
   settings: Settings, users: Users, database: Database,
   "arrow-right-from-line": ArrowRightFromLine,
@@ -134,7 +135,6 @@ export function AppSidebar() {
                     <div className={cn("workspace-circle-logo", getGradient(currentWorkspace?.name))} />
                     <div className="workspace-title-wrapper group-data-[collapsible=icon]:hidden">
                       <span className="workspace-title-text">{currentWorkspace?.name}</span>
-                      <span className="workspace-subtitle-text">{currentOrganization?.name}</span>
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent side="right" align="start" sideOffset={12} className="sidebar-switcher-dropdown-content">
@@ -146,7 +146,6 @@ export function AppSidebar() {
                           <div className={cn("dropdown-workspace-circle", getGradient(ws.name))} />
                           <div className="dropdown-item-meta">
                             <span className="dropdown-workspace-name">{ws.name}</span>
-                            <span className="dropdown-workspace-plan">{ws.domain}</span>
                           </div>
                         </div>
                       </DropdownMenuItem>
@@ -170,11 +169,11 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="sidebar-content-custom">
-        {/* Back to organization (project scope only) */}
+        {/* Back to workspace (project scope only) */}
         {activeScope === "project" && (
           <div className="sidebar-back-link-wrap group-data-[collapsible=icon]:hidden">
             <button onClick={navToOrgHome} className="sidebar-back-link-btn">
-              <Undo2 size={14} /><span>Back to organization</span>
+              <Undo2 size={14} /><span>Back to workspace</span>
             </button>
           </div>
         )}
@@ -222,12 +221,11 @@ export function AppSidebar() {
                         <DropdownMenuTrigger render={<SidebarMenuButton size="lg" className="sidebar-switcher-trigger" />}>
                           <div className={cn("workspace-circle-logo", getGradient(currentOrganization?.name))} />
                           <div className="workspace-title-wrapper group-data-[collapsible=icon]:hidden">
-                            <span className="workspace-title-text">{currentOrganization?.name || "No org"}</span>
-                            <span className="workspace-subtitle-text">Your organizations</span>
+                            <span className="workspace-title-text">{currentOrganization?.name || "No workspace"}</span>
                           </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent side="right" align="start" sideOffset={12} className="sidebar-switcher-dropdown-content">
-                          <div className="dropdown-section-label">Organizations</div>
+                          <div className="dropdown-section-label">Workspaces</div>
                           {organizations.map((org) => (
                             <DropdownMenuItem key={org.id} onClick={() => navToOrg(org.id)}
                               className={cn("dropdown-item-custom", currentOrganization?.id === org.id && "selected")}>
@@ -235,27 +233,26 @@ export function AppSidebar() {
                                 <div className={cn("dropdown-workspace-circle", getGradient(org.name))} />
                                 <div className="dropdown-item-meta">
                                   <span className="dropdown-workspace-name">{org.name}</span>
-                                  <span className="dropdown-workspace-plan">{org.plan || "Starter"}</span>
                                 </div>
                               </div>
                             </DropdownMenuItem>
                           ))}
                           <div className="dropdown-section-separator" />
-                          <DropdownMenuItem onClick={() => { const name = prompt("Organization name:"); if (name?.trim()) { createOrganization(name.trim()); afterCreateNavigate("org"); } }}
+                          <DropdownMenuItem onClick={() => { const name = prompt("Workspace name:"); if (name?.trim()) { createOrganization(name.trim()); afterCreateNavigate("org"); } }}
                             className="dropdown-item-custom dropdown-item-create">
                             <div className="dropdown-item-left">
                               <div className="dropdown-workspace-circle dropdown-circle-plus"><Plus size={14} /></div>
-                              <div className="dropdown-item-meta"><span className="dropdown-workspace-name">Create organization</span></div>
+                              <div className="dropdown-item-meta"><span className="dropdown-workspace-name">Create workspace</span></div>
                             </div>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     ) : (
                       <SidebarMenuButton size="lg" className="sidebar-switcher-trigger"
-                        onClick={() => { const name = prompt("Create your first organization:"); if (name?.trim()) { createOrganization(name.trim()); afterCreateNavigate("org"); } }}>
+                        onClick={() => { const name = prompt("Create your first workspace:"); if (name?.trim()) { createOrganization(name.trim()); afterCreateNavigate("org"); } }}>
                         <div className="workspace-circle-logo bg-[linear-gradient(135deg,#60a5fa,#1d4ed8)]" />
                         <div className="workspace-title-wrapper group-data-[collapsible=icon]:hidden">
-                          <span className="workspace-title-text">Create organization</span>
+                          <span className="workspace-title-text">Create workspace</span>
                         </div>
                       </SidebarMenuButton>
                     )}

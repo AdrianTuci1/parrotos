@@ -1,6 +1,7 @@
 import { gcpService } from './GcpService.js';
 import { Organization } from '../models/Organization.js';
 import { NotFoundError, ConflictError, ForbiddenError } from '../utils/errors.js';
+import { dataDeletionService } from './DataDeletionService.js';
 
 export class OrganizationService {
   constructor() {
@@ -67,8 +68,7 @@ export class OrganizationService {
   }
 
   async delete(orgId) {
-    await this.findById(orgId);
-    await this.orgsCollection.doc(orgId).delete();
+    await dataDeletionService.deleteOrganization(orgId);
   }
 
   async updateStats(orgId, updates) {

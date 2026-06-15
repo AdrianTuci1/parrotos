@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppStore } from "@/stores/useAppStore";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { findSectionById } from "@/components/app-shared";
@@ -13,6 +14,7 @@ import {
   MessageSquare,
   ExternalLink,
   ArrowLeft,
+  Trash2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -56,8 +58,9 @@ const notifications = [
 ];
 
 export function AppHeader() {
-  const { activeSection, activeScope, currentOrganization, currentWorkspace, currentUser } = useAppStore();
+  const { activeSection, activeScope, currentOrganization, currentWorkspace, currentUser, deleteAccount } = useAppStore();
   const section = findSectionById(activeScope, activeSection);
+  const navigate = useNavigate();
 
   const [activeOverlay, setActiveOverlay] = useState(null); // 'account' | 'help' | null
 
@@ -83,6 +86,8 @@ export function AppHeader() {
   }, [currentUser]);
 
   const [accountSubView, setAccountSubView] = useState('profile'); // 'profile' | 'password'
+  const [deleteAccountConfirmOpen, setDeleteAccountConfirmOpen] = useState(false);
+  const [deleteAccountInputText, setDeleteAccountInputText] = useState("");
 
   const fileInputRef = useRef(null);
 
@@ -132,6 +137,18 @@ export function AppHeader() {
     }));
     alert("Account settings saved successfully!");
     setActiveOverlay(null);
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      setDeleteAccountConfirmOpen(false);
+      setDeleteAccountInputText("");
+      setActiveOverlay(null);
+      navigate('/login', { replace: true });
+    } catch (err) {
+      alert('Failed to delete account: ' + err.message);
+    }
   };
 
   const handleSubmitTicket = (e) => {
@@ -385,6 +402,29 @@ export function AppHeader() {
                       Change password...
                     </button>
                   </div>
+
+                  <div style={{ width: '100%', height: '1px', backgroundColor: '#25282c', margin: '8px 0 16px' }} />
+
+                  <div className="overlay-form-group">
+                    <label className="overlay-form-label" style={{ color: '#ef4444' }}>Danger Zone</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <p className="overlay-description" style={{ margin: 0, color: '#f87171' }}>
+                        Permanently remove your account, every owned workspace, every project, and all related Firestore/Object Storage data.
+                      </p>
+                      <button
+                        type="button"
+                        className="settings-btn-danger"
+                        style={{ width: 'fit-content' }}
+                        onClick={() => {
+                          setDeleteAccountConfirmOpen(true);
+                          setDeleteAccountInputText("");
+                        }}
+                      >
+                        <Trash2 size={14} />
+                        Delete account
+                      </button>
+                    </div>
+                  </div>
                   
                   <div className="overlay-footer">
                     <button type="button" className="overlay-cancel-btn" onClick={() => setActiveOverlay(null)}>
@@ -457,6 +497,49 @@ export function AppHeader() {
                 </form>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {deleteAccountConfirmOpen && (
+        <div className="overlay-backdrop" onClick={() => setDeleteAccountConfirmOpen(false)}>
+          <div className="overlay-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="overlay-close-btn" onClick={() => setDeleteAccountConfirmOpen(false)}>
+              <X size={18} />
+            </button>
+            <div className="overlay-header">
+              <h3 className="overlay-title">Delete account</h3>
+              <p className="overlay-description" style={{ color: '#ef4444', fontWeight: 500 }}>
+                This deletes your account, every owned workspace, every project, and all related Firestore/Object Storage data.
+              </p>
+            </div>
+            <div className="overlay-body">
+              <div className="overlay-form-group">
+                <label className="overlay-form-label" style={{ color: '#8e918f', marginBottom: '8px' }}>
+                  Please type <strong style={{ color: '#ffffff' }}>{currentUser?.email || 'your email'}</strong> to confirm:
+                </label>
+                <input
+                  type="text"
+                  className="overlay-input"
+                  value={deleteAccountInputText}
+                  onChange={(e) => setDeleteAccountInputText(e.target.value)}
+                  placeholder="Type your email"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="overlay-footer">
+              <button className="overlay-cancel-btn" onClick={() => setDeleteAccountConfirmOpen(false)}>
+                Cancel
+              </button>
+              <button
+                className="overlay-delete-btn"
+                disabled={deleteAccountInputText !== (currentUser?.email || '')}
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
+              </button>
+            </div>
           </div>
         </div>
       )}

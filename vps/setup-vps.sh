@@ -113,6 +113,12 @@ LLM_PROVIDER=gemini
 LLM_API_KEY=your-gemini-api-key
 LLM_MODEL=gemini-2.5-flash
 
+# Services (internal Docker URLs)
+CHAT_SERVICE_URL=http://chat:8080
+HARNESS_SERVICE_URL=http://harness:8081
+OBSERVER_SERVICE_URL=http://observer:8082
+CLOUD_RUN_AUTH_MODE=disabled
+
 # Features
 ENABLE_BIGQUERY_ANALYTICS=true
 CORS_ORIGIN=https://app.sentrydata.io

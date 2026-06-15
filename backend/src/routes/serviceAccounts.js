@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ServiceAccountService, serviceAccountService } from '../services/ServiceAccountService.js';
-import { authenticate, requireRole } from '../middleware/auth.js';
+import { authenticate, requireOrganizationManager } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
 
@@ -22,6 +22,7 @@ const updateSchema = {
 };
 
 router.use(authenticate);
+router.use(requireOrganizationManager);
 
 router.post('/', validate(createSchema), async (req, res, next) => {
   try {

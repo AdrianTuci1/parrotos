@@ -28,6 +28,8 @@ const LLM_PROVIDER = process.env.LLM_PROVIDER || 'gemini';
 const LLM_API_KEY = process.env.LLM_API_KEY || '';
 const LLM_MODEL = process.env.LLM_MODEL || 'gemini-2.5-flash';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000/api/v1';
+const HARNESS_SERVICE_URL = process.env.HARNESS_SERVICE_URL || 'http://harness:8081';
+const OBSERVER_SERVICE_URL = process.env.OBSERVER_SERVICE_URL || 'http://observer:8082';
 const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || 'dev-internal-token';
 
 // ═══════════════════════════════════════════════════
@@ -50,6 +52,8 @@ CONTEXT YOU ALWAYS HAVE:
 - Data catalog: {dataCatalog}
 - Available widgets: {widgetList}
 - Connected integrations: {integrations}
+- Harness status: {harnessStatus}
+- Observer status: {observerStatus}
 
 YOUR CAPABILITIES:
 1. Guide users through connecting new data sources (Stripe, GA4, Shopify, etc.)
@@ -57,12 +61,20 @@ YOUR CAPABILITIES:
 3. Embed relevant widgets directly in the chat
 4. Recommend connectors based on what's missing
 5. Open integration modals for the user to enter credentials
+6. Trigger the Harness to regenerate dashboards when new data arrives
+7. Check Harness/Observer status and report progress to the user
+8. Ask the Harness to modify view bindings (titles, tables, columns, aggregations)
 
 RULES:
 - Always check the data catalog before answering data questions
 - If asked about data you don't have, suggest connecting the relevant source
 - Use open_integration_modal when user wants to connect something
 - Use show_widget when asked about metrics/charts
+- Use trigger_harness when the user wants to refresh dashboards after new connectors are added
+- Use check_harness to report status when user asks about progress
+- Use update_bindings when user asks to change widget titles, data sources, or chart types
+- IMPORTANT: Harness can only run ONE generation at a time. If busy, tell the user to wait and retry.
+- IMPORTANT: update_bindings triggers a full recompile — it's not instant. Warn users this can take 5-30s.
 - Be concise. Romanian or English based on what the user uses.
 - Never invent data. If you can't answer, say so and suggest a connector.`;
 
@@ -129,6 +141,41 @@ const TOOLS = [
       required: ['section'],
     },
   },
+  {
+    name: 'trigger_harness',
+    description: 'Trigger the Harness engine to regenerate dashboard specs from the data catalog. Use after new connectors are added or when user asks to refresh analytics.',
+    parameters: {
+      type: 'object',
+      properties: {
+        force_full: { type: 'boolean', description: 'If true, discard existing bindings and regenerate from scratch' },
+      },
+    },
+  },
+  {
+    name: 'check_harness',
+    description: 'Check the current status of the Harness engine and Observer. Use when user asks about dashboard generation progress or system health.',
+    parameters: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'update_bindings',
+    description: 'Modify a dashboard view binding — change widget titles, data tables, metric columns, dimensions, aggregations. Use when user wants to customize a dashboard view.',
+    parameters: {
+      type: 'object',
+      properties: {
+        view_id: { type: 'string', description: 'The view to modify: servers, web, financial, sales, marketing' },
+        widget_id: { type: 'string', description: 'The widget ID within the view to modify' },
+        title: { type: 'string', description: 'New display title for the widget' },
+        table: { type: 'string', description: 'BigQuery table to query' },
+        metric_column: { type: 'string', description: 'Column to use as the metric value' },
+        dimension_column: { type: 'string', description: 'Column to use for grouping/dimensions' },
+        aggregation: { type: 'string', enum: ['sum', 'avg', 'count', 'min', 'max'], description: 'Aggregation function' },
+      },
+      required: ['view_id', 'widget_id'],
+    },
+  },
 ];
 
 // ═══════════════════════════════════════════════════
@@ -144,6 +191,27 @@ async function loadContext(orgId, projectId, token) {
     fetch(`${BACKEND_URL}/organizations/${orgId}/projects/${projectId}/integrations`, { headers }).then(r => r.json()).catch(() => null),
   ]);
 
+  // Harness + Observer health (internal, no JWT needed — use INTERNAL_TOKEN)
+  let harnessStatus = 'unknown';
+  let observerStatus = 'unknown';
+  try {
+    const hRes = await fetch(`${HARNESS_SERVICE_URL}/status`, { headers: { 'X-Internal-Token': INTERNAL_TOKEN } });
+    const hBody = await hRes.json().catch(() => ({}));
+    if (!hRes.ok) {
+      harnessStatus = 'degraded';
+    } else if (hBody.status === 'generating' && hBody.currentJob) {
+      harnessStatus = `generating (stage: ${hBody.currentJob.stage}, tables: ${hBody.currentJob.tablesDiscovered ?? 0}/${hBody.currentJob.tablesTotal ?? '?'}, project: ${hBody.currentJob.projectId})`;
+    } else if (hBody.lastJob) {
+      harnessStatus = `idle — last job: ${hBody.lastJob.success ? 'ok' : 'failed'} (${hBody.lastJob.tablesProcessed ?? 0} tables, ${(hBody.lastJob.durationMs / 1000).toFixed(1)}s ago at ${hBody.lastJob.orgId}/${hBody.lastJob.projectId})`;
+    } else {
+      harnessStatus = `healthy (${hBody.provider || 'llm'}/${hBody.model || 'auto'}) — no jobs run yet`;
+    }
+  } catch { harnessStatus = 'unreachable'; }
+  try {
+    const oRes = await fetch(`${OBSERVER_SERVICE_URL}/health`, { headers: { 'X-Internal-Token': INTERNAL_TOKEN } });
+    observerStatus = oRes.ok ? 'healthy' : 'degraded';
+  } catch { observerStatus = 'unreachable'; }
+
   return {
     orgName: org.value?.data?.name || org.value?.name || 'Unknown',
     orgPlan: org.value?.data?.plan || org.value?.plan || 'Starter',
@@ -151,6 +219,8 @@ async function loadContext(orgId, projectId, token) {
     dataCatalog: catalog.value?.tables?.map(t => `${t.short_name} (${t.row_count} rows)`)?.join(', ') || 'No data yet',
     widgetList: spec.value?.widgets?.map(w => `${w.title || w.id} (${w.type})`)?.join(', ') || 'No widgets',
     integrations: integrations.value?.data?.map(i => i.name || i.type)?.join(', ') || 'None',
+    harnessStatus,
+    observerStatus,
   };
 }
 
@@ -165,7 +235,9 @@ function buildSystemPrompt(context) {
     .replace('{projectName}', context.projectName)
     .replace('{dataCatalog}', context.dataCatalog)
     .replace('{widgetList}', context.widgetList)
-    .replace('{integrations}', context.integrations);
+    .replace('{integrations}', context.integrations)
+    .replace('{harnessStatus}', context.harnessStatus)
+    .replace('{observerStatus}', context.observerStatus);
 }
 
 async function* streamLLMResponse(messages, systemPrompt) {
@@ -277,6 +349,116 @@ async function executeToolCall(name, args, orgId, projectId, token) {
 
     case 'navigate_to':
       return { type: 'action', action: 'navigate', section: args.section };
+
+    case 'trigger_harness': {
+      const dataset = `\`${process.env.GCP_PROJECT_ID || 'unknown'}.sentry_dataset_${orgId}_${String(projectId).replace(/[^a-zA-Z0-9]/g, '_')}\``;
+      try {
+        const harnessHeaders = { 'Content-Type': 'application/json', 'X-Internal-Token': INTERNAL_TOKEN };
+        const harnessRes = await fetch(`${HARNESS_SERVICE_URL}/generate`, {
+          method: 'POST',
+          headers: harnessHeaders,
+          body: JSON.stringify({ orgId, projectId, dataset, forceFull: args.force_full === true }),
+        });
+        const harnessData = await harnessRes.json().catch(() => ({}));
+        if (harnessRes.status === 409) {
+          const cj = harnessData.currentJob || {};
+          return {
+            type: 'harness_result',
+            status: 'busy',
+            currentJob: cj,
+            message: `Harness is already generating (stage: ${cj.stage || 'unknown'}, project: ${cj.projectId || projectId}). Wait for it to finish, then retry.`,
+          };
+        }
+        return {
+          type: 'harness_result',
+          status: harnessData.status,
+          views: harnessData.views,
+          totalTables: harnessData.totalTables,
+          message: harnessData.status === 'completed'
+            ? `Harness completed: ${harnessData.totalTables || 0} tables processed across ${Object.keys(harnessData.views || {}).length} views in ${harnessData.durationMs || '?'}ms.`
+            : `Harness response: ${harnessData.error || 'Unknown status'}`,
+        };
+      } catch (err) {
+        return { type: 'harness_result', status: 'error', message: `Harness call failed: ${err.message}` };
+      }
+    }
+
+    case 'check_harness': {
+      const results = {};
+      try {
+        const hRes = await fetch(`${HARNESS_SERVICE_URL}/status`, { headers: { 'X-Internal-Token': INTERNAL_TOKEN } });
+        const hBody = await hRes.json().catch(() => ({}));
+        if (!hRes.ok) {
+          results.harness = { status: 'degraded' };
+        } else {
+          results.harness = {
+            status: hBody.status,
+            provider: hBody.provider,
+            model: hBody.model,
+            uptimeSeconds: hBody.uptimeSeconds,
+          };
+          if (hBody.currentJob) {
+            results.harness.currentJob = hBody.currentJob;
+          }
+          if (hBody.lastJob) {
+            results.harness.lastJob = hBody.lastJob;
+          }
+        }
+      } catch {
+        results.harness = { status: 'unreachable' };
+      }
+      try {
+        const oRes = await fetch(`${OBSERVER_SERVICE_URL}/health`, { headers: { 'X-Internal-Token': INTERNAL_TOKEN } });
+        const oBody = await oRes.json().catch(() => ({}));
+        results.observer = { status: oRes.ok ? 'healthy' : 'degraded', uptime: oBody.uptime };
+      } catch {
+        results.observer = { status: 'unreachable' };
+      }
+      return { type: 'harness_status', ...results };
+    }
+
+    case 'update_bindings': {
+      const dataset = `\`${process.env.GCP_PROJECT_ID || 'unknown'}.sentry_dataset_${orgId}_${String(projectId).replace(/[^a-zA-Z0-9]/g, '_')}\``;
+      const widget = { id: args.widget_id };
+      if (args.title) widget.title = args.title;
+      if (args.table) widget.table = args.table;
+      if (args.metric_column) widget.metricColumn = args.metric_column;
+      if (args.dimension_column) widget.dimensionColumn = args.dimension_column;
+      if (args.aggregation) widget.aggregation = args.aggregation;
+
+      try {
+        const harnessHeaders = { 'Content-Type': 'application/json', 'X-Internal-Token': INTERNAL_TOKEN };
+        const harnessRes = await fetch(`${HARNESS_SERVICE_URL}/bindings`, {
+          method: 'PATCH',
+          headers: harnessHeaders,
+          body: JSON.stringify({
+            orgId, projectId, dataset,
+            patch: { views: { [args.view_id]: { widgets: [widget] } } },
+          }),
+        });
+        const harnessData = await harnessRes.json().catch(() => ({}));
+        if (harnessRes.status === 409) {
+          const cj = harnessData.currentJob || {};
+          return {
+            type: 'bindings_result',
+            status: 'busy',
+            currentJob: cj,
+            message: `Harness is busy (stage: ${cj.stage || 'unknown'}). Wait for it to finish, then retry this change.`,
+          };
+        }
+        return {
+          type: 'bindings_result',
+          status: harnessRes.ok ? 'updated' : 'error',
+          view: args.view_id,
+          widget: args.widget_id,
+          message: harnessRes.ok
+            ? `Widget "${args.widget_id}" in view "${args.view_id}" updated successfully.`
+            : `Failed to update: ${harnessData.error || 'Unknown error'}`,
+        };
+      } catch (err) {
+        return { type: 'bindings_result', status: 'error', message: `Bindings update failed: ${err.message}` };
+      }
+    }
 
     default:
       return { type: 'error', message: `Unknown tool: ${name}` };

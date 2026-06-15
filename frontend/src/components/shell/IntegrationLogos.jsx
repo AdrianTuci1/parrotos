@@ -160,6 +160,29 @@ const SnowflakeLogo = () => (
   </svg>
 );
 
+const connectorImageMap = {
+  stripe: 'stripe.png',
+  ga4: 'ga4.png',
+  'search console': 'search-console.png',
+  'google ads': 'google-ads.png',
+  'meta ads': 'facebook-ads.png',
+  'tiktok ads': 'tiktok-ads.png',
+  shopify: 'shopify.png',
+  woocommerce: 'woocommerce.png',
+  hubspot: 'hubspot.png',
+  mongodb: 'mongodb.png',
+  mysql: 'mysql.png',
+  postgresql: 'postgres.png',
+  prometheus: 'prometheus.png',
+  sentry: 'sentry.png',
+  salesforce: 'salesforce.png',
+  github: 'github.png',
+  slack: 'slack.png',
+  discord: 'discord.png',
+  intercom: 'intercom.png',
+  resend: 'resend.png',
+};
+
 const logoMap = {
   spreadsheets: {
     svg: <SpreadsheetsLogo />,
@@ -251,6 +274,14 @@ const logoMap = {
  * Returns the logo SVG and background color for a given connector name.
  * If not found, returns null (rendering a blank container, per "lasi chenar gol daca nu avem imagine").
  */
+/** Returns the PNG image path from public/connectors for the given connector name, or null. */
+export function getConnectorImage(connectorName) {
+  if (!connectorName) return null;
+  const key = connectorName.toLowerCase();
+  const filename = connectorImageMap[key];
+  return filename ? `/connectors/${filename}` : null;
+}
+
 export function getIntegrationLogo(connectorName) {
   if (!connectorName) return null;
   const key = connectorName.toLowerCase();

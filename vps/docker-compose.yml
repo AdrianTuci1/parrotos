@@ -20,8 +20,7 @@ services:
       - CHAT_SERVICE_URL=${CHAT_SERVICE_URL}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL}
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL}
-      - CLOUD_RUN_AUTH_MODE=${CLOUD_RUN_AUTH_MODE:-required}
-      - CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL=${CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL}
+      - CLOUD_RUN_AUTH_MODE=${CLOUD_RUN_AUTH_MODE:-disabled}
       - ENABLE_BIGQUERY_ANALYTICS=${ENABLE_BIGQUERY_ANALYTICS:-true}
       - CORS_ORIGIN=${CORS_ORIGIN:-https://app.sentrydata.io}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
@@ -35,6 +34,79 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    depends_on:
+      - chat
+      - harness
+      - observer
+
+  chat:
+    build: ./services/chat
+    container_name: sentry-chat
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
+      - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
+      - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  harness:
+    build: ./services/harness
+    container_name: sentry-harness
+    restart: unless-stopped
+    environment:
+      - PORT=8081
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+    volumes:
+      - ./secrets:/secrets:ro
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  observer:
+    build: ./services/observer
+    container_name: sentry-observer
+    restart: unless-stopped
+    environment:
+      - PORT=8082
+      - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
+      - HARNESS_SERVICE_URL=http://harness:8081
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+      - BQ_LOCATION=${BIGQUERY_LOCATION:-EU}
+    volumes:
+      - ./secrets:/secrets:ro
+    networks:
+      - sentry-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   nginx:
     image: nginx:alpine
     container_name: sentry-nginx

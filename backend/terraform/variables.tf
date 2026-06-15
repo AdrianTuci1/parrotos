@@ -33,11 +33,6 @@ variable "bigquery_location" {
   default     = "EU"
 }
 
-variable "backend_image" {
-  description = "Docker image for backend"
-  type        = string
-  default     = "gcr.io/PROJECT_ID/sentry-backend:latest"
-}
 
 variable "jwt_secret" {
   description = "JWT secret for authentication"

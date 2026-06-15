@@ -1,7 +1,3 @@
-output "backend_url" {
-  description = "URL of the deployed backend service"
-  value       = google_cloud_run_service.sentry_backend.status[0].url
-}
 
 output "gcs_bucket_name" {
   description = "Name of the GCS bucket"

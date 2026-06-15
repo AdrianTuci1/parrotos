@@ -98,14 +98,6 @@ const CONNECTOR_CATALOG = {
       lastSync: '4 min ago',
       note: 'Push health signals and segments back into sales workflows.',
     },
-    {
-      id: 'lifecycle',
-      name: 'Klaviyo',
-      type: 'lifecycle',
-      status: 'connected',
-      lastSync: '13 min ago',
-      note: 'Send audiences and event triggers into lifecycle campaigns.',
-    },
   ],
   sourceCategories: [
     {
@@ -120,7 +112,7 @@ const CONNECTOR_CATALOG = {
       title: 'Marketing & Acquisition',
       description: 'Spend, attribution, campaign pacing, and paid channel performance.',
       icon: 'sync',
-      connectors: ['Google Ads', 'Meta Ads', 'TikTok Ads', 'Klaviyo'],
+      connectors: ['Google Ads', 'Meta Ads', 'TikTok Ads'],
     },
     {
       id: 'commerce-billing',
@@ -141,7 +133,7 @@ const CONNECTOR_CATALOG = {
       title: 'Warehouses & Infra',
       description: 'Warehouse backfills, databases, and server-side telemetry.',
       icon: 'signal',
-      connectors: ['BigQuery', 'MongoDB', 'PostgreSQL', 'MySQL', 'Prometheus', 'Sentry'],
+      connectors: ['BigQuery', 'MongoDB', 'PostgreSQL', 'MySQL', 'Prometheus', 'Sentry', 'GitHub'],
     },
   ],
   destinationCategories: [
@@ -150,14 +142,14 @@ const CONNECTOR_CATALOG = {
       title: 'Collaboration & Alerts',
       description: 'Push insights, anomaly alerts, and scheduled summaries into team channels.',
       icon: 'signal',
-      connectors: ['Slack', 'Email', 'Discord'],
+      connectors: ['Slack', 'Intercom', 'Resend', 'Discord'],
     },
     {
       id: 'crm-activation',
       title: 'CRM & Lifecycle',
       description: 'Send segments, health signals, and revenue context back into customer systems.',
       icon: 'sync',
-      connectors: ['Salesforce', 'HubSpot', 'Klaviyo'],
+      connectors: ['Salesforce', 'HubSpot'],
     },
     {
       id: 'marketing-activation',
@@ -252,6 +244,12 @@ const CONNECTOR_CATALOG = {
       description: 'Document stores for product apps, content systems, and operational data.',
       flow: 'source',
     },
+    {
+      name: 'GitHub',
+      connectorName: 'GitHub',
+      description: 'Deployments, commits, pull requests, and repository health.',
+      flow: 'source',
+    },
   ],
 };
 
@@ -335,11 +333,6 @@ const CONNECTOR_AUTH_CONFIGS = {
     ],
     help: 'PostHog → Settings → Personal API Keys',
   },
-  Klaviyo: {
-    method: 'API Key',
-    fields: [{ key: 'apiKey', label: 'Private API Key', type: 'password' }],
-    help: 'Klaviyo → Settings → API Keys',
-  },
   Sentry: {
     method: 'API Key',
     fields: [
@@ -382,6 +375,15 @@ const CONNECTOR_AUTH_CONFIGS = {
     method: 'None',
     fields: [{ key: 'url', label: 'Prometheus URL', type: 'text' }],
     help: 'Direct access. No auth on same network.',
+  },
+  GitHub: {
+    method: 'API Key',
+    fields: [
+      { key: 'token', label: 'Personal Access Token', type: 'password' },
+      { key: 'owner', label: 'Repository Owner', type: 'text' },
+      { key: 'repo', label: 'Repository', type: 'text', optional: true },
+    ],
+    help: 'GitHub → Settings → Developer settings → Personal access tokens',
   },
   BigQuery: {
     method: 'Service Account',

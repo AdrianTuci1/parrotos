@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ProjectService } from '../services/ProjectService.js';
 import { OrganizationService } from '../services/OrganizationService.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrganizationOwner } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
 
@@ -67,7 +67,7 @@ router.patch('/:projectId', validate(updateSchema), async (req, res, next) => {
   }
 });
 
-router.delete('/:projectId', async (req, res, next) => {
+router.delete('/:projectId', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId, projectId } = req.params;
     await projectService.delete(orgId, projectId);

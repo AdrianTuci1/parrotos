@@ -6,11 +6,6 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  Users,
-  ShieldCheck,
-  FolderPlus,
-  FolderEdit,
-  UserCog,
   RefreshCw,
   Copy
 } from 'lucide-react';
@@ -24,21 +19,26 @@ const DEFAULT_SERVICE_ACCOUNTS = [
   { id: '4', name: 'elena_dumitrescu', saId: 'sa_elena_dumitrescu_3f22', status: 'Active', password: 'botPassword789', isProjectScoped: false, permissions: { createProject: false, editProject: false, manageUsers: false }, projectAccess: {}, clientSecret: 'sec_live_elena3f225d9f7e8b6c5d4a3b' },
 ];
 
-// Separate page view component for editing/creating service accounts
-function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete }) {
+function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete, onRegenerateSecret, isSaving }) {
   const [name, setName] = useState(member?.name || '');
-  const [password, setPassword] = useState(member?.password || '');
-  const [showPassword, setShowPassword] = useState(false);
   const [isProjectScoped, setIsProjectScoped] = useState(member?.isProjectScoped ?? false);
   const [permissions, setPermissions] = useState(
     member?.permissions || { createProject: false, editProject: false, manageUsers: false }
   );
   const [projectAccess, setProjectAccess] = useState(member?.projectAccess || {});
-  
-  // API Token state
-  const [clientSecret, setClientSecret] = useState(member?.clientSecret || `sec_live_${Math.random().toString(36).substring(2, 12)}${Math.random().toString(36).substring(2, 12)}`);
+  const [clientSecret, setClientSecret] = useState(member?.clientSecret || '');
   const [showSecret, setShowSecret] = useState(false);
   const [copiedSecret, setCopiedSecret] = useState(false);
+
+  useEffect(() => {
+    setName(member?.name || '');
+    setIsProjectScoped(member?.isProjectScoped ?? false);
+    setPermissions(member?.permissions || { createProject: false, editProject: false, manageUsers: false });
+    setProjectAccess(member?.projectAccess || {});
+    setClientSecret(member?.clientSecret || '');
+    setShowSecret(false);
+    setCopiedSecret(false);
+  }, [member]);
 
   const toggleProject = (projectId) => {
     setProjectAccess(prev => {
@@ -64,13 +64,22 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
     setName(formatted);
   };
 
-  const regenerateSecret = () => {
-    const newSecret = `sec_live_${Math.random().toString(36).substring(2, 12)}${Math.random().toString(36).substring(2, 12)}`;
-    setClientSecret(newSecret);
-    alert("API Token regenerated successfully. Please update your client integrations with the new secret.");
+  const regenerateSecret = async () => {
+    if (!member?.id) {
+      return;
+    }
+
+    const result = await onRegenerateSecret(member.id);
+    const nextSecret = result?.clientSecret || '';
+    setClientSecret(nextSecret);
+    setShowSecret(true);
+    alert('API token regenerated successfully. Copy it now because it may not be shown again.');
   };
 
   const handleCopySecret = () => {
+    if (!clientSecret) {
+      return;
+    }
     navigator.clipboard.writeText(clientSecret);
     setCopiedSecret(true);
     setTimeout(() => setCopiedSecret(false), 2000);
@@ -80,15 +89,11 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
     e.preventDefault();
     if (!name.trim()) return;
     onSave({
-      id: member?.id || `sa_${Date.now()}`,
       name: name.trim(),
-      saId: member?.saId || `sa_${Math.random().toString(36).substring(2, 10)}`,
-      password,
       isProjectScoped,
       permissions,
       projectAccess: isProjectScoped ? projectAccess : {},
-      clientSecret,
-      status: member?.status || 'Active'
+      status: member?.status || 'active',
     });
   };
 
@@ -118,7 +123,7 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
             {member ? 'Service Account Details' : 'Create Service Account'}
           </h3>
           <p style={{ fontSize: '12.5px', color: '#8e918f' }}>
-            Manage credentials, credentials rotation, administrative rights, and project scopes.
+            Manage credentials rotation, administrative rights, and project scopes.
           </p>
         </div>
 
@@ -146,25 +151,14 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
 
             <div>
               <label style={{ fontSize: '11px', fontWeight: '600', color: '#8e918f', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                Account Password
+                Service Account ID
               </label>
-              <div style={{ display: 'flex', gap: '8px', position: 'relative' }}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Set account password"
-                  style={{ width: '100%', padding: '10px 14px', paddingRight: '40px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(0,0,0,0.2)', color: '#ffffff', fontSize: '13px' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: '#8e918f', cursor: 'pointer' }}
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
+              <input
+                type="text"
+                readOnly
+                value={member?.saId || 'Will be generated after creation'}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.04)', background: 'rgba(255,255,255,0.02)', color: '#ffffff', fontSize: '12px', fontFamily: 'monospace' }}
+              />
             </div>
 
             <div>
@@ -175,13 +169,14 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
                 <input
                   type={showSecret ? 'text' : 'password'}
                   readOnly
-                  value={clientSecret}
+                  value={clientSecret || 'Rotate this secret to reveal a new API token.'}
                   style={{ width: '100%', padding: '10px 14px', paddingRight: '70px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.04)', background: 'rgba(255,255,255,0.02)', color: '#ffffff', fontSize: '12px', fontFamily: 'monospace' }}
                 />
                 <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <button
                     type="button"
                     onClick={() => setShowSecret(!showSecret)}
+                    disabled={!clientSecret}
                     style={{ background: 'transparent', border: 'none', color: '#8e918f', cursor: 'pointer' }}
                     title={showSecret ? "Hide secret" : "Show secret"}
                   >
@@ -190,6 +185,7 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
                   <button
                     type="button"
                     onClick={handleCopySecret}
+                    disabled={!clientSecret}
                     style={{ background: 'transparent', border: 'none', color: '#8e918f', cursor: 'pointer' }}
                     title="Copy API Token"
                   >
@@ -197,15 +193,21 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
                   </button>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={regenerateSecret}
-                className="settings-btn-secondary"
-                style={{ marginTop: '8px', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-              >
-                <RefreshCw size={11} />
-                Regenerate / Rotate API Token
-              </button>
+              {member?.id ? (
+                <button
+                  type="button"
+                  onClick={regenerateSecret}
+                  className="settings-btn-secondary"
+                  style={{ marginTop: '8px', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <RefreshCw size={11} />
+                  Regenerate / Rotate API Token
+                </button>
+              ) : (
+                <p style={{ marginTop: '8px', fontSize: '11.5px', color: '#8e918f' }}>
+                  Create the service account first. The API token is shown once after creation or rotation.
+                </p>
+              )}
             </div>
           </div>
 
@@ -255,7 +257,7 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
                   style={{ marginTop: '3px', width: '16px', height: '16px', borderRadius: '4px', cursor: 'pointer' }}
                 />
                 <label htmlFor="perm-users" style={{ cursor: 'pointer' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#ffffff', display: 'block' }}>Manage Organization Access & Users</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#ffffff', display: 'block' }}>Manage Workspace Access & Users</span>
                   <span style={{ fontSize: '11.5px', color: '#8e918f' }}>Allows this service account to create, edit, or delete other API tokens and service accounts.</span>
                 </label>
               </div>
@@ -351,10 +353,11 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
             <button
               type="submit"
               className="stripe-portal-btn"
+              disabled={isSaving}
               style={{ padding: '10px 20px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
             >
               <Check size={14} />
-              Save Service Account
+              {isSaving ? 'Saving...' : 'Save Service Account'}
             </button>
           </div>
         </form>
@@ -364,10 +367,21 @@ function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete
 }
 
 export function OrganizationAccessView() {
-  const { workspaces, currentOrganization, serviceAccounts, fetchServiceAccounts, createServiceAccount, updateServiceAccount, deleteServiceAccount, devMode, demoMode } = useAppStore();
+  const {
+    workspaces,
+    currentOrganization,
+    serviceAccounts,
+    fetchServiceAccounts,
+    createServiceAccount,
+    updateServiceAccount,
+    deleteServiceAccount,
+    regenerateServiceAccountSecret,
+    devMode,
+    demoMode,
+  } = useAppStore();
   
-  // Filter workspaces belonging to the active organization (or default to all if none match)
-  const orgWorkspaces = workspaces.filter(w => w.organizationId === currentOrganization?.id) || workspaces;
+  const filteredWorkspaces = workspaces.filter((workspace) => workspace.organizationId === currentOrganization?.id);
+  const orgWorkspaces = filteredWorkspaces.length > 0 ? filteredWorkspaces : workspaces;
 
   // Use mock data in dev/demo mode when store has no service accounts
   const effectiveServiceAccounts = (devMode || demoMode) && (!serviceAccounts || serviceAccounts.length === 0)
@@ -377,25 +391,34 @@ export function OrganizationAccessView() {
   const [members, setMembers] = useState(effectiveServiceAccounts);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (currentOrganization?.id && !devMode && !demoMode) {
       fetchServiceAccounts(currentOrganization.id);
     }
-  }, [currentOrganization?.id, devMode, demoMode]);
+  }, [currentOrganization?.id, devMode, demoMode, fetchServiceAccounts]);
 
   useEffect(() => {
     setMembers(effectiveServiceAccounts);
   }, [serviceAccounts, devMode, demoMode]);
 
   const handleSaveMember = async (member) => {
-    if (editingMember) {
-      await updateServiceAccount(currentOrganization?.id, member.id, member);
-    } else {
-      await createServiceAccount(currentOrganization?.id, member);
+    setIsSaving(true);
+    try {
+      if (editingMember?.id) {
+        await updateServiceAccount(currentOrganization?.id, editingMember.id, member);
+        setEditingMember(null);
+        setIsEditingMode(false);
+        return;
+      }
+
+      const created = await createServiceAccount(currentOrganization?.id, member);
+      setEditingMember(created);
+      alert('Service account created. Copy the API token now because it may not be shown again.');
+    } finally {
+      setIsSaving(false);
     }
-    setEditingMember(null);
-    setIsEditingMode(false);
   };
 
   const handleDeleteMember = async (memberId) => {
@@ -404,6 +427,13 @@ export function OrganizationAccessView() {
       setEditingMember(null);
       setIsEditingMode(false);
     }
+  };
+
+  const handleRegenerateSecret = async (memberId) => {
+    const result = await regenerateServiceAccountSecret(currentOrganization?.id, memberId);
+    const nextSecret = result?.clientSecret || '';
+    setEditingMember((prev) => prev ? { ...prev, clientSecret: nextSecret } : prev);
+    return result;
   };
 
   const openAddMember = () => {
@@ -419,7 +449,7 @@ export function OrganizationAccessView() {
   return (
     <ViewFrame
       title="Access Management"
-      description="Manage organization API service accounts, telemetry keys, and project access credentials."
+      description="Manage workspace API service accounts, telemetry keys, and project access credentials."
       maxWidthClassName="max-w-3xl"
     >
       {isEditingMode ? (
@@ -428,6 +458,8 @@ export function OrganizationAccessView() {
           workspaces={orgWorkspaces}
           onSave={handleSaveMember}
           onDelete={handleDeleteMember}
+          onRegenerateSecret={handleRegenerateSecret}
+          isSaving={isSaving}
           onCancel={() => {
             setEditingMember(null);
             setIsEditingMode(false);
@@ -466,6 +498,10 @@ export function OrganizationAccessView() {
                     <div>
                       <div className="org-row-name" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <span style={{ fontWeight: '600', color: '#ffffff' }}>{member.name}</span>
+                        <span style={{ fontSize: '11px', color: '#8e918f' }}>{member.isProjectScoped ? 'Project scoped' : 'Global access'}</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#8e918f', marginTop: '4px', fontFamily: 'monospace' }}>
+                        {member.saId || 'ID available after creation'}
                       </div>
                     </div>
                   </div>

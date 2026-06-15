@@ -437,19 +437,46 @@
 .app-sidebar-container.collapsed .sidebar-switcher-trigger,
 .app-sidebar-container.collapsed .sidebar-logo-button {
   justify-content: center !important;
-  padding: 5px 0 !important;
+  align-items: center !important;
+  padding: 0 !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }
 
+/* Ensure switcher wrapper doesn't offset items in collapsed mode */
+.app-sidebar-container.collapsed .sidebar-switcher-wrapper {
+  padding: 2px 0 !important;
+}
+
 .app-sidebar-container.collapsed .sidebar-nav-left {
   justify-content: center !important;
+  align-items: center !important;
   width: 100% !important;
 }
 
 .app-sidebar-container.collapsed .workspace-title-wrapper,
 .app-sidebar-container.collapsed .sidebar-logo-title-wrapper {
   display: none !important;
+}
+
+/* Make the circle fill vertical space when collapsed */
+.app-sidebar-container.collapsed .workspace-circle-logo {
+  height: 22px !important;
+  width: 22px !important;
+}
+
+/* Override SidebarMenuButton (lg) in collapsed: kill ALL padding so circle centers natively */
+.app-sidebar-container.collapsed .sidebar-switcher-trigger {
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Zero out SidebarMenu padding in collapsed mode */
+.app-sidebar-container.collapsed .sidebar-menu-custom {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 /* Chat History Group Plus Button */

@@ -17,6 +17,11 @@ export class AuthService {
     return response.data;
   }
 
+  async deleteAccount() {
+    const response = await apiClient.delete("/auth/me");
+    return response.data;
+  }
+
   logout() {
     apiClient.setToken(null);
   }

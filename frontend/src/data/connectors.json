@@ -113,14 +113,6 @@
       "status": "connected",
       "lastSync": "4 min ago",
       "note": "Push health signals and segments back into sales workflows."
-    },
-    {
-      "id": "lifecycle",
-      "name": "Klaviyo",
-      "type": "lifecycle",
-      "status": "connected",
-      "lastSync": "13 min ago",
-      "note": "Send audiences and event triggers into lifecycle campaigns."
     }
   ],
   "sourceCategories": [
@@ -136,7 +128,7 @@
       "title": "Marketing & Acquisition",
       "description": "Spend, attribution, campaign pacing, and paid channel performance.",
       "icon": "sync",
-      "connectors": ["Google Ads", "Meta Ads", "TikTok Ads", "Klaviyo"]
+      "connectors": ["Google Ads", "Meta Ads", "TikTok Ads"]
     },
     {
       "id": "commerce-billing",
@@ -166,14 +158,14 @@
       "title": "Collaboration & Alerts",
       "description": "Push insights, anomaly alerts, and scheduled summaries into team channels.",
       "icon": "signal",
-      "connectors": ["Slack", "Email", "Discord"]
+      "connectors": ["Slack", "Intercom", "Resend", "Discord"]
     },
     {
       "id": "crm-activation",
       "title": "CRM & Lifecycle",
       "description": "Send segments, health signals, and revenue context back into customer systems.",
       "icon": "sync",
-      "connectors": ["Salesforce", "HubSpot", "Klaviyo"]
+      "connectors": ["Salesforce", "HubSpot"]
     },
     {
       "id": "marketing-activation",
@@ -289,12 +281,6 @@
       "flow": "destination"
     },
     {
-      "name": "Klaviyo",
-      "connectorName": "Klaviyo",
-      "description": "Send audiences and event triggers into lifecycle campaigns.",
-      "flow": "destination"
-    },
-    {
       "name": "HubSpot",
       "connectorName": "HubSpot",
       "description": "Send audiences and contact lists to HubSpot CRM.",
@@ -313,9 +299,15 @@
       "flow": "destination"
     },
     {
-      "name": "Email",
-      "connectorName": "Email",
-      "description": "Send scheduled digests, alerts, and reports via SMTP.",
+      "name": "Intercom",
+      "connectorName": "Intercom",
+      "description": "Push insights, segments, and health scores into Intercom conversations.",
+      "flow": "destination"
+    },
+    {
+      "name": "Resend",
+      "connectorName": "Resend",
+      "description": "Send scheduled digests, alerts, and transactional emails via Resend.",
       "flow": "destination"
     },
     {

@@ -144,7 +144,7 @@ export function OrganizationBillingView() {
         { text: '1 project workspace', dotted: false },
         { text: '20 GB pooled storage', dotted: false },
         { text: '1h refresh cadence', dotted: true },
-        { text: '1 organization', dotted: false }
+        { text: '1 workspace', dotted: false }
       ]
     },
     {
@@ -156,7 +156,7 @@ export function OrganizationBillingView() {
       features: [
         { text: 'Up to 5 projects', dotted: false },
         { text: '150 GB pooled storage', dotted: false },
-        { text: '1h refresh cadence', dotted: true },
+        { text: '10 min refresh cadence', dotted: true },
         { text: 'Shared project links', dotted: true }
       ]
     },
@@ -213,7 +213,7 @@ export function OrganizationBillingView() {
 
   const handleCheckoutStripe = async (planKey) => {
     if (!currentOrganization?.id) {
-      triggerNotification('No organization selected.', 'error');
+      triggerNotification('No workspace selected.', 'error');
       return;
     }
     try {
@@ -226,7 +226,7 @@ export function OrganizationBillingView() {
 
   const handleManageStripe = async () => {
     if (!currentOrganization?.id) {
-      triggerNotification('No organization selected.', 'error');
+      triggerNotification('No workspace selected.', 'error');
       return;
     }
     try {
@@ -239,7 +239,7 @@ export function OrganizationBillingView() {
 
   const handleCancelSubscriptionStripe = async () => {
     if (!currentOrganization?.id) {
-      triggerNotification('No organization selected.', 'error');
+      triggerNotification('No workspace selected.', 'error');
       return;
     }
     try {
@@ -404,33 +404,6 @@ export function OrganizationBillingView() {
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="compare-feature-label">Users</td>
-                      <td>
-                        <div className="compare-cell-content">
-                          <Check size={14} className="compare-check-icon" />
-                          <span>1 user</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="compare-cell-content">
-                          <Check size={14} className="compare-check-icon" />
-                          <span>Unlimited</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="compare-cell-content">
-                          <Check size={14} className="compare-check-icon" />
-                          <span>Unlimited</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="compare-cell-content">
-                          <Check size={14} className="compare-check-icon" />
-                          <span>Unlimited</span>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
                       <td className="compare-feature-label">Update</td>
                       <td>
                         <div className="compare-cell-content">
@@ -441,7 +414,7 @@ export function OrganizationBillingView() {
                       <td>
                         <div className="compare-cell-content">
                           <Check size={14} className="compare-check-icon" />
-                          <span>1h</span>
+                          <span>10 min</span>
                         </div>
                       </td>
                       <td>

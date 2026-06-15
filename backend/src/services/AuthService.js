@@ -4,6 +4,7 @@ import { CryptoService } from '../utils/crypto.js';
 import { User } from '../models/User.js';
 import { config } from '../config/index.js';
 import { UnauthorizedError, ConflictError } from '../utils/errors.js';
+import { dataDeletionService } from './DataDeletionService.js';
 
 export class AuthService {
   constructor() {
@@ -134,6 +135,10 @@ export class AuthService {
 
     const token = this.generateToken(user);
     return { token, user: this.sanitizeUser(user) };
+  }
+
+  async deleteAccount(userId) {
+    return dataDeletionService.deleteUserAccount(userId);
   }
 
   sanitizeUser(user) {

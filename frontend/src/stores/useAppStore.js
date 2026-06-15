@@ -385,6 +385,9 @@ export const useAppStore = create((set, get) => ({
   chatSessions: config.devMode ? mockChatSessions : [], activeChatId: null, isChatPanelOpen: true,
   organizationsData: [], projectsData: [], agentsData: [],
   integrationsData: [], analyticsData: null, currentUser: null,
+  serviceAccounts: [],
+  subscription: null,
+  accountMetrics: null,
   storageVolumes: [],
   isLoading: false, error: null,
   organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
@@ -444,7 +447,22 @@ export const useAppStore = create((set, get) => ({
 
   logout: () => {
     authService.logout();
-    set({ currentUser: null, organizationsData: [], projectsData: [], agentsData: [], integrationsData: [], analyticsData: null, organizations: get().devMode ? mockOrganizations : [emptyOrg], workspaces: get().devMode ? mockWorkspaces.map(normalizeWorkspace) : [], currentOrganization: get().devMode ? mockOrganizations[0] : emptyOrg, currentWorkspace: null, activeScope: 'organization' });
+    set({
+      currentUser: null,
+      organizationsData: [],
+      projectsData: [],
+      agentsData: [],
+      integrationsData: [],
+      analyticsData: null,
+      serviceAccounts: [],
+      subscription: null,
+      accountMetrics: null,
+      organizations: get().devMode ? mockOrganizations : [emptyOrg],
+      workspaces: get().devMode ? mockWorkspaces.map(normalizeWorkspace) : [],
+      currentOrganization: get().devMode ? mockOrganizations[0] : emptyOrg,
+      currentWorkspace: null,
+      activeScope: 'organization',
+    });
   },
 
   fetchOrganizations: async () => { if (get().devMode) return; set({ isLoading: true }); try { const orgs = await organizationService.list(); set({ organizationsData: orgs, organizations: orgs, isLoading: false }); if (orgs.length > 0 && !get().currentOrganization) set({ currentOrganization: orgs[0] }); } catch (err) { set({ error: err.message, isLoading: false }); } },
@@ -551,6 +569,24 @@ export const useAppStore = create((set, get) => ({
           : state.currentOrganization,
         isLoading: false,
       }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  deleteAccount: async () => {
+    if (get().devMode) {
+      get().logout();
+      return { deleted: true };
+    }
+
+    set({ isLoading: true });
+    try {
+      const result = await authService.deleteAccount();
+      get().logout();
+      set({ isLoading: false });
+      return result;
     } catch (err) {
       set({ error: err.message, isLoading: false });
       throw err;

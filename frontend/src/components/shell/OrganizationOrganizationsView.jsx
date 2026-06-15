@@ -1,27 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/useAppStore';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import {
   Building2,
-  ChevronRight,
   ArrowLeft,
   Trash2,
   Plus,
   Check,
-  ChevronDown,
-  UserPlus,
   Mail,
-  CreditCard,
   Folder,
   X,
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import '@/styles/organization-views.css';
 
@@ -30,6 +20,7 @@ export function OrganizationOrganizationsView() {
   const {
     organizations,
     currentOrganization,
+    currentUser,
     createOrganization: storeCreateOrg,
     deleteOrganization,
     updateOrganization,
@@ -43,13 +34,10 @@ export function OrganizationOrganizationsView() {
 
   // Inline editing fields
   const [editName, setEditName] = useState('');
-  const [editPlan, setEditPlan] = useState('');
-  const [editOwner, setEditOwner] = useState('');
   const [dirty, setDirty] = useState(false);
 
   // Create form fields
   const [createName, setCreateName] = useState('');
-  const [createPlan, setCreatePlan] = useState('Starter');
 
   const handleEditSave = async (id, data) => {
     try {
@@ -57,7 +45,7 @@ export function OrganizationOrganizationsView() {
       setSelectedOrg((prev) => prev ? { ...prev, ...data } : prev);
       setDirty(false);
     } catch (err) {
-      alert('Failed to update organization: ' + err.message);
+      alert('Failed to update workspace: ' + err.message);
     }
   };
 
@@ -71,7 +59,7 @@ export function OrganizationOrganizationsView() {
       setSelectedOrg((prev) => prev ? { ...prev, isDefault: true } : prev);
       setDirty(false);
     } catch (err) {
-      alert('Failed to set default organization: ' + err.message);
+      alert('Failed to set default workspace: ' + err.message);
     }
   };
 
@@ -82,7 +70,7 @@ export function OrganizationOrganizationsView() {
       await deleteOrganization(id);
       setSelectedOrg(null);
     } catch (err) {
-      alert('Failed to delete organization: ' + err.message);
+      alert('Failed to delete workspace: ' + err.message);
     }
   };
 
@@ -92,17 +80,14 @@ export function OrganizationOrganizationsView() {
       await storeCreateOrg(createName.trim());
       setCreating(false);
       setCreateName('');
-      setCreatePlan('Starter');
     } catch (err) {
-      alert('Failed to create organization: ' + err.message);
+      alert('Failed to create workspace: ' + err.message);
     }
   };
 
   const openDetail = (org) => {
     setSelectedOrg(org);
     setEditName(org.name);
-    setEditPlan(org.plan);
-    setEditOwner(org.owner);
     setDirty(false);
   };
 
@@ -111,13 +96,13 @@ export function OrganizationOrganizationsView() {
     return (
       <ViewFrame
         title={selectedOrg.name}
-        description="Edit organization details and settings."
+        description="Edit workspace details and settings."
         maxWidthClassName="max-w-3xl"
       >
         <div className="org-detail-shell">
           <button className="org-back-btn" onClick={() => setSelectedOrg(null)}>
             <ArrowLeft size={15} />
-            <span>All organizations</span>
+            <span>All workspaces</span>
           </button>
 
           {/* General */}
@@ -129,38 +114,38 @@ export function OrganizationOrganizationsView() {
             <div className="org-edit-fields">
               <label className="org-modal-field">
                 <span className="org-modal-field-label">Name</span>
-                <Input className="org-modal-input" value={editName} onChange={(e) => { setEditName(e.target.value); setDirty(true); }} placeholder="Organization name" />
+                <Input className="org-modal-input" value={editName} onChange={(e) => { setEditName(e.target.value); setDirty(true); }} placeholder="Workspace name" />
               </label>
             </div>
             {dirty && (
               <div className="org-detail-save-bar">
                 <span className="org-save-hint">Unsaved changes</span>
                 <div className="org-detail-save-actions">
-                  <button className="org-btn-secondary" onClick={() => { setEditName(selectedOrg.name); setEditOwner(selectedOrg.owner); setDirty(false); }}>Cancel</button>
-                  <button className="org-btn-primary" onClick={() => { handleEditSave(selectedOrg.id, { name: editName, owner: editOwner }); setDirty(false); }}><Check size={14} /> Save</button>
+                  <button className="org-btn-secondary" onClick={() => { setEditName(selectedOrg.name); setDirty(false); }}>Cancel</button>
+                  <button className="org-btn-primary" onClick={() => { handleEditSave(selectedOrg.id, { name: editName }); setDirty(false); }}><Check size={14} /> Save</button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Default Organization Setting */}
+          {/* Default Workspace Setting */}
           <div className="org-edit-section">
             <div className="org-edit-header">
               <Check size={14} />
-              <span>Default Organization</span>
+              <span>Default Workspace</span>
             </div>
             <div className="org-edit-fields">
               {selectedOrg.isDefault ? (
                 <div className="overlay-connection-badge" style={{ backgroundColor: 'rgba(59, 130, 246, 0.08)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
                   <Check size={14} style={{ color: '#3b82f6', marginRight: '6px' }} />
-                  <span style={{ fontSize: '13px', color: '#ffffff' }}>This is your default organization</span>
+                  <span style={{ fontSize: '13px', color: '#ffffff' }}>This is your default workspace</span>
                 </div>
               ) : (
                 <div className="org-edit-danger-row" style={{ border: 'none', padding: 0 }}>
                   <div style={{ flex: 1 }}>
-                    <div className="org-edit-danger-label" style={{ color: '#ffffff' }}>Set as default organization</div>
+                    <div className="org-edit-danger-label" style={{ color: '#ffffff' }}>Set as default workspace</div>
                     <div className="org-edit-danger-desc">
-                      This organization will load automatically when you sign in.
+                      This workspace will load automatically when you sign in.
                     </div>
                   </div>
                   <button
@@ -183,16 +168,14 @@ export function OrganizationOrganizationsView() {
               <span>Ownership</span>
             </div>
             <div className="org-edit-fields">
-              <label className="org-modal-field">
-                <span className="org-modal-field-label">Owner email</span>
-                <div className="org-edit-owner-row">
-                  <Input className="org-modal-input" value={editOwner} onChange={(e) => { setEditOwner(e.target.value); setDirty(true); }} placeholder="owner@example.com" />
-                  <button className="org-btn-secondary" style={{ flexShrink: 0 }} onClick={() => setDirty(true)}>
-                    <UserPlus size={13} />
-                    Transfer
-                  </button>
+              <div className="org-edit-danger-row" style={{ border: 'none', padding: 0 }}>
+                <div>
+                  <div className="org-edit-danger-label" style={{ color: '#ffffff' }}>Account owner</div>
+                  <div className="org-edit-danger-desc">
+                    {currentUser?.email || 'Signed-in account'}
+                  </div>
                 </div>
-              </label>
+              </div>
             </div>
           </div>
 
@@ -205,11 +188,11 @@ export function OrganizationOrganizationsView() {
             <div className="org-edit-fields">
               <div className="org-edit-danger-row">
                 <div>
-                  <div className="org-edit-danger-label">Delete this organization</div>
+                  <div className="org-edit-danger-label">Delete this workspace</div>
                   <div className="org-edit-danger-desc">
                     {selectedOrg.isDefault
-                      ? "This is your default organization and cannot be deleted."
-                      : "Permanently remove this organization and all its projects."}
+                      ? "This is your default workspace and cannot be deleted."
+                      : "Permanently remove this workspace and all its projects."}
                   </div>
                 </div>
                 <button
@@ -236,7 +219,7 @@ export function OrganizationOrganizationsView() {
                 <div className="overlay-header">
                   <h3 className="overlay-title">Are you sure?</h3>
                   <p className="overlay-description" style={{ color: '#ef4444', fontWeight: 500 }}>
-                    This action is permanent and cannot be undone. All projects and telemetry data associated with this organization will be permanently deleted.
+                    This action is permanent and cannot be undone. All projects and telemetry data associated with this workspace will be permanently deleted.
                   </p>
                 </div>
                 <div className="overlay-body">
@@ -249,7 +232,7 @@ export function OrganizationOrganizationsView() {
                       className="overlay-input"
                       value={deleteInputText}
                       onChange={(e) => setDeleteInputText(e.target.value)}
-                      placeholder="Type organization name"
+                      placeholder="Type workspace name"
                       autoFocus
                     />
                   </div>
@@ -266,7 +249,7 @@ export function OrganizationOrganizationsView() {
                       setDeleteConfirmOpen(false);
                     }}
                   >
-                    Delete Organization
+                    Delete Workspace
                   </button>
                 </div>
               </div>
@@ -281,21 +264,21 @@ export function OrganizationOrganizationsView() {
   if (creating) {
     return (
       <ViewFrame
-        title="New organization"
-        description="Set up a new organization for your account."
+        title="New workspace"
+        description="Set up a new workspace for your account."
         maxWidthClassName="max-w-3xl"
       >
         <div className="org-detail-shell">
-          <button className="org-back-btn" onClick={() => { setCreating(false); setCreateName(''); setCreatePlan('Starter'); }}>
+          <button className="org-back-btn" onClick={() => { setCreating(false); setCreateName(''); }}>
             <ArrowLeft size={15} />
-            <span>All organizations</span>
+            <span>All workspaces</span>
           </button>
 
           <div className="org-edit-section">
             <div className="org-edit-fields">
               <label className="org-modal-field">
                 <span className="org-modal-field-label">Name</span>
-                <Input className="org-modal-input" value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder="Organization name" />
+                <Input className="org-modal-input" value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder="Workspace name" />
               </label>
             </div>
             <div className="org-edit-actions">
@@ -311,15 +294,15 @@ export function OrganizationOrganizationsView() {
   // List view
   return (
     <ViewFrame
-      title="Organizations"
+      title="Workspace"
       description={
         <span>
-          Switch between or manage all organizations under your account.{" "}
+          Switch between or manage all workspaces under your account.{" "}
           <a
             href="#learn-more"
             onClick={(e) => {
               e.preventDefault();
-              alert("Opening organizations guide...");
+              alert("Opening workspace guide...");
             }}
             style={{ color: "#3b82f6", textDecoration: "none" }}
             onMouseOver={(e) => e.target.style.textDecoration = "underline"}
@@ -332,9 +315,9 @@ export function OrganizationOrganizationsView() {
       maxWidthClassName="max-w-3xl"
     >
       <div className="org-list-header-row">
-        <span className="org-list-select-label">Select an organization</span>
+        <span className="org-list-select-label">Select a workspace</span>
         <button className="org-list-add-btn" onClick={() => setCreating(true)}>
-          New organization
+          New workspace
         </button>
       </div>
 
@@ -347,26 +330,23 @@ export function OrganizationOrganizationsView() {
               onClick={() => openDetail(org)}
               className="org-card-item"
             >
-              <div className="org-card-left">
-                <Folder size={16} className="org-card-folder-icon" />
-                <div className="org-card-names-group">
-                  <span className="org-card-primary-name">{org.name}</span>
-                  <span className="org-card-secondary-name">
-                    {org.owner ? org.owner.split('@')[0] : 'owner'}
-                  </span>
+                <div className="org-card-left">
+                  <Folder size={16} className="org-card-folder-icon" />
+                  <div className="org-card-names-group">
+                    <span className="org-card-primary-name">{org.name}</span>
+                  </div>
                 </div>
-              </div>
               <div className="org-card-right">
                 <button
                   className={`org-card-circle-action ${isCurrent ? 'active' : ''}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Select this organization
+                    // Select this workspace
                     useAppStore.getState().selectOrganization(org.id);
                     const oSlug = org.slug || org.id;
                     navigate(`/app/${oSlug}/stats`);
                   }}
-                  title={isCurrent ? "Active Organization" : "Select Organization"}
+                  title={isCurrent ? "Active Workspace" : "Select Workspace"}
                 >
                   {isCurrent ? <Check size={14} /> : <Plus size={14} />}
                 </button>
@@ -375,6 +355,7 @@ export function OrganizationOrganizationsView() {
           );
         })}
       </div>
+
     </ViewFrame>
   );
 }

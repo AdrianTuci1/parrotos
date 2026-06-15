@@ -35,6 +35,8 @@ services:
       - LLM_API_KEY=${LLM_API_KEY}
       - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
       - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
+      - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
+      - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
     restart: unless-stopped
 
