@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Visual Section (Data Flow Diagram - Sage Green Background & Carousel Slider)
+   ========================================================================== */
+.visual-section {
+  position: relative;
+  padding: 64px 24px;
+  background: linear-gradient(135deg, #b0c2b7 0%, #a2b4a9 100%);
+  border-radius: 16px;
+  margin: 32px 0;
+}
+
+/* Slideshow Container */
+.visualizer-slides-container {
+  position: relative;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.visualizer-slide {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.995);
+  transition: opacity 0.5s ease-in-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.visualizer-slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  position: relative; /* the active one determines the height of the container */
+  z-index: 10;
+}
+
+/* Image Placeholder Slides (Exact same height and style as flow map) */
+.visualizer-container-image {
+  background-color: #0c0c0e;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 48px 36px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.image-placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 460px;
+  gap: 16px;
+  color: #ffffff;
+}
+
+.placeholder-illustration {
+  color: var(--accent-coral);
+  opacity: 0.8;
+  margin-bottom: 8px;
+  animation: pulseGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.04); opacity: 0.95; }
+}
+
+.placeholder-title {
+  font-family: "Plus Jakarta Sans", var(--font-sans);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.placeholder-subtitle {
+  font-size: 14.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.placeholder-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-muted);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ==========================================================================
+   Responsive adjustments
+   ========================================================================== */
+@media (max-width: 640px) {
+  .visual-section {
+    padding: 32px 16px;
+    margin: 16px 0;
+    border-radius: 12px;
+  }
+}

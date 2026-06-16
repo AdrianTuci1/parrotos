@@ -114,7 +114,18 @@
 .organization-metric-trend {
   font-size: 13px;
   font-weight: 500;
+}
+
+.organization-metric-trend.is-positive {
   color: #6fcf97;
+}
+
+.organization-metric-trend.is-negative {
+  color: #f59e0b;
+}
+
+.organization-metric-trend.is-neutral {
+  color: #8e918f;
 }
 
 .organization-metric-detail {

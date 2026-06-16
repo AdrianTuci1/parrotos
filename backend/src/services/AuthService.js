@@ -5,10 +5,15 @@ import { User } from '../models/User.js';
 import { config } from '../config/index.js';
 import { UnauthorizedError, ConflictError } from '../utils/errors.js';
 import { dataDeletionService } from './DataDeletionService.js';
+import { OrganizationService } from './OrganizationService.js';
 
 export class AuthService {
-  constructor() {
-    this.usersCollection = gcpService.firestore.collection('users');
+  constructor({
+    usersCollection = gcpService.firestore.collection('users'),
+    organizationService = new OrganizationService(),
+  } = {}) {
+    this.usersCollection = usersCollection;
+    this.organizationService = organizationService;
   }
 
   async register(dto) {
@@ -36,6 +41,7 @@ export class AuthService {
     });
 
     await this.usersCollection.doc(userId).set(user.toFirestore());
+    await this.organizationService.createDefaultForAccount(userId, user.email);
 
     const token = this.generateToken(user);
     return { token, user: this.sanitizeUser(user) };
@@ -131,6 +137,7 @@ export class AuthService {
       });
 
       await this.usersCollection.doc(userId).set(user.toFirestore());
+      await this.organizationService.createDefaultForAccount(userId, user.email);
     }
 
     const token = this.generateToken(user);

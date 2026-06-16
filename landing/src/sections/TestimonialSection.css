@@ -1,0 +1,61 @@
+/* ==========================================================================
+   Testimonial Section (Minimalist, Large Bold Quote, Pastel Violet Gradient)
+   ========================================================================== */
+.testimonial-section {
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 24px;
+  background: linear-gradient(-45deg, #c4b5fd, #d8b4fe, #c7d2fe, #b8a6ff);
+  background-size: 400% 400%;
+  animation: testimonial-gradient 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes testimonial-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.testimonial-container {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  z-index: 2;
+}
+
+.testimonial-quote {
+  font-family: "Plus Jakarta Sans", var(--font-sans);
+  font-size: clamp(1.8rem, 4.2vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  color: #09090b; /* Deep dark charcoal for high contrast */
+  margin: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+
+@media (max-width: 640px) {
+  .testimonial-section {
+    padding: 80px 20px;
+  }
+  
+  .testimonial-quote {
+    font-size: clamp(1.4rem, 6vw, 1.8rem);
+    line-height: 1.25;
+  }
+}

@@ -1,0 +1,69 @@
+:root {
+  color-scheme: dark;
+  --bg-base: #09090b;
+  --bg-surface: #121214;
+  --bg-surface-elevated: #161619;
+  --border-muted: #27272a;
+  --border-default: #3f3f46;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  
+  --accent-coral: #f47a55;
+  --accent-violet: #6944ff;
+  --accent-slate: #71717a;
+  --accent-line: #27272a;
+
+  --font-sans: "Inter", "Plus Jakarta Sans", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100%;
+  line-height: 1.5;
+  /* Removed overflow-x: hidden to allow position: sticky sidebar to scroll and stick */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Layout Wrappers
+   ========================================================================== */
+.landing-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.landing-container {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.landing-main {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding-bottom: 96px;
+}

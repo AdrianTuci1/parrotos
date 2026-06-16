@@ -326,14 +326,6 @@ export function AppSidebar() {
       <SidebarFooter className="sidebar-footer-custom">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Documentation" onClick={() => alert("Opening documentation...")} className="sidebar-nav-button">
-              <div className="sidebar-nav-left">
-                <div className="sidebar-nav-icon"><BookOpen size={18} /></div>
-                <span className="sidebar-nav-label group-data-[collapsible=icon]:hidden">Documentation</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
             <SidebarMenuButton tooltip="Demo Mode" onClick={toggleDemoMode} className={cn("sidebar-nav-button", demoMode && "active")}>
               <div className="sidebar-nav-left">
                 <div className="sidebar-nav-icon"><Power size={18} /></div>

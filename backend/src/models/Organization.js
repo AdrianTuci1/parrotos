@@ -4,6 +4,7 @@ export class Organization {
     this.accountId = data.accountId || null;
     this.name = data.name || '';
     this.slug = data.slug || '';
+    this.isDefault = Boolean(data.isDefault);
     this.plan = data.plan || 'free'; // free, team, enterprise
     this.status = data.status || 'active';
     this.settings = data.settings || {
@@ -42,6 +43,7 @@ export class Organization {
       accountId: this.accountId,
       name: this.name,
       slug: this.slug,
+      isDefault: this.isDefault,
       plan: this.plan,
       status: this.status,
       settings: this.settings,

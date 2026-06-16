@@ -122,9 +122,15 @@ const emptyMetrics = {
 };
 
 function getOrganizationNameFromEmail(email) {
-  const domain = email.split('@')[1] || '';
-  const name = domain.split('.')[0];
-  return name.charAt(0).toUpperCase() + name.slice(1) || 'My Org';
+  const localPart = String(email || '').split('@')[0] || 'workspace';
+  const normalized = localPart
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return normalized || 'workspace';
 }
 
 const emptyOrg = { id: '__empty__', name: 'My Organization', slug: 'my-org', plan: 'Starter' };
@@ -441,7 +447,7 @@ export const useAppStore = create((set, get) => ({
   register: async (dto) => {
     if (get().devMode) return get().login(dto);
     set({ isLoading: true, error: null });
-    try { const result = await authService.register(dto); set({ currentUser: result.user, isLoading: false }); return result; }
+    try { const result = await authService.register(dto); set({ currentUser: result.user, isLoading: false }); await get().fetchOrganizations(); return result; }
     catch (err) { set({ error: err.message, isLoading: false }); throw err; }
   },
 
@@ -465,7 +471,23 @@ export const useAppStore = create((set, get) => ({
     });
   },
 
-  fetchOrganizations: async () => { if (get().devMode) return; set({ isLoading: true }); try { const orgs = await organizationService.list(); set({ organizationsData: orgs, organizations: orgs, isLoading: false }); if (orgs.length > 0 && !get().currentOrganization) set({ currentOrganization: orgs[0] }); } catch (err) { set({ error: err.message, isLoading: false }); } },
+  fetchOrganizations: async () => {
+    if (get().devMode) return;
+    set({ isLoading: true });
+    try {
+      const orgs = await organizationService.list();
+      const currentOrganization = get().currentOrganization;
+      const nextCurrentOrganization = orgs.find((org) => org.id === currentOrganization?.id) || orgs[0] || emptyOrg;
+      set({
+        organizationsData: orgs,
+        organizations: orgs,
+        currentOrganization: nextCurrentOrganization,
+        isLoading: false,
+      });
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+    }
+  },
   fetchProjects: async (orgId) => { if (get().devMode) return; set({ isLoading: true }); try { const projects = (await projectService.list(orgId)).map(normalizeWorkspace); set({ projectsData: projects, workspaces: projects, isLoading: false }); } catch (err) { set({ error: err.message, isLoading: false }); } },
   fetchAgents: async (orgId, projectId) => { if (get().devMode) return; try { set({ agentsData: await agentService.listSessions(orgId, projectId) }); } catch (err) { set({ error: err.message }); } },
   fetchIntegrations: async (orgId, projectId) => { if (get().devMode) return; try { set({ integrationsData: await integrationService.list(orgId, projectId) }); } catch (err) { set({ error: err.message }); } },

@@ -4,19 +4,16 @@ import { NotFoundError, ConflictError, ForbiddenError } from '../utils/errors.js
 import { dataDeletionService } from './DataDeletionService.js';
 
 export class OrganizationService {
-  constructor() {
-    this.orgsCollection = gcpService.firestore.collection('organizations');
+  constructor({
+    orgsCollection = gcpService.firestore.collection('organizations'),
+    deletionService = dataDeletionService,
+  } = {}) {
+    this.orgsCollection = orgsCollection;
+    this.deletionService = deletionService;
   }
 
   async create(dto, accountId) {
-    const existing = await this.orgsCollection
-      .where('slug', '==', dto.slug)
-      .limit(1)
-      .get();
-
-    if (!existing.empty) {
-      throw new ConflictError('Organization slug already exists');
-    }
+    await this.ensureSlugAvailable(dto.slug);
 
     const orgId = crypto.randomUUID();
     const now = new Date().toISOString();
@@ -27,6 +24,27 @@ export class OrganizationService {
       name: dto.name,
       slug: dto.slug,
       plan: dto.plan || 'free',
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await this.orgsCollection.doc(orgId).set(org.toFirestore());
+    return org;
+  }
+
+  async createDefaultForAccount(accountId, email) {
+    const baseName = this.getDefaultOrganizationName(email);
+    const slug = await this.generateUniqueSlug(baseName);
+    const orgId = crypto.randomUUID();
+    const now = new Date().toISOString();
+
+    const org = new Organization({
+      id: orgId,
+      accountId,
+      name: baseName,
+      slug,
+      isDefault: true,
+      plan: 'free',
       createdAt: now,
       updatedAt: now,
     });
@@ -67,8 +85,13 @@ export class OrganizationService {
     return this.findById(orgId);
   }
 
-  async delete(orgId) {
-    await dataDeletionService.deleteOrganization(orgId);
+  async delete(orgId, { allowDefaultDeletion = false } = {}) {
+    const org = await this.findById(orgId);
+    if (org.isDefault && !allowDefaultDeletion) {
+      throw new ForbiddenError('Default organization can only be deleted when deleting the account');
+    }
+
+    await this.deletionService.deleteOrganization(orgId, { skipExistenceCheck: true });
   }
 
   async updateStats(orgId, updates) {
@@ -99,5 +122,55 @@ export class OrganizationService {
       throw new ForbiddenError('Project limit reached for this plan');
     }
     return true;
+  }
+
+  async ensureSlugAvailable(slug) {
+    const existing = await this.orgsCollection
+      .where('slug', '==', slug)
+      .limit(1)
+      .get();
+
+    if (!existing.empty) {
+      throw new ConflictError('Organization slug already exists');
+    }
+  }
+
+  async generateUniqueSlug(baseSlug) {
+    const normalizedBase = this.normalizeOrganizationToken(baseSlug || 'workspace');
+
+    let slug = normalizedBase;
+    let suffix = 2;
+
+    while (!(await this.isSlugAvailable(slug))) {
+      slug = `${normalizedBase}-${suffix}`;
+      suffix += 1;
+    }
+
+    return slug;
+  }
+
+  async isSlugAvailable(slug) {
+    const existing = await this.orgsCollection
+      .where('slug', '==', slug)
+      .limit(1)
+      .get();
+
+    return existing.empty;
+  }
+
+  getDefaultOrganizationName(email) {
+    const localPart = String(email || '').split('@')[0] || 'workspace';
+    return this.normalizeOrganizationToken(localPart);
+  }
+
+  normalizeOrganizationToken(value) {
+    const normalized = String(value || '')
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    return normalized || 'workspace';
   }
 }

@@ -4,13 +4,19 @@ import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
 import '@/styles/organization-home.css';
 
+function getTrendTone(trend) {
+  if (String(trend).startsWith('+')) return 'positive';
+  if (String(trend).startsWith('-')) return 'negative';
+  return 'neutral';
+}
+
 function AccountTile({ label, value, detail, trend }) {
   return (
     <div className="organization-metric-tile">
       <span className="organization-metric-label">{label}</span>
       <div className="organization-metric-value-row">
         <span className="organization-metric-value">{value}</span>
-        <span className="organization-metric-trend">{trend}</span>
+        <span className={`organization-metric-trend is-${getTrendTone(trend)}`}>{trend}</span>
       </div>
       <span className="organization-metric-detail">{detail}</span>
     </div>
@@ -69,6 +75,12 @@ export function OrganizationHomeView() {
   const recentActivity = metrics?.recentActivity ?? [
     { title: 'No recent activity', meta: 'Activity will appear here' },
   ];
+  const workspacesTrend = totalOrgs > 0 ? '+1 this quarter' : 'No data';
+  const projectsTrend = totalProjects > 0 ? '+2 this month' : 'No data';
+  const eventsTrend = totalEvents > 0 ? '+15.3%' : 'No data';
+  const connectorsTrend = uniqueConnectors > 0 ? '+3 this quarter' : 'No data';
+  const healthTrend = totalProjects > 0 ? 'Stable' : 'No data';
+  const dataSourcesTrend = uniqueConnectors > 0 ? '+7.3%' : 'No data';
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
@@ -103,13 +115,13 @@ export function OrganizationHomeView() {
                     label="Workspaces"
                     value={String(totalOrgs)}
                     detail={`${organizations.filter((o) => o.plan !== 'Starter').length} on paid plans`}
-                    trend="+1 this quarter"
+                    trend={workspacesTrend}
                   />
                   <AccountTile
                     label="Projects"
                     value={String(totalProjects)}
                     detail={`${healthyProjects} healthy`}
-                    trend="+2 this month"
+                    trend={projectsTrend}
                   />
                 </>
               )}
@@ -134,14 +146,14 @@ export function OrganizationHomeView() {
                   <AccountTile
                     label="Total monthly events"
                     value={totalEvents >= 1000 ? `${(totalEvents / 1000).toFixed(1)}K` : String(totalEvents)}
-                    detail="Across all projects"
-                    trend="+15.3%"
+                    detail={totalEvents > 0 ? 'Across all projects' : 'No project events yet'}
+                    trend={eventsTrend}
                   />
                   <AccountTile
                     label="Active connectors"
                     value={String(uniqueConnectors)}
-                    detail="Unique connector types deployed"
-                    trend="+3 this quarter"
+                    detail={uniqueConnectors > 0 ? 'Unique connector types deployed' : 'No connectors deployed'}
+                    trend={connectorsTrend}
                   />
                 </>
               )}
@@ -167,13 +179,13 @@ export function OrganizationHomeView() {
                     label="Healthy projects"
                     value={`${totalProjects > 0 ? Math.round((healthyProjects / totalProjects) * 100) : 0}%`}
                     detail={`${healthyProjects} of ${totalProjects} projects`}
-                    trend="Stable"
+                    trend={healthTrend}
                   />
                   <AccountTile
                     label="Data sources"
-                    value={String(uniqueConnectors * 2 + 3)}
-                    detail="Connected across all workspaces"
-                    trend="+7.3%"
+                    value={String(uniqueConnectors)}
+                    detail={uniqueConnectors > 0 ? 'Connected across all workspaces' : 'No connected sources'}
+                    trend={dataSourcesTrend}
                   />
                 </>
               )}

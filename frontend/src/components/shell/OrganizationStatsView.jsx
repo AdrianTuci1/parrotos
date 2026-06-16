@@ -4,13 +4,19 @@ import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
 import '@/styles/organization-home.css';
 
+function getTrendTone(trend) {
+  if (String(trend).startsWith('+')) return 'positive';
+  if (String(trend).startsWith('-')) return 'negative';
+  return 'neutral';
+}
+
 function MetricTile({ label, value, detail, trend }) {
   return (
     <div className="organization-metric-tile">
       <span className="organization-metric-label">{label}</span>
       <div className="organization-metric-value-row">
         <span className="organization-metric-value">{value}</span>
-        <span className="organization-metric-trend">{trend}</span>
+        <span className={`organization-metric-trend is-${getTrendTone(trend)}`}>{trend}</span>
       </div>
       <span className="organization-metric-detail">{detail}</span>
     </div>
@@ -67,6 +73,12 @@ export function OrganizationStatsView() {
   const connectorUsage = metrics?.connectorUsage || [];
   const projectList = metrics?.projectList || [];
   const recentActivity = metrics?.recentActivity || [{ title: 'No recent activity', meta: 'Activity will appear here' }];
+  const activeProjectsTrend = projects.total > 0 ? '+2 this month' : 'No data';
+  const monthlyEventsTrend = events.total > 0 ? '+12.4%' : 'No data';
+  const warehouseTrend = storage.total > 0 ? '+8.1%' : 'No data';
+  const computeTrend = parseFloat(compute.value) > 0 ? compute.trend : 'No data';
+  const connectedSourcesTrend = Number(connectedSources.value) > 0 ? connectedSources.trend : 'No data';
+  const topConnectorTrend = topConnector.value && topConnector.value !== 'None' ? topConnector.trend : 'No data';
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
@@ -101,13 +113,13 @@ export function OrganizationStatsView() {
                     label="Active projects"
                     value={String(projects.total)}
                     detail={`${projects.healthy} healthy, ${projects.monitoring} monitoring`}
-                    trend="+2 this month"
+                    trend={activeProjectsTrend}
                   />
                   <MetricTile
                     label="Monthly events"
                     value={events.formatted}
-                    detail="Across all projects"
-                    trend="+12.4%"
+                    detail={events.total > 0 ? 'Across all projects' : 'No project events yet'}
+                    trend={monthlyEventsTrend}
                   />
                 </>
               )}
@@ -132,14 +144,14 @@ export function OrganizationStatsView() {
                   <MetricTile
                     label="Warehouse consumption"
                     value={storage.formatted}
-                    detail="Raw + modeled layers"
-                    trend="+8.1%"
+                    detail={storage.total > 0 ? 'Raw + modeled layers' : 'No storage usage yet'}
+                    trend={warehouseTrend}
                   />
                   <MetricTile
                     label="Monthly compute"
                     value={compute.value}
                     detail={compute.detail}
-                    trend={compute.trend}
+                    trend={computeTrend}
                   />
                 </>
               )}
@@ -165,13 +177,13 @@ export function OrganizationStatsView() {
                     label="Connected sources"
                     value={connectedSources.value}
                     detail={connectedSources.detail}
-                    trend={connectedSources.trend}
+                    trend={connectedSourcesTrend}
                   />
                   <MetricTile
                     label="Top connector"
                     value={topConnector.value}
                     detail={topConnector.detail}
-                    trend={topConnector.trend}
+                    trend={topConnectorTrend}
                   />
                 </>
               )}

@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Bottom CTA Section (Start shipping with agents)
+   ========================================================================== */
+.bottom-cta-section {
+  width: 100%;
+  padding: 140px 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* Background Image / Gradient Placeholder */
+.cta-background-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  
+  /* 
+     PLACEHOLDER: A premium, brushed abstract blue/teal gradient 
+     resembling the motion-blur visual in the screenshot.
+     To replace this with an actual image, uncomment the line below:
+     background-image: url('/path/to/your/abstract-bg.jpg');
+  */
+  background: 
+    radial-gradient(circle at 45% 20%, rgba(56, 189, 248, 0.28) 0%, transparent 60%),
+    radial-gradient(circle at 75% 80%, rgba(45, 212, 191, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, #0e4c63 0%, #063140 40%, #031d27 100%);
+  background-size: cover;
+  background-position: center;
+  filter: contrast(1.15) brightness(0.95);
+}
+
+/* Content Container */
+.cta-content-container {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.cta-title {
+  font-family: "Plus Jakarta Sans", var(--font-sans);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Button Group */
+.cta-button-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Download Button (White) */
+.btn-cta-download {
+  background-color: #ffffff;
+  color: #09090b;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cta-download:hover {
+  background-color: #f4f4f5;
+  border-color: #f4f4f5;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.arrow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contact Sales Button (Outline/Transparent) */
+.btn-cta-contact {
+  background-color: rgba(9, 9, 11, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.btn-cta-contact:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .bottom-cta-section {
+    padding: 100px 20px;
+  }
+  
+  .cta-content-container {
+    gap: 28px;
+  }
+  
+  .cta-button-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  
+  .btn-cta-download,
+  .btn-cta-contact {
+    width: 100%;
+    justify-content: center;
+  }
+}

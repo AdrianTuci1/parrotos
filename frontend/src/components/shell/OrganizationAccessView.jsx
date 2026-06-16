@@ -492,16 +492,9 @@ export function OrganizationAccessView() {
                   onClick={() => openEditMember(member)}
                 >
                   <div className="org-card-left">
-                    <div className="org-avatar" style={{ fontSize: '11px', fontWeight: 'bold' }}>
-                      {member.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || member.name.substring(0, 2).toUpperCase()}
-                    </div>
                     <div>
-                      <div className="org-row-name" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                        <span style={{ fontWeight: '600', color: '#ffffff' }}>{member.name}</span>
-                        <span style={{ fontSize: '11px', color: '#8e918f' }}>{member.isProjectScoped ? 'Project scoped' : 'Global access'}</span>
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#8e918f', marginTop: '4px', fontFamily: 'monospace' }}>
-                        {member.saId || 'ID available after creation'}
+                      <div className="org-row-name">
+                        {member.name}
                       </div>
                     </div>
                   </div>

@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Legal Pages (Privacy & Terms - Consistent Design System)
+   ========================================================================== */
+.legal-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+}
+
+.legal-container {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 120px 24px 80px;
+  flex: 1;
+}
+
+.legal-content {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.legal-content h1 {
+  font-family: "Plus Jakarta Sans", var(--font-sans);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+}
+
+.legal-content .last-updated {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 48px;
+  display: block;
+}
+
+.legal-content h2 {
+  font-family: "Plus Jakarta Sans", var(--font-sans);
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid var(--border-muted);
+  padding-bottom: 8px;
+}
+
+.legal-content p {
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.legal-content ul {
+  margin-bottom: 24px;
+  padding-left: 24px;
+}
+
+.legal-content li {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .legal-container {
+    padding: 100px 20px 60px;
+  }
+}
