@@ -6,6 +6,7 @@ import { config } from './config/index.js';
 import routes from './routes/index.js';
 import { requestId } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { metricsMiddleware } from './middleware/metrics.js';
 
 const app = express();
 
@@ -23,6 +24,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Request ID
 app.use(requestId);
+
+// Prometheus metrics
+app.use(metricsMiddleware);
 
 // Health check
 app.get('/health', (req, res) => {

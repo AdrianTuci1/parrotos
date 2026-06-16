@@ -31,9 +31,11 @@ services:
     build: ./services/chat
     environment:
       - PORT=8080
-      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
+      - LLM_MODEL_ID=${LLM_MODEL_ID:-deepseek-v4-flash}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
       - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
@@ -44,9 +46,11 @@ services:
     build: ./services/harness
     environment:
       - PORT=8081
-      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
+      - LLM_MODEL_ID=${LLM_MODEL_ID:-deepseek-v4-flash}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
       - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json

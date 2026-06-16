@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 60s
+  evaluation_interval: 60s
+
+scrape_configs:
+  - job_name: 'backend'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: '/metrics'
+
+  - job_name: 'chat'
+    static_configs:
+      - targets: ['chat:8080']
+
+  - job_name: 'harness'
+    static_configs:
+      - targets: ['harness:8081']
+
+  - job_name: 'observer'
+    static_configs:
+      - targets: ['observer:8082']
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']

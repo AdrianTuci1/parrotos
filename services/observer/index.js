@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { BigQuery } from '@google-cloud/bigquery';
 import { Storage } from '@google-cloud/storage';
+import client from 'prom-client';
 
 const app = express();
 app.use(cors());
@@ -9,6 +10,11 @@ app.use(express.json({ limit: '4mb' }));
 
 const PORT = parseInt(process.env.PORT || '8082', 10);
 const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || 'dev-internal-token';
+
+// Prometheus
+const promRegister = new client.Registry();
+promRegister.setDefaultLabels({ app: 'sentry-observer' });
+client.collectDefaultMetrics({ register: promRegister });
 const GCS_BUCKET = process.env.GCS_BUCKET || 'sentry-platform-data';
 const BACKEND_URL = (process.env.BACKEND_URL || 'http://localhost:3000/api/v1').replace(/\/$/, '');
 const HARNESS_SERVICE_URL = (process.env.HARNESS_SERVICE_URL || 'http://localhost:8081').replace(/\/$/, '');
@@ -54,6 +60,12 @@ function requireInternalToken(req, res, next) {
   }
   next();
 }
+
+// Prometheus metrics — no auth required
+app.get('/metrics', async (_, res) => {
+  res.set('Content-Type', promRegister.contentType);
+  res.end(await promRegister.metrics());
+});
 
 app.use(requireInternalToken);
 

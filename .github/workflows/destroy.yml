@@ -26,6 +26,9 @@ env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
   DOMAIN: ${{ vars.DOMAIN || 'sentrydata.io' }}
+  LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'deepseek' }}
+  LLM_MODEL_ID: ${{ vars.LLM_MODEL_ID || 'deepseek-v4-flash' }}
+  LLM_BASE_URL: ${{ vars.LLM_BASE_URL || 'https://api.deepseek.com/v1' }}
 
 jobs:
   confirm:

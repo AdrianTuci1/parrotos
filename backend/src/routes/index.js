@@ -17,10 +17,12 @@ import healthRoutes from './health.js';
 import preferencesRoutes from './preferences.js';
 import observerRoutes from './observer.js';
 import publicRoutes from './public.js';
+import metricsRoutes from './metrics.js';
 
 const router = Router();
 
 router.use('/health', healthRoutes);
+router.use('/metrics', metricsRoutes);
 router.use('/auth', authRoutes);
 router.use('/auth', oauthRoutes);
 router.use('/public', publicRoutes);

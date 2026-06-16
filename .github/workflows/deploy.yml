@@ -23,6 +23,9 @@ env:
   CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
   DOMAIN: ${{ vars.DOMAIN || 'sentrydata.io' }}
+  LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'deepseek' }}
+  LLM_MODEL_ID: ${{ vars.LLM_MODEL_ID || 'deepseek-v4-flash' }}
+  LLM_BASE_URL: ${{ vars.LLM_BASE_URL || 'https://api.deepseek.com/v1' }}
 
 jobs:
   deploy-gcp-infrastructure:
@@ -206,9 +209,11 @@ jobs:
             BIGQUERY_LOCATION=EU
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }}
-            LLM_PROVIDER=gemini
+            LLM_PROVIDER=${{ env.LLM_PROVIDER }}
             LLM_API_KEY=${{ secrets.LLM_API_KEY }}
-            LLM_MODEL=gemini-2.5-flash
+            LLM_MODEL=${{ env.LLM_MODEL_ID }}
+            LLM_MODEL_ID=${{ env.LLM_MODEL_ID }}
+            LLM_BASE_URL=${{ env.LLM_BASE_URL }}
             ENABLE_BIGQUERY_ANALYTICS=true
             CORS_ORIGIN=https://app.${{ env.DOMAIN }}
             CHAT_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.chat_url }}
@@ -355,9 +360,11 @@ jobs:
             --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }} \
             --region=${{ env.GCP_REGION }} \
             --service-account=sentry-chat@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=LLM_PROVIDER=gemini \
+            --set-env-vars=LLM_PROVIDER=${{ env.LLM_PROVIDER }} \
             --set-env-vars=LLM_API_KEY=${{ secrets.LLM_API_KEY }} \
-            --set-env-vars=LLM_MODEL=gemini-2.5-flash \
+            --set-env-vars=LLM_MODEL=${{ env.LLM_MODEL_ID }} \
+            --set-env-vars=LLM_MODEL_ID=${{ env.LLM_MODEL_ID }} \
+            --set-env-vars=LLM_BASE_URL=${{ env.LLM_BASE_URL }} \
             --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
             --memory=512Mi \
             --cpu=1 \
@@ -374,9 +381,11 @@ jobs:
             --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }} \
             --region=${{ env.GCP_REGION }} \
             --service-account=sentry-harness@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=LLM_PROVIDER=gemini \
+            --set-env-vars=LLM_PROVIDER=${{ env.LLM_PROVIDER }} \
             --set-env-vars=LLM_API_KEY=${{ secrets.LLM_API_KEY }} \
-            --set-env-vars=LLM_MODEL=gemini-2.5-flash \
+            --set-env-vars=LLM_MODEL=${{ env.LLM_MODEL_ID }} \
+            --set-env-vars=LLM_MODEL_ID=${{ env.LLM_MODEL_ID }} \
+            --set-env-vars=LLM_BASE_URL=${{ env.LLM_BASE_URL }} \
             --set-env-vars=GCS_BUCKET=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }} \
             --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
             --memory=1Gi \

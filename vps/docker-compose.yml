@@ -45,9 +45,11 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8080
-      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
+      - LLM_MODEL_ID=${LLM_MODEL_ID:-deepseek-v4-flash}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
       - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
@@ -67,9 +69,11 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8081
-      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
+      - LLM_MODEL_ID=${LLM_MODEL_ID:-deepseek-v4-flash}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
       - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
@@ -170,6 +174,60 @@ services:
       ofelia.job-run.sync-worker.schedule: "*/5 * * * *"
       ofelia.job-run.sync-worker.container: "sentry-sync-worker"
 
+  # ── Observability ──
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sentry-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-admin-api'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - sentry-network
+    # Not exposed externally — queried via backend proxy only
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: sentry-cadvisor
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      - sentry-network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: sentry-node-exporter
+    restart: unless-stopped
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - sentry-network
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: sentry-nginx-exporter
+    restart: unless-stopped
+    command:
+      - '-nginx.scrape-uri=http://nginx:80/nginx-status'
+    networks:
+      - sentry-network
+
 networks:
   sentry-network:
     driver: bridge
@@ -177,3 +235,4 @@ networks:
 volumes:
   certbot-data:
   certbot-www:
+  prometheus-data:

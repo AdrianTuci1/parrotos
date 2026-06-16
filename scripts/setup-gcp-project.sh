@@ -114,8 +114,7 @@ echo "-----------------------"
 echo "  Adding roles/owner to Terraform service account..."
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$TF_SA_EMAIL" \
-    --role="roles/owner" \
-    --condition=None
+    --role="roles/owner"
 
 echo "✅ Owner role granted"
 

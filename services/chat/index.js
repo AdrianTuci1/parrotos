@@ -12,6 +12,7 @@
 import express from 'express';
 import cors from 'cors';
 import { Firestore } from '@google-cloud/firestore';
+import client from 'prom-client';
 
 const app = express();
 app.use(cors());
@@ -20,13 +21,20 @@ app.use(express.json());
 const firestore = new Firestore();
 const PORT = process.env.PORT || 8080;
 
+// Prometheus
+const register = new client.Registry();
+register.setDefaultLabels({ app: 'sentry-chat' });
+client.collectDefaultMetrics({ register });
+
 // ═══════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════
 
-const LLM_PROVIDER = process.env.LLM_PROVIDER || 'gemini';
+const LLM_PROVIDER = process.env.LLM_PROVIDER || 'deepseek';
 const LLM_API_KEY = process.env.LLM_API_KEY || '';
-const LLM_MODEL = process.env.LLM_MODEL || 'gemini-2.5-flash';
+const LLM_MODEL = process.env.LLM_MODEL || 'deepseek-v4-flash';
+const LLM_MODEL_ID = process.env.LLM_MODEL_ID || process.env.LLM_MODEL || 'deepseek-v4-flash';
+const LLM_BASE_URL = (process.env.LLM_BASE_URL || 'https://api.deepseek.com/v1').replace(/\/$/, '');
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000/api/v1';
 const HARNESS_SERVICE_URL = process.env.HARNESS_SERVICE_URL || 'http://harness:8081';
 const OBSERVER_SERVICE_URL = process.env.OBSERVER_SERVICE_URL || 'http://observer:8082';
@@ -241,8 +249,9 @@ function buildSystemPrompt(context) {
 }
 
 async function* streamLLMResponse(messages, systemPrompt) {
-  if (LLM_PROVIDER === 'openai') {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  // deepseek / openai / openai-compatible — all use the same API format
+  if (LLM_PROVIDER === 'openai' || LLM_PROVIDER === 'deepseek' || LLM_PROVIDER === 'openai-compatible') {
+    const response = await fetch(`${LLM_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -560,6 +569,12 @@ app.post('/internal/message', requireInternalToken, async (req, res) => {
   }
 
   res.end();
+});
+
+// Prometheus metrics
+app.get('/metrics', async (_, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 // Health

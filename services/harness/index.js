@@ -4,6 +4,7 @@ import { BigQuery } from '@google-cloud/bigquery';
 import { Storage } from '@google-cloud/storage';
 import { buildDefaultBindings, compileDashboardSpecs, compileMindmapArtifact, mergeBindings } from './specCompiler.js';
 import { VIEW_ORDER } from './viewTemplates.js';
+import client from 'prom-client';
 
 const app = express();
 app.use(cors());
@@ -12,10 +13,16 @@ app.use(express.json());
 const PORT = parseInt(process.env.PORT || '8081', 10);
 const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || 'dev-internal-token';
 
-const LLM_PROVIDER = process.env.LLM_PROVIDER || 'openai-compatible';
+// Prometheus
+const promRegister = new client.Registry();
+promRegister.setDefaultLabels({ app: 'sentry-harness' });
+client.collectDefaultMetrics({ register: promRegister });
+
+const LLM_PROVIDER = process.env.LLM_PROVIDER || 'deepseek';
 const LLM_API_KEY = process.env.LLM_API_KEY || '';
-const LLM_MODEL = process.env.LLM_MODEL || 'gpt-4.1-mini';
-const LLM_BASE_URL = (process.env.LLM_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '');
+const LLM_MODEL = process.env.LLM_MODEL || 'deepseek-v4-flash';
+const LLM_MODEL_ID = process.env.LLM_MODEL_ID || process.env.LLM_MODEL || 'deepseek-v4-flash';
+const LLM_BASE_URL = (process.env.LLM_BASE_URL || 'https://api.deepseek.com/v1').replace(/\/$/, '');
 const GCS_BUCKET = process.env.GCS_BUCKET || 'sentry-platform-data';
 
 function requireInternalToken(req, res, next) {
@@ -24,6 +31,12 @@ function requireInternalToken(req, res, next) {
   }
   next();
 }
+
+// Prometheus metrics — no auth required
+app.get('/metrics', async (_, res) => {
+  res.set('Content-Type', promRegister.contentType);
+  res.end(await promRegister.metrics());
+});
 
 app.use(requireInternalToken);
 
