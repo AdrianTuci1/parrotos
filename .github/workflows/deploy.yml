@@ -38,6 +38,7 @@ jobs:
       TF_VAR_environment: ${{ github.event.inputs.environment }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       TF_VAR_domain: ${{ vars.DOMAIN || 'sentrydata.io' }}
       TF_VAR_vps_host: ${{ secrets.VPS_HOST }}
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
@@ -186,8 +187,10 @@ jobs:
           docker save sentry-observer:${{ github.sha }} > observer-image.tar
           echo "::endgroup::"
 
-      - name: 🔧 Ensure VPS Directory
-        run: ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p /opt/sentry-data /opt/sentry-data/secrets /opt/sentry-data/nginx"
+      - name: 🔧 Ensure VPS Directory + Clean old tars
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p /opt/sentry-data /opt/sentry-data/secrets /opt/sentry-data/nginx"
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "rm -f /opt/sentry-data/*.tar"
 
       - name: 📤 Copy Images to VPS
         id: copy_images
@@ -350,7 +353,10 @@ jobs:
         id: build
         run: |
           cd frontend
-          echo "VITE_API_URL=https://api.${{ env.DOMAIN }}/api/v1" > .env.production
+          cat > .env.production << ENVEOF
+          VITE_API_URL=https://api.${{ env.DOMAIN }}/api/v1
+          VITE_DEV_MODE=false
+          ENVEOF
           npm ci
           npm run build
 
@@ -372,6 +378,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: statsparrot-app
           directory: frontend/dist
+          productionBranch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ✅ Set Status

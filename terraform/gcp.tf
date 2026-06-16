@@ -241,7 +241,7 @@ resource "cloudflare_record" "app" {
   zone_id = var.cloudflare_zone_id
   name    = "app"
   type    = "CNAME"
-  content = "sentry-frontend.pages.dev"
+  content = "statsparrot-app.pages.dev"
   proxied = true
   ttl     = 1
 }
@@ -250,9 +250,16 @@ resource "cloudflare_record" "www" {
   zone_id = var.cloudflare_zone_id
   name    = "www"
   type    = "CNAME"
-  content = "sentry-frontend.pages.dev"
+  content = "statsparrot-app.pages.dev"
   proxied = true
   ttl     = 1
+}
+
+# Cloudflare Pages domain binding
+resource "cloudflare_pages_domain" "app" {
+  account_id   = var.cloudflare_account_id
+  project_name = "statsparrot-app"
+  domain       = "app.${var.domain}"
 }
 
 # Cloudflare HTTPS redirect — configure manually in dashboard:
