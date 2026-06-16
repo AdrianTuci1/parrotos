@@ -43,11 +43,11 @@ jobs:
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
       TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}
       TF_VAR_llm_api_key: ${{ secrets.LLM_API_KEY }}
+      TF_VAR_llm_provider: ${{ vars.LLM_PROVIDER || 'deepseek' }}
+      TF_VAR_llm_model_id: ${{ vars.LLM_MODEL_ID || 'deepseek-v4-flash' }}
+      TF_VAR_llm_base_url: ${{ vars.LLM_BASE_URL || 'https://api.deepseek.com/v1' }}
     outputs:
       gcp_status: ${{ steps.status.outputs.status }}
-      chat_url: ${{ steps.outputs.outputs.chat_url }}
-      harness_url: ${{ steps.outputs.outputs.harness_url }}
-      observer_url: ${{ steps.outputs.outputs.observer_url }}
       scheduler_invoker_sa: ${{ steps.outputs.outputs.scheduler_invoker_sa }}
     steps:
       - name: ⬇️ Checkout code
@@ -92,9 +92,6 @@ jobs:
           cd terraform
           echo "backend_url=$(terraform output -raw backend_url)" >> $GITHUB_OUTPUT
           echo "frontend_url=$(terraform output -raw frontend_url)" >> $GITHUB_OUTPUT
-          echo "chat_url=$(terraform output -raw chat_service_url)" >> $GITHUB_OUTPUT
-          echo "harness_url=$(terraform output -raw harness_service_url)" >> $GITHUB_OUTPUT
-          echo "observer_url=$(terraform output -raw observer_service_url)" >> $GITHUB_OUTPUT
           echo "scheduler_invoker_sa=$(terraform output -raw scheduler_invoker_service_account_email)" >> $GITHUB_OUTPUT
           echo "gcs_bucket=$(terraform output -raw gcs_bucket)" >> $GITHUB_OUTPUT
           echo "bq_dataset=$(terraform output -raw bigquery_dataset)" >> $GITHUB_OUTPUT
@@ -113,8 +110,8 @@ jobs:
             echo "   - Cloud Storage Bucket"
             echo "   - Secret Manager"
             echo "   - Service Accounts"
-            echo "   - Cloud Run service definitions"
-            echo "   - Cloud Scheduler API + invoker IAM"
+            echo "   - Cloud Scheduler API"
+            echo "   - Service IAM bindings"
           else
             echo "status=❌ FAILED" >> $GITHUB_OUTPUT
             echo "❌ GCP Infrastructure deployment failed!"
@@ -138,8 +135,7 @@ jobs:
           echo "│    ✅ Cloud Storage Bucket                                  │"
           echo "│    ✅ Secret Manager (3 secrets)                            │"
           echo "│    ✅ Service Accounts (5)                                  │"
-          echo "│    ✅ Cloud Run Services (chat, harness, observer)          │"
-          echo "│    ✅ Cloud Scheduler API + invoker IAM                     │"
+          echo "│    ✅ Cloud Scheduler API                                   │"
           echo "│                                                             │"
           echo "│  ${{ steps.status.outputs.status }}                                       │"
           echo "└─────────────────────────────────────────────────────────────┘"
@@ -147,7 +143,7 @@ jobs:
 
   deploy-vps-backend:
     if: github.event_name == 'workflow_dispatch'
-    name: 🖥️ Deploy Backend to VPS
+    name: 🖥️ Deploy All Services to VPS
     needs: deploy-gcp-infrastructure
     runs-on: ubuntu-latest
     outputs:
@@ -174,6 +170,9 @@ jobs:
           echo "::group::🔨 Building Docker Images"
           docker build -t sentry-backend:${{ github.sha }} ./backend
           docker build -t sentry-sync-worker:${{ github.sha }} -f ./backend/Dockerfile.worker ./backend
+          docker build -t sentry-chat:${{ github.sha }} ./services/chat
+          docker build -t sentry-harness:${{ github.sha }} ./services/harness
+          docker build -t sentry-observer:${{ github.sha }} ./services/observer
           echo "::endgroup::"
 
       - name: 💾 Save Docker Images
@@ -182,7 +181,13 @@ jobs:
           echo "::group::💾 Saving Docker Images"
           docker save sentry-backend:${{ github.sha }} > backend-image.tar
           docker save sentry-sync-worker:${{ github.sha }} > sync-worker-image.tar
+          docker save sentry-chat:${{ github.sha }} > chat-image.tar
+          docker save sentry-harness:${{ github.sha }} > harness-image.tar
+          docker save sentry-observer:${{ github.sha }} > observer-image.tar
           echo "::endgroup::"
+
+      - name: 🔧 Ensure VPS Directory
+        run: ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p /opt/sentry-data /opt/sentry-data/secrets /opt/sentry-data/nginx"
 
       - name: 📤 Copy Images to VPS
         id: copy_images
@@ -190,6 +195,9 @@ jobs:
           echo "::group::📤 Copying Images to VPS"
           scp backend-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
           scp sync-worker-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          scp chat-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          scp harness-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          scp observer-image.tar ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
           echo "::endgroup::"
 
       - name: 📋 Copy Config Files
@@ -197,38 +205,37 @@ jobs:
         run: |
           echo "::group::📋 Copying Config Files"
           scp vps/docker-compose.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
+          scp vps/prometheus.yml ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
           scp -r vps/nginx ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/
           
-          # Create .env file on VPS
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
-            cat > /opt/sentry-data/.env << 'ENVFILE'
-            GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
-            GCP_REGION=europe-west1
-            GCS_BUCKET_NAME=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }}
-            BIGQUERY_DATASET_PREFIX=sentry_dataset
-            BIGQUERY_LOCATION=EU
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }}
-            LLM_PROVIDER=${{ env.LLM_PROVIDER }}
-            LLM_API_KEY=${{ secrets.LLM_API_KEY }}
-            LLM_MODEL=${{ env.LLM_MODEL_ID }}
-            LLM_MODEL_ID=${{ env.LLM_MODEL_ID }}
-            LLM_BASE_URL=${{ env.LLM_BASE_URL }}
-            ENABLE_BIGQUERY_ANALYTICS=true
-            CORS_ORIGIN=https://app.${{ env.DOMAIN }}
-            CHAT_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.chat_url }}
-            HARNESS_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.harness_url }}
-            OBSERVER_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.observer_url }}
-            CLOUD_RUN_AUTH_MODE=required
-            CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL=${{ needs.deploy-gcp-infrastructure.outputs.scheduler_invoker_sa }}
-            GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
-            ENVFILE
-
-            mkdir -p /opt/sentry-data/secrets
-            cat > /opt/sentry-data/secrets/gcp-key.json << 'GCPKEY'
-            ${{ secrets.GCP_SA_KEY }}
-            GCPKEY
-          EOF
+          # Create .env and gcp-key.json locally, then SCP to VPS
+          cat > /tmp/sentry-env << ENVEOF
+          GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION=europe-west1
+          GCS_BUCKET_NAME=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }}
+          BIGQUERY_DATASET_PREFIX=sentry_dataset
+          BIGQUERY_LOCATION=EU
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }}
+          LLM_PROVIDER=${{ env.LLM_PROVIDER }}
+          LLM_API_KEY=${{ secrets.LLM_API_KEY }}
+          LLM_MODEL=${{ env.LLM_MODEL_ID }}
+          LLM_MODEL_ID=${{ env.LLM_MODEL_ID }}
+          LLM_BASE_URL=${{ env.LLM_BASE_URL }}
+          ENABLE_BIGQUERY_ANALYTICS=true
+          CORS_ORIGIN=https://app.${{ env.DOMAIN }}
+          CHAT_SERVICE_URL=http://chat:8080
+          HARNESS_SERVICE_URL=http://harness:8081
+          OBSERVER_SERVICE_URL=http://observer:8082
+          CLOUD_RUN_AUTH_MODE=disabled
+          CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL=${{ needs.deploy-gcp-infrastructure.outputs.scheduler_invoker_sa }}
+          GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+          ENVEOF
+          echo '${{ secrets.GCP_SA_KEY }}' > /tmp/gcp-key.json
+          scp /tmp/sentry-env ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/.env
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p /opt/sentry-data/secrets && chmod 644 /opt/sentry-data/secrets/gcp-key.json 2>/dev/null; true"
+          scp /tmp/gcp-key.json ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/secrets/gcp-key.json
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "chmod 644 /opt/sentry-data/secrets/gcp-key.json"
           echo "::endgroup::"
 
       - name: 🚀 Deploy on VPS
@@ -241,14 +248,20 @@ jobs:
             # Load new images
             docker load < backend-image.tar
             docker load < sync-worker-image.tar
+            docker load < chat-image.tar
+            docker load < harness-image.tar
+            docker load < observer-image.tar
             
             # Tag as latest
             docker tag sentry-backend:${{ github.sha }} sentry-backend:latest
             docker tag sentry-sync-worker:${{ github.sha }} sentry-sync-worker:latest
+            docker tag sentry-chat:${{ github.sha }} sentry-chat:latest
+            docker tag sentry-harness:${{ github.sha }} sentry-harness:latest
+            docker tag sentry-observer:${{ github.sha }} sentry-observer:latest
             
             # Restart services
-            docker-compose down
-            docker-compose up -d
+            docker compose down
+            docker compose up -d
             
             # Cleanup
             docker system prune -f
@@ -298,7 +311,10 @@ jobs:
           echo "│                                                             │"
           echo "│  Services:                                                  │"
           echo "│    ✅ Backend API (port 3000)                               │"
-          echo "│    ✅ Sync Worker (cron every 15 min)                       │"
+          echo "│    ✅ Chat Service (LLM, port 8080)                         │"
+          echo "│    ✅ Harness Service (LLM, port 8081)                      │"
+          echo "│    ✅ Observer Service (analytics, port 8082)               │"
+          echo "│    ✅ Sync Worker (cron every 5 min)                        │"
           echo "│    ✅ Nginx (reverse proxy + SSL)                           │"
           echo "│                                                             │"
           echo "│  ${{ steps.status.outputs.status }}                                       │"
@@ -308,185 +324,15 @@ jobs:
       - name: 🧹 Cleanup
         if: always()
         run: |
-          rm -f backend-image.tar sync-worker-image.tar
-
-  deploy-cloud-run-services:
-    if: github.event_name == 'workflow_dispatch'
-    name: ☁️ Deploy Cloud Run Services
-    needs: deploy-gcp-infrastructure
-    runs-on: ubuntu-latest
-    outputs:
-      cloud_run_status: ${{ steps.status.outputs.status }}
-    steps:
-      - name: ⬇️ Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🔐 Authenticate to GCP
-        id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: ⚙️ Setup gcloud
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: 🐳 Configure Docker
-        run: gcloud auth configure-docker
-
-      - name: 🔨 Build Chat Image
-        id: build_chat
-        run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }} ./services/chat
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }}
-
-      - name: 🔨 Build Harness Image
-        id: build_harness
-        run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }} ./services/harness
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }}
-
-      - name: 🔨 Build Observer Image
-        id: build_observer
-        run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-observer:${{ github.sha }} ./services/observer
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-observer:${{ github.sha }}
-
-      - name: 🚀 Deploy Chat Service
-        id: deploy_chat
-        run: |
-          gcloud run deploy sentry-chat \
-            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-chat:${{ github.sha }} \
-            --region=${{ env.GCP_REGION }} \
-            --service-account=sentry-chat@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=LLM_PROVIDER=${{ env.LLM_PROVIDER }} \
-            --set-env-vars=LLM_API_KEY=${{ secrets.LLM_API_KEY }} \
-            --set-env-vars=LLM_MODEL=${{ env.LLM_MODEL_ID }} \
-            --set-env-vars=LLM_MODEL_ID=${{ env.LLM_MODEL_ID }} \
-            --set-env-vars=LLM_BASE_URL=${{ env.LLM_BASE_URL }} \
-            --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
-            --memory=512Mi \
-            --cpu=1 \
-            --max-instances=5 \
-            --min-instances=0 \
-            --ingress=all \
-            --no-allow-unauthenticated \
-            --quiet
-
-      - name: 🚀 Deploy Harness Service
-        id: deploy_harness
-        run: |
-          gcloud run deploy sentry-harness \
-            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-harness:${{ github.sha }} \
-            --region=${{ env.GCP_REGION }} \
-            --service-account=sentry-harness@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=LLM_PROVIDER=${{ env.LLM_PROVIDER }} \
-            --set-env-vars=LLM_API_KEY=${{ secrets.LLM_API_KEY }} \
-            --set-env-vars=LLM_MODEL=${{ env.LLM_MODEL_ID }} \
-            --set-env-vars=LLM_MODEL_ID=${{ env.LLM_MODEL_ID }} \
-            --set-env-vars=LLM_BASE_URL=${{ env.LLM_BASE_URL }} \
-            --set-env-vars=GCS_BUCKET=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }} \
-            --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
-            --memory=1Gi \
-            --cpu=2 \
-            --max-instances=3 \
-            --min-instances=0 \
-            --ingress=all \
-            --no-allow-unauthenticated \
-            --quiet
-
-      - name: 🚀 Deploy Observer Service
-        id: deploy_observer
-        run: |
-          gcloud run deploy sentry-observer \
-            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sentry-observer:${{ github.sha }} \
-            --region=${{ env.GCP_REGION }} \
-            --service-account=sentry-observer@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=GCS_BUCKET=sentry-platform-data-${{ secrets.GCP_PROJECT_ID }} \
-            --set-env-vars=BACKEND_URL=https://api.${{ env.DOMAIN }}/api/v1 \
-            --set-env-vars=HARNESS_SERVICE_URL=${{ needs.deploy-gcp-infrastructure.outputs.harness_url }} \
-            --set-env-vars=BQ_LOCATION=EU \
-            --set-env-vars=INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }} \
-            --memory=1Gi \
-            --cpu=1 \
-            --max-instances=2 \
-            --min-instances=0 \
-            --ingress=all \
-            --no-allow-unauthenticated \
-            --quiet
-
-      - name: 🏥 Health Check Chat
-        id: health_chat
-        run: |
-          CHAT_URL=$(gcloud run services describe sentry-chat --region=${{ env.GCP_REGION }} --format='value(status.url)')
-          TOKEN=$(gcloud auth print-identity-token --audiences="$CHAT_URL")
-          curl -sf -H "Authorization: Bearer $TOKEN" -H "X-Internal-Token: ${{ secrets.INTERNAL_TOKEN }}" $CHAT_URL/health || exit 1
-
-      - name: 🏥 Health Check Harness
-        id: health_harness
-        run: |
-          HARNESS_URL=$(gcloud run services describe sentry-harness --region=${{ env.GCP_REGION }} --format='value(status.url)')
-          TOKEN=$(gcloud auth print-identity-token --audiences="$HARNESS_URL")
-          curl -sf -H "Authorization: Bearer $TOKEN" -H "X-Internal-Token: ${{ secrets.INTERNAL_TOKEN }}" $HARNESS_URL/health || exit 1
-
-      - name: 🏥 Health Check Observer
-        id: health_observer
-        run: |
-          OBSERVER_URL=$(gcloud run services describe sentry-observer --region=${{ env.GCP_REGION }} --format='value(status.url)')
-          TOKEN=$(gcloud auth print-identity-token --audiences="$OBSERVER_URL")
-          curl -sf -H "Authorization: Bearer $TOKEN" -H "X-Internal-Token: ${{ secrets.INTERNAL_TOKEN }}" $OBSERVER_URL/health || exit 1
-
-      - name: ✅ Set Status
-        id: status
-        if: always()
-        run: |
-          if [ "${{ steps.build_chat.outcome }}" == "success" ] && \
-             [ "${{ steps.build_harness.outcome }}" == "success" ] && \
-             [ "${{ steps.build_observer.outcome }}" == "success" ] && \
-             [ "${{ steps.deploy_chat.outcome }}" == "success" ] && \
-             [ "${{ steps.deploy_harness.outcome }}" == "success" ] && \
-             [ "${{ steps.deploy_observer.outcome }}" == "success" ] && \
-             [ "${{ steps.health_chat.outcome }}" == "success" ] && \
-             [ "${{ steps.health_harness.outcome }}" == "success" ] && \
-             [ "${{ steps.health_observer.outcome }}" == "success" ]; then
-            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
-          else
-            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-      - name: 📝 Log Results
-        if: always()
-        run: |
-          echo "::group::🔍 Cloud Run Services Deploy Log"
-          echo "┌─────────────────────────────────────────────────────────────┐"
-          echo "│  ☁️  CLOUD RUN SERVICES                                     │"
-          echo "├─────────────────────────────────────────────────────────────┤"
-          echo "│  Build Chat:      ${{ steps.build_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Build Harness:   ${{ steps.build_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Build Observer:  ${{ steps.build_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Deploy Chat:     ${{ steps.deploy_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Deploy Harness:  ${{ steps.deploy_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Deploy Observer: ${{ steps.deploy_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Health Chat:     ${{ steps.health_chat.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Health Harness:  ${{ steps.health_harness.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│  Health Observer: ${{ steps.health_observer.outcome == 'success' && '✅' || '❌' }}                                        │"
-          echo "│                                                             │"
-          echo "│  Services:                                                  │"
-          echo "│    ✅ Chat Service (on-demand, pay-per-use)                 │"
-          echo "│    ✅ Harness Service (on-demand, pay-per-use)              │"
-          echo "│    ✅ Observer Service (scheduled + manual)                 │"
-          echo "│                                                             │"
-          echo "│  ${{ steps.status.outputs.status }}                                       │"
-          echo "└─────────────────────────────────────────────────────────────┘"
-          echo "::endgroup::"
+          rm -f backend-image.tar sync-worker-image.tar chat-image.tar harness-image.tar observer-image.tar
 
   deploy-frontend:
     if: github.event_name == 'workflow_dispatch'
     name: 🌐 Deploy Frontend
     needs: deploy-vps-backend
     runs-on: ubuntu-latest
+    permissions:
+      deployments: write
     outputs:
       frontend_status: ${{ steps.status.outputs.status }}
     steps:
@@ -508,13 +354,23 @@ jobs:
           npm ci
           npm run build
 
+      - name: 🏗️ Ensure Cloudflare Pages Project
+        id: cf_project
+        run: |
+          # Create the Pages project if it doesn't exist (idempotent)
+          curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"statsparrot-app","production_branch":"main"}' || true
+          echo "Pages project ready"
+
       - name: 🚀 Deploy to Cloudflare Pages
         id: deploy
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: sentry-frontend
+          projectName: statsparrot-app
           directory: frontend/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -549,7 +405,7 @@ jobs:
 
   final-summary:
     name: 📊 Final Summary
-    needs: [deploy-gcp-infrastructure, deploy-vps-backend, deploy-cloud-run-services, deploy-frontend]
+    needs: [deploy-gcp-infrastructure, deploy-vps-backend, deploy-frontend]
     if: always() && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -563,7 +419,6 @@ jobs:
           echo "║                                                               ║"
           echo "║  📦 GCP Infrastructure:  ${{ needs.deploy-gcp-infrastructure.outputs.gcp_status || '⏭️ SKIPPED' }}                    ║"
           echo "║  🖥️  VPS Backend:        ${{ needs.deploy-vps-backend.outputs.vps_status || '⏭️ SKIPPED' }}                    ║"
-          echo "║  ☁️  Cloud Run Services:  ${{ needs.deploy-cloud-run-services.outputs.cloud_run_status || '⏭️ SKIPPED' }}                    ║"
           echo "║  🌐 Frontend:            ${{ needs.deploy-frontend.outputs.frontend_status || '⏭️ SKIPPED' }}                    ║"
           echo "║                                                               ║"
           echo "╠═══════════════════════════════════════════════════════════════╣"
@@ -582,7 +437,7 @@ jobs:
           echo "::endgroup::"
 
       - name: 🎉 Success Notification
-        if: needs.deploy-gcp-infrastructure.result == 'success' && needs.deploy-vps-backend.result == 'success' && needs.deploy-cloud-run-services.result == 'success' && needs.deploy-frontend.result == 'success'
+        if: needs.deploy-gcp-infrastructure.result == 'success' && needs.deploy-vps-backend.result == 'success' && needs.deploy-frontend.result == 'success'
         run: |
           echo "🎉🎉🎉 ALL SYSTEMS DEPLOYED SUCCESSFULLY! 🎉🎉🎉"
 

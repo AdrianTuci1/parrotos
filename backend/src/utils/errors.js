@@ -32,6 +32,12 @@ export class ConflictError extends AppError {
   }
 }
 
+export class BadRequestError extends AppError {
+  constructor(message = 'Bad request') {
+    super(message, 400, 'BAD_REQUEST');
+  }
+}
+
 export class ValidationError extends AppError {
   constructor(message = 'Validation failed') {
     super(message, 400, 'VALIDATION_ERROR');

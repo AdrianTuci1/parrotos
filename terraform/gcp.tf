@@ -52,7 +52,7 @@ resource "google_service_account" "observer" {
 resource "google_service_account" "compute" {
   account_id   = "sentry-compute"
   display_name = "Sentry Compute"
-  description  = "Default compute for Cloud Run"
+  description  = "Default compute service account"
 }
 
 # IAM Roles
@@ -196,7 +196,7 @@ resource "google_secret_manager_secret" "jwt_secret" {
 
 resource "google_secret_manager_secret_version" "jwt_secret" {
   secret      = google_secret_manager_secret.jwt_secret.id
-  secret_data = var.jwt_secret
+  secret_data = var.jwt_secret != "" ? var.jwt_secret : "placeholder-change-me"
 }
 
 resource "google_secret_manager_secret" "internal_token" {
@@ -210,7 +210,7 @@ resource "google_secret_manager_secret" "internal_token" {
 
 resource "google_secret_manager_secret_version" "internal_token" {
   secret      = google_secret_manager_secret.internal_token.id
-  secret_data = var.internal_token
+  secret_data = var.internal_token != "" ? var.internal_token : "placeholder-change-me"
 }
 
 resource "google_secret_manager_secret" "llm_api_key" {
@@ -224,239 +224,15 @@ resource "google_secret_manager_secret" "llm_api_key" {
 
 resource "google_secret_manager_secret_version" "llm_api_key" {
   secret      = google_secret_manager_secret.llm_api_key.id
-  secret_data = var.llm_api_key
+  secret_data = var.llm_api_key != "" ? var.llm_api_key : "placeholder-change-me"
 }
 
-# Cloud Run - Chat
-resource "google_cloud_run_v2_service" "chat" {
-  name     = "sentry-chat"
-  location = var.region
-  project  = var.project_id
-  ingress  = "INGRESS_TRAFFIC_ALL"
-
-  template {
-    service_account = google_service_account.chat.email
-
-    scaling {
-      min_instances = 0
-      max_instances = 5
-    }
-
-    containers {
-      image = "gcr.io/${var.project_id}/sentry-chat:latest"
-
-      resources {
-        limits = {
-          cpu    = "1"
-          memory = "512Mi"
-        }
-      }
-
-      env {
-        name  = "PORT"
-        value = "8080"
-      }
-      env {
-        name  = "LLM_PROVIDER"
-        value = "gemini"
-      }
-      env {
-        name = "LLM_API_KEY"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.llm_api_key.secret_id
-            version = "latest"
-          }
-        }
-      }
-      env {
-        name  = "LLM_MODEL"
-        value = "gemini-2.5-flash"
-      }
-      env {
-        name = "INTERNAL_TOKEN"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.internal_token.secret_id
-            version = "latest"
-          }
-        }
-      }
-    }
-  }
-
-  depends_on = [google_project_service.apis["run.googleapis.com"]]
-}
-
-# Cloud Run - Harness
-resource "google_cloud_run_v2_service" "harness" {
-  name     = "sentry-harness"
-  location = var.region
-  project  = var.project_id
-  ingress  = "INGRESS_TRAFFIC_ALL"
-
-  template {
-    service_account = google_service_account.harness.email
-
-    scaling {
-      min_instances = 0
-      max_instances = 3
-    }
-
-    containers {
-      image = "gcr.io/${var.project_id}/sentry-harness:latest"
-
-      resources {
-        limits = {
-          cpu    = "2"
-          memory = "1Gi"
-        }
-      }
-
-      env {
-        name  = "PORT"
-        value = "8081"
-      }
-      env {
-        name  = "LLM_PROVIDER"
-        value = "gemini"
-      }
-      env {
-        name = "LLM_API_KEY"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.llm_api_key.secret_id
-            version = "latest"
-          }
-        }
-      }
-      env {
-        name  = "LLM_MODEL"
-        value = "gemini-2.5-flash"
-      }
-      env {
-        name  = "GCS_BUCKET"
-        value = google_storage_bucket.main.name
-      }
-      env {
-        name = "INTERNAL_TOKEN"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.internal_token.secret_id
-            version = "latest"
-          }
-        }
-      }
-    }
-  }
-
-  depends_on = [google_project_service.apis["run.googleapis.com"]]
-}
-
-resource "google_cloud_run_v2_service" "observer" {
-  name     = "sentry-observer"
-  location = var.region
-  project  = var.project_id
-  ingress  = "INGRESS_TRAFFIC_ALL"
-
-  template {
-    service_account = google_service_account.observer.email
-
-    scaling {
-      min_instances = 0
-      max_instances = 2
-    }
-
-    containers {
-      image = "gcr.io/${var.project_id}/sentry-observer:latest"
-
-      resources {
-        limits = {
-          cpu    = "1"
-          memory = "1Gi"
-        }
-      }
-
-      env {
-        name  = "PORT"
-        value = "8082"
-      }
-      env {
-        name  = "GCS_BUCKET"
-        value = google_storage_bucket.main.name
-      }
-      env {
-        name  = "BACKEND_URL"
-        value = "https://api.${var.domain}/api/v1"
-      }
-      env {
-        name  = "HARNESS_SERVICE_URL"
-        value = google_cloud_run_v2_service.harness.uri
-      }
-      env {
-        name  = "BQ_LOCATION"
-        value = "EU"
-      }
-      env {
-        name = "INTERNAL_TOKEN"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.internal_token.secret_id
-            version = "latest"
-          }
-        }
-      }
-    }
-  }
-
-  depends_on = [google_project_service.apis["run.googleapis.com"]]
-}
-
-resource "google_cloud_run_v2_service_iam_member" "chat_backend_invoker" {
-  project  = var.project_id
-  location = var.region
-  name     = google_cloud_run_v2_service.chat.name
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.backend.email}"
-}
-
-resource "google_cloud_run_v2_service_iam_member" "harness_backend_invoker" {
-  project  = var.project_id
-  location = var.region
-  name     = google_cloud_run_v2_service.harness.name
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.backend.email}"
-}
-
-resource "google_cloud_run_v2_service_iam_member" "observer_backend_invoker" {
-  project  = var.project_id
-  location = var.region
-  name     = google_cloud_run_v2_service.observer.name
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.backend.email}"
-}
-
-resource "google_cloud_run_v2_service_iam_member" "observer_scheduler_invoker" {
-  project  = var.project_id
-  location = var.region
-  name     = google_cloud_run_v2_service.observer.name
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.compute.email}"
-}
-
-resource "google_service_account_iam_member" "backend_can_use_scheduler_invoker" {
-  service_account_id = google_service_account.compute.name
-  role               = "roles/iam.serviceAccountUser"
-  member             = "serviceAccount:${google_service_account.backend.email}"
-}
-
-# Cloud Scheduler - Sync Worker
 # Cloudflare DNS Records
 resource "cloudflare_record" "api" {
   zone_id = var.cloudflare_zone_id
   name    = "api"
   type    = can(regex("^[0-9.]+$", var.vps_host)) ? "A" : "CNAME"
-  value   = var.vps_host
+  content = var.vps_host
   proxied = true
   ttl     = 1
 }
@@ -465,7 +241,7 @@ resource "cloudflare_record" "app" {
   zone_id = var.cloudflare_zone_id
   name    = "app"
   type    = "CNAME"
-  value   = "sentry-frontend.pages.dev"
+  content = "sentry-frontend.pages.dev"
   proxied = true
   ttl     = 1
 }
@@ -474,19 +250,10 @@ resource "cloudflare_record" "www" {
   zone_id = var.cloudflare_zone_id
   name    = "www"
   type    = "CNAME"
-  value   = "sentry-frontend.pages.dev"
+  content = "sentry-frontend.pages.dev"
   proxied = true
   ttl     = 1
 }
 
-# Cloudflare Page Rule - HTTPS Redirect
-resource "cloudflare_page_rule" "https_redirect" {
-  zone_id = var.cloudflare_zone_id
-  target  = "*${var.domain}/*"
-  priority = 1
-
-  actions {
-    ssl = "strict"
-    always_use_https = true
-  }
-}
+# Cloudflare HTTPS redirect — configure manually in dashboard:
+#   SSL/TLS → Edge Certificates → Always Use HTTPS = ON

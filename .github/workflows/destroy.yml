@@ -200,6 +200,9 @@ jobs:
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
       TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}
       TF_VAR_llm_api_key: ${{ secrets.LLM_API_KEY }}
+      TF_VAR_llm_provider: ${{ vars.LLM_PROVIDER || 'deepseek' }}
+      TF_VAR_llm_model_id: ${{ vars.LLM_MODEL_ID || 'deepseek-v4-flash' }}
+      TF_VAR_llm_base_url: ${{ vars.LLM_BASE_URL || 'https://api.deepseek.com/v1' }}
     outputs:
       gcp_status: ${{ steps.status.outputs.status }}
     steps:

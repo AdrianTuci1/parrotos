@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     image: sentry-backend:latest
@@ -40,7 +38,7 @@ services:
       - observer
 
   chat:
-    build: ./services/chat
+    image: sentry-chat:latest
     container_name: sentry-chat
     restart: unless-stopped
     environment:
@@ -64,7 +62,7 @@ services:
       start_period: 40s
 
   harness:
-    build: ./services/harness
+    image: sentry-harness:latest
     container_name: sentry-harness
     restart: unless-stopped
     environment:
@@ -89,7 +87,7 @@ services:
       start_period: 40s
 
   observer:
-    build: ./services/observer
+    image: sentry-observer:latest
     container_name: sentry-observer
     restart: unless-stopped
     environment:

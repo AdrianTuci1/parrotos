@@ -16,18 +16,6 @@ output "frontend_url" {
   value = "https://app.${var.domain}"
 }
 
-output "chat_service_url" {
-  value = google_cloud_run_v2_service.chat.uri
-}
-
-output "harness_service_url" {
-  value = google_cloud_run_v2_service.harness.uri
-}
-
-output "observer_service_url" {
-  value = google_cloud_run_v2_service.observer.uri
-}
-
 output "gcs_bucket" {
   value = google_storage_bucket.main.name
 }
@@ -49,3 +37,4 @@ output "service_accounts" {
 output "scheduler_invoker_service_account_email" {
   value = google_service_account.compute.email
 }
+

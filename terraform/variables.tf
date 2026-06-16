@@ -50,9 +50,27 @@ variable "internal_token" {
 }
 
 variable "llm_api_key" {
-  description = "LLM API Key (Gemini)"
+  description = "LLM API Key"
   type        = string
   sensitive   = true
+}
+
+variable "llm_provider" {
+  description = "LLM Provider (deepseek, openai, etc.)"
+  type        = string
+  default     = "deepseek"
+}
+
+variable "llm_model_id" {
+  description = "LLM Model ID"
+  type        = string
+  default     = "deepseek-v4-flash"
+}
+
+variable "llm_base_url" {
+  description = "LLM API Base URL"
+  type        = string
+  default     = "https://api.deepseek.com/v1"
 }
 
 variable "stripe_secret_key" {

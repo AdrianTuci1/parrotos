@@ -16,7 +16,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "sentry-terraform-state"
+    bucket = "sentry-terraform-state-statsparrot-prod"
     prefix = "prod"
   }
 }
