@@ -32,6 +32,23 @@ export function LoginView() {
     if (token) {
       const redirectTo = searchParams.get("redirect") || "/app/home";
       apiClient.setToken(token);
+
+      // Decode JWT payload immediately so currentUser is set before navigate.
+      // This prevents a race: navigate fires before fetchCurrentUser completes,
+      // ProtectedRoute sees null → bounces back to /login (losing the token).
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        useAppStore.setState({
+          currentUser: {
+            id: payload.sub,
+            email: payload.email,
+            roles: payload.roles || [],
+          },
+        });
+      } catch {
+        // fallback – fetchCurrentUser will run anyway
+      }
+
       fetchCurrentUser();
       fetchOrganizations();
       navigate(redirectTo, { replace: true });
