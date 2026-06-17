@@ -30,10 +30,11 @@ export function LoginView() {
   useEffect(() => {
     const token = searchParams.get("token");
     if (token) {
+      const redirectTo = searchParams.get("redirect") || "/app/home";
       apiClient.setToken(token);
       fetchCurrentUser();
       fetchOrganizations();
-      navigate("/app/home", { replace: true });
+      navigate(redirectTo, { replace: true });
     }
   }, [searchParams, fetchCurrentUser, fetchOrganizations, navigate]);
 
