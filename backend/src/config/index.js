@@ -45,6 +45,6 @@ export const config = {
   // Google OAuth
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  googleRedirectUri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/api/v1/auth/google/callback',
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+  googleRedirectUri: process.env.GOOGLE_REDIRECT_URI || 'https://api.statsparrot.com/api/v1/auth/google/callback',
+  frontendUrl: process.env.FRONTEND_URL || 'https://app.statsparrot.com',
 };
