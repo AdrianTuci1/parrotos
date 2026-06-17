@@ -135,6 +135,42 @@ function getOrganizationNameFromEmail(email) {
 
 const emptyOrg = { id: '__empty__', name: 'My Organization', slug: 'my-org', plan: 'Starter' };
 
+const mockSubscription = {
+  plan: 'scale',
+  status: 'active',
+  limits: { maxProjects: 20, maxStorage: 536870912000, maxQueries: 50000 },
+};
+
+function isMockModeState(state) {
+  return Boolean(state.devMode || state.demoMode);
+}
+
+function getOrganizationsForState(state) {
+  if (isMockModeState(state)) {
+    return mockOrganizations;
+  }
+
+  return state.organizationsData.length > 0 ? state.organizationsData : [emptyOrg];
+}
+
+function getWorkspacesForState(state) {
+  if (isMockModeState(state)) {
+    return mockWorkspaces.map(normalizeWorkspace);
+  }
+
+  return state.projectsData.length > 0
+    ? state.projectsData.map(normalizeWorkspace)
+    : [];
+}
+
+function getCurrentOrganizationForState(state) {
+  if (isMockModeState(state)) {
+    return mockOrganizations[0];
+  }
+
+  return state.organizationsData[0] || emptyOrg;
+}
+
 // ═══════════════════════════════════════════════
 // MOCK CHAT SESSIONS (demo mode)
 // ═══════════════════════════════════════════════
@@ -395,11 +431,12 @@ export const useAppStore = create((set, get) => ({
   subscription: null,
   accountMetrics: null,
   storageVolumes: [],
+  authInitialized: config.devMode,
   isLoading: false, error: null,
   organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
 
-  shouldShowMockData: () => get().devMode && get().demoMode,
-  shouldFetchApi: () => !get().devMode,
+  shouldShowMockData: () => isMockModeState(get()),
+  shouldFetchApi: () => !isMockModeState(get()),
 
   setActiveSection: (section) =>
     set((state) => ({
@@ -419,15 +456,12 @@ export const useAppStore = create((set, get) => ({
     const newDemoMode = !get().demoMode;
     set((state) => ({
       demoMode: newDemoMode,
-      organizations: newDemoMode ? mockOrganizations : state.organizationsData.length > 0 ? state.organizationsData : [emptyOrg],
-      workspaces: newDemoMode
-        ? mockWorkspaces.map(normalizeWorkspace)
-        : state.projectsData.length > 0
-          ? state.projectsData.map(normalizeWorkspace)
-          : [],
-      currentOrganization: newDemoMode ? mockOrganizations[0] : state.organizationsData[0] || emptyOrg,
+      organizations: getOrganizationsForState({ ...state, demoMode: newDemoMode }),
+      workspaces: getWorkspacesForState({ ...state, demoMode: newDemoMode }),
+      currentOrganization: getCurrentOrganizationForState({ ...state, demoMode: newDemoMode }),
       currentWorkspace: null, activeScope: 'organization',
       organizationMetrics: newDemoMode ? mockMetrics : emptyMetrics,
+      subscription: newDemoMode ? mockSubscription : null,
     }));
   },
 
@@ -436,35 +470,84 @@ export const useAppStore = create((set, get) => ({
       const orgName = getOrganizationNameFromEmail(dto.email);
       const org = { id: `org_${Date.now()}`, name: orgName, slug: orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-'), owner: dto.email, plan: 'Starter', isDefault: true };
       const workspace = { id: `project_${Date.now()}`, organizationId: org.id, name: `${orgName} Default`, slug: `${orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-default`, domain: `${orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] };
-      set({ currentUser: { id: `user_${Date.now()}`, email: dto.email, roles: ['user'] }, organizations: [org], workspaces: [workspace], currentOrganization: org, currentWorkspace: null, activeScope: 'organization', activeSection: 'home', isLoading: false, error: null });
+      set({ currentUser: { id: `user_${Date.now()}`, email: dto.email, roles: ['user'] }, organizations: [org], workspaces: [workspace], currentOrganization: org, currentWorkspace: null, activeScope: 'organization', activeSection: 'home', authInitialized: true, isLoading: false, error: null });
       return { user: { email: dto.email } };
     }
     set({ isLoading: true, error: null });
-    try { const result = await authService.login(dto); set({ currentUser: result.user, isLoading: false }); await get().fetchOrganizations(); return result; }
+    try { const result = await authService.login(dto); set({ currentUser: result.user, authInitialized: true, isLoading: false }); await get().fetchOrganizations(); return result; }
     catch (err) { set({ error: err.message, isLoading: false }); throw err; }
   },
 
   register: async (dto) => {
     if (get().devMode) return get().login(dto);
     set({ isLoading: true, error: null });
-    try { const result = await authService.register(dto); set({ currentUser: result.user, isLoading: false }); await get().fetchOrganizations(); return result; }
+    try { const result = await authService.register(dto); set({ currentUser: result.user, authInitialized: true, isLoading: false }); await get().fetchOrganizations(); return result; }
     catch (err) { set({ error: err.message, isLoading: false }); throw err; }
   },
 
+  initializeSession: async () => {
+    if (get().devMode) {
+      set({ authInitialized: true });
+      return null;
+    }
+
+    set({ isLoading: true });
+    try {
+      let user = null;
+
+      if (!authService.isAuthenticated()) {
+        const refreshedSession = await authService.refreshSession();
+        if (!refreshedSession?.token) {
+          set({ authInitialized: true, isLoading: false });
+          return null;
+        }
+        user = refreshedSession.user || null;
+      }
+
+      if (!user) {
+        user = await authService.getMe();
+      }
+
+      if (!user) {
+        throw new Error('Session not found');
+      }
+
+      set({ currentUser: user, authInitialized: true });
+      await get().fetchOrganizations();
+      set({ isLoading: false });
+      return user;
+    } catch {
+      authService.logout();
+      set({
+        currentUser: null,
+        organizationsData: [],
+        projectsData: [],
+        integrationsData: [],
+        analyticsData: null,
+        serviceAccounts: [],
+        subscription: null,
+        accountMetrics: null,
+        authInitialized: true,
+        isLoading: false,
+      });
+      return null;
+    }
+  },
   fetchCurrentUser: async () => {
     if (get().devMode) return;
     try {
       const user = await authService.getMe();
-      if (user) set({ currentUser: user });
+      if (user) set({ currentUser: user, authInitialized: true });
       return user;
     } catch {
+      set({ authInitialized: true });
       // ignore - not authenticated
     }
   },
 
   logout: () => {
     authService.logout();
-    set({
+    set((state) => ({
       currentUser: null,
       organizationsData: [],
       projectsData: [],
@@ -474,16 +557,17 @@ export const useAppStore = create((set, get) => ({
       serviceAccounts: [],
       subscription: null,
       accountMetrics: null,
-      organizations: get().devMode ? mockOrganizations : [emptyOrg],
-      workspaces: get().devMode ? mockWorkspaces.map(normalizeWorkspace) : [],
-      currentOrganization: get().devMode ? mockOrganizations[0] : emptyOrg,
+      organizations: getOrganizationsForState({ ...state, organizationsData: [], projectsData: [] }),
+      workspaces: getWorkspacesForState({ ...state, organizationsData: [], projectsData: [] }),
+      currentOrganization: getCurrentOrganizationForState({ ...state, organizationsData: [], projectsData: [] }),
       currentWorkspace: null,
+      authInitialized: true,
       activeScope: 'organization',
-    });
+    }));
   },
 
   fetchOrganizations: async () => {
-    if (get().devMode) return;
+    if (isMockModeState(get())) return get().organizations;
     set({ isLoading: true });
     try {
       const orgs = await organizationService.list();
@@ -495,19 +579,54 @@ export const useAppStore = create((set, get) => ({
         currentOrganization: nextCurrentOrganization,
         isLoading: false,
       });
+      return orgs;
     } catch (err) {
       set({ error: err.message, isLoading: false });
+      return [];
     }
   },
-  fetchProjects: async (orgId) => { if (get().devMode) return; set({ isLoading: true }); try { const projects = (await projectService.list(orgId)).map(normalizeWorkspace); set({ projectsData: projects, workspaces: projects, isLoading: false }); } catch (err) { set({ error: err.message, isLoading: false }); } },
-  fetchAgents: async (orgId, projectId) => { if (get().devMode) return; try { set({ agentsData: await agentService.listSessions(orgId, projectId) }); } catch (err) { set({ error: err.message }); } },
-  fetchIntegrations: async (orgId, projectId) => { if (get().devMode) return; try { set({ integrationsData: await integrationService.list(orgId, projectId) }); } catch (err) { set({ error: err.message }); } },
+  fetchProjects: async (orgId) => {
+    if (isMockModeState(get())) {
+      return get().workspaces.filter((workspace) => workspace.organizationId === orgId);
+    }
+    set({ isLoading: true });
+    try {
+      const projects = (await projectService.list(orgId)).map(normalizeWorkspace);
+      set({ projectsData: projects, workspaces: projects, isLoading: false });
+      return projects;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      return [];
+    }
+  },
+  fetchAgents: async (orgId, projectId) => {
+    if (isMockModeState(get())) return get().agentsData;
+    try {
+      const agents = await agentService.listSessions(orgId, projectId);
+      set({ agentsData: agents });
+      return agents;
+    } catch (err) {
+      set({ error: err.message });
+      return [];
+    }
+  },
+  fetchIntegrations: async (orgId, projectId) => {
+    if (isMockModeState(get())) return get().integrationsData;
+    try {
+      const integrations = await integrationService.list(orgId, projectId);
+      set({ integrationsData: integrations });
+      return integrations;
+    } catch (err) {
+      set({ error: err.message });
+      return [];
+    }
+  },
 
   selectOrganization: (organizationId) => {
     const organization = get().organizations.find((item) => item.id === organizationId);
     if (!organization) return;
     set((state) => ({ currentOrganization: organization, currentWorkspace: null, activeScope: 'organization', activeSection: state.activeOrganizationSection || 'stats' }));
-    if (!get().devMode) get().fetchProjects(organizationId);
+    if (get().shouldFetchApi()) get().fetchProjects(organizationId);
   },
 
   selectWorkspace: (workspaceId) => {
@@ -515,7 +634,7 @@ export const useAppStore = create((set, get) => ({
     if (!workspace) return;
     const organization = get().organizations.find((item) => item.id === workspace.organizationId);
     set((state) => ({ currentOrganization: organization || state.currentOrganization, currentWorkspace: workspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
-    if (!get().devMode && organization) { get().fetchAgents(organization.id, workspaceId); get().fetchIntegrations(organization.id, workspaceId); }
+    if (get().shouldFetchApi() && organization) { get().fetchAgents(organization.id, workspaceId); get().fetchIntegrations(organization.id, workspaceId); }
   },
 
   goToOrganizationHome: () => set((state) => ({ activeScope: 'organization', activeSection: state.activeOrganizationSection || 'stats', currentWorkspace: null })),
@@ -913,7 +1032,7 @@ export const useAppStore = create((set, get) => ({
   // ═══════════════════════════════════════════════
 
   fetchAccountMetrics: async () => {
-    if (get().devMode) return get().organizationMetrics;
+    if (isMockModeState(get())) return get().organizationMetrics;
     set({ isLoading: true });
     try {
       const metrics = await analyticsService.getAccountMetrics();
@@ -926,7 +1045,7 @@ export const useAppStore = create((set, get) => ({
   },
 
   fetchOrgMetrics: async (orgId) => {
-    if (get().devMode) return get().organizationMetrics;
+    if (isMockModeState(get())) return get().organizationMetrics;
     set({ isLoading: true });
     try {
       const metrics = await analyticsService.getOrgMetrics(orgId);
@@ -943,10 +1062,36 @@ export const useAppStore = create((set, get) => ({
   // ═══════════════════════════════════════════════
 
   fetchSubscription: async (orgId) => {
-    if (get().devMode) return { plan: 'free', status: 'active' };
+    if (isMockModeState(get())) {
+      set({ subscription: mockSubscription });
+      return mockSubscription;
+    }
     try {
       const sub = await billingService.getSubscription(orgId);
-      set({ subscription: sub });
+      set((state) => {
+        const nextCurrentOrganization = state.currentOrganization
+          ? {
+              ...state.currentOrganization,
+              plan: sub.plan || state.currentOrganization.plan,
+              limits: sub.limits || state.currentOrganization.limits,
+            }
+          : state.currentOrganization;
+
+        const mergeOrganization = (organization) => (
+          {
+            ...organization,
+            plan: sub.plan || organization.plan,
+            limits: sub.limits || organization.limits,
+          }
+        );
+
+        return {
+          subscription: sub,
+          currentOrganization: nextCurrentOrganization,
+          organizations: state.organizations.map(mergeOrganization),
+          organizationsData: state.organizationsData.map(mergeOrganization),
+        };
+      });
       return sub;
     } catch (err) {
       set({ error: err.message });
@@ -955,14 +1100,14 @@ export const useAppStore = create((set, get) => ({
   },
 
   checkoutPlan: async (orgId, plan) => {
-    const successUrl = `${window.location.origin}/organizations/${orgId}/billing?success=true`;
-    const cancelUrl = `${window.location.origin}/organizations/${orgId}/billing?canceled=true`;
+    const successUrl = `${window.location.origin}/app/billing?success=true`;
+    const cancelUrl = `${window.location.origin}/app/billing?canceled=true`;
     const result = await billingService.createCheckoutSession(orgId, plan, successUrl, cancelUrl);
     window.location.href = result.url;
   },
 
   manageBilling: async (orgId) => {
-    const returnUrl = `${window.location.origin}/organizations/${orgId}/billing`;
+    const returnUrl = `${window.location.origin}/app/billing`;
     const result = await billingService.createPortalSession(orgId, returnUrl);
     window.location.href = result.url;
   },

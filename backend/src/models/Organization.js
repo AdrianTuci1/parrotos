@@ -19,12 +19,12 @@ export class Organization {
       storageUsed: 0,
       queriesUsed: 0,
     };
-    this.limits = data.limits || this.getDefaultLimits(this.plan);
+    this.limits = data.limits || Organization.getDefaultLimits(this.plan);
     this.createdAt = data.createdAt || new Date().toISOString();
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
 
-  getDefaultLimits(plan) {
+  static getDefaultLimits(plan) {
     const limits = {
       free: { maxProjects: 1, maxStorage: 21474836480, maxQueries: 1000 }, // 20 GB
       launch: { maxProjects: 5, maxStorage: 161061273600, maxQueries: 10000 }, // 150 GB
@@ -34,8 +34,12 @@ export class Organization {
     return limits[plan] || limits.free;
   }
 
-  canAddProject() {
-    return this.limits.maxProjects === -1 || this.stats.projectsCount < this.limits.maxProjects;
+  getDefaultLimits(plan) {
+    return Organization.getDefaultLimits(plan);
+  }
+
+  canAddProject(projectsCount = this.stats.projectsCount) {
+    return this.limits.maxProjects === -1 || projectsCount < this.limits.maxProjects;
   }
 
   toFirestore() {

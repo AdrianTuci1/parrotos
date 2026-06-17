@@ -118,7 +118,25 @@ export class OrganizationService {
 
   async checkProjectLimit(orgId) {
     const org = await this.findById(orgId);
-    if (!org.canAddProject()) {
+    const [accountOrgs, orgProjects] = await Promise.all([
+      this.findByAccount(org.accountId),
+      this.findProjectsByOrg(orgId),
+    ]);
+
+    const projectsCount = orgProjects.length;
+    if (org.stats?.projectsCount !== projectsCount) {
+      await this.orgsCollection.doc(orgId).update({
+        'stats.projectsCount': projectsCount,
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
+    const allProjects = await Promise.all(
+      accountOrgs.map((accountOrg) => this.findProjectsByOrg(accountOrg.id))
+    );
+    const totalProjectsCount = allProjects.reduce((sum, projects) => sum + projects.length, 0);
+
+    if (!org.canAddProject(totalProjectsCount)) {
       throw new ForbiddenError('Project limit reached for this plan');
     }
     return true;

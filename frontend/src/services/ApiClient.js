@@ -4,6 +4,7 @@ class ApiClient {
   constructor() {
     this.baseUrl = config.apiBaseUrl;
     this.token = null;
+    this.refreshPromise = null;
     if (typeof window !== 'undefined' && window.localStorage) {
       this.token = localStorage.getItem("token") || null;
     }
@@ -30,40 +31,78 @@ class ApiClient {
     return headers;
   }
 
-  async request(method, endpoint, body = null) {
-    const url = `${this.baseUrl}${endpoint}`;
-    const options = {
-      method,
-      headers: this.getHeaders(),
-    };
-    if (body) {
-      options.body = JSON.stringify(body);
+  async refreshAccessToken() {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
     }
 
-    const response = await fetch(url, options);
+    this.refreshPromise = (async () => {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.data?.token) {
+        this.setToken(null);
+        return null;
+      }
+
+      this.setToken(data.data.token);
+      return data.data;
+    })().finally(() => {
+      this.refreshPromise = null;
+    });
+
+    return this.refreshPromise;
+  }
+
+  async request(method, endpoint, body = null, options = {}) {
+    const { skipAuthRefresh = false } = options;
+    const url = `${this.baseUrl}${endpoint}`;
+    const requestOptions = {
+      method,
+      headers: this.getHeaders(),
+      credentials: "include",
+    };
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, requestOptions);
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
+      if (response.status === 401 && !skipAuthRefresh && endpoint !== "/auth/refresh") {
+        const refreshData = await this.refreshAccessToken();
+        if (refreshData?.token) {
+          return this.request(method, endpoint, body, { ...options, skipAuthRefresh: true });
+        }
+      }
+
       throw new Error(data?.error?.message || `HTTP ${response.status}`);
     }
 
     return data;
   }
 
-  get(endpoint) {
-    return this.request("GET", endpoint);
+  get(endpoint, options) {
+    return this.request("GET", endpoint, null, options);
   }
 
-  post(endpoint, body) {
-    return this.request("POST", endpoint, body);
+  post(endpoint, body, options) {
+    return this.request("POST", endpoint, body, options);
   }
 
-  patch(endpoint, body) {
-    return this.request("PATCH", endpoint, body);
+  patch(endpoint, body, options) {
+    return this.request("PATCH", endpoint, body, options);
   }
 
-  delete(endpoint) {
-    return this.request("DELETE", endpoint);
+  delete(endpoint, options) {
+    return this.request("DELETE", endpoint, null, options);
   }
 }
 

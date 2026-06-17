@@ -102,10 +102,49 @@ function formatStorage(totalGb) {
   return `${Math.round(totalGb)} GB`;
 }
 
+const fallbackPlanLimits = {
+  free: { maxProjects: 1, maxStorage: 21474836480, maxQueries: 1000 },
+  launch: { maxProjects: 5, maxStorage: 161061273600, maxQueries: 10000 },
+  scale: { maxProjects: 20, maxStorage: 536870912000, maxQueries: 50000 },
+  enterprise: { maxProjects: -1, maxStorage: -1, maxQueries: -1 },
+};
+
+function getUsageLimits(rawLimits, planKey) {
+  const limits = rawLimits || fallbackPlanLimits[planKey] || fallbackPlanLimits.free;
+  const maxProjects = limits.maxProjects ?? fallbackPlanLimits.free.maxProjects;
+  const maxStorageBytes = limits.maxStorage ?? fallbackPlanLimits.free.maxStorage;
+
+  return {
+    projects: maxProjects === -1 ? Number.POSITIVE_INFINITY : maxProjects,
+    projectsLabel: maxProjects === -1 ? 'Unlimited' : String(maxProjects),
+    storageGb: maxStorageBytes === -1 ? Number.POSITIVE_INFINITY : Math.round(maxStorageBytes / (1024 ** 3)),
+    storageLabel: maxStorageBytes === -1
+      ? 'Unlimited'
+      : formatStorage(maxStorageBytes / (1024 ** 3)),
+  };
+}
+
+function getUsagePercent(used, limit) {
+  if (!Number.isFinite(limit) || limit <= 0) {
+    return 0;
+  }
+
+  return Math.min(100, (used / limit) * 100);
+}
+
 export function OrganizationBillingView() {
-  const { organizations, workspaces, currentOrganization, subscription, fetchSubscription } = useAppStore();
+  const {
+    organizations,
+    workspaces,
+    currentOrganization,
+    subscription,
+    fetchSubscription,
+    checkoutPlan,
+    manageBilling,
+  } = useAppStore();
 
   const totalProjects = workspaces.length;
+  const totalOrganizations = organizations.length;
   const totalStorageGb = workspaces.reduce(
     (sum, workspace) => sum + parseUsageNumber(workspace.dataConsumption),
     0
@@ -115,16 +154,19 @@ export function OrganizationBillingView() {
   const [activeTab, setActiveTab] = useState('plans'); // 'plans', 'billings'
   const [notification, setNotification] = useState(null);
 
-  // Fetch real subscription from backend
-  const [fetchedSub, setFetchedSub] = useState(false);
   useEffect(() => {
-    if (currentOrganization?.id && !fetchedSub) {
-      fetchSubscription(currentOrganization.id).then(() => setFetchedSub(true)).catch(() => setFetchedSub(true));
+    if (currentOrganization?.id) {
+      fetchSubscription(currentOrganization.id).catch(() => {});
     }
-  }, [currentOrganization?.id, fetchSubscription, fetchedSub]);
+  }, [currentOrganization?.id, fetchSubscription]);
 
-  // Use real subscription plan if available, fallback to 'free'
-  const activePlanKey = subscription?.plan || 'free';
+  const activePlanKey = subscription?.plan || currentOrganization?.plan || 'free';
+  const currentPlanLimits = getUsageLimits(
+    subscription?.limits || currentOrganization?.limits,
+    activePlanKey
+  );
+  const projectUsagePercent = getUsagePercent(totalProjects, currentPlanLimits.projects);
+  const storageUsagePercent = getUsagePercent(totalStorageGb, currentPlanLimits.storageGb);
 
   const triggerNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -190,16 +232,6 @@ export function OrganizationBillingView() {
     }
   ];
 
-  // Resource limits based on active plan for the "Usage" card
-  const planLimits = {
-    free: { orgs: 1, projects: 1, storage: 20 },
-    launch: { orgs: 999, projects: 5, storage: 150 },
-    scale: { orgs: 999, projects: 20, storage: 500 },
-    enterprise: { orgs: 999, projects: 999, storage: 10240 }
-  };
-
-  const currentPlanLimits = planLimits[activePlanKey] || planLimits.free;
-
   // Mock Invoice List
   const invoices = [
     { id: 'INV-2026-006', date: 'June 12, 2026', amount: '$0.00', status: 'Paid' },
@@ -208,8 +240,6 @@ export function OrganizationBillingView() {
     { id: 'INV-2026-003', date: 'March 12, 2026', amount: '$0.00', status: 'Paid' },
     { id: 'INV-2026-002', date: 'February 12, 2026', amount: '$0.00', status: 'Paid' }
   ];
-
-  const { checkoutPlan, manageBilling } = useAppStore();
 
   const handleCheckoutStripe = async (planKey) => {
     if (!currentOrganization?.id) {
@@ -346,7 +376,7 @@ export function OrganizationBillingView() {
                         <button
                           type="button"
                           className="pricing-card-btn-small is-upgrade"
-                          onClick={() => handleCheckoutStripe(plan.name)}
+                          onClick={() => handleCheckoutStripe(plan.key)}
                         >
                           {plan.key === 'enterprise' ? 'Contact sales' : 'Upgrade plan'}
                         </button>
@@ -633,19 +663,23 @@ export function OrganizationBillingView() {
                   </div>
                   <div className="usage-stat-body">
                     <div className="usage-stat-val-large">
-                      {totalProjects} <span style={{ fontSize: '13px', color: '#8e918f', fontWeight: '400' }}>/ {currentPlanLimits.projects === 999 ? 'Unlimited' : currentPlanLimits.projects}</span>
+                      {totalProjects} <span style={{ fontSize: '13px', color: '#8e918f', fontWeight: '400' }}>/ {currentPlanLimits.projectsLabel}</span>
                     </div>
                     <div className="usage-bar-bg">
                       <div
                         className="usage-bar-fill"
                         style={{
-                          width: `${Math.min(100, (totalProjects / currentPlanLimits.projects) * 100)}%`
+                          width: `${projectUsagePercent}%`
                         }}
                       />
                     </div>
                     <div className="usage-stat-meta">
                       <span>Active Projects</span>
-                      <span>{currentPlanLimits.projects === 999 ? '0' : ((totalProjects / currentPlanLimits.projects) * 100).toFixed(0)}%</span>
+                      <span>{projectUsagePercent.toFixed(0)}%</span>
+                    </div>
+                    <div className="usage-stat-meta">
+                      <span>Organizations on account</span>
+                      <span>{totalOrganizations}</span>
                     </div>
                   </div>
                 </div>
@@ -657,19 +691,19 @@ export function OrganizationBillingView() {
                   </div>
                   <div className="usage-stat-body">
                     <div className="usage-stat-val-large">
-                      {formatStorage(totalStorageGb)} <span style={{ fontSize: '13px', color: '#8e918f', fontWeight: '400' }}>/ {currentPlanLimits.storage >= 1024 ? `${(currentPlanLimits.storage / 1024).toFixed(0)} TB` : `${currentPlanLimits.storage} GB`}</span>
+                      {formatStorage(totalStorageGb)} <span style={{ fontSize: '13px', color: '#8e918f', fontWeight: '400' }}>/ {currentPlanLimits.storageLabel}</span>
                     </div>
                     <div className="usage-bar-bg">
                       <div
                         className="usage-bar-fill purple"
                         style={{
-                          width: `${Math.min(100, (totalStorageGb / currentPlanLimits.storage) * 100)}%`
+                          width: `${storageUsagePercent}%`
                         }}
                       />
                     </div>
                     <div className="usage-stat-meta">
                       <span>Aggregated Ingestion</span>
-                      <span>{((totalStorageGb / currentPlanLimits.storage) * 100).toFixed(0)}%</span>
+                      <span>{storageUsagePercent.toFixed(0)}%</span>
                     </div>
                   </div>
                 </div>

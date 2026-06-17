@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginView } from "@/components/shell/LoginView";
 import { DashboardPage } from "@/components/shell/DashboardPage";
@@ -5,14 +6,19 @@ import { PublicAnalyticsPage } from "@/components/shell/PublicAnalyticsPage";
 import { useAppStore } from "@/stores/useAppStore";
 
 function ProtectedRoute({ children }) {
-  const { currentUser, devMode } = useAppStore();
+  const { currentUser, devMode, authInitialized } = useAppStore();
   if (devMode || currentUser) return children;
+  if (!authInitialized) return null;
   return <Navigate to="/login" replace />;
 }
 
 export default function App() {
-  const { devMode, demoMode } = useAppStore();
+  const { devMode, demoMode, initializeSession } = useAppStore();
   const defaultRoute = (devMode && demoMode) ? "/app/home" : "/login";
+
+  useEffect(() => {
+    initializeSession();
+  }, [initializeSession]);
 
   return (
     <BrowserRouter>

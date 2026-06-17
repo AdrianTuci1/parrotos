@@ -27,7 +27,11 @@ export class AuthService {
     return response.data?.user;
   }
 
+  async refreshSession() {
+    return apiClient.refreshAccessToken();
+  }
   logout() {
+    apiClient.post("/auth/logout", null, { skipAuthRefresh: true }).catch(() => {});
     apiClient.setToken(null);
   }
 

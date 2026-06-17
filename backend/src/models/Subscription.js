@@ -1,6 +1,7 @@
 export class Subscription {
   constructor(data = {}) {
     this.id = data.id || null;
+    this.accountId = data.accountId || null;
     this.orgId = data.orgId || null;
     this.stripeCustomerId = data.stripeCustomerId || null;
     this.stripeSubscriptionId = data.stripeSubscriptionId || null;
@@ -15,6 +16,7 @@ export class Subscription {
 
   toFirestore() {
     return {
+      accountId: this.accountId,
       orgId: this.orgId,
       stripeCustomerId: this.stripeCustomerId,
       stripeSubscriptionId: this.stripeSubscriptionId,

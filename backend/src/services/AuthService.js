@@ -43,8 +43,7 @@ export class AuthService {
     await this.usersCollection.doc(userId).set(user.toFirestore());
     await this.organizationService.createDefaultForAccount(userId, user.email);
 
-    const token = this.generateToken(user);
-    return { token, user: this.sanitizeUser(user) };
+    return this.issueSession(user);
   }
 
   async login(dto) {
@@ -66,8 +65,7 @@ export class AuthService {
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    const token = this.generateToken(user);
-    return { token, user: this.sanitizeUser(user) };
+    return this.issueSession(user);
   }
 
   async verifyToken(token) {
@@ -94,8 +92,108 @@ export class AuthService {
         provider: user.provider || '',
       },
       config.jwtSecret,
-      { expiresIn: '24h' }
+      { expiresIn: config.accessTokenExpiresIn }
     );
+  }
+
+  generateRefreshToken(user) {
+    return jwt.sign(
+      {
+        sub: user.id,
+        type: 'refresh',
+        jti: CryptoService.generateToken(24),
+      },
+      config.refreshTokenSecret,
+      { expiresIn: config.refreshTokenExpiresIn }
+    );
+  }
+
+  getRefreshTokenExpiryDate() {
+    return new Date(Date.now() + config.refreshTokenTtlMs);
+  }
+
+  async persistRefreshToken(userId, refreshToken, refreshTokenExpiresAt) {
+    await this.usersCollection.doc(userId).update({
+      refreshTokenHash: CryptoService.hashToken(refreshToken),
+      refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async issueSession(user) {
+    const token = this.generateToken(user);
+    const refreshToken = this.generateRefreshToken(user);
+    const refreshTokenExpiresAt = this.getRefreshTokenExpiryDate();
+
+    await this.persistRefreshToken(user.id, refreshToken, refreshTokenExpiresAt);
+
+    return {
+      token,
+      refreshToken,
+      user: this.sanitizeUser(user),
+    };
+  }
+
+  async refreshSession(refreshToken) {
+    if (!refreshToken) {
+      throw new UnauthorizedError('Missing refresh token');
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, config.refreshTokenSecret);
+    } catch {
+      throw new UnauthorizedError('Invalid refresh token');
+    }
+
+    if (decoded.type !== 'refresh' || !decoded.sub) {
+      throw new UnauthorizedError('Invalid refresh token');
+    }
+
+    const doc = await this.usersCollection.doc(decoded.sub).get();
+    if (!doc.exists) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    const user = User.fromFirestore(doc.id, doc.data());
+    if (!user.refreshTokenHash || !user.refreshTokenExpiresAt) {
+      throw new UnauthorizedError('Refresh token revoked');
+    }
+
+    if (new Date(user.refreshTokenExpiresAt).getTime() <= Date.now()) {
+      throw new UnauthorizedError('Refresh token expired');
+    }
+
+    const isValid = CryptoService.compareToken(refreshToken, user.refreshTokenHash);
+    if (!isValid) {
+      throw new UnauthorizedError('Invalid refresh token');
+    }
+
+    return this.issueSession(user);
+  }
+
+  async revokeRefreshToken(userId) {
+    await this.usersCollection.doc(userId).update({
+      refreshTokenHash: '',
+      refreshTokenExpiresAt: null,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async logoutByRefreshToken(refreshToken) {
+    if (!refreshToken) {
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(refreshToken, config.refreshTokenSecret);
+      if (!decoded?.sub) {
+        return;
+      }
+      await this.revokeRefreshToken(decoded.sub);
+    } catch {
+      // Ignore invalid refresh tokens on logout.
+    }
   }
 
   async findOrCreateOAuthUser(oauthData) {
@@ -140,8 +238,16 @@ export class AuthService {
       await this.organizationService.createDefaultForAccount(userId, user.email);
     }
 
-    const token = this.generateToken(user);
-    return { token, user: this.sanitizeUser(user) };
+    return this.issueSession(user);
+  }
+
+  async getUser(userId) {
+    const doc = await this.usersCollection.doc(userId).get();
+    if (!doc.exists) {
+      throw new UnauthorizedError('User not found');
+    }
+    const user = User.fromFirestore(doc.id, doc.data());
+    return this.sanitizeUser(user);
   }
 
   async getUser(userId) {

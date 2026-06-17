@@ -9,11 +9,25 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { metricsMiddleware } from './middleware/metrics.js';
 
 const app = express();
+const allowedOrigins = String(config.corsOrigin || '*')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: config.corsOrigin,
+  origin(origin, callback) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, origin);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(compression());

@@ -155,6 +155,41 @@ jobs:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v4
 
+      - name: 🔐 Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ☁️ Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: 🔑 Ensure refresh token secret exists
+        id: refresh_secret
+        run: |
+          SECRET_NAME="refresh-token-secret"
+          PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
+
+          if ! gcloud secrets describe "$SECRET_NAME" --project="$PROJECT_ID" >/dev/null 2>&1; then
+            SECRET_VALUE="$(openssl rand -base64 48 | tr -d '\n')"
+            printf '%s' "$SECRET_VALUE" | gcloud secrets create "$SECRET_NAME" \
+              --project="$PROJECT_ID" \
+              --replication-policy="automatic" \
+              --data-file=-
+          fi
+
+          if ! gcloud secrets versions list "$SECRET_NAME" --project="$PROJECT_ID" --limit=1 --format='value(name)' | grep -q .; then
+            SECRET_VALUE="$(openssl rand -base64 48 | tr -d '\n')"
+            printf '%s' "$SECRET_VALUE" | gcloud secrets versions add "$SECRET_NAME" \
+              --project="$PROJECT_ID" \
+              --data-file=-
+          fi
+
+          REFRESH_TOKEN_SECRET="$(gcloud secrets versions access latest --secret="$SECRET_NAME" --project="$PROJECT_ID")"
+          echo "::add-mask::$REFRESH_TOKEN_SECRET"
+          echo "value=$REFRESH_TOKEN_SECRET" >> "$GITHUB_OUTPUT"
+
       - name: 🔐 Setup SSH
         id: ssh
         uses: webfactory/ssh-agent@v0.9.0
@@ -228,6 +263,9 @@ jobs:
           LLM_MODEL_ID=${{ env.LLM_MODEL_ID }}
           LLM_BASE_URL=${{ env.LLM_BASE_URL }}
           ENABLE_BIGQUERY_ANALYTICS=true
+          ACCESS_TOKEN_EXPIRES_IN=15m
+          REFRESH_TOKEN_EXPIRES_IN=30d
+          REFRESH_TOKEN_SECRET=${{ steps.refresh_secret.outputs.value }}
           CORS_ORIGIN=https://app.${{ env.DOMAIN }}
           CHAT_SERVICE_URL=http://chat:8080
           HARNESS_SERVICE_URL=http://harness:8081
