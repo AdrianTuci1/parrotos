@@ -451,6 +451,17 @@ export const useAppStore = create((set, get) => ({
     catch (err) { set({ error: err.message, isLoading: false }); throw err; }
   },
 
+  fetchCurrentUser: async () => {
+    if (get().devMode) return;
+    try {
+      const user = await authService.getMe();
+      if (user) set({ currentUser: user });
+      return user;
+    } catch {
+      // ignore - not authenticated
+    }
+  },
+
   logout: () => {
     authService.logout();
     set({

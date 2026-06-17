@@ -16,7 +16,7 @@ import { AuthDivider } from "@/components/auth-divider";
 import { AtSignIcon, AlertCircle, LockIcon } from "lucide-react";
 import "@/styles/login.css";
 export function LoginView() {
-  const { login, register, demoMode, toggleDemoMode, currentUser, fetchOrganizations } = useAppStore();
+  const { login, register, demoMode, toggleDemoMode, currentUser, fetchCurrentUser, fetchOrganizations } = useAppStore();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState("login");
@@ -31,10 +31,11 @@ export function LoginView() {
     const token = searchParams.get("token");
     if (token) {
       apiClient.setToken(token);
+      fetchCurrentUser();
       fetchOrganizations();
       navigate("/app/home", { replace: true });
     }
-  }, [searchParams, fetchOrganizations, navigate]);
+  }, [searchParams, fetchCurrentUser, fetchOrganizations, navigate]);
 
   // Redirect if already logged in (only in production, not devMode)
   if (currentUser && !demoMode) {
