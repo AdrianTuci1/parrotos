@@ -162,16 +162,6 @@ export function AppHeader() {
     setActiveOverlay(null);
   };
 
-  let scopeLabel;
-  let scopeEyebrow;
-  if (activeScope === "project") {
-    scopeLabel = currentWorkspace?.name || "Project";
-    scopeEyebrow = "Project";
-  } else {
-    scopeLabel = currentOrganization?.name || "Organization";
-    scopeEyebrow = "Organization";
-  }
-
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
@@ -183,7 +173,7 @@ export function AppHeader() {
           <div className="header-section-title">
             <div className="header-section-copy">
               <span className="header-section-text">
-                {scopeLabel} · {section?.title || "Dashboard"}
+                {section?.title || "Dashboard"}
               </span>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { createHash, randomUUID, timingSafeEqual } from 'crypto';
 import bcrypt from 'bcrypt';
 
 export class CryptoService {
@@ -21,5 +21,20 @@ export class CryptoService {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;
+  }
+
+  static hashToken(token) {
+    return createHash('sha256').update(String(token)).digest('hex');
+  }
+
+  static compareToken(token, hash) {
+    const tokenHash = Buffer.from(this.hashToken(token), 'utf8');
+    const expectedHash = Buffer.from(String(hash || ''), 'utf8');
+
+    if (tokenHash.length !== expectedHash.length) {
+      return false;
+    }
+
+    return timingSafeEqual(tokenHash, expectedHash);
   }
 }

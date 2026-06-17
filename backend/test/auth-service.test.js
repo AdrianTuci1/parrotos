@@ -2,12 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AuthService } from '../src/services/AuthService.js';
 import { OrganizationService } from '../src/services/OrganizationService.js';
+import { User } from '../src/models/User.js';
 
 function createUsersCollection() {
   const writes = [];
+  const updates = [];
+  const docs = new Map();
 
   return {
     writes,
+    updates,
+    docs,
     where(field, _op, value) {
       assert.equal(field, 'email');
       return {
@@ -15,9 +20,15 @@ function createUsersCollection() {
           assert.equal(count, 1);
           return {
             async get() {
+              const match = [...docs.entries()].find(([, data]) => data.email === value);
               return {
-                empty: true,
-                docs: [],
+                empty: !match,
+                docs: match
+                  ? [{
+                      id: match[0],
+                      data: () => match[1],
+                    }]
+                  : [],
               };
             },
           };
@@ -28,6 +39,19 @@ function createUsersCollection() {
       return {
         async set(payload) {
           writes.push({ id, payload });
+          docs.set(id, { ...payload });
+        },
+        async update(payload) {
+          updates.push({ id, payload });
+          docs.set(id, { ...(docs.get(id) || {}), ...payload });
+        },
+        async get() {
+          const data = docs.get(id);
+          return {
+            id,
+            exists: Boolean(data),
+            data: () => data,
+          };
         },
       };
     },
@@ -53,9 +77,11 @@ test('register provisions a default organization for the new account', async () 
   });
 
   assert.equal(usersCollection.writes.length, 1);
+  assert.equal(usersCollection.updates.length, 1);
   assert.equal(defaultOrgCalls.length, 1);
   assert.equal(defaultOrgCalls[0].accountId, result.user.id);
   assert.equal(defaultOrgCalls[0].email, 'adrian.tuci@gmail.com');
+  assert.ok(result.refreshToken);
 });
 
 test('new OAuth users also receive a default organization', async () => {
@@ -79,9 +105,42 @@ test('new OAuth users also receive a default organization', async () => {
   });
 
   assert.equal(usersCollection.writes.length, 1);
+  assert.equal(usersCollection.updates.length, 1);
   assert.equal(defaultOrgCalls.length, 1);
   assert.equal(defaultOrgCalls[0].accountId, result.user.id);
   assert.equal(defaultOrgCalls[0].email, 'adrian.tuci@gmail.com');
+  assert.ok(result.refreshToken);
+});
+
+test('refreshSession rotates refresh token and returns a new access token', async () => {
+  const usersCollection = createUsersCollection();
+  const authService = new AuthService({
+    usersCollection,
+    organizationService: {
+      async createDefaultForAccount() {},
+    },
+  });
+
+  const user = new User({
+    id: 'user-1',
+    email: 'adrian.tuci@gmail.com',
+    username: 'Adrian',
+    roles: ['user'],
+  });
+
+  await usersCollection.doc(user.id).set(user.toFirestore());
+  const session = await authService.issueSession(user);
+  const refreshed = await authService.refreshSession(session.refreshToken);
+
+  assert.ok(refreshed.token);
+  assert.ok(refreshed.refreshToken);
+  assert.notEqual(refreshed.refreshToken, session.refreshToken);
+  assert.equal(refreshed.user.id, user.id);
+
+  await assert.rejects(
+    () => authService.refreshSession(session.refreshToken),
+    (err) => err.code === 'UNAUTHORIZED' && /Invalid refresh token/.test(err.message),
+  );
 });
 
 test('default organizations use the sanitized email local-part and cannot be deleted directly', async () => {

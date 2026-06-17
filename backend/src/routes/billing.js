@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { billingService } from '../services/BillingService.js';
+import { Organization } from '../models/Organization.js';
 import { authenticate, requireOrganizationOwner } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
 import { config } from '../config/index.js';
@@ -12,8 +13,18 @@ router.use(requireOrganizationOwner);
 router.get('/subscription', async (req, res, next) => {
   try {
     const { orgId } = req.params;
-    const sub = await billingService.findByOrg(orgId);
-    success(res, sub || { plan: 'free', status: 'active' });
+    const [sub, orgDoc] = await Promise.all([
+      billingService.findByOrg(orgId),
+      billingService.orgsCollection.doc(orgId).get(),
+    ]);
+
+    const orgData = orgDoc.exists ? orgDoc.data() : {};
+    const plan = sub?.plan || orgData?.plan || 'free';
+    const limits = orgData?.limits || Organization.getDefaultLimits(plan);
+
+    success(res, sub
+      ? { ...sub, plan, limits }
+      : { plan, status: 'active', limits });
   } catch (err) {
     next(err);
   }

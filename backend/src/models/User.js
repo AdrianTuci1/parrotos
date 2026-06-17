@@ -9,6 +9,8 @@ export class User {
     this.providerId = data.providerId || '';
     this.roles = data.roles || ['user'];
     this.orgMemberships = data.orgMemberships || []; // [{ orgId, role }]
+    this.refreshTokenHash = data.refreshTokenHash || '';
+    this.refreshTokenExpiresAt = data.refreshTokenExpiresAt || null;
     this.createdAt = data.createdAt || new Date().toISOString();
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
@@ -39,6 +41,8 @@ export class User {
     if (this.picture) data.picture = this.picture;
     if (this.provider) data.provider = this.provider;
     if (this.providerId) data.providerId = this.providerId;
+    if (this.refreshTokenHash) data.refreshTokenHash = this.refreshTokenHash;
+    if (this.refreshTokenExpiresAt) data.refreshTokenExpiresAt = this.refreshTokenExpiresAt;
     return data;
   }
 

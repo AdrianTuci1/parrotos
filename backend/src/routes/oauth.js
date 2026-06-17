@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { config } from '../config/index.js';
 import { AuthService } from '../services/AuthService.js';
-import { success } from '../utils/response.js';
 import { BadRequestError } from '../utils/errors.js';
+import { setRefreshTokenCookie } from '../utils/authCookies.js';
 
 const router = Router();
 const authService = new AuthService();
@@ -98,6 +98,8 @@ router.get('/google/callback', async (req, res, next) => {
     } catch {
       // ignore invalid state
     }
+
+    setRefreshTokenCookie(res, result.refreshToken);
 
     // Redirect to /login so LoginView can extract the token from the URL.
     // The redirectUrl is passed separately so LoginView can navigate there after setting the token.

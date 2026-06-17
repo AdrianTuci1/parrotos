@@ -8,8 +8,8 @@
   width: 100%;
   background-color: rgba(9, 9, 11, 0.75);
   background-color: color-mix(in srgb, var(--bg-base) 75%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   transition: background-color 0.3s ease;
 }
 

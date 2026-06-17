@@ -5,15 +5,15 @@ import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
 
 export function OrganizationProjectsView() {
-  const { currentOrganization, workspaces, fetchProjects } = useAppStore();
+  const { currentOrganization, workspaces, fetchProjects, demoMode, devMode } = useAppStore();
   const navigate = useNavigate();
+  const isMockMode = devMode || demoMode;
 
-  // Fetch projects from backend when not in demo mode
   useEffect(() => {
-    if (currentOrganization?.id) {
+    if (currentOrganization?.id && !isMockMode) {
       fetchProjects(currentOrganization.id);
     }
-  }, [currentOrganization?.id]);
+  }, [currentOrganization?.id, isMockMode, fetchProjects]);
 
   const organizationProjects = workspaces.filter(
     (workspace) => workspace.organizationId === currentOrganization.id
