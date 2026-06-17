@@ -250,6 +250,15 @@ export class AuthService {
     return this.sanitizeUser(user);
   }
 
+  async getUser(userId) {
+    const doc = await this.usersCollection.doc(userId).get();
+    if (!doc.exists) {
+      throw new UnauthorizedError('User not found');
+    }
+    const user = User.fromFirestore(doc.id, doc.data());
+    return this.sanitizeUser(user);
+  }
+
   async deleteAccount(userId) {
     return dataDeletionService.deleteUserAccount(userId);
   }

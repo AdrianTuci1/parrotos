@@ -30,7 +30,6 @@ export class AuthService {
   async refreshSession() {
     return apiClient.refreshAccessToken();
   }
-
   logout() {
     apiClient.post("/auth/logout", null, { skipAuthRefresh: true }).catch(() => {});
     apiClient.setToken(null);

@@ -71,6 +71,15 @@ router.post('/logout', async (req, res, next) => {
   }
 });
 
+router.get('/me', authenticate, async (req, res, next) => {
+  try {
+    const user = await authService.getUser(req.user.userId);
+    success(res, { user: user });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.delete('/me', authenticate, async (req, res, next) => {
   try {
     await authService.deleteAccount(req.user.userId);

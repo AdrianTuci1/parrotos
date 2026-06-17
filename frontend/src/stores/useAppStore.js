@@ -533,7 +533,6 @@ export const useAppStore = create((set, get) => ({
       return null;
     }
   },
-
   fetchCurrentUser: async () => {
     if (get().devMode) return;
     try {

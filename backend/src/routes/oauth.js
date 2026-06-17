@@ -100,7 +100,6 @@ router.get('/google/callback', async (req, res, next) => {
     }
 
     setRefreshTokenCookie(res, result.refreshToken);
-
     // Redirect to /login so LoginView can extract the token from the URL.
     // The redirectUrl is passed separately so LoginView can navigate there after setting the token.
     const loginUrl = `${config.frontendUrl}/login?token=${encodeURIComponent(result.token)}&redirect=${encodeURIComponent(redirectUrl)}`;
