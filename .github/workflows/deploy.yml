@@ -22,7 +22,9 @@ env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-  DOMAIN: ${{ vars.DOMAIN || 'sentrydata.io' }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  DOMAIN: ${{ vars.DOMAIN || 'statsparrot.com' }}
   LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'deepseek' }}
   LLM_MODEL_ID: ${{ vars.LLM_MODEL_ID || 'deepseek-v4-flash' }}
   LLM_BASE_URL: ${{ vars.LLM_BASE_URL || 'https://api.deepseek.com/v1' }}
@@ -233,6 +235,10 @@ jobs:
           CLOUD_RUN_AUTH_MODE=disabled
           CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL=${{ needs.deploy-gcp-infrastructure.outputs.scheduler_invoker_sa }}
           GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI=https://api.${{ env.DOMAIN }}/api/v1/auth/google/callback
+          FRONTEND_URL=https://app.${{ env.DOMAIN }}
           ENVEOF
           echo '${{ secrets.GCP_SA_KEY }}' > /tmp/gcp-key.json
           scp /tmp/sentry-env ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/sentry-data/.env

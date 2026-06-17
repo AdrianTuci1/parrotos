@@ -20,7 +20,11 @@ services:
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL}
       - CLOUD_RUN_AUTH_MODE=${CLOUD_RUN_AUTH_MODE:-disabled}
       - ENABLE_BIGQUERY_ANALYTICS=${ENABLE_BIGQUERY_ANALYTICS:-true}
-      - CORS_ORIGIN=${CORS_ORIGIN:-https://app.sentrydata.io}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://app.statsparrot.com}
+      - FRONTEND_URL=${FRONTEND_URL:-https://app.statsparrot.com}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-https://api.statsparrot.com/api/v1/auth/google/callback}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
     volumes:
       - ./secrets:/secrets:ro

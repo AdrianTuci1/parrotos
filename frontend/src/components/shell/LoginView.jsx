@@ -16,7 +16,7 @@ import { AuthDivider } from "@/components/auth-divider";
 import { AtSignIcon, AlertCircle, LockIcon } from "lucide-react";
 import "@/styles/login.css";
 export function LoginView() {
-  const { login, register, demoMode, toggleDemoMode, currentUser, fetchOrganizations } = useAppStore();
+  const { login, register, demoMode, toggleDemoMode, currentUser, fetchCurrentUser, fetchOrganizations } = useAppStore();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState("login");
@@ -30,11 +30,30 @@ export function LoginView() {
   useEffect(() => {
     const token = searchParams.get("token");
     if (token) {
+      const redirectTo = searchParams.get("redirect") || "/app/home";
       apiClient.setToken(token);
+
+      // Decode JWT payload immediately so currentUser is set before navigate.
+      // This prevents a race: navigate fires before fetchCurrentUser completes,
+      // ProtectedRoute sees null → bounces back to /login (losing the token).
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        useAppStore.setState({
+          currentUser: {
+            id: payload.sub,
+            email: payload.email,
+            roles: payload.roles || [],
+          },
+        });
+      } catch {
+        // fallback – fetchCurrentUser will run anyway
+      }
+
+      fetchCurrentUser();
       fetchOrganizations();
-      navigate("/app/home", { replace: true });
+      navigate(redirectTo, { replace: true });
     }
-  }, [searchParams, fetchOrganizations, navigate]);
+  }, [searchParams, fetchCurrentUser, fetchOrganizations, navigate]);
 
   // Redirect if already logged in (only in production, not devMode)
   if (currentUser && !demoMode) {
