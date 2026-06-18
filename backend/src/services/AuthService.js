@@ -43,7 +43,7 @@ export class AuthService {
     await this.usersCollection.doc(userId).set(user.toFirestore());
     const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email);
 
-    return this.issueSession(user, defaultOrg.id);
+    return this.issueSession(user, defaultOrg?.id || null);
   }
 
   async login(dto) {
@@ -172,7 +172,11 @@ export class AuthService {
       throw new UnauthorizedError('Invalid refresh token');
     }
 
-    return this.issueSession(user);
+    const defaultOrgs = typeof this.organizationService.findByAccount === 'function'
+      ? await this.organizationService.findByAccount(user.id)
+      : [];
+    const orgId = defaultOrgs.length > 0 ? defaultOrgs[0].id : null;
+    return this.issueSession(user, orgId);
   }
 
   async revokeRefreshToken(userId) {
@@ -239,21 +243,12 @@ export class AuthService {
 
       await this.usersCollection.doc(userId).set(user.toFirestore());
       const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email);
-      return this.issueSession(user, defaultOrg.id);
+      return this.issueSession(user, defaultOrg?.id || null);
     }
 
     const defaultOrg = await this.organizationService.findByAccount(user.id);
     const orgId = defaultOrg.length > 0 ? defaultOrg[0].id : null;
     return this.issueSession(user, orgId);
-  }
-
-  async getUser(userId) {
-    const doc = await this.usersCollection.doc(userId).get();
-    if (!doc.exists) {
-      throw new UnauthorizedError('User not found');
-    }
-    const user = User.fromFirestore(doc.id, doc.data());
-    return this.sanitizeUser(user);
   }
 
   async getUser(userId) {

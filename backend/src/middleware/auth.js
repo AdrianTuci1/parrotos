@@ -91,8 +91,9 @@ export const requireOrgAccess = async (req, res, next) => {
     const orgData = orgDoc.data();
     const isOwner = orgData.accountId === req.user.userId;
     const isMember = orgData.members?.some(m => m.userId === req.user.userId);
+    const isGlobalAdmin = req.user.roles?.includes('admin');
 
-    if (!isOwner && !isMember) {
+    if (!isOwner && !isMember && !isGlobalAdmin) {
       return next(new UnauthorizedError('User does not have access to this organization'));
     }
 
@@ -141,7 +142,10 @@ export const requireOrganizationOwner = async (req, res, next) => {
     }
 
     const org = await loadOrganization(orgId);
-    if (org.accountId !== req.user.userId) {
+    const isOwner = org.accountId === req.user.userId;
+    const isGlobalAdmin = req.user.roles?.includes('admin');
+
+    if (!isOwner && !isGlobalAdmin) {
       throw new ForbiddenError('Only the organization owner can perform this action');
     }
 
@@ -168,7 +172,10 @@ export const requireOrganizationManager = async (req, res, next) => {
     }
 
     const org = await loadOrganization(orgId);
-    if (org.accountId !== req.user.userId) {
+    const isOwner = org.accountId === req.user.userId;
+    const isGlobalAdmin = req.user.roles?.includes('admin');
+
+    if (!isOwner && !isGlobalAdmin) {
       throw new ForbiddenError('Only the organization owner can manage organization users');
     }
 

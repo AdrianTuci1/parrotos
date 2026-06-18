@@ -86,6 +86,8 @@ router.get('/account/metrics', async (req, res, next) => {
   }
 });
 
+router.use('/:orgId', requireOrgAccess);
+
 // ═══════════════════════════════════════════════
 // ORG-LEVEL METRICS (for OrganizationStatsView)
 // ═══════════════════════════════════════════════

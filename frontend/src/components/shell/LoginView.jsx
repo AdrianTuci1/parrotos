@@ -49,9 +49,11 @@ export function LoginView() {
         // fallback – fetchCurrentUser will run anyway
       }
 
-      fetchCurrentUser();
-      fetchOrganizations();
-      navigate(redirectTo, { replace: true });
+      (async () => {
+        await fetchCurrentUser();
+        await fetchOrganizations();
+        navigate(redirectTo, { replace: true });
+      })();
     }
   }, [searchParams, fetchCurrentUser, fetchOrganizations, navigate]);
 

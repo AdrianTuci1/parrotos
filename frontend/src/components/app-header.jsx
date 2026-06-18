@@ -15,6 +15,7 @@ import {
   ExternalLink,
   ArrowLeft,
   Trash2,
+  LogOut,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -58,7 +59,7 @@ const notifications = [
 ];
 
 export function AppHeader() {
-  const { activeSection, activeScope, currentOrganization, currentWorkspace, currentUser, deleteAccount } = useAppStore();
+  const { activeSection, activeScope, currentOrganization, currentWorkspace, currentUser, deleteAccount, logout } = useAppStore();
   const section = findSectionById(activeScope, activeSection);
   const navigate = useNavigate();
 
@@ -149,6 +150,12 @@ export function AppHeader() {
     } catch (err) {
       alert('Failed to delete account: ' + err.message);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setActiveOverlay(null);
+    navigate('/login', { replace: true });
   };
 
   const handleSubmitTicket = (e) => {
@@ -282,6 +289,11 @@ export function AppHeader() {
               <DropdownMenuItem className="header-dropdown-action" onClick={() => setActiveOverlay('help')}>
                 <HelpCircle size={14} />
                 Help & support
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="header-dropdown-separator" />
+              <DropdownMenuItem className="header-dropdown-action header-dropdown-danger" onClick={handleLogout}>
+                <LogOut size={14} />
+                Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

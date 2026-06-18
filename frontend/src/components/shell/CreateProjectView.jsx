@@ -65,6 +65,11 @@ export function CreateProjectView() {
       return;
     }
 
+    if (!currentOrganization?.id || currentOrganization.id === '__empty__') {
+      setSubmitError("No organization selected. Please wait while data loads.");
+      return;
+    }
+
     setSubmitError("");
 
     try {
