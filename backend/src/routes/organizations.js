@@ -34,8 +34,6 @@ router.post('/', validate(createSchema), async (req, res, next) => {
   }
 });
 
-router.use(requireOrgAccess);
-
 router.get('/', async (req, res, next) => {
   try {
     const orgs = await orgService.findByAccount(req.user.userId);
@@ -85,6 +83,8 @@ router.get('/account/metrics', async (req, res, next) => {
     next(err);
   }
 });
+
+router.use('/:orgId', requireOrgAccess);
 
 // ═══════════════════════════════════════════════
 // ORG-LEVEL METRICS (for OrganizationStatsView)
