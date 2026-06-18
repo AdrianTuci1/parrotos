@@ -66,28 +66,41 @@ export const requireRole = (...roles) => {
   };
 };
 
-export const requireOrgAccess = (req, res, next) => {
-  const orgId = req.params.orgId || req.body.orgId;
+export const requireOrgAccess = async (req, res, next) => {
+  try {
+    const orgId = req.params.orgId || req.body.orgId;
 
-  if (!orgId) {
-    return next(new UnauthorizedError('Organization ID required'));
-  }
-
-  // Service accounts must belong to the org
-  if (req.user.serviceAccount) {
-    if (req.user.orgId !== orgId) {
-      return next(new UnauthorizedError('Service account does not have access to this organization'));
+    if (!orgId) {
+      return next(new UnauthorizedError('Organization ID required'));
     }
-    return next();
-  }
 
-  // For regular users, check org membership from JWT
-  if (req.user.orgId && req.user.orgId !== orgId) {
-    return next(new UnauthorizedError('User does not have access to this organization'));
-  }
+    // Service accounts must belong to the org
+    if (req.user.serviceAccount) {
+      if (req.user.orgId !== orgId) {
+        return next(new UnauthorizedError('Service account does not have access to this organization'));
+      }
+      return next();
+    }
 
-  req.user.orgId = orgId;
-  next();
+    // For regular users, check org ownership from Firestore
+    const orgDoc = await gcpService.firestore.collection('organizations').doc(orgId).get();
+    if (!orgDoc.exists) {
+      return next(new UnauthorizedError('Organization not found'));
+    }
+
+    const orgData = orgDoc.data();
+    const isOwner = orgData.accountId === req.user.userId;
+    const isMember = orgData.members?.some(m => m.userId === req.user.userId);
+
+    if (!isOwner && !isMember) {
+      return next(new UnauthorizedError('User does not have access to this organization'));
+    }
+
+    req.user.orgId = orgId;
+    next();
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const requireProjectAccess = (req, res, next) => {

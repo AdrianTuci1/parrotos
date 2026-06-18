@@ -41,9 +41,9 @@ export class AuthService {
     });
 
     await this.usersCollection.doc(userId).set(user.toFirestore());
-    await this.organizationService.createDefaultForAccount(userId, user.email);
+    const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email);
 
-    return this.issueSession(user);
+    return this.issueSession(user, defaultOrg.id);
   }
 
   async login(dto) {
@@ -65,7 +65,9 @@ export class AuthService {
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    return this.issueSession(user);
+    const defaultOrg = await this.organizationService.findByAccount(user.id);
+    const orgId = defaultOrg.length > 0 ? defaultOrg[0].id : null;
+    return this.issueSession(user, orgId);
   }
 
   async verifyToken(token) {
@@ -83,13 +85,14 @@ export class AuthService {
     }
   }
 
-  generateToken(user) {
+  generateToken(user, orgId = null) {
     return jwt.sign(
       {
         sub: user.id,
         email: user.email,
         roles: user.roles,
         provider: user.provider || '',
+        orgId: orgId || user.orgId || null,
       },
       config.jwtSecret,
       { expiresIn: config.accessTokenExpiresIn }
@@ -120,8 +123,8 @@ export class AuthService {
     });
   }
 
-  async issueSession(user) {
-    const token = this.generateToken(user);
+  async issueSession(user, orgId = null) {
+    const token = this.generateToken(user, orgId);
     const refreshToken = this.generateRefreshToken(user);
     const refreshTokenExpiresAt = this.getRefreshTokenExpiryDate();
 
@@ -235,10 +238,13 @@ export class AuthService {
       });
 
       await this.usersCollection.doc(userId).set(user.toFirestore());
-      await this.organizationService.createDefaultForAccount(userId, user.email);
+      const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email);
+      return this.issueSession(user, defaultOrg.id);
     }
 
-    return this.issueSession(user);
+    const defaultOrg = await this.organizationService.findByAccount(user.id);
+    const orgId = defaultOrg.length > 0 ? defaultOrg[0].id : null;
+    return this.issueSession(user, orgId);
   }
 
   async getUser(userId) {

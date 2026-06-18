@@ -1,17 +1,18 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
-import { SpecService } from '../services/SpecService.js';
+import { PreferencesService } from '../services/PreferencesService.js';
 
 const router = Router({ mergeParams: true });
-const specService = new SpecService();
+const preferencesService = new PreferencesService();
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 
 router.get('/', async (req, res, next) => {
   try {
     const { orgId, projectId } = req.params;
-    const prefs = await specService.getPreferences(orgId, projectId);
+    const prefs = await preferencesService.getPreferences(orgId, projectId);
     success(res, prefs);
   } catch (err) {
     next(err);
@@ -22,7 +23,7 @@ router.post('/views/:viewId', async (req, res, next) => {
   try {
     const { orgId, projectId, viewId } = req.params;
     const { blocked, sources, title } = req.body || {};
-    const pref = await specService.setViewPreference(orgId, projectId, viewId, {
+    const pref = await preferencesService.setViewPreference(orgId, projectId, viewId, {
       ...(blocked !== undefined ? { blocked } : {}),
       ...(sources !== undefined ? { sources } : {}),
       ...(title !== undefined ? { title } : {}),
@@ -37,7 +38,7 @@ router.post('/widgets/:widgetId', async (req, res, next) => {
   try {
     const { orgId, projectId, widgetId } = req.params;
     const { blocked, sources, title } = req.body || {};
-    const pref = await specService.setWidgetPreference(orgId, projectId, widgetId, {
+    const pref = await preferencesService.setWidgetPreference(orgId, projectId, widgetId, {
       ...(blocked !== undefined ? { blocked } : {}),
       ...(sources !== undefined ? { sources } : {}),
       ...(title !== undefined ? { title } : {}),
@@ -51,7 +52,7 @@ router.post('/widgets/:widgetId', async (req, res, next) => {
 router.delete('/views/:viewId', async (req, res, next) => {
   try {
     const { orgId, projectId, viewId } = req.params;
-    await specService.removeViewPreference(orgId, projectId, viewId);
+    await preferencesService.removeViewPreference(orgId, projectId, viewId);
     success(res, { removed: true });
   } catch (err) {
     next(err);
@@ -61,7 +62,7 @@ router.delete('/views/:viewId', async (req, res, next) => {
 router.delete('/widgets/:widgetId', async (req, res, next) => {
   try {
     const { orgId, projectId, widgetId } = req.params;
-    await specService.removeWidgetPreference(orgId, projectId, widgetId);
+    await preferencesService.removeWidgetPreference(orgId, projectId, widgetId);
     success(res, { removed: true });
   } catch (err) {
     next(err);
@@ -72,7 +73,7 @@ router.post('/global', async (req, res, next) => {
   try {
     const { orgId, projectId } = req.params;
     const { autoHarness } = req.body || {};
-    const global = await specService.setGlobalPreference(orgId, projectId, {
+    const global = await preferencesService.setGlobalPreference(orgId, projectId, {
       ...(autoHarness !== undefined ? { autoHarness } : {}),
     });
     success(res, global);

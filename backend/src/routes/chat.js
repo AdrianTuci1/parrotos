@@ -1,10 +1,13 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { config } from '../config/index.js';
 import { ConnectorService } from '../services/ConnectorService.js';
 import { internalServiceClient } from '../services/InternalServiceClient.js';
 
-const router = Router();
+const router = Router({ mergeParams: true });
+
+router.use(authenticate);
+router.use(requireOrgAccess);
 
 /**
  * POST /chat/message — proxy request to Chat Service (Cloud Run)
@@ -14,7 +17,7 @@ const router = Router();
  * to the Chat Service with an internal token. The Chat Service uses
  * the user's JWT to call other backend APIs on the user's behalf.
  */
-router.post('/message', authenticate, async (req, res) => {
+router.post('/message', async (req, res) => {
   try {
     const { sessionId, message } = req.body;
     const orgId = req.params.orgId;
@@ -80,7 +83,7 @@ router.post('/message', authenticate, async (req, res) => {
  * Frontend sends the user's response to a tool call (e.g., credentials entered,
  * choice selected). Backend executes the tool and returns the result.
  */
-router.post('/tool-response', authenticate, async (req, res, next) => {
+router.post('/tool-response', async (req, res, next) => {
   try {
     const { orgId, projectId } = req.params;
     const { toolCallId, toolName, payload } = req.body;

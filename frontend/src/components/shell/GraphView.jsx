@@ -483,7 +483,7 @@ export function GraphView() {
   }
 
   return (
-    <div className="flex-1 w-full min-h-0 relative flex flex-col bg-[#0F1012] overflow-hidden">
+    <div className="flex-1 w-full min-h-0 relative flex flex-col overflow-hidden">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <div className="text-white text-sm">Loading graph artifact...</div>

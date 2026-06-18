@@ -405,6 +405,18 @@ toolCalls: [
   },
 ];
 
+function createMockChatSessions() {
+  return JSON.parse(JSON.stringify(mockChatSessions));
+}
+
+function createMockChatState() {
+  const chatSessions = createMockChatSessions();
+  return {
+    chatSessions,
+    activeChatId: chatSessions[0]?.id || null,
+  };
+}
+
 export const useAppStore = create((set, get) => ({
   devMode: config.devMode,
   demoMode: config.devMode,
@@ -424,7 +436,8 @@ export const useAppStore = create((set, get) => ({
   timeRange: '1h',
   sidebarCollapsed: false,
 
-  chatSessions: config.devMode ? mockChatSessions : [], activeChatId: null, isChatPanelOpen: true,
+  ...(config.devMode ? createMockChatState() : { chatSessions: [], activeChatId: null }),
+  isChatPanelOpen: true,
   organizationsData: [], projectsData: [], agentsData: [],
   integrationsData: [], analyticsData: null, currentUser: null,
   serviceAccounts: [],
@@ -455,6 +468,7 @@ export const useAppStore = create((set, get) => ({
   toggleDemoMode: () => {
     const newDemoMode = !get().demoMode;
     set((state) => ({
+      ...(isMockModeState({ ...state, demoMode: newDemoMode }) ? createMockChatState() : { chatSessions: [], activeChatId: null }),
       demoMode: newDemoMode,
       organizations: getOrganizationsForState({ ...state, demoMode: newDemoMode }),
       workspaces: getWorkspacesForState({ ...state, demoMode: newDemoMode }),

@@ -59,6 +59,12 @@ export function ChatView() {
   const pendingConnector = pendingAction?.toolCall?.connector;
 
   useEffect(() => {
+    if (!activeChatId && chatSessions.length > 0) {
+      useAppStore.setState({ activeChatId: chatSessions[0].id });
+    }
+  }, [activeChatId, chatSessions]);
+
+  useEffect(() => {
     const connector = pendingConnector;
     if (!connector || demoMode || !currentOrganization?.id || !currentWorkspace?.id) {
       return;
