@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AnalyticsService } from '../services/AnalyticsService.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
 
@@ -17,6 +17,7 @@ const databaseQuerySchema = {
 };
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 
 router.post('/query', validate(querySchema), async (req, res, next) => {
   try {

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { OrganizationService } from '../services/OrganizationService.js';
 import { OrganizationMetricsService } from '../services/OrganizationMetricsService.js';
-import { authenticate, requireOrganizationOwner } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess, requireOrganizationOwner } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
 import { gcpService } from '../services/GcpService.js';
@@ -33,6 +33,8 @@ router.post('/', validate(createSchema), async (req, res, next) => {
     next(err);
   }
 });
+
+router.use(requireOrgAccess);
 
 router.get('/', async (req, res, next) => {
   try {

@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { billingService } from '../services/BillingService.js';
 import { Organization } from '../models/Organization.js';
-import { authenticate, requireOrganizationOwner } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess, requireOrganizationOwner } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
 import { config } from '../config/index.js';
 
 const router = Router({ mergeParams: true });
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 router.use(requireOrganizationOwner);
 
 router.get('/subscription', async (req, res, next) => {

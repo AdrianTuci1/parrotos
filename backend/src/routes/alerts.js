@@ -1,9 +1,12 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
 import { gcpService } from '../services/GcpService.js';
 
 const router = Router({ mergeParams: true });
+
+router.use(authenticate);
+router.use(requireOrgAccess);
 
 /**
  * POST /alerts — receive alerts from monitoring agent or Modal webhooks.
@@ -42,7 +45,7 @@ router.post('/', async (req, res, next) => {
 /**
  * GET /alerts — list recent alerts for a project.
  */
-router.get('/', authenticate, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const { projectId } = req.params;
     const limit = parseInt(req.query.limit) || 20;
@@ -70,7 +73,7 @@ router.get('/', authenticate, async (req, res, next) => {
 /**
  * PATCH /alerts/:alertId/acknowledge — mark alert as acknowledged.
  */
-router.patch('/:alertId/acknowledge', authenticate, async (req, res, next) => {
+router.patch('/:alertId/acknowledge', async (req, res, next) => {
   try {
     const { projectId, alertId } = req.params;
 
@@ -92,7 +95,7 @@ router.patch('/:alertId/acknowledge', authenticate, async (req, res, next) => {
 /**
  * GET /alerts/health — return latest health report from GCS.
  */
-router.get('/health', authenticate, async (req, res, next) => {
+router.get('/health', async (req, res, next) => {
   try {
     const { orgId, projectId } = req.params;
     const prefix = `specs/${orgId}/${projectId}`;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
 import { ObserverService } from '../services/ObserverService.js';
 
@@ -7,6 +7,7 @@ const router = Router({ mergeParams: true });
 const observerService = new ObserverService();
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 
 router.get('/', async (req, res, next) => {
   try {

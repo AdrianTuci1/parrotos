@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { SpecService } from '../services/SpecService.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
 import { gcpService } from '../services/GcpService.js';
 
@@ -8,6 +8,7 @@ const router = Router({ mergeParams: true });
 const specService = new SpecService();
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 
 router.get('/', async (req, res, next) => {
   try {

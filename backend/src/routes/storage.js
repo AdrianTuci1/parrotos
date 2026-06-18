@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { StorageService } from '../services/StorageService.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
 
 const router = Router({ mergeParams: true });
 const storageService = new StorageService();
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 
 /**
  * GET /organizations/:orgId/projects/:projectId/storage/volumes

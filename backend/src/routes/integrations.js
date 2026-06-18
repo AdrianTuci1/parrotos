@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { IntegrationService } from '../services/IntegrationService.js';
 import { integrationCatalogService } from '../services/IntegrationCatalogService.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
 
@@ -21,6 +21,7 @@ const updateSchema = {
 };
 
 router.use(authenticate);
+router.use(requireOrgAccess);
 
 router.post('/', validate(createSchema), async (req, res, next) => {
   try {
