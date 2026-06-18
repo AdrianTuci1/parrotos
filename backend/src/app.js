@@ -42,7 +42,7 @@ app.use(requestId);
 // Prometheus metrics
 app.use(metricsMiddleware);
 
-// Health check
+// Health check (root level for docker/container healthchecks)
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
