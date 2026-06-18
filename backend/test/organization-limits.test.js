@@ -4,7 +4,7 @@ import { Organization } from '../src/models/Organization.js';
 import { OrganizationService } from '../src/services/OrganizationService.js';
 import { BillingService } from '../src/services/BillingService.js';
 
-test('checkProjectLimit uses the account-wide project count when org stats are stale', async () => {
+test('checkProjectLimit uses the organization project count when org stats are stale', async () => {
   const updates = [];
   const service = new OrganizationService({
     orgsCollection: {
@@ -28,20 +28,13 @@ test('checkProjectLimit uses the account-wide project count when org stats are s
     plan: 'launch',
     stats: { projectsCount: 0, membersCount: 0, storageUsed: 0, queriesUsed: 0 },
   });
-  service.findByAccount = async () => [
-    new Organization({ id: 'org-1', accountId: 'account-1', plan: 'launch' }),
-    new Organization({ id: 'org-2', accountId: 'account-1', plan: 'launch' }),
-  ];
   service.findProjectsByOrg = async (orgId) => (
     orgId === 'org-1'
       ? [{ id: 'p1' }, { id: 'p2' }, { id: 'p3' }]
       : [{ id: 'p4' }, { id: 'p5' }]
   );
 
-  await assert.rejects(
-    () => service.checkProjectLimit('org-1'),
-    (err) => err.code === 'FORBIDDEN' && /Project limit reached/.test(err.message),
-  );
+  await assert.doesNotReject(() => service.checkProjectLimit('org-1'));
 
   assert.equal(updates.length, 1);
   assert.equal(updates[0]['stats.projectsCount'], 3);
