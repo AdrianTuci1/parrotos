@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { success } from '../utils/response.js';
-import { SpecService } from '../services/SpecService.js';
+import { PreferencesService } from '../services/PreferencesService.js';
 
 const router = Router({ mergeParams: true });
-const preferencesService = new SpecService();
+const preferencesService = new PreferencesService();
 
 router.use(authenticate);
 router.use(requireOrgAccess);
