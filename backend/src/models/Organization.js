@@ -15,11 +15,12 @@ export class Organization {
     };
     this.stats = data.stats || {
       projectsCount: 0,
-      membersCount: 0,
+      membersCount: data.members?.length || 1,
       storageUsed: 0,
       queriesUsed: 0,
     };
     this.limits = data.limits || Organization.getDefaultLimits(this.plan);
+    this.members = data.members || [];
     this.createdAt = data.createdAt || new Date().toISOString();
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
@@ -53,6 +54,7 @@ export class Organization {
       settings: this.settings,
       stats: this.stats,
       limits: this.limits,
+      members: this.members,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

@@ -7,7 +7,7 @@ export function requireAdmin(req, res, next) {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  if (req.user.role !== 'admin' && req.user.role !== 'owner') {
+  if (!req.user.roles?.includes('admin') && !req.user.roles?.includes('owner')) {
     return res.status(403).json({ error: 'Admin access required' });
   }
 

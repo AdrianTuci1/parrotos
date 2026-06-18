@@ -695,10 +695,15 @@ export const useAppStore = create((set, get) => ({
       set((state) => ({ workspaces: [...state.workspaces, newWorkspace], currentWorkspace: newWorkspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
       return newWorkspace;
     }
+    const orgId = get().currentOrganization?.id;
+    if (!orgId || orgId === '__empty__') {
+      throw new Error('No organization selected');
+    }
+
     set({ isLoading: true });
     try {
       const project = normalizeWorkspace(
-        await projectService.create(get().currentOrganization.id, {
+        await projectService.create(orgId, {
           name,
           slug,
           description: payload.description || '',
