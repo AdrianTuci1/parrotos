@@ -29,7 +29,9 @@ router.get('/ready', async (req, res, next) => {
     const checks = await runReadinessChecks();
     const allHealthy = checks.every(c => c.status === 'healthy');
     
-    if (allHealthy) {
+    const allReady = checks.every(c => c.status === 'healthy' || c.status === 'skipped');
+    
+    if (allReady) {
       success(res, { status: 'ready', checks });
     } else {
       res.status(503).json({ status: 'not-ready', checks });

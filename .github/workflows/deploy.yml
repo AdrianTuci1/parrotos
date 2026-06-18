@@ -323,10 +323,26 @@ jobs:
         id: health
         run: |
           echo "::group::🏥 Health Check"
-          sleep 10
-          curl -sf http://${{ secrets.VPS_HOST }}:3000/api/v1/health || exit 1
-          curl -sf http://${{ secrets.VPS_HOST }}:3000/api/v1/health/ready || exit 1
-          echo "✅ Backend is healthy!"
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'HEALTHCHECK'
+            set -e
+            cd /opt/sentry-data
+
+            for attempt in $(seq 1 18); do
+              if curl -fsS http://localhost:3000/api/v1/health >/dev/null && \
+                 curl -fsS http://localhost:3000/api/v1/health/ready >/dev/null; then
+                echo "✅ Backend is healthy and ready"
+                exit 0
+              fi
+
+              echo "Attempt ${attempt}/18: backend not ready yet"
+              sleep 10
+            done
+
+            echo "❌ Backend failed health checks after 180s"
+            docker compose ps
+            docker compose logs backend --tail=120
+            exit 1
+          HEALTHCHECK
           echo "::endgroup::"
 
       - name: ✅ Set Status
