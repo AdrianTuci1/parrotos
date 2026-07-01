@@ -12,3 +12,6 @@ ml-lab/datasets/training_bundle/
 
 
 terraform-sa-key.json
+.env.k8s-secrets
+gcp-sa-key.json
+vps-key*

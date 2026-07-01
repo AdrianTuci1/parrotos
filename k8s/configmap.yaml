@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentry-data-config
+  namespace: sentry-data
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  API_PREFIX: "/api/v1"
+  GCP_PROJECT_ID: "statsparrot-prod"
+  GCP_REGION: "europe-west1"
+  GCS_BUCKET_NAME: "sentry-platform-data-statsparrot-prod"
+  BIGQUERY_DATASET_PREFIX: "sentry_dataset"
+  BIGQUERY_LOCATION: "EU"
+  ENABLE_BIGQUERY_ANALYTICS: "true"
+  ACCESS_TOKEN_EXPIRES_IN: "15m"
+  REFRESH_TOKEN_EXPIRES_IN: "30d"
+  CORS_ORIGIN: "https://app.statsparrot.com"
+  FRONTEND_URL: "https://app.statsparrot.com"
+  GOOGLE_REDIRECT_URI: "https://api.statsparrot.com/api/v1/auth/google/callback"
+  LLM_PROVIDER: "deepseek"
+  LLM_MODEL_ID: "deepseek-v4-flash"
+  LLM_BASE_URL: "https://api.deepseek.com/v1"
+  ENABLE_MODAL_AGENTS: "false"
+  ENABLE_MELTANO_INGESTION: "false"
+  # Service URLs will be added when chat/harness/observer are deployed
+  CHAT_SERVICE_URL: "http://localhost:8080"
+  HARNESS_SERVICE_URL: "http://localhost:8081"
+  OBSERVER_SERVICE_URL: "http://localhost:8082"
+  CLOUD_RUN_AUTH_MODE: "disabled"
