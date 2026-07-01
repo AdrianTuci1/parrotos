@@ -52,12 +52,18 @@ spec:
             httpGet:
               path: /health
               port: 8081
+              httpHeaders:
+                - name: X-Internal-Token
+                  value: $(INTERNAL_TOKEN)
             initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /health
               port: 8081
+              httpHeaders:
+                - name: X-Internal-Token
+                  value: $(INTERNAL_TOKEN)
             initialDelaySeconds: 5
             periodSeconds: 5
           resources:
