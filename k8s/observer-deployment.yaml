@@ -44,21 +44,19 @@ spec:
               mountPath: /secrets
               readOnly: true
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8082
-              httpHeaders:
-                - name: X-Internal-Token
-                  value: $(INTERNAL_TOKEN)
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'curl -fsS -H "X-Internal-Token: $INTERNAL_TOKEN" http://localhost:8082/health'
             initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
-            httpGet:
-              path: /health
-              port: 8082
-              httpHeaders:
-                - name: X-Internal-Token
-                  value: $(INTERNAL_TOKEN)
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'curl -fsS -H "X-Internal-Token: $INTERNAL_TOKEN" http://localhost:8082/health'
             initialDelaySeconds: 5
             periodSeconds: 5
           resources:
