@@ -22,7 +22,7 @@ spec:
         - name: ghcr-pull
       containers:
         - name: chat
-          image: ghcr.io/adriantuci1/sentry-data-chat:bbef7463e226c5ee332885ffbc799c2998cb0c2b
+          image: ghcr.io/adriantuci1/sentry-data-chat:415f9b30459a1ac58943417f6c2fcf4437528c14
           ports:
             - name: http
               containerPort: 8080
