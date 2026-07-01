@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentry-data-observer
+  namespace: sentry-data
+  labels:
+    app.kubernetes.io/name: sentry-data
+    app.kubernetes.io/component: observer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sentry-data
+      app.kubernetes.io/component: observer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sentry-data
+        app.kubernetes.io/component: observer
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: observer
+          image: ghcr.io/adriantuci1/sentry-data-observer:CHANGEME
+          ports:
+            - name: http
+              containerPort: 8082
+          envFrom:
+            - configMapRef:
+                name: sentry-data-config
+          env:
+            - name: INTERNAL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sentry-data-secrets
+                  key: INTERNAL_TOKEN
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /secrets/gcp-key.json
+          volumeMounts:
+            - name: gcp-key
+              mountPath: /secrets
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+      volumes:
+        - name: gcp-key
+          secret:
+            secretName: sentry-data-gcp-key
+            items:
+              - key: gcp-key.json
+                path: gcp-key.json

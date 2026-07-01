@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentry-data-harness
+  namespace: sentry-data
+  labels:
+    app.kubernetes.io/name: sentry-data
+    app.kubernetes.io/component: harness
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: sentry-data
+    app.kubernetes.io/component: harness
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+      protocol: TCP

@@ -23,8 +23,9 @@ data:
   LLM_BASE_URL: "https://api.deepseek.com/v1"
   ENABLE_MODAL_AGENTS: "false"
   ENABLE_MELTANO_INGESTION: "false"
-  # Service URLs will be added when chat/harness/observer are deployed
-  CHAT_SERVICE_URL: "http://localhost:8080"
-  HARNESS_SERVICE_URL: "http://localhost:8081"
-  OBSERVER_SERVICE_URL: "http://localhost:8082"
+  # Internal k8s service URLs for chat/harness/observer
+  BACKEND_URL: "http://sentry-data-backend/api/v1"
+  CHAT_SERVICE_URL: "http://sentry-data-chat:8080"
+  HARNESS_SERVICE_URL: "http://sentry-data-harness:8081"
+  OBSERVER_SERVICE_URL: "http://sentry-data-observer:8082"
   CLOUD_RUN_AUTH_MODE: "disabled"

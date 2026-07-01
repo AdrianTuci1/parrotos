@@ -8,3 +8,9 @@ resources:
   - service.yaml
   - ingress.yaml
   - worker-cronjob.yaml
+  - chat-deployment.yaml
+  - chat-service.yaml
+  - harness-deployment.yaml
+  - harness-service.yaml
+  - observer-deployment.yaml
+  - observer-service.yaml
