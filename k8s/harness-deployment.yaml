@@ -30,6 +30,8 @@ spec:
             - configMapRef:
                 name: sentry-data-config
           env:
+            - name: PORT
+              value: "8081"
             - name: INTERNAL_TOKEN
               valueFrom:
                 secretKeyRef:
