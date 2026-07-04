@@ -7,6 +7,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - certificate.yaml
   - worker-cronjob.yaml
   - chat-deployment.yaml
   - chat-service.yaml

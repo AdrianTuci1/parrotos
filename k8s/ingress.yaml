@@ -12,6 +12,10 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.statsparrot.com
+      secretName: api-statsparrot-tls
   rules:
     - host: api.statsparrot.com
       http:

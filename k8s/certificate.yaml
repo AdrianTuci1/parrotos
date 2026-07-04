@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-statsparrot-tls
+  namespace: sentry-data
+spec:
+  secretName: api-statsparrot-tls
+  issuerRef:
+    name: letsencrypt-cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - api.statsparrot.com
