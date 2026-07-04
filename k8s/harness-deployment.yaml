@@ -22,7 +22,7 @@ spec:
         - name: ghcr-pull
       containers:
         - name: harness
-          image: ghcr.io/adriantuci1/sentry-data-harness:415f9b30459a1ac58943417f6c2fcf4437528c14
+          image: ghcr.io/adriantuci1/sentry-data-harness:d18bcb2a82b85087d289e1be1b032e23a533d46d
           ports:
             - name: http
               containerPort: 8081
