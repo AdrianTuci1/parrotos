@@ -436,7 +436,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: statsparrot-landing
           directory: landing/dist
-          productionBranch: main
+          branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ✅ Set Status
@@ -507,7 +507,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: statsparrot-app
           directory: frontend/dist
-          productionBranch: main
+          branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ✅ Set Status

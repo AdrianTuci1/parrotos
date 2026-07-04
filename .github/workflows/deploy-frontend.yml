@@ -56,7 +56,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: statsparrot-app
           directory: frontend/dist
-          productionBranch: main
+          branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📝 Log Result
