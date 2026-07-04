@@ -195,7 +195,7 @@ jobs:
       TF_VAR_environment: ${{ github.event.inputs.environment }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-      TF_VAR_domain: ${{ vars.DOMAIN || 'sentrydata.io' }}
+      TF_VAR_domain: ${{ vars.DOMAIN || 'statsparrot.com' }}
       TF_VAR_vps_host: ${{ secrets.VPS_HOST }}
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
       TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}

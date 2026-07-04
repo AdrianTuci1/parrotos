@@ -41,7 +41,7 @@ jobs:
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
       TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      TF_VAR_domain: ${{ vars.DOMAIN || 'sentrydata.io' }}
+      TF_VAR_domain: ${{ vars.DOMAIN || 'statsparrot.com' }}
       TF_VAR_vps_host: ${{ secrets.VPS_HOST }}
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
       TF_VAR_internal_token: ${{ secrets.INTERNAL_TOKEN }}
@@ -66,6 +66,18 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.0"
+
+      - name: 🏗️ Ensure Cloudflare Pages Projects exist
+        id: cf_project
+        run: |
+          # Create the Pages projects if they don't exist (idempotent)
+          for project in statsparrot-app statsparrot-landing; do
+            curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects" \
+              -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"name\":\"$project\",\"production_branch\":\"main\"}" || true
+          done
+          echo "Pages projects ready"
 
       - name: 🏗️ Terraform Init
         id: init
@@ -389,15 +401,82 @@ jobs:
         run: |
           rm -f backend-image.tar sync-worker-image.tar chat-image.tar harness-image.tar observer-image.tar
 
-  deploy-frontend:
+  deploy-landing:
     if: github.event_name == 'workflow_dispatch'
-    name: 🌐 Deploy Frontend
+    name: 🏠 Deploy Landing Page
+    needs: deploy-gcp-infrastructure
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    outputs:
+      landing_status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: landing/package.json
+
+      - name: 🔨 Build Landing Page
+        id: build
+        run: |
+          cd landing
+          npm ci
+          npm run build
+
+      - name: 🚀 Deploy Landing Page to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: statsparrot-landing
+          directory: landing/dist
+          productionBranch: main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ✅ Set Status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.build.outcome }}" == "success" ] && \
+             [ "${{ steps.deploy.outcome }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: 📝 Log Results
+        if: always()
+        run: |
+          echo "::group::🔍 Landing Page Deploy Log"
+          echo "┌─────────────────────────────────────────────────────────────┐"
+          echo "│  🏠 LANDING PAGE                                            │"
+          echo "├─────────────────────────────────────────────────────────────┤"
+          echo "│  Build:           ${{ steps.build.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│  Deploy:          ${{ steps.deploy.outcome == 'success' && '✅' || '❌' }}                                        │"
+          echo "│                                                             │"
+          echo "│  Platform:  Cloudflare Pages (CDN Global)                     │"
+          echo "│  URL:       https://${{ env.DOMAIN }}                                   │"
+          echo "│                                                             │"
+          echo "│  ${{ steps.status.outputs.status }}                                       │"
+          echo "└─────────────────────────────────────────────────────────────┘"
+          echo "::endgroup::"
+
+  deploy-app:
+    if: github.event_name == 'workflow_dispatch'
+    name: 🌐 Deploy App Frontend
     needs: deploy-vps-backend
     runs-on: ubuntu-latest
     permissions:
       deployments: write
     outputs:
-      frontend_status: ${{ steps.status.outputs.status }}
+      app_status: ${{ steps.status.outputs.status }}
     steps:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v4
@@ -409,7 +488,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package.json
 
-      - name: 🔨 Build Frontend
+      - name: 🔨 Build Frontend App
         id: build
         run: |
           cd frontend
@@ -420,17 +499,7 @@ jobs:
           npm ci
           npm run build
 
-      - name: 🏗️ Ensure Cloudflare Pages Project
-        id: cf_project
-        run: |
-          # Create the Pages project if it doesn't exist (idempotent)
-          curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"name":"statsparrot-app","production_branch":"main"}' || true
-          echo "Pages project ready"
-
-      - name: 🚀 Deploy to Cloudflare Pages
+      - name: 🚀 Deploy App to Cloudflare Pages
         id: deploy
         uses: cloudflare/pages-action@v1
         with:
@@ -456,9 +525,9 @@ jobs:
       - name: 📝 Log Results
         if: always()
         run: |
-          echo "::group::🔍 Frontend Deploy Log"
+          echo "::group::🔍 App Deploy Log"
           echo "┌─────────────────────────────────────────────────────────────┐"
-          echo "│  🌐 FRONTEND                                                │"
+          echo "│  🌐 APP FRONTEND                                            │"
           echo "├─────────────────────────────────────────────────────────────┤"
           echo "│  Build:           ${{ steps.build.outcome == 'success' && '✅' || '❌' }}                                        │"
           echo "│  Deploy:          ${{ steps.deploy.outcome == 'success' && '✅' || '❌' }}                                        │"
@@ -472,7 +541,7 @@ jobs:
 
   final-summary:
     name: 📊 Final Summary
-    needs: [deploy-gcp-infrastructure, deploy-vps-backend, deploy-frontend]
+    needs: [deploy-gcp-infrastructure, deploy-vps-backend, deploy-landing, deploy-app]
     if: always() && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -486,25 +555,27 @@ jobs:
           echo "║                                                               ║"
           echo "║  📦 GCP Infrastructure:  ${{ needs.deploy-gcp-infrastructure.outputs.gcp_status || '⏭️ SKIPPED' }}                    ║"
           echo "║  🖥️  VPS Backend:        ${{ needs.deploy-vps-backend.outputs.vps_status || '⏭️ SKIPPED' }}                    ║"
-          echo "║  🌐 Frontend:            ${{ needs.deploy-frontend.outputs.frontend_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  🏠 Landing Page:        ${{ needs.deploy-landing.outputs.landing_status || '⏭️ SKIPPED' }}                    ║"
+          echo "║  🌐 App Frontend:        ${{ needs.deploy-app.outputs.app_status || '⏭️ SKIPPED' }}                    ║"
           echo "║                                                               ║"
           echo "╠═══════════════════════════════════════════════════════════════╣"
           echo "║  URLs:                                                        ║"
-          echo "║    🌐 Frontend:  https://app.${{ env.DOMAIN }}                            ║"
-          echo "║    🔌 API:       https://api.${{ env.DOMAIN }}                            ║"
+          echo "║    🏠 Landing:   https://${{ env.DOMAIN }}                                │"
+          echo "║    🌐 App:        https://app.${{ env.DOMAIN }}                            │"
+          echo "║    🔌 API:       https://api.${{ env.DOMAIN }}                            │"
           echo "║                                                               ║"
           echo "╠═══════════════════════════════════════════════════════════════╣"
           echo "║  Resources:                                                   ║"
-          echo "║    ✅ GCP Project: ${{ secrets.GCP_PROJECT_ID }}                            ║"
-          echo "║    ✅ VPS: ${{ secrets.VPS_HOST }}                                          ║"
-          echo "║    ✅ Cloudflare Zone: ${{ secrets.CLOUDFLARE_ZONE_ID }}                    ║"
+          echo "║    ✅ GCP Project: ${{ secrets.GCP_PROJECT_ID }}                            │"
+          echo "║    ✅ VPS: ${{ secrets.VPS_HOST }}                                          │"
+          echo "║    ✅ Cloudflare Zone: ${{ secrets.CLOUDFLARE_ZONE_ID }}                    │"
           echo "║                                                               ║"
           echo "╚═══════════════════════════════════════════════════════════════╝"
           echo ""
           echo "::endgroup::"
 
       - name: 🎉 Success Notification
-        if: needs.deploy-gcp-infrastructure.result == 'success' && needs.deploy-vps-backend.result == 'success' && needs.deploy-frontend.result == 'success'
+        if: needs.deploy-gcp-infrastructure.result == 'success' && needs.deploy-vps-backend.result == 'success' && needs.deploy-landing.result == 'success' && needs.deploy-app.result == 'success'
         run: |
           echo "🎉🎉🎉 ALL SYSTEMS DEPLOYED SUCCESSFULLY! 🎉🎉🎉"
 

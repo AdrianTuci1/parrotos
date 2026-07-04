@@ -34,7 +34,7 @@ variable "cloudflare_account_id" {
 variable "domain" {
   description = "Main domain"
   type        = string
-  default     = "sentrydata.io"
+  default     = "statsparrot.com"
 }
 
 variable "vps_host" {

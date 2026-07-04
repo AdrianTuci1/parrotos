@@ -6,7 +6,7 @@ region     = "europe-west1"
 environment = "prod"
 
 # Cloudflare
-domain               = "sentrydata.io"
+domain               = "statsparrot.com"
 vps_host             = "203.0.113.10"
 cloudflare_zone_id   = "your-zone-id-here"
 cloudflare_api_token = "your-api-token-here"

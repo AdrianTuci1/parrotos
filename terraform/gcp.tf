@@ -250,16 +250,37 @@ resource "cloudflare_record" "www" {
   zone_id = var.cloudflare_zone_id
   name    = "www"
   type    = "CNAME"
-  content = "statsparrot-app.pages.dev"
+  content = "statsparrot-landing.pages.dev"
   proxied = true
   ttl     = 1
 }
 
-# Cloudflare Pages domain binding
+resource "cloudflare_record" "apex" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.domain
+  type    = "CNAME"
+  content = "statsparrot-landing.pages.dev"
+  proxied = true
+  ttl     = 1
+}
+
+# Cloudflare Pages domain bindings (projects are created in GitHub Actions)
 resource "cloudflare_pages_domain" "app" {
   account_id   = var.cloudflare_account_id
   project_name = "statsparrot-app"
   domain       = "app.${var.domain}"
+}
+
+resource "cloudflare_pages_domain" "www" {
+  account_id   = var.cloudflare_account_id
+  project_name = "statsparrot-landing"
+  domain       = "www.${var.domain}"
+}
+
+resource "cloudflare_pages_domain" "apex" {
+  account_id   = var.cloudflare_account_id
+  project_name = "statsparrot-landing"
+  domain       = var.domain
 }
 
 # Cloudflare HTTPS redirect — configure manually in dashboard:
