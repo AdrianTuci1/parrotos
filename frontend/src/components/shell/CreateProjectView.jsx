@@ -236,7 +236,7 @@ export function CreateProjectView() {
 
             <div className="settings-group-row create-project-actions-row">
               <div className="settings-group-row-left">
-                <span className="settings-row-title">Create workspace</span>
+                <span className="settings-row-title">Create project</span>
                 <span className="settings-row-desc">
                   You will land directly in the new project's analytics area after creation.
                 </span>

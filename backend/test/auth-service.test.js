@@ -221,7 +221,7 @@ test('verifyToken rejects invalid or tampered tokens', async () => {
     (err) => err.code === 'UNAUTHORIZED' && /Invalid or expired token/.test(err.message),
   );
 });
-test('default organizations use the sanitized email local-part and cannot be deleted directly', async () => {
+test('default organizations use the sanitized email local-part and can be deleted by default', async () => {
   const writes = [];
   const orgsCollection = {
     where(field, _op, value) {
@@ -266,9 +266,11 @@ test('default organizations use the sanitized email local-part and cannot be del
   assert.equal(writes[0].payload.isDefault, true);
 
   service.findById = async () => defaultOrg;
+  await service.delete(defaultOrg.id);
+  assert.deepEqual(deletionCalls, [defaultOrg.id]);
+
   await assert.rejects(
-    () => service.delete(defaultOrg.id),
+    () => service.delete(defaultOrg.id, { allowDefaultDeletion: false }),
     (err) => err.code === 'FORBIDDEN' && /Default organization/.test(err.message),
   );
-  assert.deepEqual(deletionCalls, []);
 });

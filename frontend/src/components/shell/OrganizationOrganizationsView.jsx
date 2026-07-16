@@ -64,11 +64,12 @@ export function OrganizationOrganizationsView() {
   };
 
   const handleDelete = async (id) => {
-    const org = organizations.find((o) => o.id === id);
-    if (org?.isDefault) return;
     try {
       await deleteOrganization(id);
       setSelectedOrg(null);
+      if (useAppStore.getState().organizations.length === 0) {
+        navigate('/app/organizations');
+      }
     } catch (err) {
       alert('Failed to delete workspace: ' + err.message);
     }
@@ -191,14 +192,12 @@ export function OrganizationOrganizationsView() {
                   <div className="org-edit-danger-label">Delete this workspace</div>
                   <div className="org-edit-danger-desc">
                     {selectedOrg.isDefault
-                      ? "This is your default workspace and cannot be deleted."
+                      ? "This is your default workspace. Deleting it will remove all projects inside it."
                       : "Permanently remove this workspace and all its projects."}
                   </div>
                 </div>
                 <button
                   className="org-btn-danger"
-                  disabled={selectedOrg.isDefault}
-                  style={selectedOrg.isDefault ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
                   onClick={() => {
                     setDeleteConfirmOpen(true);
                     setDeleteInputText('');

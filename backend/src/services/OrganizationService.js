@@ -104,7 +104,7 @@ export class OrganizationService {
     return this.findById(orgId);
   }
 
-  async delete(orgId, { allowDefaultDeletion = false } = {}) {
+  async delete(orgId, { allowDefaultDeletion = true } = {}) {
     const org = await this.findById(orgId);
     if (org.isDefault && !allowDefaultDeletion) {
       throw new ForbiddenError('Default organization can only be deleted when deleting the account');

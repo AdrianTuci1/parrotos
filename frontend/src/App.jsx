@@ -7,9 +7,10 @@ import { useAppStore } from "@/stores/useAppStore";
 
 function ProtectedRoute({ children }) {
   const { currentUser, devMode, authInitialized } = useAppStore();
-  if (devMode || currentUser) return children;
+  if (devMode) return children;
   if (!authInitialized) return null;
-  return <Navigate to="/login" replace />;
+  if (!currentUser) return <Navigate to="/login" replace />;
+  return children;
 }
 
 export default function App() {

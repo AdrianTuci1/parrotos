@@ -710,14 +710,14 @@ export const useAppStore = create((set, get) => ({
 
   createOrganization: async (name) => {
     if (get().devMode) {
-      const id = `org_${Date.now()}`, slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const id = `org_${Date.now()}`, slug = slugify(name);
       const newOrg = { id, name, slug, owner: 'you@example.com', plan: 'Starter' };
       const newWorkspace = { id: `project_${Date.now()}`, organizationId: id, name: `${name} Default`, slug: `${slug}-default`, domain: `${slug}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] };
       set((state) => ({ organizations: [...state.organizations, newOrg], workspaces: [...state.workspaces, newWorkspace], currentOrganization: newOrg, currentWorkspace: null, activeScope: 'organization', activeSection: 'stats' }));
       return newOrg;
     }
     set({ isLoading: true });
-    try { const org = await organizationService.create({ name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }); set((state) => ({ organizationsData: [...state.organizationsData, org], organizations: [...state.organizations, org], currentOrganization: org, isLoading: false })); return org; }
+    try { const org = await organizationService.create({ name, slug: slugify(name) }); set((state) => ({ organizationsData: [...state.organizationsData, org], organizations: [...state.organizations, org], currentOrganization: org, isLoading: false })); return org; }
     catch (err) { set({ error: err.message, isLoading: false }); throw err; }
   },
 
