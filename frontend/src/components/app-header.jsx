@@ -3,20 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppStore } from "@/stores/useAppStore";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { findSectionById } from "@/components/app-shared";
-import {
-  Bell,
-  Settings,
-  HelpCircle,
-  CheckCheck,
-  Settings2,
-  X,
-  BookOpen,
-  MessageSquare,
-  ExternalLink,
-  ArrowLeft,
-  Trash2,
-  LogOut,
-} from "lucide-react";
+import { Bell, Settings, HelpCircle, CheckCheck, X, BookOpen, MessageSquare, ExternalLink, ArrowLeft, Trash2, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,43 +14,39 @@ import {
 } from "@/components/ui/dropdown-menu";
 import "@/styles/header.css";
 
-const notifications = [
-  {
-    id: 'n1',
-    title: 'Project sync completed',
-    detail: 'All connectors synced successfully.',
-    time: '2 min ago',
-    read: false,
-  },
-  {
-    id: 'n2',
-    title: 'Octomus latency alert',
-    detail: 'Warehouse jobs are running 34% slower than baseline.',
-    time: '18 min ago',
-    read: false,
-  },
-  {
-    id: 'n3',
-    title: 'New connector available',
-    detail: 'Salesforce connector is now ready to configure.',
-    time: '1h ago',
-    read: true,
-  },
-  {
-    id: 'n4',
-    title: 'Staticlabs billing updated',
-    detail: 'Plan changed from Growth to Scale.',
-    time: '3h ago',
-    read: true,
-  },
-];
+function formatRelativeTime(isoDate) {
+  if (!isoDate) return "just now";
+  const date = new Date(isoDate);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return date.toLocaleDateString();
+}
 
 export function AppHeader() {
-  const { activeSection, activeScope, currentOrganization, currentWorkspace, currentUser, deleteAccount, logout } = useAppStore();
+  const {
+    activeSection,
+    activeScope,
+    currentOrganization,
+    currentWorkspace,
+    currentUser,
+    notificationsData,
+    markNotificationRead,
+    markAllNotificationsRead,
+    deleteAccount,
+    logout,
+  } = useAppStore();
   const section = findSectionById(activeScope, activeSection);
   const navigate = useNavigate();
 
   const [activeOverlay, setActiveOverlay] = useState(null); // 'account' | 'help' | null
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [userProfile, setUserProfile] = useState({
@@ -169,7 +152,23 @@ export function AppHeader() {
     setActiveOverlay(null);
   };
 
+  const notifications = notificationsData || [];
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleNotificationClick = (notification) => {
+    if (!notification.read) {
+      markNotificationRead(notification.id);
+    }
+    if (notification.link) {
+      navigate(notification.link);
+    }
+    setNotificationsOpen(false);
+  };
+
+  const handleMarkAllRead = (e) => {
+    e.stopPropagation();
+    markAllNotificationsRead();
+  };
 
   return (
     <header className="app-header">
@@ -187,7 +186,7 @@ export function AppHeader() {
         </div>
 
         <div className="header-right-side">
-          <DropdownMenu>
+          <DropdownMenu open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <DropdownMenuTrigger
               render={
                 <button className="header-bell-btn">
@@ -212,7 +211,8 @@ export function AppHeader() {
                   </div>
                   <button
                     className="header-dropdown-mark-read"
-                    onClick={(e) => { e.stopPropagation(); }}
+                    onClick={handleMarkAllRead}
+                    disabled={unreadCount === 0}
                   >
                     <CheckCheck size={14} />
                     Mark all read
@@ -220,27 +220,30 @@ export function AppHeader() {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
 
-              {notifications.map((n) => (
-                <DropdownMenuItem key={n.id} className="header-notif-item" onClick={(e) => e.preventDefault()}>
-                  <div className="header-notif-left">
-                    {!n.read && <span className="header-notif-dot" />}
-                    <div className="header-notif-copy">
-                      <span className={`header-notif-title ${!n.read ? 'unread' : ''}`}>
-                        {n.title}
-                      </span>
-                      <span className="header-notif-detail">{n.detail}</span>
-                    </div>
-                  </div>
-                  <span className="header-notif-time">{n.time}</span>
+              {notifications.length === 0 ? (
+                <DropdownMenuItem className="header-notif-item" onClick={(e) => e.preventDefault()}>
+                  <span className="header-notif-detail">No notifications yet</span>
                 </DropdownMenuItem>
-              ))}
-
-              <DropdownMenuSeparator className="header-dropdown-separator" />
-
-              <DropdownMenuItem className="header-dropdown-action">
-                <Settings2 size={14} />
-                Notification settings
-              </DropdownMenuItem>
+              ) : (
+                notifications.map((n) => (
+                  <DropdownMenuItem
+                    key={n.id}
+                    className="header-notif-item"
+                    onClick={(e) => { e.preventDefault(); handleNotificationClick(n); }}
+                  >
+                    <div className="header-notif-left">
+                      {!n.read && <span className="header-notif-dot" />}
+                      <div className="header-notif-copy">
+                        <span className={`header-notif-title ${!n.read ? 'unread' : ''}`}>
+                          {n.title}
+                        </span>
+                        <span className="header-notif-detail">{n.detail}</span>
+                      </div>
+                    </div>
+                    <span className="header-notif-time">{formatRelativeTime(n.createdAt)}</span>
+                  </DropdownMenuItem>
+                ))
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 

@@ -36,11 +36,24 @@ function createMockOrgsCollection() {
   };
 }
 
+function createMockNotificationService() {
+  const calls = [];
+  return {
+    calls,
+    async create(notification) {
+      calls.push(notification);
+      return { id: 'notif-1', ...notification };
+    },
+  };
+}
+
 test('createDefaultForAccount uses username and normalizes it for slug', async () => {
   const orgsCollection = createMockOrgsCollection();
+  const notificationService = createMockNotificationService();
   const service = new OrganizationService({
     orgsCollection,
     deletionService: { async deleteOrganization() {} },
+    notificationService,
   });
 
   const org = await service.createDefaultForAccount(
@@ -54,13 +67,17 @@ test('createDefaultForAccount uses username and normalizes it for slug', async (
   assert.equal(org.isDefault, true);
   assert.equal(orgsCollection.writes[0].payload.name, 'Andrei Toader');
   assert.equal(orgsCollection.writes[0].payload.slug, 'andrei-toader');
+  assert.equal(notificationService.calls.length, 1);
+  assert.equal(notificationService.calls[0].title, 'Workspace created');
 });
 
 test('createDefaultForAccount falls back to sanitized email local-part when username is missing', async () => {
   const orgsCollection = createMockOrgsCollection();
+  const notificationService = createMockNotificationService();
   const service = new OrganizationService({
     orgsCollection,
     deletionService: { async deleteOrganization() {} },
+    notificationService,
   });
 
   const org = await service.createDefaultForAccount(

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ProjectService } from '../services/ProjectService.js';
 import { OrganizationService } from '../services/OrganizationService.js';
+import { NotificationService } from '../services/NotificationService.js';
 import { authenticate, requireOrgAccess, requireOrganizationOwner } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { success } from '../utils/response.js';
@@ -8,6 +9,7 @@ import { success } from '../utils/response.js';
 const router = Router({ mergeParams: true });
 const projectService = new ProjectService();
 const orgService = new OrganizationService();
+const notificationService = new NotificationService();
 
 const createSchema = {
   name: { required: true, type: 'string', minLength: 1, maxLength: 100 },
@@ -32,6 +34,22 @@ router.post('/', validate(createSchema), async (req, res, next) => {
     const { orgId } = req.params;
     await orgService.checkProjectLimit(orgId);
     const project = await projectService.create(orgId, req.body);
+    const org = await orgService.findById(orgId);
+
+    try {
+      await notificationService.create({
+        userId: req.user.userId,
+        orgId,
+        projectId: project.id,
+        type: 'project_created',
+        title: 'Project created',
+        detail: `Project "${project.name}" has been created in your workspace.`,
+        link: `/app/${org.slug}/${project.slug}/analytics`,
+      });
+    } catch {
+      // Ignore notification errors
+    }
+
     success(res, project, 201);
   } catch (err) {
     next(err);

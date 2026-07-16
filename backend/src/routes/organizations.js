@@ -25,6 +25,15 @@ const updateSchema = {
 
 router.use(authenticate);
 
+router.get('/', async (req, res, next) => {
+  try {
+    const orgs = await orgService.findByAccount(req.user.userId);
+    success(res, orgs);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/', validate(createSchema), async (req, res, next) => {
   try {
     const org = await orgService.create(req.body, req.user.userId);
@@ -35,15 +44,6 @@ router.post('/', validate(createSchema), async (req, res, next) => {
 });
 
 router.use(requireOrgAccess);
-
-router.get('/', async (req, res, next) => {
-  try {
-    const orgs = await orgService.findByAccount(req.user.userId);
-    success(res, orgs);
-  } catch (err) {
-    next(err);
-  }
-});
 
 router.get('/:orgId', requireOrganizationOwner, async (req, res, next) => {
   try {

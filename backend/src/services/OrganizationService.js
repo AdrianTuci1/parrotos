@@ -2,14 +2,17 @@ import { gcpService } from './GcpService.js';
 import { Organization } from '../models/Organization.js';
 import { NotFoundError, ConflictError, ForbiddenError } from '../utils/errors.js';
 import { dataDeletionService } from './DataDeletionService.js';
+import { NotificationService } from './NotificationService.js';
 
 export class OrganizationService {
   constructor({
     orgsCollection = gcpService.firestore.collection('organizations'),
     deletionService = dataDeletionService,
+    notificationService = new NotificationService(),
   } = {}) {
     this.orgsCollection = orgsCollection;
     this.deletionService = deletionService;
+    this.notificationService = notificationService;
   }
 
   async create(dto, accountId) {
@@ -52,6 +55,20 @@ export class OrganizationService {
     });
 
     await this.orgsCollection.doc(orgId).set(org.toFirestore());
+
+    try {
+      await this.notificationService.create({
+        userId: accountId,
+        orgId,
+        type: 'organization_created',
+        title: 'Workspace created',
+        detail: `Your workspace "${baseName}" has been created.`,
+        link: `/app/${slug}/stats`,
+      });
+    } catch {
+      // Don't fail organization creation if notification fails
+    }
+
     return org;
   }
 

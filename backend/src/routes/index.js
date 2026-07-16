@@ -18,6 +18,7 @@ import preferencesRoutes from './preferences.js';
 import observerRoutes from './observer.js';
 import publicRoutes from './public.js';
 import metricsRoutes from './metrics.js';
+import notificationRoutes from './notifications.js';
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.use('/auth', authRoutes);
 router.use('/auth', oauthRoutes);
 router.use('/public', publicRoutes);
 router.use('/organizations', orgRoutes);
+router.use('/notifications', notificationRoutes);
 router.use('/organizations/:orgId/projects', projectRoutes);
 router.use('/organizations/:orgId/projects/:projectId/agents', agentRoutes);
 router.use('/organizations/:orgId/projects/:projectId/integrations', integrationRoutes);

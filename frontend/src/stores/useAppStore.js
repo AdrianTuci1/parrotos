@@ -7,9 +7,10 @@ import { integrationService } from '@/services/IntegrationService';
 import { authService } from '@/services/AuthService';
 import { serviceAccountService } from '@/services/ServiceAccountService';
 import { billingService } from '@/services/BillingService';
-import { alertService } from '@/services/AlertService';
-import { connectorAuthService } from '@/services/ConnectorAuthService';
-import { apiClient } from '@/services/ApiClient';
+import { alertService } from '@/services/AlertService.js';
+import { connectorAuthService } from '@/services/ConnectorAuthService.js';
+import { notificationService } from '@/services/NotificationService.js';
+import { apiClient } from '@/services/ApiClient.js';
 import connectorsData from '@/data/connectors.json';
 import { analyticsService } from '@/services/AnalyticsService';
 import { specService } from '@/services/SpecService';
@@ -447,6 +448,7 @@ export const useAppStore = create((set, get) => ({
   authInitialized: config.devMode,
   isLoading: false, error: null,
   organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
+  notificationsData: [],
 
   shouldShowMockData: () => isMockModeState(get()),
   shouldFetchApi: () => !isMockModeState(get()),
@@ -489,15 +491,15 @@ export const useAppStore = create((set, get) => ({
       return { user: { email: dto.email, username: dto.username } };
     }
     set({ isLoading: true, error: null });
-    try { const result = await authService.login(dto); set({ currentUser: result.user, authInitialized: true, isLoading: false }); await get().fetchOrganizations(); return result; }
-    catch (err) { set({ error: err.message, isLoading: false }); throw err; }
+    try { const result = await authService.login(dto); set({ currentUser: result.user }); await get().fetchOrganizations(); await get().fetchNotifications(); set({ authInitialized: true }); return result; }
+    catch (err) { set({ error: err.message, authInitialized: true, isLoading: false }); throw err; }
   },
 
   register: async (dto) => {
     if (get().devMode) return get().login(dto);
     set({ isLoading: true, error: null });
-    try { const result = await authService.register(dto); set({ currentUser: result.user, authInitialized: true, isLoading: false }); await get().fetchOrganizations(); return result; }
-    catch (err) { set({ error: err.message, isLoading: false }); throw err; }
+    try { const result = await authService.register(dto); set({ currentUser: result.user }); await get().fetchOrganizations(); await get().fetchNotifications(); set({ authInitialized: true }); return result; }
+    catch (err) { set({ error: err.message, authInitialized: true, isLoading: false }); throw err; }
   },
 
   initializeSession: async () => {
@@ -527,9 +529,9 @@ export const useAppStore = create((set, get) => ({
         throw new Error('Session not found');
       }
 
-      set({ currentUser: user, authInitialized: true });
-      await get().fetchOrganizations();
-      set({ isLoading: false });
+      set({ currentUser: user });
+      try { await get().fetchOrganizations(); await get().fetchNotifications(); } catch { /* fetchOrganizations already sets error */ }
+      set({ authInitialized: true, isLoading: false });
       return user;
     } catch {
       authService.logout();
@@ -578,7 +580,58 @@ export const useAppStore = create((set, get) => ({
       currentWorkspace: null,
       authInitialized: true,
       activeScope: 'organization',
+      notificationsData: [],
     }));
+  },
+
+  fetchNotifications: async () => {
+    if (isMockModeState(get())) return;
+    try {
+      const notifications = await notificationService.list({ limit: 50 });
+      set({ notificationsData: notifications });
+      return notifications;
+    } catch (err) {
+      set({ error: err.message });
+      return [];
+    }
+  },
+
+  markNotificationRead: async (notificationId) => {
+    if (isMockModeState(get())) return;
+    try {
+      await notificationService.markAsRead(notificationId);
+      set((state) => ({
+        notificationsData: state.notificationsData.map((n) =>
+          n.id === notificationId ? { ...n, read: true } : n
+        ),
+      }));
+    } catch (err) {
+      set({ error: err.message });
+    }
+  },
+
+  markAllNotificationsRead: async () => {
+    if (isMockModeState(get())) return;
+    try {
+      await notificationService.markAllAsRead();
+      set((state) => ({
+        notificationsData: state.notificationsData.map((n) => ({ ...n, read: true })),
+      }));
+    } catch (err) {
+      set({ error: err.message });
+    }
+  },
+
+  deleteNotification: async (notificationId) => {
+    if (isMockModeState(get())) return;
+    try {
+      await notificationService.delete(notificationId);
+      set((state) => ({
+        notificationsData: state.notificationsData.filter((n) => n.id !== notificationId),
+      }));
+    } catch (err) {
+      set({ error: err.message });
+    }
   },
 
   fetchOrganizations: async () => {
