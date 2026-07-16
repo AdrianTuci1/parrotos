@@ -33,8 +33,8 @@ export class OrganizationService {
     return org;
   }
 
-  async createDefaultForAccount(accountId, email) {
-    const baseName = this.getDefaultOrganizationName(email);
+  async createDefaultForAccount(accountId, email, username) {
+    const baseName = username || this.getDefaultOrganizationName(email);
     const slug = await this.generateUniqueSlug(baseName);
     const orgId = crypto.randomUUID();
     const now = new Date().toISOString();

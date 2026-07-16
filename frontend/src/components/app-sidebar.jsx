@@ -48,10 +48,8 @@ export function AppSidebar() {
   const navigationGroups = getNavigationGroups(activeScope);
   const orgProjects = workspaces.filter((w) => w.organizationId === currentOrganization?.id);
 
-  const getGradient = (name) =>
-    name?.toLowerCase() === "pixtooth"
-      ? "bg-[linear-gradient(135deg,#4ade80,#3b82f6)]"
-      : "bg-[linear-gradient(135deg,#60a5fa,#1d4ed8)]";
+  const getGradient = () =>
+    "bg-[linear-gradient(135deg,#60a5fa,#1d4ed8)]";
 
   const navTo = (sectionId) => {
     const store = useAppStore.getState();

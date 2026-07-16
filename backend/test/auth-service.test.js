@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import jwt from 'jsonwebtoken';
 import { AuthService } from '../src/services/AuthService.js';
 import { OrganizationService } from '../src/services/OrganizationService.js';
 import { User } from '../src/models/User.js';
@@ -64,8 +65,8 @@ test('register provisions a default organization for the new account', async () 
   const authService = new AuthService({
     usersCollection,
     organizationService: {
-      async createDefaultForAccount(accountId, email) {
-        defaultOrgCalls.push({ accountId, email });
+      async createDefaultForAccount(accountId, email, username) {
+        defaultOrgCalls.push({ accountId, email, username });
       },
     },
   });
@@ -81,6 +82,7 @@ test('register provisions a default organization for the new account', async () 
   assert.equal(defaultOrgCalls.length, 1);
   assert.equal(defaultOrgCalls[0].accountId, result.user.id);
   assert.equal(defaultOrgCalls[0].email, 'adrian.tuci@gmail.com');
+  assert.equal(defaultOrgCalls[0].username, 'Adrian');
   assert.ok(result.refreshToken);
 });
 
@@ -90,8 +92,8 @@ test('new OAuth users also receive a default organization', async () => {
   const authService = new AuthService({
     usersCollection,
     organizationService: {
-      async createDefaultForAccount(accountId, email) {
-        defaultOrgCalls.push({ accountId, email });
+      async createDefaultForAccount(accountId, email, username) {
+        defaultOrgCalls.push({ accountId, email, username });
       },
     },
   });
@@ -109,6 +111,7 @@ test('new OAuth users also receive a default organization', async () => {
   assert.equal(defaultOrgCalls.length, 1);
   assert.equal(defaultOrgCalls[0].accountId, result.user.id);
   assert.equal(defaultOrgCalls[0].email, 'adrian.tuci@gmail.com');
+  assert.equal(defaultOrgCalls[0].username, 'Adrian Tuci');
   assert.ok(result.refreshToken);
 });
 
@@ -143,6 +146,81 @@ test('refreshSession rotates refresh token and returns a new access token', asyn
   );
 });
 
+test('issueSession persists a refresh token hash on the user document', async () => {
+  const usersCollection = createUsersCollection();
+  const authService = new AuthService({
+    usersCollection,
+    organizationService: {
+      async createDefaultForAccount() {},
+    },
+  });
+
+  const user = new User({
+    id: 'user-1',
+    email: 'adrian.tuci@gmail.com',
+    username: 'Adrian',
+    roles: ['user'],
+  });
+
+  const session = await authService.issueSession(user);
+  const stored = usersCollection.docs.get(user.id);
+
+  assert.ok(stored.refreshTokenHash);
+  assert.ok(stored.refreshTokenExpiresAt);
+  assert.ok(session.token);
+  assert.ok(session.refreshToken);
+});
+
+test('verifyToken validates an access token issued by issueSession', async () => {
+  const usersCollection = createUsersCollection();
+  const authService = new AuthService({
+    usersCollection,
+    organizationService: {
+      async createDefaultForAccount() {},
+    },
+  });
+
+  const user = new User({
+    id: 'user-1',
+    email: 'adrian.tuci@gmail.com',
+    username: 'Adrian',
+    roles: ['user'],
+  });
+
+  await usersCollection.doc(user.id).set(user.toFirestore());
+  const session = await authService.issueSession(user, 'org-1');
+  const decoded = await authService.verifyToken(session.token);
+
+  assert.equal(decoded.userId, user.id);
+  assert.equal(decoded.email, user.email);
+  assert.equal(decoded.orgId, 'org-1');
+});
+
+test('verifyToken rejects invalid or tampered tokens', async () => {
+  const usersCollection = createUsersCollection();
+  const authService = new AuthService({
+    usersCollection,
+    organizationService: {
+      async createDefaultForAccount() {},
+    },
+  });
+
+  await assert.rejects(
+    () => authService.verifyToken('not-a-real-token'),
+    (err) => err.code === 'UNAUTHORIZED' && /Invalid or expired token/.test(err.message),
+  );
+
+  const tamperedToken = jwt.sign(
+    { sub: 'user-1', email: 'adrian.tuci@gmail.com', roles: ['user'] },
+    'wrong-secret',
+    { expiresIn: '1h' }
+  );
+
+  await assert.rejects(
+    () => authService.verifyToken(tamperedToken),
+    (err) => err.code === 'UNAUTHORIZED' && /Invalid or expired token/.test(err.message),
+  );
+});
 test('default organizations use the sanitized email local-part and cannot be deleted directly', async () => {
   const writes = [];
   const orgsCollection = {

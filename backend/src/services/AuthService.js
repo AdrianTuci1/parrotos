@@ -41,7 +41,7 @@ export class AuthService {
     });
 
     await this.usersCollection.doc(userId).set(user.toFirestore());
-    const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email);
+    const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email, user.username);
 
     return this.issueSession(user, defaultOrg?.id || null);
   }
@@ -242,7 +242,7 @@ export class AuthService {
       });
 
       await this.usersCollection.doc(userId).set(user.toFirestore());
-      const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email);
+      const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email, user.username);
       return this.issueSession(user, defaultOrg?.id || null);
     }
 

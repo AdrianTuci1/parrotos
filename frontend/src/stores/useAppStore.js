@@ -481,11 +481,12 @@ export const useAppStore = create((set, get) => ({
 
   login: async (dto) => {
     if (get().devMode) {
-      const orgName = getOrganizationNameFromEmail(dto.email);
-      const org = { id: `org_${Date.now()}`, name: orgName, slug: orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-'), owner: dto.email, plan: 'Starter', isDefault: true };
-      const workspace = { id: `project_${Date.now()}`, organizationId: org.id, name: `${orgName} Default`, slug: `${orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-default`, domain: `${orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] };
-      set({ currentUser: { id: `user_${Date.now()}`, email: dto.email, roles: ['user'] }, organizations: [org], workspaces: [workspace], currentOrganization: org, currentWorkspace: null, activeScope: 'organization', activeSection: 'home', authInitialized: true, isLoading: false, error: null });
-      return { user: { email: dto.email } };
+      const orgName = getOrganizationNameFromEmail(dto.username || dto.email);
+      const orgSlug = slugify(orgName);
+      const org = { id: `org_${Date.now()}`, name: orgName, slug: orgSlug, owner: dto.email, plan: 'Starter', isDefault: true };
+      const workspace = { id: `project_${Date.now()}`, organizationId: org.id, name: `${orgName} Default`, slug: `${orgSlug}-default`, domain: `${orgSlug}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] };
+      set({ currentUser: { id: `user_${Date.now()}`, email: dto.email, username: dto.username, roles: ['user'] }, organizations: [org], workspaces: [workspace], currentOrganization: org, currentWorkspace: null, activeScope: 'organization', activeSection: 'home', authInitialized: true, isLoading: false, error: null });
+      return { user: { email: dto.email, username: dto.username } };
     }
     set({ isLoading: true, error: null });
     try { const result = await authService.login(dto); set({ currentUser: result.user, authInitialized: true, isLoading: false }); await get().fetchOrganizations(); return result; }

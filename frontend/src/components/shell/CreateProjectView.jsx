@@ -29,7 +29,7 @@ function slugify(value = "") {
 
 export function CreateProjectView() {
   const navigate = useNavigate();
-  const { currentOrganization, createWorkspace, isLoading } = useAppStore();
+  const { currentOrganization, createWorkspace, createOrganization, isLoading } = useAppStore();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -37,6 +37,23 @@ export function CreateProjectView() {
   const [modules, setModules] = useState(defaultModules);
   const [slugEdited, setSlugEdited] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  const hasOrganization = currentOrganization?.id && currentOrganization.id !== '__empty__';
+
+  const handleCreateOrganization = async () => {
+    const value = window.prompt("Workspace name:");
+    if (value?.trim()) {
+      try {
+        const org = await createOrganization(value.trim());
+        const orgSlug = org?.slug || org?.id;
+        if (orgSlug) {
+          navigate(`/app/${orgSlug}/create-project`, { replace: true });
+        }
+      } catch (err) {
+        setSubmitError(err.message || "Failed to create workspace.");
+      }
+    }
+  };
 
   useEffect(() => {
     if (!slugEdited) {
@@ -98,6 +115,27 @@ export function CreateProjectView() {
       }
     >
       <form className="settings-wrapper create-project-wrapper" onSubmit={handleSubmit}>
+        {!hasOrganization && (
+          <div className="settings-section">
+            <div className="settings-group-card" style={{ background: 'rgba(239, 68, 68, 0.06)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+              <div className="settings-group-row">
+                <div className="settings-group-row-left">
+                  <span className="settings-row-title">No workspace selected</span>
+                  <span className="settings-row-desc">
+                    Create a workspace first so you can attach projects to it.
+                  </span>
+                  {submitError ? <span className="create-project-error">{submitError}</span> : null}
+                </div>
+                <div className="settings-action-row create-project-actions">
+                  <button type="button" className="settings-btn-primary" onClick={handleCreateOrganization}>
+                    Create workspace
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="settings-section">
           <div className="settings-section-header">
             <h3 className="settings-section-title">Project Identity</h3>
@@ -118,7 +156,7 @@ export function CreateProjectView() {
                 <Input
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Pixtooth"
+                  placeholder="Project name"
                   className="create-project-input"
                 />
               </div>
@@ -138,7 +176,7 @@ export function CreateProjectView() {
                     setSlugEdited(true);
                     setSlug(event.target.value.toLowerCase());
                   }}
-                  placeholder="pixtooth"
+                  placeholder="my-project"
                   className="create-project-input"
                 />
                 <div className="create-project-field-hint">
@@ -211,7 +249,7 @@ export function CreateProjectView() {
                 <button
                   type="submit"
                   className="settings-btn-primary"
-                  disabled={isLoading || !name.trim()}
+                  disabled={isLoading || !name.trim() || !hasOrganization}
                 >
                   {isLoading ? "Creating..." : "Create project"}
                 </button>

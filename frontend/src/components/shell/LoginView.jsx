@@ -30,7 +30,6 @@ export function LoginView() {
   useEffect(() => {
     const token = searchParams.get("token");
     if (token) {
-      const redirectTo = searchParams.get("redirect") || "/app/home";
       apiClient.setToken(token);
 
       // Decode JWT payload immediately so currentUser is set before navigate.
@@ -52,7 +51,13 @@ export function LoginView() {
       (async () => {
         await fetchCurrentUser();
         await fetchOrganizations();
-        navigate(redirectTo, { replace: true });
+        const state = useAppStore.getState();
+        const orgSlug = state.currentOrganization?.slug || state.currentOrganization?.id;
+        if (orgSlug && state.currentOrganization?.id !== '__empty__') {
+          navigate(`/app/${orgSlug}/stats`, { replace: true });
+        } else {
+          navigate("/app/organizations", { replace: true });
+        }
       })();
     }
   }, [searchParams, fetchCurrentUser, fetchOrganizations, navigate]);
@@ -74,7 +79,13 @@ export function LoginView() {
       } else {
         await register({ email, password, username });
       }
-      navigate("/app/home", { replace: true });
+      const state = useAppStore.getState();
+      const orgSlug = state.currentOrganization?.slug || state.currentOrganization?.id;
+      if (orgSlug && state.currentOrganization?.id !== '__empty__') {
+        navigate(`/app/${orgSlug}/stats`, { replace: true });
+      } else {
+        navigate("/app/organizations", { replace: true });
+      }
     } catch (err) {
       setError(err.message || "Authentication failed");
     } finally {

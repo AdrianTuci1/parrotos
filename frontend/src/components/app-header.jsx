@@ -30,8 +30,8 @@ import "@/styles/header.css";
 const notifications = [
   {
     id: 'n1',
-    title: 'Pixtooth sync completed',
-    detail: 'All 12 connectors synced successfully.',
+    title: 'Project sync completed',
+    detail: 'All connectors synced successfully.',
     time: '2 min ago',
     read: false,
   },

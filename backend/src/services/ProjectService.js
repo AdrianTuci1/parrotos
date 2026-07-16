@@ -5,8 +5,8 @@ import { config } from '../config/index.js';
 import { dataDeletionService } from './DataDeletionService.js';
 
 export class ProjectService {
-  constructor() {
-    this.gcp = gcpService;
+  constructor({ gcp = gcpService } = {}) {
+    this.gcp = gcp;
   }
 
   _generatePublicToken() {
