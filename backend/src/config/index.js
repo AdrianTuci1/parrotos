@@ -35,6 +35,7 @@ export const config = {
   refreshTokenTtlMs: parseDurationToMs(process.env.REFRESH_TOKEN_EXPIRES_IN || '30d', 30 * 24 * 60 * 60 * 1000),
   refreshCookieName: process.env.REFRESH_COOKIE_NAME || 'parrot_refresh_token',
   refreshCookieDomain: process.env.REFRESH_COOKIE_DOMAIN || '',
+  refreshCookieSameSite: process.env.REFRESH_COOKIE_SAME_SITE || 'lax',
   
   // GCP
   gcpProjectId: process.env.GCP_PROJECT_ID,

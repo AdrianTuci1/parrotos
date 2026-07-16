@@ -18,29 +18,55 @@ export function parseCookieHeader(header = '') {
     }, {});
 }
 
-function buildCookieOptions(maxAge = 0) {
-  return {
-    httpOnly: true,
-    secure: config.nodeEnv === 'production',
-    sameSite: 'lax',
-    path: `${config.apiPrefix}/auth`,
-    maxAge,
-    ...(config.refreshCookieDomain ? { domain: config.refreshCookieDomain } : {}),
-  };
+function getCookieDomain(req) {
+  if (config.refreshCookieDomain) {
+    return config.refreshCookieDomain;
+  }
+
+  if (config.nodeEnv !== 'production') {
+    return undefined;
+  }
+
+  // Derive parent domain from the request host so the refresh cookie is sent
+  // across subdomains (e.g. api.statsparrot.com -> .statsparrot.com).
+  const host = req?.headers?.host?.split(':')[0] || '';
+  const parts = host.split('.');
+  if (parts.length >= 2) {
+    return `.${parts.slice(-2).join('.')}`;
+  }
+
+  return undefined;
 }
 
-export function setRefreshTokenCookie(res, refreshToken) {
+function buildCookieOptions(req, maxAge = 0) {
+  const options = {
+    httpOnly: true,
+    secure: config.nodeEnv === 'production',
+    sameSite: config.refreshCookieSameSite || 'lax',
+    path: `${config.apiPrefix}/auth`,
+    maxAge,
+  };
+
+  const domain = getCookieDomain(req);
+  if (domain) {
+    options.domain = domain;
+  }
+
+  return options;
+}
+
+export function setRefreshTokenCookie(res, refreshToken, req) {
   res.cookie(
     config.refreshCookieName,
     refreshToken,
-    buildCookieOptions(config.refreshTokenTtlMs),
+    buildCookieOptions(req, config.refreshTokenTtlMs),
   );
 }
 
-export function clearRefreshTokenCookie(res) {
+export function clearRefreshTokenCookie(res, req) {
   res.clearCookie(
     config.refreshCookieName,
-    buildCookieOptions(0),
+    buildCookieOptions(req, 0),
   );
 }
 

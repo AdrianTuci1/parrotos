@@ -31,6 +31,16 @@ class ApiClient {
     return headers;
   }
 
+  isTokenExpiringSoon(token, bufferSeconds = 60) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (!payload.exp) return false;
+      return payload.exp - bufferSeconds < Date.now() / 1000;
+    } catch {
+      return false;
+    }
+  }
+
   async refreshAccessToken() {
     if (this.refreshPromise) {
       return this.refreshPromise;
@@ -62,6 +72,13 @@ class ApiClient {
 
   async request(method, endpoint, body = null, options = {}) {
     const { skipAuthRefresh = false } = options;
+
+    // Refresh proactively if the access token is close to expiry so callers don't
+    // hit a 401 in the middle of a request chain (especially cross-subdomain).
+    if (!skipAuthRefresh && endpoint !== "/auth/refresh" && this.token && this.isTokenExpiringSoon(this.token)) {
+      await this.refreshAccessToken();
+    }
+
     const url = `${this.baseUrl}${endpoint}`;
     const requestOptions = {
       method,
