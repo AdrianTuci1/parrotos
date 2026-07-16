@@ -13,10 +13,10 @@ import { useAppStore } from '@/stores/useAppStore';
 import '@/styles/organization-views.css';
 
 const DEFAULT_SERVICE_ACCOUNTS = [
-  { id: '1', name: 'alex_parker', saId: 'sa_alex_parker_8a92', status: 'Active', password: 'password123', isProjectScoped: false, permissions: { createProject: true, editProject: true, manageUsers: true }, projectAccess: {}, clientSecret: 'sec_live_alex4a921b7c8d9e2f5a6b3c' },
-  { id: '2', name: 'maria_popescu', saId: 'sa_maria_popescu_1b29', status: 'Active', password: 'securePassword!', isProjectScoped: true, permissions: { createProject: false, editProject: true, manageUsers: false }, projectAccess: { 'pixtooth': 'Read & Write' }, clientSecret: 'sec_live_maria1b293c8d4e9f7a5b6c3d' },
-  { id: '3', name: 'andrei_ionescu', saId: 'sa_andrei_ionescu_5c93', status: 'Active', password: 'telemetryPassWord', isProjectScoped: true, permissions: { createProject: false, editProject: false, manageUsers: false }, projectAccess: { 'staticlabs': 'Read Only' }, clientSecret: 'sec_live_andrei5c934d9f8e7b6c5d4a3b' },
-  { id: '4', name: 'elena_dumitrescu', saId: 'sa_elena_dumitrescu_3f22', status: 'Active', password: 'botPassword789', isProjectScoped: false, permissions: { createProject: false, editProject: false, manageUsers: false }, projectAccess: {}, clientSecret: 'sec_live_elena3f225d9f7e8b6c5d4a3b' },
+  { id: '1', name: 'demo_sa_admin', saId: 'sa_demo_admin_8a92', status: 'Active', password: 'password123', isProjectScoped: false, permissions: { createProject: true, editProject: true, manageUsers: true }, projectAccess: {}, clientSecret: 'sec_live_demo4a921b7c8d9e2f5a6b3c' },
+  { id: '2', name: 'demo_sa_editor', saId: 'sa_demo_editor_1b29', status: 'Active', password: 'securePassword!', isProjectScoped: true, permissions: { createProject: false, editProject: true, manageUsers: false }, projectAccess: { 'demo-project-1': 'Read & Write' }, clientSecret: 'sec_live_demo1b293c8d4e9f7a5b6c3d' },
+  { id: '3', name: 'demo_sa_viewer', saId: 'sa_demo_viewer_5c93', status: 'Active', password: 'telemetryPassWord', isProjectScoped: true, permissions: { createProject: false, editProject: false, manageUsers: false }, projectAccess: { 'demo-project-3': 'Read Only' }, clientSecret: 'sec_live_demo5c934d9f8e7b6c5d4a3b' },
+  { id: '4', name: 'demo_sa_bot', saId: 'sa_demo_bot_3f22', status: 'Active', password: 'botPassword789', isProjectScoped: false, permissions: { createProject: false, editProject: false, manageUsers: false }, projectAccess: {}, clientSecret: 'sec_live_demo3f225d9f7e8b6c5d4a3b' },
 ];
 
 function ServiceAccountEditPage({ member, workspaces, onSave, onCancel, onDelete, onRegenerateSecret, isSaving }) {

@@ -50,17 +50,17 @@ export function AppHeader() {
 
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [userProfile, setUserProfile] = useState({
-    fullName: "Alex Parker",
-    email: "alex@nexahub.io",
-    provider: "Google", // 'Google' | 'Email'
+    fullName: "User",
+    email: "user@example.com",
+    provider: "Email",
   });
 
   // Sync profile with currentUser from backend
   useEffect(() => {
     if (currentUser) {
       setUserProfile({
-        fullName: currentUser.username || currentUser.fullName || "Alex Parker",
-        email: currentUser.email || "alex@nexahub.io",
+        fullName: currentUser.username || currentUser.fullName || "User",
+        email: currentUser.email || "user@example.com",
         provider: currentUser.provider?.toLowerCase() === 'google' ? 'Google' : 'Email',
       });
       if (currentUser.picture) {
@@ -88,9 +88,9 @@ export function AppHeader() {
 
   // State for Account Settings
   const [accountForm, setAccountForm] = useState({
-    fullName: "Alex Parker",
-    email: "alex@nexahub.io",
-    provider: "Google",
+    fullName: "User",
+    email: "user@example.com",
+    provider: "Email",
     currentPassword: "",
     newPassword: "",
   });
@@ -570,15 +570,15 @@ export function AppHeader() {
                   <BookOpen size={14} style={{ color: "#a8c7fa" }} />
                   Documentation & Resources
                 </h4>
-                <a href="https://docs.nexahub.io" target="_blank" rel="noreferrer" className="overlay-help-link">
+                <a href="/docs" className="overlay-help-link">
                   <span>Developer Documentation</span>
                   <ExternalLink size={12} />
                 </a>
-                <a href="https://docs.nexahub.io/guides" target="_blank" rel="noreferrer" className="overlay-help-link">
+                <a href="/guides" className="overlay-help-link">
                   <span>Getting Started Guide</span>
                   <ExternalLink size={12} />
                 </a>
-                <a href="https://status.nexahub.io" target="_blank" rel="noreferrer" className="overlay-help-link">
+                <a href="/status" className="overlay-help-link">
                   <span>System Status</span>
                   <ExternalLink size={12} />
                 </a>

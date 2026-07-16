@@ -41,16 +41,16 @@ function normalizeWorkspace(workspace) {
 }
 
 const mockOrganizations = [
-  { id: 'nexa-org', name: 'Nexa', slug: 'nexa', owner: 'admin@nexahub.io', plan: 'Agency' },
-  { id: 'staticlabs-org', name: 'Staticlabs', slug: 'staticlabs', owner: 'ops@staticlabs.ro', plan: 'Growth' },
-  { id: 'octomus-org', name: 'Octomus', slug: 'octomus', owner: 'team@octomus.dev', plan: 'Scale' },
+  { id: 'demo-org-1', name: 'Demo Organization', slug: 'demo-organization', owner: 'user@example.com', plan: 'Agency' },
+  { id: 'demo-org-2', name: 'Second Workspace', slug: 'second-workspace', owner: 'team@example.com', plan: 'Growth' },
+  { id: 'demo-org-3', name: 'Third Workspace', slug: 'third-workspace', owner: 'ops@example.com', plan: 'Scale' },
 ];
 
 const mockWorkspaces = [
-  { id: 'pixtooth', organizationId: 'nexa-org', name: 'Pixtooth', slug: 'pixtooth', domain: 'pixtooth.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', lastUpdated: '4 min ago', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
-  { id: 'octomus', organizationId: 'octomus-org', name: 'Octomus', slug: 'octomus', domain: 'octomus.dev', status: 'Healthy', monthlyEvents: '2.7K', dataConsumption: '421 GB', lastUpdated: '11 min ago', connectors: ['Stripe', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL'] },
-  { id: 'staticlabs', organizationId: 'staticlabs-org', name: 'Staticlabs', slug: 'staticlabs', domain: 'staticlabs.ro', status: 'Monitoring', monthlyEvents: '1.9K', dataConsumption: '286 GB', lastUpdated: '18 min ago', connectors: ['Shopify', 'Klaviyo', 'PostHog', 'Meta Ads', 'TikTok Ads', 'MongoDB'] },
-  { id: 'nexa', organizationId: 'nexa-org', name: 'Nexa', slug: 'nexa', domain: 'nexa.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] },
+  { id: 'demo-project-1', organizationId: 'demo-org-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', lastUpdated: '4 min ago', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
+  { id: 'demo-project-2', organizationId: 'demo-org-3', name: 'Secondary Project', slug: 'secondary-project', domain: 'secondary-project.dev', status: 'Healthy', monthlyEvents: '2.7K', dataConsumption: '421 GB', lastUpdated: '11 min ago', connectors: ['Stripe', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL'] },
+  { id: 'demo-project-3', organizationId: 'demo-org-2', name: 'Monitoring Project', slug: 'monitoring-project', domain: 'monitoring-project.example', status: 'Monitoring', monthlyEvents: '1.9K', dataConsumption: '286 GB', lastUpdated: '18 min ago', connectors: ['Shopify', 'Klaviyo', 'PostHog', 'Meta Ads', 'TikTok Ads', 'MongoDB'] },
+  { id: 'demo-project-4', organizationId: 'demo-org-1', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] },
 ];
 
 const mockMetrics = {
@@ -63,17 +63,17 @@ const mockMetrics = {
   uniqueConnectors: 12,
   connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL', 'Shopify', 'Klaviyo', 'Meta Ads', 'TikTok Ads'],
   orgsList: [
-    { id: 'nexa-org', name: 'Nexa', slug: 'nexa', plan: 'Agency', projectCount: 2 },
-    { id: 'staticlabs-org', name: 'Staticlabs', slug: 'staticlabs', plan: 'Growth', projectCount: 1 },
-    { id: 'octomus-org', name: 'Octomus', slug: 'octomus', plan: 'Scale', projectCount: 1 },
+    { id: 'demo-org-1', name: 'Demo Organization', slug: 'demo-organization', plan: 'Agency', projectCount: 2 },
+    { id: 'demo-org-2', name: 'Second Workspace', slug: 'second-workspace', plan: 'Growth', projectCount: 1 },
+    { id: 'demo-org-3', name: 'Third Workspace', slug: 'third-workspace', plan: 'Scale', projectCount: 1 },
   ],
   recentActivity: [
-    { title: 'Project updated', meta: 'Pixtooth in Nexa' },
-    { title: 'Connector active', meta: 'Stripe connected to Pixtooth' },
-    { title: 'New project created', meta: 'Nexa added to Nexa' },
+    { title: 'Project updated', meta: 'Demo Project in Demo Organization' },
+    { title: 'Connector active', meta: 'Stripe connected to Demo Project' },
+    { title: 'New project created', meta: 'Fresh Project added to Demo Organization' },
   ],
   // Org-level metrics (for OrganizationStatsView) - default for first org
-  org: { id: 'nexa-org', name: 'Nexa', slug: 'nexa', plan: 'Agency' },
+  org: { id: 'demo-org-1', name: 'Demo Organization', slug: 'demo-organization', plan: 'Agency' },
   projects: { total: 2, healthy: 1, monitoring: 1 },
   events: { total: 13000, formatted: '13K' },
   storage: { total: 612, formatted: '612 GB' },
@@ -88,13 +88,13 @@ const mockMetrics = {
     { name: 'MongoDB', count: 1, share: 50 },
   ],
   projectList: [
-    { id: 'pixtooth', name: 'Pixtooth', slug: 'pixtooth', domain: 'pixtooth.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
-    { id: 'nexa', name: 'Nexa', slug: 'nexa', domain: 'nexa.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', connectors: [] },
+    { id: 'demo-project-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
+    { id: 'demo-project-4', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', connectors: [] },
   ],
   recentActivity: [
-    { title: 'Project updated', meta: 'Pixtooth configuration changed' },
+    { title: 'Project updated', meta: 'Demo Project configuration changed' },
     { title: 'Connector synced', meta: 'Stripe data refreshed' },
-    { title: 'Project created', meta: 'Nexa added to organization' },
+    { title: 'Project created', meta: 'Fresh Project added to organization' },
   ],
 };
 

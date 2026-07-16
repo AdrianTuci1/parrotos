@@ -43,35 +43,6 @@ router.post('/', validate(createSchema), async (req, res, next) => {
   }
 });
 
-router.use(requireOrgAccess);
-
-router.get('/:orgId', requireOrganizationOwner, async (req, res, next) => {
-  try {
-    const org = await orgService.findById(req.params.orgId);
-    success(res, org);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.patch('/:orgId', requireOrganizationOwner, validate(updateSchema), async (req, res, next) => {
-  try {
-    const org = await orgService.update(req.params.orgId, req.body);
-    success(res, org);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
-  try {
-    await orgService.delete(req.params.orgId);
-    success(res, { deleted: true });
-  } catch (err) {
-    next(err);
-  }
-});
-
 // ═══════════════════════════════════════════════
 // ACCOUNT-LEVEL METRICS (for OrganizationHomeView)
 // ═══════════════════════════════════════════════
@@ -86,7 +57,41 @@ router.get('/account/metrics', async (req, res, next) => {
   }
 });
 
-router.use('/:orgId', requireOrgAccess);
+router.use(requireOrgAccess);
+
+// ═══════════════════════════════════════════════
+// ORG DETAIL / UPDATE / DELETE (for Settings & Deletion)
+// ═══════════════════════════════════════════════
+
+router.get('/:orgId', requireOrganizationOwner, async (req, res, next) => {
+  try {
+    const { orgId } = req.params;
+    const org = await orgService.findById(orgId);
+    success(res, org);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/:orgId', requireOrganizationOwner, validate(updateSchema), async (req, res, next) => {
+  try {
+    const { orgId } = req.params;
+    const org = await orgService.update(orgId, req.body, req.user.userId);
+    success(res, org);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
+  try {
+    const { orgId } = req.params;
+    await orgService.delete(orgId, req.user.userId, { allowDefaultDeletion: true });
+    success(res, null, 204);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // ═══════════════════════════════════════════════
 // ORG-LEVEL METRICS (for OrganizationStatsView)
