@@ -22,7 +22,7 @@ spec:
         - name: ghcr-pull
       containers:
         - name: observer
-          image: ghcr.io/adriantuci1/sentry-data-observer:9b700b19252c0ea2c9bc10f974861e5eba73802c
+          image: ghcr.io/adriantuci1/sentry-data-observer:2dcc83272d76644651113c0da963649daa8d41e5
           ports:
             - name: http
               containerPort: 8082

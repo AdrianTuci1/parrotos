@@ -24,7 +24,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: worker
-              image: ghcr.io/adriantuci1/sentry-data-worker:9b700b19252c0ea2c9bc10f974861e5eba73802c
+              image: ghcr.io/adriantuci1/sentry-data-worker:2dcc83272d76644651113c0da963649daa8d41e5
               envFrom:
                 - configMapRef:
                     name: sentry-data-config
