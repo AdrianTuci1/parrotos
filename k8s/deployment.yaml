@@ -22,7 +22,7 @@ spec:
         - name: ghcr-pull
       containers:
         - name: backend
-          image: ghcr.io/adriantuci1/sentry-data-backend:cea4c0c597f14be5876be7c2861d2ec3cebe9c58
+          image: ghcr.io/adriantuci1/sentry-data-backend:4e5031b96958ebb8367c98be164216037d1fe47a
           ports:
             - name: http
               containerPort: 3000
