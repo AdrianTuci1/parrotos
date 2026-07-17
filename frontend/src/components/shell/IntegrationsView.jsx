@@ -95,8 +95,9 @@ export function IntegrationsView() {
 
   // Fetch integrations from API on mount, fall back to defaults
   useEffect(() => {
-    if (!isMockMode && currentOrganization?.id && currentWorkspace?.id) {
-      fetchIntegrations(currentOrganization.id, currentWorkspace.id);
+    if (!isMockMode && currentOrganization?.id) {
+      const projectId = currentWorkspace?.id || 'unknown';
+      fetchIntegrations(currentOrganization.id, projectId);
     }
   }, [currentOrganization?.id, currentWorkspace?.id, isMockMode, fetchIntegrations]);
 
@@ -113,12 +114,13 @@ export function IntegrationsView() {
     let cancelled = false;
 
     async function loadCatalog() {
-      if (!currentOrganization?.id || !currentWorkspace?.id) {
+      if (!currentOrganization?.id) {
         return;
       }
 
       try {
-        const nextCatalog = await fetchIntegrationCatalog(currentOrganization.id, currentWorkspace.id);
+        const projectId = currentWorkspace?.id || 'unknown';
+        const nextCatalog = await fetchIntegrationCatalog(currentOrganization.id, projectId);
         if (!cancelled && nextCatalog) {
           setCatalog(nextCatalog);
         }

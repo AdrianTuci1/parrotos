@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { config } from '@/config';
 import { organizationService } from '@/services/OrganizationService';
 import { projectService } from '@/services/ProjectService';
@@ -418,37 +419,40 @@ function createMockChatState() {
   };
 }
 
-export const useAppStore = create((set, get) => ({
-  devMode: config.devMode,
-  demoMode: config.devMode,
+export const useAppStore = create(
+  persist(
+    (set, get) => ({
+      devMode: config.devMode,
+      demoMode: config.devMode,
 
-  organizations: config.devMode ? mockOrganizations : [emptyOrg],
-  currentOrganization: config.devMode ? mockOrganizations[0] : emptyOrg,
-  currentWorkspace: null,
-  workspaces: config.devMode ? mockWorkspaces.map(normalizeWorkspace) : [],
+      organizations: config.devMode ? mockOrganizations : [emptyOrg],
+      currentOrganization: config.devMode ? mockOrganizations[0] : emptyOrg,
+      currentWorkspace: null,
+      workspaces: config.devMode ? mockWorkspaces.map(normalizeWorkspace) : [],
 
-  // Only two visual scopes: 'organization' and 'project'
-  activeScope: 'organization',
-  activeSection: 'home',
-  activeOrganizationSection: 'stats',
-  activeProjectSection: 'analytics',
+      // Only two visual scopes: 'organization' and 'project'
+      activeScope: 'organization',
+      activeSection: 'home',
+      activeOrganizationSection: 'stats',
+      activeProjectSection: 'analytics',
 
-  activeAnalyticsView: 'servers',
-  timeRange: '1h',
-  sidebarCollapsed: false,
+      activeAnalyticsView: 'servers',
+      timeRange: '1h',
+      sidebarCollapsed: false,
 
-  ...(config.devMode ? createMockChatState() : { chatSessions: [], activeChatId: null }),
-  isChatPanelOpen: true,
-  organizationsData: [], projectsData: [], agentsData: [],
-  integrationsData: [], analyticsData: null, currentUser: null,
-  serviceAccounts: [],
-  subscription: null,
-  accountMetrics: null,
-  storageVolumes: [],
-  authInitialized: config.devMode,
-  isLoading: false, error: null,
-  organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
-  notificationsData: [],
+      isChatPanelOpen: true,
+      organizationsData: [], projectsData: [], agentsData: [],
+      integrationsData: [], analyticsData: null, currentUser: null,
+      serviceAccounts: [],
+      subscription: null,
+      accountMetrics: null,
+      storageVolumes: [],
+      authInitialized: config.devMode,
+      isLoading: false, error: null,
+      organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
+      notificationsData: [],
+      chatSessions: [],
+      activeChatId: null,
 
   shouldShowMockData: () => isMockModeState(get()),
   shouldFetchApi: () => !isMockModeState(get()),
@@ -702,7 +706,10 @@ export const useAppStore = create((set, get) => ({
     if (!workspace) return;
     const organization = get().organizations.find((item) => item.id === workspace.organizationId);
     set((state) => ({ currentOrganization: organization || state.currentOrganization, currentWorkspace: workspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
-    if (get().shouldFetchApi() && organization) { get().fetchAgents(organization.id, workspaceId); get().fetchIntegrations(organization.id, workspaceId); }
+    if (get().shouldFetchApi() && organization) {
+      get().fetchAgents(organization.id, workspaceId);
+      get().fetchIntegrations(organization.id, workspaceId);
+    }
   },
 
   goToOrganizationHome: () => set((state) => ({ activeScope: 'organization', activeSection: state.activeOrganizationSection || 'stats', currentWorkspace: null })),
@@ -1614,4 +1621,41 @@ export const useAppStore = create((set, get) => ({
       return { ...msg, toolCalls: newToolCalls };
     })};
   }) })),
-}));
+}),
+{
+  name: 'parrot-app-store',
+      partialize: (state) => ({
+        currentOrganization: state.currentOrganization,
+        currentWorkspace: state.currentWorkspace,
+        activeScope: state.activeScope,
+        activeSection: state.activeSection,
+        activeOrganizationSection: state.activeOrganizationSection,
+        activeProjectSection: state.activeProjectSection,
+        organizationsData: state.organizationsData.map((o) => ({
+          id: o.id,
+          name: o.name,
+          slug: o.slug,
+          plan: o.plan || 'Starter',
+          accountId: o.accountId,
+          status: o.status,
+          isDefault: o.isDefault,
+        })),
+        projectsData: state.projectsData.map((p) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          organizationId: p.organizationId,
+          status: p.status || 'Healthy',
+        })),
+        workspaces: state.projectsData.map((p) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          organizationId: p.organizationId,
+          status: p.status || 'Healthy',
+        })),
+      }),
+    }
+  )
+);
+
