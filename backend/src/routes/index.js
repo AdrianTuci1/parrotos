@@ -20,15 +20,13 @@ import publicRoutes from './public.js';
 import metricsRoutes from './metrics.js';
 import notificationRoutes from './notifications.js';
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router.use('/health', healthRoutes);
 router.use('/metrics', metricsRoutes);
 router.use('/auth', authRoutes);
 router.use('/auth', oauthRoutes);
 router.use('/public', publicRoutes);
-router.use('/organizations', orgRoutes);
-router.use('/notifications', notificationRoutes);
 router.use('/organizations/:orgId/projects', projectRoutes);
 router.use('/organizations/:orgId/projects/:projectId/agents', agentRoutes);
 router.use('/organizations/:orgId/projects/:projectId/integrations', integrationRoutes);
@@ -39,6 +37,8 @@ router.use('/organizations/:orgId/projects/:projectId/chat', chatRoutes);
 router.use('/organizations/:orgId/projects/:projectId/storage', storageRoutes);
 router.use('/organizations/:orgId/projects/:projectId/preferences', preferencesRoutes);
 router.use('/organizations/:orgId/projects/:projectId/observer', observerRoutes);
+router.use('/organizations', orgRoutes);
+router.use('/notifications', notificationRoutes);
 router.use('/organizations/:orgId/service-accounts', serviceAccountRoutes);
 router.use('/organizations/:orgId/billing', billingRoutes);
 router.use('/stripe/webhook', stripeWebhookRoutes);

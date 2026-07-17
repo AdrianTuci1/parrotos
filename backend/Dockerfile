@@ -1,5 +1,8 @@
 FROM node:20-alpine
 
+# curl is required for container healthchecks
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Install dependencies
