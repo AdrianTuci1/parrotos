@@ -2,12 +2,17 @@ import { FieldValue } from '@google-cloud/firestore';
 import { CloudSchedulerClient } from '@google-cloud/scheduler';
 import { config } from '../config/index.js';
 import { gcpService } from './GcpService.js';
+import { MockCloudSchedulerClient } from './LocalGcpService.js';
 import { NotFoundError } from '../utils/errors.js';
+
+function isLocalMode() {
+  return process.env.LOCAL_DEV_MODE === 'true' || Boolean(process.env.FIRESTORE_EMULATOR_HOST);
+}
 
 export class DataDeletionService {
   constructor({
     gcp = gcpService,
-    schedulerClient = new CloudSchedulerClient(),
+    schedulerClient = isLocalMode() ? new MockCloudSchedulerClient() : new CloudSchedulerClient(),
     runtimeConfig = config,
   } = {}) {
     this.gcp = gcp;

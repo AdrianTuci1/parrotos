@@ -38,6 +38,9 @@ app.get('/metrics', async (_, res) => {
   res.end(await promRegister.metrics());
 });
 
+// Health check — no auth required for container/Docker health probes
+app.get('/health', (_, res) => res.json({ status: 'ok' }));
+
 app.use(requireInternalToken);
 
 // ═══════════════════════════════════════════════════

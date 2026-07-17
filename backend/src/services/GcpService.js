@@ -5,11 +5,28 @@ import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { GoogleAuth } from 'google-auth-library';
 import { config } from '../config/index.js';
 
+// Local mode: use in-memory + Firestore emulator instead of real GCP.
+import { LocalGcpService, getLocalGcpService } from './LocalGcpService.js';
+
+const isLocalMode = () => process.env.LOCAL_DEV_MODE === 'true' || process.env.FIRESTORE_EMULATOR_HOST;
+
 // Singleton pattern for GCP clients
 class GcpService {
   constructor() {
     if (GcpService.instance) {
       return GcpService.instance;
+    }
+
+    if (isLocalMode()) {
+      const local = getLocalGcpService();
+      this.firestore = local.firestore;
+      this.storage = local.storage;
+      this.bigQuery = local.bigQuery;
+      this.secretManager = local.secretManager;
+      this.auth = local.auth;
+      this.config = local.config;
+      GcpService.instance = this;
+      return this;
     }
 
     const options = {
