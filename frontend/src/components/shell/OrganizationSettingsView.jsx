@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { SettingsSidebar } from "@/components/shell/SettingsSidebar";
-import { OrganizationBillingView } from "@/components/shell/OrganizationBillingView";
 import {
   Building2,
   Users,
-  CreditCard,
   ShieldCheck,
   Trash2,
   Check,
@@ -21,12 +19,11 @@ import "@/styles/settings.css";
 const orgSettingsItems = [
   { id: "general", label: "General", icon: <Building2 size={16} /> },
   { id: "members", label: "Members", icon: <Users size={16} /> },
-  { id: "billing", label: "Billing", icon: <CreditCard size={16} /> },
   { id: "security", label: "Security", icon: <ShieldCheck size={16} /> },
   { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
 ];
 
-function SectionHeader({ title, description }) {
+export function SectionHeader({ title, description }) {
   return (
     <div className="settings-page-header">
       <h1 className="settings-page-title">{title}</h1>
@@ -483,7 +480,6 @@ export function OrganizationSettingsView() {
           </>
         )}
         {activeTab === "members" && <MembersSection />}
-        {activeTab === "billing" && <OrganizationBillingView embedded />}
         {activeTab === "security" && <SecuritySection />}
         {activeTab === "danger" && <DangerSection />}
       </div>

@@ -25,7 +25,7 @@ const projectSettingsItems = [
   { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
 ];
 
-function SectionHeader({ title, description }) {
+export function SectionHeader({ title, description }) {
   return (
     <div className="settings-page-header">
       <h1 className="settings-page-title">{title}</h1>
@@ -34,7 +34,7 @@ function SectionHeader({ title, description }) {
   );
 }
 
-function GeneralSection() {
+export function GeneralSection() {
   const { currentWorkspace, updateProject } = useAppStore();
   const [name, setName] = useState(currentWorkspace?.name || "");
   const [desc, setDesc] = useState(currentWorkspace?.description || "");
@@ -84,7 +84,7 @@ function GeneralSection() {
   );
 }
 
-function PublicLinkRow() {
+export function PublicLinkRow() {
   const { currentWorkspace, generatePublicLink, revokePublicLink, regeneratePublicLink } = useAppStore();
   const [link, setLink] = useState(currentWorkspace?.publicLink?.url || "");
   const [copied, setCopied] = useState(false);
@@ -140,7 +140,7 @@ function PublicLinkRow() {
   );
 }
 
-function PlaceholderSection({ title, description }) {
+export function PlaceholderSection({ title, description }) {
   return (
     <div className="settings-page">
       <SectionHeader title={title} description={description} />
@@ -190,7 +190,7 @@ function IntegrationsSection() {
   );
 }
 
-function DangerSection() {
+export function DangerSection() {
   const { currentWorkspace, deleteProject } = useAppStore();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarHeader,
@@ -12,7 +13,7 @@ import { getNavigationGroups } from "@/components/app-shared";
 import { useAppStore } from "@/stores/useAppStore";
 import {
   Plus, LayoutDashboard, BarChart3, Briefcase, Plug, Settings,
-  BookOpen, Rocket, GitBranch, MessageSquare, Undo2, Users, CreditCard, Power,
+  Rocket, GitBranch, MessageSquare, Undo2, Users, CreditCard, Power,
   Database, ArrowRightFromLine, House,
 } from "lucide-react";
 import {
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import "@/styles/sidebar.css";
+import { CreateModal } from "@/components/shell/CreateModal";
 
 const sectionIcons = {
   "bar-chart-3": BarChart3, briefcase: Briefcase, "credit-card": CreditCard,
@@ -36,7 +38,7 @@ export function AppSidebar() {
   const {
     currentOrganization, currentWorkspace, organizations, workspaces,
     activeScope, activeSection,
-    selectOrganization, selectWorkspace, createOrganization,
+    selectOrganization, selectWorkspace, createOrganization, createWorkspace,
     goToOrganizationHome,
     chatSessions, activeChatId, selectChat, createChatSession,
     demoMode, toggleDemoMode,
@@ -44,6 +46,9 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const navigate = useNavigate();
+
+  const [createOrgOpen, setCreateOrgOpen] = useState(false);
+  const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
   const navigationGroups = getNavigationGroups(activeScope);
   const orgProjects = workspaces.filter((w) => w.organizationId === currentOrganization?.id);
@@ -89,11 +94,6 @@ export function AppSidebar() {
     navigate(`/app/${oSlug}/stats`);
   };
 
-  const navToCreateProject = () => {
-    const oSlug = currentOrganization?.slug || currentOrganization?.id;
-    navigate(`/app/${oSlug}/create-project`);
-  };
-
   const afterCreateNavigate = (target) => {
     setTimeout(() => {
       const state = useAppStore.getState();
@@ -105,6 +105,19 @@ export function AppSidebar() {
         navigate(`/app/${oSlug}/${pSlug}/analytics`);
       }
     }, 0);
+  };
+
+  const handleCreateOrg = async (name) => {
+    await createOrganization(name);
+    afterCreateNavigate("org");
+  };
+
+  const handleCreateProject = async (name) => {
+    if (!currentOrganization) {
+      throw new Error("No organization selected");
+    }
+    await createWorkspace({ name });
+    afterCreateNavigate("project");
   };
 
   return (
@@ -149,7 +162,7 @@ export function AppSidebar() {
                       </DropdownMenuItem>
                     ))}
                     <div className="dropdown-section-separator" />
-                    <DropdownMenuItem onClick={navToCreateProject}
+                    <DropdownMenuItem onClick={() => setCreateProjectOpen(true)}
                       className="dropdown-item-custom dropdown-item-create">
                       <div className="dropdown-item-left">
                         <div className="dropdown-workspace-circle dropdown-circle-plus"><Plus size={14} /></div>
@@ -236,7 +249,7 @@ export function AppSidebar() {
                             </DropdownMenuItem>
                           ))}
                           <div className="dropdown-section-separator" />
-                          <DropdownMenuItem onClick={() => { const name = prompt("Workspace name:"); if (name?.trim()) { createOrganization(name.trim()); afterCreateNavigate("org"); } }}
+                          <DropdownMenuItem onClick={() => setCreateOrgOpen(true)}
                             className="dropdown-item-custom dropdown-item-create">
                             <div className="dropdown-item-left">
                               <div className="dropdown-workspace-circle dropdown-circle-plus"><Plus size={14} /></div>
@@ -247,7 +260,7 @@ export function AppSidebar() {
                       </DropdownMenu>
                     ) : (
                       <SidebarMenuButton size="lg" className="sidebar-switcher-trigger"
-                        onClick={() => { const name = prompt("Create your first workspace:"); if (name?.trim()) { createOrganization(name.trim()); afterCreateNavigate("org"); } }}>
+                        onClick={() => setCreateOrgOpen(true)}>
                         <div className="workspace-circle-logo bg-[linear-gradient(135deg,#60a5fa,#1d4ed8)]" />
                         <div className="workspace-title-wrapper group-data-[collapsible=icon]:hidden">
                           <span className="workspace-title-text">Create workspace</span>
@@ -278,14 +291,14 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 ))}
                 <SidebarMenuItem>
-                  <SidebarMenuButton tooltip="Create project"
-                    onClick={navToCreateProject}
-                    className="sidebar-nav-button">
-                    <div className="sidebar-nav-left">
-                      <div className="sidebar-nav-icon"><Plus size={18} /></div>
-                      <span className="sidebar-nav-label group-data-[collapsible=icon]:hidden">Create project</span>
-                    </div>
-                  </SidebarMenuButton>
+                <SidebarMenuButton tooltip="Create project"
+                  onClick={() => setCreateProjectOpen(true)}
+                  className="sidebar-nav-button">
+                  <div className="sidebar-nav-left">
+                    <div className="sidebar-nav-icon"><Plus size={18} /></div>
+                    <span className="sidebar-nav-label group-data-[collapsible=icon]:hidden">Create project</span>
+                  </div>
+                </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
@@ -336,6 +349,26 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+      <CreateModal
+        open={createOrgOpen}
+        onClose={() => setCreateOrgOpen(false)}
+        title="Create Workspace"
+        description="Create a new workspace for your organization."
+        label="Workspace name"
+        placeholder="Workspace name"
+        submitLabel="Create Workspace"
+        onSubmit={handleCreateOrg}
+      />
+      <CreateModal
+        open={createProjectOpen}
+        onClose={() => setCreateProjectOpen(false)}
+        title="Create Project"
+        description="Create a new project in the current workspace."
+        label="Project name"
+        placeholder="Project name"
+        submitLabel="Create Project"
+        onSubmit={handleCreateProject}
+      />
     </Sidebar>
   );
 }

@@ -10,6 +10,7 @@ import specsRoutes from './specs.js';
 import alertsRoutes from './alerts.js';
 import chatRoutes from './chat.js';
 import serviceAccountRoutes from './serviceAccounts.js';
+import apiTokenRoutes from './apiTokens.js';
 import billingRoutes from './billing.js';
 import stripeWebhookRoutes from './stripeWebhook.js';
 import storageRoutes from './storage.js';
@@ -42,6 +43,7 @@ router.use('/organizations', orgRoutes);
 router.use('/organizations/:orgId/invitations', invitationRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/organizations/:orgId/service-accounts', serviceAccountRoutes);
+router.use('/organizations/:orgId/api-tokens', apiTokenRoutes);
 router.use('/organizations/:orgId/billing', billingRoutes);
 router.use('/stripe/webhook', stripeWebhookRoutes);
 

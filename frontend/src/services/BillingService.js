@@ -21,6 +21,31 @@ export class BillingService {
     });
     return response.data;
   }
+
+  async getUsage(orgId) {
+    const response = await apiClient.get(`/organizations/${orgId}/billing/usage`);
+    return response.data;
+  }
+
+  async getCredits(orgId) {
+    const response = await apiClient.get(`/organizations/${orgId}/billing/credits`);
+    return response.data;
+  }
+
+  async getInvoices(orgId) {
+    const response = await apiClient.get(`/organizations/${orgId}/billing/invoices`);
+    return response.data;
+  }
+
+  async getPlans(orgId) {
+    const response = await apiClient.get(`/organizations/${orgId}/billing/plans`);
+    return response.data;
+  }
+
+  async setBudget(orgId, budget) {
+    const response = await apiClient.patch(`/organizations/${orgId}/billing/budget`, { budget });
+    return response.data;
+  }
 }
 
 export const billingService = new BillingService();

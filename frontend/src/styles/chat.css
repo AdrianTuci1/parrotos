@@ -282,7 +282,9 @@
 .chat-centered-composer-wrapper {
   display: flex;
   width: 100%;
-  max-width: 100%; /* full width */
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
   align-items: center;
   gap: 12px;
   background-color: #111214;
@@ -292,14 +294,14 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.chat-centered-text-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 10px 4px;
-  font-size: 14px;
-  color: #E3E3E3;
-  outline: none;
+.chat-centered-composer-wrapper.pill-composer {
+  border-radius: 9999px !important;
+  padding: 10px 24px !important;
+  max-width: 900px !important; /* centered, limited width */
+}
+
+.chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
+  max-width: 900px !important; /* centered, limited width */
 }
 
 .chat-centered-text-input::placeholder {
@@ -398,12 +400,19 @@ main:has(.chat-active-mode),
   flex-direction: column;
   gap: 28px;
   width: 100%;
-  max-width: 100%; /* full width */
+  max-width: 900px;
   margin: 0 auto;
   padding: 32px 24px 8px 24px;
   min-height: 100%;
   justify-content: flex-end;
   box-sizing: border-box;
+}
+
+.chat-pending-action-sticky {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 0 16px 0;
 }
 
 /* --- Message Row (no avatars) --- */
@@ -508,12 +517,12 @@ main:has(.chat-active-mode),
 
 .chat-active-input-footer .pill-composer {
   width: 100%;
-  max-width: 100%; /* full width */
+  max-width: 900px; /* centered, limited width */
 }
 
 /* Wider composer when starting a fresh session (no messages yet) */
 .chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
-  max-width: 100% !important; /* full width */
+  max-width: 900px !important; /* centered, limited width */
 }
 
 /* Microphone button inside pill composer */
@@ -553,13 +562,6 @@ main:has(.chat-active-mode),
 /* ═══════════════════════════════════════════════
    PENDING ACTION — normal flow, after messages
    ═══════════════════════════════════════════════ */
-
-.chat-pending-action-sticky {
-  width: 100%;
-  max-width: 100%; /* full width */
-  margin: 0 auto;
-  padding: 0 0 16px 0;
-}
 
 .chat-pending-action-card {
   border-radius: 14px;

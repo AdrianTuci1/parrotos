@@ -5,6 +5,7 @@ export { agentService, AgentService } from './AgentService.js';
 export { integrationService, IntegrationService } from './IntegrationService.js';
 export { authService, AuthService } from './AuthService.js';
 export { serviceAccountService, ServiceAccountService } from './ServiceAccountService.js';
+export { apiTokenService, ApiTokenService } from './ApiTokenService.js';
 export { billingService, BillingService } from './BillingService.js';
 export { alertService, AlertService } from './AlertService.js';
 export { connectorAuthService, ConnectorAuthService } from './ConnectorAuthService.js';

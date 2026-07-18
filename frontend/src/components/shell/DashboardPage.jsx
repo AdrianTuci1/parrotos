@@ -11,7 +11,6 @@ import { ChatView } from "@/components/shell/ChatView";
 import { CreateProjectView } from "@/components/shell/CreateProjectView";
 import { OrganizationStatsView } from "@/components/shell/OrganizationStatsView";
 import { OrganizationAccessView } from "@/components/shell/OrganizationAccessView";
-import { OrganizationBillingView } from "@/components/shell/OrganizationBillingView";
 import { OrganizationSettingsView } from "@/components/shell/OrganizationSettingsView";
 import { useAppStore } from "@/stores/useAppStore";
 import { orgSections, projectSections } from "@/components/app-shared";
@@ -27,7 +26,6 @@ const sectionComponents = {
   chat: ChatView,
   stats: OrganizationStatsView,
   access: OrganizationAccessView,
-  billing: OrganizationBillingView,
   "org-settings": OrganizationSettingsView,
 };
 

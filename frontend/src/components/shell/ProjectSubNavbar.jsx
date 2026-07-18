@@ -12,7 +12,6 @@ const projectTabs = [
   { id: "storage", label: "Storage" },
   { id: "graph", label: "Graph" },
   { id: "chat", label: "Chat" },
-  { id: "settings", label: "Project Settings" },
 ];
 
 export function ProjectSubNavbar() {
