@@ -5,8 +5,9 @@
   justify-content: space-between;
   align-items: center;
   min-height: 100vh;
-  background-color: #ffffff;
-  color: #1a1a1a;
+  width: 100%;
+  background-color: #0B0D0E;
+  color: #ffffff;
   padding: 48px 24px;
   font-family: var(--font-sans);
 }
@@ -19,15 +20,16 @@
 
 .login-top-logo svg,
 .login-top-logo path {
-  fill: #000000; /* Black logo in light mode */
+  fill: #ffffff;
 }
 
 .login-card {
   width: 100%;
-  max-width: 320px;
-  background: transparent;
-  border: none;
-  padding: 0;
+  max-width: 360px;
+  background: #111214;
+  border: 1px solid #262626;
+  border-radius: 16px;
+  padding: 32px;
   margin: auto 0;
   display: flex;
   flex-direction: column;
@@ -41,14 +43,14 @@
 .login-title {
   font-size: 28px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #ffffff;
   margin-bottom: 8px;
   letter-spacing: -0.02em;
 }
 
 .login-subtitle {
   font-size: 15px;
-  color: #666666;
+  color: #8E918F;
 }
 
 .login-error {
@@ -69,16 +71,16 @@
   gap: 16px;
 }
 
-/* Override input groups in light mode */
+/* Override input groups in dark mode */
 .login-card [data-slot="input-group"] {
   height: 44px !important;
-  background-color: #ffffff !important;
-  border: 1px solid #d1d5db !important;
+  background-color: #0e0f11 !important;
+  border: 1px solid #262626 !important;
   border-radius: 8px !important;
 }
 
 .login-card [data-slot="input-group"]:focus-within {
-  border-color: #111111 !important;
+  border-color: #ffffff !important;
 }
 
 .login-card [data-slot="input-group"] input {
@@ -86,7 +88,7 @@
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: #111111 !important;
+  color: #ffffff !important;
   font-size: 14px !important;
   padding-left: 14px !important;
   padding-right: 14px !important;
@@ -97,23 +99,23 @@
 }
 
 .login-card [data-slot="input-group"] input::placeholder {
-  color: #9ca3af !important;
+  color: #5C5F62 !important;
 }
 
 .login-card [data-slot="input-group"] [data-slot="input-group-addon"] {
   height: 100% !important;
   display: flex !important;
   align-items: center !important;
-  color: #6b7280 !important;
+  color: #8E918F !important;
   padding-left: 14px !important;
   padding-right: 6px !important;
 }
 
-/* Submit button in light mode */
+/* Submit button in dark mode */
 .login-form button[type="submit"] {
   height: 44px !important;
-  background-color: #111111 !important; /* dark button in light mode */
-  color: #ffffff !important;
+  background-color: #E3E3E3 !important;
+  color: #000000 !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
   border: none !important;
@@ -122,13 +124,13 @@
 }
 
 .login-form button[type="submit"]:hover {
-  background-color: #222222 !important;
+  background-color: #ffffff !important;
 }
 
 .login-divider-text {
   display: flex;
   align-items: center;
-  color: #6b7280;
+  color: #5C5F62;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.05em;
@@ -140,7 +142,7 @@
   content: "";
   flex: 1;
   height: 1px;
-  background: #e5e7eb;
+  background: #2E3033;
 }
 
 .login-divider-text span {
@@ -153,12 +155,12 @@
   gap: 10px;
 }
 
-/* OAuth buttons in light mode */
+/* OAuth buttons in dark mode */
 .login-oauth-buttons button {
   height: 44px !important;
-  background-color: #ffffff !important;
-  border: 1px solid #d1d5db !important;
-  color: #111111 !important;
+  background-color: #000000 !important;
+  border: 1px solid #2E3033 !important;
+  color: #ffffff !important;
   border-radius: 8px !important;
   font-weight: 500 !important;
   display: flex !important;
@@ -169,8 +171,8 @@
 }
 
 .login-oauth-buttons button:hover {
-  background-color: #f9fafb !important;
-  border-color: #9ca3af !important;
+  background-color: #111111 !important;
+  border-color: #444444 !important;
 }
 
 .login-footer {
@@ -180,7 +182,7 @@
 .login-toggle-mode {
   background: none;
   border: none;
-  color: #2563eb;
+  color: #3b82f6;
   font-size: 13px;
   cursor: pointer;
 }
@@ -191,21 +193,21 @@
 
 .login-disclaimer {
   text-align: center;
-  color: #6b7280;
+  color: #8E918F;
   font-size: 13px;
   max-width: 380px;
   line-height: 1.6;
 }
 
 .login-disclaimer a {
-  color: #6b7280;
+  color: #8E918F;
   text-decoration: underline;
   text-underline-offset: 4px;
   transition: color 0.15s;
 }
 
 .login-disclaimer a:hover {
-  color: #111111;
+  color: #ffffff;
 }
 
 .login-logout-btn {
@@ -223,92 +225,4 @@
 .login-logout-btn:hover {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.5);
-}
-
-
-/* ==================== DARK MODE ==================== */
-.dark .login-wrapper {
-  background-color: #000000; /* Pitch black */
-  color: #ffffff;
-}
-
-.dark .login-top-logo svg,
-.dark .login-top-logo path {
-  fill: #ffffff; /* White logo in dark mode */
-}
-
-.dark .login-title {
-  color: #ffffff;
-}
-
-.dark .login-subtitle {
-  color: #8E918F;
-}
-
-.dark .login-card [data-slot="input-group"] {
-  background-color: #000000 !important;
-  border: 1px solid #2E3033 !important;
-}
-
-.dark .login-card [data-slot="input-group"]:focus-within {
-  border-color: #ffffff !important;
-}
-
-.dark .login-card [data-slot="input-group"] input {
-  color: #ffffff !important;
-}
-
-.dark .login-card [data-slot="input-group"] input::placeholder {
-  color: #5C5F62 !important;
-}
-
-.dark .login-card [data-slot="input-group"] [data-slot="input-group-addon"] {
-  color: #8E918F !important;
-}
-
-/* Submit button in dark mode - Light grey background, black text */
-.dark .login-form button[type="submit"] {
-  background-color: #E3E3E3 !important;
-  color: #000000 !important;
-}
-
-.dark .login-form button[type="submit"]:hover {
-  background-color: #ffffff !important;
-}
-
-.dark .login-divider-text {
-  color: #5C5F62;
-}
-
-.dark .login-divider-text::before,
-.dark .login-divider-text::after {
-  background: #2E3033;
-}
-
-/* OAuth buttons in dark mode */
-.dark .login-oauth-buttons button {
-  background-color: #000000 !important;
-  border: 1px solid #2E3033 !important;
-  color: #ffffff !important;
-}
-
-.dark .login-oauth-buttons button:hover {
-  background-color: #111111 !important;
-  border-color: #444444 !important;
-}
-
-.dark .login-toggle-mode {
-  color: #3b82f6;
-}
-
-.dark .login-disclaimer {
-  color: #8E918F;
-}
-
-.dark .login-disclaimer a {
-  color: #8E918F;
-}
-
-.dark .login-disclaimer a:hover {
-  color: #ffffff;
 }

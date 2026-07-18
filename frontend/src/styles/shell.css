@@ -2,39 +2,33 @@
    Shell and Layout Styles
    ========================================================================== */
 
-/* Sidebar Provider variables and container styling */
-.sidebar-provider-container {
-  height: 100vh !important;
-  max-height: 100vh !important;
-  overflow: hidden !important;
-  display: flex;
-  gap: 8px;
-  background-color: #0B0D0E;
-  padding: 8px;
-  --sidebar-width: 17.5rem;
-  --sidebar-width-icon: 4rem;
-  --sidebar: #090A0B;
-  --sidebar-foreground: #E3E3E3;
-  --sidebar-accent: #23262A;
-  --sidebar-accent-foreground: #F3F4F6;
-  --sidebar-border: #25282C;
-  --sidebar-ring: #A8C7FA;
-}
-
-/* Main layout wrapper holding navbar and active view */
-.app-main-layout {
-  position: relative;
+.layout-root {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100% !important;
-  min-height: 0 !important;
-  min-width: 0;
+  background-color: #0B0D0E;
+}
+
+.layout-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
   overflow: hidden;
-  border-radius: 28px;
-  border: 1px solid #25282C;
+}
+
+.layout-body-chat {
+  flex-direction: row;
+}
+
+.layout-main {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: #090A0B;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  padding: 0 !important; /* Reverted padding to 0 */
 }
 
 /* Content Area inside Main Layout */
@@ -45,53 +39,63 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
 }
 
 .app-content-inner {
   width: 100%;
-  max-width: 80rem; /* 1280px / 7xl */
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
+.app-content-inner.max-w-7xl,
+.app-content-inner.max-w-3xl {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .app-content-wrapper-graph {
-  max-width: 80rem;
-  margin-left: auto;
-  margin-right: auto;
   align-items: stretch;
 }
 
 .app-content-inner-graph {
-  max-width: none;
+  max-width: 100%;
   background: transparent;
 }
 
-/* View Frame Container - flat, borderless, scrollable */
+/* View Frame Container - flat, borderless, scrollable, full-width */
 .view-frame-section {
   display: flex;
   width: 100%;
+  min-width: 0;
   min-height: 0;
   flex-direction: column;
-  padding-top: 12px;
-  padding-bottom: 16px;
-  padding-left: 16px; /* aligns perfectly with AppHeader 16px padding */
-  padding-right: 16px; /* aligns perfectly with AppHeader 16px padding */
+  padding: 0;
   border-radius: 0 !important;
   overflow: visible !important; /* do not scroll independently */
 }
 
 .view-frame-inner {
-  margin-left: auto;
-  margin-right: auto;
   display: flex;
   height: 100%;
   width: 100%;
   min-height: 0;
   flex-direction: column;
   gap: 20px;
+  padding: 12px 16px 16px;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.view-frame-inner.max-w-3xl,
+.view-frame-inner.max-w-7xl,
+.view-frame-inner.full-width {
+  max-width: 100%; /* full width */
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .view-frame-header {
@@ -100,9 +104,13 @@
   align-items: start;
   justify-content: space-between;
   gap: 12px;
-  padding-left: 4px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding: 8px 0;
+}
+
+.view-frame-content {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
 }
 
 .view-frame-title-group {
@@ -194,7 +202,7 @@
 
 .public-content-inner {
   width: 100%;
-  max-width: 80rem;
+  max-width: 100%; /* full width */
   flex: 1;
   display: flex;
   flex-direction: column;

@@ -218,7 +218,7 @@
   margin-left: auto;
   margin-right: auto;
   display: flex;
-  max-width: 48rem; /* 768px / 3xl */
+  max-width: 100%; /* full width */
   align-items: center;
   gap: 8px;
 }
@@ -276,13 +276,13 @@
 
 .chat-empty-mode .chat-active-input-footer {
   width: 100%;
-  max-width: 30rem;
+  max-width: 100%; /* full width */
 }
 
 .chat-centered-composer-wrapper {
   display: flex;
   width: 100%;
-  max-width: 32rem; /* 512px */
+  max-width: 100%; /* full width */
   align-items: center;
   gap: 12px;
   background-color: #111214;
@@ -332,7 +332,7 @@
 .chat-centered-composer-wrapper.pill-composer {
   border-radius: 9999px !important;
   padding: 10px 24px !important;
-  max-width: 36rem !important;
+  max-width: 100% !important; /* full width */
 }
 
 /* Demo mode banner — slim overlay chip, stays on top of content */
@@ -398,7 +398,7 @@ main:has(.chat-active-mode),
   flex-direction: column;
   gap: 28px;
   width: 100%;
-  max-width: 52rem;
+  max-width: 100%; /* full width */
   margin: 0 auto;
   padding: 32px 24px 8px 24px;
   min-height: 100%;
@@ -508,12 +508,12 @@ main:has(.chat-active-mode),
 
 .chat-active-input-footer .pill-composer {
   width: 100%;
-  max-width: 28rem;
+  max-width: 100%; /* full width */
 }
 
 /* Wider composer when starting a fresh session (no messages yet) */
 .chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
-  max-width: 26rem !important;
+  max-width: 100% !important; /* full width */
 }
 
 /* Microphone button inside pill composer */
@@ -556,7 +556,7 @@ main:has(.chat-active-mode),
 
 .chat-pending-action-sticky {
   width: 100%;
-  max-width: 52rem;
+  max-width: 100%; /* full width */
   margin: 0 auto;
   padding: 0 0 16px 0;
 }

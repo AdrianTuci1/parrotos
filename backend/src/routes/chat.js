@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate, requireOrgAccess } from '../middleware/auth.js';
 import { config } from '../config/index.js';
+import { chatFallbackService } from '../services/ChatFallbackService.js';
 import { ConnectorService } from '../services/ConnectorService.js';
 import { internalServiceClient } from '../services/InternalServiceClient.js';
 
@@ -20,35 +21,45 @@ router.use(requireOrgAccess);
 router.post('/message', async (req, res) => {
   try {
     const { sessionId, message } = req.body;
-    const orgId = req.params.orgId;
-    const projectId = req.params.projectId;
-    const userToken = req.headers.authorization?.replace('Bearer ', '');
+    const { orgId, projectId } = req.params;
 
     if (!sessionId || !message) {
       return res.status(400).json({ error: 'sessionId and message are required' });
     }
 
-    // Forward to Chat Service with SSE streaming
-    const response = await internalServiceClient.fetch(`${config.chatServiceUrl}/internal/message`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        orgId,
-        projectId,
-        sessionId,
-        message,
-        backendToken: userToken, // pass user's JWT so Chat Service can call backend APIs
-      }),
-    });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({ error: 'Chat service unavailable' }));
-      return res.status(response.status).json(err);
+    // Try real chat service first; if unreachable, fall back to local OpenAI/mock SSE
+    let useFallback = false;
+    let response;
+    try {
+      const userToken = req.headers.authorization?.replace('Bearer ', '');
+      response = await internalServiceClient.fetch(`${config.chatServiceUrl}/internal/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orgId, projectId, sessionId, message, backendToken: userToken }),
+      });
+      if (!response.ok) useFallback = true;
+    } catch {
+      useFallback = true;
     }
 
-    // Stream SSE response back to frontend
+    if (useFallback) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.flushHeaders();
+
+      try {
+        for await (const event of chatFallbackService.stream({ message })) {
+          res.write(`data: ${JSON.stringify(event)}\n\n`);
+        }
+      } catch (err) {
+        res.write(`data: ${JSON.stringify({ type: 'error', message: err.message })}\n\n`);
+      }
+      res.end();
+      return;
+    }
+
+    // Stream real chat service response
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');

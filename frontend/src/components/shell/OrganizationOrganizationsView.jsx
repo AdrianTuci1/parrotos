@@ -98,7 +98,7 @@ export function OrganizationOrganizationsView() {
       <ViewFrame
         title={selectedOrg.name}
         description="Edit workspace details and settings."
-        maxWidthClassName="max-w-3xl"
+        maxWidthClassName="full-width"
       >
         <div className="org-detail-shell">
           <button className="org-back-btn" onClick={() => setSelectedOrg(null)}>
@@ -265,7 +265,7 @@ export function OrganizationOrganizationsView() {
       <ViewFrame
         title="New workspace"
         description="Set up a new workspace for your account."
-        maxWidthClassName="max-w-3xl"
+        maxWidthClassName="full-width"
       >
         <div className="org-detail-shell">
           <button className="org-back-btn" onClick={() => { setCreating(false); setCreateName(''); }}>
@@ -311,7 +311,7 @@ export function OrganizationOrganizationsView() {
           </a>
         </span>
       }
-      maxWidthClassName="max-w-3xl"
+      maxWidthClassName="full-width"
     >
       <div className="org-list-header-row">
         <span className="org-list-select-label">Select a workspace</span>

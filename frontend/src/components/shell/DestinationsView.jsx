@@ -296,7 +296,7 @@ export function DestinationsView() {
       <ViewFrame
         title={detailOpen ? null : "Destinations"}
         description={detailOpen ? null : "Manage data destinations — where your processed data is sent."}
-        maxWidthClassName="max-w-3xl"
+        maxWidthClassName="full-width"
       >
         {detailOpen ? (
           <IntegrationConnectionPage

@@ -23,7 +23,7 @@ export function OrganizationProjectsView() {
     <ViewFrame
       title="Projects"
       description="Review every client project, its current usage profile, and the connector footprint behind it."
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="full-width"
       actions={
         <button
           className="flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-sm text-text-primary hover:bg-bg-hover transition-colors"

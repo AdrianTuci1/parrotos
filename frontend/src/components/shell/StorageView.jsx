@@ -584,7 +584,7 @@ export function StorageView() {
     <ViewFrame
       title={activeVolume ? activeVolume.name : "Storage"}
       description={activeVolume ? null : "Persist and communicate data created or processed by your Modal Apps."}
-      maxWidthClassName="max-w-3xl"
+      maxWidthClassName="full-width"
       actions={
         activeVolume ? (
           <button

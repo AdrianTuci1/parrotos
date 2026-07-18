@@ -173,7 +173,7 @@
   display: grid;
   width: 100% !important;
   max-width: 100% !important;
-  grid-template-cols: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 140px;
   gap: 12px !important; /* spacing between widget cards */
   border-radius: 0 !important;

@@ -8,6 +8,7 @@ import { integrationService } from '@/services/IntegrationService';
 import { authService } from '@/services/AuthService';
 import { serviceAccountService } from '@/services/ServiceAccountService';
 import { billingService } from '@/services/BillingService';
+import { userService } from '@/services/UserService';
 import { alertService } from '@/services/AlertService.js';
 import { connectorAuthService } from '@/services/ConnectorAuthService.js';
 import { notificationService } from '@/services/NotificationService.js';
@@ -32,6 +33,7 @@ function normalizeWorkspace(workspace) {
   return {
     ...workspace,
     slug,
+    organizationId: workspace.organizationId || workspace.orgId,
     domain: workspace.domain || `${slug}.workspace`,
     status: workspace.status || 'Healthy',
     monthlyEvents: workspace.monthlyEvents ?? String(workspace.stats?.sessionsCount ?? 0),
@@ -451,6 +453,7 @@ export const useAppStore = create(
       isLoading: false, error: null,
       organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
       notificationsData: [],
+      invitations: [],
       chatSessions: [],
       activeChatId: null,
 
@@ -638,6 +641,45 @@ export const useAppStore = create(
     }
   },
 
+  fetchInvitations: async () => {
+    if (isMockModeState(get())) return;
+    try {
+      const result = await userService.getInvitations();
+      set({ invitations: result.invitations || [] });
+      return result.invitations || [];
+    } catch (err) {
+      set({ error: err.message });
+      return [];
+    }
+  },
+
+  acceptInvitation: async (invitationId) => {
+    if (isMockModeState(get())) return;
+    try {
+      await userService.acceptInvitation(invitationId);
+      set((state) => ({
+        invitations: state.invitations.filter((i) => i.id !== invitationId),
+      }));
+      await get().fetchOrganizations();
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  declineInvitation: async (invitationId) => {
+    if (isMockModeState(get())) return;
+    try {
+      await userService.declineInvitation(invitationId);
+      set((state) => ({
+        invitations: state.invitations.filter((i) => i.id !== invitationId),
+      }));
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
   fetchOrganizations: async () => {
     if (isMockModeState(get())) return get().organizations;
     set({ isLoading: true });
@@ -819,6 +861,218 @@ export const useAppStore = create(
       get().logout();
       set({ isLoading: false });
       return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  fetchMembers: async (orgId) => {
+    if (get().devMode) {
+      const org = get().currentOrganization;
+      return [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
+    }
+    set({ isLoading: true });
+    try {
+      const result = await organizationService.getMembers(orgId);
+      set({ members: result.members || [], isLoading: false });
+      return result.members;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  addMember: async (orgId, email, role) => {
+    if (get().devMode) {
+      const newMember = { userId: `user-${email}`, email, username: email.split('@')[0], role, joinedAt: new Date().toISOString() };
+      set((state) => ({ members: [...state.members, newMember] }));
+      return newMember;
+    }
+    set({ isLoading: true });
+    try {
+      const result = await organizationService.addMember(orgId, email, role);
+      set((state) => ({ members: [...state.members, result.member], isLoading: false }));
+      return result.member;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  updateMember: async (orgId, userId, role) => {
+    if (get().devMode) {
+      set((state) => ({
+        members: state.members.map((m) => m.userId === userId ? { ...m, role } : m),
+      }));
+      return get().members.find((m) => m.userId === userId);
+    }
+    set({ isLoading: true });
+    try {
+      const result = await organizationService.updateMember(orgId, userId, role);
+      set((state) => ({
+        members: state.members.map((m) => m.userId === userId ? (result.member || { ...m, role }) : m),
+        isLoading: false,
+      }));
+      return result.member;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  removeMember: async (orgId, userId) => {
+    if (get().devMode) {
+      set((state) => ({ members: state.members.filter((m) => m.userId !== userId) }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await organizationService.removeMember(orgId, userId);
+      set((state) => ({ members: state.members.filter((m) => m.userId !== userId), isLoading: false }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  cancelInvitation: async (orgId, invitationId) => {
+    if (get().devMode) {
+      set((state) => ({ members: state.members.filter((m) => m.invitationId !== invitationId) }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await organizationService.cancelInvitation(orgId, invitationId);
+      set((state) => ({ members: state.members.filter((m) => m.invitationId !== invitationId), isLoading: false }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  fetchSecuritySettings: async (orgId) => {
+    if (get().devMode) {
+      return get().currentOrganization?.settings?.security || {};
+    }
+    try {
+      const org = await organizationService.get(orgId);
+      const securitySettings = org?.settings?.security || {};
+      set((state) => ({
+        currentOrganization: { ...state.currentOrganization, settings: { ...state.currentOrganization?.settings, security: securitySettings } },
+      }));
+      return securitySettings;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateSecuritySettings: async (orgId, settings) => {
+    if (get().devMode) {
+      set((state) => ({
+        currentOrganization: {
+          ...state.currentOrganization,
+          settings: { ...state.currentOrganization?.settings, security: { ...state.currentOrganization?.settings?.security, ...settings } },
+        },
+      }));
+      return get().currentOrganization.settings.security;
+    }
+    try {
+      const result = await organizationService.updateSecuritySettings(orgId, settings);
+      set((state) => ({
+        currentOrganization: { ...state.currentOrganization, ...result },
+      }));
+      return result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateProfile: async (dto) => {
+    if (get().devMode) {
+      set((state) => ({ currentUser: { ...state.currentUser, ...dto } }));
+      return { user: get().currentUser };
+    }
+    set({ isLoading: true });
+    try {
+      const result = await userService.updateProfile(dto);
+      set((state) => ({ currentUser: result.user || { ...state.currentUser, ...dto }, isLoading: false }));
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  fetchNotificationPreferences: async () => {
+    if (get().devMode) {
+      return get().currentUser?.notificationPreferences || {
+        emailAlerts: true,
+        weeklyDigest: false,
+        marketingEmails: false,
+      };
+    }
+    try {
+      const result = await userService.getNotificationPreferences();
+      return result.preferences || result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateNotificationPreferences: async (prefs) => {
+    if (get().devMode) {
+      set((state) => ({
+        currentUser: {
+          ...state.currentUser,
+          notificationPreferences: { ...state.currentUser?.notificationPreferences, ...prefs },
+        },
+      }));
+      return get().currentUser?.notificationPreferences;
+    }
+    try {
+      const result = await userService.updateNotificationPreferences(prefs);
+      set((state) => ({
+        currentUser: {
+          ...state.currentUser,
+          notificationPreferences: result.preferences || result,
+        },
+      }));
+      return result.preferences || result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateProject: async (orgId, projectId, dto) => {
+    if (get().devMode) {
+      set((state) => ({
+        workspaces: state.workspaces.map((w) =>
+          w.id === projectId ? { ...w, ...dto } : w
+        ),
+        currentWorkspace: state.currentWorkspace?.id === projectId
+          ? { ...state.currentWorkspace, ...dto }
+          : state.currentWorkspace,
+      }));
+      return get().workspaces.find(w => w.id === projectId);
+    }
+    set({ isLoading: true });
+    try {
+      const updated = await projectService.update(orgId, projectId, dto);
+      set((state) => ({
+        workspaces: state.workspaces.map((w) =>
+          w.id === projectId ? { ...w, ...updated } : w
+        ),
+        currentWorkspace: state.currentWorkspace?.id === projectId
+          ? { ...state.currentWorkspace, ...updated }
+          : state.currentWorkspace,
+        isLoading: false,
+      }));
+      return updated;
     } catch (err) {
       set({ error: err.message, isLoading: false });
       throw err;

@@ -292,7 +292,7 @@ export function IntegrationsView() {
       <ViewFrame
         title={detailOpen ? null : "Integrations"}
         description={detailOpen ? null : "Connect business data sources, then route modeled insights into the destinations your teams already use."}
-        maxWidthClassName="max-w-3xl"
+        maxWidthClassName="full-width"
       >
         {detailOpen ? (
           <IntegrationConnectionPage

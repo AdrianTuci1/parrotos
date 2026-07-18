@@ -9,6 +9,11 @@ export class User {
     this.providerId = data.providerId || '';
     this.roles = data.roles || ['user'];
     this.orgMemberships = data.orgMemberships || []; // [{ orgId, role }]
+    this.notificationPreferences = data.notificationPreferences || {
+      emailAlerts: true,
+      weeklyDigest: false,
+      marketingEmails: false,
+    };
     this.refreshTokenHash = data.refreshTokenHash || '';
     this.refreshTokenExpiresAt = data.refreshTokenExpiresAt || null;
     this.createdAt = data.createdAt || new Date().toISOString();
@@ -43,6 +48,9 @@ export class User {
     if (this.providerId) data.providerId = this.providerId;
     if (this.refreshTokenHash) data.refreshTokenHash = this.refreshTokenHash;
     if (this.refreshTokenExpiresAt) data.refreshTokenExpiresAt = this.refreshTokenExpiresAt;
+    if (this.notificationPreferences && Object.keys(this.notificationPreferences).length > 0) {
+      data.notificationPreferences = this.notificationPreferences;
+    }
     return data;
   }
 

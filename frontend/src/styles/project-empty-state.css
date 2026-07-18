@@ -1,12 +1,11 @@
 .project-empty-state {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
-  max-width: 48rem;
   margin: 0 auto;
   min-height: calc(100vh - 220px);
-  padding: 40px 0;
+  padding: 40px 24px;
 }
 
 .project-empty-copy {
@@ -14,7 +13,8 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  width: min(100%, 30rem);
+  width: 100%;
+  max-width: 100%;
 }
 
 .project-empty-eyebrow {
@@ -33,12 +33,14 @@
   line-height: 1.15;
   letter-spacing: -0.03em;
   color: #f3f4f6;
-  max-width: 32rem;
+  max-width: 100%;
+  width: 100%;
 }
 
 .project-empty-description {
   margin-top: 10px;
-  max-width: 30rem;
+  max-width: 100%;
+  width: 100%;
   font-size: 13px;
   line-height: 1.7;
   color: #8e918f;
@@ -50,6 +52,7 @@
   align-items: flex-start;
   gap: 10px;
   margin-top: 18px;
+  width: 100%;
 }
 
 .project-empty-action-row {
@@ -70,8 +73,8 @@
 
 @media (max-width: 768px) {
   .project-empty-state {
-    min-height: calc(100vh - 180px);
-    padding: 32px 0;
+    min-height: calc(100vh - 220px);
+    padding: 24px 16px;
   }
 
   .project-empty-title {
@@ -79,6 +82,7 @@
   }
 
   .project-empty-description {
-    max-width: 24rem;
+    max-width: 100%;
   }
 }
+

@@ -6,6 +6,7 @@ import { config } from '../config/index.js';
 import { UnauthorizedError, ConflictError } from '../utils/errors.js';
 import { dataDeletionService } from './DataDeletionService.js';
 import { OrganizationService } from './OrganizationService.js';
+import { emailService } from './EmailService.js';
 
 export class AuthService {
   constructor({
@@ -42,6 +43,13 @@ export class AuthService {
 
     await this.usersCollection.doc(userId).set(user.toFirestore());
     const defaultOrg = await this.organizationService.createDefaultForAccount(userId, user.email, user.username);
+
+    emailService.send({
+      to: user.email,
+      subject: 'Welcome to StatsParrot',
+      text: `Hi ${user.username},\n\nWelcome to StatsParrot! Your workspace "${defaultOrg?.name || 'Default'}" has been created.\n\nGet started at ${config.frontendUrl || 'https://app.statsparrot.com'}.`,
+      html: `<p>Hi ${user.username},</p><p>Welcome to StatsParrot! Your workspace <strong>${defaultOrg?.name || 'Default'}</strong> has been created.</p><p><a href="${config.frontendUrl || 'https://app.statsparrot.com'}">Get started</a></p>`,
+    }).catch(() => {});
 
     return this.issueSession(user, defaultOrg?.id || null);
   }
@@ -260,6 +268,62 @@ export class AuthService {
     return this.sanitizeUser(user);
   }
 
+  async updateUser(userId, dto) {
+    const doc = await this.usersCollection.doc(userId).get();
+    if (!doc.exists) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    const allowedFields = ['username', 'email', 'picture'];
+    const updates = {};
+    for (const key of allowedFields) {
+      if (dto[key] !== undefined) {
+        updates[key] = dto[key];
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return this.getUser(userId);
+    }
+
+    updates.updatedAt = new Date().toISOString();
+    await this.usersCollection.doc(userId).update(updates);
+    return this.getUser(userId);
+  }
+
+  async getNotificationPreferences(userId) {
+    const doc = await this.usersCollection.doc(userId).get();
+    if (!doc.exists) {
+      throw new UnauthorizedError('User not found');
+    }
+    const data = doc.data();
+    return data.notificationPreferences || {
+      emailAlerts: true,
+      weeklyDigest: false,
+      marketingEmails: false,
+    };
+  }
+
+  async updateNotificationPreferences(userId, prefs) {
+    const doc = await this.usersCollection.doc(userId).get();
+    if (!doc.exists) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    const existing = doc.data().notificationPreferences || {};
+    const allowedFields = ['emailAlerts', 'weeklyDigest', 'marketingEmails'];
+    const updates = { notificationPreferences: { ...existing } };
+    for (const key of allowedFields) {
+      if (prefs[key] !== undefined) {
+        updates.notificationPreferences[key] = Boolean(prefs[key]);
+      }
+    }
+    updates.updatedAt = new Date().toISOString();
+
+    await this.usersCollection.doc(userId).update(updates);
+    return updates.notificationPreferences;
+  }
+
   async deleteAccount(userId) {
     return dataDeletionService.deleteUserAccount(userId);
   }
@@ -273,6 +337,11 @@ export class AuthService {
       provider: user.provider || '',
       roles: user.roles,
       orgMemberships: user.orgMemberships,
+      notificationPreferences: user.notificationPreferences || {
+        emailAlerts: true,
+        weeklyDigest: false,
+        marketingEmails: false,
+      },
     };
   }
 }

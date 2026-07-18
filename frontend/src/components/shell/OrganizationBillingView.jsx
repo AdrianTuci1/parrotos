@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import {
   Check,
   Minus,
@@ -13,6 +13,19 @@ import {
 import { useAppStore } from '@/stores/useAppStore';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import '@/styles/billing.css';
+
+function Wrapper({ children, embedded }) {
+  if (embedded) return <Fragment>{children}</Fragment>;
+  return (
+    <ViewFrame
+      title="Billings & Subscription"
+      description="Upgrade to enable unlimited tracking, enhanced security controls, and additional features."
+      maxWidthClassName="full-width"
+    >
+      {children}
+    </ViewFrame>
+  );
+}
 
 // SVG Icons for Pricing Cards matching the screenshot's premium aesthetic
 const FreeIcon = () => (
@@ -132,7 +145,7 @@ function getUsagePercent(used, limit) {
   return Math.min(100, (used / limit) * 100);
 }
 
-export function OrganizationBillingView() {
+export function OrganizationBillingView({ embedded = false }) {
   const {
     organizations,
     workspaces,
@@ -285,11 +298,7 @@ export function OrganizationBillingView() {
   };
 
   return (
-    <ViewFrame
-      title="Billings & Subscription"
-      description="Upgrade to enable unlimited tracking, enhanced security controls, and additional features."
-      maxWidthClassName="max-w-7xl"
-    >
+    <Wrapper embedded={embedded}>
       {/* Toast notifications */}
       {notification && (
         <div style={{
@@ -771,6 +780,6 @@ export function OrganizationBillingView() {
           </div>
         )}
       </div>
-    </ViewFrame>
+    </Wrapper>
   );
 }

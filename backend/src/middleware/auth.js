@@ -173,10 +173,12 @@ export const requireOrganizationManager = async (req, res, next) => {
 
     const org = await loadOrganization(orgId);
     const isOwner = org.accountId === req.user.userId;
+    const member = org.members?.find((m) => m.userId === req.user.userId);
+    const isAdmin = member?.role === 'Admin' || member?.role === 'Owner';
     const isGlobalAdmin = req.user.roles?.includes('admin');
 
-    if (!isOwner && !isGlobalAdmin) {
-      throw new ForbiddenError('Only the organization owner can manage organization users');
+    if (!isOwner && !isAdmin && !isGlobalAdmin) {
+      throw new ForbiddenError('Only the organization owner or admin can manage organization users');
     }
 
     req.user.orgId = orgId;

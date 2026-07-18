@@ -19,6 +19,7 @@ import observerRoutes from './observer.js';
 import publicRoutes from './public.js';
 import metricsRoutes from './metrics.js';
 import notificationRoutes from './notifications.js';
+import invitationRoutes from './invitations.js';
 
 const router = Router({ mergeParams: true });
 
@@ -38,6 +39,7 @@ router.use('/organizations/:orgId/projects/:projectId/storage', storageRoutes);
 router.use('/organizations/:orgId/projects/:projectId/preferences', preferencesRoutes);
 router.use('/organizations/:orgId/projects/:projectId/observer', observerRoutes);
 router.use('/organizations', orgRoutes);
+router.use('/organizations/:orgId/invitations', invitationRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/organizations/:orgId/service-accounts', serviceAccountRoutes);
 router.use('/organizations/:orgId/billing', billingRoutes);

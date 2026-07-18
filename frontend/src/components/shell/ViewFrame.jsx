@@ -10,7 +10,7 @@ export function ViewFrame({
   children,
   className,
   contentClassName,
-  maxWidthClassName = "max-w-7xl",
+  maxWidthClassName,
   loading,
 }) {
   const isLoading = useAppStore((state) => state.isLoading);

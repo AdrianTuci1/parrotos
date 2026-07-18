@@ -3,6 +3,7 @@ import { Organization } from '../models/Organization.js';
 import { NotFoundError, ConflictError, ForbiddenError } from '../utils/errors.js';
 import { dataDeletionService } from './DataDeletionService.js';
 import { NotificationService } from './NotificationService.js';
+import { invitationService } from './InvitationService.js';
 
 export class OrganizationService {
   constructor({
@@ -100,8 +101,125 @@ export class OrganizationService {
       updates.limits = org.getDefaultLimits(dto.plan);
     }
 
+    delete updates.members;
+    delete updates.securitySettings;
+
     await this.orgsCollection.doc(orgId).update(updates);
     return this.findById(orgId);
+  }
+
+  async updateSecuritySettings(orgId, settings) {
+    const org = await this.findById(orgId);
+    const existing = org.settings?.security || {};
+    const allowedFields = ['require2FA', 'ssoEnabled', 'ssoProvider', 'auditLogRetention', 'allowedDomains'];
+    const securitySettings = { ...existing };
+    for (const key of allowedFields) {
+      if (settings[key] !== undefined) {
+        securitySettings[key] = settings[key];
+      }
+    }
+    await this.orgsCollection.doc(orgId).update({
+      'settings.security': securitySettings,
+      updatedAt: new Date().toISOString(),
+    });
+    return this.findById(orgId);
+  }
+
+  async getMembers(orgId) {
+    const org = await this.findById(orgId);
+    const members = org.members || [];
+    const enriched = [];
+    for (const member of members) {
+      const userDoc = await gcpService.firestore.collection('users').doc(member.userId).get();
+      const userData = userDoc.exists ? userDoc.data() : {};
+      enriched.push({
+        userId: member.userId,
+        role: member.role || 'Member',
+        joinedAt: member.joinedAt,
+        email: userData.email || '',
+        username: userData.username || '',
+        picture: userData.picture || '',
+      });
+    }
+    const invitations = await invitationService.listForOrg(orgId);
+    for (const inv of invitations) {
+      enriched.push({
+        invitationId: inv.id,
+        userId: null,
+        role: inv.role,
+        joinedAt: inv.createdAt,
+        email: inv.email,
+        username: '',
+        picture: '',
+        status: inv.status,
+      });
+    }
+    return enriched;
+  }
+
+  async addMember(orgId, email, role = 'Member') {
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const org = await this.findById(orgId);
+    const existing = (org.members || []).find((m) => {
+      const userDoc = m.userDoc || { email: '' };
+      return false;
+    });
+
+    const snapshot = await gcpService.firestore.collection('users').where('email', '==', normalizedEmail).limit(1).get();
+    if (!snapshot.empty) {
+      const userDoc = snapshot.docs[0];
+      const userId = userDoc.id;
+      const alreadyMember = (org.members || []).some((m) => m.userId === userId);
+      if (alreadyMember) {
+        throw new ConflictError('User is already a member of this organization');
+      }
+      const now = new Date().toISOString();
+      const members = [...(org.members || []), { userId, role, joinedAt: now }];
+      await this.orgsCollection.doc(orgId).update({
+        members,
+        'stats.membersCount': members.length,
+        updatedAt: now,
+      });
+      return {
+        userId,
+        role,
+        joinedAt: now,
+        email: userDoc.data().email,
+        username: userDoc.data().username || '',
+        picture: userDoc.data().picture || '',
+      };
+    }
+
+    return invitationService.invite(orgId, null, normalizedEmail, role);
+  }
+
+  async updateMember(orgId, userId, role) {
+    const org = await this.findById(orgId);
+    const members = org.members || [];
+    const idx = members.findIndex(m => m.userId === userId);
+    if (idx === -1) {
+      throw new NotFoundError('Member not found');
+    }
+    members[idx].role = role;
+    await this.orgsCollection.doc(orgId).update({
+      members,
+      updatedAt: new Date().toISOString(),
+    });
+    return this.getMembers(orgId).then(m => m.find(m => m.userId === userId));
+  }
+
+  async removeMember(orgId, userId) {
+    const org = await this.findById(orgId);
+    const members = (org.members || []).filter(m => m.userId !== userId);
+    await this.orgsCollection.doc(orgId).update({
+      members,
+      'stats.membersCount': members.length,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async cancelInvitation(orgId, invitationId) {
+    return invitationService.cancel(orgId, invitationId, null);
   }
 
   async delete(orgId, { allowDefaultDeletion = true } = {}) {

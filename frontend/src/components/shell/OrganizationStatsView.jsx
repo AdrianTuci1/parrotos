@@ -81,7 +81,7 @@ export function OrganizationStatsView() {
   const topConnectorTrend = topConnector.value && topConnector.value !== 'None' ? topConnector.trend : 'No data';
 
   return (
-    <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
+    <ViewFrame className="organization-home-frame" maxWidthClassName="full-width">
       <div className="organization-home-shell">
         <div className="organization-home-hero">
           <div>

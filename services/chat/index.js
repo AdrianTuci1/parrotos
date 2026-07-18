@@ -18,7 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const firestore = new Firestore();
+const firestore = new Firestore({ projectId: process.env.GCP_PROJECT_ID || 'local-dev-project' });
 const PORT = process.env.PORT || 8080;
 
 // Prometheus
@@ -39,6 +39,7 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3000/api/v1';
 const HARNESS_SERVICE_URL = process.env.HARNESS_SERVICE_URL || 'http://harness:8081';
 const OBSERVER_SERVICE_URL = process.env.OBSERVER_SERVICE_URL || 'http://observer:8082';
 const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || 'dev-internal-token';
+const TEST_MODE = process.env.TEST_MODE === '1';
 
 // ═══════════════════════════════════════════════════
 // AUTH MIDDLEWARE — only accept requests from backend
@@ -165,6 +166,7 @@ const TOOLS = [
     parameters: {
       type: 'object',
       properties: {},
+      required: [],
     },
   },
   {
@@ -248,7 +250,28 @@ function buildSystemPrompt(context) {
     .replace('{observerStatus}', context.observerStatus);
 }
 
+// Test-mode mock LLM responses for deterministic E2E coverage.
+async function* streamTestResponse(userMessage) {
+  const lower = userMessage.toLowerCase();
+  if (lower.includes('connectors') || lower.includes('recommend') || lower.includes('suggest')) {
+    yield { type: 'text', content: 'Based on common e-commerce needs, I recommend these connectors:' };
+    yield { type: 'tool_call', id: 'tc_test_suggest', name: 'suggest_connectors', args: JSON.stringify({ reason: 'E-commerce data stack', connectors: ['Stripe', 'Shopify', 'GA4'] }) };
+  } else if (lower.includes('connect stripe') || lower.includes('stripe')) {
+    yield { type: 'text', content: 'I can connect Stripe for you. Please enter your credentials.' };
+    yield { type: 'tool_call', id: 'tc_test_stripe', name: 'open_integration_modal', args: JSON.stringify({ connector_type: 'Stripe' }) };
+  } else if (lower.includes('widget') || lower.includes('chart') || lower.includes('revenue')) {
+    yield { type: 'text', content: 'Here is a revenue chart widget for your project.' };
+    yield { type: 'tool_call', id: 'tc_test_widget', name: 'show_widget', args: JSON.stringify({ widget_query_ref: 'revenue_chart', title: 'Revenue over time' }) };
+  } else {
+    yield { type: 'text', content: 'This is a test-mode response. How can I help?' };
+  }
+}
+
 async function* streamLLMResponse(messages, systemPrompt) {
+  const userMessage = messages[messages.length - 1]?.content || '';
+  if (TEST_MODE) {
+    yield* streamTestResponse(userMessage); return;
+  }
   // deepseek / openai / openai-compatible — all use the same API format
   if (LLM_PROVIDER === 'openai' || LLM_PROVIDER === 'deepseek' || LLM_PROVIDER === 'openai-compatible') {
     const response = await fetch(`${LLM_BASE_URL}/chat/completions`, {
@@ -271,6 +294,7 @@ async function* streamLLMResponse(messages, systemPrompt) {
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
+    const toolCallBuffer = new Map();
 
     while (true) {
       const { done, value } = await reader.read();
@@ -287,11 +311,26 @@ async function* streamLLMResponse(messages, systemPrompt) {
             }
             if (delta?.tool_calls) {
               for (const tc of delta.tool_calls) {
-                yield { type: 'tool_call', id: tc.id, name: tc.function?.name, args: tc.function?.arguments };
+                const index = tc.index ?? 0;
+                let current = toolCallBuffer.get(index) || { id: '', name: '', args: '' };
+                if (tc.id) current.id = tc.id;
+                if (tc.function?.name) current.name += tc.function.name;
+                if (tc.function?.arguments) current.args += tc.function.arguments;
+                toolCallBuffer.set(index, current);
+                if (current.id && current.name && current.args && (tc.function?.arguments || '').endsWith('}')) {
+                  yield { type: 'tool_call', id: current.id, name: current.name, args: current.args };
+                  toolCallBuffer.delete(index);
+                }
               }
             }
           } catch {}
         }
+      }
+    }
+    // Flush any remaining tool calls that didn't end with '}'
+    for (const current of toolCallBuffer.values()) {
+      if (current.id && current.name) {
+        yield { type: 'tool_call', id: current.id, name: current.name, args: current.args };
       }
     }
   } else {

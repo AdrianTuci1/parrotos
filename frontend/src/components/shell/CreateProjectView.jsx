@@ -107,7 +107,7 @@ export function CreateProjectView() {
     <ViewFrame
       title="Create Project"
       description="Set up a new project workspace using the same operating model as your existing project views."
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="full-width"
       actions={
         <button type="button" className="settings-btn-secondary" onClick={handleCancel}>
           Cancel

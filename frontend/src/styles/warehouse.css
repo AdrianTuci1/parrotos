@@ -24,7 +24,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  max-width: 1200px;
+  max-width: 100%; /* full width */
   margin: 0 auto;
 }
 
@@ -230,7 +230,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 65%;
+  max-width: 100%; /* full width */
 }
 
 .query-meta {
