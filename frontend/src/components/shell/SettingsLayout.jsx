@@ -43,6 +43,8 @@ const workspaceSettingsItems = [
   { id: "billing", label: "Usage & Billing", icon: Receipt },
 ];
 
+const emptyOrg = { id: '__empty__', name: 'My Organization', slug: 'my-org', plan: 'Starter' };
+
 function stringToGradient(seed = "") {
   let hash = 0;
   const s = String(seed || "default");
@@ -75,6 +77,7 @@ export function SettingsLayout({ children }) {
     currentOrganization,
     selectOrganization,
     createOrganization,
+    fetchOrganizations,
   } = useAppStore();
 
   useEffect(() => {
@@ -87,6 +90,19 @@ export function SettingsLayout({ children }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Ensure organizations are loaded and a valid workspace is selected for workspace settings.
+  useEffect(() => {
+    const isWorkspaceRoute = location.pathname.startsWith('/settings/workspace');
+    const needsOrg = !currentOrganization || currentOrganization.id === emptyOrg.id || !currentOrganization.id;
+    if (isWorkspaceRoute && needsOrg) {
+      fetchOrganizations().then((orgs) => {
+        if (orgs?.length > 0) {
+          selectOrganization(orgs[0].id);
+        }
+      }).catch(() => {});
+    }
+  }, [location.pathname, currentOrganization, fetchOrganizations, selectOrganization]);
 
   const switchOrg = (orgId) => {
     const org = organizations.find((o) => o.id === orgId);

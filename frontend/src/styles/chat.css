@@ -377,7 +377,9 @@
 .chat-centered-composer-wrapper.pill-composer {
   border-radius: 9999px !important;
   padding: 10px 24px !important;
-  max-width: 100% !important; /* full width */
+  max-width: 900px !important; /* centered, limited width */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Demo mode banner — slim overlay chip, stays on top of content */

@@ -209,10 +209,10 @@ export function ChatView() {
         const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
         const fields = authConfig.fields || DEFAULT_FIELDS.fields;
         const values = {};
-        // Extract values from input fields in the DOM
-        const container = document.querySelector('.chat-pending-action-fields');
+        // Extract values from the pending action card inputs in the DOM
+        const container = document.querySelector('.chat-pending-action-card');
         if (container) {
-          const inputs = container.querySelectorAll('input');
+          const inputs = container.querySelectorAll('input, textarea');
           inputs.forEach((input, idx) => {
             if (fields[idx]) values[fields[idx].key] = input.value;
           });

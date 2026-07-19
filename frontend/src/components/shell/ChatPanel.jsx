@@ -188,6 +188,7 @@ function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = C
   const auth = isKeyInput ? (connectorAuthFields[connector] || DEFAULT_FIELDS) : null;
   const firstField = auth?.fields?.[0] || null;
 
+  // Conflicts with the normal chat flow: ESC rejects, Enter approves when not focused.
   return (
     <div className="chat-pending-action-card">
       <div className="chat-pending-action-header">
@@ -204,32 +205,18 @@ function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = C
         </div>
       </div>
 
-      {isKeyInput && firstField && (
-        <div className="chat-pending-action-fields">
-          <input
-            type={firstField.type === "password" ? "password" : "text"}
-            placeholder={firstField.placeholder || firstField.label}
-            className="chat-command-input"
-            autoComplete="off"
-            autoFocus
-          />
-        </div>
-      )}
-
-      {!isKeyInput && tc.choices && (
-        <div className="chat-pending-action-fields choice-row">
-          {(tc.choices || []).map((choice, i) => (
-            <button
-              key={i}
-              className="chat-command-choice-btn"
-              onClick={() => onApprove(action.key)}
-            >
-              {choice.label}
-              {choice.description && <span className="chat-command-choice-desc">{choice.description}</span>}
-            </button>
-          ))}
-        </div>
-      )}
+      <InlineActionComposer
+        variant={isKeyInput ? "key-input" : "choice"}
+        connector={connector}
+        choices={tc.choices}
+        title={tc.title}
+        subtitle={tc.subtitle || tc.reason}
+        approvalKey={action.key}
+        status="pending"
+        onApprove={onApprove}
+        onReject={onReject}
+        connectorAuthFields={connectorAuthFields}
+      />
     </div>
   );
 }
