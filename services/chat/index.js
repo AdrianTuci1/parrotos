@@ -267,6 +267,61 @@ async function* streamTestResponse(userMessage) {
   }
 }
 
+// Production fallback: when the LLM is unavailable (401, 429, 5xx, missing key),
+// we still answer using deterministic rules and real tool calls. This keeps the
+// chat agent useful for proposing connectors, opening modals, and embedding charts.
+async function* streamFallbackResponse(userMessage, context) {
+  const lower = userMessage.toLowerCase();
+  const connected = context.integrations?.split(', ').filter(Boolean) || [];
+
+  if (lower.includes('salut') || lower.includes('hello') || lower.includes('hi')) {
+    yield { type: 'text', content: 'Salut! Sunt asistentul Sentry. Cu ce te pot ajuta — conectări, grafice sau analiză?' };
+  }
+
+  if (lower.includes('conect') || lower.includes('connect') || lower.includes('adaug') || lower.includes('add')) {
+    const allConnectors = ['Stripe', 'GA4', 'Search Console', 'Google Ads', 'Shopify', 'WooCommerce', 'HubSpot', 'Salesforce', 'PostHog', 'Sentry', 'Klaviyo', 'BigQuery'];
+    const missing = allConnectors.filter(c => !connected.includes(c));
+    if (missing.length > 0) {
+      yield { type: 'text', content: 'Pot propune câțiva conectori pe care îi poți adăuga:' };
+      yield { type: 'tool_call', id: 'fb_suggest', name: 'suggest_connectors', args: JSON.stringify({ reason: 'Stack recomandat pentru e-commerce & analytics', connectors: missing.slice(0, 3) }) };
+    }
+  }
+
+  if (lower.includes('stripe')) {
+    yield { type: 'text', content: 'Pot deschide modala de conectare Stripe.' };
+    yield { type: 'tool_call', id: 'fb_stripe', name: 'open_integration_modal', args: JSON.stringify({ connector_type: 'Stripe' }) };
+  }
+
+  if (lower.includes('shopify')) {
+    yield { type: 'text', content: 'Pot deschide modala de conectare Shopify.' };
+    yield { type: 'tool_call', id: 'fb_shopify', name: 'open_integration_modal', args: JSON.stringify({ connector_type: 'Shopify' }) };
+  }
+
+  if (lower.includes('grafic') || lower.includes('chart') || lower.includes('widget') || lower.includes('venit') || lower.includes('revenue') || lower.includes('metric')) {
+    yield { type: 'text', content: 'Pot încărca un widget direct în chat.' };
+    yield { type: 'tool_call', id: 'fb_widget', name: 'show_widget', args: JSON.stringify({ widget_query_ref: 'revenue_over_time', title: 'Venit în timp' }) };
+  }
+
+  if (lower.includes('status') || lower.includes('progres') || lower.includes('stare') || lower.includes('harness') || lower.includes('observer')) {
+    yield { type: 'text', content: 'Verific starea serviciilor.' };
+    yield { type: 'tool_call', id: 'fb_check', name: 'check_harness', args: '{}' };
+  }
+
+  if (lower.includes('refresh') || lower.includes('regenereaz') || lower.includes('rebuild') || lower.includes('update')) {
+    yield { type: 'text', content: 'Pornesc regenerarea dashboard-urilor.' };
+    yield { type: 'tool_call', id: 'fb_trigger', name: 'trigger_harness', args: JSON.stringify({ force_full: false }) };
+  }
+
+  if (lower.includes('analytics') || lower.includes('query') || lower.includes('sql') || lower.includes('date') || lower.includes('raport')) {
+    yield { type: 'text', content: 'Pot rula o interogare asupra datelor disponibile.' };
+    yield { type: 'tool_call', id: 'fb_query', name: 'run_analytics_query', args: JSON.stringify({ question: userMessage, sql: 'SELECT 1' }) };
+  }
+
+  if (lower.includes('navig') || lower.includes('merg') || lower.includes('du-mă')) {
+    yield { type: 'tool_call', id: 'fb_nav', name: 'navigate_to', args: JSON.stringify({ section: 'analytics' }) };
+  }
+}
+
 async function* streamLLMResponse(messages, systemPrompt) {
   const userMessage = messages[messages.length - 1]?.content || '';
   if (TEST_MODE) {
@@ -291,6 +346,13 @@ async function* streamLLMResponse(messages, systemPrompt) {
         stream: true,
       }),
     });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'LLM request failed');
+      const err = new Error(`LLM ${response.status}: ${errorText}`);
+      err.status = response.status;
+      throw err;
+    }
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -596,7 +658,7 @@ app.post('/internal/message', requireInternalToken, async (req, res) => {
         {
           role: 'assistant',
           content: assistantContent || null,
-          tool_calls: toolCalls.length > 0 ? toolCalls : undefined,
+          tool_calls: toolCalls.length > 0 ? toolCalls : [],
         },
       ];
       await saveConversation(orgId, projectId, sessionId, newMessages);

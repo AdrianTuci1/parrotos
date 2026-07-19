@@ -1,0 +1,91 @@
+# Docker Compose stack pentru testare locala AI service (backend + chat agent + firestore emulator).
+# Nu modifica infrastructura de productie; acest fisier e doar pentru dev/test.
+#
+# Usage:
+#   docker compose -f docker-compose.chat.yml up --build
+#
+# Acces:
+#   Backend:  http://localhost:3000
+#   Chat:     http://localhost:8080
+#   Firestore emulator: localhost:8081
+
+services:
+  firestore-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
+    container_name: statsparrot-firestore-emulator
+    command: ["gcloud", "emulators", "firestore", "start", "--host-port=0.0.0.0:8081"]
+    ports:
+      - "8081:8081"
+    networks:
+      - statsparrot-chat
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8081/ || exit 0"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: statsparrot-backend
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - LOCAL_DEV_MODE=true
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8081
+      - GCP_PROJECT_ID=statsparrot-local
+      - CHAT_SERVICE_URL=http://chat:8080
+      - HARNESS_SERVICE_URL=http://localhost:8081
+      - OBSERVER_SERVICE_URL=http://localhost:8082
+      - CORS_ORIGIN=*
+    ports:
+      - "3000:3000"
+    networks:
+      - statsparrot-chat
+    depends_on:
+      firestore-emulator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  chat:
+    build:
+      context: ./services/chat
+      dockerfile: Dockerfile
+    container_name: statsparrot-chat
+    env_file:
+      - .env
+    environment:
+      - BACKEND_URL=http://backend:3000/api/v1
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8081
+      - GCP_PROJECT_ID=statsparrot-local
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    networks:
+      - statsparrot-chat
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  statsparrot-chat:
+    driver: bridge

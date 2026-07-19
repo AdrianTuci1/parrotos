@@ -1,6 +1,10 @@
 import { llmService } from './LlmService.js';
 
 export class ChatFallbackService {
+  constructor(llmServiceInstance = llmService) {
+    this.llmService = llmServiceInstance;
+  }
+
   async *stream({ message }) {
     try {
       const messages = [
@@ -8,7 +12,7 @@ export class ChatFallbackService {
         { role: 'user', content: message },
       ];
 
-      for await (const chunk of llmService.stream(messages)) {
+      for await (const chunk of this.llmService.stream(messages)) {
         yield { type: 'text', content: chunk };
       }
     } catch (err) {

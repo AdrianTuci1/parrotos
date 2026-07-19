@@ -1,23 +1,22 @@
-FROM node:20-alpine
+FROM node:22-slim
 
-# curl is required for container healthchecks
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++ curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install --omit=dev
+COPY package.json package-lock.json ./
+RUN npm install --production
 
-# Copy source code
 COPY src ./src
 
-# Fix ownership for non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 && \
-    chown -R nodejs:nodejs /app
-USER nodejs
+ENV NODE_ENV=production
+ENV PORT=3000
 
 EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -fs http://localhost:3000/health || exit 1
 
 CMD ["node", "src/app.js"]
