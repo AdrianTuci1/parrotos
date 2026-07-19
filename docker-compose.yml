@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     build: ./backend
@@ -22,9 +20,12 @@ services:
       - ENABLE_BIGQUERY_ANALYTICS=${ENABLE_BIGQUERY_ANALYTICS:-true}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
     depends_on:
-      - chat
-      - harness
-      - observer
+      chat:
+        condition: service_started
+      harness:
+        condition: service_started
+      observer:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
     restart: unless-stopped
@@ -40,6 +41,11 @@ services:
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
       - FIRESTORE_EMULATOR_HOST=${FIRESTORE_EMULATOR_HOST:-host.docker.internal:8090}
       - TEST_MODE=${TEST_MODE:-0}
+    depends_on:
+      harness:
+        condition: service_started
+      observer:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
     restart: unless-stopped
@@ -78,5 +84,6 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+      backend:
+        condition: service_started
     restart: unless-stopped

@@ -1,0 +1,62 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: sentry-data-staging
+namePrefix: staging-
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: sentry-data-config
+    patch: |-
+      - op: replace
+        path: /data/GCP_PROJECT_ID
+        value: "statsparrot-staging"
+      - op: replace
+        path: /data/GCS_BUCKET_NAME
+        value: "sentry-platform-data-statsparrot-staging"
+      - op: replace
+        path: /data/CORS_ORIGIN
+        value: "https://app-staging.statsparrot.com"
+      - op: replace
+        path: /data/FRONTEND_URL
+        value: "https://app-staging.statsparrot.com"
+      - op: replace
+        path: /data/GOOGLE_REDIRECT_URI
+        value: "https://api-staging.statsparrot.com/api/v1/auth/google/callback"
+      - op: replace
+        path: /data/BACKEND_URL
+        value: "http://staging-sentry-data-backend/api/v1"
+      - op: replace
+        path: /data/CHAT_SERVICE_URL
+        value: "http://staging-sentry-data-chat:8080"
+      - op: replace
+        path: /data/HARNESS_SERVICE_URL
+        value: "http://staging-sentry-data-harness:8081"
+      - op: replace
+        path: /data/OBSERVER_SERVICE_URL
+        value: "http://staging-sentry-data-observer:8082"
+  - target:
+      kind: Ingress
+      name: sentry-data-backend
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: api-staging.statsparrot.com
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: api-staging.statsparrot.com
+      - op: replace
+        path: /spec/tls/0/secretName
+        value: api-staging-statsparrot-tls
+  - target:
+      kind: Certificate
+      name: api-statsparrot-tls
+    patch: |-
+      - op: replace
+        path: /spec/dnsNames/0
+        value: api-staging.statsparrot.com
+      - op: replace
+        path: /spec/secretName
+        value: api-staging-statsparrot-tls
