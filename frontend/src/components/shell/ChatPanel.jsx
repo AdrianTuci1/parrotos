@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { BarChart3, Plug, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { cn } from "@/lib/utils";
@@ -186,9 +186,23 @@ function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = C
   const isKeyInput = tc.action === "open_integration_modal";
   const connector = tc.connector || "integration";
   const auth = isKeyInput ? (connectorAuthFields[connector] || DEFAULT_FIELDS) : null;
-  const firstField = auth?.fields?.[0] || null;
+  const fields = auth?.fields || [];
+  const [fieldValues, setFieldValues] = useState(() =>
+    Object.fromEntries(fields.map((f) => [f.key, ""]))
+  );
 
-  // Conflicts with the normal chat flow: ESC rejects, Enter approves when not focused.
+  const handleApprove = () => {
+    if (isKeyInput) {
+      onApprove(action.key, { credentials: fieldValues });
+    } else {
+      onApprove(action.key);
+    }
+  };
+
+  const handleChoiceClick = (choice) => {
+    onApprove(action.key, { selected: choice.label });
+  };
+
   return (
     <div className="chat-pending-action-card">
       <div className="chat-pending-action-header">
@@ -199,24 +213,44 @@ function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = C
           <button className="chat-pending-key-btn" onClick={() => onReject(action.key)}>
             Deny <kbd>Esc</kbd>
           </button>
-          <button className="chat-pending-key-btn" onClick={() => onApprove(action.key)}>
+          <button className="chat-pending-key-btn" onClick={handleApprove}>
             Approve <kbd><CornerDownLeft size={11} /></kbd>
           </button>
         </div>
       </div>
 
-      <InlineActionComposer
-        variant={isKeyInput ? "key-input" : "choice"}
-        connector={connector}
-        choices={tc.choices}
-        title={tc.title}
-        subtitle={tc.subtitle || tc.reason}
-        approvalKey={action.key}
-        status="pending"
-        onApprove={onApprove}
-        onReject={onReject}
-        connectorAuthFields={connectorAuthFields}
-      />
+      {isKeyInput && fields.length > 0 && (
+        <div className="chat-pending-action-fields">
+          {fields.map((f, idx) => (
+            <input
+              key={f.key}
+              type={f.type === "password" ? "password" : "text"}
+              placeholder={f.placeholder || f.label}
+              className="chat-command-input"
+              autoComplete="off"
+              autoFocus={idx === 0}
+              value={fieldValues[f.key] || ""}
+              onChange={(e) => setFieldValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApprove(); } }}
+            />
+          ))}
+        </div>
+      )}
+
+      {!isKeyInput && tc.choices && (
+        <div className="chat-pending-action-fields choice-row">
+          {(tc.choices || []).map((choice, i) => (
+            <button
+              key={i}
+              className="chat-command-choice-btn"
+              onClick={() => handleChoiceClick(choice)}
+            >
+              {choice.label}
+              {choice.description && <span className="chat-command-choice-desc">{choice.description}</span>}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

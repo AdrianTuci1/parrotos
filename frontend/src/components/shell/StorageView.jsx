@@ -227,8 +227,9 @@ export function StorageView() {
       }
       return workspaceStorages[workspaceKey];
     }
-    // Backend mode: use storageVolumes from store
-    return storageVolumes || [];
+    // Backend mode: use storageVolumes from store; guard against non-array responses
+    const fetched = storageVolumes || [];
+    return Array.isArray(fetched) ? fetched : [];
   }, [workspaceStorages, workspaceKey, initialVolumes, isMockMode, storageVolumes]);
 
   const activeVolume = useMemo(() => {
