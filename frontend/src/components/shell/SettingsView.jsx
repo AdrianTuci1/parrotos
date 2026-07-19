@@ -1,274 +1,278 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ViewFrame } from "@/components/shell/ViewFrame";
+import { useState } from "react";
 import { useAppStore } from "@/stores/useAppStore";
+import { SettingsSidebar } from "@/components/shell/SettingsSidebar";
 import {
   Link as LinkIcon,
   RefreshCw,
-  Users,
   Trash2,
   Check,
   Copy,
-  ChevronDown,
+  X,
+  Users,
+  Bell,
+  Shield,
+  Database,
+  Globe,
   Pencil,
-  X
 } from "lucide-react";
 import "@/styles/settings.css";
 
-export function SettingsView() {
-  const {
-    currentOrganization,
-    currentWorkspace,
-    deleteProject,
-    generatePublicLink,
-    revokePublicLink,
-    regeneratePublicLink,
-    isLoading,
-  } = useAppStore();
-  const navigate = useNavigate();
+const projectSettingsItems = [
+  { id: "general", label: "General", icon: <Globe size={16} /> },
+  { id: "team", label: "Team", icon: <Users size={16} /> },
+  { id: "notifications", label: "Notifications", icon: <Bell size={16} /> },
+  { id: "integrations", label: "Integrations & Hooks", icon: <LinkIcon size={16} /> },
+  { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
+];
 
-  const [publicShareLink, setPublicShareLink] = useState("");
-  const [copiedPublic, setCopiedPublic] = useState(false);
-  const [reanalyzing, setReanalyzing] = useState(false);
-  const [generatingLink, setGeneratingLink] = useState(false);
+export function SectionHeader({ title, description }) {
+  return (
+    <div className="settings-page-header">
+      <h1 className="settings-page-title">{title}</h1>
+      {description && <p className="settings-page-desc">{description}</p>}
+    </div>
+  );
+}
 
-  // Deletion confirmation state
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deleteInputText, setDeleteInputText] = useState("");
+export function GeneralSection() {
+  const { currentWorkspace, updateProject } = useAppStore();
+  const [name, setName] = useState(currentWorkspace?.name || "");
+  const [desc, setDesc] = useState(currentWorkspace?.description || "");
+  const [saved, setSaved] = useState(false);
 
-  // Sync cu publicLink din workspace când se schimbă
-  useEffect(() => {
-    if (currentWorkspace?.publicLink?.url) {
-      setPublicShareLink(currentWorkspace.publicLink.url);
-    } else {
-      setPublicShareLink("");
-    }
-  }, [currentWorkspace?.publicLink]);
-
-  const handleGeneratePublicLink = async () => {
-    if (!currentOrganization || !currentWorkspace) return;
-    setGeneratingLink(true);
-    try {
-      const result = await generatePublicLink(currentOrganization.id, currentWorkspace.id);
-      if (result?.url) {
-        setPublicShareLink(result.url);
-      }
-    } catch (err) {
-      alert('Failed to generate public link: ' + err.message);
-    } finally {
-      setGeneratingLink(false);
-    }
-  };
-
-  const copyPublicLink = () => {
-    if (!publicShareLink) return;
-    navigator.clipboard.writeText(publicShareLink);
-    setCopiedPublic(true);
-    setTimeout(() => setCopiedPublic(false), 2000);
-  };
-
-  const handleRevokePublicLink = async () => {
-    if (!currentOrganization || !currentWorkspace) return;
-    if (!confirm("Are you sure you want to revoke the public link? This will immediately disable public access to the analytics dashboard.")) {
-      return;
-    }
-    try {
-      await revokePublicLink(currentOrganization.id, currentWorkspace.id);
-      setPublicShareLink("");
-    } catch (err) {
-      alert('Failed to revoke public link: ' + err.message);
-    }
-  };
-
-  const handleRegeneratePublicLink = async () => {
-    if (!currentOrganization || !currentWorkspace) return;
-    setGeneratingLink(true);
-    try {
-      const result = await regeneratePublicLink(currentOrganization.id, currentWorkspace.id);
-      if (result?.url) {
-        setPublicShareLink(result.url);
-        setCopiedPublic(false);
-      }
-    } catch (err) {
-      alert('Failed to regenerate public link: ' + err.message);
-    } finally {
-      setGeneratingLink(false);
-    }
-  };
-
-  const handleReanalyze = () => {
-    setReanalyzing(true);
-    setTimeout(() => {
-      setReanalyzing(false);
-      alert("Re-analysis request sent successfully!");
-    }, 1500);
-  };
-
-  const handleDelete = async () => {
-    if (!currentWorkspace || !currentOrganization) return;
-    try {
-      await deleteProject(currentOrganization.id, currentWorkspace.id);
-      navigate('/app', { replace: true });
-    } catch (err) {
-      alert('Failed to delete project: ' + err.message);
-    }
+  const handleSave = async () => {
+    if (!currentWorkspace) return;
+    await updateProject(currentWorkspace.organizationId, currentWorkspace.id, {
+      name: name.trim(),
+      description: desc.trim(),
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   return (
-    <ViewFrame
-      title="Settings"
-      description="Manage workspace access permissions, link generation, re-analysis execution, and project removal."
-      maxWidthClassName="max-w-3xl"
-    >
-      <div className="settings-wrapper">
-        {/* Section 1: Access Links & Re-analysis */}
-        <div className="settings-section">
-          <div className="settings-section-header">
-            <h3 className="settings-section-title">Integrations & Hooks</h3>
+    <div className="settings-page">
+      <SectionHeader title="General" description="Project name, description, and public domain." />
+
+      <div className="settings-card">
+        <div className="settings-field">
+          <label className="settings-label">Project name</label>
+          <input
+            className="settings-input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Project name"
+          />
+        </div>
+        <div className="settings-field">
+          <label className="settings-label">Description</label>
+          <textarea
+            className="settings-input settings-textarea"
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            placeholder="Short description"
+            rows={3}
+          />
+        </div>
+        <div className="settings-card-actions">
+          <button className="settings-btn-primary" onClick={handleSave} disabled={saved}>
+            {saved ? <><Check size={14} /> Saved</> : "Save Changes"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function PublicLinkRow() {
+  const { currentWorkspace, generatePublicLink, revokePublicLink, regeneratePublicLink } = useAppStore();
+  const [link, setLink] = useState(currentWorkspace?.publicLink?.url || "");
+  const [copied, setCopied] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!currentWorkspace) return;
+    const result = await generatePublicLink(currentWorkspace.organizationId, currentWorkspace.id);
+    setLink(result?.url || "");
+  };
+  const handleRegenerate = async () => {
+    if (!currentWorkspace) return;
+    const result = await regeneratePublicLink(currentWorkspace.organizationId, currentWorkspace.id);
+    setLink(result?.url || "");
+  };
+  const handleRevoke = async () => {
+    if (!currentWorkspace) return;
+    await revokePublicLink(currentWorkspace.organizationId, currentWorkspace.id);
+    setLink("");
+  };
+  const handleCopy = () => {
+    navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <div className="settings-card">
+      <div className="settings-card-header">
+        <div className="settings-card-header-text">
+          <h3 className="settings-card-title">Public Link</h3>
+          <p className="settings-card-subtitle">Share read-only analytics without login.</p>
+        </div>
+      </div>
+      <div className="settings-card-body">
+        {link ? (
+          <div className="settings-link-row">
+            <div className="settings-link-display">
+              <span className="settings-link-text">{link}</span>
+            </div>
+            <button className="settings-btn-icon" onClick={handleCopy} title="Copy">
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+            </button>
+            <button className="settings-btn-icon" onClick={handleRegenerate} title="Regenerate">
+              <RefreshCw size={14} />
+            </button>
+            <button className="settings-btn-danger-outline" onClick={handleRevoke}>Revoke</button>
           </div>
+        ) : (
+          <button className="settings-btn-secondary" onClick={handleGenerate}>Generate Public Link</button>
+        )}
+      </div>
+    </div>
+  );
+}
 
-          <div className="settings-group-card">
-            {/* Row 1: Public Share Link */}
-            <div className="settings-group-row" style={{ flexDirection: "column", alignItems: "stretch", gap: "14px" }}>
-              <div className="settings-group-row-left">
-                <span className="settings-row-title">Public Analytics sharing</span>
-                <span className="settings-row-desc">
-                  Generate a public dashboard link to share this project's real-time analytics with external partners without requiring them to log in.
-                </span>
-              </div>
-              <div className="settings-action-row" style={{ marginTop: "4px", display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-                {!publicShareLink ? (
-                  <button
-                    onClick={handleGeneratePublicLink}
-                    disabled={generatingLink || isLoading}
-                    className="settings-btn-secondary"
-                  >
-                    <LinkIcon size={14} />
-                    {generatingLink ? "Generating..." : "Generate Public Link"}
-                  </button>
-                ) : (
-                  <>
-                    <div className="settings-link-display" style={{ flex: 1, minWidth: "240px" }}>
-                      <span className="settings-link-text">{publicShareLink}</span>
-                      <button onClick={copyPublicLink} className="settings-copy-btn" title="Copy Link">
-                        {copiedPublic ? <Check size={14} style={{ color: "#3b82f6" }} /> : <Copy size={14} />}
-                      </button>
-                    </div>
-                    <button
-                      onClick={handleRegeneratePublicLink}
-                      disabled={generatingLink}
-                      className="settings-btn-secondary"
-                      style={{ padding: "8px 12px", borderRadius: "8px", fontSize: "12px" }}
-                      title="Regenerate Link"
-                    >
-                      <RefreshCw size={14} className={generatingLink ? "animate-spin" : ""} />
-                    </button>
-                    <button
-                      onClick={handleRevokePublicLink}
-                      className="settings-btn-danger"
-                      style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "12px" }}
-                    >
-                      Disable Public Link
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+export function PlaceholderSection({ title, description }) {
+  return (
+    <div className="settings-page">
+      <SectionHeader title={title} description={description} />
+      <div className="settings-card">
+        <p className="settings-placeholder">This section is under construction.</p>
+      </div>
+    </div>
+  );
+}
 
-            {/* Row 2: Request Re-analysis */}
-            <div className="settings-group-row">
-              <div className="settings-group-row-left">
-                <span className="settings-row-title">Request Re-analysis</span>
-                <span className="settings-row-desc">
-                  Force Sentry parser to re-scan all server nodes, log history, and telemetry streams to refresh security findings.
-                </span>
-              </div>
-              <div className="settings-group-row-right">
-                <button onClick={handleReanalyze} disabled={reanalyzing} className="settings-btn-secondary">
-                  <RefreshCw size={14} className={reanalyzing ? "animate-spin" : ""} />
-                  {reanalyzing ? "Re-analyzing..." : "Run Re-analysis Now"}
-                </button>
-              </div>
-            </div>
+function IntegrationsSection() {
+  return (
+    <div className="settings-page">
+      <SectionHeader title="Integrations & Hooks" description="Incoming webhooks and outgoing connectors." />
+
+      <div className="settings-card">
+        <div className="settings-card-header">
+          <div className="settings-card-header-text">
+            <h3 className="settings-card-title">Webhook URL</h3>
+            <p className="settings-card-subtitle">POST events to this endpoint to ingest data.</p>
           </div>
         </div>
-
-
-
-        {/* Section 3: Danger Zone */}
-        <div className="settings-section">
-          <div className="settings-section-header">
-            <h3 className="settings-section-title" style={{ color: "#ef4444" }}>Danger Zone</h3>
-          </div>
-          
-          <div className="settings-danger-card">
-            <div className="settings-danger-header">
-              <Trash2 size={16} className="text-[#EF4444]" />
-              <h3 className="settings-danger-title">Delete Project</h3>
+        <div className="settings-card-body">
+          <div className="settings-link-row">
+            <div className="settings-link-display">
+              <span className="settings-link-text">https://api.parrot.io/v1/hooks/ingest/{'{projectId}'}</span>
             </div>
-            <p className="settings-row-desc" style={{ color: "#f87171" }}>
-              Permanently delete Sentry Observability Hub telemetry configurations, database integrations, and logs. This action is irreversible.
-            </p>
-            <div style={{ marginTop: "4px" }}>
-              <button
-                onClick={() => {
-                  setDeleteConfirmOpen(true);
-                  setDeleteInputText('');
-                }}
-                className="settings-btn-danger"
-              >
-                Delete Project
-              </button>
-            </div>
+            <button className="settings-btn-icon" title="Copy">
+              <Copy size={14} />
+            </button>
           </div>
         </div>
       </div>
 
-      {deleteConfirmOpen && currentWorkspace && (
-        <div className="overlay-backdrop" onClick={() => setDeleteConfirmOpen(false)}>
-          <div className="overlay-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="overlay-close-btn" onClick={() => setDeleteConfirmOpen(false)}>
-              <X size={16} />
-            </button>
-            <div className="overlay-header">
-              <h3 className="overlay-title">Are you sure?</h3>
-              <p className="overlay-description" style={{ color: '#ef4444', fontWeight: 500 }}>
-                This action is permanent and cannot be undone. All database integrations, Sentry Observability Hub telemetry configurations, and logs for this project will be permanently deleted.
-              </p>
-            </div>
-            <div className="overlay-body">
-              <div className="overlay-form-group">
-                <label className="overlay-form-label" style={{ color: '#8e918f', marginBottom: '8px' }}>
-                  Please type <strong style={{ color: '#ffffff' }}>{currentWorkspace.name}</strong> to confirm:
-                </label>
-                <input
-                  type="text"
-                  className="overlay-input"
-                  value={deleteInputText}
-                  onChange={(e) => setDeleteInputText(e.target.value)}
-                  placeholder="Type project name"
-                  autoFocus
-                />
-              </div>
-            </div>
-            <div className="overlay-footer">
-              <button className="overlay-cancel-btn" onClick={() => setDeleteConfirmOpen(false)}>
-                Cancel
+      <div className="settings-card">
+        <div className="settings-card-header">
+          <div className="settings-card-header-text">
+            <h3 className="settings-card-title">Connected Sources</h3>
+            <p className="settings-card-subtitle">Live integrations feeding this project.</p>
+          </div>
+        </div>
+        <div className="settings-card-body">
+          <p className="settings-placeholder">No sources connected yet. Use the Sources tab to connect.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function DangerSection() {
+  const { currentWorkspace, deleteProject } = useAppStore();
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+
+  const handleDelete = async () => {
+    if (!currentWorkspace) return;
+    try {
+      await deleteProject(currentWorkspace.organizationId, currentWorkspace.id);
+      setOpen(false);
+    } catch (err) {
+      alert("Failed to delete: " + err.message);
+    }
+  };
+
+  return (
+    <div className="settings-page">
+      <SectionHeader title="Danger Zone" description="Irreversible actions for this project." />
+
+      <div className="settings-card settings-card-danger">
+        <div className="settings-danger-row">
+          <div className="settings-danger-text">
+            <h3 className="settings-card-title">Delete Project</h3>
+            <p className="settings-card-subtitle">Permanently delete {currentWorkspace?.name || "this project"} and all associated data.</p>
+          </div>
+          <button className="settings-btn-danger" onClick={() => setOpen(true)}>Delete Project</button>
+        </div>
+      </div>
+
+      {open && (
+        <div className="settings-overlay-backdrop" onClick={() => setOpen(false)}>
+          <div className="settings-overlay" onClick={(e) => e.stopPropagation()}>
+            <div className="settings-overlay-header">
+              <h3 className="settings-overlay-title">Delete Project</h3>
+              <button className="settings-overlay-close" onClick={() => setOpen(false)}>
+                <X size={16} />
               </button>
-              <button
-                className="overlay-delete-btn"
-                disabled={deleteInputText !== currentWorkspace.name}
-                onClick={() => {
-                  handleDelete();
-                  setDeleteConfirmOpen(false);
-                }}
-              >
+            </div>
+            <div className="settings-overlay-body">
+              <p className="settings-overlay-copy">
+                This action cannot be undone. Type <strong>{currentWorkspace?.name}</strong> to confirm.
+              </p>
+              <input
+                type="text"
+                className="settings-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={`Type ${currentWorkspace?.name} to confirm`}
+                autoFocus
+              />
+            </div>
+            <div className="settings-overlay-footer">
+              <button className="settings-btn-secondary" onClick={() => setOpen(false)}>Cancel</button>
+              <button className="settings-btn-danger" disabled={input !== currentWorkspace?.name} onClick={handleDelete}>
                 Delete Project
               </button>
             </div>
           </div>
         </div>
       )}
-    </ViewFrame>
+    </div>
+  );
+}
+
+export function SettingsView() {
+  const [activeTab, setActiveTab] = useState("general");
+
+  return (
+    <div className="settings-layout">
+      <SettingsSidebar items={projectSettingsItems} activeId={activeTab} onChange={setActiveTab} />
+      <div className="settings-main">
+        {activeTab === "general" && (
+          <>
+            <SectionHeader title="Settings" description="Manage project configuration, team access, and integrations." />
+            <GeneralSection />
+            <PublicLinkRow />
+          </>
+        )}
+        {activeTab === "team" && <PlaceholderSection title="Team" description="Invite and manage project members." />}
+        {activeTab === "notifications" && <PlaceholderSection title="Notifications" description="Configure alerts and routing." />}
+        {activeTab === "integrations" && <IntegrationsSection />}
+        {activeTab === "danger" && <DangerSection />}
+      </div>
+    </div>
   );
 }

@@ -227,8 +227,9 @@ export function StorageView() {
       }
       return workspaceStorages[workspaceKey];
     }
-    // Backend mode: use storageVolumes from store
-    return storageVolumes || [];
+    // Backend mode: use storageVolumes from store; guard against non-array responses
+    const fetched = storageVolumes || [];
+    return Array.isArray(fetched) ? fetched : [];
   }, [workspaceStorages, workspaceKey, initialVolumes, isMockMode, storageVolumes]);
 
   const activeVolume = useMemo(() => {
@@ -584,7 +585,7 @@ export function StorageView() {
     <ViewFrame
       title={activeVolume ? activeVolume.name : "Storage"}
       description={activeVolume ? null : "Persist and communicate data created or processed by your Modal Apps."}
-      maxWidthClassName="max-w-3xl"
+      maxWidthClassName="full-width"
       actions={
         activeVolume ? (
           <button

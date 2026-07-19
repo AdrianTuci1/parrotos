@@ -1,62 +1,62 @@
-version: "3.8"
-
 services:
   backend:
     build: ./backend
     ports:
       - "3000:3000"
+    env_file:
+      - ./.env
     environment:
       - PORT=3000
       - NODE_ENV=production
       - LOCAL_DEV_MODE=${LOCAL_DEV_MODE:-true}
       - FIRESTORE_EMULATOR_HOST=${FIRESTORE_EMULATOR_HOST:-host.docker.internal:8090}
-      - JWT_SECRET=${JWT_SECRET}
-      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
-      - GCP_REGION=${GCP_REGION:-europe-west1}
-      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME:-sentry-platform-data}
       - API_PREFIX=${API_PREFIX:-/api/v1}
       - CORS_ORIGIN=${CORS_ORIGIN:-*}
       - CHAT_SERVICE_URL=${CHAT_SERVICE_URL:-http://chat:8080}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
-      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - CLOUD_RUN_AUTH_MODE=${CLOUD_RUN_AUTH_MODE:-disabled}
       - ENABLE_MODAL_AGENTS=false
       - ENABLE_BIGQUERY_ANALYTICS=${ENABLE_BIGQUERY_ANALYTICS:-true}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
     depends_on:
-      - chat
-      - harness
-      - observer
+      chat:
+        condition: service_started
+      harness:
+        condition: service_started
+      observer:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
     restart: unless-stopped
 
   chat:
     build: ./services/chat
+    env_file:
+      - ./.env
     environment:
       - PORT=8080
-      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
-      - LLM_MODEL_ID=${LLM_MODEL_ID:-deepseek-v4-flash}
-      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
       - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
-      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - FIRESTORE_EMULATOR_HOST=${FIRESTORE_EMULATOR_HOST:-host.docker.internal:8090}
+      - TEST_MODE=${TEST_MODE:-0}
+    depends_on:
+      harness:
+        condition: service_started
+      observer:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     restart: unless-stopped
 
   harness:
     build: ./services/harness
+    env_file:
+      - ./.env
     environment:
       - PORT=8081
-      - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
-      - LLM_MODEL_ID=${LLM_MODEL_ID:-deepseek-v4-flash}
-      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
       - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
-      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
     volumes:
       - ${GCP_KEY_PATH:-~/.config/gcloud/application_default_credentials.json}:/secrets/gcp-key.json:ro
@@ -64,14 +64,26 @@ services:
 
   observer:
     build: ./services/observer
+    ports:
+      - "8082:8082"
+    env_file:
+      - ./.env
     environment:
       - PORT=8082
       - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
-      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
       - BQ_LOCATION=${BIGQUERY_LOCATION:-EU}
     volumes:
       - ${GCP_KEY_PATH:-~/.config/gcloud/application_default_credentials.json}:/secrets/gcp-key.json:ro
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      backend:
+        condition: service_started
     restart: unless-stopped

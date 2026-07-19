@@ -10,6 +10,7 @@ import specsRoutes from './specs.js';
 import alertsRoutes from './alerts.js';
 import chatRoutes from './chat.js';
 import serviceAccountRoutes from './serviceAccounts.js';
+import apiTokenRoutes from './apiTokens.js';
 import billingRoutes from './billing.js';
 import stripeWebhookRoutes from './stripeWebhook.js';
 import storageRoutes from './storage.js';
@@ -19,6 +20,7 @@ import observerRoutes from './observer.js';
 import publicRoutes from './public.js';
 import metricsRoutes from './metrics.js';
 import notificationRoutes from './notifications.js';
+import invitationRoutes from './invitations.js';
 
 const router = Router({ mergeParams: true });
 
@@ -38,8 +40,10 @@ router.use('/organizations/:orgId/projects/:projectId/storage', storageRoutes);
 router.use('/organizations/:orgId/projects/:projectId/preferences', preferencesRoutes);
 router.use('/organizations/:orgId/projects/:projectId/observer', observerRoutes);
 router.use('/organizations', orgRoutes);
+router.use('/organizations/:orgId/invitations', invitationRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/organizations/:orgId/service-accounts', serviceAccountRoutes);
+router.use('/organizations/:orgId/api-tokens', apiTokenRoutes);
 router.use('/organizations/:orgId/billing', billingRoutes);
 router.use('/stripe/webhook', stripeWebhookRoutes);
 

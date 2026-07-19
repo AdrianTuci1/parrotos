@@ -1,25 +1,26 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import { AppHeader } from "@/components/app-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { useAppStore } from "@/stores/useAppStore";
+import { Topbar } from "@/components/shell/Topbar";
+import { ProjectSubNavbar } from "@/components/shell/ProjectSubNavbar";
+import { ChatSidebar } from "@/components/shell/ChatSidebar";
+import { cn } from "@/lib/utils";
 import "@/styles/shell.css";
 
-export function AppShell({ children }) {
+export function Layout({ children }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const activeSection = useAppStore((state) => state.activeSection);
-  const isGraphSection = activeSection === "graph";
+  const isChat = activeSection === "chat";
 
   return (
-    <SidebarProvider className="sidebar-provider-container">
-      <AppSidebar />
-      <SidebarInset className="app-main-layout">
-        <AppHeader />
-        <div className={cn("app-content-wrapper", isGraphSection && "app-content-wrapper-graph")}>
-          <div className={cn("app-content-inner", isGraphSection && "app-content-inner-graph")}>
-            {children}
-          </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="layout-root">
+      <Topbar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
+      <ProjectSubNavbar open={mobileMenuOpen} setOpen={setMobileMenuOpen} />
+      <div className={cn("layout-body", isChat && "layout-body-chat")}>
+        {isChat && <ChatSidebar />}
+        <main className="layout-main">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }

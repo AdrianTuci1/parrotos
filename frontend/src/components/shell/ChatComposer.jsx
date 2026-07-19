@@ -35,15 +35,25 @@ export function ChatComposer({
       <div
         className={`chat-centered-composer-wrapper pill-composer ${isEmptyMode ? "chat-centered-composer-empty" : ""}`}
       >
-        <input
-          type="text"
-          value={input}
-          onChange={(event) => onInputChange(event.target.value)}
-          onKeyDown={(event) => event.key === "Enter" && onSend()}
-          placeholder={placeholder}
-          className="chat-centered-text-input"
-          disabled={streaming}
-        />
+        {recording ? (
+          <div className="chat-waveform">
+            <span className="chat-waveform-bar" />
+            <span className="chat-waveform-bar" />
+            <span className="chat-waveform-bar" />
+            <span className="chat-waveform-bar" />
+            <span className="chat-waveform-bar" />
+          </div>
+        ) : (
+          <input
+            type="text"
+            value={input}
+            onChange={(event) => onInputChange(event.target.value)}
+            onKeyDown={(event) => event.key === "Enter" && onSend()}
+            placeholder={placeholder}
+            className="chat-centered-text-input"
+            disabled={streaming}
+          />
+        )}
         <button
           className={recording ? "chat-mic-btn recording" : "chat-mic-btn"}
           type="button"

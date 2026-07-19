@@ -1,245 +1,488 @@
-import { useState, useEffect } from 'react';
-import { useAppStore } from '@/stores/useAppStore';
-import { ViewFrame } from '@/components/shell/ViewFrame';
+import { useState, useEffect } from "react";
+import { useAppStore } from "@/stores/useAppStore";
+import { SettingsSidebar } from "@/components/shell/SettingsSidebar";
 import {
-  Globe,
-  Bell,
+  Building2,
+  Users,
   ShieldCheck,
-  Database,
-  RefreshCw,
-  ToggleLeft,
+  Trash2,
   Check,
   X,
-  Pencil
-} from 'lucide-react';
-import '@/styles/organization-views.css';
-import '@/styles/settings.css';
+  Plus,
+  MoreHorizontal,
+  Shield,
+  Lock,
+  Eye,
+} from "lucide-react";
+import "@/styles/settings.css";
 
-export function OrganizationSettingsView() {
-  const { currentOrganization, organizationMetrics, updateOrganization, fetchSubscription } = useAppStore();
-  const [editingName, setEditingName] = useState(false);
-  const [nameValue, setNameValue] = useState('');
+const orgSettingsItems = [
+  { id: "general", label: "General", icon: <Building2 size={16} /> },
+  { id: "members", label: "Members", icon: <Users size={16} /> },
+  { id: "security", label: "Security", icon: <ShieldCheck size={16} /> },
+  { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
+];
 
-  // Interactive local states for simplified metrics cycling
-  const [defaultRole, setDefaultRole] = useState(currentOrganization?.settings?.defaultRole || 'Member');
-  const [retention, setRetention] = useState(currentOrganization?.settings?.retention || '90 days');
-  const [autoInvite, setAutoInvite] = useState(currentOrganization?.settings?.autoInviteDomains?.length > 0 || false);
+export function SectionHeader({ title, description }) {
+  return (
+    <div className="settings-page-header">
+      <h1 className="settings-page-title">{title}</h1>
+      {description && <p className="settings-page-desc">{description}</p>}
+    </div>
+  );
+}
+
+function GeneralSection() {
+  const { currentOrganization, updateOrganization } = useAppStore();
+  const [name, setName] = useState(currentOrganization?.name || "");
+  const [defaultRole, setDefaultRole] = useState(currentOrganization?.settings?.defaultRole || "Member");
+  const [retention, setRetention] = useState(currentOrganization?.settings?.retention || "90 days");
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (currentOrganization?.id) {
-      setDefaultRole(currentOrganization?.settings?.defaultRole || 'Member');
-      setRetention(currentOrganization?.settings?.retention || '90 days');
-      setAutoInvite((currentOrganization?.settings?.autoInviteDomains || []).length > 0);
+      setDefaultRole(currentOrganization?.settings?.defaultRole || "Member");
+      setRetention(currentOrganization?.settings?.retention || "90 days");
+      setName(currentOrganization?.name || "");
     }
   }, [currentOrganization]);
 
-  const handleSaveName = async () => {
-    if (!nameValue.trim()) return;
+  const handleSave = async () => {
+    if (!currentOrganization) return;
+    await updateOrganization(currentOrganization.id, {
+      name: name.trim(),
+      settings: { ...currentOrganization.settings, defaultRole, retention },
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const Row = ({ title, desc, right }) => (
+    <div className="settings-card-row">
+      <div className="settings-card-row-text">
+        <div className="settings-card-row-title">{title}</div>
+        <div className="settings-card-row-desc">{desc}</div>
+      </div>
+      <div className="settings-card-row-right">{right}</div>
+    </div>
+  );
+
+  return (
+    <div className="settings-page">
+      <SectionHeader title="General" description="Organization name, default roles, and governance rules." />
+
+      <div className="settings-card">
+        <div className="settings-field">
+          <label className="settings-label">Organization display name</label>
+          <div className="settings-input-row">
+            <input className="settings-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Organization name" />
+            <button className="settings-btn-primary" onClick={handleSave} disabled={saved}>
+              {saved ? <><Check size={14} /> Saved</> : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="settings-card">
+        <div className="settings-card-header">
+          <div className="settings-card-header-text">
+            <h3 className="settings-card-title">Defaults</h3>
+            <p className="settings-card-subtitle">Values applied to new members and projects.</p>
+          </div>
+        </div>
+        <div className="settings-card-body">
+          <Row
+            title="Default member role"
+            desc="Role assigned to new team members"
+            right={
+              <select
+                className="settings-select"
+                value={defaultRole}
+                onChange={(e) => setDefaultRole(e.target.value)}
+              >
+                <option value="Member">Member</option>
+                <option value="Admin">Admin</option>
+                <option value="Viewer">Viewer</option>
+              </select>
+            }
+          />
+          <Row
+            title="Data retention policy"
+            desc="Automatic data archiving and cleanup"
+            right={
+              <select
+                className="settings-select"
+                value={retention}
+                onChange={(e) => setRetention(e.target.value)}
+              >
+                <option value="30 days">30 days</option>
+                <option value="90 days">90 days</option>
+                <option value="1 year">1 year</option>
+              </select>
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MembersSection() {
+  const { currentOrganization, currentUser, members, fetchMembers, addMember, removeMember, updateMember, cancelInvitation } = useAppStore();
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("Member");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (currentOrganization?.id) {
+      fetchMembers(currentOrganization.id).catch(() => {});
+    }
+  }, [currentOrganization?.id]);
+
+  const handleInvite = async () => {
+    if (!email.trim() || !currentOrganization) return;
+    setError("");
+    setLoading(true);
     try {
-      await updateOrganization(currentOrganization.id, { name: nameValue.trim() });
-      setEditingName(false);
+      await addMember(currentOrganization.id, email.trim(), role);
+      setEmail("");
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      alert('Failed to update: ' + err.message);
+      setError(err.message || "Failed to invite member.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSaveSettings = async (key, value) => {
+  const handleRoleChange = async (userId, newRole) => {
+    if (!currentOrganization) return;
     try {
-      const settings = {
-        ...currentOrganization.settings,
-        [key]: value,
-      };
-      await updateOrganization(currentOrganization.id, { settings });
+      await updateMember(currentOrganization.id, userId, newRole);
     } catch (err) {
-      alert('Failed to update settings: ' + err.message);
+      setError(err.message || "Failed to update role.");
+    }
+  };
+
+  const handleRemove = async (userId) => {
+    if (!currentOrganization || userId === currentUser?.id) return;
+    try {
+      await removeMember(currentOrganization.id, userId);
+    } catch (err) {
+      setError(err.message || "Failed to remove member.");
+    }
+  };
+
+  const handleCancelInvitation = async (invitationId) => {
+    if (!currentOrganization) return;
+    try {
+      await cancelInvitation(currentOrganization.id, invitationId);
+    } catch (err) {
+      setError(err.message || "Failed to cancel invitation.");
     }
   };
 
   return (
-    <ViewFrame
-      title="Organization Settings"
-      description="Configure account-level defaults, governance rules, and managed infrastructure preferences."
-      maxWidthClassName="max-w-3xl"
-    >
-      <div className="org-metrics-row">
-        <div className="org-metric-item">
-          <span className="org-metric-label">Policies</span>
-          <span className="org-metric-value">6</span>
+    <div className="settings-page">
+      <SectionHeader title="Members" description="Invite and manage team members." />
+
+      <div className="settings-card">
+        <div className="settings-card-header">
+          <div className="settings-card-header-text">
+            <h3 className="settings-card-title">Invite member</h3>
+            <p className="settings-card-subtitle">Send an invitation by email. Existing users join immediately.</p>
+          </div>
         </div>
-        <div className="org-metric-item">
-          <span className="org-metric-label">Pending</span>
-          <span className="org-metric-value">2</span>
-        </div>
-        <div className="org-metric-item">
-          <span className="org-metric-label">Warehouse</span>
-          <span className="org-metric-value">
-            {organizationMetrics?.storage?.formatted || '0 GB'}
-          </span>
+        <div className="settings-card-body">
+          <div className="settings-input-row" style={{ marginBottom: 12 }}>
+            <input
+              className="settings-input"
+              placeholder="colleague@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleInvite(); }}
+            />
+            <select className="settings-select" value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="Member">Member</option>
+              <option value="Admin">Admin</option>
+              <option value="Viewer">Viewer</option>
+            </select>
+            <button className="settings-btn-primary" onClick={handleInvite} disabled={loading || saved}>
+              {saved ? <><Check size={14} /> Invited</> : <><Plus size={14} /> Invite</>}
+            </button>
+          </div>
+          {error && <span className="create-project-error">{error}</span>}
         </div>
       </div>
 
-      <div className="org-gap-4">
-        <div className="org-list-container">
-          <div className="org-list-header-row" style={{ marginTop: 0 }}>
-            <span className="org-list-select-label">General Settings</span>
+      <div className="settings-card">
+        <div className="settings-card-header">
+          <div className="settings-card-header-text">
+            <h3 className="settings-card-title">Team members</h3>
+            <p className="settings-card-subtitle">{members.length} member{members.length === 1 ? "" : "s"}</p>
           </div>
-
-          <div className="org-stack">
-            {/* Row 1: Organization Display Name */}
-            <div
-              className="org-card-item"
-              style={{ cursor: editingName ? "default" : "pointer" }}
-              onClick={() => {
-                if (!editingName) {
-                  setNameValue(currentOrganization.name);
-                  setEditingName(true);
-                }
-              }}
-            >
-              <div className="org-card-left">
-                <Globe size={16} className="org-card-folder-icon" />
-                <div>
-                  <div className="org-row-name">Organization display name</div>
-                  {editingName ? (
-                    <div
-                      style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <input
-                        value={nameValue}
-                        onChange={(e) => setNameValue(e.target.value)}
-                        className="org-modal-input"
-                        style={{ width: '100%', maxWidth: '240px' }}
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleSaveName();
-                          if (e.key === 'Escape') setEditingName(false);
-                        }}
-                      />
-                      <button
-                        className="org-modal-primary-btn"
-                        style={{ height: '30px', padding: '0 12px', minWidth: 'auto', borderRadius: '6px', fontSize: '11px' }}
-                        onClick={handleSaveName}
-                      >
-                        Save
-                      </button>
-                      <button
-                        className="org-modal-secondary-btn"
-                        style={{ height: '30px', padding: '0 12px', minWidth: 'auto', borderRadius: '6px', fontSize: '11px' }}
-                        onClick={() => setEditingName(false)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
+        </div>
+        <div className="settings-card-body">
+          {(members || []).map((member) => {
+            const isInvitation = member.invitationId != null;
+            const key = member.userId || member.invitationId;
+            return (
+              <div className="settings-card-row" key={key}>
+                <div className="settings-card-row-text">
+                  <div className="settings-card-row-title">{member.email}</div>
+                  <div className="settings-card-row-desc">
+                    {member.role}
+                    {isInvitation ? " · invitation pending" : ` · joined ${new Date(member.joinedAt).toLocaleDateString()}`}
+                  </div>
+                </div>
+                <div className="settings-card-row-right" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  {member.userId === currentUser?.id ? (
+                    <span className="settings-card-row-desc">You</span>
                   ) : (
-                    <div className="org-row-meta">{currentOrganization.name}</div>
+                    <>
+                      <select
+                        className="settings-select"
+                        value={member.role}
+                        onChange={(e) => handleRoleChange(member.userId, e.target.value)}
+                        disabled={isInvitation}
+                      >
+                        <option value="Member">Member</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Viewer">Viewer</option>
+                      </select>
+                      <button
+                        className="settings-btn-icon"
+                        title={isInvitation ? "Cancel invitation" : "Remove member"}
+                        onClick={() => isInvitation ? handleCancelInvitation(member.invitationId) : handleRemove(member.userId)}
+                      >
+                        <X size={14} />
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
-              {!editingName && (
-                <div className="org-card-right">
-                  <Pencil size={14} className="org-hover-pencil" />
-                </div>
-              )}
-            </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-            {/* Row 2: Notification Preferences */}
-            <div
-              className="org-card-item"
-              style={{ cursor: "pointer" }}
-              onClick={() => alert("Opening notification preference dashboard...")}
-            >
-              <div className="org-card-left">
-                <Bell size={16} className="org-card-folder-icon" />
-                <div>
-                  <div className="org-row-name">Notification preferences</div>
-                  <div className="org-row-meta">Email and Slack alert routing</div>
-                </div>
-              </div>
-              <div className="org-card-right">
-                <span className="org-role-permissions-text">Configured</span>
-                <Pencil size={14} className="org-hover-pencil" />
-              </div>
-            </div>
+function SecuritySection() {
+  const { currentOrganization, fetchSecuritySettings, updateSecuritySettings } = useAppStore();
+  const [settings, setSettings] = useState({
+    require2FA: false,
+    ssoEnabled: false,
+    ssoProvider: "",
+    auditLogRetention: "90 days",
+    allowedDomains: "",
+  });
+  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-            {/* Row 3: Default Member Role */}
-            <div
-              className="org-card-item"
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                const rolesCycle = { 'Member': 'Admin', 'Admin': 'Viewer', 'Viewer': 'Member' };
-                const newRole = rolesCycle[defaultRole];
-                setDefaultRole(newRole);
-                handleSaveSettings('defaultRole', newRole);
-              }}
-            >
-              <div className="org-card-left">
-                <ShieldCheck size={16} className="org-card-folder-icon" />
-                <div>
-                  <div className="org-row-name">Default member role</div>
-                  <div className="org-row-meta">Role assigned to new team members</div>
-                </div>
-              </div>
-              <div className="org-card-right">
-                <span className="org-role-permissions-text" style={{ color: "#a8c7fa" }}>{defaultRole}</span>
-                <Pencil size={14} className="org-hover-pencil" />
-              </div>
-            </div>
+  useEffect(() => {
+    if (currentOrganization?.id) {
+      fetchSecuritySettings(currentOrganization.id).then((s) => {
+        setSettings({
+          require2FA: s.require2FA || false,
+          ssoEnabled: s.ssoEnabled || false,
+          ssoProvider: s.ssoProvider || "",
+          auditLogRetention: s.auditLogRetention || "90 days",
+          allowedDomains: (s.allowedDomains || []).join(", "),
+        });
+      }).catch(() => {});
+    }
+  }, [currentOrganization?.id]);
 
-            {/* Row 4: Data Retention Policy */}
-            <div
-              className="org-card-item"
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                const retentionCycle = { '90 days': '180 days', '180 days': '365 days', '365 days': '30 days', '30 days': '90 days' };
-                const newRetention = retentionCycle[retention];
-                setRetention(newRetention);
-                handleSaveSettings('retention', newRetention);
-              }}
-            >
-              <div className="org-card-left">
-                <Database size={16} className="org-card-folder-icon" />
-                <div>
-                  <div className="org-row-name">Data retention policy</div>
-                  <div className="org-row-meta">Automatic data archiving and cleanup</div>
-                </div>
-              </div>
-              <div className="org-card-right">
-                <span className="org-role-permissions-text" style={{ color: "#a8c7fa" }}>{retention}</span>
-                <Pencil size={14} className="org-hover-pencil" />
-              </div>
-            </div>
+  const handleSave = async () => {
+    if (!currentOrganization) return;
+    setLoading(true);
+    try {
+      await updateSecuritySettings(currentOrganization.id, {
+        require2FA: settings.require2FA,
+        ssoEnabled: settings.ssoEnabled,
+        ssoProvider: settings.ssoProvider,
+        auditLogRetention: settings.auditLogRetention,
+        allowedDomains: settings.allowedDomains.split(",").map(d => d.trim()).filter(Boolean),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      // handled by store
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            {/* Row 5: Auto-invite domains */}
-            <div
-              className="org-card-item"
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                const newAutoInvite = !autoInvite;
-                setAutoInvite(newAutoInvite);
-                handleSaveSettings('autoInviteDomains', newAutoInvite ? [currentOrganization?.domain || 'example.com'] : []);
-              }}
-            >
-              <div className="org-card-left">
-                <ToggleLeft size={16} className="org-card-folder-icon" />
-                <div>
-                  <div className="org-row-name">Auto-invite domains</div>
-                  <div className="org-row-meta">Allow auto-join from verified domains</div>
-                </div>
-              </div>
-              <div className="org-card-right">
-                <button
-                  type="button"
-                  className={`settings-toggle ${autoInvite ? "active" : ""}`}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="settings-toggle-dot" />
-                </button>
-              </div>
+  const Toggle = ({ icon, title, desc, checked, onChange }) => (
+    <div className="settings-card-row">
+      <div className="settings-card-row-text" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div className="org-stat-icon-box" style={{ borderRadius: 10, width: 36, height: 36 }}>{icon}</div>
+        <div>
+          <div className="settings-card-row-title">{title}</div>
+          <div className="settings-card-row-desc">{desc}</div>
+        </div>
+      </div>
+      <div className="settings-card-row-right">
+        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="settings-page">
+      <SectionHeader title="Security" description="SSO, audit logs, and access policies." />
+
+      <div className="settings-card">
+        <div className="settings-card-body">
+          <Toggle
+            icon={<Lock size={18} />}
+            title="Require two-factor authentication"
+            desc="All members must enable 2FA to access this organization."
+            checked={settings.require2FA}
+            onChange={(v) => setSettings((s) => ({ ...s, require2FA: v }))}
+          />
+          <Toggle
+            icon={<Shield size={18} />}
+            title="Enable SSO"
+            desc="Authenticate members through a single sign-on provider."
+            checked={settings.ssoEnabled}
+            onChange={(v) => setSettings((s) => ({ ...s, ssoEnabled: v }))}
+          />
+          <Toggle
+            icon={<Eye size={18} />}
+            title="Audit log retention"
+            desc="Keep audit logs for the selected duration."
+            checked={settings.auditLogRetention !== "30 days"}
+            onChange={(v) => setSettings((s) => ({ ...s, auditLogRetention: v ? "90 days" : "30 days" }))}
+          />
+        </div>
+      </div>
+
+      {settings.ssoEnabled && (
+        <div className="settings-card">
+          <div className="settings-card-header">
+            <div className="settings-card-header-text">
+              <h3 className="settings-card-title">SSO configuration</h3>
+              <p className="settings-card-subtitle">Provider and allowed domains.</p>
+            </div>
+          </div>
+          <div className="settings-card-body" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div className="settings-field" style={{ padding: 0 }}>
+              <label className="settings-label">SSO provider</label>
+              <input
+                className="settings-input"
+                placeholder="e.g. Google Workspace, Okta"
+                value={settings.ssoProvider}
+                onChange={(e) => setSettings((s) => ({ ...s, ssoProvider: e.target.value }))}
+              />
+            </div>
+            <div className="settings-field" style={{ padding: 0 }}>
+              <label className="settings-label">Allowed email domains (comma separated)</label>
+              <input
+                className="settings-input"
+                placeholder="example.com, acme.com"
+                value={settings.allowedDomains}
+                onChange={(e) => setSettings((s) => ({ ...s, allowedDomains: e.target.value }))}
+              />
             </div>
           </div>
         </div>
+      )}
+
+      <div className="settings-card-actions">
+        <button className="settings-btn-primary" onClick={handleSave} disabled={loading || saved}>
+          {saved ? <><Check size={14} /> Saved</> : "Save security settings"}
+        </button>
       </div>
-    </ViewFrame>
+    </div>
+  );
+}
+
+function DangerSection() {
+  const { currentOrganization, deleteOrganization } = useAppStore();
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+
+  const handleDelete = async () => {
+    if (!currentOrganization) return;
+    try {
+      await deleteOrganization(currentOrganization.id);
+      setOpen(false);
+    } catch (err) {
+      alert("Failed to delete: " + err.message);
+    }
+  };
+
+  return (
+    <div className="settings-page">
+      <SectionHeader title="Danger Zone" description="Irreversible actions for this organization." />
+
+      <div className="settings-card settings-card-danger">
+        <div className="settings-danger-row">
+          <div className="settings-danger-text">
+            <h3 className="settings-card-title">Delete Organization</h3>
+            <p className="settings-card-subtitle">Permanently delete {currentOrganization?.name || "this organization"} and all projects inside it.</p>
+          </div>
+          <button className="settings-btn-danger" onClick={() => setOpen(true)}>Delete Organization</button>
+        </div>
+      </div>
+
+      {open && (
+        <div className="settings-overlay-backdrop" onClick={() => setOpen(false)}>
+          <div className="settings-overlay" onClick={(e) => e.stopPropagation()}>
+            <div className="settings-overlay-header">
+              <h3 className="settings-overlay-title">Delete Organization</h3>
+              <button className="settings-overlay-close" onClick={() => setOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            <div className="settings-overlay-body">
+              <p className="settings-overlay-copy">
+                This action cannot be undone. Type <strong>{currentOrganization?.name}</strong> to confirm.
+              </p>
+              <input
+                type="text"
+                className="settings-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={`Type ${currentOrganization?.name} to confirm`}
+                autoFocus
+              />
+            </div>
+            <div className="settings-overlay-footer">
+              <button className="settings-btn-secondary" onClick={() => setOpen(false)}>Cancel</button>
+              <button className="settings-btn-danger" disabled={input !== currentOrganization?.name} onClick={handleDelete}>
+                Delete Organization
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function OrganizationSettingsView() {
+  const [activeTab, setActiveTab] = useState("general");
+
+  return (
+    <div className="settings-layout">
+      <SettingsSidebar items={orgSettingsItems} activeId={activeTab} onChange={setActiveTab} />
+      <div className="settings-main">
+        {activeTab === "general" && (
+          <>
+            <SectionHeader title="Settings" description="Configure account-level defaults and governance." />
+            <GeneralSection />
+          </>
+        )}
+        {activeTab === "members" && <MembersSection />}
+        {activeTab === "security" && <SecuritySection />}
+        {activeTab === "danger" && <DangerSection />}
+      </div>
+    </div>
   );
 }

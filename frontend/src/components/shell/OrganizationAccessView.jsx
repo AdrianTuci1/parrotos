@@ -450,7 +450,7 @@ export function OrganizationAccessView() {
     <ViewFrame
       title="Access Management"
       description="Manage workspace API service accounts, telemetry keys, and project access credentials."
-      maxWidthClassName="max-w-3xl"
+      maxWidthClassName="full-width"
     >
       {isEditingMode ? (
         <ServiceAccountEditPage

@@ -37,7 +37,17 @@ function getAudience(url) {
 
 export class InternalServiceClient {
   constructor() {
-    this.auth = new GoogleAuth({ projectId: config.gcpProjectId });
+    this._auth = null;
+  }
+
+  getAuth() {
+    if (!this._auth) {
+      // Only initialize GoogleAuth when OIDC is actually required. In local/dev
+      // environments without GCP_PROJECT_ID this constructor would otherwise
+      // throw "Unable to detect a Project Id".
+      this._auth = new GoogleAuth({ projectId: config.gcpProjectId || undefined });
+    }
+    return this._auth;
   }
 
   async buildHeaders(url, extraHeaders = {}) {
@@ -46,17 +56,17 @@ export class InternalServiceClient {
       'X-Internal-Token': config.internalToken,
     };
 
-    if (!shouldUseOidc(url)) {
-      return headers;
+    if (shouldUseOidc(url)) {
+      const audience = getAudience(url);
+      const client = await this.getAuth().getIdTokenClient(audience);
+      const authHeaders = await client.getRequestHeaders(audience);
+      return {
+        ...headers,
+        ...authHeaders,
+      };
     }
 
-    const audience = getAudience(url);
-    const client = await this.auth.getIdTokenClient(audience);
-    const authHeaders = await client.getRequestHeaders(audience);
-    return {
-      ...headers,
-      ...authHeaders,
-    };
+    return headers;
   }
 
   async fetch(url, options = {}) {

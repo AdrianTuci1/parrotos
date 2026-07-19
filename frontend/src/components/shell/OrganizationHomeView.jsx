@@ -83,7 +83,7 @@ export function OrganizationHomeView() {
   const dataSourcesTrend = uniqueConnectors > 0 ? '+7.3%' : 'No data';
 
   return (
-    <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
+    <ViewFrame className="organization-home-frame" maxWidthClassName="full-width">
       <div className="organization-home-shell">
         <div className="organization-home-hero">
           <div>

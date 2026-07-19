@@ -31,15 +31,18 @@ services:
     networks:
       - sentry-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/v1/health && curl -f http://localhost:3000/api/v1/health/ready"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
     depends_on:
-      - chat
-      - harness
-      - observer
+      chat:
+        condition: service_healthy
+      harness:
+        condition: service_healthy
+      observer:
+        condition: service_healthy
 
   chat:
     image: sentry-chat:latest
@@ -129,7 +132,10 @@ services:
     networks:
       - sentry-network
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+      certbot:
+        condition: service_started
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   certbot:
@@ -145,7 +151,7 @@ services:
   sync-worker:
     image: sentry-sync-worker:latest
     container_name: sentry-sync-worker
-    restart: unless-stopped
+    restart: "no"
     environment:
       - NODE_ENV=production
       - GCP_PROJECT_ID=${GCP_PROJECT_ID}
@@ -160,8 +166,7 @@ services:
     networks:
       - sentry-network
     command: ["node", "src/worker/syncWorker.js"]
-    # Run every 5 minutes via cron
-    # Or use a scheduler container
+    # Run every 5 minutes via the scheduler service below.
 
   scheduler:
     image: mcuadros/ofelia:latest

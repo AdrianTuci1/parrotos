@@ -218,7 +218,7 @@
   margin-left: auto;
   margin-right: auto;
   display: flex;
-  max-width: 48rem; /* 768px / 3xl */
+  max-width: 100%; /* full width */
   align-items: center;
   gap: 8px;
 }
@@ -276,13 +276,15 @@
 
 .chat-empty-mode .chat-active-input-footer {
   width: 100%;
-  max-width: 30rem;
+  max-width: 100%; /* full width */
 }
 
 .chat-centered-composer-wrapper {
   display: flex;
   width: 100%;
-  max-width: 32rem; /* 512px */
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
   align-items: center;
   gap: 12px;
   background-color: #111214;
@@ -292,18 +294,61 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+.chat-centered-composer-wrapper.pill-composer {
+  border-radius: 9999px !important;
+  padding: 10px 24px !important;
+  max-width: 640px !important; /* centered, limited width */
+}
+
+.chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
+  max-width: 640px !important; /* centered, limited width */
+}
+
 .chat-centered-text-input {
   flex: 1;
-  background: transparent;
+  min-width: 0;
   border: none;
-  padding: 10px 4px;
-  font-size: 14px;
+  background: transparent;
   color: #E3E3E3;
+  font-size: 14px;
+  line-height: 1.4;
   outline: none;
+  padding: 0;
 }
 
 .chat-centered-text-input::placeholder {
   color: #8E918F;
+}
+
+/* Voice waveform shown while recording */
+.chat-waveform {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  height: 24px;
+}
+
+.chat-waveform-bar {
+  width: 4px;
+  height: 8px;
+  background: #A8C7FA;
+  border-radius: 2px;
+  animation: chatWaveform 0.9s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.chat-waveform-bar:nth-child(1) { animation-delay: 0s; }
+.chat-waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+.chat-waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+.chat-waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+.chat-waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes chatWaveform {
+  0%, 100% { transform: scaleY(0.6); }
+  50% { transform: scaleY(1.8); }
 }
 
 .chat-centered-send-btn {
@@ -328,12 +373,6 @@
   opacity: 0.5;
 }
 
-/* Pill Composer details */
-.chat-centered-composer-wrapper.pill-composer {
-  border-radius: 9999px !important;
-  padding: 10px 24px !important;
-  max-width: 36rem !important;
-}
 
 /* Demo mode banner — slim overlay chip, stays on top of content */
 .chat-demo-banner {
@@ -398,12 +437,19 @@ main:has(.chat-active-mode),
   flex-direction: column;
   gap: 28px;
   width: 100%;
-  max-width: 52rem;
+  max-width: 900px;
   margin: 0 auto;
   padding: 32px 24px 8px 24px;
   min-height: 100%;
   justify-content: flex-end;
   box-sizing: border-box;
+}
+
+.chat-pending-action-sticky {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 0 16px 0;
 }
 
 /* --- Message Row (no avatars) --- */
@@ -508,12 +554,12 @@ main:has(.chat-active-mode),
 
 .chat-active-input-footer .pill-composer {
   width: 100%;
-  max-width: 28rem;
+  max-width: 640px; /* match empty mode, keep it narrow */
 }
 
 /* Wider composer when starting a fresh session (no messages yet) */
 .chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
-  max-width: 26rem !important;
+  max-width: 640px !important; /* centered, limited width */
 }
 
 /* Microphone button inside pill composer */
@@ -553,13 +599,6 @@ main:has(.chat-active-mode),
 /* ═══════════════════════════════════════════════
    PENDING ACTION — normal flow, after messages
    ═══════════════════════════════════════════════ */
-
-.chat-pending-action-sticky {
-  width: 100%;
-  max-width: 52rem;
-  margin: 0 auto;
-  padding: 0 0 16px 0;
-}
 
 .chat-pending-action-card {
   border-radius: 14px;

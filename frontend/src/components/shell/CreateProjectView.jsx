@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Briefcase,
@@ -7,6 +7,7 @@ import { ViewFrame } from "@/components/shell/ViewFrame";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppStore } from "@/stores/useAppStore";
+import { CreateModal } from "@/components/shell/CreateModal";
 import "@/styles/settings.css";
 
 const defaultModules = {
@@ -34,37 +35,37 @@ export function CreateProjectView() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
-  const [modules, setModules] = useState(defaultModules);
   const [slugEdited, setSlugEdited] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [createOrgOpen, setCreateOrgOpen] = useState(false);
 
   const hasOrganization = currentOrganization?.id && currentOrganization.id !== '__empty__';
 
-  const handleCreateOrganization = async () => {
-    const value = window.prompt("Workspace name:");
-    if (value?.trim()) {
-      try {
-        const org = await createOrganization(value.trim());
-        const orgSlug = org?.slug || org?.id;
-        if (orgSlug) {
-          navigate(`/app/${orgSlug}/create-project`, { replace: true });
-        }
-      } catch (err) {
-        setSubmitError(err.message || "Failed to create workspace.");
+  const handleCreateOrganization = async (value) => {
+    try {
+      const org = await createOrganization(value);
+      const orgSlug = org?.slug || org?.id;
+      if (orgSlug) {
+        navigate(`/app/${orgSlug}/create-project`, { replace: true });
       }
+    } catch (err) {
+      setSubmitError(err.message || "Failed to create workspace.");
     }
   };
 
-  useEffect(() => {
-    if (!slugEdited) {
-      setSlug(slugify(name));
-    }
-  }, [name, slugEdited]);
 
   const organizationSlug = currentOrganization?.slug || currentOrganization?.id;
 
   const handleCancel = () => {
     navigate(`/app/${organizationSlug}/stats`);
+  };
+
+  const handleNameChange = (event) => {
+    const value = event.target.value;
+    setName(value);
+    if (!slugEdited) {
+      setSlug(slugify(value));
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -94,7 +95,7 @@ export function CreateProjectView() {
         name: trimmedName,
         slug: normalizedSlug,
         description: description.trim(),
-        modules,
+        modules: defaultModules,
       });
       const projectSlug = project.slug || project.id;
       navigate(`/app/${organizationSlug}/${projectSlug}/analytics`);
@@ -107,7 +108,7 @@ export function CreateProjectView() {
     <ViewFrame
       title="Create Project"
       description="Set up a new project workspace using the same operating model as your existing project views."
-      maxWidthClassName="max-w-7xl"
+      maxWidthClassName="full-width"
       actions={
         <button type="button" className="settings-btn-secondary" onClick={handleCancel}>
           Cancel
@@ -127,7 +128,7 @@ export function CreateProjectView() {
                   {submitError ? <span className="create-project-error">{submitError}</span> : null}
                 </div>
                 <div className="settings-action-row create-project-actions">
-                  <button type="button" className="settings-btn-primary" onClick={handleCreateOrganization}>
+                  <button type="button" className="settings-btn-primary" onClick={() => setCreateOrgOpen(true)}>
                     Create workspace
                   </button>
                 </div>
@@ -155,7 +156,7 @@ export function CreateProjectView() {
               <div className="create-project-field-panel">
                 <Input
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={handleNameChange}
                   placeholder="Project name"
                   className="create-project-input"
                 />
@@ -258,6 +259,16 @@ export function CreateProjectView() {
           </div>
         </div>
       </form>
+      <CreateModal
+        open={createOrgOpen}
+        onClose={() => setCreateOrgOpen(false)}
+        title="Create Workspace"
+        description="Create a new workspace for your organization."
+        label="Workspace name"
+        placeholder="Workspace name"
+        submitLabel="Create Workspace"
+        onSubmit={handleCreateOrganization}
+      />
     </ViewFrame>
   );
 }

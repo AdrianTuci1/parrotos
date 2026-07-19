@@ -1,360 +1,233 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/useAppStore';
-import { ViewFrame } from '@/components/shell/ViewFrame';
 import {
-  Building2,
-  ArrowLeft,
-  Trash2,
   Plus,
-  Check,
-  Mail,
-  Folder,
-  X,
+  Copy,
+  ExternalLink,
+  Users,
+  LogOut,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { SectionHeader } from '@/components/shell/OrganizationSettingsView';
 import '@/styles/organization-views.css';
+import { cn } from '@/lib/utils';
+
+function stringToGradient(seed = "") {
+  let hash = 0;
+  const s = String(seed || "default");
+  for (let i = 0; i < s.length; i++) {
+    hash = s.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h1 = Math.abs(hash % 360);
+  const h2 = (h1 + 45) % 360;
+  const h3 = (h1 + 90) % 360;
+  return `linear-gradient(135deg, hsl(${h1} 75% 55%), hsl(${h2} 70% 45%), hsl(${h3} 75% 35%))`;
+}
+
+function WorkspaceAvatar({ id }) {
+  return (
+    <div
+      className="workspace-avatar"
+      style={{ background: stringToGradient(id) }}
+    />
+  );
+}
 
 export function OrganizationOrganizationsView() {
   const navigate = useNavigate();
   const {
     organizations,
-    currentOrganization,
     currentUser,
-    createOrganization: storeCreateOrg,
-    deleteOrganization,
-    updateOrganization,
+    createOrganization,
+    leaveOrganization,
   } = useAppStore();
-  const [selectedOrg, setSelectedOrg] = useState(null);
-  const [creating, setCreating] = useState(false);
 
-  // Deletion confirmation state
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deleteInputText, setDeleteInputText] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newWorkspaceName, setNewWorkspaceName] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState('');
+  const [copiedId, setCopiedId] = useState(null);
+  const [leavingId, setLeavingId] = useState(null);
 
-  // Inline editing fields
-  const [editName, setEditName] = useState('');
-  const [dirty, setDirty] = useState(false);
-
-  // Create form fields
-  const [createName, setCreateName] = useState('');
-
-  const handleEditSave = async (id, data) => {
+  const handleCopyId = async (id) => {
     try {
-      await updateOrganization(id, data);
-      setSelectedOrg((prev) => prev ? { ...prev, ...data } : prev);
-      setDirty(false);
-    } catch (err) {
-      alert('Failed to update workspace: ' + err.message);
-    }
-  };
-
-  const handleMakeDefault = async () => {
-    try {
-      await updateOrganization(selectedOrg.id, { isDefault: true });
-      const updatedOrgs = useAppStore.getState().organizations.map((o) =>
-        o.id === selectedOrg.id ? { ...o, isDefault: true } : { ...o, isDefault: false }
-      );
-      useAppStore.setState({ organizations: updatedOrgs });
-      setSelectedOrg((prev) => prev ? { ...prev, isDefault: true } : prev);
-      setDirty(false);
-    } catch (err) {
-      alert('Failed to set default workspace: ' + err.message);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteOrganization(id);
-      setSelectedOrg(null);
-      if (useAppStore.getState().organizations.length === 0) {
-        navigate('/app/organizations');
-      }
-    } catch (err) {
-      alert('Failed to delete workspace: ' + err.message);
+      await navigator.clipboard.writeText(id);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1500);
+    } catch {
+      setCopiedId(null);
     }
   };
 
   const handleCreate = async () => {
-    if (!createName.trim()) return;
+    if (!newWorkspaceName.trim()) return;
+    setError('');
+    setIsCreating(true);
     try {
-      await storeCreateOrg(createName.trim());
-      setCreating(false);
-      setCreateName('');
+      await createOrganization(newWorkspaceName.trim());
+      setNewWorkspaceName('');
+      setIsModalOpen(false);
     } catch (err) {
-      alert('Failed to create workspace: ' + err.message);
+      setError(err.message || 'Failed to create workspace.');
+    } finally {
+      setIsCreating(false);
     }
   };
 
-  const openDetail = (org) => {
-    setSelectedOrg(org);
-    setEditName(org.name);
-    setDirty(false);
+  const handleLeave = async (org) => {
+    if (org.isDefault) return;
+    setError('');
+    setLeavingId(org.id);
+    try {
+      await leaveOrganization(org.id);
+    } catch (err) {
+      setError(err.message || 'Failed to leave workspace.');
+    } finally {
+      setLeavingId(null);
+    }
   };
 
-  // Detail / inline edit view
-  if (selectedOrg) {
-    return (
-      <ViewFrame
-        title={selectedOrg.name}
-        description="Edit workspace details and settings."
-        maxWidthClassName="max-w-3xl"
-      >
-        <div className="org-detail-shell">
-          <button className="org-back-btn" onClick={() => setSelectedOrg(null)}>
-            <ArrowLeft size={15} />
-            <span>All workspaces</span>
-          </button>
+  const handleManageMembers = () => {
+    navigate('/settings/workspace/management');
+  };
 
-          {/* General */}
-          <div className="org-edit-section">
-            <div className="org-edit-header">
-              <Building2 size={14} />
-              <span>General</span>
-            </div>
-            <div className="org-edit-fields">
-              <label className="org-modal-field">
-                <span className="org-modal-field-label">Name</span>
-                <Input className="org-modal-input" value={editName} onChange={(e) => { setEditName(e.target.value); setDirty(true); }} placeholder="Workspace name" />
-              </label>
-            </div>
-            {dirty && (
-              <div className="org-detail-save-bar">
-                <span className="org-save-hint">Unsaved changes</span>
-                <div className="org-detail-save-actions">
-                  <button className="org-btn-secondary" onClick={() => { setEditName(selectedOrg.name); setDirty(false); }}>Cancel</button>
-                  <button className="org-btn-primary" onClick={() => { handleEditSave(selectedOrg.id, { name: editName }); setDirty(false); }}><Check size={14} /> Save</button>
-                </div>
-              </div>
-            )}
-          </div>
+  const closeModal = () => {
+    if (isCreating) return;
+    setIsModalOpen(false);
+    setNewWorkspaceName('');
+    setError('');
+  };
 
-          {/* Default Workspace Setting */}
-          <div className="org-edit-section">
-            <div className="org-edit-header">
-              <Check size={14} />
-              <span>Default Workspace</span>
-            </div>
-            <div className="org-edit-fields">
-              {selectedOrg.isDefault ? (
-                <div className="overlay-connection-badge" style={{ backgroundColor: 'rgba(59, 130, 246, 0.08)', borderColor: 'rgba(59, 130, 246, 0.2)' }}>
-                  <Check size={14} style={{ color: '#3b82f6', marginRight: '6px' }} />
-                  <span style={{ fontSize: '13px', color: '#ffffff' }}>This is your default workspace</span>
-                </div>
-              ) : (
-                <div className="org-edit-danger-row" style={{ border: 'none', padding: 0 }}>
-                  <div style={{ flex: 1 }}>
-                    <div className="org-edit-danger-label" style={{ color: '#ffffff' }}>Set as default workspace</div>
-                    <div className="org-edit-danger-desc">
-                      This workspace will load automatically when you sign in.
-                    </div>
-                  </div>
-                  <button
-                    className="org-btn-secondary"
-                    type="button"
-                    style={{ flexShrink: 0 }}
-                    onClick={handleMakeDefault}
-                  >
-                    Make default
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+  const getRole = (org) => {
+    if (org.role) return org.role;
+    if (org.owner && currentUser?.email && org.owner !== currentUser.email) return 'Member';
+    return 'Owner';
+  };
 
-          {/* Ownership */}
-          <div className="org-edit-section">
-            <div className="org-edit-header">
-              <Mail size={14} />
-              <span>Ownership</span>
-            </div>
-            <div className="org-edit-fields">
-              <div className="org-edit-danger-row" style={{ border: 'none', padding: 0 }}>
-                <div>
-                  <div className="org-edit-danger-label" style={{ color: '#ffffff' }}>Account owner</div>
-                  <div className="org-edit-danger-desc">
-                    {currentUser?.email || 'Signed-in account'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Danger zone */}
-          <div className="org-edit-section">
-            <div className="org-edit-header">
-              <Trash2 size={14} />
-              <span>Danger zone</span>
-            </div>
-            <div className="org-edit-fields">
-              <div className="org-edit-danger-row">
-                <div>
-                  <div className="org-edit-danger-label">Delete this workspace</div>
-                  <div className="org-edit-danger-desc">
-                    {selectedOrg.isDefault
-                      ? "This is your default workspace. Deleting it will remove all projects inside it."
-                      : "Permanently remove this workspace and all its projects."}
-                  </div>
-                </div>
-                <button
-                  className="org-btn-danger"
-                  onClick={() => {
-                    setDeleteConfirmOpen(true);
-                    setDeleteInputText('');
-                  }}
-                >
-                  <Trash2 size={14} /> Delete
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {deleteConfirmOpen && (
-            <div className="overlay-backdrop" onClick={() => setDeleteConfirmOpen(false)}>
-              <div className="overlay-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="overlay-close-btn" onClick={() => setDeleteConfirmOpen(false)}>
-                  <X size={16} />
-                </button>
-                <div className="overlay-header">
-                  <h3 className="overlay-title">Are you sure?</h3>
-                  <p className="overlay-description" style={{ color: '#ef4444', fontWeight: 500 }}>
-                    This action is permanent and cannot be undone. All projects and telemetry data associated with this workspace will be permanently deleted.
-                  </p>
-                </div>
-                <div className="overlay-body">
-                  <div className="overlay-form-group">
-                    <label className="overlay-form-label" style={{ color: '#8e918f', marginBottom: '8px' }}>
-                      Please type <strong style={{ color: '#ffffff' }}>{selectedOrg.name}</strong> to confirm:
-                    </label>
-                    <input
-                      type="text"
-                      className="overlay-input"
-                      value={deleteInputText}
-                      onChange={(e) => setDeleteInputText(e.target.value)}
-                      placeholder="Type workspace name"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-                <div className="overlay-footer">
-                  <button className="overlay-cancel-btn" onClick={() => setDeleteConfirmOpen(false)}>
-                    Cancel
-                  </button>
-                  <button
-                    className="overlay-delete-btn"
-                    disabled={deleteInputText !== selectedOrg.name}
-                    onClick={() => {
-                      handleDelete(selectedOrg.id);
-                      setDeleteConfirmOpen(false);
-                    }}
-                  >
-                    Delete Workspace
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </ViewFrame>
-    );
-  }
-
-  // Create inline view
-  if (creating) {
-    return (
-      <ViewFrame
-        title="New workspace"
-        description="Set up a new workspace for your account."
-        maxWidthClassName="max-w-3xl"
-      >
-        <div className="org-detail-shell">
-          <button className="org-back-btn" onClick={() => { setCreating(false); setCreateName(''); }}>
-            <ArrowLeft size={15} />
-            <span>All workspaces</span>
-          </button>
-
-          <div className="org-edit-section">
-            <div className="org-edit-fields">
-              <label className="org-modal-field">
-                <span className="org-modal-field-label">Name</span>
-                <Input className="org-modal-input" value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder="Workspace name" />
-              </label>
-            </div>
-            <div className="org-edit-actions">
-              <button className="org-btn-secondary" onClick={() => { setCreating(false); setCreateName(''); setCreatePlan('Starter'); }}>Cancel</button>
-              <button className="org-btn-primary" onClick={handleCreate}><Plus size={14} /> Create</button>
-            </div>
-          </div>
-        </div>
-      </ViewFrame>
-    );
-  }
-
-  // List view
   return (
-    <ViewFrame
-      title="Workspace"
-      description={
-        <span>
-          Switch between or manage all workspaces under your account.{" "}
+    <div className="settings-page workspaces-page">
+      <div className="workspaces-header">
+        <SectionHeader
+          title="Workspaces"
+          description="Manage your workspace memberships."
+        />
+        <div className="workspaces-header-actions">
           <a
-            href="#learn-more"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Opening workspace guide...");
-            }}
-            style={{ color: "#3b82f6", textDecoration: "none" }}
-            onMouseOver={(e) => e.target.style.textDecoration = "underline"}
-            onMouseOut={(e) => e.target.style.textDecoration = "none"}
+            href="https://docs.parrot.com/workspaces"
+            target="_blank"
+            rel="noreferrer"
+            className="workspaces-docs-link"
           >
-            Learn more.
+            <ExternalLink size={14} />
+            Docs
           </a>
-        </span>
-      }
-      maxWidthClassName="max-w-3xl"
-    >
-      <div className="org-list-header-row">
-        <span className="org-list-select-label">Select a workspace</span>
-        <button className="org-list-add-btn" onClick={() => setCreating(true)}>
-          New workspace
-        </button>
+          <button
+            className="settings-btn-primary workspaces-create-btn"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Plus size={14} />
+            Create Workspace
+          </button>
+        </div>
       </div>
 
-      <div className="org-stack">
-        {organizations.map((org) => {
-          const isCurrent = org.id === currentOrganization.id;
-          return (
-            <div
-              key={org.id}
-              onClick={() => openDetail(org)}
-              className="org-card-item"
-            >
-                <div className="org-card-left">
-                  <Folder size={16} className="org-card-folder-icon" />
-                  <div className="org-card-names-group">
-                    <span className="org-card-primary-name">{org.name}</span>
+      {error && <span className="create-project-error">{error}</span>}
+
+      <div className="settings-card workspaces-table-card">
+        <table className="workspaces-table">
+          <thead>
+            <tr>
+              <th>Organization</th>
+              <th>Role</th>
+              <th className="workspaces-actions-col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {organizations.map((org) => (
+              <tr key={org.id}>
+                <td>
+                  <div className="workspace-cell">
+                    <WorkspaceAvatar id={org.id} />
+                    <span className="workspace-name">{org.name}</span>
+                    {org.isDefault && (
+                      <span className="workspace-badge">personal</span>
+                    )}
                   </div>
+                </td>
+                <td className="workspace-role">{getRole(org)}</td>
+                <td className="workspace-actions">
+                  <button
+                    className="workspace-action-btn"
+                    onClick={() => handleCopyId(org.id)}
+                  >
+                    <Copy size={14} />
+                    {copiedId === org.id ? 'Copied' : 'Copy ID'}
+                  </button>
+                  {!org.isDefault && (
+                    <button
+                      className="workspace-action-btn"
+                      onClick={() => handleManageMembers(org.id)}
+                    >
+                      <Users size={14} />
+                      Manage members
+                    </button>
+                  )}
+                  <button
+                    className={cn(
+                      'workspace-action-btn workspace-leave-btn',
+                      org.isDefault && 'disabled'
+                    )}
+                    disabled={org.isDefault || leavingId === org.id}
+                    onClick={() => handleLeave(org)}
+                    title={org.isDefault ? 'Cannot leave default workspace' : 'Leave workspace'}
+                  >
+                    <LogOut size={14} />
+                    {leavingId === org.id ? 'Leaving...' : 'Leave'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {isModalOpen && (
+        <>
+          <div className="org-modal-backdrop" onClick={closeModal} />
+          <div className="org-modal-frame">
+            <div className="org-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="org-modal-header">
+                <h3 className="org-modal-title">Create Workspace</h3>
+                <p className="org-modal-description">
+                  Create a new workspace for your organization.
+                </p>
+              </div>
+              <div className="org-modal-body">
+                <div className="org-modal-field">
+                  <label className="org-modal-field-label">Name</label>
+                  <Input
+                    className="org-modal-input"
+                    value={newWorkspaceName}
+                    onChange={(e) => setNewWorkspaceName(e.target.value)}
+                    placeholder="Workspace name"
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); }}
+                    autoFocus
+                  />
                 </div>
-              <div className="org-card-right">
-                <button
-                  className={`org-card-circle-action ${isCurrent ? 'active' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Select this workspace
-                    useAppStore.getState().selectOrganization(org.id);
-                    const oSlug = org.slug || org.id;
-                    navigate(`/app/${oSlug}/stats`);
-                  }}
-                  title={isCurrent ? "Active Workspace" : "Select Workspace"}
-                >
-                  {isCurrent ? <Check size={14} /> : <Plus size={14} />}
+              </div>
+              <div className="org-modal-footer">
+                <button className="org-modal-secondary-btn" onClick={closeModal} disabled={isCreating}>
+                  Cancel
+                </button>
+                <button className="org-modal-primary-btn" onClick={handleCreate} disabled={isCreating || !newWorkspaceName.trim()}>
+                  {isCreating ? 'Creating...' : 'Create Workspace'}
                 </button>
               </div>
             </div>
-          );
-        })}
-      </div>
-
-    </ViewFrame>
+          </div>
+        </>
+      )}
+    </div>
   );
 }

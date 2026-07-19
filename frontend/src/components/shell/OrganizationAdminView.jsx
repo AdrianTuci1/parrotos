@@ -7,7 +7,7 @@ export function OrganizationAdminView({
   secondaryStat,
 }) {
   return (
-    <ViewFrame title={title} description={description} maxWidthClassName="max-w-7xl">
+    <ViewFrame title={title} description={description} maxWidthClassName="full-width">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-border bg-bg-secondary p-5">
           <span className="text-xs uppercase tracking-[0.16em] text-text-muted">Primary</span>

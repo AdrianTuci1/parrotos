@@ -192,7 +192,7 @@ export function ChatView() {
   // INLINE ACTION HANDLERS
   // ═══════════════════════════════════════════════
 
-  const handleApprove = useCallback(async (key) => {
+  const handleApprove = useCallback(async (key, payload = null) => {
     setApprovalStates(prev => ({ ...prev, [key]: "executing" }));
 
     const pending = pendingAction;
@@ -202,24 +202,32 @@ export function ChatView() {
     const isKeyInput = tc.action === "open_integration_modal";
 
     try {
-      let payload = {};
+      let finalPayload = payload;
 
       if (isKeyInput) {
-        const connector = tc.connector || "integration";
-        const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
-        const fields = authConfig.fields || DEFAULT_FIELDS.fields;
-        const values = {};
-        // Extract values from input fields in the DOM
-        const container = document.querySelector('.chat-pending-action-fields');
-        if (container) {
-          const inputs = container.querySelectorAll('input');
-          inputs.forEach((input, idx) => {
-            if (fields[idx]) values[fields[idx].key] = input.value;
-          });
+        if (!finalPayload || !finalPayload.credentials) {
+          const connector = tc.connector || "integration";
+          const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
+          const fields = authConfig.fields || DEFAULT_FIELDS.fields;
+          const values = {};
+          // Extract values from input fields in the DOM (fallback)
+          const container = document.querySelector('.chat-pending-action-fields');
+          if (container) {
+            const inputs = container.querySelectorAll('input');
+            inputs.forEach((input, idx) => {
+              if (fields[idx]) values[fields[idx].key] = input.value;
+            });
+          }
+          finalPayload = { connector_type: connector, credentials: values };
+        } else {
+          finalPayload = { connector_type: tc.connector || "integration", credentials: finalPayload.credentials };
         }
-        payload = { connector_type: connector, credentials: values };
       } else if (tc.type === "choice" || tc.action === "show_choices") {
-        payload = { selected: tc.choices?.[0]?.label };
+        if (!finalPayload || !finalPayload.selected) {
+          finalPayload = { selected: tc.choices?.[0]?.label };
+        } else {
+          finalPayload = { selected: finalPayload.selected };
+        }
       }
 
       await submitToolResponse(
@@ -227,7 +235,7 @@ export function ChatView() {
         currentWorkspace?.id,
         tc.id,
         isKeyInput ? "open_integration_modal" : (tc.type === "choice" ? "show_choices" : tc.action),
-        payload
+        finalPayload
       );
 
       setApprovalStates(prev => ({ ...prev, [key]: "approved" }));

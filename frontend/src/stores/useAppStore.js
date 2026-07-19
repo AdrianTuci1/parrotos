@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { config } from '@/config';
 import { organizationService } from '@/services/OrganizationService';
 import { projectService } from '@/services/ProjectService';
@@ -6,7 +7,9 @@ import { agentService } from '@/services/AgentService';
 import { integrationService } from '@/services/IntegrationService';
 import { authService } from '@/services/AuthService';
 import { serviceAccountService } from '@/services/ServiceAccountService';
+import { apiTokenService } from '@/services/ApiTokenService';
 import { billingService } from '@/services/BillingService';
+import { userService } from '@/services/UserService';
 import { alertService } from '@/services/AlertService.js';
 import { connectorAuthService } from '@/services/ConnectorAuthService.js';
 import { notificationService } from '@/services/NotificationService.js';
@@ -31,6 +34,7 @@ function normalizeWorkspace(workspace) {
   return {
     ...workspace,
     slug,
+    organizationId: workspace.organizationId || workspace.orgId,
     domain: workspace.domain || `${slug}.workspace`,
     status: workspace.status || 'Healthy',
     monthlyEvents: workspace.monthlyEvents ?? String(workspace.stats?.sessionsCount ?? 0),
@@ -91,11 +95,6 @@ const mockMetrics = {
     { id: 'demo-project-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
     { id: 'demo-project-4', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', connectors: [] },
   ],
-  recentActivity: [
-    { title: 'Project updated', meta: 'Demo Project configuration changed' },
-    { title: 'Connector synced', meta: 'Stripe data refreshed' },
-    { title: 'Project created', meta: 'Fresh Project added to organization' },
-  ],
 };
 
 const emptyMetrics = {
@@ -119,7 +118,6 @@ const emptyMetrics = {
   topConnector: { value: '-', detail: '', trend: '' },
   connectorUsage: [],
   projectList: [],
-  recentActivity: [],
 };
 
 function getOrganizationNameFromEmail(email) {
@@ -418,37 +416,41 @@ function createMockChatState() {
   };
 }
 
-export const useAppStore = create((set, get) => ({
-  devMode: config.devMode,
-  demoMode: config.devMode,
+export const useAppStore = create(
+  persist(
+    (set, get) => ({
+      devMode: config.devMode,
+      demoMode: config.devMode,
 
-  organizations: config.devMode ? mockOrganizations : [emptyOrg],
-  currentOrganization: config.devMode ? mockOrganizations[0] : emptyOrg,
-  currentWorkspace: null,
-  workspaces: config.devMode ? mockWorkspaces.map(normalizeWorkspace) : [],
+      organizations: config.devMode ? mockOrganizations : [emptyOrg],
+      currentOrganization: config.devMode ? mockOrganizations[0] : emptyOrg,
+      currentWorkspace: null,
+      workspaces: config.devMode ? mockWorkspaces.map(normalizeWorkspace) : [],
 
-  // Only two visual scopes: 'organization' and 'project'
-  activeScope: 'organization',
-  activeSection: 'home',
-  activeOrganizationSection: 'stats',
-  activeProjectSection: 'analytics',
+      // Only two visual scopes: 'organization' and 'project'
+      activeScope: 'organization',
+      activeSection: 'home',
+      activeOrganizationSection: 'stats',
+      activeProjectSection: 'analytics',
 
-  activeAnalyticsView: 'servers',
-  timeRange: '1h',
-  sidebarCollapsed: false,
+      activeAnalyticsView: 'servers',
+      timeRange: '1h',
+      sidebarCollapsed: false,
 
-  ...(config.devMode ? createMockChatState() : { chatSessions: [], activeChatId: null }),
-  isChatPanelOpen: true,
-  organizationsData: [], projectsData: [], agentsData: [],
-  integrationsData: [], analyticsData: null, currentUser: null,
-  serviceAccounts: [],
-  subscription: null,
-  accountMetrics: null,
-  storageVolumes: [],
-  authInitialized: config.devMode,
-  isLoading: false, error: null,
-  organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
-  notificationsData: [],
+      isChatPanelOpen: true,
+      organizationsData: [], projectsData: [], agentsData: [],
+      integrationsData: [], analyticsData: null, currentUser: null,
+      serviceAccounts: [], apiTokens: [],
+      subscription: null,
+      accountMetrics: null,
+      storageVolumes: [],
+      authInitialized: config.devMode,
+      isLoading: false, error: null,
+      organizationMetrics: config.devMode ? mockMetrics : emptyMetrics,
+      notificationsData: [],
+      invitations: [],
+      chatSessions: [],
+      activeChatId: null,
 
   shouldShowMockData: () => isMockModeState(get()),
   shouldFetchApi: () => !isMockModeState(get()),
@@ -542,6 +544,7 @@ export const useAppStore = create((set, get) => ({
         integrationsData: [],
         analyticsData: null,
         serviceAccounts: [],
+        apiTokens: [],
         subscription: null,
         accountMetrics: null,
         authInitialized: true,
@@ -572,6 +575,7 @@ export const useAppStore = create((set, get) => ({
       integrationsData: [],
       analyticsData: null,
       serviceAccounts: [],
+      apiTokens: [],
       subscription: null,
       accountMetrics: null,
       organizations: getOrganizationsForState({ ...state, organizationsData: [], projectsData: [] }),
@@ -631,6 +635,45 @@ export const useAppStore = create((set, get) => ({
       }));
     } catch (err) {
       set({ error: err.message });
+    }
+  },
+
+  fetchInvitations: async () => {
+    if (isMockModeState(get())) return;
+    try {
+      const result = await userService.getInvitations();
+      set({ invitations: result.invitations || [] });
+      return result.invitations || [];
+    } catch (err) {
+      set({ error: err.message });
+      return [];
+    }
+  },
+
+  acceptInvitation: async (invitationId) => {
+    if (isMockModeState(get())) return;
+    try {
+      await userService.acceptInvitation(invitationId);
+      set((state) => ({
+        invitations: state.invitations.filter((i) => i.id !== invitationId),
+      }));
+      await get().fetchOrganizations();
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  declineInvitation: async (invitationId) => {
+    if (isMockModeState(get())) return;
+    try {
+      await userService.declineInvitation(invitationId);
+      set((state) => ({
+        invitations: state.invitations.filter((i) => i.id !== invitationId),
+      }));
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
     }
   },
 
@@ -702,7 +745,10 @@ export const useAppStore = create((set, get) => ({
     if (!workspace) return;
     const organization = get().organizations.find((item) => item.id === workspace.organizationId);
     set((state) => ({ currentOrganization: organization || state.currentOrganization, currentWorkspace: workspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
-    if (get().shouldFetchApi() && organization) { get().fetchAgents(organization.id, workspaceId); get().fetchIntegrations(organization.id, workspaceId); }
+    if (get().shouldFetchApi() && organization) {
+      get().fetchAgents(organization.id, workspaceId);
+      get().fetchIntegrations(organization.id, workspaceId);
+    }
   },
 
   goToOrganizationHome: () => set((state) => ({ activeScope: 'organization', activeSection: state.activeOrganizationSection || 'stats', currentWorkspace: null })),
@@ -800,6 +846,36 @@ export const useAppStore = create((set, get) => ({
     }
   },
 
+  leaveOrganization: async (orgId) => {
+    if (get().devMode) {
+      set((state) => ({
+        organizations: state.organizations.filter((o) => o.id !== orgId),
+        workspaces: state.workspaces.filter((w) => w.organizationId !== orgId),
+        currentOrganization: state.currentOrganization?.id === orgId
+          ? (state.organizations.find((o) => o.id !== orgId) || emptyOrg)
+          : state.currentOrganization,
+      }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await organizationService.removeMember(orgId, get().currentUser?.id);
+      set((state) => ({
+        organizationsData: state.organizationsData.filter((o) => o.id !== orgId),
+        organizations: state.organizations.filter((o) => o.id !== orgId),
+        workspaces: state.workspaces.filter((w) => w.organizationId !== orgId),
+        projectsData: state.projectsData.filter((p) => p.organizationId !== orgId),
+        currentOrganization: state.currentOrganization?.id === orgId
+          ? (state.organizationsData.find((o) => o.id !== orgId) || emptyOrg)
+          : state.currentOrganization,
+        isLoading: false,
+      }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
   deleteAccount: async () => {
     if (get().devMode) {
       get().logout();
@@ -812,6 +888,218 @@ export const useAppStore = create((set, get) => ({
       get().logout();
       set({ isLoading: false });
       return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  fetchMembers: async (orgId) => {
+    if (get().devMode) {
+      const org = get().currentOrganization;
+      return [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
+    }
+    set({ isLoading: true });
+    try {
+      const result = await organizationService.getMembers(orgId);
+      set({ members: result.members || [], isLoading: false });
+      return result.members;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  addMember: async (orgId, email, role) => {
+    if (get().devMode) {
+      const newMember = { userId: `user-${email}`, email, username: email.split('@')[0], role, joinedAt: new Date().toISOString() };
+      set((state) => ({ members: [...state.members, newMember] }));
+      return newMember;
+    }
+    set({ isLoading: true });
+    try {
+      const result = await organizationService.addMember(orgId, email, role);
+      set((state) => ({ members: [...state.members, result.member], isLoading: false }));
+      return result.member;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  updateMember: async (orgId, userId, role) => {
+    if (get().devMode) {
+      set((state) => ({
+        members: state.members.map((m) => m.userId === userId ? { ...m, role } : m),
+      }));
+      return get().members.find((m) => m.userId === userId);
+    }
+    set({ isLoading: true });
+    try {
+      const result = await organizationService.updateMember(orgId, userId, role);
+      set((state) => ({
+        members: state.members.map((m) => m.userId === userId ? (result.member || { ...m, role }) : m),
+        isLoading: false,
+      }));
+      return result.member;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  removeMember: async (orgId, userId) => {
+    if (get().devMode) {
+      set((state) => ({ members: state.members.filter((m) => m.userId !== userId) }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await organizationService.removeMember(orgId, userId);
+      set((state) => ({ members: state.members.filter((m) => m.userId !== userId), isLoading: false }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  cancelInvitation: async (orgId, invitationId) => {
+    if (get().devMode) {
+      set((state) => ({ members: state.members.filter((m) => m.invitationId !== invitationId) }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await organizationService.cancelInvitation(orgId, invitationId);
+      set((state) => ({ members: state.members.filter((m) => m.invitationId !== invitationId), isLoading: false }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  fetchSecuritySettings: async (orgId) => {
+    if (get().devMode) {
+      return get().currentOrganization?.settings?.security || {};
+    }
+    try {
+      const org = await organizationService.get(orgId);
+      const securitySettings = org?.settings?.security || {};
+      set((state) => ({
+        currentOrganization: { ...state.currentOrganization, settings: { ...state.currentOrganization?.settings, security: securitySettings } },
+      }));
+      return securitySettings;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateSecuritySettings: async (orgId, settings) => {
+    if (get().devMode) {
+      set((state) => ({
+        currentOrganization: {
+          ...state.currentOrganization,
+          settings: { ...state.currentOrganization?.settings, security: { ...state.currentOrganization?.settings?.security, ...settings } },
+        },
+      }));
+      return get().currentOrganization.settings.security;
+    }
+    try {
+      const result = await organizationService.updateSecuritySettings(orgId, settings);
+      set((state) => ({
+        currentOrganization: { ...state.currentOrganization, ...result },
+      }));
+      return result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateProfile: async (dto) => {
+    if (get().devMode) {
+      set((state) => ({ currentUser: { ...state.currentUser, ...dto } }));
+      return { user: get().currentUser };
+    }
+    set({ isLoading: true });
+    try {
+      const result = await userService.updateProfile(dto);
+      set((state) => ({ currentUser: result.user || { ...state.currentUser, ...dto }, isLoading: false }));
+      return result;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  fetchNotificationPreferences: async () => {
+    if (get().devMode) {
+      return get().currentUser?.notificationPreferences || {
+        emailAlerts: true,
+        weeklyDigest: false,
+        marketingEmails: false,
+      };
+    }
+    try {
+      const result = await userService.getNotificationPreferences();
+      return result.preferences || result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateNotificationPreferences: async (prefs) => {
+    if (get().devMode) {
+      set((state) => ({
+        currentUser: {
+          ...state.currentUser,
+          notificationPreferences: { ...state.currentUser?.notificationPreferences, ...prefs },
+        },
+      }));
+      return get().currentUser?.notificationPreferences;
+    }
+    try {
+      const result = await userService.updateNotificationPreferences(prefs);
+      set((state) => ({
+        currentUser: {
+          ...state.currentUser,
+          notificationPreferences: result.preferences || result,
+        },
+      }));
+      return result.preferences || result;
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
+
+  updateProject: async (orgId, projectId, dto) => {
+    if (get().devMode) {
+      set((state) => ({
+        workspaces: state.workspaces.map((w) =>
+          w.id === projectId ? { ...w, ...dto } : w
+        ),
+        currentWorkspace: state.currentWorkspace?.id === projectId
+          ? { ...state.currentWorkspace, ...dto }
+          : state.currentWorkspace,
+      }));
+      return get().workspaces.find(w => w.id === projectId);
+    }
+    set({ isLoading: true });
+    try {
+      const updated = await projectService.update(orgId, projectId, dto);
+      set((state) => ({
+        workspaces: state.workspaces.map((w) =>
+          w.id === projectId ? { ...w, ...updated } : w
+        ),
+        currentWorkspace: state.currentWorkspace?.id === projectId
+          ? { ...state.currentWorkspace, ...updated }
+          : state.currentWorkspace,
+        isLoading: false,
+      }));
+      return updated;
     } catch (err) {
       set({ error: err.message, isLoading: false });
       throw err;
@@ -1101,6 +1389,74 @@ export const useAppStore = create((set, get) => ({
   },
 
   // ═══════════════════════════════════════════════
+  // API TOKENS
+  // ═══════════════════════════════════════════════
+
+  fetchApiTokens: async (orgId) => {
+    if (get().devMode) {
+      const existing = get().apiTokens || [];
+      if (existing.length > 0) return existing;
+      const mock = [
+        { id: 'tok_1', name: 'Production ETL', prefix: 'sdt_prod', scopes: ['read', 'write'], lastUsedAt: '2026-07-17T14:32:00Z', createdAt: '2026-06-01T09:00:00Z', expiresAt: '2027-06-01T09:00:00Z', status: 'active' },
+        { id: 'tok_2', name: 'Dashboard queries', prefix: 'sdt_dash', scopes: ['read'], lastUsedAt: '2026-07-18T08:15:00Z', createdAt: '2026-05-20T11:30:00Z', expiresAt: null, status: 'active' },
+      ];
+      set({ apiTokens: mock });
+      return mock;
+    }
+    set({ isLoading: true });
+    try {
+      const tokens = await apiTokenService.list(orgId);
+      set({ apiTokens: tokens, isLoading: false });
+      return tokens;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  createApiToken: async (orgId, name, scopes = ['read', 'write']) => {
+    if (get().devMode) {
+      const item = {
+        id: `tok_${Date.now()}`,
+        name: name.trim(),
+        prefix: 'sdt_mock',
+        token: `sdt_${Array.from({ length: 32 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('')}`,
+        scopes,
+        lastUsedAt: null,
+        createdAt: new Date().toISOString(),
+        expiresAt: null,
+        status: 'active',
+      };
+      set((state) => ({ apiTokens: [item, ...state.apiTokens] }));
+      return item;
+    }
+    set({ isLoading: true });
+    try {
+      const item = await apiTokenService.create(orgId, { name: name.trim(), scopes });
+      set((state) => ({ apiTokens: [item, ...state.apiTokens], isLoading: false }));
+      return item;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  revokeApiToken: async (orgId, tokenId) => {
+    if (get().devMode) {
+      set((state) => ({ apiTokens: state.apiTokens.filter((t) => t.id !== tokenId) }));
+      return;
+    }
+    set({ isLoading: true });
+    try {
+      await apiTokenService.delete(orgId, tokenId);
+      set((state) => ({ apiTokens: state.apiTokens.filter((t) => t.id !== tokenId), isLoading: false }));
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      throw err;
+    }
+  },
+
+  // ═══════════════════════════════════════════════
   // ACCOUNT METRICS
   // ═══════════════════════════════════════════════
 
@@ -1185,9 +1541,98 @@ export const useAppStore = create((set, get) => ({
     window.location.href = result.url;
   },
 
-  // ═══════════════════════════════════════════════
-  // ALERTS
-  // ═══════════════════════════════════════════════
+  fetchWorkspaceLimits: async (orgId) => {
+    if (isMockModeState(get())) {
+      const sub = get().subscription || mockSubscription;
+      return {
+        connectors: { limit: 10, current: 0, peak: 1 },
+        projects: { limit: sub.limits?.maxProjects ?? 20, current: get().workspaces.length, peak: get().workspaces.length },
+        storage: { limit: sub.limits?.maxStorage ? Math.round(sub.limits.maxStorage / (1024 ** 3)) : 500, current: 0, peak: 12 },
+        queries: { limit: sub.limits?.maxQueries ?? 50000, current: 0, peak: 1200 },
+        ingestion: { limit: '5/s + 150 burst', current: 0, peak: '1/s' },
+      };
+    }
+    try {
+      const [sub, metrics] = await Promise.all([
+        billingService.getSubscription(orgId),
+        analyticsService.getOrgMetrics(orgId).catch(() => null),
+      ]);
+      const projects = metrics?.projects?.total ?? get().workspaces.length ?? 0;
+      const storageGb = metrics?.storage?.total ?? 0;
+      return {
+        connectors: { limit: sub.limits?.maxConnectors ?? 10, current: metrics?.connectedSources?.value ? parseInt(metrics.connectedSources.value, 10) : 0, peak: 1 },
+        projects: { limit: sub.limits?.maxProjects ?? 20, current: projects, peak: projects },
+        storage: { limit: sub.limits?.maxStorage ? Math.round(sub.limits.maxStorage / (1024 ** 3)) : 500, current: storageGb, peak: Math.max(storageGb, 12) },
+        queries: { limit: sub.limits?.maxQueries ?? 50000, current: metrics?.events?.total ?? 0, peak: 1200 },
+        ingestion: { limit: sub.limits?.maxIngestion ?? '5/s + 150 burst', current: 0, peak: '1/s' },
+      };
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  fetchUsageBilling: async (orgId) => {
+    if (isMockModeState(get())) {
+      const sub = get().subscription || mockSubscription;
+      const metrics = get().organizationMetrics || mockMetrics;
+      return {
+        subscription: sub,
+        usage: {
+          totalSpend: 0,
+          usageBreakdown: 3.22,
+          items: [
+            { name: 'Ephemeral Apps', value: 1.85, color: '#86efac' },
+            { name: 'Deployed Apps', value: 1.37, color: '#f87171' },
+          ],
+        },
+        credits: { balance: 0, applied: -3.22, transactions: [] },
+        invoices: [
+          { id: 'INV-2026-006', date: 'June 12, 2026', amount: '$0.00', status: 'Paid' },
+          { id: 'INV-2026-005', date: 'May 12, 2026', amount: '$0.00', status: 'Paid' },
+        ],
+        plans: [
+          { key: 'starter', name: 'Starter', price: 0, current: true },
+          { key: 'team', name: 'Team', price: 250 },
+          { key: 'enterprise', name: 'Enterprise', price: 'Custom' },
+        ],
+        metrics,
+      };
+    }
+    try {
+      const [sub, usage, credits, invoices, plans, metrics] = await Promise.all([
+        billingService.getSubscription(orgId).catch(() => null),
+        billingService.getUsage(orgId).catch(() => null),
+        billingService.getCredits(orgId).catch(() => null),
+        billingService.getInvoices(orgId).catch(() => null),
+        billingService.getPlans(orgId).catch(() => null),
+        analyticsService.getOrgMetrics(orgId).catch(() => null),
+      ]);
+      return {
+        subscription: sub,
+        usage,
+        credits,
+        invoices,
+        plans,
+        metrics,
+      };
+    } catch (err) {
+      set({ error: err.message });
+      return null;
+    }
+  },
+
+  setWorkspaceBudget: async (orgId, budget) => {
+    if (isMockModeState(get())) {
+      return { budget };
+    }
+    try {
+      return await billingService.setBudget(orgId, budget);
+    } catch (err) {
+      set({ error: err.message });
+      throw err;
+    }
+  },
 
   fetchAlerts: async (orgId, projectId, limit = 20) => {
     if (get().devMode) return [];
@@ -1614,4 +2059,41 @@ export const useAppStore = create((set, get) => ({
       return { ...msg, toolCalls: newToolCalls };
     })};
   }) })),
-}));
+}),
+{
+  name: 'parrot-app-store',
+      partialize: (state) => ({
+        currentOrganization: state.currentOrganization,
+        currentWorkspace: state.currentWorkspace,
+        activeScope: state.activeScope,
+        activeSection: state.activeSection,
+        activeOrganizationSection: state.activeOrganizationSection,
+        activeProjectSection: state.activeProjectSection,
+        organizationsData: state.organizationsData.map((o) => ({
+          id: o.id,
+          name: o.name,
+          slug: o.slug,
+          plan: o.plan || 'Starter',
+          accountId: o.accountId,
+          status: o.status,
+          isDefault: o.isDefault,
+        })),
+        projectsData: state.projectsData.map((p) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          organizationId: p.organizationId,
+          status: p.status || 'Healthy',
+        })),
+        workspaces: state.projectsData.map((p) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          organizationId: p.organizationId,
+          status: p.status || 'Healthy',
+        })),
+      }),
+    }
+  )
+);
+

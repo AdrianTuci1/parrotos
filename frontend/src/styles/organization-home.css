@@ -32,14 +32,15 @@
   line-height: 1.02;
   letter-spacing: -0.04em;
   color: #f3f4f6;
+  max-width: 100%;
 }
 
 .organization-home-copy {
   margin: 16px 0 0;
-  max-width: 60rem;
   font-size: 15px;
   line-height: 1.6;
   color: #8e918f;
+  max-width: 100%;
 }
 
 .organization-home-grid {
@@ -270,10 +271,11 @@
   }
 
   .organization-home-copy {
-    margin-top: 12px;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #8e918f;
+}
 
   .organization-home-grid {
     gap: 14px;

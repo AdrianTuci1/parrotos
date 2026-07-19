@@ -70,6 +70,16 @@ export const config = {
   cloudRunAuthMode: process.env.CLOUD_RUN_AUTH_MODE || 'auto',
   cloudSchedulerInvokerServiceAccountEmail: process.env.CLOUD_SCHEDULER_INVOKER_SERVICE_ACCOUNT_EMAIL || '',
 
+  // Resend
+  resendApiKey: process.env.RESEND_API_KEY || '',
+  emailFrom: process.env.EMAIL_FROM || 'noreply@statsparrot.com',
+
+  // LLM
+  llmProvider: process.env.LLM_PROVIDER || 'openai',
+  llmApiKey: process.env.LLM_API_KEY || '',
+  llmModel: process.env.LLM_MODEL || '',
+  llmBaseUrl: process.env.LLM_BASE_URL || '',
+
   // Google OAuth
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,

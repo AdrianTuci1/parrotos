@@ -11,7 +11,6 @@ import { OrganizationHomeView } from '@/components/shell/OrganizationHomeView';
 import { OrganizationProjectsView } from '@/components/shell/OrganizationProjectsView';
 import { OrganizationOrganizationsView } from '@/components/shell/OrganizationOrganizationsView';
 import { OrganizationAccessView } from '@/components/shell/OrganizationAccessView';
-import { OrganizationBillingView } from '@/components/shell/OrganizationBillingView';
 import { OrganizationSettingsView } from '@/components/shell/OrganizationSettingsView';
 import { OrganizationStatsView } from '@/components/shell/OrganizationStatsView';
 import { useAppStore } from '@/stores/useAppStore';
@@ -26,7 +25,6 @@ const views = {
   'organization-projects': OrganizationProjectsView,
   'organization-organizations': OrganizationOrganizationsView,
   'organization-access': OrganizationAccessView,
-  'organization-billing': OrganizationBillingView,
   'organization-settings': OrganizationSettingsView,
   'organization-stats': OrganizationStatsView,
   'create-project': CreateProjectView,
