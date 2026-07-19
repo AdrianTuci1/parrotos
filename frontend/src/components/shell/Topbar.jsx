@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { LogoIcon } from "@/components/logo";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ChevronDown, LogOut, Settings, Plus } from "lucide-react";
+import { ChevronDown, LogOut, Settings, Plus, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import "@/styles/topbar.css";
 import { NotificationBell } from "@/components/shell/NotificationBell";
@@ -39,7 +39,7 @@ function ScopeCircle({ id, className }) {
   );
 }
 
-export function Topbar() {
+export function Topbar({ mobileMenuOpen, setMobileMenuOpen }) {
   const navigate = useNavigate();
   const [createOrgOpen, setCreateOrgOpen] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
@@ -105,7 +105,7 @@ export function Topbar() {
             <LogoIcon className="h-5 w-5" />
             <span className="topbar-logo-text">Parrot</span>
           </div>
-
+          <div className="topbar-scopes-wrapper">
           <div className="topbar-divider" />
 
           <DropdownMenu>
@@ -165,6 +165,18 @@ export function Topbar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {currentOrganization && currentWorkspace && (
+            <button
+              type="button"
+              className="topbar-scope-hamburger"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          )}
+        </div>
         </div>
 
         <div className="topbar-right">

@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/useAppStore";
-import { Menu, X } from "lucide-react";
 import "@/styles/topbar.css";
 
 const projectTabs = [
@@ -14,11 +12,10 @@ const projectTabs = [
   { id: "chat", label: "Chat" },
 ];
 
-export function ProjectSubNavbar() {
+export function ProjectSubNavbar({ open, setOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentOrganization, currentWorkspace } = useAppStore();
-  const [open, setOpen] = useState(false);
 
   if (!currentOrganization || !currentWorkspace) return null;
 
@@ -36,26 +33,20 @@ export function ProjectSubNavbar() {
   };
 
   return (
-    <div className="subnavbar">
-      <div className="subnavbar-tabs">
-        {projectTabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => goTo(tab.id)}
-            className={cn("subnavbar-tab", activeTab === tab.id && "active")}
-          >
-            {tab.label}
-          </button>
-        ))}
+    <>
+      <div className="subnavbar">
+        <div className="subnavbar-tabs">
+          {projectTabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => goTo(tab.id)}
+              className={cn("subnavbar-tab", activeTab === tab.id && "active")}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
-      <button
-        type="button"
-        className="subnavbar-hamburger"
-        onClick={() => setOpen((o) => !o)}
-        aria-label="Toggle menu"
-      >
-        {open ? <X size={18} /> : <Menu size={18} />}
-      </button>
       {open && (
         <div className="subnavbar-mobile-menu">
           {projectTabs.map((tab) => (
@@ -69,7 +60,7 @@ export function ProjectSubNavbar() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
