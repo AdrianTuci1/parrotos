@@ -108,9 +108,17 @@ export function DashboardPage() {
     return () => { cancelled = true; };
   }, [orgSlug, projectSlug, section, organizations.length, workspaces.length, currentOrganization?.id, currentWorkspace?.id, activeSection, setActiveSection, selectOrganization, selectWorkspace, fetchProjects, navigate, urlSection]);
 
+  const isSlimProjectView = viewKey === "sources" || viewKey === "destinations";
+
   return (
     <Layout>
-      <ActiveView />
+      {projectSlug ? (
+        <div className={`project-view-wrapper${isSlimProjectView ? " is-slim" : ""}`}>
+          <ActiveView />
+        </div>
+      ) : (
+        <ActiveView />
+      )}
     </Layout>
   );
 }

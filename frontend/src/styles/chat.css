@@ -304,8 +304,51 @@
   max-width: 900px !important; /* centered, limited width */
 }
 
+.chat-centered-text-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #E3E3E3;
+  font-size: 14px;
+  line-height: 1.4;
+  outline: none;
+  padding: 0;
+}
+
 .chat-centered-text-input::placeholder {
   color: #8E918F;
+}
+
+/* Voice waveform shown while recording */
+.chat-waveform {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  height: 24px;
+}
+
+.chat-waveform-bar {
+  width: 4px;
+  height: 8px;
+  background: #A8C7FA;
+  border-radius: 2px;
+  animation: chatWaveform 0.9s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.chat-waveform-bar:nth-child(1) { animation-delay: 0s; }
+.chat-waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+.chat-waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+.chat-waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+.chat-waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes chatWaveform {
+  0%, 100% { transform: scaleY(0.6); }
+  50% { transform: scaleY(1.8); }
 }
 
 .chat-centered-send-btn {
@@ -522,7 +565,7 @@ main:has(.chat-active-mode),
 
 /* Wider composer when starting a fresh session (no messages yet) */
 .chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
-  max-width: 900px !important; /* centered, limited width */
+  max-width: 640px !important; /* centered, limited width */
 }
 
 /* Microphone button inside pill composer */
