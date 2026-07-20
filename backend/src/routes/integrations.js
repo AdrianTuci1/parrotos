@@ -52,6 +52,39 @@ router.get('/catalog', async (req, res, next) => {
   }
 });
 
+// GET /auth/:connectorName — get auth config for a connector
+router.get('/auth/:connectorName', async (req, res, next) => {
+  try {
+    const config = integrationCatalogService.getAuthConfig(req.params.connectorName);
+    if (!config) {
+      return res.status(404).json({ error: 'Unknown connector' });
+    }
+    success(res, config);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /deploy — deploy a connector (Cloud Function or BigQuery Transfer)
+router.post('/deploy', async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const { connectorName, credentials } = req.body;
+
+    if (!connectorName || !credentials) {
+      return res.status(400).json({ error: 'connectorName and credentials required' });
+    }
+
+    const { ConnectorService } = await import('../services/ConnectorService.js');
+    const connectorService = new ConnectorService();
+    const result = await connectorService.deployConnector(orgId, projectId, connectorName, credentials);
+
+    success(res, result, 202);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/:integrationId', async (req, res, next) => {
   try {
     const { orgId, projectId, integrationId } = req.params;
@@ -92,25 +125,7 @@ router.post('/:integrationId/sync', async (req, res, next) => {
   }
 });
 
-// POST /deploy — deploy a connector (Cloud Function or BigQuery Transfer)
-router.post('/deploy', async (req, res, next) => {
-  try {
-    const { orgId, projectId } = req.params;
-    const { connectorName, credentials } = req.body;
 
-    if (!connectorName || !credentials) {
-      return res.status(400).json({ error: 'connectorName and credentials required' });
-    }
-
-    const { ConnectorService } = await import('../services/ConnectorService.js');
-    const connectorService = new ConnectorService();
-    const result = await connectorService.deployConnector(orgId, projectId, connectorName, credentials);
-
-    success(res, result, 202);
-  } catch (err) {
-    next(err);
-  }
-});
 
 // POST /:integrationId/trigger-sync — trigger a manual sync for an existing connector
 router.post('/:integrationId/trigger-sync', async (req, res, next) => {
@@ -132,18 +147,7 @@ router.post('/:integrationId/trigger-sync', async (req, res, next) => {
   }
 });
 
-// GET /auth/:connectorName — get auth config for a connector
-router.get('/auth/:connectorName', async (req, res, next) => {
-  try {
-    const config = integrationCatalogService.getAuthConfig(req.params.connectorName);
-    if (!config) {
-      return res.status(404).json({ error: 'Unknown connector' });
-    }
-    success(res, config);
-  } catch (err) {
-    next(err);
-  }
-});
+
 
 // POST /webhook/sync-complete — receive Pub/Sub push notifications when sync completes
 router.post('/webhook/sync-complete', async (req, res, next) => {
