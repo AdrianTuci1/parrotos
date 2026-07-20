@@ -94,6 +94,8 @@ export const requireOrgAccess = async (req, res, next) => {
     const isGlobalAdmin = req.user.roles?.includes('admin');
 
     if (!isOwner && !isMember && !isGlobalAdmin) {
+      console.warn(`[requireOrgAccess] 401 Unauthorized for user ${req.user.userId} on org ${orgId}. isOwner: ${isOwner}, isMember: ${isMember}, isGlobalAdmin: ${isGlobalAdmin}`);
+      console.warn(`[requireOrgAccess] orgData.accountId: ${orgData.accountId}, orgData.members:`, orgData.members);
       return next(new UnauthorizedError('User does not have access to this organization'));
     }
 

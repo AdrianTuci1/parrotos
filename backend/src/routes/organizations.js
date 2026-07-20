@@ -136,9 +136,23 @@ router.patch('/:orgId/members/:userId', requireOrganizationManager, validate(upd
   }
 });
 
-router.delete('/:orgId/members/:userId', requireOrganizationManager, async (req, res, next) => {
+router.delete('/:orgId/members/:userId', requireOrgAccess, async (req, res, next) => {
   try {
     const { orgId, userId } = req.params;
+
+    if (userId !== req.user.userId) {
+      const { gcpService } = await import('../services/GcpService.js');
+      const orgDoc = await gcpService.getOrgRef(orgId).get();
+      const orgData = orgDoc.data();
+      const member = orgData.members?.find(m => m.userId === req.user.userId);
+      const isManager = member?.role === 'Owner' || member?.role === 'Admin';
+      const isGlobalAdmin = req.user.roles?.includes('admin');
+      
+      if (!isManager && !isGlobalAdmin) {
+        throw new ForbiddenError('Only organization managers can remove other members');
+      }
+    }
+
     await orgService.removeMember(orgId, userId);
     success(res, null, 204);
   } catch (err) {

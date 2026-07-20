@@ -34,16 +34,19 @@ export class NotificationService {
 
   async listForUser(userId, { limit = 50, unreadOnly = false } = {}) {
     let query = this.notificationsCollection
-      .where('userId', '==', userId)
-      .orderBy('createdAt', 'desc')
-      .limit(limit);
+      .where('userId', '==', userId);
 
     if (unreadOnly) {
       query = query.where('read', '==', false);
     }
 
     const snapshot = await query.get();
-    return snapshot.docs.map((doc) => Notification.fromFirestore(doc.id, doc.data()));
+    let notifications = snapshot.docs.map((doc) => Notification.fromFirestore(doc.id, doc.data()));
+    
+    // Sort in memory to avoid needing a composite index in Firestore
+    notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    return notifications.slice(0, limit);
   }
 
   async markAsRead(userId, notificationId) {
