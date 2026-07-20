@@ -467,7 +467,19 @@ function DangerSection() {
 }
 
 export function OrganizationSettingsView() {
+  const { currentOrganization } = useAppStore();
   const [activeTab, setActiveTab] = useState("general");
+
+  const hasOrg = Boolean(currentOrganization?.id && currentOrganization.id !== "__empty__");
+  if (!hasOrg) {
+    return (
+      <div className="workspace-page">
+        <div className="workspace-placeholder" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          No organization selected or organization was deleted.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="settings-layout">

@@ -697,6 +697,7 @@ export const useAppStore = create(
     }
   },
   fetchProjects: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (isMockModeState(get())) {
       return get().workspaces.filter((workspace) => workspace.organizationId === orgId);
     }
@@ -895,6 +896,7 @@ export const useAppStore = create(
   },
 
   fetchMembers: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) {
       const org = get().currentOrganization;
       return [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
@@ -1317,6 +1319,7 @@ export const useAppStore = create(
   // ═══════════════════════════════════════════════
 
   fetchServiceAccounts: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) return;
     set({ isLoading: true });
     try {
@@ -1393,6 +1396,7 @@ export const useAppStore = create(
   // ═══════════════════════════════════════════════
 
   fetchApiTokens: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) {
       const existing = get().apiTokens || [];
       if (existing.length > 0) return existing;
