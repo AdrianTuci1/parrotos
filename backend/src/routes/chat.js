@@ -20,7 +20,7 @@ router.use(requireOrgAccess);
  */
 router.post('/message', async (req, res) => {
   try {
-    const { sessionId, message } = req.body;
+    const { sessionId, message, title } = req.body;
     const { orgId, projectId } = req.params;
 
     if (!sessionId || !message) {
@@ -35,7 +35,7 @@ router.post('/message', async (req, res) => {
       response = await internalServiceClient.fetch(`${config.chatServiceUrl}/internal/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orgId, projectId, sessionId, message, backendToken: userToken }),
+        body: JSON.stringify({ orgId, projectId, sessionId, message, title, backendToken: userToken }),
       });
       if (!response.ok) useFallback = true;
     } catch {

@@ -591,10 +591,11 @@ async function loadConversation(orgId, projectId, sessionId) {
   return doc.exists ? doc.data().messages || [] : [];
 }
 
-async function saveConversation(orgId, projectId, sessionId, messages) {
+async function saveConversation(orgId, projectId, sessionId, messages, title) {
   await conversationRef(orgId, projectId, sessionId).set({
     messages,
     updatedAt: new Date().toISOString(),
+    ...(title && { title }),
   }, { merge: true });
 }
 
@@ -603,7 +604,7 @@ async function saveConversation(orgId, projectId, sessionId, messages) {
 // ═══════════════════════════════════════════════════
 
 app.post('/internal/message', requireInternalToken, async (req, res) => {
-  const { orgId, projectId, sessionId, message, backendToken } = req.body;
+  const { orgId, projectId, sessionId, message, backendToken, title } = req.body;
   // backendToken is the user's JWT from the main backend — used to call backend APIs on user's behalf
 
   if (!orgId || !projectId || !sessionId || !message) {
@@ -661,7 +662,7 @@ app.post('/internal/message', requireInternalToken, async (req, res) => {
           tool_calls: toolCalls.length > 0 ? toolCalls : [],
         },
       ];
-      await saveConversation(orgId, projectId, sessionId, newMessages);
+      await saveConversation(orgId, projectId, sessionId, newMessages, title);
     }
 
     send({ type: 'done' });

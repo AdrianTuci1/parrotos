@@ -160,7 +160,7 @@ export function ChatView() {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ sessionId: currentChatId, message: text }),
+        body: JSON.stringify({ sessionId: currentChatId, message: text, title: text.slice(0, 30) }),
       });
 
       const reader = response.body.getReader();
