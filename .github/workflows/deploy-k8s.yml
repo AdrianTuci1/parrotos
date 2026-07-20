@@ -1,4 +1,4 @@
-name: Deploy to Kubernetes
+name: Build and Push Images
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
     paths:
       - 'backend/**'
       - 'services/**'
-      - 'k8s/**'
       - '.github/workflows/deploy-k8s.yml'
   workflow_dispatch:
 
@@ -17,9 +16,6 @@ env:
   CHAT_IMAGE: adriantuci1/sentry-data-chat
   HARNESS_IMAGE: adriantuci1/sentry-data-harness
   OBSERVER_IMAGE: adriantuci1/sentry-data-observer
-  GKE_CLUSTER: ${{ vars.GKE_CLUSTER || 'sentry-data-cluster' }}
-  GKE_LOCATION: ${{ vars.GKE_LOCATION || 'europe-west1' }}
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
 
 jobs:
   build-and-push:
@@ -96,35 +92,3 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.OBSERVER_IMAGE }}:main
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Configure GKE credentials
-        uses: google-github-actions/get-gke-credentials@v2
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_LOCATION }}
-          project_id: ${{ env.GCP_PROJECT_ID }}
-
-      - name: 🚀 Deploy to GKE
-        run: |
-          kubectl set image deployment/sentry-data-backend \
-            backend=${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }} -n sentry-data
-          kubectl set image deployment/sentry-data-chat \
-            chat=${{ env.REGISTRY }}/${{ env.CHAT_IMAGE }}:${{ github.sha }} -n sentry-data
-          kubectl set image deployment/sentry-data-harness \
-            harness=${{ env.REGISTRY }}/${{ env.HARNESS_IMAGE }}:${{ github.sha }} -n sentry-data
-          kubectl set image deployment/sentry-data-observer \
-            observer=${{ env.REGISTRY }}/${{ env.OBSERVER_IMAGE }}:${{ github.sha }} -n sentry-data
-          kubectl set image cronjob/sentry-data-sync-worker \
-            worker=${{ env.REGISTRY }}/${{ env.WORKER_IMAGE }}:${{ github.sha }} -n sentry-data
-
-      - name: 🏥 Wait for rollout
-        run: |
-          kubectl rollout status deployment/sentry-data-backend -n sentry-data --timeout=300s
-          kubectl rollout status deployment/sentry-data-chat -n sentry-data --timeout=300s
-          kubectl rollout status deployment/sentry-data-harness -n sentry-data --timeout=300s
-          kubectl rollout status deployment/sentry-data-observer -n sentry-data --timeout=300s
