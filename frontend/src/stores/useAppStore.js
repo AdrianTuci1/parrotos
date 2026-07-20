@@ -2073,7 +2073,26 @@ export const useAppStore = create(
 
   createChatSession: (title = 'New Chat') => { const session = { id: `chat_${Date.now()}`, title, messages: [], createdAt: new Date().toISOString() }; set((state) => ({ chatSessions: [...state.chatSessions, session], activeChatId: session.id })); return session; },
   selectChat: (chatId) => set({ activeChatId: chatId }),
-  deleteChatSession: (chatId) => set((state) => { const filtered = state.chatSessions.filter((chat) => chat.id !== chatId); return { chatSessions: filtered, activeChatId: state.activeChatId === chatId ? filtered[0]?.id || null : state.activeChatId }; }),
+  deleteChatSession: async (chatId) => {
+    const { currentOrganization, currentWorkspace, devMode } = get();
+    if (!devMode && currentOrganization?.id && currentWorkspace?.id) {
+      try {
+        const { apiClient } = await import('@/services/ApiClient');
+        await apiClient.delete(`/organizations/${currentOrganization.id}/projects/${currentWorkspace.id}/chat/history/${chatId}`);
+      } catch (err) {
+        console.error('Failed to delete chat session from backend:', err);
+      }
+    }
+    
+    set((state) => {
+      const filtered = state.chatSessions.filter((chat) => chat.id !== chatId);
+      const isActive = state.activeChatId === chatId;
+      return { 
+        chatSessions: filtered, 
+        activeChatId: isActive ? null : state.activeChatId 
+      };
+    });
+  },
   addMessage: (chatId, message) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => chat.id === chatId ? { ...chat, messages: [...chat.messages, { id: `msg_${Date.now()}`, ...message, timestamp: new Date().toISOString() }] } : chat) })),
   updateToolStatus: (chatId, messageId, toolIdx, status) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => {
     if (chat.id !== chatId) return chat;

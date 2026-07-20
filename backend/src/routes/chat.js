@@ -179,5 +179,23 @@ router.get('/history', async (req, res, next) => {
   }
 });
 
+
+router.delete('/history/:sessionId', async (req, res, next) => {
+  try {
+    const { orgId, projectId, sessionId } = req.params;
+    const { gcpService } = await import('../services/GcpService.js');
+    
+    await gcpService.firestore
+      .collection('organizations').doc(orgId)
+      .collection('projects').doc(projectId)
+      .collection('chatSessions').doc(sessionId)
+      .delete();
+      
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
 
