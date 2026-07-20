@@ -2,17 +2,33 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: sentry-data
 resources:
-  - namespace.yaml
-  - configmap.yaml
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
-  - certificate.yaml
-  - worker-cronjob.yaml
-  - chat-deployment.yaml
-  - chat-service.yaml
-  - harness-deployment.yaml
-  - harness-service.yaml
-  - observer-deployment.yaml
-  - observer-service.yaml
-  - hpa.yaml
+- namespace.yaml
+- configmap.yaml
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+- certificate.yaml
+- worker-cronjob.yaml
+- chat-deployment.yaml
+- chat-service.yaml
+- harness-deployment.yaml
+- harness-service.yaml
+- observer-deployment.yaml
+- observer-service.yaml
+- hpa.yaml
+images:
+- name: ghcr.io/adriantuci1/sentry-data-backend
+  newName: ghcr.io/adriantuci1/sentry-data-backend
+  newTag: eee5b6fe972f9c04d40a72ed6e2dd0d88debbeef
+- name: ghcr.io/adriantuci1/sentry-data-chat
+  newName: ghcr.io/adriantuci1/sentry-data-chat
+  newTag: eee5b6fe972f9c04d40a72ed6e2dd0d88debbeef
+- name: ghcr.io/adriantuci1/sentry-data-harness
+  newName: ghcr.io/adriantuci1/sentry-data-harness
+  newTag: eee5b6fe972f9c04d40a72ed6e2dd0d88debbeef
+- name: ghcr.io/adriantuci1/sentry-data-observer
+  newName: ghcr.io/adriantuci1/sentry-data-observer
+  newTag: eee5b6fe972f9c04d40a72ed6e2dd0d88debbeef
+- name: ghcr.io/adriantuci1/sentry-data-worker
+  newName: ghcr.io/adriantuci1/sentry-data-worker
+  newTag: eee5b6fe972f9c04d40a72ed6e2dd0d88debbeef
