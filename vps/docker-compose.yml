@@ -50,6 +50,7 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8080
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
       - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
       - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
@@ -59,6 +60,9 @@ services:
       - HARNESS_SERVICE_URL=${HARNESS_SERVICE_URL:-http://harness:8081}
       - OBSERVER_SERVICE_URL=${OBSERVER_SERVICE_URL:-http://observer:8082}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json
+    volumes:
+      - ./secrets:/secrets:ro
     networks:
       - sentry-network
     healthcheck:

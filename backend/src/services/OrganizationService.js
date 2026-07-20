@@ -28,7 +28,7 @@ export class OrganizationService {
       name: dto.name,
       slug: dto.slug,
       plan: dto.plan || 'free',
-      members: [{ userId: accountId, role: 'owner', joinedAt: now }],
+      members: [{ userId: accountId, role: 'Owner', joinedAt: now }],
       createdAt: now,
       updatedAt: now,
     });
@@ -50,7 +50,7 @@ export class OrganizationService {
       slug,
       isDefault: true,
       plan: 'free',
-      members: [{ userId: accountId, role: 'owner', joinedAt: now }],
+      members: [{ userId: accountId, role: 'Owner', joinedAt: now }],
       createdAt: now,
       updatedAt: now,
     });

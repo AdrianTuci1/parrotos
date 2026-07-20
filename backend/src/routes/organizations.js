@@ -107,7 +107,7 @@ router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
 // MEMBERS
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId/members', requireOrgAccess, async (req, res, next) => {
+router.get('/:orgId/members', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const members = await orgService.getMembers(orgId);

@@ -174,7 +174,8 @@ export const requireOrganizationManager = async (req, res, next) => {
     const org = await loadOrganization(orgId);
     const isOwner = org.accountId === req.user.userId;
     const member = org.members?.find((m) => m.userId === req.user.userId);
-    const isAdmin = member?.role === 'Admin' || member?.role === 'Owner';
+    const memberRole = member?.role?.toLowerCase();
+    const isAdmin = memberRole === 'admin' || memberRole === 'owner';
     const isGlobalAdmin = req.user.roles?.includes('admin');
 
     if (!isOwner && !isAdmin && !isGlobalAdmin) {
