@@ -428,7 +428,14 @@ function DangerSection() {
             <h3 className="settings-card-title">Delete Organization</h3>
             <p className="settings-card-subtitle">Permanently delete {currentOrganization?.name || "this organization"} and all projects inside it.</p>
           </div>
-          <button className="settings-btn-danger" onClick={() => setOpen(true)}>Delete Organization</button>
+          <button 
+            className={cn("settings-btn-danger", isDefault && "disabled")} 
+            onClick={() => !isDefault && setOpen(true)}
+            disabled={isDefault}
+            title={isDefault ? "Cannot delete default workspace" : "Delete Organization"}
+          >
+            Delete Organization
+          </button>
         </div>
       </div>
 

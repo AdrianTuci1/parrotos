@@ -66,9 +66,18 @@ export const requireRole = (...roles) => {
   };
 };
 
+const extractOrgId = (req) => {
+  let orgId = req.params?.orgId || req.body?.orgId || req.query?.orgId;
+  if (!orgId && req.originalUrl) {
+    const match = req.originalUrl.match(/\/organizations\/([a-zA-Z0-9-]+)/);
+    if (match) orgId = match[1];
+  }
+  return orgId;
+};
+
 export const requireOrgAccess = async (req, res, next) => {
   try {
-    const orgId = req.params.orgId || req.body.orgId;
+    const orgId = extractOrgId(req);
 
     if (!orgId) {
       return next(new UnauthorizedError('Organization ID required'));
@@ -133,7 +142,7 @@ async function loadOrganization(orgId) {
 
 export const requireOrganizationOwner = async (req, res, next) => {
   try {
-    const orgId = req.params.orgId || req.body.orgId;
+    const orgId = extractOrgId(req);
 
     if (!orgId) {
       throw new UnauthorizedError('Organization ID required');
@@ -160,7 +169,7 @@ export const requireOrganizationOwner = async (req, res, next) => {
 
 export const requireOrganizationManager = async (req, res, next) => {
   try {
-    const orgId = req.params.orgId || req.body.orgId;
+    const orgId = extractOrgId(req);
 
     if (!orgId) {
       throw new UnauthorizedError('Organization ID required');

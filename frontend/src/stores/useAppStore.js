@@ -860,7 +860,7 @@ export const useAppStore = create(
     }
     set({ isLoading: true });
     try {
-      await organizationService.removeMember(orgId, get().currentUser?.id);
+      await organizationService.removeMember(orgId, get().currentUser?.id || get().currentUser?.userId);
       set((state) => ({
         organizationsData: state.organizationsData.filter((o) => o.id !== orgId),
         organizations: state.organizations.filter((o) => o.id !== orgId),
@@ -2061,7 +2061,7 @@ export const useAppStore = create(
     set({ isLoading: true });
     try {
       const response = await apiClient.get(`/organizations/${orgId}/projects/${projectId}/chat/history`);
-      const sessions = response.data?.data || [];
+      const sessions = response.data || [];
       const activeId = sessions.length > 0 ? sessions[0].id : null;
       set({ chatSessions: sessions, activeChatId: activeId, isLoading: false });
       return sessions;
