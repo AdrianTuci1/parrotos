@@ -8,6 +8,7 @@ data:
   PORT: "3000"
   API_PREFIX: "/api/v1"
   GCP_PROJECT_ID: "statsparrot-prod"
+  GOOGLE_CLOUD_PROJECT: "statsparrot-prod"
   GCP_REGION: "europe-west1"
   GCS_BUCKET_NAME: "sentry-platform-data-statsparrot-prod"
   BIGQUERY_DATASET_PREFIX: "sentry_dataset"

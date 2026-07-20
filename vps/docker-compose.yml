@@ -9,6 +9,7 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_CLOUD_PROJECT=${GCP_PROJECT_ID}
       - GCP_REGION=${GCP_REGION:-europe-west1}
       - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
       - BIGQUERY_DATASET_PREFIX=${BIGQUERY_DATASET_PREFIX:-sentry_dataset}
@@ -51,6 +52,7 @@ services:
     environment:
       - PORT=8080
       - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_CLOUD_PROJECT=${GCP_PROJECT_ID}
       - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
       - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
@@ -78,6 +80,8 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8081
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_CLOUD_PROJECT=${GCP_PROJECT_ID}
       - LLM_PROVIDER=${LLM_PROVIDER:-deepseek}
       - LLM_API_KEY=${LLM_API_KEY}
       - LLM_MODEL=${LLM_MODEL:-deepseek-v4-flash}
@@ -103,6 +107,8 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8082
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_CLOUD_PROJECT=${GCP_PROJECT_ID}
       - GCS_BUCKET=${GCS_BUCKET_NAME:-sentry-platform-data}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - BACKEND_URL=${BACKEND_URL:-http://backend:3000/api/v1}
