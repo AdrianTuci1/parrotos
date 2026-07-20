@@ -42,6 +42,12 @@ spec:
                 secretKeyRef:
                   name: sentry-data-secrets
                   key: LLM_API_KEY
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /secrets/gcp-key.json
+          volumeMounts:
+            - name: gcp-key
+              mountPath: /secrets
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /health
@@ -61,3 +67,10 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
+      volumes:
+        - name: gcp-key
+          secret:
+            secretName: sentry-data-gcp-key
+            items:
+              - key: gcp-key.json
+                path: gcp-key.json
