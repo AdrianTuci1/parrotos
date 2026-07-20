@@ -67,8 +67,7 @@ router.get('/account/metrics', async (req, res, next) => {
   }
 });
 
-router.use(requireOrgAccess);
-
+router.use('/:orgId', requireOrgAccess);
 // ═══════════════════════════════════════════════
 // ORG DETAIL / UPDATE / DELETE (for Settings & Deletion)
 // ═══════════════════════════════════════════════
