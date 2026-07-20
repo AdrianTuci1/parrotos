@@ -58,6 +58,13 @@ export function ChatView() {
 
   const pendingConnector = pendingAction?.toolCall?.connector;
 
+
+  useEffect(() => {
+    if (currentOrganization?.id && currentWorkspace?.id) {
+      useAppStore.getState().fetchChatSessions(currentOrganization.id, currentWorkspace.id);
+    }
+  }, [currentOrganization?.id, currentWorkspace?.id]);
+
   useEffect(() => {
     if (!activeChatId && chatSessions.length > 0) {
       useAppStore.setState({ activeChatId: chatSessions[0].id });
@@ -168,7 +175,7 @@ export function ChatView() {
           try {
             const event = JSON.parse(line.slice(6));
             if (event.type === "text") { fullContent += event.content; setStreamContent(fullContent); }
-            else if (event.type === "tool_result") toolResults.push(event);
+            else if (event.type !== "done" && event.id) { event.status = "pending"; toolResults.push(event); }
             else if (event.type === "error") { fullContent = event.message; setStreamContent(fullContent); }
           } catch (error) {
             void error;

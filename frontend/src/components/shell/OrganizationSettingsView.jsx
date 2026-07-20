@@ -404,6 +404,7 @@ function SecuritySection() {
 
 function DangerSection() {
   const { currentOrganization, deleteOrganization } = useAppStore();
+  const isDefault = currentOrganization?.isDefault;
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
 

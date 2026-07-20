@@ -156,4 +156,28 @@ router.post('/tool-response', async (req, res, next) => {
   }
 });
 
+
+router.get('/history', async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const { gcpService } = await import('../services/GcpService.js');
+    const snapshot = await gcpService.firestore
+      .collection('organizations').doc(orgId)
+      .collection('projects').doc(projectId)
+      .collection('chatSessions')
+      .get();
+    
+    const sessions = [];
+    snapshot.forEach(doc => {
+      sessions.push({ id: doc.id, ...doc.data() });
+    });
+    
+    sessions.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+    res.json({ success: true, data: sessions });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
+

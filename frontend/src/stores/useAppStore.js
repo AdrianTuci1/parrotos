@@ -2050,6 +2050,27 @@ export const useAppStore = create(
     return response.data;
   },
 
+
+  fetchChatSessions: async (orgId, projectId) => {
+    if (!orgId || orgId === '__empty__' || !projectId) return [];
+    if (get().devMode) {
+      const mock = createMockChatSessions();
+      set({ chatSessions: mock, activeChatId: mock[0]?.id || null });
+      return mock;
+    }
+    set({ isLoading: true });
+    try {
+      const response = await apiClient.get(`/organizations/${orgId}/projects/${projectId}/chat/history`);
+      const sessions = response.data?.data || [];
+      const activeId = sessions.length > 0 ? sessions[0].id : null;
+      set({ chatSessions: sessions, activeChatId: activeId, isLoading: false });
+      return sessions;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      return [];
+    }
+  },
+
   createChatSession: (title = 'New Chat') => { const session = { id: `chat_${Date.now()}`, title, messages: [], createdAt: new Date().toISOString() }; set((state) => ({ chatSessions: [...state.chatSessions, session], activeChatId: session.id })); return session; },
   selectChat: (chatId) => set({ activeChatId: chatId }),
   deleteChatSession: (chatId) => set((state) => { const filtered = state.chatSessions.filter((chat) => chat.id !== chatId); return { chatSessions: filtered, activeChatId: state.activeChatId === chatId ? filtered[0]?.id || null : state.activeChatId }; }),

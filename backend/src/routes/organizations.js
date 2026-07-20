@@ -95,7 +95,7 @@ router.patch('/:orgId', requireOrganizationOwner, validate(updateSchema), async 
 router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
-    await orgService.delete(orgId, { allowDefaultDeletion: true });
+    await orgService.delete(orgId, { allowDefaultDeletion: false });
     success(res, null, 204);
   } catch (err) {
     next(err);
