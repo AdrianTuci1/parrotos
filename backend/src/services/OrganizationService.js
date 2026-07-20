@@ -34,6 +34,15 @@ export class OrganizationService {
     });
 
     await this.orgsCollection.doc(orgId).set(org.toFirestore());
+
+    try {
+      const { ProjectService } = await import('./ProjectService.js');
+      const projectService = new ProjectService();
+      await projectService.create(orgId, { name: 'Default Workspace', slug: 'default' });
+    } catch (err) {
+      console.error('Failed to create default project for org', orgId, err);
+    }
+
     return org;
   }
 

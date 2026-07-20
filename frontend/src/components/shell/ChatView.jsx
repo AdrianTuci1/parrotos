@@ -123,6 +123,11 @@ export function ChatView() {
     const text = input.trim();
     if (!text || streaming || pendingAction) return;
 
+    if (!currentWorkspace?.id) {
+      alert("Please select or create a workspace first.");
+      return;
+    }
+
     if (demoMode) {
       setDemoBannerVisible(true);
       setTimeout(() => setDemoBannerVisible(false), 1000);
