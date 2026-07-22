@@ -158,16 +158,24 @@ export class OrganizationService {
     const members = org.members || [];
     const enriched = [];
     for (const member of members) {
-      const userDoc = await gcpService.firestore.collection('users').doc(member.userId).get();
-      const userData = userDoc.exists ? userDoc.data() : {};
-      enriched.push({
-        userId: member.userId,
-        role: member.role || 'Member',
-        joinedAt: member.joinedAt,
-        email: userData.email || '',
-        username: userData.username || '',
-        picture: userData.picture || '',
-      });
+      if (!member.userId) {
+        console.warn('Member missing userId in org:', orgId, member);
+        continue;
+      }
+      try {
+        const userDoc = await gcpService.firestore.collection('users').doc(member.userId).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        enriched.push({
+          userId: member.userId,
+          role: member.role || 'Member',
+          joinedAt: member.joinedAt,
+          email: userData.email || '',
+          username: userData.username || '',
+          picture: userData.picture || '',
+        });
+      } catch (err) {
+        console.error('Failed to fetch user data for member:', member.userId, err);
+      }
     }
     const invitations = await invitationService.listForOrg(orgId);
     for (const inv of invitations) {
