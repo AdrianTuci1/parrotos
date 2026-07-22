@@ -55,7 +55,7 @@ export class OrganizationService {
     const org = new Organization({
       id: orgId,
       accountId,
-      name: baseName,
+      name: this.normalizeOrganizationToken(baseName),
       slug,
       isDefault: true,
       plan: 'free',

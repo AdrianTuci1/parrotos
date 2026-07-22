@@ -53,7 +53,7 @@ function requireInternalToken(req, res, next) {
   next();
 }
 
-const SYSTEM_PROMPT = `You are the Sentry AI Assistant, a project-scoped data agent. You help users connect data sources, explore analytics, and get insights.
+const SYSTEM_PROMPT = `You are the Parrot Assistant, a project-scoped data agent. You help users connect data sources, explore analytics, and get insights.
 
 CONTEXT YOU ALWAYS HAVE:
 - Organization: {orgName} (plan: {orgPlan})
@@ -275,7 +275,7 @@ async function* streamFallbackResponse(userMessage, context) {
   const connected = context.integrations?.split(', ').filter(Boolean) || [];
 
   if (lower.includes('salut') || lower.includes('hello') || lower.includes('hi')) {
-    yield { type: 'text', content: 'Salut! Sunt asistentul Sentry. Cu ce te pot ajuta — conectări, grafice sau analiză?' };
+    yield { type: 'text', content: 'Salut! Sunt asistentul Parrot. Cu ce te pot ajuta — conectări, grafice sau analiză?' };
   }
 
   if (lower.includes('conect') || lower.includes('connect') || lower.includes('adaug') || lower.includes('add')) {
@@ -591,12 +591,19 @@ async function loadConversation(orgId, projectId, sessionId) {
   return doc.exists ? doc.data().messages || [] : [];
 }
 
-async function saveConversation(orgId, projectId, sessionId, messages, title) {
-  await conversationRef(orgId, projectId, sessionId).set({
-    messages,
-    updatedAt: new Date().toISOString(),
-    ...(title && { title }),
-  }, { merge: true });
+async function saveConversation(orgId, projectId, sessionId, messages) {
+  try {
+    await conversationRef(orgId, projectId, sessionId).update({
+      messages,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    if (err.code === 5) { // NOT_FOUND in gRPC/Firestore
+      console.log(`Session ${sessionId} was deleted by user, skipping save.`);
+    } else {
+      console.error('Failed to save conversation:', err);
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -662,7 +669,7 @@ app.post('/internal/message', requireInternalToken, async (req, res) => {
           tool_calls: toolCalls.length > 0 ? toolCalls : [],
         },
       ];
-      await saveConversation(orgId, projectId, sessionId, newMessages, title);
+      await saveConversation(orgId, projectId, sessionId, newMessages);
     }
 
     send({ type: 'done' });

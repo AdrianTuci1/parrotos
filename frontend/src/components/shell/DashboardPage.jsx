@@ -27,6 +27,8 @@ const sectionComponents = {
   stats: OrganizationStatsView,
   access: OrganizationAccessView,
   "org-settings": OrganizationSettingsView,
+  metrics: OrganizationStatsView,
+  invitations: OrganizationAccessView,
 };
 
 export function DashboardPage() {
