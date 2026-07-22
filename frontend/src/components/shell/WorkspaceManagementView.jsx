@@ -4,13 +4,13 @@ import { WorkspaceSettingsHeader } from "@/components/shell/workspace-settings/W
 import { MembersTab } from "@/components/shell/workspace-settings/management-tabs";
 
 export function WorkspaceManagementView() {
-  const { currentOrganization, fetchMembers } = useAppStore();
+  const currentOrganization = useAppStore((state) => state.currentOrganization);
 
   useEffect(() => {
-    if (currentOrganization?.id) {
-      fetchMembers(currentOrganization.id).catch(() => {});
+    if (currentOrganization?.id && currentOrganization.id !== "__empty__") {
+      useAppStore.getState().fetchMembers(currentOrganization.id).catch(() => {});
     }
-  }, [currentOrganization?.id, fetchMembers]);
+  }, [currentOrganization?.id]);
 
   return (
     <div className="workspace-page">

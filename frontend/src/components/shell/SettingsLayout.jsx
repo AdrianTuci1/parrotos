@@ -91,7 +91,7 @@ export function SettingsLayout({ children }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Ensure organizations are loaded and a valid workspace is selected for workspace settings.
+  // Load organizations on mount if empty; also auto-select first org on workspace routes when missing
   useEffect(() => {
     const isWorkspaceRoute = location.pathname.startsWith('/settings/workspace');
     const needsOrg = !currentOrganization || currentOrganization.id === emptyOrg.id || !currentOrganization.id;
@@ -101,8 +101,10 @@ export function SettingsLayout({ children }) {
           selectOrganization(orgs[0].id);
         }
       }).catch(() => {});
+    } else if (organizations.length === 0) {
+      fetchOrganizations().catch(() => {});
     }
-  }, [location.pathname, currentOrganization, fetchOrganizations, selectOrganization]);
+  }, [location.pathname, currentOrganization, organizations.length, fetchOrganizations, selectOrganization]);
 
   const switchOrg = (orgId) => {
     const org = organizations.find((o) => o.id === orgId);
@@ -122,6 +124,10 @@ export function SettingsLayout({ children }) {
   const isWorkspaceActive = (id) =>
     location.pathname === `/settings/workspace/${id}` ||
     (id === "management" && location.pathname === "/settings/workspace");
+
+  const canAccessWorkspaceSettings = Boolean(
+    currentOrganization?.id && currentOrganization.id !== "__empty__"
+  );
 
   const sidebarContent = (
     <>
@@ -213,9 +219,12 @@ export function SettingsLayout({ children }) {
               type="button"
               className={cn(
                 "settings-workspace-menu-link",
-                isWorkspaceActive(item.id) && "active"
+                isWorkspaceActive(item.id) && "active",
+                !canAccessWorkspaceSettings && "disabled"
               )}
-              onClick={() => goToWorkspaceTab(item.id)}
+              onClick={() => canAccessWorkspaceSettings && goToWorkspaceTab(item.id)}
+              disabled={!canAccessWorkspaceSettings}
+              title={canAccessWorkspaceSettings ? item.label : "Select a workspace first"}
             >
               <item.icon size={14} />
               <span>{item.label}</span>
@@ -271,7 +280,7 @@ export function SettingsLayout({ children }) {
         />
       )}
       <main className={cn("settings-main", isMobile && "settings-main-mobile")}>
-        <ViewFrame title="" description="" maxWidthClassName="full-width">
+        <ViewFrame title="" description="" maxWidthClassName="full-width" loading={false}>
           {children}
         </ViewFrame>
       </main>

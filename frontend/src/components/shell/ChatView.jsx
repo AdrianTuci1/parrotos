@@ -58,11 +58,14 @@ export function ChatView() {
 
   const pendingConnector = pendingAction?.toolCall?.connector;
 
+
   useEffect(() => {
-    if (!activeChatId && chatSessions.length > 0) {
-      useAppStore.setState({ activeChatId: chatSessions[0].id });
+    if (currentOrganization?.id && currentWorkspace?.id) {
+      useAppStore.getState().fetchChatSessions(currentOrganization.id, currentWorkspace.id);
     }
-  }, [activeChatId, chatSessions]);
+  }, [currentOrganization?.id, currentWorkspace?.id]);
+
+
 
   useEffect(() => {
     const connector = pendingConnector;
@@ -116,6 +119,11 @@ export function ChatView() {
     const text = input.trim();
     if (!text || streaming || pendingAction) return;
 
+    if (!currentWorkspace?.id) {
+      alert("Please select or create a workspace first.");
+      return;
+    }
+
     if (demoMode) {
       setDemoBannerVisible(true);
       setTimeout(() => setDemoBannerVisible(false), 1000);
@@ -123,14 +131,15 @@ export function ChatView() {
     }
 
     let currentChatId = activeChatId;
+    const chatTitle = text.length > 50 ? text.slice(0, 47) + '...' : text;
 
     if (!currentChatId) {
-      const newSession = createChatSession(text.slice(0, 30));
+      const newSession = createChatSession(chatTitle);
       currentChatId = newSession.id;
     } else if (messages.length === 0) {
       useAppStore.setState((state) => ({
         chatSessions: state.chatSessions.map((chat) =>
-          chat.id === currentChatId ? { ...chat, title: text.slice(0, 30) } : chat
+          chat.id === currentChatId ? { ...chat, title: chatTitle } : chat
         ),
       }));
     }
@@ -148,7 +157,7 @@ export function ChatView() {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ sessionId: currentChatId, message: text }),
+        body: JSON.stringify({ sessionId: currentChatId, message: text, title: chatTitle }),
       });
 
       const reader = response.body.getReader();
@@ -168,7 +177,7 @@ export function ChatView() {
           try {
             const event = JSON.parse(line.slice(6));
             if (event.type === "text") { fullContent += event.content; setStreamContent(fullContent); }
-            else if (event.type === "tool_result") toolResults.push(event);
+            else if (event.type !== "done" && event.id) { event.status = "pending"; toolResults.push(event); }
             else if (event.type === "error") { fullContent = event.message; setStreamContent(fullContent); }
           } catch (error) {
             void error;
@@ -192,7 +201,7 @@ export function ChatView() {
   // INLINE ACTION HANDLERS
   // ═══════════════════════════════════════════════
 
-  const handleApprove = useCallback(async (key) => {
+  const handleApprove = useCallback(async (key, payload = null) => {
     setApprovalStates(prev => ({ ...prev, [key]: "executing" }));
 
     const pending = pendingAction;
@@ -202,24 +211,32 @@ export function ChatView() {
     const isKeyInput = tc.action === "open_integration_modal";
 
     try {
-      let payload = {};
+      let finalPayload = payload;
 
       if (isKeyInput) {
-        const connector = tc.connector || "integration";
-        const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
-        const fields = authConfig.fields || DEFAULT_FIELDS.fields;
-        const values = {};
-        // Extract values from the pending action card inputs in the DOM
-        const container = document.querySelector('.chat-pending-action-card');
-        if (container) {
-          const inputs = container.querySelectorAll('input, textarea');
-          inputs.forEach((input, idx) => {
-            if (fields[idx]) values[fields[idx].key] = input.value;
-          });
+        if (!finalPayload || !finalPayload.credentials) {
+          const connector = tc.connector || "integration";
+          const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
+          const fields = authConfig.fields || DEFAULT_FIELDS.fields;
+          const values = {};
+          // Extract values from input fields in the DOM (fallback)
+          const container = document.querySelector('.chat-pending-action-fields');
+          if (container) {
+            const inputs = container.querySelectorAll('input');
+            inputs.forEach((input, idx) => {
+              if (fields[idx]) values[fields[idx].key] = input.value;
+            });
+          }
+          finalPayload = { connector_type: connector, credentials: values };
+        } else {
+          finalPayload = { connector_type: tc.connector || "integration", credentials: finalPayload.credentials };
         }
-        payload = { connector_type: connector, credentials: values };
       } else if (tc.type === "choice" || tc.action === "show_choices") {
-        payload = { selected: tc.choices?.[0]?.label };
+        if (!finalPayload || !finalPayload.selected) {
+          finalPayload = { selected: tc.choices?.[0]?.label };
+        } else {
+          finalPayload = { selected: finalPayload.selected };
+        }
       }
 
       await submitToolResponse(
@@ -227,7 +244,7 @@ export function ChatView() {
         currentWorkspace?.id,
         tc.id,
         isKeyInput ? "open_integration_modal" : (tc.type === "choice" ? "show_choices" : tc.action),
-        payload
+        finalPayload
       );
 
       setApprovalStates(prev => ({ ...prev, [key]: "approved" }));

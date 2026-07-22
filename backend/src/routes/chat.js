@@ -20,7 +20,7 @@ router.use(requireOrgAccess);
  */
 router.post('/message', async (req, res) => {
   try {
-    const { sessionId, message } = req.body;
+    const { sessionId, message, title } = req.body;
     const { orgId, projectId } = req.params;
 
     if (!sessionId || !message) {
@@ -35,7 +35,7 @@ router.post('/message', async (req, res) => {
       response = await internalServiceClient.fetch(`${config.chatServiceUrl}/internal/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orgId, projectId, sessionId, message, backendToken: userToken }),
+        body: JSON.stringify({ orgId, projectId, sessionId, message, title, backendToken: userToken }),
       });
       if (!response.ok) useFallback = true;
     } catch {
@@ -43,20 +43,100 @@ router.post('/message', async (req, res) => {
     }
 
     if (useFallback) {
+      // Persist session to Firestore (create or update)
+      const { gcpService } = await import('../services/GcpService.js');
+      const sessionsRef = gcpService.firestore
+        .collection('organizations').doc(orgId)
+        .collection('projects').doc(projectId)
+        .collection('chatSessions');
+      
+      const sessionDoc = await sessionsRef.doc(sessionId).get();
+      const now = new Date().toISOString();
+      if (!sessionDoc.exists) {
+        await sessionsRef.doc(sessionId).set({
+          title: title || message.slice(0, 50) || 'New Chat',
+          userId: req.user.userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      } else {
+        const existingData = sessionDoc.data();
+        const updates = { updatedAt: now };
+        // Update title if still default or empty
+        if (!existingData.title || existingData.title === 'New Chat' || existingData.title === 'Untitled Chat') {
+          updates.title = title || message.slice(0, 50) || 'New Chat';
+        }
+        await sessionsRef.doc(sessionId).update(updates);
+      }
+
+      // Save user message
+      await sessionsRef.doc(sessionId).collection('messages').add({
+        role: 'user',
+        content: message,
+        userId: req.user.userId,
+        createdAt: now,
+      });
+
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
       res.flushHeaders();
 
+      let assistantContent = '';
       try {
         for await (const event of chatFallbackService.stream({ message })) {
+          if (event.type === 'text') assistantContent += event.content;
           res.write(`data: ${JSON.stringify(event)}\n\n`);
         }
       } catch (err) {
-        res.write(`data: ${JSON.stringify({ type: 'error', message: err.message })}\n\n`);
+        const errorMsg = err.message || 'Unknown error';
+        assistantContent = errorMsg;
+        res.write(`data: ${JSON.stringify({ type: 'error', message: errorMsg })}\n\n`);
       }
+
+      // Save assistant response
+      if (assistantContent) {
+        await sessionsRef.doc(sessionId).collection('messages').add({
+          role: 'assistant',
+          content: assistantContent,
+          createdAt: new Date().toISOString(),
+        }).catch(() => {});
+      }
+
       res.end();
       return;
+    }
+
+    // Ensure session exists in Firestore
+    try {
+      const { gcpService } = await import('../services/GcpService.js');
+      const sessionsRef = gcpService.firestore
+        .collection('organizations').doc(orgId)
+        .collection('projects').doc(projectId)
+        .collection('chatSessions');
+      
+      const sessionDoc = await sessionsRef.doc(sessionId).get();
+      const now = new Date().toISOString();
+      if (!sessionDoc.exists) {
+        await sessionsRef.doc(sessionId).set({
+          title: title || message.slice(0, 50) || 'New Chat',
+          userId: req.user.userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      } else {
+        const existingData = sessionDoc.data();
+        if (!existingData.title || existingData.title === 'New Chat' || existingData.title === 'Untitled Chat') {
+          await sessionsRef.doc(sessionId).update({
+            title: title || message.slice(0, 50) || 'New Chat',
+            updatedAt: now,
+          });
+        } else {
+          await sessionsRef.doc(sessionId).update({ updatedAt: now });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to persist chat session:', e.message);
     }
 
     // Stream real chat service response
@@ -156,4 +236,46 @@ router.post('/tool-response', async (req, res, next) => {
   }
 });
 
+
+router.get('/history', async (req, res, next) => {
+  try {
+    const { orgId, projectId } = req.params;
+    const { gcpService } = await import('../services/GcpService.js');
+    const snapshot = await gcpService.firestore
+      .collection('organizations').doc(orgId)
+      .collection('projects').doc(projectId)
+      .collection('chatSessions')
+      .get();
+    
+    const sessions = [];
+    snapshot.forEach(doc => {
+      sessions.push({ id: doc.id, ...doc.data() });
+    });
+    
+    sessions.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+    res.json({ success: true, data: sessions });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+router.delete('/history/:sessionId', async (req, res, next) => {
+  try {
+    const { orgId, projectId, sessionId } = req.params;
+    const { gcpService } = await import('../services/GcpService.js');
+    
+    await gcpService.firestore
+      .collection('organizations').doc(orgId)
+      .collection('projects').doc(projectId)
+      .collection('chatSessions').doc(sessionId)
+      .delete();
+      
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
+

@@ -67,13 +67,12 @@ router.get('/account/metrics', async (req, res, next) => {
   }
 });
 
-router.use(requireOrgAccess);
-
+router.use('/:orgId', requireOrgAccess);
 // ═══════════════════════════════════════════════
 // ORG DETAIL / UPDATE / DELETE (for Settings & Deletion)
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId', requireOrganizationOwner, async (req, res, next) => {
+router.get('/:orgId', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const org = await orgService.findById(orgId);
@@ -96,7 +95,7 @@ router.patch('/:orgId', requireOrganizationOwner, validate(updateSchema), async 
 router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
-    await orgService.delete(orgId, { allowDefaultDeletion: true });
+    await orgService.delete(orgId, { allowDefaultDeletion: false });
     success(res, null, 204);
   } catch (err) {
     next(err);
@@ -107,11 +106,11 @@ router.delete('/:orgId', requireOrganizationOwner, async (req, res, next) => {
 // MEMBERS
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId/members', requireOrgAccess, async (req, res, next) => {
+router.get('/:orgId/members', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const members = await orgService.getMembers(orgId);
-    success(res, { members });
+    success(res, members);
   } catch (err) {
     next(err);
   }
@@ -137,9 +136,23 @@ router.patch('/:orgId/members/:userId', requireOrganizationManager, validate(upd
   }
 });
 
-router.delete('/:orgId/members/:userId', requireOrganizationManager, async (req, res, next) => {
+router.delete('/:orgId/members/:userId', requireOrgAccess, async (req, res, next) => {
   try {
     const { orgId, userId } = req.params;
+
+    if (userId !== req.user.userId) {
+      const { gcpService } = await import('../services/GcpService.js');
+      const orgDoc = await gcpService.getOrgRef(orgId).get();
+      const orgData = orgDoc.data();
+      const member = orgData.members?.find(m => m.userId === req.user.userId);
+      const isManager = member?.role === 'Owner' || member?.role === 'Admin';
+      const isGlobalAdmin = req.user.roles?.includes('admin');
+      
+      if (!isManager && !isGlobalAdmin) {
+        throw new ForbiddenError('Only organization managers can remove other members');
+      }
+    }
+
     await orgService.removeMember(orgId, userId);
     success(res, null, 204);
   } catch (err) {
@@ -165,7 +178,7 @@ router.patch('/:orgId/security', requireOrganizationOwner, async (req, res, next
 // ORG-LEVEL METRICS (for OrganizationStatsView)
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId/metrics', requireOrganizationOwner, async (req, res, next) => {
+router.get('/:orgId/metrics', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const metrics = await metricsService.getOrgMetrics(orgId);

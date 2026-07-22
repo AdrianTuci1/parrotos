@@ -66,9 +66,18 @@ export const requireRole = (...roles) => {
   };
 };
 
+const extractOrgId = (req) => {
+  let orgId = req.params?.orgId || req.body?.orgId || req.query?.orgId;
+  if (!orgId && req.originalUrl) {
+    const match = req.originalUrl.match(/\/organizations\/([a-zA-Z0-9-]+)/);
+    if (match) orgId = match[1];
+  }
+  return orgId;
+};
+
 export const requireOrgAccess = async (req, res, next) => {
   try {
-    const orgId = req.params.orgId || req.body.orgId;
+    const orgId = extractOrgId(req);
 
     if (!orgId) {
       return next(new UnauthorizedError('Organization ID required'));
@@ -94,6 +103,8 @@ export const requireOrgAccess = async (req, res, next) => {
     const isGlobalAdmin = req.user.roles?.includes('admin');
 
     if (!isOwner && !isMember && !isGlobalAdmin) {
+      console.warn(`[requireOrgAccess] 401 Unauthorized for user ${req.user.userId} on org ${orgId}. isOwner: ${isOwner}, isMember: ${isMember}, isGlobalAdmin: ${isGlobalAdmin}`);
+      console.warn(`[requireOrgAccess] orgData.accountId: ${orgData.accountId}, orgData.members:`, orgData.members);
       return next(new UnauthorizedError('User does not have access to this organization'));
     }
 
@@ -131,7 +142,7 @@ async function loadOrganization(orgId) {
 
 export const requireOrganizationOwner = async (req, res, next) => {
   try {
-    const orgId = req.params.orgId || req.body.orgId;
+    const orgId = extractOrgId(req);
 
     if (!orgId) {
       throw new UnauthorizedError('Organization ID required');
@@ -158,7 +169,7 @@ export const requireOrganizationOwner = async (req, res, next) => {
 
 export const requireOrganizationManager = async (req, res, next) => {
   try {
-    const orgId = req.params.orgId || req.body.orgId;
+    const orgId = extractOrgId(req);
 
     if (!orgId) {
       throw new UnauthorizedError('Organization ID required');
@@ -174,7 +185,8 @@ export const requireOrganizationManager = async (req, res, next) => {
     const org = await loadOrganization(orgId);
     const isOwner = org.accountId === req.user.userId;
     const member = org.members?.find((m) => m.userId === req.user.userId);
-    const isAdmin = member?.role === 'Admin' || member?.role === 'Owner';
+    const memberRole = member?.role?.toLowerCase();
+    const isAdmin = memberRole === 'admin' || memberRole === 'owner';
     const isGlobalAdmin = req.user.roles?.includes('admin');
 
     if (!isOwner && !isAdmin && !isGlobalAdmin) {

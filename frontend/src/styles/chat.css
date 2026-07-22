@@ -282,7 +282,7 @@
 .chat-centered-composer-wrapper {
   display: flex;
   width: 100%;
-  max-width: 900px;
+  max-width: 640px;
   margin-left: auto;
   margin-right: auto;
   align-items: center;
@@ -297,11 +297,11 @@
 .chat-centered-composer-wrapper.pill-composer {
   border-radius: 9999px !important;
   padding: 10px 24px !important;
-  max-width: 900px !important; /* centered, limited width */
+  max-width: 640px !important; /* centered, limited width */
 }
 
 .chat-centered-composer-wrapper.pill-composer.chat-centered-composer-empty {
-  max-width: 900px !important; /* centered, limited width */
+  max-width: 640px !important; /* centered, limited width */
 }
 
 .chat-centered-text-input {
@@ -373,14 +373,6 @@
   opacity: 0.5;
 }
 
-/* Pill Composer details */
-.chat-centered-composer-wrapper.pill-composer {
-  border-radius: 9999px !important;
-  padding: 10px 24px !important;
-  max-width: 900px !important; /* centered, limited width */
-  margin-left: auto;
-  margin-right: auto;
-}
 
 /* Demo mode banner — slim overlay chip, stays on top of content */
 .chat-demo-banner {
@@ -562,7 +554,7 @@ main:has(.chat-active-mode),
 
 .chat-active-input-footer .pill-composer {
   width: 100%;
-  max-width: 900px; /* centered, limited width */
+  max-width: 640px; /* match empty mode, keep it narrow */
 }
 
 /* Wider composer when starting a fresh session (no messages yet) */

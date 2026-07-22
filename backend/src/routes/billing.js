@@ -9,8 +9,8 @@ const router = Router({ mergeParams: true });
 
 router.use(authenticate);
 router.use(requireOrgAccess);
-router.use(requireOrganizationOwner);
 
+// GET routes are accessible to all org members
 router.get('/subscription', async (req, res, next) => {
   try {
     const { orgId } = req.params;
@@ -31,7 +31,27 @@ router.get('/subscription', async (req, res, next) => {
   }
 });
 
-router.post('/checkout-session', async (req, res, next) => {
+router.get('/usage', async (req, res) => {
+  success(res, { totalSpend: 0, usageBreakdown: 0, items: [] });
+});
+
+router.get('/credits', async (req, res) => {
+  success(res, { balance: 0, applied: 0, transactions: [] });
+});
+
+router.get('/invoices', async (req, res) => {
+  success(res, []);
+});
+
+router.get('/plans', async (req, res) => {
+  success(res, [
+    { key: "starter", name: "Starter", price: 0 },
+    { key: "team", name: "Team", price: 250 },
+    { key: "enterprise", name: "Enterprise", price: "Custom" },
+  ]);
+});
+
+router.post('/checkout-session', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const { plan, successUrl, cancelUrl } = req.body;
@@ -83,7 +103,7 @@ router.post('/checkout-session', async (req, res, next) => {
   }
 });
 
-router.post('/portal-session', async (req, res, next) => {
+router.post('/portal-session', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const { returnUrl } = req.body;

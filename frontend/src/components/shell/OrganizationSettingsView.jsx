@@ -404,6 +404,7 @@ function SecuritySection() {
 
 function DangerSection() {
   const { currentOrganization, deleteOrganization } = useAppStore();
+  const isDefault = currentOrganization?.isDefault;
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
 
@@ -427,7 +428,14 @@ function DangerSection() {
             <h3 className="settings-card-title">Delete Organization</h3>
             <p className="settings-card-subtitle">Permanently delete {currentOrganization?.name || "this organization"} and all projects inside it.</p>
           </div>
-          <button className="settings-btn-danger" onClick={() => setOpen(true)}>Delete Organization</button>
+          <button 
+            className={cn("settings-btn-danger", isDefault && "disabled")} 
+            onClick={() => !isDefault && setOpen(true)}
+            disabled={isDefault}
+            title={isDefault ? "Cannot delete default workspace" : "Delete Organization"}
+          >
+            Delete Organization
+          </button>
         </div>
       </div>
 
@@ -467,7 +475,19 @@ function DangerSection() {
 }
 
 export function OrganizationSettingsView() {
+  const { currentOrganization } = useAppStore();
   const [activeTab, setActiveTab] = useState("general");
+
+  const hasOrg = Boolean(currentOrganization?.id && currentOrganization.id !== "__empty__");
+  if (!hasOrg) {
+    return (
+      <div className="workspace-page">
+        <div className="workspace-placeholder" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          No organization selected or organization was deleted.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="settings-layout">

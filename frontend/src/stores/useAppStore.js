@@ -683,7 +683,11 @@ export const useAppStore = create(
     try {
       const orgs = await organizationService.list();
       const currentOrganization = get().currentOrganization;
-      const nextCurrentOrganization = orgs.find((org) => org.id === currentOrganization?.id) || orgs[0] || emptyOrg;
+      const savedId = typeof window !== "undefined" ? window.localStorage.getItem("selectedOrganizationId") : null;
+      const nextCurrentOrganization = orgs.find((org) => org.id === currentOrganization?.id)
+        || orgs.find((org) => org.id === savedId)
+        || orgs[0]
+        || emptyOrg;
       set({
         organizationsData: orgs,
         organizations: orgs,
@@ -697,6 +701,7 @@ export const useAppStore = create(
     }
   },
   fetchProjects: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (isMockModeState(get())) {
       return get().workspaces.filter((workspace) => workspace.organizationId === orgId);
     }
@@ -736,6 +741,9 @@ export const useAppStore = create(
   selectOrganization: (organizationId) => {
     const organization = get().organizations.find((item) => item.id === organizationId);
     if (!organization) return;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("selectedOrganizationId", organization.id);
+    }
     set((state) => ({ currentOrganization: organization, currentWorkspace: null, activeScope: 'organization', activeSection: state.activeOrganizationSection || 'stats' }));
     if (get().shouldFetchApi()) get().fetchProjects(organizationId);
   },
@@ -859,7 +867,7 @@ export const useAppStore = create(
     }
     set({ isLoading: true });
     try {
-      await organizationService.removeMember(orgId, get().currentUser?.id);
+      await organizationService.removeMember(orgId, get().currentUser?.id || get().currentUser?.userId);
       set((state) => ({
         organizationsData: state.organizationsData.filter((o) => o.id !== orgId),
         organizations: state.organizations.filter((o) => o.id !== orgId),
@@ -895,15 +903,19 @@ export const useAppStore = create(
   },
 
   fetchMembers: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) {
       const org = get().currentOrganization;
-      return [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
+      const mockMembers = [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
+      set({ members: mockMembers });
+      return mockMembers;
     }
     set({ isLoading: true });
     try {
       const result = await organizationService.getMembers(orgId);
-      set({ members: result.members || [], isLoading: false });
-      return result.members;
+      const membersArray = Array.isArray(result) ? result : (result.members || []);
+      set({ members: membersArray, isLoading: false });
+      return membersArray;
     } catch (err) {
       set({ error: err.message, isLoading: false });
       throw err;
@@ -1317,6 +1329,7 @@ export const useAppStore = create(
   // ═══════════════════════════════════════════════
 
   fetchServiceAccounts: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) return;
     set({ isLoading: true });
     try {
@@ -1393,6 +1406,7 @@ export const useAppStore = create(
   // ═══════════════════════════════════════════════
 
   fetchApiTokens: async (orgId) => {
+    if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) {
       const existing = get().apiTokens || [];
       if (existing.length > 0) return existing;
@@ -2046,9 +2060,48 @@ export const useAppStore = create(
     return response.data;
   },
 
+
+  fetchChatSessions: async (orgId, projectId) => {
+    if (!orgId || orgId === '__empty__' || !projectId) return [];
+    if (get().devMode) {
+      const mock = createMockChatSessions();
+      set({ chatSessions: mock, activeChatId: mock[0]?.id || null });
+      return mock;
+    }
+    set({ isLoading: true });
+    try {
+      const response = await apiClient.get(`/organizations/${orgId}/projects/${projectId}/chat/history`);
+      const sessions = response.data || [];
+      const activeId = sessions.length > 0 ? sessions[0].id : null;
+      set({ chatSessions: sessions, activeChatId: activeId, isLoading: false });
+      return sessions;
+    } catch (err) {
+      set({ error: err.message, isLoading: false });
+      return [];
+    }
+  },
+
   createChatSession: (title = 'New Chat') => { const session = { id: `chat_${Date.now()}`, title, messages: [], createdAt: new Date().toISOString() }; set((state) => ({ chatSessions: [...state.chatSessions, session], activeChatId: session.id })); return session; },
   selectChat: (chatId) => set({ activeChatId: chatId }),
-  deleteChatSession: (chatId) => set((state) => { const filtered = state.chatSessions.filter((chat) => chat.id !== chatId); return { chatSessions: filtered, activeChatId: state.activeChatId === chatId ? filtered[0]?.id || null : state.activeChatId }; }),
+  deleteChatSession: async (chatId) => {
+    const { currentOrganization, currentWorkspace, devMode } = get();
+    if (!devMode && currentOrganization?.id && currentWorkspace?.id) {
+      try {
+        await apiClient.delete(`/organizations/${currentOrganization.id}/projects/${currentWorkspace.id}/chat/history/${chatId}`);
+      } catch (err) {
+        console.error('Failed to delete chat session from backend:', err);
+      }
+    }
+    
+    set((state) => {
+      const filtered = state.chatSessions.filter((chat) => chat.id !== chatId);
+      const isActive = state.activeChatId === chatId;
+      return { 
+        chatSessions: filtered, 
+        activeChatId: isActive ? null : state.activeChatId 
+      };
+    });
+  },
   addMessage: (chatId, message) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => chat.id === chatId ? { ...chat, messages: [...chat.messages, { id: `msg_${Date.now()}`, ...message, timestamp: new Date().toISOString() }] } : chat) })),
   updateToolStatus: (chatId, messageId, toolIdx, status) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => {
     if (chat.id !== chatId) return chat;

@@ -1463,6 +1463,14 @@
   color: #F3F4F6;
 }
 
+.settings-workspace-menu-link:disabled,
+.settings-workspace-menu-link.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  color: #4A4C4F;
+}
+
 .settings-scope-avatar {
   width: 1.25rem;
   height: 1.25rem;

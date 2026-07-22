@@ -28,12 +28,21 @@ export class OrganizationService {
       name: dto.name,
       slug: dto.slug,
       plan: dto.plan || 'free',
-      members: [{ userId: accountId, role: 'owner', joinedAt: now }],
+      members: [{ userId: accountId, role: 'Owner', joinedAt: now }],
       createdAt: now,
       updatedAt: now,
     });
 
     await this.orgsCollection.doc(orgId).set(org.toFirestore());
+
+    try {
+      const { ProjectService } = await import('./ProjectService.js');
+      const projectService = new ProjectService();
+      await projectService.create(orgId, { name: 'Default Workspace', slug: 'default' });
+    } catch (err) {
+      console.error('Failed to create default project for org', orgId, err);
+    }
+
     return org;
   }
 
@@ -46,11 +55,11 @@ export class OrganizationService {
     const org = new Organization({
       id: orgId,
       accountId,
-      name: baseName,
+      name: this.normalizeOrganizationToken(baseName),
       slug,
       isDefault: true,
       plan: 'free',
-      members: [{ userId: accountId, role: 'owner', joinedAt: now }],
+      members: [{ userId: accountId, role: 'Owner', joinedAt: now }],
       createdAt: now,
       updatedAt: now,
     });
@@ -82,11 +91,30 @@ export class OrganizationService {
   }
 
   async findByAccount(accountId) {
-    const snapshot = await this.orgsCollection
+    // Get orgs where user is the owner
+    const ownedSnapshot = await this.orgsCollection
       .where('accountId', '==', accountId)
       .get();
 
-    return snapshot.docs.map(doc => Organization.fromFirestore(doc.id, doc.data()));
+    const ownedOrgs = ownedSnapshot.docs.map(doc => Organization.fromFirestore(doc.id, doc.data()));
+    const ownedIds = new Set(ownedOrgs.map(o => o.id));
+
+    // Also find orgs where user is a member (but not owner, to avoid duplicates)
+    // Firestore doesn't support querying nested array object fields directly,
+    // so we scan all orgs and filter by membership.
+    // For scalability, this should be replaced with a memberUserIds flat array.
+    const allSnapshot = await this.orgsCollection.get();
+    const memberOrgs = [];
+    allSnapshot.forEach(doc => {
+      if (ownedIds.has(doc.id)) return; // skip already found
+      const data = doc.data();
+      const isMember = (data.members || []).some(m => m.userId === accountId);
+      if (isMember) {
+        memberOrgs.push(Organization.fromFirestore(doc.id, data));
+      }
+    });
+
+    return [...ownedOrgs, ...memberOrgs];
   }
 
   async update(orgId, dto) {
@@ -130,16 +158,24 @@ export class OrganizationService {
     const members = org.members || [];
     const enriched = [];
     for (const member of members) {
-      const userDoc = await gcpService.firestore.collection('users').doc(member.userId).get();
-      const userData = userDoc.exists ? userDoc.data() : {};
-      enriched.push({
-        userId: member.userId,
-        role: member.role || 'Member',
-        joinedAt: member.joinedAt,
-        email: userData.email || '',
-        username: userData.username || '',
-        picture: userData.picture || '',
-      });
+      if (!member.userId) {
+        console.warn('Member missing userId in org:', orgId, member);
+        continue;
+      }
+      try {
+        const userDoc = await gcpService.firestore.collection('users').doc(member.userId).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        enriched.push({
+          userId: member.userId,
+          role: member.role || 'Member',
+          joinedAt: member.joinedAt,
+          email: userData.email || '',
+          username: userData.username || '',
+          picture: userData.picture || '',
+        });
+      } catch (err) {
+        console.error('Failed to fetch user data for member:', member.userId, err);
+      }
     }
     const invitations = await invitationService.listForOrg(orgId);
     for (const inv of invitations) {

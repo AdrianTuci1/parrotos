@@ -1,5 +1,5 @@
 // Organization-level sub-navbar items (workspace landing + management)
-export const orgSections = ['stats', 'access', 'org-settings'];
+export const orgSections = ['stats', 'access', 'org-settings', 'metrics', 'invitations'];
 
 // Project-level sub-navbar items
 export const projectSections = ['analytics', 'sources', 'destinations', 'storage', 'graph', 'chat', 'settings'];

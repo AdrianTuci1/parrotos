@@ -1,15 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/useAppStore';
-import {
-  Plus,
-  Copy,
-  ExternalLink,
-  Users,
-  LogOut,
-} from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Plus, ExternalLink } from 'lucide-react';
 import { SectionHeader } from '@/components/shell/OrganizationSettingsView';
+import { CreateWorkspaceModal } from './workspaces/CreateWorkspaceModal';
+import { WorkspaceRow } from './workspaces/WorkspaceRow';
 import '@/styles/organization-views.css';
 import { cn } from '@/lib/utils';
 
@@ -25,22 +20,15 @@ function stringToGradient(seed = "") {
   return `linear-gradient(135deg, hsl(${h1} 75% 55%), hsl(${h2} 70% 45%), hsl(${h3} 75% 35%))`;
 }
 
-function WorkspaceAvatar({ id }) {
-  return (
-    <div
-      className="workspace-avatar"
-      style={{ background: stringToGradient(id) }}
-    />
-  );
-}
-
 export function OrganizationOrganizationsView() {
   const navigate = useNavigate();
   const {
     organizations,
     currentUser,
+    currentOrganization,
     createOrganization,
     leaveOrganization,
+    switchOrganization,
   } = useAppStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,7 +76,10 @@ export function OrganizationOrganizationsView() {
     }
   };
 
-  const handleManageMembers = () => {
+  const handleManageMembers = (id) => {
+    if (id !== currentOrganization?.id) {
+      switchOrganization(id);
+    }
     navigate('/settings/workspace/management');
   };
 
@@ -114,7 +105,7 @@ export function OrganizationOrganizationsView() {
         />
         <div className="workspaces-header-actions">
           <a
-            href="https://docs.parrot.com/workspaces"
+            href="https://docs.statsparrot.com/workspaces"
             target="_blank"
             rel="noreferrer"
             className="workspaces-docs-link"
@@ -145,89 +136,29 @@ export function OrganizationOrganizationsView() {
           </thead>
           <tbody>
             {organizations.map((org) => (
-              <tr key={org.id}>
-                <td>
-                  <div className="workspace-cell">
-                    <WorkspaceAvatar id={org.id} />
-                    <span className="workspace-name">{org.name}</span>
-                    {org.isDefault && (
-                      <span className="workspace-badge">personal</span>
-                    )}
-                  </div>
-                </td>
-                <td className="workspace-role">{getRole(org)}</td>
-                <td className="workspace-actions">
-                  <button
-                    className="workspace-action-btn"
-                    onClick={() => handleCopyId(org.id)}
-                  >
-                    <Copy size={14} />
-                    {copiedId === org.id ? 'Copied' : 'Copy ID'}
-                  </button>
-                  {!org.isDefault && (
-                    <button
-                      className="workspace-action-btn"
-                      onClick={() => handleManageMembers(org.id)}
-                    >
-                      <Users size={14} />
-                      Manage members
-                    </button>
-                  )}
-                  <button
-                    className={cn(
-                      'workspace-action-btn workspace-leave-btn',
-                      org.isDefault && 'disabled'
-                    )}
-                    disabled={org.isDefault || leavingId === org.id}
-                    onClick={() => handleLeave(org)}
-                    title={org.isDefault ? 'Cannot leave default workspace' : 'Leave workspace'}
-                  >
-                    <LogOut size={14} />
-                    {leavingId === org.id ? 'Leaving...' : 'Leave'}
-                  </button>
-                </td>
-              </tr>
+              <WorkspaceRow
+                key={org.id}
+                org={org}
+                role={getRole(org)}
+                copiedId={copiedId}
+                leavingId={leavingId}
+                onCopyId={handleCopyId}
+                onManageMembers={handleManageMembers}
+                onLeave={handleLeave}
+              />
             ))}
           </tbody>
         </table>
       </div>
 
-      {isModalOpen && (
-        <>
-          <div className="org-modal-backdrop" onClick={closeModal} />
-          <div className="org-modal-frame">
-            <div className="org-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="org-modal-header">
-                <h3 className="org-modal-title">Create Workspace</h3>
-                <p className="org-modal-description">
-                  Create a new workspace for your organization.
-                </p>
-              </div>
-              <div className="org-modal-body">
-                <div className="org-modal-field">
-                  <label className="org-modal-field-label">Name</label>
-                  <Input
-                    className="org-modal-input"
-                    value={newWorkspaceName}
-                    onChange={(e) => setNewWorkspaceName(e.target.value)}
-                    placeholder="Workspace name"
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); }}
-                    autoFocus
-                  />
-                </div>
-              </div>
-              <div className="org-modal-footer">
-                <button className="org-modal-secondary-btn" onClick={closeModal} disabled={isCreating}>
-                  Cancel
-                </button>
-                <button className="org-modal-primary-btn" onClick={handleCreate} disabled={isCreating || !newWorkspaceName.trim()}>
-                  {isCreating ? 'Creating...' : 'Create Workspace'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <CreateWorkspaceModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onCreate={handleCreate}
+        isCreating={isCreating}
+        newWorkspaceName={newWorkspaceName}
+        setNewWorkspaceName={setNewWorkspaceName}
+      />
     </div>
   );
 }

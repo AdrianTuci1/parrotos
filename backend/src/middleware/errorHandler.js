@@ -46,6 +46,7 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   // Default: 500 Internal Server Error
+  console.error('[errorHandler] Unhandled Error:', err);
   res.status(500).json({
     success: false,
     error: {
