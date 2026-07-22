@@ -1,7 +1,28 @@
 # Test Report
 
 ## Scope
-This report covers the test status for the StatsParrot `feature/frontend-runtime-fixes` branch after adding settings, member, role, invitation and security tests.
+This report covers the test status for the StatsParrot `feature/frontend-runtime-fixes` branch after fixing workspace-settings route access, adding workspace API-token end-to-end coverage, and updating the test report.
+
+## Changes Made
+
+### Frontend
+- `frontend/src/components/shell/SettingsLayout.jsx`
+  - Disabled the global `isLoading` spinner inside `ViewFrame` for settings pages so that workspace child views are no longer unmounted/remounted while data is loading.
+  - Added auto-select fallback for `/settings/workspace/*` routes: if no real organization is selected, fetch organizations and select the first available one.
+- `frontend/src/components/shell/WorkspaceManagementView.jsx`
+  - Stabilized the `useEffect` dependency to `currentOrganization?.id` only.
+  - Guarded fetch against the placeholder `__empty__` organization.
+- `frontend/src/components/shell/WorkspaceApiTokensView.jsx`
+  - Same stabilization as `WorkspaceManagementView` for `fetchApiTokens`, `createApiToken`, and `revokeApiToken`.
+- `frontend/src/stores/useAppStore.js`
+  - Persist the selected organization id in `localStorage` (`selectedOrganizationId`).
+  - Restore the saved organization on `fetchOrganizations`, falling back to the current one or the first available organization.
+
+### E2E
+- `e2e/tests/workspace-settings.spec.ts`
+  - Added cold-navigation test for `/settings/workspace/management` and `/settings/workspace/api-tokens`.
+  - Added test for creating and revoking a workspace API token.
+  - Added test asserting workspace sidebar links are enabled once the workspace loads.
 
 ## Test Suites
 
@@ -17,11 +38,6 @@ This report covers the test status for the StatsParrot `feature/frontend-runtime
 | `src/test/OrganizationService.test.js` | 2 | ✓ |
 | `src/test/settings-store.test.js` | 5 | ✓ |
 | `src/test/settings-members.test.js` | 11 | ✓ |
-
-**New coverage:**
-- `fetchMembers`, `addMember`, `updateMember` with roles (`admin`, `editor`, `viewer`), `removeMember`, `cancelInvitation`.
-- Security settings: `fetchSecuritySettings`, `updateSecuritySettings`.
-- User invitations: `fetchInvitations`, `acceptInvitation`, `declineInvitation`.
 
 ### Backend (Node Test Runner)
 **Command:** `npm test` in `/opt/statsparrot/backend`
@@ -42,19 +58,25 @@ This report covers the test status for the StatsParrot `feature/frontend-runtime
 | `test/project-service.test.js` | 5 | ✓ |
 | `test/DataDeletionService.test.js` | 1 | ✓ |
 
-**New coverage:**
-- `InvitationService.invite` with role normalization and duplicate rejection.
-- `InvitationService.accept` adds member with assigned role, rejects wrong email.
-- `InvitationService.decline` updates status.
-- `InvitationService.cancel` deletes invitation.
-- `InvitationService.listForOrg` and `listForUser`.
+### E2E (Playwright)
+**Command:** `FRONTEND_URL=http://localhost:5174 npx playwright test tests/workspace-settings.spec.ts --reporter=list --project=chromium --timeout=60000` in `/opt/statsparrot/e2e`
+
+**Result:** 3/3 passed.
+
+| Test | Status |
+|------|--------|
+| can navigate to workspace management and api tokens from cold navigation | ✓ |
+| can create and revoke an API token | ✓ |
+| workspace settings sidebar links are not disabled after workspace loads | ✓ |
 
 ## Summary
-- **Total tests:** 75
+- **Total unit/integration tests:** 75
 - **Passed:** 75
 - **Failed:** 0
+- **E2E tests:** 3
+- **Passed:** 3
 - **Status:** ✅ Ready for merge
 
 ## Notes
-- Conflicts with `main` on K8s manifest files were resolved before pushing.
-- No production code changes were made; this commit adds only test coverage.
+- The Docker stack (backend, frontend, Firestore emulator) was already running for the E2E run. A frontend production build was generated and is ready for the container restart.
+- Workspace routes now auto-select and persist the active organization, fixing direct navigation/refresh access to `Workspace Management` and `API Tokens`.

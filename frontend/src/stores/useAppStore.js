@@ -683,7 +683,11 @@ export const useAppStore = create(
     try {
       const orgs = await organizationService.list();
       const currentOrganization = get().currentOrganization;
-      const nextCurrentOrganization = orgs.find((org) => org.id === currentOrganization?.id) || orgs[0] || emptyOrg;
+      const savedId = typeof window !== "undefined" ? window.localStorage.getItem("selectedOrganizationId") : null;
+      const nextCurrentOrganization = orgs.find((org) => org.id === currentOrganization?.id)
+        || orgs.find((org) => org.id === savedId)
+        || orgs[0]
+        || emptyOrg;
       set({
         organizationsData: orgs,
         organizations: orgs,
@@ -737,6 +741,9 @@ export const useAppStore = create(
   selectOrganization: (organizationId) => {
     const organization = get().organizations.find((item) => item.id === organizationId);
     if (!organization) return;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("selectedOrganizationId", organization.id);
+    }
     set((state) => ({ currentOrganization: organization, currentWorkspace: null, activeScope: 'organization', activeSection: state.activeOrganizationSection || 'stats' }));
     if (get().shouldFetchApi()) get().fetchProjects(organizationId);
   },

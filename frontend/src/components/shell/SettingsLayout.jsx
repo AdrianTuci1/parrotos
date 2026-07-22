@@ -93,10 +93,18 @@ export function SettingsLayout({ children }) {
 
   // Load organizations on mount if empty; also auto-select first org on workspace routes when missing
   useEffect(() => {
-    if (organizations.length === 0) {
+    const isWorkspaceRoute = location.pathname.startsWith('/settings/workspace');
+    const needsOrg = !currentOrganization || currentOrganization.id === emptyOrg.id || !currentOrganization.id;
+    if (isWorkspaceRoute && needsOrg) {
+      fetchOrganizations().then((orgs) => {
+        if (orgs?.length > 0) {
+          selectOrganization(orgs[0].id);
+        }
+      }).catch(() => {});
+    } else if (organizations.length === 0) {
       fetchOrganizations().catch(() => {});
     }
-  }, [organizations.length, fetchOrganizations]);
+  }, [location.pathname, currentOrganization, organizations.length, fetchOrganizations, selectOrganization]);
 
   const switchOrg = (orgId) => {
     const org = organizations.find((o) => o.id === orgId);
@@ -272,7 +280,7 @@ export function SettingsLayout({ children }) {
         />
       )}
       <main className={cn("settings-main", isMobile && "settings-main-mobile")}>
-        <ViewFrame title="" description="" maxWidthClassName="full-width">
+        <ViewFrame title="" description="" maxWidthClassName="full-width" loading={false}>
           {children}
         </ViewFrame>
       </main>

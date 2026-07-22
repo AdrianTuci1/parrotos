@@ -27,20 +27,22 @@ function displayToken(token) {
 }
 
 export function WorkspaceApiTokensView() {
-  const { currentOrganization, apiTokens, isLoading, fetchApiTokens, createApiToken, revokeApiToken } = useAppStore();
+  const currentOrganization = useAppStore((state) => state.currentOrganization);
+  const apiTokens = useAppStore((state) => state.apiTokens);
+  const isLoading = useAppStore((state) => state.isLoading);
   const [copiedId, setCopiedId] = useState(null);
   const [newToken, setNewToken] = useState(null);
   const [createTokenOpen, setCreateTokenOpen] = useState(false);
 
   useEffect(() => {
-    if (currentOrganization?.id) {
-      fetchApiTokens(currentOrganization.id);
+    if (currentOrganization?.id && currentOrganization.id !== "__empty__") {
+      useAppStore.getState().fetchApiTokens(currentOrganization.id);
     }
-  }, [currentOrganization?.id, fetchApiTokens]);
+  }, [currentOrganization?.id]);
 
   const handleCreate = async (name) => {
     if (!currentOrganization?.id) return;
-    const item = await createApiToken(currentOrganization.id, name.trim());
+    const item = await useAppStore.getState().createApiToken(currentOrganization.id, name.trim());
     setNewToken(item);
     setCopiedId(null);
   };
@@ -55,7 +57,7 @@ export function WorkspaceApiTokensView() {
   const handleRevoke = async (id) => {
     if (!currentOrganization?.id) return;
     if (!confirm("Are you sure you want to revoke this token?")) return;
-    await revokeApiToken(currentOrganization.id, id);
+    await useAppStore.getState().revokeApiToken(currentOrganization.id, id);
     if (newToken?.id === id) setNewToken(null);
   };
 
