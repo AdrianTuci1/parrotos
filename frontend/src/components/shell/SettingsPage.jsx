@@ -10,13 +10,13 @@ export function SettingsPage() {
   return (
     <SettingsLayout>
       <Routes>
-        <Route index element={<Navigate to="profile" replace />} />
+        <Route index element={<Navigate to="/settings/profile" replace />} />
         <Route path="profile" element={<ProfileSettingsView />} />
         <Route path="workspaces" element={<OrganizationOrganizationsView />} />
-        <Route path="workspace" element={<Navigate to="workspace/management" replace />} />
+        <Route path="workspace" element={<Navigate to="/settings/workspace/management" replace />} />
         <Route path="workspace/:tab" element={<WorkspaceSettingsView />} />
         <Route path="notifications" element={<NotificationSettingsView />} />
-        <Route path="*" element={<Navigate to="profile" replace />} />
+        <Route path="*" element={<Navigate to="/settings/profile" replace />} />
       </Routes>
     </SettingsLayout>
   );

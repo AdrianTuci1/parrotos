@@ -899,13 +899,16 @@ export const useAppStore = create(
     if (!orgId || orgId === '__empty__') return [];
     if (get().devMode) {
       const org = get().currentOrganization;
-      return [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
+      const mockMembers = [{ userId: org?.accountId || 'owner', email: 'owner@example.com', username: 'Owner', role: 'owner', joinedAt: new Date().toISOString() }];
+      set({ members: mockMembers });
+      return mockMembers;
     }
     set({ isLoading: true });
     try {
       const result = await organizationService.getMembers(orgId);
-      set({ members: result.members || [], isLoading: false });
-      return result.members;
+      const membersArray = Array.isArray(result) ? result : (result.members || []);
+      set({ members: membersArray, isLoading: false });
+      return membersArray;
     } catch (err) {
       set({ error: err.message, isLoading: false });
       throw err;
