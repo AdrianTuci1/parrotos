@@ -2077,7 +2077,6 @@ export const useAppStore = create(
     const { currentOrganization, currentWorkspace, devMode } = get();
     if (!devMode && currentOrganization?.id && currentWorkspace?.id) {
       try {
-        const { apiClient } = await import('@/services/ApiClient');
         await apiClient.delete(`/organizations/${currentOrganization.id}/projects/${currentWorkspace.id}/chat/history/${chatId}`);
       } catch (err) {
         console.error('Failed to delete chat session from backend:', err);
