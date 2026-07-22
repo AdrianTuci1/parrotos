@@ -19,16 +19,16 @@ resources:
 images:
 - name: ghcr.io/adriantuci1/sentry-data-backend
   newName: ghcr.io/adriantuci1/sentry-data-backend
-  newTag: 5157d3142caaa91c51bf3845acb47d968324d427
+  newTag: c4fdf4660edf4ef46192310c451ff5034bee7f5f
 - name: ghcr.io/adriantuci1/sentry-data-chat
   newName: ghcr.io/adriantuci1/sentry-data-chat
-  newTag: 5157d3142caaa91c51bf3845acb47d968324d427
+  newTag: c4fdf4660edf4ef46192310c451ff5034bee7f5f
 - name: ghcr.io/adriantuci1/sentry-data-harness
   newName: ghcr.io/adriantuci1/sentry-data-harness
-  newTag: 5157d3142caaa91c51bf3845acb47d968324d427
+  newTag: c4fdf4660edf4ef46192310c451ff5034bee7f5f
 - name: ghcr.io/adriantuci1/sentry-data-observer
   newName: ghcr.io/adriantuci1/sentry-data-observer
-  newTag: 5157d3142caaa91c51bf3845acb47d968324d427
+  newTag: c4fdf4660edf4ef46192310c451ff5034bee7f5f
 - name: ghcr.io/adriantuci1/sentry-data-worker
   newName: ghcr.io/adriantuci1/sentry-data-worker
-  newTag: 5157d3142caaa91c51bf3845acb47d968324d427
+  newTag: c4fdf4660edf4ef46192310c451ff5034bee7f5f
