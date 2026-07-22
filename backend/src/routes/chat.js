@@ -43,20 +43,100 @@ router.post('/message', async (req, res) => {
     }
 
     if (useFallback) {
+      // Persist session to Firestore (create or update)
+      const { gcpService } = await import('../services/GcpService.js');
+      const sessionsRef = gcpService.firestore
+        .collection('organizations').doc(orgId)
+        .collection('projects').doc(projectId)
+        .collection('chatSessions');
+      
+      const sessionDoc = await sessionsRef.doc(sessionId).get();
+      const now = new Date().toISOString();
+      if (!sessionDoc.exists) {
+        await sessionsRef.doc(sessionId).set({
+          title: title || message.slice(0, 50) || 'New Chat',
+          userId: req.user.userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      } else {
+        const existingData = sessionDoc.data();
+        const updates = { updatedAt: now };
+        // Update title if still default or empty
+        if (!existingData.title || existingData.title === 'New Chat' || existingData.title === 'Untitled Chat') {
+          updates.title = title || message.slice(0, 50) || 'New Chat';
+        }
+        await sessionsRef.doc(sessionId).update(updates);
+      }
+
+      // Save user message
+      await sessionsRef.doc(sessionId).collection('messages').add({
+        role: 'user',
+        content: message,
+        userId: req.user.userId,
+        createdAt: now,
+      });
+
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
       res.flushHeaders();
 
+      let assistantContent = '';
       try {
         for await (const event of chatFallbackService.stream({ message })) {
+          if (event.type === 'text') assistantContent += event.content;
           res.write(`data: ${JSON.stringify(event)}\n\n`);
         }
       } catch (err) {
-        res.write(`data: ${JSON.stringify({ type: 'error', message: err.message })}\n\n`);
+        const errorMsg = err.message || 'Unknown error';
+        assistantContent = errorMsg;
+        res.write(`data: ${JSON.stringify({ type: 'error', message: errorMsg })}\n\n`);
       }
+
+      // Save assistant response
+      if (assistantContent) {
+        await sessionsRef.doc(sessionId).collection('messages').add({
+          role: 'assistant',
+          content: assistantContent,
+          createdAt: new Date().toISOString(),
+        }).catch(() => {});
+      }
+
       res.end();
       return;
+    }
+
+    // Ensure session exists in Firestore
+    try {
+      const { gcpService } = await import('../services/GcpService.js');
+      const sessionsRef = gcpService.firestore
+        .collection('organizations').doc(orgId)
+        .collection('projects').doc(projectId)
+        .collection('chatSessions');
+      
+      const sessionDoc = await sessionsRef.doc(sessionId).get();
+      const now = new Date().toISOString();
+      if (!sessionDoc.exists) {
+        await sessionsRef.doc(sessionId).set({
+          title: title || message.slice(0, 50) || 'New Chat',
+          userId: req.user.userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      } else {
+        const existingData = sessionDoc.data();
+        if (!existingData.title || existingData.title === 'New Chat' || existingData.title === 'Untitled Chat') {
+          await sessionsRef.doc(sessionId).update({
+            title: title || message.slice(0, 50) || 'New Chat',
+            updatedAt: now,
+          });
+        } else {
+          await sessionsRef.doc(sessionId).update({ updatedAt: now });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to persist chat session:', e.message);
     }
 
     // Stream real chat service response

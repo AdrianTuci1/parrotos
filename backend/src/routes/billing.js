@@ -9,8 +9,8 @@ const router = Router({ mergeParams: true });
 
 router.use(authenticate);
 router.use(requireOrgAccess);
-router.use(requireOrganizationOwner);
 
+// GET routes are accessible to all org members
 router.get('/subscription', async (req, res, next) => {
   try {
     const { orgId } = req.params;
@@ -31,7 +31,7 @@ router.get('/subscription', async (req, res, next) => {
   }
 });
 
-router.post('/checkout-session', async (req, res, next) => {
+router.post('/checkout-session', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const { plan, successUrl, cancelUrl } = req.body;
@@ -83,7 +83,7 @@ router.post('/checkout-session', async (req, res, next) => {
   }
 });
 
-router.post('/portal-session', async (req, res, next) => {
+router.post('/portal-session', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const { returnUrl } = req.body;

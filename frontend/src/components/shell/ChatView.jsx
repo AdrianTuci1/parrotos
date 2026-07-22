@@ -131,14 +131,15 @@ export function ChatView() {
     }
 
     let currentChatId = activeChatId;
+    const chatTitle = text.length > 50 ? text.slice(0, 47) + '...' : text;
 
     if (!currentChatId) {
-      const newSession = createChatSession(text.slice(0, 30));
+      const newSession = createChatSession(chatTitle);
       currentChatId = newSession.id;
     } else if (messages.length === 0) {
       useAppStore.setState((state) => ({
         chatSessions: state.chatSessions.map((chat) =>
-          chat.id === currentChatId ? { ...chat, title: text.slice(0, 30) } : chat
+          chat.id === currentChatId ? { ...chat, title: chatTitle } : chat
         ),
       }));
     }
@@ -156,7 +157,7 @@ export function ChatView() {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ sessionId: currentChatId, message: text, title: text.slice(0, 30) }),
+        body: JSON.stringify({ sessionId: currentChatId, message: text, title: chatTitle }),
       });
 
       const reader = response.body.getReader();

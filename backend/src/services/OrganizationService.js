@@ -91,11 +91,30 @@ export class OrganizationService {
   }
 
   async findByAccount(accountId) {
-    const snapshot = await this.orgsCollection
+    // Get orgs where user is the owner
+    const ownedSnapshot = await this.orgsCollection
       .where('accountId', '==', accountId)
       .get();
 
-    return snapshot.docs.map(doc => Organization.fromFirestore(doc.id, doc.data()));
+    const ownedOrgs = ownedSnapshot.docs.map(doc => Organization.fromFirestore(doc.id, doc.data()));
+    const ownedIds = new Set(ownedOrgs.map(o => o.id));
+
+    // Also find orgs where user is a member (but not owner, to avoid duplicates)
+    // Firestore doesn't support querying nested array object fields directly,
+    // so we scan all orgs and filter by membership.
+    // For scalability, this should be replaced with a memberUserIds flat array.
+    const allSnapshot = await this.orgsCollection.get();
+    const memberOrgs = [];
+    allSnapshot.forEach(doc => {
+      if (ownedIds.has(doc.id)) return; // skip already found
+      const data = doc.data();
+      const isMember = (data.members || []).some(m => m.userId === accountId);
+      if (isMember) {
+        memberOrgs.push(Organization.fromFirestore(doc.id, data));
+      }
+    });
+
+    return [...ownedOrgs, ...memberOrgs];
   }
 
   async update(orgId, dto) {

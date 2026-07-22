@@ -72,7 +72,7 @@ router.use('/:orgId', requireOrgAccess);
 // ORG DETAIL / UPDATE / DELETE (for Settings & Deletion)
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId', requireOrganizationOwner, async (req, res, next) => {
+router.get('/:orgId', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const org = await orgService.findById(orgId);
@@ -178,7 +178,7 @@ router.patch('/:orgId/security', requireOrganizationOwner, async (req, res, next
 // ORG-LEVEL METRICS (for OrganizationStatsView)
 // ═══════════════════════════════════════════════
 
-router.get('/:orgId/metrics', requireOrganizationOwner, async (req, res, next) => {
+router.get('/:orgId/metrics', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const metrics = await metricsService.getOrgMetrics(orgId);

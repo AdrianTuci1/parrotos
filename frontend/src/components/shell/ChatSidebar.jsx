@@ -19,7 +19,7 @@ export function ChatSidebar() {
   } = useAppStore();
   const navigate = useNavigate();
 
-  const validSessions = chatSessions.filter((s) => s.messages?.length > 0);
+  const validSessions = chatSessions.filter((s) => s.messages?.length > 0 || (!s.messages && s.id));
 
   const navToChat = (chatId) => {
     const orgSlug = currentOrganization?.slug || currentOrganization?.id;
