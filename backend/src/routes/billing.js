@@ -31,6 +31,26 @@ router.get('/subscription', async (req, res, next) => {
   }
 });
 
+router.get('/usage', async (req, res) => {
+  success(res, { totalSpend: 0, usageBreakdown: 0, items: [] });
+});
+
+router.get('/credits', async (req, res) => {
+  success(res, { balance: 0, applied: 0, transactions: [] });
+});
+
+router.get('/invoices', async (req, res) => {
+  success(res, []);
+});
+
+router.get('/plans', async (req, res) => {
+  success(res, [
+    { key: "starter", name: "Starter", price: 0 },
+    { key: "team", name: "Team", price: 250 },
+    { key: "enterprise", name: "Enterprise", price: "Custom" },
+  ]);
+});
+
 router.post('/checkout-session', requireOrganizationOwner, async (req, res, next) => {
   try {
     const { orgId } = req.params;

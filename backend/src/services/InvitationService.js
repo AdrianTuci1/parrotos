@@ -15,8 +15,9 @@ export class InvitationService {
   }
 
   async listForOrg(orgId) {
-    const snapshot = await this.invitationsCollection.where('orgId', '==', orgId).orderBy('createdAt', 'desc').get();
-    return snapshot.docs.map((doc) => Invitation.fromFirestore(doc.id, doc.data()));
+    const snapshot = await this.invitationsCollection.where('orgId', '==', orgId).get();
+    const invitations = snapshot.docs.map((doc) => Invitation.fromFirestore(doc.id, doc.data()));
+    return invitations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
   async listForUser(userId) {
@@ -26,9 +27,10 @@ export class InvitationService {
     const snapshot = await this.invitationsCollection
       .where('email', '==', email)
       .where('status', '==', 'pending')
-      .orderBy('createdAt', 'desc')
       .get();
-    return snapshot.docs.map((doc) => Invitation.fromFirestore(doc.id, doc.data()));
+    
+    const invitations = snapshot.docs.map((doc) => Invitation.fromFirestore(doc.id, doc.data()));
+    return invitations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
   async invite(orgId, invitedByUserId, email, role = 'Member') {

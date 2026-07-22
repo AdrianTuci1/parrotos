@@ -110,7 +110,7 @@ router.get('/:orgId/members', async (req, res, next) => {
   try {
     const { orgId } = req.params;
     const members = await orgService.getMembers(orgId);
-    success(res, { members });
+    success(res, members);
   } catch (err) {
     next(err);
   }
