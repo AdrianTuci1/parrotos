@@ -16,6 +16,7 @@ import type {
 } from "../types";
 import Chart from "./Chart";
 import { useReadable } from "./useReadable";
+import FilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/react/FilterChipsReadOnly";
 
 export interface ChartContainerProps {
   /** Runtime client forwarded to Chart/RillChart (Svelte context is unavailable in React). */
@@ -50,6 +51,7 @@ export default function ChartContainer(props: ChartContainerProps) {
   } = props;
 
   const specValue = useReadable(spec);
+  const tafs = useReadable(timeAndFilterStore);
 
   // The Svelte version reads the parent theme from Svelte context; in React the theme
   // is passed in directly (a React host context bridge is a later increment).
@@ -127,9 +129,15 @@ export default function ChartContainer(props: ChartContainerProps) {
             <div className="flex items-center gap-x-2 w-full max-w-full overflow-x-auto chip-scroll-container">
               <h4 className="title">{chartTitle}</h4>
               {"metrics_view" in specValue && (
-                <FilterChipsReadOnlyPlaceholder
-                  dimensions={dimensions}
-                  measures={measures}
+                <FilterChipsReadOnly
+                  metricsViewNames={[metricsViewName]}
+                  dimensions={dimensions ?? []}
+                  measures={measures ?? []}
+                  filters={tafs?.where}
+                  dimensionsWithInlistFilter={[]}
+                  dimensionThresholdFilters={[]}
+                  displayTimeRange={tafs?.timeRange}
+                  chipLayout="scroll"
                 />
               )}
             </div>
@@ -148,29 +156,6 @@ export default function ChartContainer(props: ChartContainerProps) {
           />
         </div>
       </div>
-    </div>
-  );
-}
-
-/**
- * Placeholder for the Svelte `FilterChipsReadOnly` chips row. Wires the data the real
- * component receives so a later increment can swap in the actual React implementation.
- */
-function FilterChipsReadOnlyPlaceholder({
-  dimensions,
-  measures,
-}: {
-  dimensions: unknown[] | undefined;
-  measures: unknown[] | undefined;
-}) {
-  return (
-    <div
-      className="flex items-center gap-x-2 text-fg-secondary"
-      data-testid="filter-chips-read-only"
-    >
-      <span className="text-xs">
-        ({measures?.length ?? 0} measures, {dimensions?.length ?? 0} dimensions)
-      </span>
     </div>
   );
 }
