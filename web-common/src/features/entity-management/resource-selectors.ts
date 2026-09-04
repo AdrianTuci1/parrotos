@@ -1,0 +1,382 @@
+import {
+  createRuntimeServiceGetResource,
+  createRuntimeServiceListResources,
+  getRuntimeServiceGetResourceQueryKey,
+  getRuntimeServiceListResourcesQueryKey,
+  getRuntimeServiceListResourcesQueryOptions,
+  runtimeServiceGetResource,
+  runtimeServiceListResources,
+  type V1ExploreSpec,
+  type V1GetResourceResponse,
+  type V1ListResourcesResponse,
+  type V1MetricsViewSpec,
+  V1ReconcileStatus,
+  type V1Resource,
+} from "@rilldata/web-common/runtime-client";
+import type { ConnectError } from "@connectrpc/connect";
+import type { CreateQueryOptions, QueryClient } from "@tanstack/svelte-query";
+import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+
+export enum ResourceKind {
+  ProjectParser = "rill.runtime.v1.ProjectParser",
+  Alert = "rill.runtime.v1.Alert",
+  Report = "rill.runtime.v1.Report",
+  Source = "rill.runtime.v1.Source",
+  Connector = "rill.runtime.v1.Connector",
+  Model = "rill.runtime.v1.Model",
+  MetricsView = "rill.runtime.v1.MetricsView",
+  Explore = "rill.runtime.v1.Explore",
+  Theme = "rill.runtime.v1.Theme",
+  Component = "rill.runtime.v1.Component",
+  Canvas = "rill.runtime.v1.Canvas",
+  API = "rill.runtime.v1.API",
+  RefreshTrigger = "rill.runtime.v1.RefreshTrigger",
+  Migration = "rill.runtime.v1.Migration",
+}
+
+export function displayResourceKind(kind: ResourceKind | undefined) {
+  switch (kind) {
+    case ResourceKind.ProjectParser:
+      return "project parser";
+    case ResourceKind.Alert:
+      return "alert";
+    case ResourceKind.Report:
+      return "report";
+    case ResourceKind.Source:
+      return "source";
+    case ResourceKind.Connector:
+      return "connector";
+    case ResourceKind.Model:
+      return "model";
+    case ResourceKind.MetricsView:
+      return "metrics view";
+    case ResourceKind.Explore:
+      return "dashboard";
+    case ResourceKind.Theme:
+      return "theme";
+    case ResourceKind.Component:
+      return "component";
+    case ResourceKind.Canvas:
+      return "dashboard";
+    case ResourceKind.API:
+      return "API";
+    case ResourceKind.RefreshTrigger:
+      return "refresh trigger";
+    default:
+      return undefined;
+  }
+}
+
+export function resourceKindStyleName(kind: ResourceKind | undefined) {
+  switch (kind) {
+    case ResourceKind.Alert:
+      return "bg-Alert/15 text-Alert";
+    case ResourceKind.Report:
+      return "bg-Report/15 text-Report";
+    case ResourceKind.Source:
+      return "bg-Model/15 text-Model";
+    case ResourceKind.Connector:
+      return "bg-Connector/15 text-Connector";
+    case ResourceKind.Model:
+      return "bg-Model/15 text-Model";
+    case ResourceKind.MetricsView:
+      return "bg-Metrics/15 text-Metrics";
+    case ResourceKind.Explore:
+      return "bg-Explore/15 text-Explore";
+    case ResourceKind.Theme:
+      return "bg-Theme/15 text-Theme";
+    case ResourceKind.Component:
+      return "bg-Component/15 text-Component";
+    case ResourceKind.Canvas:
+      return "bg-Canvas/15 text-Canvas";
+    case ResourceKind.API:
+      return "bg-API/15 text-API";
+    default:
+      return undefined;
+  }
+}
+
+export type UserFacingResourceKinds = Exclude<
+  ResourceKind,
+  | ResourceKind.ProjectParser
+  | ResourceKind.RefreshTrigger
+  | ResourceKind.Migration
+>;
+
+export const SingletonProjectParserName = "parser";
+
+// In the UI, we shouldn't show the `rill.runtime.v1` prefix
+export function prettyResourceKind(kind: string) {
+  return kind.replace(/^rill\.runtime\.v1\./, "");
+}
+
+/**
+ * Coerce resource kind to match UI representation.
+ * Models that are defined-as-source are displayed as Sources in the sidebar and graph.
+ * This ensures consistent representation across the application.
+ *
+ * @param res - The resource to check
+ * @returns The coerced ResourceKind, or undefined if the resource has no kind
+ *
+ * @example
+ * // A model that is defined-as-source
+ * coerceResourceKind(modelResource) // Returns ResourceKind.Source
+ *
+ * // A normal model
+ * coerceResourceKind(normalModel) // Returns ResourceKind.Model
+ */
+export function coerceResourceKind(res: V1Resource): ResourceKind | undefined {
+  const raw = res.meta?.name?.kind as ResourceKind | undefined;
+  if (raw === ResourceKind.Model) {
+    // A resource is a Source if it's a model defined-as-source and its result table matches the resource name
+    const name = res.meta?.name?.name;
+    const resultTable = res.model?.state?.resultTable;
+    const definedAsSource = res.model?.spec?.definedAsSource;
+    if (name && resultTable === name && definedAsSource === true) {
+      return ResourceKind.Source;
+    }
+  }
+  return raw;
+}
+
+export function useResource<T = V1Resource>(
+  client: RuntimeClient,
+  name: string,
+  kind: ResourceKind,
+  queryOptions?: Partial<
+    CreateQueryOptions<
+      V1GetResourceResponse,
+      ConnectError,
+      T // T is the return type of the `select` function
+    >
+  >,
+  queryClient?: QueryClient,
+) {
+  return createRuntimeServiceGetResource(
+    client,
+    {
+      name: { kind, name },
+    },
+    {
+      query: {
+        select: (data) => data?.resource as T,
+        enabled: !!client?.instanceId && !!name && !!kind,
+        ...queryOptions,
+      },
+    },
+    queryClient,
+  );
+}
+
+// FIXME: To remove this duplicate of `useResource` https://github.com/rilldata/rill/pull/5531#discussion_r1733027626
+/**
+ * `useResourceV2` is a more flexible version of `useResource` that accepts
+ *  any `queryOptions`, not just `select` and `queryClient`.
+ */
+export function useResourceV2<T = V1Resource>(
+  client: RuntimeClient,
+  name: string,
+  kind: ResourceKind,
+  queryOptions?: Partial<
+    CreateQueryOptions<
+      V1GetResourceResponse,
+      ConnectError,
+      T // T is the return type of the `select` function
+    >
+  >,
+  queryClient?: QueryClient,
+) {
+  return createRuntimeServiceGetResource(
+    client,
+    {
+      name: { kind, name },
+    },
+    {
+      query: {
+        select: (data) => data?.resource as T,
+        enabled: !!client?.instanceId && !!name && !!kind,
+        ...queryOptions,
+      },
+    },
+    queryClient,
+  );
+}
+
+export function useProjectParser(
+  queryClient: QueryClient,
+  client: RuntimeClient,
+  queryOptions?: Partial<
+    CreateQueryOptions<V1GetResourceResponse, ConnectError, V1Resource>
+  >,
+) {
+  return useResource(
+    client,
+    SingletonProjectParserName,
+    ResourceKind.ProjectParser,
+    queryOptions,
+    queryClient,
+  );
+}
+
+export function useFilteredResources<T = Array<V1Resource>>(
+  client: RuntimeClient,
+  kind: ResourceKind,
+  selector: (data: V1ListResourcesResponse) => T = (data) =>
+    data.resources as T,
+) {
+  return createRuntimeServiceListResources(
+    client,
+    {
+      kind: kind,
+    },
+    {
+      query: {
+        select: selector,
+      },
+    },
+    queryClient,
+  );
+}
+
+/**
+ * Fetches all resources and filters them client side.
+ * This is to improve network requests since we need the full list all the time as well.
+ */
+export function useClientFilteredResources(
+  client: RuntimeClient,
+  kind: ResourceKind,
+  filter: (res: V1Resource) => boolean = () => true,
+) {
+  return createRuntimeServiceListResources(
+    client,
+    {},
+    {
+      query: {
+        select: (data) =>
+          data.resources?.filter(
+            (res) => res.meta?.name?.kind === kind && filter(res),
+          ) ?? [],
+      },
+    },
+    queryClient,
+  );
+}
+
+/**
+ * Query options version of {@link useClientFilteredResources}.
+ */
+export function getClientFilteredResourcesQueryOptions(
+  client: RuntimeClient,
+  kind: ResourceKind,
+  filter: (res: V1Resource) => boolean = () => true,
+) {
+  return getRuntimeServiceListResourcesQueryOptions(
+    client,
+    {},
+    {
+      query: {
+        select: (data) =>
+          data.resources?.filter(
+            (res) => res.meta?.name?.kind === kind && filter(res),
+          ) ?? [],
+      },
+    },
+  );
+}
+
+export function resourceIsLoading(resource?: V1Resource) {
+  return (
+    !!resource &&
+    resource.meta?.reconcileStatus !== V1ReconcileStatus.RECONCILE_STATUS_IDLE
+  );
+}
+
+export async function fetchResource(
+  client: RuntimeClient,
+  queryClient: QueryClient,
+  name: string,
+  kind: ResourceKind,
+  refetch = false,
+) {
+  const resp = await queryClient.fetchQuery({
+    queryKey: getRuntimeServiceGetResourceQueryKey(client.instanceId, {
+      name: { name, kind },
+    }),
+    queryFn: () =>
+      runtimeServiceGetResource(client, {
+        name: { name, kind },
+      }),
+    staleTime: refetch ? 0 : Infinity,
+  });
+  return resp.resource;
+}
+
+export function fetchProjectParser(
+  client: RuntimeClient,
+  queryClient: QueryClient,
+  refetch = false,
+) {
+  return fetchResource(
+    client,
+    queryClient,
+    SingletonProjectParserName,
+    ResourceKind.ProjectParser,
+    refetch,
+  );
+}
+
+export async function fetchResources(
+  queryClient: QueryClient,
+  client: RuntimeClient,
+) {
+  const resp = await queryClient.fetchQuery({
+    queryKey: getRuntimeServiceListResourcesQueryKey(client.instanceId, {}),
+    queryFn: () => runtimeServiceListResources(client, {}),
+  });
+  return resp.resources ?? [];
+}
+
+export type MetricsViewAndExploreSpecs = {
+  metricsViewSpecsMap: Map<string, V1MetricsViewSpec>;
+  exploreSpecsMap: Map<string, V1ExploreSpec>;
+  exploreForMetricViewsMap: Map<string, string>;
+};
+export function getMetricsViewAndExploreSpecsQueryOptions(
+  client: RuntimeClient,
+) {
+  return getRuntimeServiceListResourcesQueryOptions(
+    client,
+    {},
+    {
+      query: {
+        select: (data) => {
+          const metricsViewSpecsMap = new Map<string, V1MetricsViewSpec>();
+          const exploreSpecsMap = new Map<string, V1ExploreSpec>();
+          const exploreForMetricViewsMap = new Map<string, string>();
+
+          data.resources?.forEach((res) => {
+            if (res.metricsView?.state?.validSpec) {
+              metricsViewSpecsMap.set(
+                res.meta?.name?.name ?? "",
+                res.metricsView.state.validSpec,
+              );
+            } else if (res.explore?.state?.validSpec) {
+              const metricsViewName =
+                res.explore.state.validSpec.metricsView ?? "";
+              const exploreName = res.meta?.name?.name ?? "";
+              exploreForMetricViewsMap.set(metricsViewName, exploreName);
+              exploreSpecsMap.set(exploreName, res.explore.state.validSpec);
+            }
+          });
+
+          return {
+            metricsViewSpecsMap,
+            exploreSpecsMap,
+            exploreForMetricViewsMap,
+          } satisfies MetricsViewAndExploreSpecs;
+        },
+      },
+    },
+  );
+}

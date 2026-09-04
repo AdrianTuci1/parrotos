@@ -1,0 +1,12 @@
+Statsparrot
+Copyright 2026
+
+This product is a derivative fork of Rill (https://github.com/rilldata/rill),
+Copyright 2022 Rill Data Inc., and incorporates source code from Rill.
+
+Rill is licensed under the Apache License, Version 2.0 (see LICENSE.md).
+Statsparrot is distributed under the Apache License, Version 2.0.
+
+This product additionally contains code originally developed for Statsparrot
+(connector ingestion, reverse-ETL, and the Parrot agent), which is licensed
+under the Apache License, Version 2.0.

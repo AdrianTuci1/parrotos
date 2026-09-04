@@ -1,0 +1,202 @@
+<script lang="ts">
+  import type { Extension } from "@codemirror/state";
+  import { EditorView } from "@codemirror/view";
+  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog/";
+  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import Label from "@rilldata/web-common/components/forms/Label.svelte";
+  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
+  import Alert from "@rilldata/web-common/components/icons/Alert.svelte";
+  import Check from "@rilldata/web-common/components/icons/Check.svelte";
+  import UndoIcon from "@rilldata/web-common/components/icons/UndoIcon.svelte";
+  import MetaKey from "@rilldata/web-common/components/tooltip/MetaKey.svelte";
+  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
+  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import { debounce } from "../../lib/create-debouncer";
+  import { FileArtifact } from "../entity-management/file-artifact";
+  import Codespace from "./Codespace.svelte";
+  import { FILE_SAVE_DEBOUNCE_TIME } from "./config";
+  import DiffBar from "./DiffBar.svelte";
+
+  export let fileArtifact: FileArtifact;
+  export let extensions: Extension[] = [];
+  export let autoSave = true;
+  export let editor: EditorView | null;
+  export let forceDisableAutoSave = false;
+  export let refetchOnWindowFocus = true;
+  export let onSave: (content: string) => void = () => {};
+  export let onRevert: () => void = () => {};
+
+  $: ({
+    saveLocalContent,
+    revertChanges,
+    merging,
+    editorContent,
+    disableAutoSave,
+    inConflict,
+    saveState: { saving, error, resolve },
+    saveEnabled,
+  } = fileArtifact);
+
+  $: editable = !fileArtifact.managed;
+
+  $: debounceSave = debounce(save, FILE_SAVE_DEBOUNCE_TIME);
+
+  $: disabled = !$saveEnabled;
+
+  async function handleKeydown(e: KeyboardEvent) {
+    if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      if (disabled) return;
+      await save();
+    }
+  }
+
+  async function save(force = false) {
+    const local = $editorContent;
+    if (local === null) return;
+    onSave(local);
+    await saveLocalContent(force);
+  }
+
+  function revertContent() {
+    revertChanges(); // Revert fileArtifact to remote content
+    resolve();
+    onRevert(); // Call revert callback
+  }
+
+  async function handleRefocus() {
+    if (refetchOnWindowFocus) await fileArtifact.fetchContent(true);
+  }
+</script>
+
+<svelte:window onkeydown={handleKeydown} onfocus={handleRefocus} />
+
+<section>
+  {#if $merging}
+    <DiffBar
+      saving={$saving}
+      errorMessage={$error?.message}
+      onAcceptCurrent={() => save(true)}
+      onAcceptIncoming={revertContent}
+    />
+  {/if}
+
+  <div class="editor-container">
+    {#key fileArtifact}
+      <Codespace
+        {extensions}
+        {fileArtifact}
+        autoSave={!forceDisableAutoSave && !disableAutoSave && autoSave}
+        bind:editor
+        {editable}
+      />
+    {/key}
+  </div>
+
+  {#if !$merging && editable}
+    <footer>
+      <div class="flex gap-x-3">
+        {#if !autoSave || disableAutoSave || forceDisableAutoSave}
+          <Tooltip distance={8} activeDelay={300}>
+            <Button
+              type={!!$error && !$saving ? "destructive" : "primary"}
+              loading={$saving}
+              loadingCopy="Saving"
+              {disabled}
+              onClick={() => save()}
+            >
+              {#if $error}
+                <Alert size="14px" />
+              {:else}
+                <Check size="14px" />
+              {/if}
+
+              {#if $error}
+                {$error?.message} Try again.
+              {:else}
+                Save
+              {/if}
+            </Button>
+            <TooltipContent slot="tooltip-content">
+              <TooltipShortcutContainer pad={false}>
+                Save
+                <Shortcut>
+                  <MetaKey action="S" />
+                </Shortcut>
+              </TooltipShortcutContainer>
+            </TooltipContent>
+          </Tooltip>
+
+          <Button type="text" {disabled} onClick={revertContent}>
+            <UndoIcon size="14px" />
+            Revert changes
+          </Button>
+        {/if}
+      </div>
+      <div
+        class="flex gap-x-1 items-center h-full bg-surface-subtle rounded-full"
+        class:hidden={disableAutoSave || forceDisableAutoSave}
+      >
+        <Switch
+          bind:checked={autoSave}
+          id="auto-save"
+          small
+          onclick={() => {
+            if (!autoSave) debounceSave();
+          }}
+        />
+        <Label class="font-normal text-xs" for="auto-save">Auto-save</Label>
+      </div>
+    </footer>
+  {/if}
+</section>
+
+{#if $inConflict && !$merging}
+  <AlertDialog.Root open>
+    <AlertDialog.Content>
+      <AlertDialog.Title>File update detected</AlertDialog.Title>
+      <AlertDialog.Description>
+        This file has been modified by another application. Please compare or
+        overwrite your local version with the latest changes.
+      </AlertDialog.Description>
+
+      <AlertDialog.Footer>
+        <AlertDialog.Action>
+          {#snippet child({ props })}
+            <Button
+              {...props}
+              type="primary"
+              large
+              onClick={() => {
+                merging.set(true);
+              }}
+            >
+              Compare
+            </Button>
+
+            <Button type="secondary" large onClick={revertContent}>
+              Overwrite
+            </Button>
+          {/snippet}
+        </AlertDialog.Action>
+      </AlertDialog.Footer>
+    </AlertDialog.Content>
+  </AlertDialog.Root>
+{/if}
+
+<style lang="postcss">
+  .editor-container {
+    @apply size-full overflow-auto p-0 pt-0 pb-0 flex flex-col;
+  }
+
+  footer {
+    @apply justify-between items-center flex flex-none;
+    @apply h-10 p-2 w-full rounded-b-sm border-t bg-surface-subtle;
+  }
+
+  section {
+    @apply size-full flex-col bg-surface-subtle flex overflow-hidden relative;
+  }
+</style>

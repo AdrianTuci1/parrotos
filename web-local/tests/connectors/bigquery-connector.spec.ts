@@ -1,0 +1,209 @@
+import { expect } from "@playwright/test";
+import { test } from "../setup/base";
+import * as path from "path";
+import { fileURLToPath } from "url";
+import { writeFileSync, unlinkSync, existsSync } from "fs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+test.describe("BigQuery connector", () => {
+  test.use({ project: "Blank" });
+
+  // Get BigQuery credentials from environment variable
+  const getCredentialsFromEnv = () => {
+    const credentialsJson =
+      process.env.RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON;
+    if (!credentialsJson) {
+      throw new Error(
+        "RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is required",
+      );
+    }
+    return JSON.parse(credentialsJson);
+  };
+
+  test("Create BigQuery connector with JSON credentials upload", async ({
+    page,
+  }) => {
+    // Skip test if environment variable is not set
+    if (
+      !process.env.RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON
+    ) {
+      test.skip(
+        true,
+        "RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is not set",
+      );
+    }
+
+    // Get credentials from environment variable
+    const credentials = getCredentialsFromEnv();
+
+    // Open the Add Data modal
+    await page.getByRole("button", { name: "Add Asset" }).click();
+    await page.getByRole("menuitem", { name: "Add Data" }).click();
+
+    // Select BigQuery connector
+    await page.getByLabel("Connect to bigquery").click();
+
+    // Upload credentials JSON file
+    const credentialsJson = JSON.stringify(credentials, null, 2);
+
+    // Set up file chooser with proper error handling
+    const [fileChooser] = await Promise.all([
+      page.waitForEvent("filechooser"),
+      page.getByRole("button", { name: "Choose file" }).click(),
+    ]);
+
+    // Create a temporary file for upload
+    const tempFilePath = path.join(__dirname, "temp-credentials.json");
+
+    try {
+      writeFileSync(tempFilePath, credentialsJson);
+
+      // Upload the file using FileChooser
+      await fileChooser.setFiles([tempFilePath]);
+    } finally {
+      // Clean up temp file
+      if (existsSync(tempFilePath)) {
+        unlinkSync(tempFilePath);
+      }
+    }
+
+    // Verify that project_id was automatically extracted and filled
+    await expect(page.getByRole("textbox", { name: "Project ID" })).toHaveValue(
+      credentials.project_id,
+    );
+
+    // Verify that the file was uploaded successfully
+    // The CredentialsInput should show the filename after upload
+    await expect(page.getByText("temp-credentials.json")).toBeVisible();
+
+    // Assert that the yaml preview contains key properties with new ALL_CAPS env naming
+    const yamlPreview = page.getByLabel("Yaml preview");
+    await expect(yamlPreview).toContainText("type: connector");
+    await expect(yamlPreview).toContainText("driver: bigquery");
+    await expect(yamlPreview).toContainText(
+      `project_id: "${credentials.project_id}"`,
+    );
+    // New ALL_CAPS env variable naming (generic property without driver prefix)
+    await expect(yamlPreview).toContainText(
+      'google_application_credentials: "{{ .env.GOOGLE_APPLICATION_CREDENTIALS }}"',
+    );
+
+    // Submit the form (credentials are already uploaded)
+    await page.getByRole("button", { name: "Test and Connect" }).click();
+
+    // Wait for pick a table screen
+    await expect(
+      page.getByText(
+        "Pick a table or input your SQL to power your first dashboard",
+      ),
+    ).toBeVisible();
+
+    // rilldata/integration_test folder is visible in the tree.
+    await expect(
+      page
+        .getByLabel("Import Table Form")
+        .getByLabel("rilldata.integration_test"),
+    ).toBeVisible();
+
+    // Skip creation, it can be heavy on gcs usage.
+    await page.keyboard.press("Escape");
+
+    // Go to the `.env` file and verify the credentials are stored with new naming
+    await page.getByRole("link", { name: ".env" }).click();
+    const envEditor = page.getByLabel("codemirror editor").getByRole("textbox");
+    await expect(envEditor).toContainText("GOOGLE_APPLICATION_CREDENTIALS=");
+
+    // Verify the credentials JSON is properly stored in .env
+    const envContent = await envEditor.textContent();
+    expect(envContent).toContain(JSON.stringify(credentials));
+  });
+
+  test("Duplicate BigQuery connectors get _# suffix for env variables", async ({
+    page,
+  }) => {
+    // Skip test if environment variable is not set
+    if (
+      !process.env.RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON
+    ) {
+      test.skip(
+        true,
+        "RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is not set",
+      );
+    }
+
+    const credentials = getCredentialsFromEnv();
+    const tempFilePath = path.join(__dirname, "temp-credentials.json");
+    const credentialsJson = JSON.stringify(credentials, null, 2);
+
+    // Create first BigQuery connector
+    await page.getByRole("button", { name: "Add Asset" }).click();
+    await page.getByRole("menuitem", { name: "Add Data" }).click();
+    await page.getByLabel("Connect to bigquery").click();
+
+    const [fileChooser1] = await Promise.all([
+      page.waitForEvent("filechooser"),
+      page.getByRole("button", { name: "Choose file" }).click(),
+    ]);
+
+    try {
+      writeFileSync(tempFilePath, credentialsJson);
+      await fileChooser1.setFiles([tempFilePath]);
+    } finally {
+      if (existsSync(tempFilePath)) {
+        unlinkSync(tempFilePath);
+      }
+    }
+
+    // Wait for the uploaded credentials to be processed into the form.
+    await expect(page.getByRole("textbox", { name: "Project ID" })).toHaveValue(
+      credentials.project_id,
+    );
+
+    await page.getByLabel("Save connector").click();
+    await page.waitForURL(`**/files/connectors/bigquery.yaml`);
+
+    // Create second BigQuery connector
+    await page.getByRole("button", { name: "Add Asset" }).click();
+    await page.getByRole("menuitem", { name: "Add Data" }).click();
+    await page.getByLabel("Connect to bigquery").click();
+
+    const [fileChooser2] = await Promise.all([
+      page.waitForEvent("filechooser"),
+      page.getByRole("button", { name: "Choose file" }).click(),
+    ]);
+
+    try {
+      writeFileSync(tempFilePath, credentialsJson);
+      await fileChooser2.setFiles([tempFilePath]);
+    } finally {
+      if (existsSync(tempFilePath)) {
+        unlinkSync(tempFilePath);
+      }
+    }
+
+    // Wait for the uploaded credentials to be processed into the form.
+    await expect(page.getByRole("textbox", { name: "Project ID" })).toHaveValue(
+      credentials.project_id,
+    );
+
+    await page.getByLabel("Save connector").click();
+    // Second connector should get _1 suffix in filename
+    await page.waitForURL(`**/files/connectors/bigquery_1.yaml`);
+
+    // Second connector should use _1 suffix for env variable
+    const codeEditor = page
+      .getByLabel("codemirror editor")
+      .getByRole("textbox");
+    await expect(codeEditor).toContainText(
+      `google_application_credentials: "{{ .env.GOOGLE_APPLICATION_CREDENTIALS_1 }}"`,
+    );
+
+    // Verify .env has both variables
+    await page.getByRole("link", { name: ".env" }).click();
+    const envEditor = page.getByLabel("codemirror editor").getByRole("textbox");
+    await expect(envEditor).toContainText("GOOGLE_APPLICATION_CREDENTIALS=");
+    await expect(envEditor).toContainText("GOOGLE_APPLICATION_CREDENTIALS_1=");
+  });
+});

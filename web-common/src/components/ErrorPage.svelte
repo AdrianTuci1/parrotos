@@ -1,0 +1,96 @@
+<script lang="ts">
+  import { page } from "$app/stores";
+  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
+  import { isEmbedPage } from "../layout/navigation/navigation-utils";
+  import AlertCircleOutline from "./icons/AlertCircleOutline.svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let statusCode: number | null | undefined = undefined;
+  export let header: string;
+  export let body: string = "";
+  export let detail: string | undefined = undefined;
+  export let fatal = false;
+  export let href: string = "/";
+
+  let showDetail = false;
+
+  const onEmbedPage = isEmbedPage($page);
+</script>
+
+<CtaLayoutContainer>
+  <CtaContentContainer>
+    {#if statusCode}
+      <h1 class="status-code">{statusCode}</h1>
+    {:else}
+      <AlertCircleOutline size="64px" />
+    {/if}
+    <h2 class="header">{header}</h2>
+    <CtaMessage>{body}</CtaMessage>
+    {#if (!fatal && !onEmbedPage) || $$slots.cta}
+      <div class="cta-actions">
+        <slot name="cta" />
+        {#if !fatal && !onEmbedPage}
+          <Button type="ghost" {href}>{m.error_back_to_home()}</Button>
+        {/if}
+      </div>
+    {/if}
+    {#if detail}
+      <section class="detail-section">
+        <button
+          class="detail-toggle"
+          onclick={() => (showDetail = !showDetail)}
+        >
+          {#if !showDetail}
+            {m.error_show_details()}
+          {:else}
+            {m.error_hide_details()}
+          {/if}
+        </button>
+        {#if showDetail}
+          <div class="detail-text-wrapper">
+            <p class="font-mono">{detail}</p>
+          </div>
+        {/if}
+      </section>
+    {/if}
+  </CtaContentContainer>
+</CtaLayoutContainer>
+
+<style lang="postcss">
+  .status-code {
+    @apply text-8xl font-extrabold;
+    @apply bg-gradient-to-b from-[#CBD5E1] to-[#E2E8F0] text-transparent bg-clip-text;
+  }
+
+  .header {
+    @apply text-lg font-semibold;
+  }
+
+  .cta-actions {
+    @apply flex flex-col items-center gap-y-3;
+  }
+
+  .detail-section {
+    @apply flex flex-col items-center gap-y-2;
+  }
+
+  .detail-toggle {
+    @apply text-sm text-fg-secondary font-medium;
+    @apply flex items-center;
+    @apply duration-300 ease-in-out;
+  }
+
+  .detail-toggle:hover {
+    @apply text-primary-700;
+  }
+
+  .detail-text-wrapper {
+    @apply mt-4;
+    @apply w-[700px] px-[26px] py-2;
+    @apply border border-gray-200 rounded-sm;
+    @apply bg-surface-background;
+  }
+</style>

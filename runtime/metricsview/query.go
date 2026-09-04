@@ -1,0 +1,963 @@
+package metricsview
+
+import (
+	"encoding/json"
+	"fmt"
+	"reflect"
+	"time"
+
+	"github.com/google/jsonschema-go/jsonschema"
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime/pkg/jsonschemautil"
+	"github.com/rilldata/rill/runtime/pkg/timeutil"
+)
+
+type Query struct {
+	MetricsView         string      `json:"metrics_view" mapstructure:"metrics_view"`
+	Dimensions          []Dimension `json:"dimensions" mapstructure:"dimensions"`
+	Measures            []Measure   `json:"measures" mapstructure:"measures"`
+	PivotOn             []string    `json:"pivot_on" mapstructure:"pivot_on"`
+	Spine               *Spine      `json:"spine" mapstructure:"spine"`
+	Sort                []Sort      `json:"sort" mapstructure:"sort"`
+	TimeRange           *TimeRange  `json:"time_range" mapstructure:"time_range"`
+	ComparisonTimeRange *TimeRange  `json:"comparison_time_range" mapstructure:"comparison_time_range"`
+	Where               *Expression `json:"where" mapstructure:"where"`
+	Having              *Expression `json:"having" mapstructure:"having"`
+	Limit               *int64      `json:"limit" mapstructure:"limit"`
+	Offset              *int64      `json:"offset" mapstructure:"offset"`
+	TimeZone            string      `json:"time_zone" mapstructure:"time_zone"`
+	UseDisplayNames     bool        `json:"use_display_names" mapstructure:"use_display_names"`
+	Rows                bool        `json:"rows" mapstructure:"rows"`
+
+	QueryLimits  *QueryLimits   `json:"query_limits,omitempty" mapstructure:"query_limits"`
+	UnusedFields map[string]any `json:"-" mapstructure:",remain"`
+}
+
+type Dimension struct {
+	Name    string            `json:"name,omitempty" mapstructure:"name"`
+	Compute *DimensionCompute `json:"compute,omitempty" mapstructure:"compute"`
+}
+
+type DimensionCompute struct {
+	TimeFloor *DimensionComputeTimeFloor `json:"time_floor,omitempty" mapstructure:"time_floor"`
+}
+
+type DimensionComputeTimeFloor struct {
+	Dimension string    `json:"dimension,omitempty" mapstructure:"dimension"`
+	Grain     TimeGrain `json:"grain,omitempty" mapstructure:"grain"`
+}
+
+type Measure struct {
+	Name    string          `json:"name,omitempty" mapstructure:"name"`
+	Compute *MeasureCompute `json:"compute,omitempty" mapstructure:"compute"`
+}
+
+type MeasureCompute struct {
+	Count           bool                           `json:"count,omitempty" mapstructure:"count"`
+	CountDistinct   *MeasureComputeCountDistinct   `json:"count_distinct,omitempty" mapstructure:"count_distinct"`
+	ComparisonValue *MeasureComputeComparisonValue `json:"comparison_value,omitempty" mapstructure:"comparison_value"`
+	ComparisonDelta *MeasureComputeComparisonDelta `json:"comparison_delta,omitempty" mapstructure:"comparison_delta"`
+	ComparisonRatio *MeasureComputeComparisonRatio `json:"comparison_ratio,omitempty" mapstructure:"comparison_ratio"`
+	PercentOfTotal  *MeasureComputePercentOfTotal  `json:"percent_of_total,omitempty" mapstructure:"percent_of_total"`
+	URI             *MeasureComputeURI             `json:"uri,omitempty" mapstructure:"uri"`
+	ComparisonTime  *MeasureComputeComparisonTime  `json:"comparison_time,omitempty" mapstructure:"comparison_time"`
+	Expression      *MeasureComputeExpression      `json:"expression,omitempty" mapstructure:"expression"`
+}
+
+// QueryLimits represents limits that should be applied to a query, such as requiring a time range or limiting the maximum time range for interactive queries. These are not part of the Query json itself because they are not intrinsic to the query, but rather are constraints that may be applied to the query before execution.
+type QueryLimits struct {
+	RequireTimeRange bool  `json:"require_time_range,omitempty" mapstructure:"require_time_range"`
+	MaxTimeRangeDays int64 `json:"max_time_range_days,omitempty" mapstructure:"max_time_range_days"`
+}
+
+func (q *Query) AsMap() (map[string]any, error) {
+	// We do a JSON roundtrip to convert to a map[string]any.
+	// We don't use mapstructure here because it doesn't correctly handle time.Time roundtrips to a map[string]any, even with decoder hooks.
+	// And anyway, since JSON is the usual entrypoint for TimeRange maps, this is more representative of real usage.
+	data, err := json.Marshal(q)
+	if err != nil {
+		return nil, err
+	}
+	var res map[string]any
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (q *Query) Validate() error {
+	if q.Rows {
+		if len(q.Dimensions) > 0 {
+			return fmt.Errorf("dimensions not supported when rows is set, all model columns will be returned")
+		}
+		if len(q.Measures) > 0 {
+			return fmt.Errorf("measures not supported when rows is set, all model columns will be returned")
+		}
+		if len(q.Sort) > 0 {
+			return fmt.Errorf("sort not supported when rows is set")
+		}
+		if q.ComparisonTimeRange != nil {
+			return fmt.Errorf("comparison_time_range not supported when rows is set")
+		}
+		if q.Having != nil {
+			return fmt.Errorf("having not supported when rows is set")
+		}
+		if len(q.PivotOn) > 0 {
+			return fmt.Errorf("pivot_on not supported when rows is set")
+		}
+	}
+
+	if q.ComparisonTimeRange != nil && !q.ComparisonTimeRange.IsZero() && (q.TimeRange == nil || q.TimeRange.IsZero()) {
+		return fmt.Errorf("comparison_time_range requires time_range to be set")
+	}
+
+	if q.TimeRange != nil && q.ComparisonTimeRange != nil && q.TimeRange.TimeDimension != q.ComparisonTimeRange.TimeDimension {
+		return fmt.Errorf("time_dimension in time_range and comparison_time_range must match")
+	}
+
+	return nil
+}
+
+func (m *MeasureCompute) Validate() error {
+	n := 0
+	if m.Count {
+		n++
+	}
+	if m.CountDistinct != nil {
+		n++
+	}
+	if m.ComparisonValue != nil {
+		n++
+	}
+	if m.ComparisonDelta != nil {
+		n++
+	}
+	if m.ComparisonRatio != nil {
+		n++
+	}
+	if m.PercentOfTotal != nil {
+		n++
+	}
+	if m.URI != nil {
+		n++
+	}
+	if m.ComparisonTime != nil {
+		n++
+	}
+	if m.Expression != nil {
+		n++
+	}
+	if n == 0 {
+		return fmt.Errorf(`must specify a compute operation`)
+	}
+	if n > 1 {
+		return fmt.Errorf("must specify only one compute operation")
+	}
+	return nil
+}
+
+type MeasureComputeCountDistinct struct {
+	Dimension string `json:"dimension" mapstructure:"dimension"`
+}
+
+type MeasureComputeComparisonValue struct {
+	Measure string `json:"measure" mapstructure:"measure"`
+}
+
+type MeasureComputeComparisonDelta struct {
+	Measure string `json:"measure" mapstructure:"measure"`
+}
+
+type MeasureComputeComparisonRatio struct {
+	Measure string `json:"measure" mapstructure:"measure"`
+}
+
+type MeasureComputePercentOfTotal struct {
+	Measure string   `json:"measure" mapstructure:"measure"`
+	Total   *float64 `json:"total" mapstructure:"total"`
+}
+
+type MeasureComputeURI struct {
+	Dimension string `json:"dimension" mapstructure:"dimension"`
+}
+
+type MeasureComputeComparisonTime struct {
+	Dimension string `json:"dimension" mapstructure:"dimension"`
+}
+
+// MeasureComputeExpression computes an ephemeral measure derived from other measures via an arithmetic expression.
+// The expression is validated by ParseMeasureExpression: it may only reference existing measure names,
+// combined with numeric literals, NULL, the operators + - * / %, parentheses, and an allowlist of scalar functions.
+type MeasureComputeExpression struct {
+	Expression  string `json:"expression" mapstructure:"expression"`
+	DisplayName string `json:"display_name,omitempty" mapstructure:"display_name"`
+}
+
+type Spine struct {
+	Where     *WhereSpine `json:"where" mapstructure:"where"`
+	TimeRange *TimeSpine  `json:"time" mapstructure:"time"`
+}
+
+type WhereSpine struct {
+	Expression *Expression `json:"expr" mapstructure:"expr"`
+}
+
+type TimeSpine struct {
+	Start         time.Time `json:"start" mapstructure:"start"`
+	End           time.Time `json:"end" mapstructure:"end"`
+	Grain         TimeGrain `json:"grain" mapstructure:"grain"`
+	TimeDimension string    `json:"time_dimension" mapstructure:"time_dimension"` // optional time dimension to use for time-based operations, if not specified, the default time dimension in the metrics view is used
+}
+
+type Sort struct {
+	Name string `json:"name" mapstructure:"name"`
+	Desc bool   `json:"desc" mapstructure:"desc"`
+}
+
+type TimeRange struct {
+	Start         time.Time `json:"start" mapstructure:"start"`
+	End           time.Time `json:"end" mapstructure:"end"`
+	Expression    string    `json:"expression,omitempty" mapstructure:"expression"`
+	IsoDuration   string    `json:"iso_duration,omitempty" mapstructure:"iso_duration"`
+	IsoOffset     string    `json:"iso_offset,omitempty" mapstructure:"iso_offset"`
+	RoundToGrain  TimeGrain `json:"round_to_grain,omitempty" mapstructure:"round_to_grain"`
+	TimeDimension string    `json:"time_dimension,omitempty" mapstructure:"time_dimension"` // optional time dimension to use for time-based operations, if not specified, the default time dimension in the metrics view is used
+}
+
+func (tr *TimeRange) IsZero() bool {
+	return tr.Start.IsZero() && tr.End.IsZero() && tr.Expression == "" && tr.IsoDuration == "" && tr.IsoOffset == "" && tr.RoundToGrain == TimeGrainUnspecified
+}
+
+func (tr *TimeRange) AsMap() (map[string]any, error) {
+	// We do a JSON roundtrip to convert to a map[string]any.
+	// We don't use mapstructure here because it doesn't correctly handle time.Time roundtrips to a map[string]any, even with decoder hooks.
+	// And anyway, since JSON is the usual entrypoint for TimeRange maps, this is more representative of real usage.
+	data, err := json.Marshal(tr)
+	if err != nil {
+		return nil, err
+	}
+	var res map[string]any
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+type Expression struct {
+	Name      string     `json:"name,omitempty" mapstructure:"name"`
+	Value     any        `json:"val,omitempty" mapstructure:"val"`
+	Condition *Condition `json:"cond,omitempty" mapstructure:"cond"`
+	Subquery  *Subquery  `json:"subquery,omitempty" mapstructure:"subquery"`
+}
+
+func (e *Expression) AsMap() (map[string]any, error) {
+	// We do a JSON roundtrip to convert to a map[string]any.
+	// We don't use mapstructure here because it doesn't correctly handle time.Time roundtrips to a map[string]any, even with decoder hooks.
+	// And anyway, since JSON is the usual entrypoint for TimeRange maps, this is more representative of real usage.
+	data, err := json.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	var res map[string]any
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+type Condition struct {
+	Operator    Operator      `json:"op,omitempty" mapstructure:"op"`
+	Expressions []*Expression `json:"exprs,omitempty" mapstructure:"exprs"`
+}
+
+type Subquery struct {
+	Dimension Dimension   `json:"dimension,omitempty" mapstructure:"dimension"`
+	Measures  []Measure   `json:"measures,omitempty" mapstructure:"measures"`
+	Where     *Expression `json:"where,omitempty" mapstructure:"where"`
+	Having    *Expression `json:"having,omitempty" mapstructure:"having"`
+}
+
+type Operator string
+
+const (
+	OperatorUnspecified Operator = ""
+	OperatorEq          Operator = "eq"
+	OperatorNeq         Operator = "neq"
+	OperatorLt          Operator = "lt"
+	OperatorLte         Operator = "lte"
+	OperatorGt          Operator = "gt"
+	OperatorGte         Operator = "gte"
+	OperatorIn          Operator = "in"
+	OperatorNin         Operator = "nin"
+	OperatorIlike       Operator = "ilike"
+	OperatorNilike      Operator = "nilike"
+	OperatorOr          Operator = "or"
+	OperatorAnd         Operator = "and"
+	OperatorCast        Operator = "cast"
+)
+
+func (o Operator) Valid() bool {
+	switch o {
+	case OperatorEq, OperatorNeq, OperatorLt, OperatorLte, OperatorGt, OperatorGte, OperatorIn, OperatorNin, OperatorIlike, OperatorNilike, OperatorOr, OperatorAnd, OperatorCast:
+		return true
+	}
+	return false
+}
+
+type TimeGrain string
+
+const (
+	TimeGrainUnspecified TimeGrain = ""
+	TimeGrainMillisecond TimeGrain = "millisecond"
+	TimeGrainSecond      TimeGrain = "second"
+	TimeGrainMinute      TimeGrain = "minute"
+	TimeGrainHour        TimeGrain = "hour"
+	TimeGrainDay         TimeGrain = "day"
+	TimeGrainWeek        TimeGrain = "week"
+	TimeGrainMonth       TimeGrain = "month"
+	TimeGrainQuarter     TimeGrain = "quarter"
+	TimeGrainYear        TimeGrain = "year"
+)
+
+func (t TimeGrain) Valid() bool {
+	switch t {
+	case TimeGrainUnspecified, TimeGrainMillisecond, TimeGrainSecond, TimeGrainMinute, TimeGrainHour, TimeGrainDay, TimeGrainWeek, TimeGrainMonth, TimeGrainQuarter, TimeGrainYear:
+		return true
+	}
+	return false
+}
+
+func (t TimeGrain) ToTimeutil() timeutil.TimeGrain {
+	switch t {
+	case TimeGrainUnspecified:
+		return timeutil.TimeGrainUnspecified
+	case TimeGrainMillisecond:
+		return timeutil.TimeGrainMillisecond
+	case TimeGrainSecond:
+		return timeutil.TimeGrainSecond
+	case TimeGrainMinute:
+		return timeutil.TimeGrainMinute
+	case TimeGrainHour:
+		return timeutil.TimeGrainHour
+	case TimeGrainDay:
+		return timeutil.TimeGrainDay
+	case TimeGrainWeek:
+		return timeutil.TimeGrainWeek
+	case TimeGrainMonth:
+		return timeutil.TimeGrainMonth
+	case TimeGrainQuarter:
+		return timeutil.TimeGrainQuarter
+	case TimeGrainYear:
+		return timeutil.TimeGrainYear
+	default:
+		panic(fmt.Errorf("invalid time grain %q", t))
+	}
+}
+
+func (t TimeGrain) ToProto() runtimev1.TimeGrain {
+	switch t {
+	case TimeGrainUnspecified:
+		return runtimev1.TimeGrain_TIME_GRAIN_UNSPECIFIED
+	case TimeGrainMillisecond:
+		return runtimev1.TimeGrain_TIME_GRAIN_MILLISECOND
+	case TimeGrainSecond:
+		return runtimev1.TimeGrain_TIME_GRAIN_SECOND
+	case TimeGrainMinute:
+		return runtimev1.TimeGrain_TIME_GRAIN_MINUTE
+	case TimeGrainHour:
+		return runtimev1.TimeGrain_TIME_GRAIN_HOUR
+	case TimeGrainDay:
+		return runtimev1.TimeGrain_TIME_GRAIN_DAY
+	case TimeGrainWeek:
+		return runtimev1.TimeGrain_TIME_GRAIN_WEEK
+	case TimeGrainMonth:
+		return runtimev1.TimeGrain_TIME_GRAIN_MONTH
+	case TimeGrainQuarter:
+		return runtimev1.TimeGrain_TIME_GRAIN_QUARTER
+	case TimeGrainYear:
+		return runtimev1.TimeGrain_TIME_GRAIN_YEAR
+	default:
+		panic(fmt.Errorf("invalid time grain %q", t))
+	}
+}
+
+func TimeGrainFromProto(t runtimev1.TimeGrain) TimeGrain {
+	switch t {
+	case runtimev1.TimeGrain_TIME_GRAIN_UNSPECIFIED:
+		return TimeGrainUnspecified
+	case runtimev1.TimeGrain_TIME_GRAIN_MILLISECOND:
+		return TimeGrainMillisecond
+	case runtimev1.TimeGrain_TIME_GRAIN_SECOND:
+		return TimeGrainSecond
+	case runtimev1.TimeGrain_TIME_GRAIN_MINUTE:
+		return TimeGrainMinute
+	case runtimev1.TimeGrain_TIME_GRAIN_HOUR:
+		return TimeGrainHour
+	case runtimev1.TimeGrain_TIME_GRAIN_DAY:
+		return TimeGrainDay
+	case runtimev1.TimeGrain_TIME_GRAIN_WEEK:
+		return TimeGrainWeek
+	case runtimev1.TimeGrain_TIME_GRAIN_MONTH:
+		return TimeGrainMonth
+	case runtimev1.TimeGrain_TIME_GRAIN_QUARTER:
+		return TimeGrainQuarter
+	case runtimev1.TimeGrain_TIME_GRAIN_YEAR:
+		return TimeGrainYear
+	default:
+		panic(fmt.Errorf("invalid time grain %q", t))
+	}
+}
+
+// AnalyzeQueryFields returns a list of all fields (dimensions and measures) that are part of the query.
+func AnalyzeQueryFields(q *Query) []string {
+	// Extract accessible fields from the query
+	fieldsMap := make(map[string]struct{})
+	// Add dimensions
+	for _, dim := range q.Dimensions {
+		fieldsMap[getDimensionName(dim)] = struct{}{}
+	}
+	// Add measures
+	for _, meas := range q.Measures {
+		for _, name := range getMeasureNames(meas) {
+			fieldsMap[name] = struct{}{}
+		}
+	}
+	// Add time dimension if present
+	if q.TimeRange != nil && q.TimeRange.TimeDimension != "" {
+		fieldsMap[q.TimeRange.TimeDimension] = struct{}{}
+	}
+
+	exprFields := AnalyzeExpressionFields(q.Where)
+	for _, f := range exprFields {
+		fieldsMap[f] = struct{}{}
+	}
+
+	var fields []string
+	for f := range fieldsMap {
+		fields = append(fields, f)
+	}
+
+	return fields
+}
+
+func getDimensionName(dim Dimension) string {
+	if dim.Compute == nil {
+		return dim.Name
+	}
+
+	if dim.Compute.TimeFloor != nil {
+		return dim.Compute.TimeFloor.Dimension
+	}
+
+	panic("could not find dimension name")
+}
+
+// getMeasureNames returns the metrics view fields that the measure resolves to.
+// It returns nil for measures that don't reference a field, such as a count.
+func getMeasureNames(m Measure) []string {
+	if m.Compute == nil {
+		return []string{m.Name}
+	}
+	switch {
+	case m.Compute.Count:
+		return nil
+	case m.Compute.CountDistinct != nil:
+		return []string{m.Compute.CountDistinct.Dimension}
+	case m.Compute.ComparisonValue != nil: // although comparison cases can be skipped as base fields would have already been added but adding for switch completeness as it will deduped
+		return []string{m.Compute.ComparisonValue.Measure}
+	case m.Compute.ComparisonDelta != nil:
+		return []string{m.Compute.ComparisonDelta.Measure}
+	case m.Compute.ComparisonRatio != nil:
+		return []string{m.Compute.ComparisonRatio.Measure}
+	case m.Compute.PercentOfTotal != nil:
+		return []string{m.Compute.PercentOfTotal.Measure}
+	case m.Compute.URI != nil:
+		return []string{m.Compute.URI.Dimension}
+	case m.Compute.ComparisonTime != nil:
+		return []string{m.Compute.ComparisonTime.Dimension}
+	case m.Compute.Expression != nil:
+		// The expression itself is ephemeral, but it references measures in the metrics view.
+		// Report those so that inferred security rules (see InferRequiredSecurityRules) grant access to them.
+		// Parse errors are ignored here; the executor reports them when the query runs.
+		expr, err := ParseMeasureExpression(m.Compute.Expression.Expression)
+		if err != nil {
+			return nil
+		}
+		return expr.Refs()
+	default:
+		panic("could not find measure name")
+	}
+}
+
+// TypeSchemas returns a map of JSON schemas for this package's query types (currently Query and Expression).
+// This is designed to integrate with jsonschema.ForOptions to enable JSON schema inference on types that have sub-fields that use this package's types.
+func TypeSchemas() map[reflect.Type]*jsonschema.Schema {
+	// Query schema
+	queryType := reflect.TypeFor[Query]()
+	var querySchema *jsonschema.Schema
+	err := json.Unmarshal([]byte(QueryJSONSchema), &querySchema)
+	if err != nil {
+		panic(fmt.Errorf("failed to unmarshal schema: %w", err))
+	}
+
+	// Expression schema
+	expressionType := reflect.TypeFor[Expression]()
+	var expressionSchema *jsonschema.Schema
+	err = json.Unmarshal([]byte(ExpressionJSONSchema), &expressionSchema)
+	if err != nil {
+		panic(fmt.Errorf("failed to unmarshal schema: %w", err))
+	}
+
+	// Return map
+	return map[reflect.Type]*jsonschema.Schema{
+		queryType:      querySchema,
+		expressionType: expressionSchema,
+	}
+}
+
+const QueryJSONSchema = `
+{
+  "type": "object",
+  "properties": {
+    "metrics_view": {
+      "type": "string",
+      "description": "The metrics view to query."
+    },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Dimension"
+      },
+      "description": "List of dimensions to include in the query. The result will be grouped by these."
+    },
+    "measures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Measure"
+      },
+      "description": "List of measures to include in the query. These will be aggregated based on the dimensions."
+    },
+    "pivot_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional dimensions to pivot on. The provided dimensions must be present in the query. If not provided, the query will return a flat result set. Note that pivoting can have poor performance on large result sets."
+    },
+    "spine": {
+      "$ref": "#/$defs/Spine",
+      "description": "Optionally configure a 'spine' of dimension values that should be present in the result regardless of whether they have data. This is for example useful for generating a time series with zero values for missing dates."
+    },
+    "sort": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Sort"
+      },
+      "description": "Sort order for the results."
+    },
+    "time_range": {
+      "$ref": "#/$defs/TimeRange",
+      "description": "Time range filter for the query. Time ranges are inclusive of start time and exclusive of end time. Note that for large datasets, querying shorter and/or more recent time ranges has significant performance benefits."
+    },
+    "comparison_time_range": {
+      "$ref": "#/$defs/TimeRange",
+      "description": "Time range filter to use for comparison measures."
+    },
+    "where": {
+      "$ref": "#/$defs/Expression",
+      "description": "Optional expression for filtering the underlying data before aggregation. This is the recommended way to filter data."
+    },
+    "having": {
+      "$ref": "#/$defs/Expression",
+      "description": "Optional expression for filtering the results after aggregation. This is useful for filtering based on the aggregated measure values."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Maximum number of rows to return. It is required for interactive queries."
+    },
+    "offset": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional offset for the query results. This is useful for pagination together with 'limit'."
+    },
+    "time_zone": {
+      "type": "string",
+      "description": "Optional time zone for time_floor operations and dynamic time ranges. Defaults to UTC."
+    },
+    "use_display_names": {
+      "type": "boolean",
+      "description": "Optional flag to return results using display names for dimensions and measures instead of their unique names. Defaults to false."
+    },
+    "rows": {
+      "type": "boolean",
+      "description": "Optional flag to return the underlying rows instead of aggregated results. This is useful for debugging or exploring the data. Setting it to true is incompatible with the following options: dimensions, measures, sort, comparison_time_range, having, pivot_on."
+    }
+  },
+  "$defs": {
+    "Dimension": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the dimension"
+        },
+        "compute": {
+          "$ref": "#/$defs/DimensionCompute",
+          "description": "Optionally configure a derived dimension, such as a time floor."
+        }
+      },
+      "required": ["name"]
+    },
+    "DimensionCompute": {
+      "type": "object",
+      "properties": {
+        "time_floor": {
+          "$ref": "#/$defs/DimensionComputeTimeFloor"
+        }
+      }
+    },
+    "DimensionComputeTimeFloor": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "description": "Dimension to apply time floor to"
+        },
+        "grain": {
+          "$ref": "#/$defs/TimeGrain",
+          "description": "Time grain for flooring"
+        }
+      },
+      "required": ["dimension", "grain"]
+    },
+    "Measure": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the measure"
+        },
+        "compute": {
+          "$ref": "#/$defs/MeasureCompute",
+          "description": "Optionally configure a derived measure, such as a comparison."
+        }
+      },
+      "required": ["name"]
+    },
+    "MeasureCompute": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "boolean",
+          "description": "Whether to compute count"
+        },
+        "count_distinct": {
+          "$ref": "#/$defs/MeasureComputeCountDistinct"
+        },
+        "comparison_value": {
+          "$ref": "#/$defs/MeasureComputeComparisonValue"
+        },
+        "comparison_delta": {
+          "$ref": "#/$defs/MeasureComputeComparisonDelta"
+        },
+        "comparison_ratio": {
+          "$ref": "#/$defs/MeasureComputeComparisonRatio"
+        },
+        "percent_of_total": {
+          "$ref": "#/$defs/MeasureComputePercentOfTotal"
+        },
+        "uri": {
+          "$ref": "#/$defs/MeasureComputeURI"
+        },
+        "comparison_time": {
+          "$ref": "#/$defs/MeasureComputeComparisonTime"
+        },
+        "expression": {
+          "$ref": "#/$defs/MeasureComputeExpression"
+        }
+      },
+      "oneOf": [
+        {"required": ["count"]},
+        {"required": ["count_distinct"]},
+        {"required": ["comparison_value"]},
+        {"required": ["comparison_delta"]},
+        {"required": ["comparison_ratio"]},
+        {"required": ["percent_of_total"]},
+        {"required": ["uri"]},
+        {"required": ["comparison_time"]},
+        {"required": ["expression"]}
+      ]
+    },
+    "MeasureComputeCountDistinct": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "description": "Dimension to count distinct values for"
+        }
+      },
+      "required": ["dimension"]
+    },
+    "MeasureComputeComparisonValue": {
+      "type": "object",
+      "properties": {
+        "measure": {
+          "type": "string",
+          "description": "Measure to compare"
+        }
+      },
+      "required": ["measure"]
+    },
+    "MeasureComputeComparisonDelta": {
+      "type": "object",
+      "properties": {
+        "measure": {
+          "type": "string",
+          "description": "Measure to compute delta for"
+        }
+      },
+      "required": ["measure"]
+    },
+    "MeasureComputeComparisonRatio": {
+      "type": "object",
+      "properties": {
+        "measure": {
+          "type": "string",
+          "description": "Measure to compute ratio for"
+        }
+      },
+      "required": ["measure"]
+    },
+    "MeasureComputePercentOfTotal": {
+      "type": "object",
+      "properties": {
+        "measure": {
+          "type": "string",
+          "description": "Measure to compute percentage for"
+        },
+        "total": {
+          "type": "number",
+          "description": "Total value to use for percentage calculation"
+        }
+      },
+      "required": ["measure"]
+    },
+    "MeasureComputeURI": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "description": "Dimension to generate URI for"
+        }
+      },
+      "required": ["dimension"]
+    },
+    "MeasureComputeComparisonTime": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "description": "Time dimension to return the comparison time for"
+        }
+      },
+      "required": ["dimension"]
+    },
+    "MeasureComputeExpression": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "Arithmetic expression that derives an ephemeral measure from existing measures, e.g. 'revenue - cost'. References must be existing measure names. Only numeric literals, NULL, the operators + - * / %, parentheses, and the functions abs, round, floor, ceil, sqrt, ln, exp, power, coalesce, nullif, greatest, least are allowed."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Optional display name for the derived measure"
+        }
+      },
+      "required": ["expression"]
+    },
+    "Spine": {
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/$defs/WhereSpine"
+        },
+        "time": {
+          "$ref": "#/$defs/TimeSpine"
+        }
+      }
+    },
+    "WhereSpine": {
+      "type": "object",
+      "properties": {
+        "expr": {
+          "$ref": "#/$defs/Expression"
+        }
+      }
+    },
+    "TimeSpine": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start time"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End time"
+        },
+        "grain": {
+          "$ref": "#/$defs/TimeGrain",
+          "description": "Time grain for the spine"
+        }
+      },
+      "required": ["start", "end", "grain"]
+    },
+    "Sort": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Field name to sort by"
+        },
+        "desc": {
+          "type": "boolean",
+          "description": "Whether to sort in descending order"
+        }
+      },
+      "required": ["name"]
+    },
+    "TimeRange": {
+      "type": "object",
+      "description": "Time range for filtering the query. Prefer using absolute 'start' and 'end' parameters if available. Otherwise, use 'expression' for relative time ranges, when specifying 'expression' make sure no other time range fields other than 'time_dimension' is set as its not supported.",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start time (inclusive)"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End time (exclusive)"
+        },
+        "expression": {
+          "type": "string",
+          "description": "Time range expression. If specifying this no other TimeRange fields should be set."
+        },
+        "iso_duration": {
+          "type": "string",
+          "description": "ISO 8601 duration, supported but deprecated in favor of 'expression' field."
+        },
+        "iso_offset": {
+          "type": "string",
+          "description": "ISO 8601 offset, supported but deprecated in favor of 'expression' field."
+        },
+        "round_to_grain": {
+          "$ref": "#/$defs/TimeGrain",
+          "description": "Time grain to round to"
+        }
+      }
+    },
+    "Expression": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Expression name"
+        },
+        "val": {
+          "description": "Expression value"
+        },
+        "cond": {
+          "$ref": "#/$defs/Condition"
+        },
+        "subquery": {
+          "$ref": "#/$defs/Subquery"
+        }
+      }
+    },
+    "Condition": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "$ref": "#/$defs/Operator",
+          "description": "Operator for the condition"
+        },
+        "exprs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Expression"
+          },
+          "description": "Expressions in the condition"
+        }
+      },
+      "required": ["op"]
+    },
+    "Subquery": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "measures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Measure"
+          }
+        },
+        "where": {
+          "$ref": "#/$defs/Expression"
+        },
+        "having": {
+          "$ref": "#/$defs/Expression"
+        }
+      },
+      "required": ["dimension", "measures"]
+    },
+    "Operator": {
+      "type": "string",
+      "enum": [
+        "",
+        "eq",
+        "neq",
+        "lt",
+        "lte",
+        "gt",
+        "gte",
+        "in",
+        "nin",
+        "ilike",
+        "nilike",
+        "or",
+        "and"
+      ],
+      "description": "Comparison or logical operator"
+    },
+    "TimeGrain": {
+      "type": "string",
+      "enum": [
+        "",
+        "millisecond",
+        "second",
+        "minute",
+        "hour",
+        "day",
+        "week",
+        "month",
+        "quarter",
+        "year"
+      ],
+      "description": "Time granularity"
+    }
+  }
+}
+`
+
+var ExpressionJSONSchema = jsonschemautil.MustExtractDefAsSchema(QueryJSONSchema, "Expression")

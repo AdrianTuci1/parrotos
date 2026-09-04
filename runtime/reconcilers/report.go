@@ -1,0 +1,997 @@
+package reconcilers
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/url"
+	"time"
+
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime"
+	"github.com/rilldata/rill/runtime/ai"
+	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/rilldata/rill/runtime/pkg/duration"
+	"github.com/rilldata/rill/runtime/pkg/email"
+	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/rilldata/rill/runtime/pkg/pbutil"
+	"github.com/rilldata/rill/runtime/queries"
+	"go.opentelemetry.io/otel/attribute"
+	"go.uber.org/zap"
+	"golang.org/x/exp/slices"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+const (
+	reportExecutionHistoryLimit = 10
+	reportCheckDefaultTimeout   = 5 * time.Minute
+	reportDefaultIntervalsLimit = 25
+	reportQueryPriority         = 1
+)
+
+func init() {
+	runtime.RegisterReconcilerInitializer(runtime.ResourceKindReport, newReportReconciler)
+}
+
+type ReportReconciler struct {
+	C *runtime.Controller
+}
+
+func newReportReconciler(ctx context.Context, c *runtime.Controller) (runtime.Reconciler, error) {
+	return &ReportReconciler{C: c}, nil
+}
+
+func (r *ReportReconciler) Close(ctx context.Context) error {
+	return nil
+}
+
+func (r *ReportReconciler) AssignSpec(from, to *runtimev1.Resource) error {
+	a := from.GetReport()
+	b := to.GetReport()
+	if a == nil || b == nil {
+		return fmt.Errorf("cannot assign spec from %T to %T", from.Resource, to.Resource)
+	}
+	b.Spec = a.Spec
+	return nil
+}
+
+func (r *ReportReconciler) AssignState(from, to *runtimev1.Resource) error {
+	a := from.GetReport()
+	b := to.GetReport()
+	if a == nil || b == nil {
+		return fmt.Errorf("cannot assign state from %T to %T", from.Resource, to.Resource)
+	}
+	b.State = a.State
+	return nil
+}
+
+func (r *ReportReconciler) ResetState(res *runtimev1.Resource) error {
+	res.GetReport().State = &runtimev1.ReportState{}
+	return nil
+}
+
+func (r *ReportReconciler) Reconcile(ctx context.Context, n *runtimev1.ResourceName) runtime.ReconcileResult {
+	self, err := r.C.Get(ctx, n, true)
+	if err != nil {
+		return runtime.ReconcileResult{Err: err}
+	}
+	rep := self.GetReport()
+	if rep == nil {
+		return runtime.ReconcileResult{Err: errors.New("not a report")}
+	}
+
+	// Exit early for deletion
+	if self.Meta.DeletedOn != nil {
+		return runtime.ReconcileResult{}
+	}
+
+	// NOTE: refs not supported for reports.
+	// Not supporting them simplifies report spec generation, improves performance (there may be many reports),
+	// and it's anyway acceptable (maybe even expected) that a report fails with an execution error if the underlying query errors.
+
+	// If CurrentExecution is not nil, a catastrophic failure occurred during the last execution.
+	// Clean up to ensure CurrentExecution is nil.
+	if rep.State.CurrentExecution != nil {
+		rep.State.CurrentExecution.ErrorMessage = "Internal: report execution was interrupted unexpectedly"
+		rep.State.CurrentExecution.FinishedOn = timestamppb.Now()
+		err = r.popCurrentExecution(ctx, self, rep)
+		if err != nil {
+			return runtime.ReconcileResult{Err: err}
+		}
+	}
+
+	// Exit early if disabled
+	if rep.Spec.RefreshSchedule != nil && rep.Spec.RefreshSchedule.Disable {
+		return runtime.ReconcileResult{}
+	}
+
+	// get web open mode from annotations
+	mode := rep.Spec.Annotations["web_open_mode"]
+	if mode == "" {
+		mode = "creator" // default
+	}
+
+	nonEmailNotifiers := false
+	for _, notifier := range rep.Spec.Notifiers {
+		if notifier.Connector != "email" {
+			nonEmailNotifiers = true
+			break
+		}
+	}
+
+	// AI resolver only supports non email notifications in creator mode as we can't reliably fetch user attributes for slack webhooks/channels for enforcing access control in other modes
+	if rep.Spec.Resolver == "ai" && mode != "creator" && nonEmailNotifiers {
+		return runtime.ReconcileResult{Err: fmt.Errorf("reports with 'ai' resolver only support non-email notifications in 'creator' web open mode")}
+	} // TODO add support for slack users who are also rill users in recipient mode
+
+	// Determine whether to trigger
+	adhocTrigger := rep.Spec.Trigger
+	scheduleTrigger := rep.State.NextRunOn != nil && !rep.State.NextRunOn.AsTime().After(time.Now())
+	trigger := adhocTrigger || scheduleTrigger
+
+	// If not triggering now, update NextRunOn and retrigger when it falls due
+	if !trigger {
+		err = r.updateNextRunOn(ctx, self, rep)
+		if err != nil {
+			return runtime.ReconcileResult{Err: err, Warnings: latestReportWarnings(rep)}
+		}
+		if rep.State.NextRunOn != nil {
+			return runtime.ReconcileResult{Retrigger: rep.State.NextRunOn.AsTime(), Warnings: latestReportWarnings(rep)}
+		}
+		return runtime.ReconcileResult{Warnings: latestReportWarnings(rep)}
+	}
+
+	// Determine time to evaluate the report relative to.
+	// We use the "clean" scheduled time unless it's an ad-hoc trigger.
+	var reportTime *timestamppb.Timestamp
+	if scheduleTrigger && !adhocTrigger {
+		reportTime = rep.State.NextRunOn
+	} else {
+		reportTime = timestamppb.Now()
+	}
+
+	retry, executeErr := r.executeAll(ctx, self, rep, reportTime.AsTime(), adhocTrigger)
+
+	// If we want to retry, exit without advancing NextRunOn or clearing spec.Trigger.
+	// NOTE: We don't set Retrigger here because we'll leave re-scheduling to whatever cancelled the reconciler.
+	if retry || errors.Is(executeErr, context.Canceled) {
+		return runtime.ReconcileResult{Err: executeErr}
+	}
+
+	// Advance NextRunOn
+	err = r.updateNextRunOn(ctx, self, rep)
+	if err != nil {
+		return runtime.ReconcileResult{Err: err}
+	}
+
+	// Clear ad-hoc trigger
+	if rep.Spec.Trigger {
+		err := r.setTriggerFalse(ctx, n)
+		if err != nil {
+			return runtime.ReconcileResult{Err: fmt.Errorf("failed to clear trigger: %w", err)}
+		}
+	}
+
+	// Done
+	if rep.State.NextRunOn != nil {
+		return runtime.ReconcileResult{Err: executeErr, Warnings: latestReportWarnings(rep), Retrigger: rep.State.NextRunOn.AsTime()}
+	}
+	return runtime.ReconcileResult{Err: executeErr, Warnings: latestReportWarnings(rep)}
+}
+
+func (r *ReportReconciler) ResolveTransitiveAccess(ctx context.Context, claims *runtime.SecurityClaims, res *runtimev1.Resource) ([]*runtimev1.SecurityRule, error) {
+	var rules []*runtimev1.SecurityRule
+	var conditionKinds []string
+	var conditionRes []*runtimev1.ResourceName
+
+	report := res.GetReport()
+	if report == nil {
+		return nil, fmt.Errorf("resource is not a report")
+	}
+
+	spec := report.GetSpec()
+	if spec == nil {
+		return nil, fmt.Errorf("report spec is nil")
+	}
+	conditionRes = append(conditionRes, res.Meta.Name)
+	conditionKinds = append(conditionKinds, runtime.ResourceKindTheme)
+
+	var mvName string
+	if spec.Resolver != "" {
+		initializer, ok := runtime.ResolverInitializers[spec.Resolver]
+		if !ok {
+			return nil, fmt.Errorf("no resolver found for name 'legacy_metrics'")
+		}
+		resolver, err := initializer(ctx, &runtime.ResolverOptions{
+			Runtime:    r.C.Runtime,
+			InstanceID: r.C.InstanceID,
+			Properties: spec.ResolverProperties.AsMap(),
+			Claims:     claims,
+			ForExport:  false,
+		})
+		if err != nil {
+			return nil, err
+		}
+		defer resolver.Close()
+		inferred, err := resolver.InferRequiredSecurityRules()
+		if err != nil {
+			return nil, err
+		}
+
+		rules = append(rules, inferred...)
+
+		refs := resolver.Refs()
+		for _, ref := range refs {
+			// need access to the referenced resources
+			conditionRes = append(conditionRes, &runtimev1.ResourceName{Kind: ref.Kind, Name: ref.Name})
+			if ref.Kind == runtime.ResourceKindMetricsView {
+				mvName = ref.Name
+			}
+		}
+	}
+
+	// figure out explore or canvas for the report
+	explore := exploreNameFromAnnotations(spec.Annotations, mvName)
+	var canvas string
+	if c, ok := spec.Annotations["canvas"]; ok {
+		canvas = c
+	}
+
+	// add explore and canvas to access and field access rule's condition resources
+	if explore != "" {
+		exp := &runtimev1.ResourceName{Kind: runtime.ResourceKindExplore, Name: explore}
+		conditionRes = append(conditionRes, exp)
+		for _, r := range rules {
+			if rfa := r.GetFieldAccess(); rfa != nil {
+				rfa.ConditionResources = append(rfa.ConditionResources, exp)
+			}
+		}
+	}
+	if canvas != "" {
+		c := &runtimev1.ResourceName{Kind: runtime.ResourceKindCanvas, Name: canvas}
+
+		// Also allow access to the canvas's components and the resources their renderers reference (e.g. metrics views).
+		// This enables report recipients to render the canvas in the browser (e.g. for PDF exports).
+		canvasRes, err := r.C.Get(ctx, c, false)
+		if err == nil {
+			canvasResources, err := canvasTransitiveConditionResources(ctx, r.C, claims, canvasRes)
+			if err != nil {
+				return nil, err
+			}
+			conditionRes = append(conditionRes, canvasResources...)
+		} else if errors.Is(err, drivers.ErrResourceNotFound) {
+			// Canvas not found: still allow access to the name so requests fail with a clear error on the canvas itself.
+			conditionRes = append(conditionRes, c)
+		} else {
+			return nil, err
+		}
+
+		// Restrict recipients to the data selected by the filters that were captured when the report was created (if any).
+		filterRules, err := canvasFilterSecurityRules(spec.Annotations["metrics_view_filters"])
+		if err != nil {
+			return nil, err
+		}
+		rules = append(rules, filterRules...)
+
+		for _, r := range rules {
+			if rfa := r.GetFieldAccess(); rfa != nil {
+				rfa.ConditionResources = append(rfa.ConditionResources, c)
+			}
+		}
+	}
+
+	if len(conditionKinds) > 0 || len(conditionRes) > 0 {
+		rules = append(rules, &runtimev1.SecurityRule{
+			Rule: &runtimev1.SecurityRule_Access{
+				Access: &runtimev1.SecurityRuleAccess{
+					ConditionKinds:     conditionKinds,
+					ConditionResources: conditionRes,
+					Allow:              true,
+					Exclusive:          true,
+				},
+			},
+		})
+	}
+
+	return rules, nil
+}
+
+// updateNextRunOn evaluates the report's schedule relative to the current time, and updates the NextRunOn state accordingly.
+// If the schedule is nil, it will set NextRunOn to nil.
+func (r *ReportReconciler) updateNextRunOn(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report) error {
+	next, err := nextRefreshTime(time.Now(), rep.Spec.RefreshSchedule)
+	if err != nil {
+		return err
+	}
+
+	var curr time.Time
+	if rep.State.NextRunOn != nil {
+		curr = rep.State.NextRunOn.AsTime()
+	}
+
+	if next.Equal(curr) {
+		return nil
+	}
+
+	if next.IsZero() {
+		rep.State.NextRunOn = nil
+	} else {
+		rep.State.NextRunOn = timestamppb.New(next)
+	}
+
+	return r.C.UpdateState(ctx, self.Meta.Name, self)
+}
+
+// popCurrentExecution moves the current execution into the execution history, and persists the updated state.
+// At a certain limit, it trims old executions from the history to prevent it from growing unboundedly.
+func (r *ReportReconciler) popCurrentExecution(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report) error {
+	if rep.State.CurrentExecution == nil {
+		panic(fmt.Errorf("attempting to pop current execution when there is none"))
+	}
+
+	rep.State.ExecutionHistory = slices.Insert(rep.State.ExecutionHistory, 0, rep.State.CurrentExecution)
+	rep.State.CurrentExecution = nil
+
+	if len(rep.State.ExecutionHistory) > reportExecutionHistoryLimit {
+		rep.State.ExecutionHistory = rep.State.ExecutionHistory[:reportExecutionHistoryLimit]
+	}
+
+	return r.C.UpdateState(ctx, self.Meta.Name, self)
+}
+
+// setTriggerFalse sets the report's spec.Trigger to false.
+// Unlike the State, the Spec may be edited concurrently with a Reconcile call, so we need to read and edit it under a lock.
+func (r *ReportReconciler) setTriggerFalse(ctx context.Context, n *runtimev1.ResourceName) error {
+	r.C.Lock(ctx)
+	defer r.C.Unlock(ctx)
+
+	self, err := r.C.Get(ctx, n, true)
+	if err != nil {
+		return err
+	}
+
+	rep := self.GetReport()
+	if rep == nil {
+		return fmt.Errorf("not a report")
+	}
+
+	rep.Spec.Trigger = false
+	return r.C.UpdateSpec(ctx, self.Meta.Name, self)
+}
+
+// executeAll runs queries and sends reports. It also adds entries to rep.State.ExecutionHistory.
+// By default, a report is checked once for the current watermark, but if rep.Spec.IntervalsIsoDuration is set, it will be checked *for each* interval that has elapsed since the previous execution watermark.
+func (r *ReportReconciler) executeAll(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report, triggerTime time.Time, adhocTrigger bool) (bool, error) {
+	// Enforce timeout
+	timeout := reportCheckDefaultTimeout
+	if rep.Spec.TimeoutSeconds > 0 {
+		timeout = time.Duration(rep.Spec.TimeoutSeconds) * time.Second
+	}
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	// Run report queries and send notifications
+	retry, executeErr := r.executeAllWrapped(ctx, self, rep, triggerTime, adhocTrigger)
+	if executeErr == nil {
+		return false, nil
+	}
+
+	// If it's a cancellation, don't add the error to the execution history.
+	// The controller may for example cancel if the runtime is restarting or the underlying source is scheduled to refresh.
+	if retry || errors.Is(executeErr, context.Canceled) {
+		// If there's a CurrentExecution, pretend it never happened
+		if rep.State.CurrentExecution != nil {
+			rep.State.CurrentExecution = nil
+			err := r.C.UpdateState(ctx, self.Meta.Name, self)
+			if err != nil {
+				return false, err
+			}
+		}
+		return retry, executeErr
+	}
+
+	// There was an execution error. Add it to the execution history.
+	if rep.State.CurrentExecution == nil {
+		// CurrentExecution will only be nil if we never made it to the point of checking the report query.
+		rep.State.CurrentExecution = &runtimev1.ReportExecution{
+			Adhoc:      adhocTrigger,
+			ReportTime: nil, // NOTE: Setting execution time to nil. The only alternative is using triggerTime, but a) it might not be the reportTime, b) it might lead to previousWatermark being advanced too far on the next invocation.
+			StartedOn:  timestamppb.Now(),
+		}
+	}
+	rep.State.CurrentExecution.ErrorMessage = executeErr.Error()
+	rep.State.CurrentExecution.FinishedOn = timestamppb.Now()
+	err := r.popCurrentExecution(ctx, self, rep)
+	if err != nil {
+		return false, err
+	}
+	return retry, executeErr
+}
+
+// executeAllWrapped is called by executeAll, which wraps it with timeout and writing of errors to the execution history.
+func (r *ReportReconciler) executeAllWrapped(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report, triggerTime time.Time, adhocTrigger bool) (bool, error) {
+	// Check refs
+	err := checkRefs(ctx, r.C, self.Meta.Refs)
+	if err != nil {
+		return false, err
+	}
+
+	// Evaluate watermark unless refs check failed.
+	watermark := triggerTime
+	if rep.Spec.WatermarkInherit {
+		t, ok, err := r.computeInheritedWatermark(ctx, self.Meta.Refs)
+		if err != nil {
+			return false, err
+		}
+		if ok {
+			watermark = t
+		}
+		// If !ok, no watermark could be computed. So we'll just stick to triggerTime.
+	}
+
+	// Evaluate previous watermark (if any)
+	var previousWatermark time.Time
+	for _, e := range rep.State.ExecutionHistory {
+		if e.ReportTime != nil {
+			previousWatermark = e.ReportTime.AsTime()
+			break
+		}
+	}
+
+	// Evaluate intervals
+	ts, err := calculateReportExecutionTimes(rep, watermark, previousWatermark)
+	if err != nil {
+		skipErr := &skipError{}
+		if errors.As(err, skipErr) {
+			r.C.Logger.Info("Skipped report", zap.String("name", self.Meta.Name.Name), zap.String("reason", skipErr.reason), zap.Time("current_watermark", watermark), zap.Time("previous_watermark", previousWatermark), zap.String("interval", rep.Spec.IntervalsIsoDuration), observability.ZapCtx(ctx))
+			return false, nil
+		}
+		r.C.Logger.Error("Internal: failed to calculate execution times", zap.String("name", self.Meta.Name.Name), zap.Error(err), observability.ZapCtx(ctx))
+		return false, err
+	}
+	if len(ts) == 0 {
+		// This should never happen
+		r.C.Logger.Error("Internal: no execution times found", zap.String("name", self.Meta.Name.Name), zap.Error(err), observability.ZapCtx(ctx))
+		return false, nil
+	}
+
+	// Evaluate report for each execution time
+	for _, t := range ts {
+		retry, err := r.executeSingle(ctx, self, rep, t, adhocTrigger)
+		if err != nil {
+			return retry, err
+		}
+	}
+
+	return false, nil
+}
+
+// executeSingle runs the report query and sends notifications for a single execution time.
+func (r *ReportReconciler) executeSingle(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report, executionTime time.Time, adhocTrigger bool) (bool, error) {
+	// Tag as report execution so the metrics queries it runs (e.g. via the AI resolver) are attributed to the "report" source for billing.
+	ctx = runtime.WithRequestSource(ctx, runtime.RequestSourceReport)
+
+	// Create new execution and save in State.CurrentExecution
+	rep.State.CurrentExecution = &runtimev1.ReportExecution{
+		Adhoc:      adhocTrigger,
+		ReportTime: timestamppb.New(executionTime),
+		StartedOn:  timestamppb.Now(),
+	}
+	err := r.C.UpdateState(ctx, self.Meta.Name, self)
+	if err != nil {
+		return false, err
+	}
+
+	// Execute report
+	dirtyErr, warnings, reportErr := r.sendReport(ctx, self, rep, executionTime)
+
+	// Set execution error and determine whether to retry.
+	// We're only going to retry on non-dirty cancellations.
+	retry := false
+	if reportErr != nil {
+		if errors.Is(reportErr, context.Canceled) || errors.Is(reportErr, context.DeadlineExceeded) {
+			if dirtyErr {
+				rep.State.CurrentExecution.ErrorMessage = "Report run was interrupted after some notifications were sent. The report will not automatically retry."
+			} else {
+				retry = true
+				rep.State.CurrentExecution.ErrorMessage = "Report run was interrupted. It will automatically retry."
+			}
+		} else {
+			rep.State.CurrentExecution.ErrorMessage = fmt.Sprintf("Report run failed: %v", reportErr.Error())
+		}
+		reportErr = fmt.Errorf("last report run failed with error: %v", reportErr.Error())
+	}
+
+	// Log it
+	if reportErr != nil {
+		r.C.Logger.Error("Report run failed", zap.Any("report", self.Meta.Name), zap.Any("error", reportErr.Error()), observability.ZapCtx(ctx))
+	}
+
+	// Commit CurrentExecution to history
+	rep.State.CurrentExecution.FinishedOn = timestamppb.Now()
+	rep.State.CurrentExecution.Warnings = warnings
+	err = r.popCurrentExecution(ctx, self, rep)
+	if err != nil {
+		return false, err
+	}
+
+	return retry, reportErr
+}
+
+// sendReport composes and sends the actual report to the configured recipients.
+// It returns true if an error occurred after some or all notifications were sent.
+func (r *ReportReconciler) sendReport(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report, t time.Time) (bool, []string, error) {
+	r.C.Logger.Info("Sending report", zap.String("report", self.Meta.Name.Name), zap.Time("report_time", t), observability.ZapCtx(ctx))
+
+	admin, release, err := r.C.Runtime.Admin(ctx, r.C.InstanceID)
+	if err != nil {
+		return false, nil, fmt.Errorf("failed to get admin client: %w", err)
+	}
+	defer release()
+
+	var ownerID, webOpenMode string
+	if id, ok := rep.Spec.Annotations["admin_owner_user_id"]; ok {
+		ownerID = id
+	}
+	if w, ok := rep.Spec.Annotations["web_open_mode"]; ok {
+		webOpenMode = w
+	}
+	if webOpenMode == "" { // backwards compatibility
+		webOpenMode = "creator"
+	}
+
+	anonRecipients := false
+	var emailRecipients []string
+	for _, notifier := range rep.Spec.Notifiers {
+		if notifier.Connector == "email" {
+			emailRecipients = pbutil.ToSliceString(notifier.Properties.AsMap()["recipients"])
+		} else {
+			anonRecipients = true
+		}
+	}
+
+	meta, err := admin.GetReportMetadata(ctx, self.Meta.Name.Name, ownerID, webOpenMode, emailRecipients, anonRecipients, t)
+	if err != nil {
+		if errors.Is(err, drivers.ErrNotImplemented) {
+			r.C.Logger.Info("Skipped sending report: admin service does not support reports", zap.String("report", self.Meta.Name.Name), observability.ZapCtx(ctx))
+			return false, nil, nil
+		}
+		return false, nil, fmt.Errorf("failed to get report metadata: %w", err)
+	}
+
+	// recipient -> notification data
+	notificationsContent := make(map[string]*notificationData)
+
+	var allWarnings []string
+
+	// generate report contents first depending on the resolver type and then send notifications
+	switch rep.Spec.Resolver {
+	case "ai": // generate ai sessions
+		aiReports := make(map[string]*aiReport)
+		// For AI reports, in recipient mode, we require the metadata to contain user attributes for reach recipient, since we'll need them to trigger the report and generate personalized content.
+		// In creator mode, we create a shared session for all recipients and create the session with creator's attributes.
+		for recipient, delivery := range meta.ReportDelivery {
+			if delivery.UserID == "" || len(delivery.UserAttrs) == 0 {
+				r.C.Logger.Warn("Skipping recipient - no user attributes found in metadata", zap.String("recipient", recipient), zap.String("report", self.Meta.Name.Name), observability.ZapCtx(ctx))
+				continue
+			}
+			// In recipient mode, delivery.UserID will be recipients userId, in creator mode, delivery.UserID will be the ownerID which is same for all recipients so report will be triggered once.
+			report, exists := aiReports[delivery.UserID]
+			if !exists {
+				var triggerWarnings []string
+				report, triggerWarnings, err = r.triggerAIReport(ctx, self, rep, t, webOpenMode, delivery.UserID, delivery.UserAttrs)
+				if err != nil {
+					return false, nil, fmt.Errorf("failed to trigger AI report for %q: %w", recipient, err)
+				}
+				allWarnings = append(allWarnings, triggerWarnings...)
+				aiReports[delivery.UserID] = report
+			}
+
+			openLink, err := buildAISessionURL(delivery.OpenURL, report.sessionID)
+			if err != nil {
+				return false, nil, fmt.Errorf("failed to build open link for %q: %w", recipient, err)
+			}
+			notificationsContent[recipient] = &notificationData{
+				openLink:        openLink,
+				editLink:        delivery.EditURL,
+				unsubscribeLink: delivery.UnsubscribeURL,
+				summary:         truncateSummary(report.summary, 500),
+			}
+		}
+	default: // add more resolvers here, for default just generate export links
+		for recipient, delivery := range meta.ReportDelivery {
+			downloadURL, err := createExportURL(delivery.ExportURL, t)
+			if err != nil {
+				return false, nil, err
+			}
+			notificationsContent[recipient] = &notificationData{
+				openLink:        delivery.OpenURL,
+				editLink:        delivery.EditURL,
+				unsubscribeLink: delivery.UnsubscribeURL,
+				downloadLink:    downloadURL.String(),
+				downloadFormat:  formatExportFormat(rep.Spec.ExportFormat),
+			}
+		}
+	}
+
+	sent := false
+	for _, notifier := range rep.Spec.Notifiers {
+		switch notifier.Connector {
+		case "email":
+			recipients := pbutil.ToSliceString(notifier.Properties.AsMap()["recipients"])
+			sent, err = r.sendEmailNotification(ctx, self, rep, t, recipients, notificationsContent)
+			if err != nil {
+				return sent, nil, err
+			}
+		default:
+			var err error
+			sent, err = r.sendNonEmailNotification(ctx, rep, t, notifier, notificationsContent)
+			if err != nil {
+				return sent, nil, err
+			}
+		}
+	}
+
+	return false, allWarnings, nil
+}
+
+func (r *ReportReconciler) sendEmailNotification(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report, t time.Time, recipients []string, notificationsContent map[string]*notificationData) (bool, error) {
+	sent := false
+	for _, recipient := range recipients {
+		content, ok := notificationsContent[recipient]
+		if !ok {
+			r.C.Logger.Warn("Skipping recipient - failed to get notification content", zap.String("recipient", recipient), zap.String("report", self.Meta.Name.Name), observability.ZapCtx(ctx))
+			continue
+		}
+
+		opts := &email.ScheduledReport{
+			ToEmail:         recipient,
+			ToName:          "",
+			DisplayName:     rep.Spec.DisplayName,
+			ReportTime:      t,
+			Summary:         content.summary,
+			OpenLink:        content.openLink,
+			EditLink:        content.editLink,
+			UnsubscribeLink: content.unsubscribeLink,
+			DownloadLink:    content.downloadLink,
+			DownloadFormat:  content.downloadFormat,
+		}
+		if err := r.C.Runtime.Email.SendScheduledReport(opts); err != nil {
+			return true, fmt.Errorf("failed to send AI report email to %q: %w", recipient, err)
+		}
+		sent = true
+	}
+
+	return sent, nil
+}
+
+// sendNonEmailNotification sends report via non-email notifiers (e.g., Slack).
+func (r *ReportReconciler) sendNonEmailNotification(ctx context.Context, rep *runtimev1.Report, t time.Time, notifier *runtimev1.Notifier, notificationsContent map[string]*notificationData) (bool, error) {
+	conn, release, err := r.C.Runtime.AcquireHandle(ctx, r.C.InstanceID, notifier.Connector)
+	if err != nil {
+		return false, err
+	}
+	defer release()
+
+	n, err := conn.AsNotifier(notifier.Properties.AsMap())
+	if err != nil {
+		return false, err
+	}
+
+	content, ok := notificationsContent[""] // non-email recipients are treated as anon users
+	if !ok {
+		return false, fmt.Errorf("failed to get notification content for non-email notifier %q", notifier.Connector)
+	}
+
+	msg := &drivers.ScheduledReport{
+		DisplayName:     rep.Spec.DisplayName,
+		ReportTime:      t,
+		DownloadFormat:  content.downloadFormat,
+		OpenLink:        content.openLink,
+		DownloadLink:    content.downloadLink,
+		UnsubscribeLink: content.unsubscribeLink,
+		Summary:         content.summary,
+	}
+
+	start := time.Now()
+	err = n.SendScheduledReport(msg)
+	totalLatency := time.Since(start).Milliseconds()
+
+	if r.C.Activity != nil {
+		r.C.Activity.RecordMetric(ctx, "notifier_total_latency_ms", float64(totalLatency),
+			attribute.Bool("failed", err != nil),
+			attribute.String("connector", notifier.Connector),
+			attribute.String("notification_type", "scheduled_report"),
+		)
+	}
+
+	if err != nil {
+		return false, fmt.Errorf("failed to send %s notification: %w", notifier.Connector, err)
+	}
+
+	return true, nil
+}
+
+// canvasFilterSecurityRules builds row filter security rules from a report's "metrics_view_filters" annotation,
+// which contains a JSON object of metrics view name to filter expression (in protojson format).
+// The annotation is set for canvas reports and captures the filters that were selected when the report was created;
+// baking them in as row filters ensures magic-token recipients cannot query data beyond the report's filters.
+func canvasFilterSecurityRules(annotation string) ([]*runtimev1.SecurityRule, error) {
+	if annotation == "" {
+		return nil, nil
+	}
+
+	var filters map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(annotation), &filters); err != nil {
+		return nil, fmt.Errorf(`failed to parse "metrics_view_filters" annotation: %w`, err)
+	}
+
+	var rules []*runtimev1.SecurityRule
+	for mv, data := range filters {
+		if mv == "" {
+			return nil, errors.New(`empty metrics view name in "metrics_view_filters" annotation`)
+		}
+		expr := &runtimev1.Expression{}
+		if err := protojson.Unmarshal(data, expr); err != nil {
+			return nil, fmt.Errorf("failed to parse filter for metrics view %q: %w", mv, err)
+		}
+		rules = append(rules, &runtimev1.SecurityRule{
+			Rule: &runtimev1.SecurityRule_RowFilter{
+				RowFilter: &runtimev1.SecurityRuleRowFilter{
+					ConditionResources: []*runtimev1.ResourceName{{
+						Kind: runtime.ResourceKindMetricsView,
+						Name: mv,
+					}},
+					Expression: expr,
+				},
+			},
+		})
+	}
+	return rules, nil
+}
+
+// common notification data used for reports
+type notificationData struct {
+	openLink        string
+	editLink        string
+	downloadLink    string
+	downloadFormat  string
+	unsubscribeLink string
+	summary         string
+} // add more fields as needed for new resolver types that reports will support
+
+type aiReport struct {
+	sessionID string
+	summary   string
+}
+
+// triggerAIReport executes an AI-powered report and returns session id with summary.
+// If userID is provided, the session will be created with that user's claims for row-level security.
+func (r *ReportReconciler) triggerAIReport(ctx context.Context, self *runtimev1.Resource, rep *runtimev1.Report, t time.Time, webOpenMode, userID string, userAttrs map[string]any) (*aiReport, []string, error) {
+	if rep.Spec.Resolver != "ai" {
+		return nil, nil, fmt.Errorf("triggerAIReport called for non-AI report")
+	}
+
+	if userID == "" || len(userAttrs) == 0 {
+		return nil, nil, fmt.Errorf("userID and userAttrs are required for AI report")
+	}
+
+	// Create claims for executing the AI resolver
+	// The userID and userAttrs determines what data the AI can access (row-level security)
+	claims := &runtime.SecurityClaims{
+		UserID:         userID,
+		UserAttributes: userAttrs,
+		SkipChecks:     false,
+		Permissions:    []runtime.Permission{runtime.ReadObjects, runtime.ReadMetrics, runtime.UseAI},
+	}
+
+	// Get resolver properties from spec and add is_report flag
+	props := rep.Spec.ResolverProperties.AsMap()
+	props["is_report"] = true
+	if props["agent"] == nil {
+		props["agent"] = ai.AnalystAgentName
+	}
+
+	// Execute AI resolver
+	result, info, err := r.C.Runtime.Resolve(ctx, &runtime.ResolveOptions{
+		InstanceID:         r.C.InstanceID,
+		Resolver:           "ai",
+		ResolverProperties: props,
+		Args: map[string]any{
+			"execution_time":        t,
+			"create_shared_session": webOpenMode == "creator", // if creator mode, create a shared session
+		},
+		Claims: claims,
+	})
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to execute AI resolver: %w", err)
+	}
+	defer result.Close()
+
+	var warnings []string
+	if info != nil {
+		warnings = info.Warnings
+	}
+
+	// Get the result row
+	row, err := result.Next()
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get AI resolver result: %w", err)
+	}
+
+	sessionID, ok := row["ai_session_id"].(string)
+	if !ok || sessionID == "" {
+		return nil, nil, fmt.Errorf("AI resolver did not return a valid session ID")
+	}
+	summary, _ := row["summary"].(string)
+
+	r.C.Logger.Info("AI session created", zap.String("report", self.Meta.Name.Name), zap.String("session_id", sessionID), zap.String("user_id", userID), observability.ZapCtx(ctx))
+
+	return &aiReport{
+		sessionID: sessionID,
+		summary:   summary,
+	}, warnings, nil
+}
+
+func buildAISessionURL(baseOpenURL, sessionID string) (string, error) {
+	// add session_id as query param
+	u, err := url.Parse(baseOpenURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse open URL %q: %w", baseOpenURL, err)
+	}
+	q := u.Query()
+	q.Set("session_id", sessionID)
+	u.RawQuery = q.Encode()
+	return u.String(), nil
+}
+
+// truncateSummary truncates the summary to a maximum length, adding ellipsis if truncated.
+func truncateSummary(summary string, maxLen int) string {
+	if len(summary) <= maxLen {
+		return summary
+	}
+	return summary[:maxLen-3] + "..."
+}
+
+func createExportURL(inURL string, executionTime time.Time) (*url.URL, error) {
+	exportURL, err := url.Parse(inURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse export URL %q: %w", inURL, err)
+	}
+
+	exportURLQry := exportURL.Query()
+	exportURLQry.Set("execution_time", executionTime.Format(time.RFC3339))
+	exportURL.RawQuery = exportURLQry.Encode()
+	return exportURL, nil
+}
+
+func formatExportFormat(f runtimev1.ExportFormat) string {
+	switch f {
+	case runtimev1.ExportFormat_EXPORT_FORMAT_CSV:
+		return "CSV"
+	case runtimev1.ExportFormat_EXPORT_FORMAT_XLSX:
+		return "Excel"
+	case runtimev1.ExportFormat_EXPORT_FORMAT_PARQUET:
+		return "Parquet"
+	case runtimev1.ExportFormat_EXPORT_FORMAT_PDF:
+		return "PDF"
+	default:
+		return f.String()
+	}
+}
+
+// computeInheritedWatermark computes the inherited watermark for the report.
+// It returns false if the watermark could not be computed.
+func (r *ReportReconciler) computeInheritedWatermark(ctx context.Context, refs []*runtimev1.ResourceName) (time.Time, bool, error) {
+	var t time.Time
+	for _, ref := range refs {
+		q := &queries.ResourceWatermark{
+			ResourceKind: ref.Kind,
+			ResourceName: ref.Name,
+		}
+		err := r.C.Runtime.Query(ctx, r.C.InstanceID, q, reportQueryPriority)
+		if err != nil {
+			return t, false, fmt.Errorf("failed to resolve watermark for %s/%s: %w", ref.Kind, ref.Name, err)
+		}
+
+		if q.Result != nil && (t.IsZero() || q.Result.Before(t)) {
+			t = *q.Result
+		}
+	}
+
+	return t, !t.IsZero(), nil
+}
+
+// calculateReportExecutionTimes calculates the execution times for a report, taking into consideration the report's intervals configuration and previous executions.
+// If the report is not configured to run on intervals, it will return a slice containing only the current watermark.
+// If the alert should not be executed, it returns a skipError explaining why.
+func calculateReportExecutionTimes(r *runtimev1.Report, watermark, previousWatermark time.Time) ([]time.Time, error) {
+	// If the watermark is unchanged, skip the check.
+	// NOTE: It might make sense to make this configurable in the future, but the use cases seem limited.
+	// The watermark can only be unchanged if watermark="inherit" and since that indicates watermarks can be trusted, why check for the same watermark?
+	if watermark.Equal(previousWatermark) {
+		return nil, skipError{reason: "watermark is unchanged"}
+	}
+
+	// If the report is not configured to run on intervals, check it just for the current watermark.
+	if r.Spec.IntervalsIsoDuration == "" {
+		return []time.Time{watermark}, nil
+	}
+
+	// Note: The watermark and previousWatermark may be unaligned with the report's interval duration.
+
+	// Parse the interval duration
+	// The YAML parser validates it as a StandardDuration, so this shouldn't fail.
+	di, err := duration.ParseISO8601(r.Spec.IntervalsIsoDuration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse interval duration: %w", err)
+	}
+	d, ok := di.(duration.StandardDuration)
+	if !ok {
+		return nil, fmt.Errorf("interval duration %q is not a standard ISO 8601 duration", r.Spec.IntervalsIsoDuration)
+	}
+
+	// Extract time zone
+	tz := time.UTC
+	if r.Spec.RefreshSchedule != nil && r.Spec.RefreshSchedule.TimeZone != "" {
+		tz, err = time.LoadLocation(r.Spec.RefreshSchedule.TimeZone)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load time zone %q: %w", r.Spec.RefreshSchedule.TimeZone, err)
+		}
+	}
+
+	// Compute the last end time (rounded to the interval duration)
+	// NOTE: Hardcoding firstDayOfWeek and firstMonthOfYear. We might consider inferring these from the underlying metrics view (or just customizing in the `intervals:` clause) in the future.
+	end := watermark.In(tz)
+	if r.Spec.IntervalsCheckUnclosed {
+		// Ceil
+		t := d.Truncate(end, 1, 1)
+		if !t.Equal(end) {
+			end = d.Add(t)
+		}
+	} else {
+		// Floor
+		end = d.Truncate(end, 1, 1)
+	}
+
+	// If there isn't a previous watermark, we'll just check the current watermark.
+	if previousWatermark.IsZero() {
+		return []time.Time{end}, nil
+	}
+
+	// Skip if end isn't past the previous watermark (unless we're supposed to check unclosed intervals)
+	if !r.Spec.IntervalsCheckUnclosed && !end.After(previousWatermark) {
+		return nil, skipError{reason: "watermark has not advanced by a full interval"}
+	}
+
+	// Set a limit on the number of intervals to check
+	limit := int(r.Spec.IntervalsLimit)
+	if limit <= 0 {
+		limit = reportDefaultIntervalsLimit
+	}
+
+	// Calculate the execution times
+	ts := []time.Time{end}
+	for i := 0; i < limit; i++ {
+		t := ts[len(ts)-1]
+		t = d.Sub(t)
+		if !t.After(previousWatermark) {
+			break
+		}
+		ts = append(ts, t)
+	}
+
+	// Reverse execution times so we run them in chronological order
+	slices.Reverse(ts)
+
+	return ts, nil
+}
+
+func latestReportWarnings(r *runtimev1.Report) []string {
+	if r.State != nil && len(r.State.ExecutionHistory) > 0 {
+		return r.State.ExecutionHistory[len(r.State.ExecutionHistory)-1].Warnings
+	}
+	return nil
+}

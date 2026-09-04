@@ -1,0 +1,124 @@
+<script lang="ts">
+  import { Chip } from "@rilldata/web-common/components/chip";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
+  import Search from "@rilldata/web-common/components/search/Search.svelte";
+  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useMetricFieldData } from "../selectors";
+
+  const client = useRuntimeClient();
+
+  export let metricName: string;
+  export let label: string | undefined = undefined;
+  export let id: string;
+  export let selectedItem: string | undefined = undefined;
+  export let type: "measure" | "dimension";
+  export let includeTime = false;
+  export let canvasName: string;
+  export let searchableItems: string[] | undefined = undefined;
+  export let excludedValues: string[] | undefined = undefined;
+  export let isRemovable = false;
+  export let onSelect: (item: string, displayName: string) => void = () => {};
+  export let onRemove: () => void = () => {};
+
+  let open = false;
+  let searchValue = "";
+
+  $: ctx = getCanvasStore(canvasName, client.instanceId);
+  $: ({ getTimeDimensionForMetricView } = ctx.canvasEntity.metricsView);
+
+  $: timeDimension = getTimeDimensionForMetricView(metricName);
+
+  $: isTimeSelected = $timeDimension && selectedItem === $timeDimension;
+  $: effectiveExcludedValues =
+    type === "dimension" && !includeTime && $timeDimension
+      ? [...(excludedValues ?? []), $timeDimension]
+      : excludedValues;
+  $: fieldData = useMetricFieldData(
+    ctx,
+    metricName,
+    [type],
+    searchableItems,
+    searchValue,
+    effectiveExcludedValues,
+  );
+</script>
+
+<div class="flex flex-col gap-y-2 pt-1">
+  <div class="flex items-center gap-x-2">
+    {#if label}
+      <InputLabel small {label} {id} />
+    {/if}
+  </div>
+
+  <DropdownMenu.Root bind:open>
+    <DropdownMenu.Trigger>
+      {#snippet child({ props })}
+        <Chip
+          {...props}
+          fullWidth
+          caret
+          removable={isRemovable && !!selectedItem}
+          {onRemove}
+          type={isTimeSelected ? "time" : type}
+        >
+          <span
+            class="font-bold truncate"
+            class:text-fg-tertiary={!selectedItem}
+            slot="body"
+          >
+            {#if isTimeSelected}
+              Time
+            {:else if selectedItem}
+              {$fieldData.displayMap[selectedItem]?.label || selectedItem}
+            {:else}
+              Choose a field...
+            {/if}
+          </span>
+        </Chip>
+      {/snippet}
+    </DropdownMenu.Trigger>
+
+    <DropdownMenu.Content class="p-0" sameWidth>
+      <div class="p-3 pb-1">
+        <Search bind:value={searchValue} autofocus={false} />
+      </div>
+      <div class="max-h-64 overflow-y-auto pb-2">
+        {#if type == "dimension" && includeTime && $timeDimension}
+          <DropdownMenu.Item
+            class="pl-8 mx-1"
+            onclick={() => {
+              onSelect($timeDimension, "Time");
+              open = false;
+            }}
+          >
+            Time
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator />
+        {/if}
+        {#each $fieldData.filteredItems as item (item)}
+          {#if item !== selectedItem}
+            <DropdownMenu.Item
+              class="pl-8 mx-1"
+              onclick={() => {
+                onSelect(item, $fieldData.displayMap[item]?.label || item);
+                open = false;
+              }}
+            >
+              <slot {item}>
+                {$fieldData.displayMap[item]?.label || item}
+              </slot>
+            </DropdownMenu.Item>
+          {/if}
+        {:else}
+          {#if searchValue}
+            <div class="text-fg-disabled text-center p-2 w-full">
+              no results
+            </div>
+          {/if}
+        {/each}
+      </div>
+    </DropdownMenu.Content>
+  </DropdownMenu.Root>
+</div>

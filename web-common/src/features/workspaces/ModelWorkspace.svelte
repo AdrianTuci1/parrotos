@@ -1,0 +1,187 @@
+<script lang="ts">
+  import { fade, slide } from "svelte/transition";
+  import { goto } from "$app/navigation";
+  import ConnectedPreviewTable from "@rilldata/web-common/components/preview-table/ConnectedPreviewTable.svelte";
+  import { getNameFromFile } from "@rilldata/web-common/features/entity-management/entity-mappers";
+  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
+  import {
+    ResourceKind,
+    resourceIsLoading,
+  } from "@rilldata/web-common/features/entity-management/resource-selectors.js";
+  import { handleEntityRename } from "@rilldata/web-common/features/entity-management/actions/ui-actions.ts";
+  import WorkspaceInspector from "@rilldata/web-common/features/models/inspector/WorkspaceInspector.svelte";
+  import ModelEditor from "@rilldata/web-common/features/models/workspace/ModelEditor.svelte";
+  import ModelWorkspaceCtAs from "@rilldata/web-common/features/models/workspace/ModelWorkspaceCTAs.svelte";
+  import WorkspaceContainer from "@rilldata/web-common/layout/workspace/WorkspaceContainer.svelte";
+  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import WorkspaceHeader from "@rilldata/web-common/layout/workspace/WorkspaceHeader.svelte";
+  import WorkspaceTableContainer from "@rilldata/web-common/layout/workspace/WorkspaceTableContainer.svelte";
+  import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
+  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import type { V1Model } from "@rilldata/web-common/runtime-client";
+
+  import { isProfilingQuery } from "@rilldata/web-common/runtime-client/query-matcher";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ReconcilingSpinner from "../entity-management/ReconcilingSpinner.svelte";
+  import ReconcileWarningPanel from "../entity-management/ReconcileWarningPanel.svelte";
+  import { getUserFriendlyError } from "../models/error-utils";
+  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+
+  export let fileArtifact: FileArtifact;
+
+  const runtimeClient = useRuntimeClient();
+
+  $: ({
+    hasUnsavedChanges,
+    autoSave,
+    path: filePath,
+    fileName,
+    remoteContent,
+  } = fileArtifact);
+
+  $: assetName = getNameFromFile(filePath);
+
+  $: workspace = workspaces.get(filePath);
+  $: tableVisible = workspace.table.visible;
+
+  $: allErrorsStore = fileArtifact.getAllErrors(queryClient);
+  $: hasErrors = fileArtifact.getHasErrors(queryClient);
+
+  $: allErrors = $allErrorsStore;
+
+  $: resourceQuery = fileArtifact.getResource(queryClient);
+  $: resource = $resourceQuery.data;
+  $: model = $resourceQuery.data?.model;
+  $: connector = (model as V1Model)?.spec?.outputConnector as string;
+  const database = ""; // models use the default database
+  const databaseSchema = ""; // models use the default databaseSchema
+  $: tableName = (model as V1Model)?.state?.resultTable as string;
+  // A model can have errors (e.g., failed partitions) but still produce a result table.
+  // We enable export/metrics-view actions based on whether output exists, not error state.
+  $: hasResultTable = !!tableName;
+
+  $: refreshedOn = model?.state?.refreshedOn;
+  $: isResourceReconciling = resourceIsLoading($resourceQuery.data);
+
+  async function save() {
+    await queryClient.cancelQueries({
+      predicate: (query) => isProfilingQuery(query, assetName),
+    });
+  }
+
+  async function handleNameChange(newTitle: string) {
+    const newRoute = await handleEntityRename(
+      runtimeClient,
+      newTitle,
+      filePath,
+      fileName,
+    );
+
+    if (newRoute) await goto(newRoute);
+  }
+
+  function formatRefreshedOn(refreshedOn: string) {
+    const date = new Date(refreshedOn);
+    return date.toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    });
+  }
+</script>
+
+<WorkspaceContainer>
+  <WorkspaceHeader
+    {filePath}
+    {resource}
+    resourceKind={ResourceKind.Model}
+    slot="header"
+    titleInput={fileName}
+    showTableToggle
+    hasUnsavedChanges={$hasUnsavedChanges}
+    onTitleChange={handleNameChange}
+  >
+    {#snippet workspaceControls()}
+      <p
+        class="text-fg-muted line-clamp-1 mr-2 text-[11px]"
+        transition:fade={{ duration: 200 }}
+      >
+        {#if refreshedOn}
+          Computed on {formatRefreshedOn(refreshedOn)}
+        {/if}
+      </p>
+    {/snippet}
+
+    {#snippet cta(width: number)}
+      {@const collapse = width < 800}
+
+      <div class="flex gap-x-2 items-center">
+        <ModelWorkspaceCtAs
+          {resource}
+          {connector}
+          {collapse}
+          {hasResultTable}
+          modelName={assetName}
+          hasUnsavedChanges={$hasUnsavedChanges}
+        />
+      </div>
+    {/snippet}
+  </WorkspaceHeader>
+
+  <div
+    slot="body"
+    class="editor-pane size-full overflow-hidden flex flex-col gap-y-0"
+  >
+    <WorkspaceEditorContainer>
+      {#key assetName}
+        <ModelEditor {fileArtifact} bind:autoSave={$autoSave} onSave={save} />
+      {/key}
+    </WorkspaceEditorContainer>
+
+    <ReconcileWarningPanel {fileArtifact} />
+
+    {#if $tableVisible}
+      <WorkspaceTableContainer {filePath}>
+        {#if isResourceReconciling}
+          <ReconcilingSpinner />
+        {:else if connector && tableName}
+          <ConnectedPreviewTable {connector} table={tableName} />
+        {/if}
+        <svelte:fragment slot="error">
+          {#if allErrors.length > 0}
+            <div
+              transition:slide={{ duration: 200 }}
+              class="border border-destructive bg-destructive/15 dark:bg-destructive/30 text-fg-primary border-l-4 px-2 py-5 max-h-72 overflow-auto flex flex-col gap-2"
+              aria-label="Model errors"
+            >
+              {#each allErrors as error (error.message)}
+                <div>
+                  {getUserFriendlyError(error.message ?? "")}
+                </div>
+              {/each}
+              <div class="flex justify-start pt-1">
+                <ExplainAndFixErrorButton {filePath} />
+              </div>
+            </div>
+          {/if}
+        </svelte:fragment>
+      </WorkspaceTableContainer>
+    {/if}
+  </div>
+
+  <WorkspaceInspector
+    slot="inspector"
+    {filePath}
+    {connector}
+    {database}
+    {databaseSchema}
+    {tableName}
+    hasErrors={$hasErrors}
+    hasUnsavedChanges={$hasUnsavedChanges}
+    {resource}
+    isEmpty={!$remoteContent?.length}
+    {isResourceReconciling}
+  />
+</WorkspaceContainer>

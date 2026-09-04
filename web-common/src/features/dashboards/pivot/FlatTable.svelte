@@ -1,0 +1,473 @@
+<script lang="ts">
+  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
+  import type { MeasureColumnProps } from "@rilldata/web-common/features/dashboards/pivot/pivot-column-definition";
+  import {
+    COLUMN_WIDTH_CONSTANTS as WIDTHS,
+    calculateColumnWidth,
+    calculateMeasureWidth,
+    distributeColumnWidthsToFillContainer,
+  } from "@rilldata/web-common/features/dashboards/pivot/pivot-column-width-utils";
+  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
+  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  import { writable } from "svelte/store";
+  import type {
+    Cell,
+    Column,
+    HeaderGroup,
+    Row,
+  } from "tanstack-table-8-svelte-5";
+  import { flexRender } from "tanstack-table-8-svelte-5";
+  import { cellInspectorStore } from "../stores/cell-inspector-store";
+  import {
+    computeEffectiveDimIdx,
+    flatCellState,
+    flatRowState,
+  } from "./pivot-cell-classes";
+  import {
+    type PivotClickSelectionState,
+    dimKeyFromRow,
+  } from "./pivot-click-selection";
+  import type { PivotRowSelectionState } from "./pivot-row-selection";
+  import type { CellFormatter } from "./pivot-conditional-formatting";
+  import PivotHeaderLabel from "./PivotHeaderLabel.svelte";
+  import type { PivotDataRow, PivotDataStoreConfig } from "./types";
+
+  // State props
+  export let assembled: boolean;
+  export let measures: MeasureColumnProps;
+  export let cellFormatters: Map<string, CellFormatter> = new Map();
+  export let dataRows: PivotDataRow[];
+  export let hasMeasureContextColumns: boolean;
+  export let canShowDataViewer = false;
+  export let enableClickToFilter = false;
+  export let rowSelectionState: PivotRowSelectionState | undefined = undefined;
+  export let clickSelection: PivotClickSelectionState | undefined = undefined;
+  export let activeCell: { rowId: string; columnId: string } | null | undefined;
+  export let config: PivotDataStoreConfig | undefined = undefined;
+  export let fillWidth = false;
+  export let containerWidth = 0;
+
+  // Table props
+  export let headerGroups: HeaderGroup<PivotDataRow>[];
+  export let rows: Row<PivotDataRow>[];
+  export let virtualRows: { index: number }[];
+  export let totalsRow: PivotDataRow | undefined;
+  export let before: number;
+  export let after: number;
+  export let totalRowSize: number;
+
+  // Event handlers
+  export let onCellClick: (e: MouseEvent) => void;
+  export let onMouseMove: (e: MouseEvent) => void;
+  export let onTableLeave: () => void;
+  export let onCellCopy: (e: MouseEvent) => void;
+
+  const columnLengths = writable(new Map<string, number>());
+
+  const HEADER_HEIGHT = 30;
+
+  let totalLength = 0;
+
+  $: headers = headerGroups[0].headers;
+
+  // Initialize column lengths if not already set
+  $: headers.forEach((header) => {
+    const columnId = header.column.id;
+
+    if (!$columnLengths.has(columnId)) {
+      const measure = getMeasureColumn(header.column);
+      const estimatedWidth = measure
+        ? calculateMeasureWidth(
+            measure.name,
+            measure.label,
+            measure.formatter,
+            totalsRow,
+            dataRows,
+          )
+        : calculateColumnWidth(
+            String(header.column.columnDef.header),
+            "",
+            dataRows,
+          );
+      columnLengths.update((lengths) => lengths.set(columnId, estimatedWidth));
+    }
+  });
+
+  $: baseColumnWidths = headers.map(
+    (header) =>
+      $columnLengths.get(header.column.id) ?? WIDTHS.INIT_MEASURE_WIDTH,
+  );
+  $: displayColumnWidths = fillWidth
+    ? distributeColumnWidthsToFillContainer(
+        headers.map((header, i) => ({
+          width: baseColumnWidths[i],
+          role: getMeasureColumn(header.column) ? "measure" : "dimension",
+        })),
+        containerWidth,
+      )
+    : baseColumnWidths;
+  $: totalLength = displayColumnWidths.reduce((acc, width) => {
+    return acc + width;
+  }, 0);
+
+  function getMeasureColumn(headerColumn: Column<PivotDataRow>) {
+    const columnId = headerColumn.id;
+    return measures.find((m) => m.name === columnId);
+  }
+
+  // Resolve conditional-formatting styling for a measure cell. Returns null for
+  // cells that should not be formatted (no config, the totals row, non-numeric
+  // values, or no matching threshold rule).
+  function getCellFormatting(
+    cell: Cell<PivotDataRow, unknown>,
+    isTotalsRow: boolean,
+  ): { background: string; color: string } | null {
+    if (isTotalsRow) return null;
+    const meta = cell.column.columnDef.meta;
+    if (!meta?.conditionalFormat || meta.isRowTotal || !meta.measureName) {
+      return null;
+    }
+    const formatter = cellFormatters.get(meta.measureName);
+    if (!formatter) return null;
+    const value = cell.getValue();
+    if (typeof value !== "number" || !Number.isFinite(value)) return null;
+    return formatter(value);
+  }
+
+  function isCellActive(rowId: string, columnId: string) {
+    return rowId === activeCell?.rowId && columnId === activeCell?.columnId;
+  }
+
+  $: lastDimIdx = (config?.rowDimensionNames.length ?? 0) - 1;
+
+  function hasBorderRight(columnId: string): boolean {
+    if (!hasMeasureContextColumns) return true;
+    const measureIndex = measures.findIndex((m) => m.name === columnId);
+    if (measureIndex === -1) return true;
+    //  Every third column is the last in its group
+    return (measureIndex + 1) % 3 === 0;
+  }
+</script>
+
+<div
+  class="w-full absolute top-0 z-50 flex pointer-events-none"
+  style:width="{totalLength}px"
+  style:height="{totalRowSize + HEADER_HEIGHT + headerGroups.length}px"
+>
+  {#each headers as header, i (header.id)}
+    {@const baseLength =
+      $columnLengths.get(header.column.id) ?? WIDTHS.INIT_MEASURE_WIDTH}
+    {@const length = displayColumnWidths[i] ?? baseLength}
+    {@const last = i === headers.length - 1}
+    <div style:width="{length}px" class="h-full relative">
+      <Resizer
+        side="right"
+        direction="EW"
+        min={WIDTHS.MIN_MEASURE_WIDTH}
+        max={WIDTHS.MAX_MEASURE_WIDTH}
+        dimension={baseLength}
+        justify={last ? "end" : "center"}
+        hang={!last}
+        onUpdate={(d: number) =>
+          columnLengths.update((lengths) => {
+            return lengths.set(header.column.id, d);
+          })}
+      >
+        <div class="resize-bar"></div>
+      </Resizer>
+    </div>
+  {/each}
+</div>
+
+<table
+  role="presentation"
+  style:width="{totalLength}px"
+  class:with-totals-row={!!totalsRow && measures.length > 0}
+  onclick={modified({ shift: onCellCopy, click: onCellClick })}
+  onmousemove={onMouseMove}
+  onmouseleave={onTableLeave}
+>
+  <colgroup>
+    {#each headers as header, i (header.id)}
+      {@const baseLength =
+        $columnLengths.get(header.column.id) ?? WIDTHS.INIT_MEASURE_WIDTH}
+      {@const length = displayColumnWidths[i] ?? baseLength}
+      <col style:width="{length}px" style:max-width="{length}px" />
+    {/each}
+  </colgroup>
+
+  <thead>
+    {#each headerGroups as headerGroup (headerGroup.id)}
+      <tr>
+        {#each headerGroup.headers as header (header.id)}
+          {@const sortDirection = header.column.getIsSorted()}
+          {@const icon = header.column.columnDef.meta?.icon}
+          <th>
+            <button
+              class="header-cell"
+              class:cursor-pointer={header.column.getCanSort()}
+              class:select-none={header.column.getCanSort()}
+              class:flex-row-reverse={!!getMeasureColumn(header.column)}
+              class:border-r={hasBorderRight(header.column.id)}
+              onclick={header.column.getToggleSortingHandler()}
+            >
+              {#if !header.isPlaceholder}
+                {#if icon}
+                  <svelte:component this={icon} />
+                {:else}
+                  <PivotHeaderLabel
+                    label={String(header.column.columnDef.header)}
+                    description={header.column.columnDef.meta?.description}
+                  />
+                {/if}
+                {#if sortDirection}
+                  <span
+                    class="transition-transform -mr-1"
+                    class:-rotate-180={sortDirection === "asc"}
+                  >
+                    <ArrowDown />
+                  </span>
+                {/if}
+              {/if}
+            </button>
+          </th>
+        {/each}
+      </tr>
+    {/each}
+  </thead>
+  <tbody>
+    <tr style:height="{before}px"></tr>
+    {#each virtualRows as row (row.index)}
+      {@const cells = rows[row.index].getVisibleCells()}
+      {@const rowId = rows[row.index].id}
+      {@const rowData = rows[row.index].original}
+      {@const dk = dimKeyFromRow(rowData, config?.rowDimensionNames ?? [])}
+      {@const isTotalsRow = !!totalsRow && rowId === "0"}
+      {@const isSelected = rowSelectionState?.isRowSelected(rowData) ?? false}
+      {@const hasClickedCell =
+        clickSelection?.hasSelectedCellInRow(dk) ?? false}
+      {@const effectiveDimIdx = computeEffectiveDimIdx(
+        hasClickedCell,
+        clickSelection?.getClickedDimensionIndex(dk) ?? -1,
+        lastDimIdx,
+        isSelected,
+        rowSelectionState?.maxFilteredDimensionIndex ?? -1,
+      )}
+      {@const rs = flatRowState({
+        isSelected,
+        hasSelection: rowSelectionState?.hasActiveSelection ?? false,
+        hasClickedCell,
+        effectiveDimIdx,
+      })}
+      <tr class:selected-row={rs.selectedRow} class:dimmed-row={rs.dimmedRow}>
+        {#each cells as cell (cell.id)}
+          {@const result =
+            typeof cell.column.columnDef.cell === "function"
+              ? cell.column.columnDef.cell(cell.getContext())
+              : cell.column.columnDef.cell}
+          {@const cs = flatCellState({
+            isActive: isCellActive(cell.row.id, cell.column.id),
+            isClicked:
+              clickSelection?.isCellSelected(dk, cell.column.id) ?? false,
+            colDimIdx: config?.rowDimensionNames.indexOf(cell.column.id) ?? -1,
+            effectiveDimIdx,
+            lastDimIdx,
+            isTotalsRow,
+            canShowDataViewer,
+            enableClickToFilter,
+            hasValue: cell.getValue() !== undefined,
+          })}
+          {@const tooltipValue = cell.column.columnDef.meta?.tooltipFormatter
+            ? cell.column.columnDef.meta.tooltipFormatter(cell.getValue())
+            : cell.getValue()}
+          {@const cellFmt = getCellFormatting(cell, isTotalsRow)}
+          <td
+            class="ui-copy-number cell truncate"
+            class:has-conditional-format={cellFmt !== null}
+            style:--cf-bg={cellFmt?.background ?? null}
+            style:--cf-color={cellFmt?.color ?? null}
+            class:active-cell={cs.activeCell}
+            class:selected-cell={cs.selectedCell}
+            class:selected-context-cell={cs.selectedContextCell}
+            class:muted-cell={cs.mutedCell}
+            class:interactive-cell={cs.interactiveCell}
+            class:text-right={getMeasureColumn(cell.column)}
+            class:border-r={hasBorderRight(cell.column.id)}
+            class:total-label={cell.getValue() === "Total"}
+            data-value={tooltipValue}
+            data-rowid={cell.row.id}
+            data-columnid={cell.column.id}
+            onmouseover={() =>
+              cellInspectorStore.updateValue(cell.getValue(), tooltipValue)}
+            onfocus={() =>
+              cellInspectorStore.updateValue(cell.getValue(), tooltipValue)}
+          >
+            {#if result?.component && result?.props}
+              <svelte:component
+                this={result.component}
+                {...result.props}
+                {assembled}
+              />
+            {:else if typeof result === "string" || typeof result === "number"}
+              {result}
+            {:else}
+              <svelte:component
+                this={flexRender(cell.column.columnDef.cell, cell.getContext())}
+              />
+            {/if}
+          </td>
+        {/each}
+      </tr>
+    {/each}
+    <tr style:height="{after}px"></tr>
+  </tbody>
+</table>
+
+<style lang="postcss">
+  * {
+    @apply border-gray-200;
+  }
+
+  .resize-bar {
+    @apply bg-primary-500 w-1 h-full;
+  }
+
+  table {
+    @apply p-0 m-0 border-spacing-0 border-separate w-fit;
+    @apply font-normal cursor-default;
+    @apply bg-surface-background table-fixed;
+  }
+
+  /* Pin header */
+  thead {
+    @apply sticky top-0;
+    @apply z-30 bg-surface-background;
+  }
+
+  tbody .cell {
+    height: var(--row-height);
+  }
+
+  th {
+    @apply p-0 m-0 text-xs;
+    @apply border-b relative;
+  }
+
+  th:last-of-type,
+  td:last-of-type {
+    @apply border-r-0;
+  }
+
+  th,
+  td {
+    @apply whitespace-nowrap text-xs;
+  }
+
+  td {
+    @apply p-0 m-0;
+  }
+
+  .header-cell {
+    @apply px-2 bg-surface-background size-full;
+    @apply flex items-center gap-x-1 w-full truncate;
+    @apply text-fg-primary font-medium;
+    height: var(--header-height);
+  }
+
+  .cell {
+    @apply size-full p-1 px-2 text-fg-primary;
+  }
+
+  /* Conditional formatting (heatmap / data bar). Placed before the
+     selection/hover rules below and kept at equal specificity (0,2,0) so
+     those win by source order, keeping selected and hovered cells legible. */
+  .cell.has-conditional-format {
+    background: var(--cf-bg);
+    color: var(--cf-color);
+  }
+
+  /* When a hover/selection state replaces the conditional background with a
+     light surface color, the formatter's text color (which may be white, chosen
+     for a dark heatmap fill) becomes illegible. Revert to the default
+     foreground so the value stays readable. */
+  tr:hover td.cell.has-conditional-format,
+  td.cell.has-conditional-format.active-cell,
+  td.cell.has-conditional-format.selected-cell,
+  td.cell.has-conditional-format.selected-context-cell,
+  td.cell.has-conditional-format.muted-cell,
+  .selected-row td.cell.has-conditional-format {
+    @apply text-fg-primary;
+  }
+
+  tr > td {
+    @apply font-normal;
+  }
+
+  /* The totals row */
+  .with-totals-row tbody > tr:nth-of-type(2) {
+    @apply bg-surface-background sticky z-20;
+    top: var(--total-header-height);
+  }
+
+  /* The totals row label - make it bold for flat tables */
+  .total-label {
+    @apply font-semibold;
+  }
+
+  tr:hover,
+  tr:hover .cell {
+    @apply bg-surface-hover;
+  }
+
+  tr:hover .active-cell {
+    @apply bg-primary-100;
+  }
+
+  .interactive-cell {
+    @apply cursor-pointer;
+  }
+  .interactive-cell.cell:hover {
+    @apply bg-primary-100;
+  }
+  .active-cell.cell {
+    @apply bg-primary-50;
+  }
+
+  td.selected-cell.cell {
+    @apply bg-primary-50 relative z-[1];
+    box-shadow: 0 0 0 1px theme(colors.primary.400);
+  }
+  /* The totals row is z-20 and covers the outset top shadow; use an inset top border instead */
+  .with-totals-row tbody > tr:nth-of-type(3) > td.selected-cell.cell {
+    box-shadow:
+      0 0 0 1px theme(colors.primary.400),
+      inset 0 1px 0 0 theme(colors.primary.400);
+  }
+  td.selected-cell.cell:hover {
+    @apply bg-primary-100;
+  }
+
+  .selected-row .cell {
+    @apply bg-primary-50;
+  }
+  .selected-row:hover .cell {
+    @apply bg-primary-100;
+  }
+
+  .dimmed-row .cell {
+    @apply opacity-50;
+  }
+
+  /* Dimension cells to the left of the clicked cell: same primary background, no ring */
+  .selected-context-cell.cell {
+    @apply bg-primary-50;
+  }
+  .selected-context-cell.cell:hover {
+    @apply bg-primary-100;
+  }
+
+  /* Dimension cells to the right of the clicked cell: muted background */
+  .muted-cell.cell {
+    @apply bg-surface-muted;
+  }
+</style>

@@ -1,0 +1,130 @@
+<script lang="ts">
+  import { invalidate, onNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { errorStore } from "@rilldata/web-admin/components/errors/error-store";
+  import { getHomeBookmarkExploreState } from "@rilldata/web-admin/features/bookmarks/selectors";
+  import DashboardBuilding from "@rilldata/web-common/features/dashboards/DashboardBuilding.svelte";
+  import DashboardErrored from "@rilldata/web-admin/features/dashboards/DashboardErrored.svelte";
+  import {
+    DashboardBannerID,
+    DashboardBannerPriority,
+  } from "@rilldata/web-common/components/banner/constants";
+  import { Dashboard } from "@rilldata/web-common/features/dashboards";
+  import StateManagersProvider from "@rilldata/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
+  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  import {
+    useExploreWithPolling,
+    isExploreReconcilingForFirstTime,
+    isExploreErrored,
+  } from "@rilldata/web-common/features/explores/selectors";
+  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { isNotFoundError } from "@rilldata/web-common/lib/errors";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import type { PageData } from "./$types";
+  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let data: PageData;
+  $: ({ project } = data);
+
+  const { disablePersistentDashboardState } = featureFlags;
+
+  const runtimeClient = useRuntimeClient();
+  $: ({
+    organization: orgName,
+    project: projectName,
+    dashboard: exploreName,
+  } = $page.params);
+
+  $: explore = useExploreWithPolling(runtimeClient, exploreName);
+
+  $: isDashboardNotFound =
+    !$explore.data && $explore.isError && isNotFoundError($explore.error);
+  $: exploreTitle =
+    $explore.data?.explore?.explore?.state?.validSpec?.displayName;
+  $: metricsViewName = $explore.data?.metricsView?.meta?.name?.name;
+  $: hasBanner = !!$explore.data?.explore?.explore?.state?.validSpec?.banner;
+
+  // If no dashboard is found, show a 404 page
+  $: if (isDashboardNotFound) {
+    errorStore.set({
+      statusCode: 404,
+      header: m.error_dashboard_not_found(),
+      body: `The dashboard you requested could not be found. Please check that you provided the name of a working dashboard.`,
+    });
+  }
+
+  // Display a dashboard banner
+  $: if (hasBanner) {
+    eventBus.emit("add-banner", {
+      id: DashboardBannerID,
+      priority: DashboardBannerPriority,
+      message: {
+        type: "default",
+        message: $explore.data.explore.explore.state.validSpec.banner,
+        iconType: "alert",
+      },
+    });
+  }
+
+  $: bookmarkExploreStateQuery = getHomeBookmarkExploreState(
+    project?.id,
+    runtimeClient,
+    metricsViewName,
+    exploreName,
+  );
+
+  onNavigate(({ from, to }) => {
+    errorStore.reset();
+
+    const changedDashboard =
+      !from || !to || from.params.dashboard !== to.params.dashboard;
+    // Clear out any dashboard banners
+    if (hasBanner && changedDashboard) {
+      eventBus.emit("remove-banner", DashboardBannerID);
+    }
+  });
+
+  let reconcilingForFirstTime: boolean | undefined;
+  $: if ($explore.isSuccess) {
+    const newReconcilingForFirstTime = isExploreReconcilingForFirstTime(
+      $explore.data,
+    );
+    // reconcilingForFirstTime means the dashboard is reconciling for the 1st time in the current deployment.
+    // a new deployment could change this from false to true
+    const reconcilingForFirstTimeChanged =
+      reconcilingForFirstTime !== undefined &&
+      newReconcilingForFirstTime !== undefined &&
+      reconcilingForFirstTime !== newReconcilingForFirstTime;
+    if (reconcilingForFirstTimeChanged) {
+      void invalidate(`explore:${exploreName}`);
+    }
+    reconcilingForFirstTime = newReconcilingForFirstTime;
+  }
+</script>
+
+<svelte:head>
+  <title>{exploreTitle || `${exploreName} - Rill`}</title>
+</svelte:head>
+
+{#if $explore.isSuccess}
+  {#if isExploreReconcilingForFirstTime($explore.data)}
+    <DashboardBuilding />
+  {:else if isExploreErrored($explore.data)}
+    <DashboardErrored organization={orgName} project={projectName} />
+  {:else if metricsViewName}
+    {#key exploreName}
+      <StateManagersProvider {metricsViewName} {exploreName}>
+        <DashboardStateManager
+          {exploreName}
+          storageNamespacePrefix={`${orgName}__${projectName}__`}
+          bookmarkOrTokenExploreState={bookmarkExploreStateQuery}
+          disableMostRecentDashboardState={$disablePersistentDashboardState}
+          disableInitSessionDashboardState={$disablePersistentDashboardState}
+        >
+          <Dashboard {metricsViewName} {exploreName} />
+        </DashboardStateManager>
+      </StateManagersProvider>
+    {/key}
+  {/if}
+{/if}

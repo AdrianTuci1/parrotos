@@ -1,0 +1,184 @@
+<script lang="ts">
+  import { DataTypeIcon } from "@rilldata/web-common/components/data-types";
+  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
+  import Pin from "@rilldata/web-common/components/icons/Pin.svelte";
+  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
+  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
+  import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
+  import {
+    copyToClipboard,
+    isClipboardApiSupported,
+  } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { getContext } from "svelte";
+  import { fly } from "svelte/transition";
+  import TooltipDescription from "../../tooltip/TooltipDescription.svelte";
+  import type { HeaderPosition, VirtualizedTableConfig } from "../types";
+  import StickyHeader from "./StickyHeader.svelte";
+
+  export let pinned = false;
+  export let noPin = false;
+  export let showDataIcon = false;
+  export let name;
+  export let type: string;
+  export let description = "";
+  export let header;
+  export let position: HeaderPosition = "top";
+  export let enableResize = true;
+  export let enableSorting = true;
+  export let isSelected = false;
+  export let sorted: SortDirection | undefined = undefined;
+  export let onResizeColumn: (size: number, name: string) => void = () => {};
+  export let onResetColumnWidth: (name: string) => void = () => {};
+  export let onClickColumn: (name: string) => void;
+  export let onPin: () => void;
+
+  const config: VirtualizedTableConfig = getContext("config");
+
+  let showMore = false;
+
+  $: isDimensionTable = config.table === "DimensionTable";
+  $: isDimensionColumn =
+    isDimensionTable && (type === "VARCHAR" || type === "CODE_STRING");
+
+  $: textAlignment = isDimensionColumn ? "text-left pl-1" : "text-right pr-1";
+
+  $: columnFontWeight = isSelected ? "" : config.columnHeaderFontWeightClass;
+
+  const handleResize = (size: number) => {
+    onResizeColumn(size, name);
+  };
+</script>
+
+<StickyHeader
+  {enableResize}
+  bgClass={config.headerBgColorClass}
+  onResetColumnWidth={() => {
+    onResetColumnWidth(name);
+  }}
+  onResize={handleResize}
+  {position}
+  {header}
+  onFocus={() => {
+    showMore = true;
+  }}
+  onBlur={() => {
+    showMore = false;
+  }}
+  onClick={() => onClickColumn(name)}
+  onShiftClick={() => {
+    copyToClipboard(name, `Copied column name "${name}" to clipboard`);
+  }}
+>
+  <div
+    class=" 
+           flex
+           justify-stretch
+           select-none
+           over
+           {isDimensionTable ? '' : 'items-center gap-x-2'}
+           "
+  >
+    <Tooltip location="top" alignment="middle" distance={16}>
+      <div
+        class="
+        grid
+        items-center cursor-pointer w-full"
+        class:gap-x-2={!isSelected}
+        style:grid-template-columns={isDimensionTable
+          ? ""
+          : `max-content auto ${!noPin && showMore ? "max-content" : ""}`}
+      >
+        {#if showDataIcon}
+          <DataTypeIcon suppressTooltip color={"text-fg-secondary"} {type} />
+        {/if}
+        <span
+          class="text-ellipsis
+          {columnFontWeight}
+          {isDimensionTable
+            ? `${textAlignment} break-words line-clamp-2`
+            : 'overflow-hidden whitespace-nowrap'}
+          "
+        >
+          {#if typeof name !== "string"}
+            <div class="flex justify-end">
+              <svelte:component this={name} />
+            </div>
+          {:else}
+            {name}
+          {/if}
+        </span>
+      </div>
+      <TooltipContent slot="tooltip-content" maxWidth="280px">
+        {#if !isDimensionTable}
+          <TooltipTitle>
+            <svelte:fragment slot="name">
+              {name}
+            </svelte:fragment>
+            <svelte:fragment slot="description">
+              {showDataIcon ? type : ""}
+            </svelte:fragment>
+          </TooltipTitle>
+        {/if}
+        {#if isDimensionTable && description?.length}
+          <TooltipDescription>
+            {description}
+          </TooltipDescription>
+        {/if}
+        {#if isDimensionTable || isClipboardApiSupported()}
+          <TooltipShortcutContainer>
+            {#if enableSorting}
+              <div>Sort column</div>
+              <Shortcut>Click</Shortcut>
+            {/if}
+            {#if isClipboardApiSupported()}
+              <div>
+                <StackingWord key="shift">Copy</StackingWord>
+                column name to clipboard
+              </div>
+              <Shortcut>
+                <span style="font-family: var(--system);">⇧</span> + Click
+              </Shortcut>
+            {/if}
+          </TooltipShortcutContainer>
+        {/if}
+      </TooltipContent>
+    </Tooltip>
+
+    {#if sorted}
+      <div class="mt-0.5 text-fg-secondary">
+        {#if sorted === SortDirection.DESCENDING}
+          <div in:fly|global={{ duration: 200, y: -8 }} style:opacity={1}>
+            <ArrowDown size="12px" />
+          </div>
+        {:else if sorted === SortDirection.ASCENDING}
+          <div in:fly|global={{ duration: 200, y: 8 }} style:opacity={1}>
+            <ArrowDown flip size="12px" />
+          </div>
+        {/if}
+      </div>
+    {/if}
+
+    {#if !noPin && showMore}
+      <Tooltip location="top" alignment="middle" distance={16}>
+        <button
+          transition:fly={{ duration: 200, y: 4 }}
+          class:text-fg-primary={pinned}
+          class:text-fg-secondary={!pinned}
+          class="   duration-100 justify-self-end"
+          onclick={onPin}
+        >
+          <Pin size="16px" />
+        </button>
+        <TooltipContent slot="tooltip-content">
+          {pinned
+            ? "unpin this column from the right side of the table"
+            : "pin this column to the right side of the table"}
+        </TooltipContent>
+      </Tooltip>
+    {/if}
+  </div>
+</StickyHeader>

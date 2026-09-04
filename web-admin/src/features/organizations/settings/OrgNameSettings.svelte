@@ -1,0 +1,168 @@
+<script lang="ts">
+  import { goto } from "$app/navigation";
+  import {
+    createAdminServiceGetOrganization,
+    createAdminServiceUpdateOrganization,
+    getAdminServiceGetOrganizationQueryKey,
+    getAdminServiceListOrganizationsQueryKey,
+    type RpcStatus,
+  } from "@rilldata/web-admin/client";
+  import { parseUpdateOrgError } from "@rilldata/web-admin/features/organizations/settings/errors";
+  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  import { Button } from "@rilldata/web-common/components/button";
+  import Input from "@rilldata/web-common/components/forms/Input.svelte";
+  import { sanitizeOrgName } from "@rilldata/web-common/features/organization/sanitizeOrgName";
+  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import type { AxiosError } from "axios";
+  import { defaults, superForm } from "sveltekit-superforms";
+  import { yup } from "sveltekit-superforms/adapters";
+  import { object, string } from "yup";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  let { organization }: { organization: string } = $props();
+
+  const initialValues: {
+    name: string;
+    description: string;
+  } = {
+    name: "",
+    description: "",
+  };
+  const schema = yup(
+    object({
+      name: string().required(),
+      description: string(),
+    }),
+  );
+
+  const updateOrgMutation = createAdminServiceUpdateOrganization();
+
+  const { form, errors, enhance, submit } = superForm(
+    defaults(initialValues, schema),
+    {
+      SPA: true,
+      validators: schema,
+      async onUpdate({ form }) {
+        if (!form.valid) return;
+        const values = form.data;
+
+        const newOrg = sanitizeOrgName(values.name);
+
+        try {
+          await $updateOrgMutation.mutateAsync({
+            org: organization,
+            data: {
+              displayName: values.name,
+              newName: newOrg,
+              description: values.description,
+            },
+          });
+
+          await queryClient.invalidateQueries({
+            queryKey: getAdminServiceListOrganizationsQueryKey(),
+          });
+        } catch (err) {
+          const parsedErr = parseUpdateOrgError(err);
+          if (parsedErr.duplicateOrg) {
+            form.errors.name = [
+              m.settings_name_already_taken({ name: newOrg }),
+            ];
+          }
+          return;
+        }
+
+        if (organization !== newOrg) {
+          queryClient.removeQueries({
+            queryKey: getAdminServiceGetOrganizationQueryKey(organization),
+          });
+          setTimeout(() => goto(`/${newOrg}/-/settings`));
+        } else {
+          void queryClient.refetchQueries({
+            queryKey: getAdminServiceGetOrganizationQueryKey(organization),
+          });
+        }
+        eventBus.emit("notification", {
+          message: m.settings_updated_org_notification(),
+        });
+      },
+      resetForm: false,
+    },
+  );
+
+  let orgResp = $derived(createAdminServiceGetOrganization(organization));
+  $effect(() => {
+    if ($orgResp.data?.organization) {
+      $form.name =
+        $orgResp.data.organization.displayName ||
+        $orgResp.data.organization.name;
+      $form.description = $orgResp.data.organization.description;
+    }
+  });
+
+  let changed = $derived(
+    $orgResp.data?.organization?.name !== $form.name ||
+      $orgResp.data?.organization?.description !== $form.description,
+  );
+
+  let error = $derived(
+    parseUpdateOrgError(
+      $updateOrgMutation.error as unknown as AxiosError<RpcStatus>,
+    ),
+  );
+</script>
+
+<SettingsContainer title={m.settings_org_title()}>
+  <form
+    id="org-update-form"
+    onsubmit={(e) => {
+      e.preventDefault();
+      submit(e);
+    }}
+    class="update-org-form"
+    use:enhance
+  >
+    <Input
+      bind:value={$form.name}
+      errors={$errors?.name}
+      id="name"
+      label={m.settings_name_label()}
+      description={m.settings_org_url_description({
+        slug: sanitizeOrgName($form.name),
+      })}
+      textClass="text-sm"
+      alwaysShowError
+      additionalClass="max-w-[520px]"
+    />
+    <Input
+      bind:value={$form.description}
+      errors={$errors?.description}
+      id="description"
+      label={m.settings_description_label()}
+      placeholder={m.settings_description_placeholder()}
+      textClass="text-sm"
+      additionalClass="max-w-[520px]"
+    />
+  </form>
+  {#if error?.message}
+    <div class="text-red-500 text-sm py-px">
+      {error.message}
+    </div>
+  {/if}
+  {#snippet action()}
+    <Button
+      onClick={submit}
+      type="primary"
+      loading={$updateOrgMutation.isPending}
+      disabled={!changed}
+    >
+      {m.settings_save_button()}
+    </Button>
+  {/snippet}
+</SettingsContainer>
+
+<style lang="postcss">
+  .update-org-form {
+    @apply flex flex-col gap-y-5 w-full;
+  }
+</style>

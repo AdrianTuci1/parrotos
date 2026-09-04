@@ -1,0 +1,50 @@
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipDescription from "@rilldata/web-common/components/tooltip/TooltipDescription.svelte";
+  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
+  import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+
+  export let measure: MetricsViewSpecMeasure;
+  export let value = "";
+  export let note: string | undefined = undefined;
+
+  $: description =
+    measure?.description || measure?.displayName || measure?.expression;
+  $: name = measure?.displayName || measure?.expression;
+</script>
+
+<TooltipContent maxWidth="280px">
+  <TooltipTitle>
+    <svelte:fragment slot="name">
+      {name}
+    </svelte:fragment>
+    <svelte:fragment slot="description">
+      {value}
+    </svelte:fragment>
+  </TooltipTitle>
+
+  <TooltipDescription>
+    {description}
+  </TooltipDescription>
+
+  {#if note}
+    <TooltipDescription>
+      {note}
+    </TooltipDescription>
+  {:else}
+    <TooltipShortcutContainer>
+      <div>
+        <StackingWord key="shift">{m.chart_copy_to_clipboard()}</StackingWord>
+        {m.bignumber_copy_value()}
+      </div>
+      <Shortcut>
+        <span style="font-family: var(--system);">⇧</span>
+        {m.bignumber_shift_click()}
+      </Shortcut>
+    </TooltipShortcutContainer>
+  {/if}
+</TooltipContent>

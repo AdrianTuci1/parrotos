@@ -1,0 +1,23 @@
+<script lang="ts">
+  import { ContextMenu as ContextMenuPrimitive } from "bits-ui";
+  import { cn } from "@rilldata/web-common/lib/shadcn";
+
+  type $$Props = ContextMenuPrimitive.GroupHeadingProps & {
+    inset?: boolean;
+  };
+
+  let className: $$Props["class"] = undefined;
+  export let inset: $$Props["inset"] = undefined;
+  export { className as class };
+</script>
+
+<ContextMenuPrimitive.GroupHeading
+  class={cn(
+    "px-2 py-1.5 text-sm font-semibold text-fg-primary",
+    inset && "pl-8",
+    className,
+  )}
+  {...$$restProps}
+>
+  <slot />
+</ContextMenuPrimitive.GroupHeading>

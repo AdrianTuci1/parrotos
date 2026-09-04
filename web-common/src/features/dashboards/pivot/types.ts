@@ -1,0 +1,228 @@
+import { type TimeRangeString } from "@rilldata/web-common/lib/time/types";
+import type {
+  MetricsViewSpecDimension,
+  MetricsViewSpecMeasure,
+  V1Expression,
+  V1MetricsViewAggregationResponseDataItem,
+  V1TimeGrain,
+} from "@rilldata/web-common/runtime-client";
+import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { QueryClient } from "@tanstack/svelte-query";
+import type {
+  ColumnDef,
+  ExpandedState,
+  SortingState,
+} from "tanstack-table-8-svelte-5";
+import type { Readable } from "svelte/store";
+
+export const COMPARISON_VALUE = "__previous";
+export const COMPARISON_DELTA = "__delta_abs";
+export const COMPARISON_PERCENT = "__delta_rel";
+export const ComparisonModifierSuffixRegex =
+  /__(?:previous|delta_abs|delta_rel)/;
+
+export interface PivotDataState {
+  isFetching: boolean;
+  error?: PivotQueryError[];
+  data: PivotDataRow[];
+  columnDef: ColumnDef<PivotDataRow>[];
+  assembled: boolean;
+  totalColumns: number; // total columns excluding row and group totals columns
+  reachedEndForRowData?: boolean;
+  totalsRowData?: PivotDataRow;
+  activeCellFilters?: PivotFilter;
+  columnDimensionAxes?: Record<string, string[]>;
+}
+
+export type PivotDataStore = Readable<PivotDataState>;
+
+export interface PivotCell {
+  rowId: string;
+  columnId: string;
+}
+
+export interface PivotDashboardContext {
+  runtimeClient: RuntimeClient;
+  metricsViewName: Readable<string>;
+  queryClient: QueryClient;
+  enabled: Readable<boolean>;
+}
+
+export interface PivotState {
+  columns: PivotChipData[];
+  rows: PivotChipData[];
+  expanded: ExpandedState;
+  sorting: SortingState;
+  columnPage: number;
+  rowPage: number;
+  enableComparison: boolean;
+  tableMode: PivotTableMode;
+  activeCell: PivotCell | null;
+  showTotalsColumn: boolean;
+  showTotalsRow: boolean;
+  rowLimit?: number;
+  outermostRowLimit?: number; // Local limit for outermost dimension only
+  nestedRowLimits?: Record<string, number>; // Local per-row limits keyed by expand index (e.g., "0.1.2")
+  // Per-measure conditional formatting, keyed by measure name. Measures not
+  // present here render without any cell formatting.
+  measureFormatting?: Record<string, PivotMeasureFormatting>;
+}
+
+export type PivotTableMode = "flat" | "nest";
+
+// Conditional formatting applied to a measure's cells in the pivot table,
+// discriminated on `mode`.
+export type PivotMeasureFormatting =
+  | PivotScaleFormatting
+  | PivotRulesFormatting;
+
+// Value-scaled formatting: a color gradient (heatmap) or proportional bar
+// (data_bar) over the measure's min-max domain in the current result.
+export type PivotScaleFormatting = {
+  mode: "heatmap" | "data_bar";
+  // For heatmap: the gradient color scheme. For data_bar: the source of the bar
+  // color. Keyed into PIVOT_FORMATTING_SCHEMES (e.g. "greens", "redYellowGreen",
+  // "theme-sequential").
+  scheme: string;
+};
+
+// Threshold-based formatting: an ordered rule list where the first matching
+// rule colors the cell (Excel convention). Cells matching no rule are left
+// unformatted.
+export type PivotRulesFormatting = {
+  mode: "rules";
+  rules: PivotFormatRule[];
+};
+
+export type PivotFormatRuleOperator =
+  | "gt"
+  | "gte"
+  | "lt"
+  | "lte"
+  | "eq"
+  | "between";
+
+export type PivotFormatRule = {
+  operator: PivotFormatRuleOperator;
+  value: number;
+  // Upper bound (inclusive), only for "between".
+  value2?: number;
+  // A semantic color key from PIVOT_RULE_COLORS (e.g. "positive") or a raw hex
+  // string (with or without the leading "#").
+  color: string;
+};
+
+export interface PivotDataRow {
+  subRows?: PivotDataRow[];
+
+  [key: string]: string | number | null | PivotDataRow[] | undefined;
+}
+
+export interface TimeFilters {
+  timeStart: string;
+  interval: V1TimeGrain;
+  // Time end represents the start time of the last interval for a range
+  timeEnd?: string;
+}
+
+export interface PivotTimeConfig {
+  timeStart: string | undefined;
+  timeEnd: string | undefined;
+  timeZone: string;
+  timeDimension: string;
+}
+
+export interface PivotQueryError {
+  statusCode: number | null;
+  message?: string;
+  traceId?: string;
+}
+
+/**
+ * This is the config that is passed to the pivot data store methods
+ */
+export interface PivotDataStoreConfig {
+  ready?: boolean;
+  measureNames: string[];
+  rowDimensionNames: string[];
+  colDimensionNames: string[];
+  allMeasures: MetricsViewSpecMeasure[];
+  allDimensions: MetricsViewSpecDimension[];
+  whereFilter: V1Expression;
+  pivot: PivotState;
+  time: PivotTimeConfig;
+  enableComparison: boolean;
+  comparisonTime: TimeRangeString | undefined;
+  searchText: string | undefined;
+  isFlat: boolean;
+}
+
+export interface PivotAxesData {
+  isFetching: boolean;
+  data?: Record<string, string[]> | undefined;
+  totals?:
+    | Record<string, V1MetricsViewAggregationResponseDataItem[]>
+    | undefined;
+  error?: PivotQueryError[];
+}
+
+export interface PivotFilter {
+  filters: V1Expression | undefined;
+  timeRange: TimeRangeString;
+}
+
+// OLD PIVOT TYPES
+export type PivotMeasure = {
+  def: string;
+  minichart?: boolean;
+  minichartDimension?: string;
+  /* expand with other props over time as needed */
+};
+
+export type PivotDimension = {
+  def: string;
+  /* other props like sort criteria, limits can go here */
+};
+
+export type PivotColumnSet = {
+  dims: PivotDimension[];
+  measures: PivotMeasure[];
+};
+
+export type PivotConfig = {
+  rowDims: PivotDimension[];
+  colSets: PivotColumnSet[];
+  sort: any; // TBD
+  expanded: any[];
+};
+
+export type PivotPos = {
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+};
+
+export type PivotRenderCallback = (data: {
+  x: number;
+  y: number;
+  value: any;
+  element: HTMLElement;
+}) => string | void;
+
+export type PivotSidebarSection = "Time" | "Measures" | "Dimensions";
+
+export type PivotChipData = {
+  id: string;
+  title: string;
+  type: PivotChipType;
+  description?: string;
+};
+
+export enum PivotChipType {
+  Time = "time",
+  Measure = "measure",
+  Dimension = "dimension",
+}
+
+export type MeasureType = "measure" | "comparison_delta" | "comparison_percent";

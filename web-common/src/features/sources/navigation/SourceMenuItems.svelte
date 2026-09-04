@@ -1,0 +1,272 @@
+<script lang="ts">
+  import CanvasIcon from "@rilldata/web-common/components/icons/CanvasIcon.svelte";
+  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
+  import Import from "@rilldata/web-common/components/icons/Import.svelte";
+  import Model from "@rilldata/web-common/components/icons/Model.svelte";
+  import RefreshIcon from "@rilldata/web-common/components/icons/RefreshIcon.svelte";
+  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
+  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
+  import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry";
+  import { openResourceGraphQuickView } from "@rilldata/web-common/features/resource-graph/quick-view/quick-view-store";
+  import {
+    useIsLocalFileConnector,
+    useSourceFromYaml,
+  } from "@rilldata/web-common/features/sources/selectors";
+  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import { overlay } from "@rilldata/web-common/layout/overlay-store";
+  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
+  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  import {
+    MetricsEventScreenName,
+    MetricsEventSpace,
+  } from "@rilldata/web-common/metrics/service/MetricsTypes";
+  import type { V1Source } from "@rilldata/web-common/runtime-client";
+  import { V1ReconcileStatus } from "@rilldata/web-common/runtime-client";
+  import { useQueryClient } from "@tanstack/svelte-query";
+  import { GitBranch, WandIcon } from "lucide-svelte";
+  import MetricsViewIcon from "../../../components/icons/MetricsViewIcon.svelte";
+  import { useRuntimeClient } from "../../../runtime-client/v2";
+  import { createSqlModelFromTable } from "../../connectors/code-utils";
+  import {
+    createCanvasDashboardFromTableWithAgent,
+    useCreateMetricsViewFromTableUIAction,
+    useCreateMetricsViewWithCanvasUIAction,
+  } from "../../metrics-views/ai-generation/generateMetricsView";
+  import {
+    refreshSource,
+    replaceSourceWithUploadedFile,
+  } from "../refreshSource";
+
+  export let filePath: string;
+
+  const runtimeClient = useRuntimeClient();
+
+  $: fileArtifact = fileArtifacts.getFileArtifact(filePath);
+
+  const queryClient = useQueryClient();
+
+  $: ({ instanceId } = runtimeClient);
+
+  const { ai, developerChat } = featureFlags;
+
+  $: sourceQuery = fileArtifact.getResource(queryClient);
+  let source: V1Source | undefined;
+  $: source = $sourceQuery.data?.source;
+  $: sinkConnector = $sourceQuery.data?.source?.spec?.sinkConnector;
+  $: sourceHasError = fileArtifact.getHasErrors(queryClient);
+  $: sourceIsIdle =
+    $sourceQuery.data?.meta?.reconcileStatus ===
+    V1ReconcileStatus.RECONCILE_STATUS_IDLE;
+  $: disableCreateDashboard = $sourceHasError || !sourceIsIdle;
+  $: connector = source?.state?.connector as string;
+  const database = ""; // Sources are ingested into the default database
+  const databaseSchema = ""; // Sources are ingested into the default database schema
+  $: tableName = source?.state?.table as string;
+
+  $: sourceResource = $sourceQuery.data;
+
+  function viewGraph() {
+    if (!sourceResource) {
+      console.warn(
+        "[SourceMenuItems] Cannot open resource graph: resource unavailable.",
+      );
+      return;
+    }
+    openResourceGraphQuickView(sourceResource);
+  }
+
+  $: sourceFromYaml = useSourceFromYaml(runtimeClient, filePath);
+
+  $: createMetricsViewFromTable = useCreateMetricsViewFromTableUIAction(
+    runtimeClient,
+    instanceId,
+    sinkConnector as string,
+    database,
+    databaseSchema,
+    tableName,
+    false,
+    BehaviourEventMedium.Menu,
+    MetricsEventSpace.LeftPanel,
+  );
+
+  $: createExploreFromTable = useCreateMetricsViewFromTableUIAction(
+    runtimeClient,
+    instanceId,
+    sinkConnector as string,
+    database,
+    databaseSchema,
+    tableName,
+    true,
+    BehaviourEventMedium.Menu,
+    MetricsEventSpace.LeftPanel,
+  );
+
+  $: createCanvasDashboardFromTable = useCreateMetricsViewWithCanvasUIAction(
+    runtimeClient,
+    instanceId,
+    sinkConnector as string,
+    database,
+    databaseSchema,
+    tableName,
+    BehaviourEventMedium.Menu,
+    MetricsEventSpace.LeftPanel,
+  );
+
+  const handleCreateModel = async () => {
+    try {
+      const previousActiveEntity = getScreenNameFromPage();
+      const addDevLimit = false; // Typically, the `dev` limit would be applied on the Source itself
+      const [newModelPath, newModelName] = await createSqlModelFromTable(
+        runtimeClient,
+        queryClient,
+        connector,
+        database,
+        databaseSchema,
+        tableName,
+        addDevLimit,
+      );
+      await navigateToFile(newModelPath);
+      await behaviourEvent?.fireNavigationEvent(
+        newModelName,
+        BehaviourEventMedium.Menu,
+        MetricsEventSpace.LeftPanel,
+        previousActiveEntity,
+        MetricsEventScreenName.Model,
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onRefreshSource = async () => {
+    const connector: string | undefined =
+      source?.state?.connector ?? $sourceFromYaml.data?.type;
+    if (!connector) {
+      // if parse failed or there is no catalog entry, we cannot refresh source
+      // TODO: show the import source modal with fixed tableName
+      return;
+    }
+    try {
+      await refreshSource(
+        connector,
+        filePath,
+        $sourceQuery.data?.meta?.name?.name ?? "",
+        runtimeClient,
+      );
+    } catch {
+      // no-op
+    }
+  };
+
+  $: isLocalFileConnectorQuery = useIsLocalFileConnector(
+    runtimeClient,
+    filePath,
+  );
+  $: isLocalFileConnector = $isLocalFileConnectorQuery.data;
+
+  async function onReplaceSource() {
+    await replaceSourceWithUploadedFile(runtimeClient, filePath);
+    overlay.set(null);
+  }
+
+  async function onGenerateCanvasDashboard() {
+    // Use developer agent if enabled, otherwise fall back to RPC
+    if ($developerChat) {
+      await createCanvasDashboardFromTableWithAgent(
+        runtimeClient,
+        sinkConnector as string,
+        database,
+        databaseSchema,
+        tableName,
+      );
+    } else {
+      await createCanvasDashboardFromTable();
+    }
+  }
+</script>
+
+<NavigationMenuItem onclick={viewGraph}>
+  <GitBranch slot="icon" size="14px" />
+  View DAG graph
+</NavigationMenuItem>
+
+<NavigationMenuItem onclick={handleCreateModel}>
+  <Model slot="icon" />
+  Create new model
+</NavigationMenuItem>
+
+<NavigationMenuItem
+  disabled={disableCreateDashboard}
+  onclick={createMetricsViewFromTable}
+>
+  <MetricsViewIcon slot="icon" />
+  <div class="flex gap-x-2 items-center">
+    Generate Metrics View
+    {#if $ai}
+      with AI
+      <WandIcon class="w-3 h-3" />
+    {/if}
+  </div>
+  <svelte:fragment slot="description">
+    {#if $sourceHasError}
+      Source has errors
+    {:else if !sourceIsIdle}
+      Source is being ingested
+    {/if}
+  </svelte:fragment>
+</NavigationMenuItem>
+
+<NavigationMenuItem
+  disabled={disableCreateDashboard}
+  onclick={onGenerateCanvasDashboard}
+>
+  <CanvasIcon slot="icon" />
+  <div class="flex gap-x-2 items-center">
+    Generate Canvas Dashboard
+    {#if $ai}
+      with AI
+      <WandIcon class="w-3 h-3" />
+    {/if}
+  </div>
+  <svelte:fragment slot="description">
+    {#if $sourceHasError}
+      Source has errors
+    {:else if !sourceIsIdle}
+      Source is being ingested
+    {/if}
+  </svelte:fragment>
+</NavigationMenuItem>
+
+<NavigationMenuItem
+  disabled={disableCreateDashboard}
+  onclick={createExploreFromTable}
+>
+  <ExploreIcon slot="icon" />
+  <div class="flex gap-x-2 items-center">
+    Generate Explore Dashboard
+    {#if $ai}
+      with AI
+      <WandIcon class="w-3 h-3" />
+    {/if}
+  </div>
+  <svelte:fragment slot="description">
+    {#if $sourceHasError}
+      Source has errors
+    {:else if !sourceIsIdle}
+      Source is being ingested
+    {/if}
+  </svelte:fragment>
+</NavigationMenuItem>
+
+<NavigationMenuItem onclick={onRefreshSource}>
+  <RefreshIcon slot="icon" />
+  Refresh source
+</NavigationMenuItem>
+
+{#if isLocalFileConnector}
+  <NavigationMenuItem onclick={onReplaceSource}>
+    <Import slot="icon" />
+    Replace source with uploaded file
+  </NavigationMenuItem>
+{/if}

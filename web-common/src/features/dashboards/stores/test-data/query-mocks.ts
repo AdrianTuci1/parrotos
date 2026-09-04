@@ -1,0 +1,130 @@
+import type { CreateQueryResult } from "@tanstack/svelte-query";
+import {
+  AD_BIDS_INIT_DIMENSIONS,
+  AD_BIDS_INIT_MEASURES,
+  AD_BIDS_METRICS_INIT,
+  AD_BIDS_NAME,
+} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+import type { ExploreValidSpecResponse } from "@rilldata/web-common/features/explores/selectors";
+import type {
+  MetricsViewSpecDimension,
+  MetricsViewSpecMeasure,
+  V1MetricsViewSpec,
+} from "@rilldata/web-common/runtime-client";
+import type { ConnectError } from "@connectrpc/connect";
+import type { QueryObserverResult } from "@tanstack/query-core";
+import { writable } from "svelte/store";
+
+export function createMetricsMetaQueryMock(
+  shouldInit = true,
+): CreateQueryResult<V1MetricsViewSpec, ConnectError> & {
+  setMeasures: (measures: Array<MetricsViewSpecMeasure>) => void;
+  setDimensions: (dimensions: Array<MetricsViewSpecDimension>) => void;
+} {
+  const { update, subscribe } = writable<
+    QueryObserverResult<V1MetricsViewSpec, ConnectError>
+  >({
+    data: undefined,
+    isSuccess: false,
+    isRefetching: false,
+  } as any);
+
+  const mock = {
+    subscribe,
+    setMeasures: (measures: MetricsViewSpecMeasure[]) =>
+      update((value) => {
+        value.isSuccess = true;
+        value.data ??= {
+          measures: [],
+          dimensions: [],
+        };
+        value.data.measures = measures;
+        return value;
+      }),
+    setDimensions: (dimensions: MetricsViewSpecDimension[]) =>
+      update((value) => {
+        value.isSuccess = true;
+        value.data ??= {
+          measures: [],
+          dimensions: [],
+        };
+        value.data.dimensions = dimensions;
+        return value;
+      }),
+  };
+
+  if (shouldInit) {
+    mock.setMeasures(AD_BIDS_INIT_MEASURES);
+    mock.setDimensions(AD_BIDS_INIT_DIMENSIONS);
+  }
+
+  return mock;
+}
+
+export function createValidSpecQueryMock(
+  metricsView = AD_BIDS_NAME,
+  shouldInit = true,
+  initMetrics: V1MetricsViewSpec = AD_BIDS_METRICS_INIT,
+): CreateQueryResult<ExploreValidSpecResponse, ConnectError> & {
+  setMeasures: (measures: Array<MetricsViewSpecMeasure>) => void;
+  setDimensions: (dimensions: Array<MetricsViewSpecDimension>) => void;
+} {
+  const { update, subscribe } = writable<
+    QueryObserverResult<ExploreValidSpecResponse, ConnectError>
+  >({
+    data: undefined,
+    isSuccess: false,
+    isRefetching: false,
+  } as any);
+
+  function initData() {
+    return {
+      metricsView: {
+        measures: [],
+        dimensions: [],
+      },
+      explore: {
+        metricsView,
+        measures: [],
+        dimensions: [],
+      },
+    };
+  }
+
+  const mock = {
+    subscribe,
+    setMeasures: (
+      measures: MetricsViewSpecMeasure[],
+      exploreMeasures?: string[],
+    ) => {
+      exploreMeasures ??= measures.map((m) => m.name!);
+      update((value) => {
+        value.isSuccess = true;
+        value.data ??= initData();
+        value.data.metricsView!.measures = measures;
+        value.data.explore!.measures = exploreMeasures;
+        return value;
+      });
+    },
+    setDimensions: (
+      dimensions: MetricsViewSpecDimension[],
+      exploreDimensions?: string[],
+    ) => {
+      exploreDimensions ??= dimensions.map((d) => d.name!);
+      update((value) => {
+        value.isSuccess = true;
+        value.data ??= initData();
+        value.data.metricsView!.dimensions = dimensions;
+        value.data.explore!.dimensions = exploreDimensions;
+        return value;
+      });
+    },
+  };
+
+  if (shouldInit) {
+    mock.setMeasures(initMetrics.measures!);
+    mock.setDimensions(initMetrics.dimensions!);
+  }
+
+  return mock;
+}

@@ -1,0 +1,232 @@
+package drivers
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"path/filepath"
+	"strings"
+	"time"
+
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+var ErrRemoteAhead = fmt.Errorf("remote ahead of local state, please pull first")
+
+type MergeFailedError struct {
+	Output string
+	// MergedBranch is the name of the branch that was being merged when the error occurred.
+	MergedBranch string
+	// Conflict is true if the merge failed due to conflicts.
+	Conflict bool
+}
+
+func (e *MergeFailedError) Error() string {
+	return e.Output
+}
+
+// RepoStore is implemented by drivers capable of storing project code files.
+// All paths start with '/' and are relative to the repo root.
+type RepoStore interface {
+	// Root returns an absolute path to a physical directory where files are stored.
+	// It's provided as an escape hatch, but should not generally be used as it does not have consistency guarantees.
+	Root(ctx context.Context) (string, error)
+	// ListGlob lists all files in the repo matching the glob pattern.
+	ListGlob(ctx context.Context, glob string, skipDirs bool) ([]DirEntry, error)
+	// Get retrieves the content of a file at the specified path.
+	Get(ctx context.Context, path string) (string, error)
+	// Hash returns a unique hash of the contents of the files at the specified paths.
+	// If a file does not exist, it is skipped (does not return an error).
+	Hash(ctx context.Context, paths []string) (string, error)
+	// Stat returns metadata about a file.
+	Stat(ctx context.Context, path string) (*FileInfo, error)
+	// Put creates or overwrites a file.
+	Put(ctx context.Context, path string, reader io.Reader) error
+	// MkdirAll creates a directory and any required parent directories.
+	MkdirAll(ctx context.Context, path string) error
+	// Rename moves a file from one path to another.
+	Rename(ctx context.Context, fromPath string, toPath string) error
+	// Delete removes a file or directory.
+	// If force is true, it will delete non-empty directories.
+	Delete(ctx context.Context, path string, force bool) error
+	// Watch sets up a watcher for changes in the repo.
+	// The callback will be called with events for changes in the repo.
+	// The function does not return until the context is cancelled or an error occurs.
+	Watch(ctx context.Context, cb WatchCallback) error
+
+	// ListCommits returns a list of commits in reverse chronological order.
+	// fromCommit is the commit SHA to start from (empty for HEAD). Returns commits and next page token.
+	ListCommits(ctx context.Context, fromCommit string, limit int) (commits []Commit, nextPageToken string, err error)
+	// Status returns the current status of the repository.
+	// If remoteBranch is non-empty and the repo is git-backed, ahead/behind counts compare
+	// against `<remote>/<remoteBranch>` instead of the upstream of the current local branch.
+	Status(ctx context.Context, remoteBranch string) (*RepoStatus, error)
+	// Diff lists the files that differ from the comparison branch and, optionally, the combined patch.
+	// If remoteBranch is non-empty, the comparison is against `<remote>/<remoteBranch>` instead of
+	// the upstream of the current local branch. If includeDiff is set, the combined unified patch is
+	// also computed. If fetch is set, the remote-tracking ref is updated first; otherwise the changes
+	// are computed against the already-fetched ref.
+	Diff(ctx context.Context, remoteBranch string, includeDiff, fetch bool) (*RepoDiff, error)
+	// Revert discards local changes for the given files, resetting them to the comparison branch's
+	// state (the same ref used by Diff). paths are relative to the project subpath, matching the paths
+	// returned by Diff; paths that are not actually changed are skipped. If paths is empty, all changed
+	// files are reverted. It returns the subpath-relative paths that were reverted.
+	Revert(ctx context.Context, remoteBranch string, paths []string) ([]string, error)
+	// Pull synchronizes local and remote state.
+	// If discardChanges is true, it will discard any local changes made using Put/Rename/etc. and force synchronize to the remote state.
+	// If forceHandshake is true, it will re-verify any cached config. Specifically, this should be used when external config changes, such as the Git branch or file archive ID.
+	Pull(ctx context.Context, opts *PullOptions) error
+	// Commit commits local changes to the git repository (equivalent to git commit -am <message>).
+	Commit(ctx context.Context, message string) (string, error)
+	// CommitAndPush commits local changes to the remote repository and pushes them.
+	CommitAndPush(ctx context.Context, message string, force bool) error
+	// RestoreCommit creates a new commit that restores the state of the repo to the specified commit SHA.
+	RestoreCommit(ctx context.Context, commitSHA string) (string, error)
+	// CommitHash returns a unique ID for the state of the remote files currently served (does not change on uncommitted local changes).
+	CommitHash(ctx context.Context) (string, error)
+	// CommitTimestamp returns the update timestamp for the current remote files (does not change on uncommitted local changes).
+	CommitTimestamp(ctx context.Context) (time.Time, error)
+	// ListBranches returns a list of branch names and the current branch name.
+	ListBranches(ctx context.Context) ([]string, string, error)
+	// SwitchBranch switches to the specified branch. If createIfNotExists is true, creates the branch if it doesn't exist.
+	SwitchBranch(ctx context.Context, branch string, createIfNotExists, ignoreLocalChanges bool) error
+	// MergeToBranch merges the current branch to the specified branch.
+	// In case of merge conflicts, prefer current changes if force is true else return an error without merging.
+	MergeToBranch(ctx context.Context, branch string, force bool) error
+}
+
+// FileInfo contains metadata about a file.
+type FileInfo struct {
+	LastUpdated time.Time
+	IsDir       bool
+}
+
+// DirEntry represents an entry in a directory listing.
+type DirEntry struct {
+	Path  string
+	IsDir bool
+}
+
+// WatchCallback is a function that will be called with file events.
+type WatchCallback func(event []WatchEvent)
+
+// WatchEvent represents a file event.
+type WatchEvent struct {
+	Type runtimev1.FileEvent
+	Path string
+	Dir  bool
+}
+
+// RepoListLimit is the maximum number of files that can be listed in a call to RepoStore.ListGlob.
+// This limit is effectively a cap on the number of files in a project because `rill start` lists the project directory using a "**" glob.
+const RepoListLimit = 2000
+
+// ErrRepoListLimitExceeded should be returned when RepoListLimit is exceeded.
+var ErrRepoListLimitExceeded = fmt.Errorf("glob exceeded limit of %d matched files", RepoListLimit)
+
+// IsIgnored returns true if the path (and any files in nested directories) should be ignored.
+// It checks ignoredPaths as well as any additional paths specified.
+func IsIgnored(path string, additionalIgnoredPaths []string) bool {
+	for _, dir := range ignoredPaths {
+		if path == dir {
+			return true
+		}
+		if strings.HasPrefix(path, dir) && path[len(dir)] == '/' {
+			return true
+		}
+	}
+	for _, dir := range additionalIgnoredPaths {
+		if path == dir {
+			return true
+		}
+		if strings.HasPrefix(path, dir) && path[len(dir)] == '/' {
+			return true
+		}
+	}
+	return false
+}
+
+// ResolveRepoPath resolves a repo-relative path against the given root directory and returns the resulting file system path.
+// It returns an error if the resolved path falls outside the root, which prevents path traversal using ".." segments.
+// Repo drivers must use it instead of joining untrusted paths onto the root directly.
+func ResolveRepoPath(root, path string) (string, error) {
+	root = filepath.Clean(root)
+	fp := filepath.Join(root, path)
+	if fp != root && !strings.HasPrefix(fp, root+string(filepath.Separator)) {
+		return "", fmt.Errorf("path %q is outside the repo root", path)
+	}
+	return fp, nil
+}
+
+type RepoStatus struct {
+	// IsGitRepo indicates if the repo is backed by a Git repository.
+	IsGitRepo     bool
+	Branch        string
+	RemoteURL     string
+	Subpath       string
+	ManagedRepo   bool
+	LocalChanges  bool // true if there are local changes (staged, unstaged, or untracked)
+	LocalCommits  int32
+	RemoteCommits int32
+	// ChangedFiles lists the files that would land on the comparison branch.
+	// Only populated when Status is called with changedFiles set to true.
+	ChangedFiles []RepoFileChange
+}
+
+type RepoFileStatus int
+
+const (
+	RepoFileStatusUnspecified RepoFileStatus = iota
+	RepoFileStatusAdded
+	RepoFileStatusModified
+	RepoFileStatusDeleted
+	RepoFileStatusRenamed
+)
+
+// RepoFileChange is a single file that differs from a comparison branch.
+type RepoFileChange struct {
+	Path string
+	// OldPath is the previous path; only set when Status is RepoFileStatusRenamed.
+	OldPath string
+	Status  RepoFileStatus
+}
+
+// RepoDiff is the set of changes between the local repo and a comparison branch.
+type RepoDiff struct {
+	// IsGitRepo indicates if the repo is backed by a Git repository.
+	IsGitRepo bool
+	// ChangedFiles lists the files that would land on the comparison branch.
+	ChangedFiles []RepoFileChange
+	// Diff is the combined unified patch across ChangedFiles; only set when IncludeDiff is true.
+	Diff string
+}
+
+type PullOptions struct {
+	ForceHandshake bool
+
+	// If userTriggered is true, the latest changes will be pulled from the remote repository honouring DiscardChanges.
+	UserTriggered  bool
+	DiscardChanges bool
+}
+
+// Commit represents a git commit.
+type Commit struct {
+	CommitSha     string
+	AuthorName    string
+	AuthorEmail   string
+	CommitMessage string
+	CommittedOn   *timestamppb.Timestamp
+}
+
+// ignoredPaths is a list of paths that are always ignored by the parser.
+var ignoredPaths = []string{
+	"/tmp",
+	"/.git",
+	"/.github",
+	"/node_modules",
+	"/.DS_Store",
+	"/.vscode",
+	"/.idea",
+	"/.rillcloud",
+}

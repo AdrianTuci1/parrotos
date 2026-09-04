@@ -1,0 +1,562 @@
+<script lang="ts">
+  import * as Alert from "@rilldata/web-common/components/alert-dialog";
+  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import Input from "@rilldata/web-common/components/forms/Input.svelte";
+  import Label from "@rilldata/web-common/components/forms/Label.svelte";
+  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
+  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
+  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import {
+    NUMERICS,
+    TIMESTAMPS,
+  } from "@rilldata/web-common/lib/duckdb-data-types";
+  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
+  import type { V1ProfileColumn } from "@rilldata/web-common/runtime-client";
+  import { parseDocument, YAMLMap, YAMLSeq } from "yaml";
+  import { FileArtifact } from "../entity-management/file-artifact";
+  import { YAMLDimension, YAMLMeasure, type MenuOption } from "./lib";
+  import SimpleSqlExpression from "./SimpleSQLExpression.svelte";
+  import TagInput from "@rilldata/web-common/components/forms/TagInput.svelte";
+
+  export let item: YAMLMeasure | YAMLDimension;
+  export let fileArtifact: FileArtifact;
+  export let index: number;
+  export let type: "measures" | "dimensions";
+  export let columns: V1ProfileColumn[];
+  export let editing: boolean;
+  export let unsavedChanges: boolean;
+  export let switchView: () => void;
+  export let onDelete: () => void;
+  export let onCancel: (unsavedChanges: boolean) => void;
+  export let resetEditing: () => void;
+
+  let editingClone = structuredClone(item);
+  let showTypeMismatchModal = false;
+  let previousTypeValue: "time" | "geo" | "categorical" | undefined = (
+    item as YAMLDimension
+  ).type;
+  let typeMismatchMessage = "";
+
+  let columnOptions: MenuOption[] = columns.map(({ name, type }) => ({
+    value: name ?? "",
+    label: name ?? "",
+    type,
+  }));
+
+  let properties: Record<
+    string,
+    Array<{
+      label: string;
+      selected: number;
+      optional?: true;
+      fontFamily?: string;
+      fields: Array<{
+        key: string;
+        hint?: string;
+        label: string;
+        options?: MenuOption[];
+        placeholder?: string;
+        boolean?: true;
+      }>;
+    }>
+  > = {
+    measures: [
+      {
+        label: "SQL expression",
+        fontFamily: `"Source Code Variable", monospace`,
+        fields: [
+          {
+            key: "expression",
+            label: "Simple",
+            options: columnOptions,
+            placeholder: "Column from model",
+          },
+          {
+            key: "expression",
+            label: "Advanced",
+          },
+        ],
+        selected: editingClone.expression ? 1 : 0,
+      },
+      {
+        label: "Name",
+        fontFamily: `"Source Code Variable", monospace`,
+        fields: [
+          {
+            key: "name",
+            hint: "A stable identifier for use in code",
+            label: "Name",
+          },
+        ],
+        selected: 0,
+      },
+      {
+        optional: true,
+        label: "Display name",
+        fields: [
+          {
+            key: "display_name",
+            hint: "Used on dashboards and charts. Inferred from name when not provided",
+
+            label: "Display name",
+          },
+        ],
+        selected: 0,
+      },
+      {
+        label: "Format",
+        fields: [
+          {
+            label: "Simple",
+            key: "format_preset",
+            options: Object.values(FormatPreset).map((value) => ({
+              value,
+              label: value,
+            })),
+            placeholder: "Select a format",
+          },
+          {
+            label: "d3-format",
+            key: "format_d3",
+          },
+        ],
+        selected: editingClone["format_d3"] ? 1 : 0,
+      },
+      {
+        optional: true,
+        label: "Description",
+        fields: [
+          {
+            key: "description",
+
+            label: "Description",
+          },
+        ],
+        selected: 0,
+      },
+      {
+        label: "Summable metric",
+        optional: true,
+        fields: [
+          {
+            key: "valid_percent_of_total",
+            hint: "Values can be added to yield a valid sum",
+            label: "Summable metric",
+            boolean: true,
+          },
+        ],
+        selected: 0,
+      },
+      {
+        label: "Lower is better",
+        optional: true,
+        fields: [
+          {
+            key: "lower_is_better",
+            hint: "When enabled, increases are highlighted red and decreases use the default color, instead of the other way around",
+            label: "Lower is better",
+            boolean: true,
+          },
+        ],
+        selected: 0,
+      },
+    ],
+    dimensions: [
+      {
+        label: "SQL expression",
+        fontFamily: `"Source Code Variable", monospace`,
+        fields: [
+          {
+            placeholder: "Column from model",
+            options: columnOptions,
+            key: "column",
+            label: "Simple",
+          },
+          {
+            label: "Advanced",
+            key: "expression",
+          },
+        ],
+        selected: editingClone.expression ? 1 : 0,
+      },
+      {
+        label: "Name",
+        fontFamily: `"Source Code Variable", monospace`,
+        fields: [
+          {
+            key: "name",
+            hint: "A stable identifier for use in code",
+            label: "Name",
+          },
+        ],
+        selected: 0,
+      },
+      {
+        label: "Display name",
+        optional: true,
+        fields: [
+          {
+            key: "display_name",
+            hint: "Used on dashboards and charts. Inferred from name when not provided",
+
+            label: "Display name",
+          },
+        ],
+        selected: 0,
+      },
+      {
+        label: "Description",
+        optional: true,
+        fields: [
+          {
+            key: "description",
+
+            label: "Description",
+          },
+        ],
+        selected: 0,
+      },
+      {
+        label: "Type",
+        optional: true,
+        fields: [
+          {
+            key: "type",
+            label: "Type",
+            options: [
+              { label: "Categorical", value: "categorical" },
+              { label: "Time", value: "time" },
+              { label: "Geospatial", value: "geo" },
+            ],
+          },
+        ],
+        selected: 0,
+      },
+    ],
+  };
+
+  $: numericColumns = columnOptions.filter(
+    ({ type }) => type && NUMERICS.has(type),
+  );
+
+  // Returns column type only for simple column refs or expressions that exactly match a column name
+  $: selectedColumnType = (() => {
+    if (type !== "dimensions") return undefined;
+    const dimensionClone = editingClone as YAMLDimension;
+
+    if (dimensionClone.column) {
+      return columns.find((c) => c.name === dimensionClone.column)?.type;
+    }
+
+    if (dimensionClone.expression) {
+      return columns.find((c) => c.name === dimensionClone.expression.trim())
+        ?.type;
+    }
+
+    return undefined;
+  })();
+
+  $: isColumnTimeType = selectedColumnType
+    ? TIMESTAMPS.has(selectedColumnType)
+    : false;
+
+  function handleTypeChange(newType: string) {
+    const typedNewType = newType as "time" | "geo" | "categorical";
+
+    if (typedNewType === "time" && !isColumnTimeType && selectedColumnType) {
+      typeMismatchMessage = `This column is stored as ${selectedColumnType}, not a time value. Do you want to treat this dimension as a time type anyway?`;
+      showTypeMismatchModal = true;
+    } else if (
+      typedNewType !== "time" &&
+      isColumnTimeType &&
+      selectedColumnType
+    ) {
+      typeMismatchMessage = `This column is stored as a time value (${selectedColumnType}). Do you want to treat this dimension as ${typedNewType} anyway?`;
+      showTypeMismatchModal = true;
+    } else {
+      previousTypeValue = typedNewType;
+    }
+  }
+
+  function confirmTypeChange() {
+    previousTypeValue = editingClone.type as
+      | "time"
+      | "geo"
+      | "categorical"
+      | undefined;
+    showTypeMismatchModal = false;
+  }
+
+  function cancelTypeChange() {
+    editingClone.type = previousTypeValue;
+    showTypeMismatchModal = false;
+  }
+
+  $: ({ editorContent, updateEditorContent } = fileArtifact);
+
+  // Suggestions: existing tags across all dimensions and measures in this file.
+  $: tagSuggestions = (() => {
+    try {
+      const doc = parseDocument($editorContent ?? "");
+      const seen = new Set<string>();
+      for (const section of ["dimensions", "measures"] as const) {
+        const seq = doc.get(section);
+        if (!(seq instanceof YAMLSeq)) continue;
+        for (const node of seq.items) {
+          if (!(node instanceof YAMLMap)) continue;
+          const t = node.get("tags");
+          if (!(t instanceof YAMLSeq)) continue;
+          for (const tagNode of t.items) {
+            const raw =
+              typeof tagNode === "string"
+                ? tagNode
+                : tagNode &&
+                    typeof tagNode === "object" &&
+                    "value" in tagNode &&
+                    typeof (tagNode as { value: unknown }).value === "string"
+                  ? (tagNode as { value: string }).value
+                  : "";
+            const value = raw.trim();
+            if (value) seen.add(value);
+          }
+        }
+      }
+      return Array.from(seen);
+    } catch {
+      return [];
+    }
+  })();
+
+  $: requiredPropertiesUnfilled = properties[type]
+    .filter(({ optional, fields, selected }) => {
+      const field = fields[selected];
+      if (!field) return false;
+      const value = editingClone[field.key];
+      return !optional && (value === undefined || value === "");
+    })
+    .map(({ label }) => label);
+
+  $: unsavedChanges = Object.keys(editingClone).some((key) => {
+    const a = editingClone[key];
+    const b = item?.[key];
+    if (Array.isArray(a) && Array.isArray(b)) {
+      return a.length !== b.length || a.some((v, i) => v !== b[i]);
+    }
+    return a !== b || (item?.["format_preset"] && item?.["format_d3"]);
+  });
+
+  async function saveChanges() {
+    const parsedDocument = parseDocument($editorContent ?? "");
+    let sequence = parsedDocument.get(type);
+
+    if (!(sequence instanceof YAMLSeq) || sequence.items.length === 0) {
+      sequence = new YAMLSeq();
+      parsedDocument.set(type, sequence);
+    }
+
+    if (!(sequence instanceof YAMLSeq)) {
+      throw new Error("Invalid YAML document");
+    }
+
+    const items = sequence.items as YAMLMap[];
+    const newItem = items[index] ?? new YAMLMap();
+
+    properties[type].forEach(({ selected, fields, label }) => {
+      const { key } = fields[selected];
+      if (label === "Format") {
+        if (key === "format_preset") {
+          newItem.delete("format_d3");
+        } else {
+          newItem.delete("format_preset");
+        }
+      } else if (label === "SQL expression" && type === "dimensions") {
+        if (key === "expression") {
+          newItem.delete("column");
+        } else {
+          newItem.delete("expression");
+        }
+      }
+
+      if (editingClone[key] || editingClone[key] === false)
+        newItem.set(key, editingClone[key]);
+    });
+
+    if (Array.isArray(editingClone.tags) && editingClone.tags.length > 0) {
+      newItem.set("tags", parsedDocument.createNode(editingClone.tags));
+    } else {
+      newItem.delete("tags");
+    }
+
+    if (editing) {
+      items[index] = newItem;
+    } else {
+      items.push(newItem);
+    }
+
+    await updateEditorContent(parsedDocument.toString(), false, true);
+
+    resetEditing();
+
+    eventBus.emit("notification", { message: "Item saved", type: "success" });
+  }
+</script>
+
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === "Escape") onCancel(unsavedChanges);
+  }}
+/>
+
+<div
+  class="h-full w-[320px] bg-surface-background flex-none flex flex-col border select-none rounded-[2px]"
+>
+  <h1 class="pt-6 px-5">{editing ? "Edit" : "Add"} {type.slice(0, -1)}</h1>
+
+  <div
+    class="px-5 flex flex-col gap-y-3 w-full h-fit overflow-y-auto overflow-x-visible"
+  >
+    {#each properties[type] as { fields, selected, label, optional, fontFamily } (label)}
+      {@const { hint, key, options, placeholder, boolean } = fields[selected]}
+
+      {#if boolean}
+        <div class="flex gap-x-2 items-center h-full rounded-full">
+          <Switch bind:checked={editingClone[key]} id="auto-save" medium />
+          <Label class="font-medium text-fg-secondary text-sm" for="auto-save"
+            >{label}</Label
+          >
+          {#if hint}
+            <Tooltip location="left">
+              <div class="text-fg-muted">
+                <InfoCircle size="13px" />
+              </div>
+              <TooltipContent slot="tooltip-content">
+                {hint}
+              </TooltipContent>
+            </Tooltip>
+          {/if}
+        </div>
+      {:else if key === "expression" && type === "measures"}
+        <SimpleSqlExpression
+          {editing}
+          columns={columnOptions}
+          {numericColumns}
+          bind:expression={editingClone.expression}
+          bind:name={editingClone.name}
+        />
+      {:else}
+        <Input
+          id="vme-{label}"
+          textClass="text-sm"
+          capitalizeLabel={false}
+          {label}
+          {hint}
+          {options}
+          {optional}
+          {fontFamily}
+          {placeholder}
+          multiline={key === "description" || key === "expression"}
+          enableSearch={key === "column"}
+          {selected}
+          bind:value={editingClone[key]}
+          fields={fields.map(({ label }) => label)}
+          onChange={(newValue) => {
+            if (!editing && key === "column" && type === "dimensions") {
+              editingClone.name = newValue;
+            }
+            if (key === "type" && type === "dimensions") {
+              handleTypeChange(newValue);
+            }
+          }}
+          onFieldSwitch={(index) => {
+            selected = index;
+          }}
+          sameWidth={true}
+        />
+      {/if}
+    {/each}
+
+    <TagInput
+      tags={editingClone.tags ?? []}
+      suggestions={tagSuggestions}
+      onChange={(next) => {
+        editingClone.tags = next;
+        editingClone = editingClone;
+      }}
+    />
+
+    <span></span>
+  </div>
+
+  <div class="flex flex-col gap-y-3 mt-auto border-t px-5 pb-6 pt-3">
+    <p class="text-fg-muted">
+      For more options,
+      <button onclick={switchView} class="text-primary-600 font-medium">
+        edit in YAML
+      </button>
+    </p>
+    <div class="flex justify-{editing ? 'between' : 'end'}">
+      {#if editing}
+        <Button type="text" onClick={onDelete}>Delete</Button>
+      {/if}
+      <div class="flex gap-x-2 self-end">
+        <Button
+          type="tertiary"
+          onClick={() => {
+            onCancel(unsavedChanges);
+          }}
+        >
+          Cancel
+        </Button>
+        <Tooltip
+          location="top"
+          distance={8}
+          suppress={!requiredPropertiesUnfilled.length}
+        >
+          <Button
+            type="primary"
+            onClick={saveChanges}
+            disabled={requiredPropertiesUnfilled.length > 0 || !unsavedChanges}
+          >
+            {editing ? "Save changes" : "Add " + type.slice(0, -1)}
+          </Button>
+
+          <TooltipContent slot="tooltip-content">
+            Required: {requiredPropertiesUnfilled.join(", ")}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </div>
+  </div>
+</div>
+
+<Alert.Root bind:open={showTypeMismatchModal}>
+  <Alert.Trigger>
+    {#snippet child({ props })}
+      <div {...props} class="hidden"></div>
+    {/snippet}
+  </Alert.Trigger>
+  <Alert.Content noCancel>
+    <Alert.Header>
+      <Alert.Title>Type mismatch</Alert.Title>
+      <Alert.Description>
+        {typeMismatchMessage}
+      </Alert.Description>
+    </Alert.Header>
+    <Alert.Footer>
+      <Button type="tertiary" onClick={cancelTypeChange}>Cancel</Button>
+      <Button type="primary" onClick={confirmTypeChange}>Confirm</Button>
+    </Alert.Footer>
+  </Alert.Content>
+</Alert.Root>
+
+<style lang="postcss">
+  h1 {
+    @apply text-lg font-semibold mb-4;
+  }
+
+  /* h2 {
+    @apply text-sm font-medium;
+  } */
+</style>

@@ -1,0 +1,230 @@
+package server
+
+import (
+	"bufio"
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/rilldata/rill/admin/database"
+	"github.com/rilldata/rill/admin/server/auth"
+	"github.com/rilldata/rill/runtime/pkg/httputil"
+)
+
+// runtimeProxyAccessTokenTTL is the TTL for tokens minted by the runtime proxy.
+// Since streaming connections and MCP SSE connections can be long-lived, we set this to a long duration.
+const runtimeProxyAccessTokenTTL = 24 * time.Hour
+
+// runtimeProxyForOrgAndProject proxies a request to the runtime service for a specific project.
+// This provides a way to directly query a project's runtime on a stable URL without needing to call GetProject or GetDeploymentCredentials to discover the runtime URL.
+// If the request is made using an Authorization header or cookie recognized by the admin service,
+// the proxied request is made with a newly minted JWT similar to the one that could be obtained by calling GetProject.
+// If the Authorization header of the request is not recognized by the admin service, it is proxied through to the runtime service.
+func (s *Server) runtimeProxyForOrgAndProject(w http.ResponseWriter, r *http.Request) error {
+	// Get args from URL path components
+	org := r.PathValue("org")
+	project := r.PathValue("project")
+	branch := r.PathValue("branch") // Empty for the non-branch routes
+	proxyPath := r.PathValue("path")
+	proxyRawQuery := r.URL.RawQuery
+
+	// Find the project and deployment we're proxying to.
+	// If a branch was specified, use the deployment for that branch; otherwise use the project's primary deployment.
+	proj, depl, err := s.resolveDeploymentForOrgAndProject(r.Context(), org, project, branch)
+	if err != nil {
+		return err
+	}
+
+	// Prepare a JWT to use for the proxied request.
+	// We support three scenarios:
+	// 1. Passing a runtime JWT directly.
+	// 2. Using admin service authentication, which requires us to issue a new ephemeral runtime JWT for the proxied request.
+	// 3. Accessing public projects anonymously, which also requires us to issue a new ephemeral runtime JWT for the proxied request.
+	var jwt string
+
+	// We support passing a runtime JWT directly.
+	// Since we use HTTPMiddlewareLenient for this handler, it's invoked even if the Authorization header contains a token that is not valid for the admin service.
+	claims := auth.GetClaims(r.Context())
+	if claims.OwnerType() == auth.OwnerTypeAnon {
+		authorizationHeader := r.Header.Get("Authorization")
+		if len(authorizationHeader) >= 6 && strings.EqualFold(authorizationHeader[0:6], "bearer") {
+			jwt = strings.TrimSpace(authorizationHeader[6:])
+		}
+	}
+	// If a direct JWT was not provided, issue a new ephemeral runtime JWT for the proxied request.
+	if jwt == "" {
+		jwt, err = s.issueEphemeralRuntimeToken(r.Context(), proj, depl, runtimeProxyAccessTokenTTL)
+		if errors.Is(err, errNoProdAccess) {
+			if claims.OwnerType() == auth.OwnerTypeAnon {
+				// This means no token was provided, so return instructions for how to initiate an OAuth flow.
+				// This is currently used by MCP clients that authenticate with OAuth.
+				w.Header().Set("WWW-Authenticate", fmt.Sprintf("Bearer resource_metadata=%q", s.admin.URLs.OAuthProtectedResourceMetadata(r)))
+			}
+			return httputil.Error(http.StatusUnauthorized, err)
+		}
+		if err != nil {
+			return httputil.Error(http.StatusInternalServerError, err)
+		}
+	}
+
+	// Track usage of the deployment
+	s.admin.Used.Deployment(depl.ID)
+
+	// Create the URL to proxy to by prepending `/v1/instances/{instanceID}` to the proxy path.
+	proxyURL, err := url.Parse(runtimeHTTPHost(depl.RuntimeHost))
+	if err != nil {
+		return httputil.Error(http.StatusInternalServerError, err)
+	}
+	proxyURL = proxyURL.JoinPath("/v1/instances", depl.RuntimeInstanceID, proxyPath)
+	proxyURL.RawQuery = proxyRawQuery
+
+	// Create the proxied request.
+	req, err := http.NewRequestWithContext(r.Context(), r.Method, proxyURL.String(), r.Body)
+	if err != nil {
+		return httputil.Error(http.StatusInternalServerError, err)
+	}
+	for k, v := range r.Header {
+		req.Header.Add(k, v[0])
+	}
+
+	// Override the authorization header with the JWT (note use of Set instead of Add).
+	if jwt != "" {
+		req.Header.Set("Authorization", "Bearer "+jwt)
+	} else {
+		req.Header.Del("Authorization")
+	}
+
+	// Add the X-Original-URI header to preserve the original request URI.
+	// This enables the runtime to know the runtime proxy path that was used.
+	req.Header.Set("X-Original-URI", r.RequestURI)
+
+	// Send the proxied request using http.DefaultClient. The default client automatically handles caching/pooling of TCP connections.
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return httputil.Error(http.StatusInternalServerError, err)
+	}
+	defer res.Body.Close()
+
+	// Copy response headers except from "Access-Control-Allow-Origin" (which is also added by the admin server), thus causing browser CORS errors.
+	outHeader := w.Header()
+	for k, v := range res.Header {
+		if strings.EqualFold(k, "Access-Control-Allow-Origin") {
+			continue
+		}
+		for _, vv := range v {
+			outHeader.Add(k, vv)
+		}
+	}
+	w.WriteHeader(res.StatusCode)
+
+	// For SSE responses, we need to flush eagerly
+	if res.Header.Get("Content-Type") == "text/event-stream" {
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			return httputil.Error(http.StatusInternalServerError, fmt.Errorf("streaming not supported"))
+		}
+
+		// Use a larger buffer for better performance
+		reader := bufio.NewReaderSize(res.Body, 4096)
+		buffer := make([]byte, 4096)
+
+		for {
+			n, err := reader.Read(buffer)
+			if n > 0 {
+				if _, writeErr := w.Write(buffer[:n]); writeErr != nil {
+					return writeErr
+				}
+				flusher.Flush()
+			}
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				return err
+			}
+		}
+	} else {
+		_, err = io.Copy(w, res.Body)
+		if err != nil {
+			return httputil.Error(http.StatusInternalServerError, err)
+		}
+	}
+
+	return nil
+}
+
+// errNoProdAccess is returned when the caller does not have access to a project's production deployment.
+// It is a sentinel because callers own the response and decide whether to emit an OAuth challenge.
+var errNoProdAccess = errors.New("does not have permission to access the production deployment")
+
+// resolveDeploymentForOrgAndProject resolves an org and project name to the deployment to serve requests from.
+// If branch is empty, it resolves the project's primary deployment.
+func (s *Server) resolveDeploymentForOrgAndProject(ctx context.Context, org, project, branch string) (*database.Project, *database.Deployment, error) {
+	proj, err := s.admin.DB.FindProjectByName(ctx, org, project)
+	if err != nil {
+		return nil, nil, httputil.Error(http.StatusBadRequest, err)
+	}
+
+	if branch == "" {
+		if proj.PrimaryDeploymentID == nil {
+			return nil, nil, httputil.Errorf(http.StatusBadRequest, "no prod deployment for project")
+		}
+		depl, err := s.admin.DB.FindDeployment(ctx, *proj.PrimaryDeploymentID)
+		if err != nil {
+			return nil, nil, httputil.Error(http.StatusBadRequest, err)
+		}
+		return proj, depl, nil
+	}
+
+	depls, err := s.admin.DB.FindDeploymentsForProject(ctx, proj.ID, "", branch)
+	if err != nil {
+		return nil, nil, httputil.Error(http.StatusBadRequest, err)
+	}
+	if len(depls) == 0 {
+		return nil, nil, httputil.Errorf(http.StatusBadRequest, "no deployment for branch %q", branch)
+	}
+	return proj, depls[0], nil // At most one deployment per branch is allowed
+}
+
+// issueEphemeralRuntimeToken checks that the caller can read a project's production deployment,
+// then issues a runtime JWT for it similar to the one that could be obtained by calling GetProject.
+// It returns errNoProdAccess if the caller does not have access.
+func (s *Server) issueEphemeralRuntimeToken(ctx context.Context, proj *database.Project, depl *database.Deployment, ttl time.Duration) (string, error) {
+	claims := auth.GetClaims(ctx)
+	permissions := claims.ProjectPermissions(ctx, proj.OrganizationID, depl.ProjectID)
+	if proj.Public {
+		permissions.ReadProject = true
+		permissions.ReadProd = true
+	}
+	if !permissions.ReadProd {
+		return "", errNoProdAccess
+	}
+
+	return s.issueRuntimeToken(ctx, &issueRuntimeTokenOptions{
+		project:            proj,
+		deployment:         depl,
+		projectPermissions: permissions,
+		forOwner:           true,
+		ttl:                ttl,
+	})
+}
+
+// runtimeHTTPHost returns the host to send HTTP requests to for a deployment.
+// NOTE: In production, the runtime host serves both the HTTP and gRPC servers.
+// But in development, the two are presently on different ports, and depl.RuntimeHost is that of the gRPC server.
+// Until we get both servers on the same port in development, this hack rewrites the runtime host to the HTTP server.
+func runtimeHTTPHost(runtimeHost string) string {
+	if !strings.HasPrefix(runtimeHost, "http://localhost:") {
+		return runtimeHost
+	}
+	if host := os.Getenv("RILL_RUNTIME_AUTH_AUDIENCE_URL"); host != "" {
+		return host
+	}
+	return "http://localhost:8081"
+}

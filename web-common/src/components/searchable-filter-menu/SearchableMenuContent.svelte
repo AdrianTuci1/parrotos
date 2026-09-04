@@ -1,0 +1,166 @@
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+  import { matchSorter } from "match-sorter";
+  import Button from "../button/Button.svelte";
+  import { Search } from "../search";
+
+  const voidFn = () => {};
+
+  export let selectableGroups: SearchableFilterSelectableGroup[];
+  export let selectedItems: string[][];
+  export let allowMultiSelect = false;
+  export let requireSelection = false;
+  export let fadeUnselected = false;
+  export let showXForSelected = false;
+  export let showSelection = false;
+  export let allowSelectAll = true;
+  export let searchText = "";
+  export let showHiddenSelectionsCount = false;
+  export let side: "top" | "right" | "bottom" | "left" = "bottom";
+  export let onSelect: (name: string) => void;
+  export let onToggleSelectAll: () => void = voidFn;
+
+  $: allSelected = selectableGroups.every((g, i) => {
+    return (
+      selectedItems[i]?.length && g.items.length === selectedItems[i].length
+    );
+  });
+
+  $: selectedCount = selectedItems.flat().length;
+
+  $: singleSelection = selectedCount === 1;
+
+  $: numSelectedShown = selectableGroups.reduce(
+    (sel, { items }, groupIndex) => {
+      return (
+        sel +
+        items.filter(({ name }) => selectedItems[groupIndex]?.includes(name))
+          .length
+      );
+    },
+    0,
+  );
+
+  $: numSelectedNotShown = selectedCount - numSelectedShown;
+
+  $: filteredGroups = filterGroups(selectableGroups, searchText);
+
+  function filterGroups(
+    selectableGroups: SearchableFilterSelectableGroup[],
+
+    searchText: string,
+  ) {
+    if (!searchText) return selectableGroups;
+
+    return selectableGroups.map((group) => {
+      return {
+        ...group,
+        items: matchSorter(group.items, searchText, { keys: ["label"] }),
+      };
+    });
+  }
+</script>
+
+<DropdownMenu.Content
+  align="start"
+  {side}
+  class="flex flex-col max-h-96 w-72 overflow-hidden p-0"
+>
+  <div class="px-3 pt-3 pb-1">
+    <Search
+      bind:value={searchText}
+      label={m.common_search_list()}
+      showBorderOnFocus={false}
+    />
+  </div>
+
+  <div class="flex flex-col flex-1 overflow-y-auto w-full h-fit pb-1">
+    {#each filteredGroups as { name, label, items }, index (name)}
+      <DropdownMenu.Group class="px-1">
+        {#if filteredGroups.length > 1}
+          <DropdownMenu.Label>
+            {label ?? name}
+          </DropdownMenu.Label>
+        {/if}
+        {#each items as { name, label } (name)}
+          {@const selected = selectedItems[index]?.includes(name)}
+
+          <svelte:component
+            this={allowMultiSelect || showSelection
+              ? DropdownMenu.CheckboxItem
+              : DropdownMenu.Item}
+            {...allowMultiSelect || showSelection
+              ? {
+                  checked: selected,
+                  showXForSelected,
+                  closeOnSelect: !allowMultiSelect,
+                }
+              : {}}
+            class="text-xs cursor-pointer"
+            disabled={requireSelection && singleSelection && selected}
+            aria-disabled={requireSelection && singleSelection && selected}
+            onclick={() => {
+              if (requireSelection && singleSelection && selected) return;
+
+              onSelect(name);
+            }}
+          >
+            <span
+              class:text-fg-disabled={fadeUnselected &&
+                !selected &&
+                allowMultiSelect}
+            >
+              {#if label.length > 240}
+                {label.slice(0, 240)}...
+              {:else}
+                {label}
+              {/if}
+            </span>
+          </svelte:component>
+        {:else}
+          <div
+            data-testid="searchable-menu-no-results"
+            class="text-fg-disabled text-center p-2 w-full"
+          >
+            {m.common_no_results()}
+          </div>
+        {/each}
+
+        {#if index !== filteredGroups.length - 1}
+          <DropdownMenu.Separator />
+        {/if}
+      </DropdownMenu.Group>
+    {/each}
+  </div>
+
+  {#if allowSelectAll && allowMultiSelect}
+    <footer>
+      <Button onClick={onToggleSelectAll} type="tertiary">
+        {#if allSelected}
+          {m.common_deselect_all()}
+        {:else}
+          {m.common_select_all()}
+        {/if}
+      </Button>
+
+      <slot name="action" />
+      {#if numSelectedNotShown && showHiddenSelectionsCount}
+        <div class="ui-label">
+          {m.common_other_values_selected({ count: numSelectedNotShown })}
+        </div>
+      {/if}
+    </footer>
+  {/if}
+</DropdownMenu.Content>
+
+<style lang="postcss">
+  footer {
+    height: 42px;
+    @apply border-t border-gray-300;
+    @apply bg-gray-100;
+    @apply flex flex-row flex-none items-center justify-end;
+    @apply gap-x-2 p-2 px-3.5;
+  }
+</style>

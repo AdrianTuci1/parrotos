@@ -1,0 +1,95 @@
+import type { BaseCanvasComponentConstructor } from "@rilldata/web-common/features/canvas/components/util";
+import {
+  CHART_CONFIG,
+  type ChartMetadataConfig,
+} from "@rilldata/web-common/features/components/charts/config";
+import type { ChartType } from "@rilldata/web-common/features/components/charts/types";
+import {
+  CartesianChartComponent,
+  type CartesianCanvasChartSpec,
+} from "./variants/CartesianChart";
+import {
+  CircularChartComponent,
+  type CircularCanvasChartSpec,
+} from "./variants/CircularChart";
+import {
+  ComboChartComponent,
+  type ComboCanvasChartSpec,
+} from "./variants/ComboChart";
+import {
+  FunnelChartComponent,
+  type FunnelCanvasChartSpec,
+} from "./variants/FunnelChart";
+import {
+  HeatmapChartComponent,
+  type HeatmapCanvasChartSpec,
+} from "./variants/HeatmapChart";
+import {
+  ScatterPlotChartComponent,
+  type ScatterPlotCanvasChartSpec,
+} from "./variants/ScatterPlotChart";
+
+export { default as Chart } from "./CanvasChart.svelte";
+
+export type ChartComponent =
+  | typeof CartesianChartComponent
+  | typeof CircularChartComponent
+  | typeof FunnelChartComponent
+  | typeof HeatmapChartComponent
+  | typeof ComboChartComponent
+  | typeof ScatterPlotChartComponent;
+
+export type CanvasChartSpec =
+  | CartesianCanvasChartSpec
+  | CircularCanvasChartSpec
+  | FunnelCanvasChartSpec
+  | HeatmapCanvasChartSpec
+  | ComboCanvasChartSpec
+  | ScatterPlotCanvasChartSpec;
+
+export function getCanvasChartComponent(
+  type: ChartType,
+): BaseCanvasComponentConstructor<CanvasChartSpec> {
+  switch (type) {
+    case "bar_chart":
+    case "line_chart":
+    case "area_chart":
+    case "stacked_bar":
+    case "stacked_bar_normalized":
+      return CartesianChartComponent;
+    case "donut_chart":
+    case "pie_chart":
+      return CircularChartComponent;
+    case "funnel_chart":
+      return FunnelChartComponent;
+    case "heatmap":
+      return HeatmapChartComponent;
+    case "combo_chart":
+      return ComboChartComponent;
+    case "scatter_plot":
+      return ScatterPlotChartComponent;
+    default:
+      throw new Error("Unsupported chart type: " + type);
+  }
+}
+
+export type CanvasChartConfig = ChartMetadataConfig & {
+  component: BaseCanvasComponentConstructor<CanvasChartSpec>;
+};
+
+export const CANVAS_CHART_CONFIG: Record<ChartType, CanvasChartConfig> =
+  Object.fromEntries(
+    Object.entries(CHART_CONFIG).map(([type, config]) => [
+      type,
+      {
+        ...config,
+        // Re-declare title as a lazy getter: spreading `config` above would
+        // otherwise flatten CHART_CONFIG's title getter into a string frozen to
+        // the locale active at module load. Delegating keeps it locale-reactive.
+        get title() {
+          return CHART_CONFIG[type as ChartType].title;
+        },
+        component: getCanvasChartComponent(type as ChartType),
+      },
+    ]),
+  ) as Record<ChartType, CanvasChartConfig>;

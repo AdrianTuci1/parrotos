@@ -1,0 +1,17 @@
+model: all_types
+display_name: Ad bids Parquet
+description:
+
+timeseries: timestamp
+smallest_time_grain: 
+
+dimensions:
+  - display_name: tuuid
+    property: tuuid
+    description: ""
+
+measures:
+  - display_name: "Number of bids"
+    expression: count(*)
+    description: ""
+    format_preset: humanize

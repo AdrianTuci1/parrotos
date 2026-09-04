@@ -1,0 +1,101 @@
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { Progress } from "@rilldata/web-common/components/progress";
+  import GlobalDimensionSearchResult from "@rilldata/web-common/features/dashboards/dimension-search/GlobalDimensionSearchResult.svelte";
+  import {
+    type DimensionSearchResult,
+    useDimensionSearchResults,
+  } from "@rilldata/web-common/features/dashboards/dimension-search/useDimensionSearchResults";
+  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+  } from "@rilldata/web-common/components/dropdown-menu";
+
+  export let searchText: string;
+  export let onSelect: () => void;
+  export let open: boolean;
+
+  const {
+    actions: {
+      dimensionsFilter: { toggleDimensionValueSelection },
+    },
+    timeRangeSummaryStore,
+    metricsViewName,
+    validSpecStore,
+  } = getStateManagers();
+
+  const client = useRuntimeClient();
+
+  let results: ReturnType<typeof useDimensionSearchResults>;
+  $: if (
+    $validSpecStore.data?.metricsView &&
+    $timeRangeSummaryStore.data?.timeRangeSummary &&
+    !!searchText
+  ) {
+    results = useDimensionSearchResults(
+      client,
+      $metricsViewName,
+      $validSpecStore.data?.metricsView,
+      $timeRangeSummaryStore.data.timeRangeSummary,
+      searchText,
+    );
+  }
+
+  $: responses = ($results?.responses.filter((r) => r?.values?.length) ??
+    []) as DimensionSearchResult[];
+
+  function onItemSelect(dimension: string, value: any) {
+    onSelect();
+    toggleDimensionValueSelection(dimension, value, false, true);
+  }
+</script>
+
+<DropdownMenu
+  open={open && !!$results && !!searchText}
+  onOpenChange={(o) => (open = o)}
+>
+  <DropdownMenuTrigger>
+    {#snippet child({ props })}
+      <button
+        {...props}
+        class="absolute left-32"
+        aria-label={m.dashboard_dimension_search_results_aria()}
+      ></button>
+    {/snippet}
+  </DropdownMenuTrigger>
+  <DropdownMenuContent
+    class="w-64 max-h-96 overflow-scroll right-2"
+    sideOffset={32}
+  >
+    <div class="flex flex-col divide-y divide-gray-200">
+      {#if $results.errors.length}
+        <div class="text-center p-2 w-full text-red-500">
+          {m.dashboard_dimension_search_error()}
+        </div>
+      {:else if $results.completed && responses.length === 0}
+        <div class="text-fg-disabled text-center p-2 w-full">
+          {m.dashboard_dimension_search_no_results()}
+        </div>
+      {:else}
+        {#if $results.progress < 100}
+          <div class="flex flex-row items-center gap-x-2 px-2">
+            <Progress value={$results.progress} max={100} class="h-1" />
+            <div class="text-fg-secondary text-[11px]">
+              {$results.progress}%
+            </div>
+          </div>
+        {/if}
+        {#each responses as { dimension, values } (dimension)}
+          <GlobalDimensionSearchResult
+            {dimension}
+            {values}
+            onSelect={onItemSelect}
+          />
+        {/each}
+      {/if}
+    </div>
+  </DropdownMenuContent>
+</DropdownMenu>

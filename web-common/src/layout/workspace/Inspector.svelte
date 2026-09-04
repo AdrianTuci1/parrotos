@@ -1,0 +1,61 @@
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { slide } from "svelte/transition";
+  import Resizer from "../Resizer.svelte";
+  import { workspaces } from "./workspace-stores";
+
+  export let filePath: string;
+  export let resizable = true;
+  export let fixedWidth: number | undefined = undefined;
+  export let minWidth = 320;
+  export let maxWidth = 420;
+
+  let resizing = false;
+
+  $: workspace = workspaces.get(filePath);
+  $: widthStore = workspace.inspector.width;
+  $: visible = workspace.inspector.visible;
+
+  $: width = fixedWidth ?? $widthStore;
+</script>
+
+{#if $visible}
+  <aside
+    class="inspector-wrapper"
+    style:width="{width + 8}px"
+    transition:slide={{ axis: "x", duration: 500 }}
+    aria-label={m.layout_inspector_panel_aria()}
+  >
+    <Resizer
+      disabled={!resizable}
+      absolute={false}
+      direction="EW"
+      side="left"
+      min={fixedWidth ?? minWidth}
+      max={fixedWidth ?? maxWidth}
+      dimension={fixedWidth ?? width}
+      onUpdate={(newWidth) => {
+        widthStore.set(newWidth);
+      }}
+      bind:resizing
+    />
+
+    <div class="inner" style:width="{width}px">
+      <slot />
+    </div>
+  </aside>
+{/if}
+
+<style lang="postcss">
+  .inspector-wrapper {
+    will-change: width;
+    @apply h-full flex-none flex relative;
+  }
+
+  .inner {
+    will-change: width;
+    @apply h-full flex-none;
+    @apply border bg-surface-background;
+    @apply overflow-y-auto overflow-x-hidden rounded-[2px];
+  }
+</style>

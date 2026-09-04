@@ -1,0 +1,218 @@
+<script lang="ts">
+  import { Database, Folder } from "lucide-svelte";
+  import CaretDownIcon from "../../../components/icons/CaretDownIcon.svelte";
+  import {
+    createRuntimeServiceGetInstance,
+    type V1AnalyzedConnector,
+    type V1TableInfo,
+  } from "../../../runtime-client";
+  import { useRuntimeClient } from "../../../runtime-client/v2";
+  import TableEntry from "./TableEntry.svelte";
+  import {
+    useInfiniteListTables,
+    useIsModelingSupportedForDefaultOlapDriverOLAP,
+  } from "../selectors";
+  import Button from "../../../components/button/Button.svelte";
+  import type { ConnectorExplorerStore } from "./connector-explorer-store";
+  import { onMount } from "svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let connector: V1AnalyzedConnector;
+  export let database: string;
+  export let databaseSchema: string;
+  export let store: ConnectorExplorerStore;
+
+  const client = useRuntimeClient();
+
+  $: connectorName = connector?.name as string;
+
+  $: instanceQuery = createRuntimeServiceGetInstance(client, {
+    sensitive: true,
+  });
+  $: projectOlapConnector = $instanceQuery.data?.instance?.olapConnector;
+
+  // Whether the project's OLAP can be written to (i.e. models can materialize
+  // into it). True for managed DuckDB, provisioned, or read-write connectors.
+  $: projectOlapWriteableQuery =
+    useIsModelingSupportedForDefaultOlapDriverOLAP(client);
+  $: projectOlapWriteable = $projectOlapWriteableQuery.data ?? false;
+
+  $: sourceCanLive = connector.driver?.implementsOlap ?? false;
+  $: sourceCanIngest =
+    (connector.driver?.implementsWarehouse ||
+      connector.driver?.implementsSqlStore) ??
+    false;
+  $: isProjectOlap = projectOlapConnector === connectorName;
+
+  // "Create model" requires an ingestable source AND a writeable project OLAP,
+  // and is pointless when the source is already the project's OLAP.
+  $: canImport = projectOlapWriteable && sourceCanIngest && !isProjectOlap;
+
+  // Live-connect when the source can answer OLAP queries directly and importing
+  // isn't available (or the source IS the project's OLAP, so data is in place).
+  $: isOlapConnector = sourceCanLive && !canImport;
+
+  $: expandedStore = store.getItem(connectorName, database, databaseSchema);
+  $: expanded = $expandedStore;
+
+  $: tablesQuery = useInfiniteListTables(
+    client,
+    connectorName,
+    database,
+    databaseSchema,
+    100,
+    expanded,
+  );
+
+  $: ({
+    data,
+    error,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = $tablesQuery);
+
+  let loadMoreContainer: HTMLDivElement;
+  let isNarrow = false;
+
+  onMount(() => {
+    if (!loadMoreContainer) return;
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0].contentRect.width;
+      isNarrow = width < 220; // switch to shorter copy on narrow sidebar
+    });
+    observer.observe(loadMoreContainer);
+    return () => observer.disconnect();
+  });
+
+  // Normalize V1TableInfo[] from ListTables into the TableEntry input shape
+  $: typedData = data?.tables?.map((table: V1TableInfo) => ({
+    name: table.name ?? "",
+    database,
+    databaseSchema,
+    view: table.view ?? false,
+  }));
+</script>
+
+<li aria-label={`${database}.${databaseSchema}`} class="database-schema-entry">
+  <button
+    type="button"
+    class="database-schema-entry-header {database ? 'pl-[40px]' : 'pl-[22px]'}"
+    class:open={expanded}
+    onclick={() => store.toggleItem(connectorName, database, databaseSchema)}
+  >
+    <CaretDownIcon
+      className="transform transition-transform text-fg-secondary {expanded
+        ? 'rotate-0'
+        : '-rotate-90'}"
+      size="14px"
+    />
+    <!-- Some databases do not have a full "database -> databaseSchema -> table" hierarchy. 
+      When there are only two organizational levels,the API returns "databaseSchema -> table". 
+      However, in these cases, we should use a Database icon (not a Folder icon) to represent the organizational structure. -->
+    {#if !database}
+      <Database size="14px" class="shrink-0 text-fg-secondary" />
+    {:else}
+      <Folder size="14px" class="shrink-0 text-fg-secondary" />
+    {/if}
+    <span class="truncate">
+      {databaseSchema}
+    </span>
+  </button>
+
+  {#if expanded}
+    {#if error && (!typedData || typedData.length === 0)}
+      <div class="message {database ? 'pl-[78px]' : 'pl-[60px]'}">
+        {m.connector_explorer_error({ error: error.message })}
+      </div>
+    {:else if isLoading && (!typedData || typedData.length === 0)}
+      <div class="message {database ? 'pl-[78px]' : 'pl-[60px]'}">
+        {m.status_loading_tables_short()}
+      </div>
+    {:else if connector?.errorMessage}
+      <div class="message {database ? 'pl-[78px]' : 'pl-[60px]'}">
+        {connector.errorMessage}
+      </div>
+    {:else if !connector.driver || !connector.driver.name}
+      <div class="message {database ? 'pl-[78px]' : 'pl-[60px]'}">
+        {m.connector_explorer_connector_not_found()}
+      </div>
+    {:else if !typedData || typedData.length === 0}
+      <div class="message {database ? 'pl-[78px]' : 'pl-[60px]'}">
+        {m.status_no_tables()}
+      </div>
+    {:else if typedData.length > 0}
+      <ol>
+        {#each typedData as tableInfo (tableInfo)}
+          <TableEntry
+            driver={connector.driver.name}
+            connector={connectorName}
+            showGenerateMetricsAndDashboard={isOlapConnector || canImport}
+            showGenerateModel={canImport}
+            {isOlapConnector}
+            {database}
+            {databaseSchema}
+            table={tableInfo.name}
+            {store}
+          />
+        {/each}
+      </ol>
+
+      {#if hasNextPage}
+        <div
+          class="load-more {database ? 'pl-[78px]' : 'pl-[60px]'}"
+          bind:this={loadMoreContainer}
+        >
+          {#if error}
+            <span class="error">
+              {m.connector_explorer_load_more_tables_error()}
+            </span>
+            <Button type="tertiary" small onClick={() => fetchNextPage()}>
+              {m.common_retry()}
+            </Button>
+          {:else}
+            <Button
+              type="tertiary"
+              small
+              disabled={isFetchingNextPage}
+              loading={isFetchingNextPage}
+              loadingCopy={isNarrow
+                ? m.common_loading()
+                : m.status_loading_tables_short()}
+              class="w-full"
+              onClick={() => fetchNextPage()}
+            >
+              {isNarrow ? "Load more" : "Load more tables"}
+            </Button>
+          {/if}
+        </div>
+      {/if}
+    {/if}
+  {/if}
+</li>
+
+<style lang="postcss">
+  .database-schema-entry {
+    @apply w-full;
+    @apply flex flex-col;
+  }
+
+  .database-schema-entry-header {
+    @apply h-6 pr-2; /* left-padding is set dynamically above */
+    @apply flex items-center gap-x-1;
+  }
+
+  button:hover {
+    @apply bg-surface-hover;
+  }
+
+  .message {
+    @apply pr-3.5 py-2; /* left-padding is set dynamically above */
+    @apply text-fg-secondary;
+  }
+
+  .load-more {
+    @apply py-2 pr-2;
+  }
+</style>

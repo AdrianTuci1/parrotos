@@ -1,0 +1,1361 @@
+package queries_test
+
+import (
+	"bytes"
+	"context"
+	"fmt"
+	"strings"
+	"testing"
+	"time"
+
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime"
+	"github.com/rilldata/rill/runtime/pkg/expressionpb"
+	"github.com/rilldata/rill/runtime/queries"
+	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/stretchr/testify/require"
+	"github.com/xuri/excelize/v2"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
+	// Register drivers
+
+	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
+)
+
+func TestMetricsViewsComparisonAgainstClickHouse(t *testing.T) {
+	testmode.Expensive(t)
+	rt, instanceID := testruntime.NewInstanceWithClickhouseProject(t, false)
+	minTime, halfTime, maxTime := adBidsTimeRange(t, rt, instanceID)
+	t.Run("testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order_no_sort_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_no_sort_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_order", func(t *testing.T) {
+		testMetricsViewsComparison_measure_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_no_alias", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_no_alias(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_base_measure", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_base_measure(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_aliases(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_no_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_no_dim_values(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_general_toplist_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_null_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_null_dim_values(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+}
+
+func TestMetricsViewsComparisonAgainstDuckdb(t *testing.T) {
+	rt, instanceID := testruntime.NewInstanceForProject(t, "ad_bids")
+	minTime, halfTime, maxTime := adBidsTimeRange(t, rt, instanceID)
+	t.Run("testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+
+	t.Run("testMetricsViewsComparison_dim_order_no_sort_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_no_sort_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_order", func(t *testing.T) {
+		testMetricsViewsComparison_measure_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_no_alias", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_no_alias(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_base_measure", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_base_measure(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_aliases(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_no_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_no_dim_values(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_general_toplist_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_null_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_null_dim_values(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+
+	rt2, instanceID2 := testruntime.NewInstanceForProject(t, "ad_bids_2rows")
+	t.Run("testMetricsViewsComparison_export_xlsx", func(t *testing.T) {
+		testMetricsViewsComparison_export_xlsx(t, rt2, instanceID2)
+	})
+	t.Run("testServer_MetricsViewTimeseries_export_csv", func(t *testing.T) {
+		testServer_MetricsViewTimeseries_export_csv(t, rt2, instanceID2)
+	})
+}
+func TestMetricsViewsComparisonAgainstStarRocks(t *testing.T) {
+	testmode.Expensive(t)
+
+	rt, instanceID := testruntime.NewInstanceWithStarRocksProject(t)
+	t.Run("testMetricsViewsComparison_dim_order", func(t *testing.T) {
+		testMetricsViewsComparisonStarRocks_dim_order(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_measure_order", func(t *testing.T) {
+		testMetricsViewsComparisonStarRocks_measure_order(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters", func(t *testing.T) {
+		testMetricsViewsComparisonStarRocks_measure_filters(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_null_dim_values", func(t *testing.T) {
+		testMetricsViewsComparisonStarRocks_null_dim_values(t, rt, instanceID)
+	})
+}
+
+func TestMetricsViewsComparisonAgainstBigQuery(t *testing.T) {
+	testmode.Expensive(t)
+
+	rt, instanceID := newBigQueryInstance(t)
+	minTime, halfTime, maxTime := bigQueryAdBidsTimeRange(t, rt, instanceID)
+	t.Run("testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order_no_sort_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_no_sort_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_order", func(t *testing.T) {
+		testMetricsViewsComparison_measure_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_no_alias", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_no_alias(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_base_measure", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_base_measure(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_aliases(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_no_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_no_dim_values(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_general_toplist_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_general_toplist_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_null_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_null_dim_values(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+}
+
+func TestMetricsViewsComparisonAgainstSnowflake(t *testing.T) {
+	t.Skip("Skipping Snowflake due to disabled test instance")
+	testmode.Expensive(t)
+
+	rt, instanceID := newSnowflakeInstance(t)
+	minTime, halfTime, maxTime := snowflakeAdBidsTimeRange(t, rt, instanceID)
+	t.Run("testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order_no_sort_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_no_sort_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_order", func(t *testing.T) {
+		testMetricsViewsComparison_measure_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_no_alias", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_no_alias(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_base_measure", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_base_measure(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_aliases(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_no_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_no_dim_values(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_general_toplist_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_general_toplist_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_null_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_null_dim_values(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+}
+
+func TestMetricsViewsComparisonAgainstDatabricks(t *testing.T) {
+	t.Skip("Skipping Databricks due to disabled test instance")
+	testmode.Expensive(t)
+
+	rt, instanceID := newDatabricksInstance(t)
+	minTime, halfTime, maxTime := databricksAdBidsTimeRange(t, rt, instanceID)
+	t.Run("testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_dim_order_no_sort_order", func(t *testing.T) {
+		testMetricsViewsComparison_dim_order_no_sort_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_order", func(t *testing.T) {
+		testMetricsViewsComparison_measure_order(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_no_alias", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_no_alias(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_base_measure", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_base_measure(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_measure_filters_with_compare_aliases", func(t *testing.T) {
+		testMetricsViewsComparison_measure_filters_with_compare_aliases(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_no_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_no_dim_values(t, rt, instanceID)
+	})
+	t.Run("testMetricsViewsComparison_comparsion_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_comparsion_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_general_toplist_having_same_name", func(t *testing.T) {
+		testMetricsViewsComparison_general_toplist_having_same_name(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+	t.Run("testMetricsViewsComparison_null_dim_values", func(t *testing.T) {
+		testMetricsViewsComparison_null_dim_values(t, rt, instanceID, minTime, halfTime, maxTime)
+	})
+}
+
+// broken: due to unsorted subselect
+// func TestMetricsViewsComparison_Druid_dim_order_limit(t *testing.T) {
+// 	if os.Getenv("METRICS_CREDS") == "" {
+// 		t.Skip("skipping the test without the test instance")
+// 	}
+
+// 	rt, instanceID, err := testruntime.NewInstanceForDruidProject(t)
+// 	require.NoError(t, err)
+
+// 	q := &queries.MetricsViewComparison{
+// 		MetricsViewName: "ad_bids_metrics",
+// 		DimensionName:   "dom",
+// 		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+// 			{
+// 				Name: "m1",
+// 			},
+// 		},
+// 		TimeRange: &runtimev1.TimeRange{
+// 			Start: timestamppb.New(time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)),
+// 			End:   timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+// 		},
+// 		ComparisonTimeRange: &runtimev1.TimeRange{
+// 			Start: timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+// 			End:   timestamppb.New(time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)),
+// 		},
+// 		Sort: []*runtimev1.MetricsViewComparisonSort{
+// 			{
+// 				Name: "dom",
+// 				Desc: true,
+// 			},
+// 		},
+// 		Limit:  1,
+// 		Offset: 1,
+// 	}
+
+// 	err = q.Resolve(context.Background(), rt, instanceID, 0)
+// 	require.NoError(t, err)
+// 	for i, row := range q.Result.Rows {
+// 		fmt.Printf("%s %d \n", compRowToStr(row), i)
+// 	}
+// 	require.NotEmpty(t, q.Result)
+// 	require.Equal(t, 1, len(q.Result.Rows))
+// 	require.Equal(t, "news.yahoo.com m1 1.50 1.53 -0.03 -0.02 ", compRowToStr(q.Result.Rows[0]))
+// }
+
+func TestMetricsViewsComparison_Druid_dim_order(t *testing.T) {
+
+	rt, instanceID, err := testruntime.NewInstanceForDruidProject(t)
+	require.NoError(t, err)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "m1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: timestamppb.New(time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)),
+			End:   timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+			End:   timestamppb.New(time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)),
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name: "dom",
+				Desc: true,
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err = q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	for i, row := range q.Result.Rows {
+		fmt.Printf("%s %d \n", compRowToStr(row), i)
+	}
+	require.NotEmpty(t, q.Result)
+	require.Equal(t, 7, len(q.Result.Rows))
+	require.Equal(t, "sports.yahoo.com m1 3.74 3.76 -0.02 -0.00 ", compRowToStr(q.Result.Rows[0]))
+	require.Equal(t, "news.yahoo.com m1 1.50 1.53 -0.03 -0.02 ", compRowToStr(q.Result.Rows[1]))
+}
+
+func compRowToStr(row *runtimev1.MetricsViewComparisonRow) string {
+	s := fmt.Sprintf("%v ", row.DimensionValue.AsInterface())
+
+	for _, m := range row.MeasureValues {
+		s += fmt.Sprintf("%v ", m.MeasureName)
+		s += fmt.Sprintf("%.2f ", m.BaseValue.GetNumberValue())
+		s += fmt.Sprintf("%.2f ", m.ComparisonValue.GetNumberValue())
+		s += fmt.Sprintf("%.2f ", m.DeltaAbs.GetNumberValue())
+		s += fmt.Sprintf("%.2f ", m.DeltaRel.GetNumberValue())
+	}
+	return s
+}
+
+// broken: ORDER BY <measure> column requires GROUP BY
+// func TestMetricsViewsComparison_Druid_comparsion_no_dim_values(t *testing.T) {
+// 	if os.Getenv("METRICS_CREDS") == "" {
+// 		t.Skip("skipping the test without the test instance")
+// 	}
+
+// 	rt, instanceID, err := testruntime.NewInstanceForDruidProject(t)
+// 	require.NoError(t, err)
+
+// 	q := &queries.MetricsViewComparison{
+// 		MetricsViewName: "ad_bids_metrics",
+// 		DimensionName:   "dom",
+// 		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+// 			{
+// 				Name: "m1",
+// 			},
+// 		},
+// 		ComparisonMeasures: []string{"m1"},
+// 		TimeRange: &runtimev1.TimeRange{
+// 			Start: timestamppb.New(time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)),
+// 			End:   timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+// 		},
+// 		ComparisonTimeRange: &runtimev1.TimeRange{
+// 			Start: timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+// 			End:   timestamppb.New(time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)),
+// 		},
+// 		Sort: []*runtimev1.MetricsViewComparisonSort{
+// 			{
+// 				Name:     "m1",
+// 				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+// 				Desc:     true,
+// 			},
+// 		},
+// 		Where: expressionpb.AndAll(
+// 			expressionpb.IdentIn("pub", expressionpb.String("Yahoo")),
+// 			expressionpb.IdentIn("id", expressionpb.Number(0)),
+// 		),
+// 		Limit: 250,
+//      SecurityClaims: testClaims(),
+// 	}
+
+// 	err = q.Resolve(context.Background(), rt, instanceID, 0)
+// 	require.NoError(t, err)
+// 	require.Empty(t, q.Result)
+// }
+
+func testMetricsViewsComparison_dim_order_comparison_toplist_vs_general_toplist(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     false,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	dims := make([]string, 0, 10)
+	previous := ""
+	for i, r := range q.Result.Rows {
+		if i == 10 {
+			break
+		}
+
+		require.Equal(t, -1, strings.Compare(previous, r.DimensionValue.GetStringValue()))
+		previous = r.DimensionValue.GetStringValue()
+		dims = append(dims, r.DimensionValue.GetStringValue())
+	}
+
+	q = &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     false,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+	err = q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+
+	comparisonDims := make([]string, 0, 10)
+	for i, r := range q.Result.Rows {
+		if i == 10 {
+			break
+		}
+		comparisonDims = append(comparisonDims, r.DimensionValue.GetStringValue())
+	}
+	require.Equal(t, dims, comparisonDims)
+}
+
+func testMetricsViewsComparison_dim_order(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.NotEmpty(t, "sports.yahoo.com", q.Result.Rows[0].DimensionValue)
+	require.NotEmpty(t, "news.yahoo.com", q.Result.Rows[1].DimensionValue)
+}
+
+func testMetricsViewsComparison_dim_order_no_sort_order(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_UNSPECIFIED,
+				Desc:     true,
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err) // allow undefined sort type
+}
+
+func testMetricsViewsComparison_measure_order(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "measure_1",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_COMPARISON_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.NotEmpty(t, "facebook.com", q.Result.Rows[0].DimensionValue)
+	require.NotEmpty(t, "msn.com", q.Result.Rows[1].DimensionValue)
+}
+
+func testMetricsViewsComparison_measure_filters(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, _ *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit: 250,
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "measure_1",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(3.25),
+							},
+						},
+					},
+				},
+			},
+		},
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.Len(t, q.Result.Rows, 3)
+	require.Equal(t, "sports.yahoo.com", q.Result.Rows[0].DimensionValue.GetStringValue())
+	require.Equal(t, "news.google.com", q.Result.Rows[1].DimensionValue.GetStringValue())
+	require.Equal(t, "instagram.com", q.Result.Rows[2].DimensionValue.GetStringValue())
+}
+
+func testMetricsViewsComparison_measure_filters_with_compare_no_alias(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit: 250,
+		Aliases: []*runtimev1.MetricsViewComparisonMeasureAlias{
+			{
+				Name:  "measure_1",
+				Type:  runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_REL_DELTA,
+				Alias: "measure_1_something_else",
+			},
+		},
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "measure_1__delta_rel",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(1.0),
+							},
+						},
+					},
+				},
+			},
+		},
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.ErrorContains(t, err, `name "measure_1__delta_rel" in expression is not a dimension or measure available in the current context`)
+}
+
+func testMetricsViewsComparison_measure_filters_with_compare_base_measure(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "measure_1",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(3.25),
+							},
+						},
+					},
+				},
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.Len(t, q.Result.Rows, 3)
+	require.Equal(t, "sports.yahoo.com", q.Result.Rows[0].DimensionValue.GetStringValue())
+	require.Equal(t, "news.google.com", q.Result.Rows[1].DimensionValue.GetStringValue())
+	require.Equal(t, "instagram.com", q.Result.Rows[2].DimensionValue.GetStringValue())
+}
+
+func testMetricsViewsComparison_measure_filters_with_compare_aliases(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "measure_1_delta",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(1),
+							},
+						},
+					},
+				},
+			},
+		},
+		Aliases: []*runtimev1.MetricsViewComparisonMeasureAlias{
+			{
+				Name:  "measure_1",
+				Type:  runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_REL_DELTA,
+				Alias: "measure_1_delta",
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.Len(t, q.Result.Rows, 3)
+	require.Equal(t, "sports.yahoo.com", q.Result.Rows[0].DimensionValue.GetStringValue())
+	require.Equal(t, "news.google.com", q.Result.Rows[1].DimensionValue.GetStringValue())
+	require.Equal(t, "instagram.com", q.Result.Rows[2].DimensionValue.GetStringValue())
+}
+
+func testMetricsViewsComparison_comparsion_no_dim_values(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "m1",
+			},
+		},
+		ComparisonMeasures: []string{"m1"},
+		TimeRange: &runtimev1.TimeRange{
+			Start: timestamppb.New(time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)),
+			End:   timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: timestamppb.New(time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)),
+			End:   timestamppb.New(time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)),
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "m1",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Where: expressionpb.AndAll(
+			expressionpb.IdentIn("pub", expressionpb.String("Yahoo1")),
+		),
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.Empty(t, q.Result)
+}
+
+func testMetricsViewsComparison_comparsion_having_same_name(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "bid_price",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit: 250,
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "bid_price",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(3.25),
+							},
+						},
+					},
+				},
+			},
+		},
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.Len(t, q.Result.Rows, 3)
+	require.Equal(t, "sports.yahoo.com", q.Result.Rows[0].DimensionValue.GetStringValue())
+	require.Equal(t, "news.google.com", q.Result.Rows[1].DimensionValue.GetStringValue())
+	require.Equal(t, "instagram.com", q.Result.Rows[2].DimensionValue.GetStringValue())
+}
+
+func testMetricsViewsComparison_general_toplist_having_same_name(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, _ *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "bid_price",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit: 250,
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "bid_price",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(3.25),
+							},
+						},
+					},
+				},
+			},
+		},
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+	require.Len(t, q.Result.Rows, 3)
+	require.Equal(t, "sports.yahoo.com", q.Result.Rows[0].DimensionValue.GetStringValue())
+	require.Equal(t, "news.google.com", q.Result.Rows[1].DimensionValue.GetStringValue())
+	require.Equal(t, "instagram.com", q.Result.Rows[2].DimensionValue.GetStringValue())
+}
+
+func testMetricsViewsComparison_export_xlsx(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	maxTime := ctr.Result.Min.AsTime().Add(diff / 2)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "domain",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: ctr.Result.Min,
+			End:   timestamppb.New(maxTime),
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "domain",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     false,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+
+	var buf bytes.Buffer
+
+	err = q.Export(context.Background(), rt, instanceID, &buf, &runtime.ExportOptions{
+		Format:       runtimev1.ExportFormat_EXPORT_FORMAT_XLSX,
+		PreWriteHook: func(filename string) error { return nil },
+	})
+	require.NoError(t, err)
+
+	file, err := excelize.OpenReader(&buf)
+	rows, err := file.GetRows("Sheet1")
+	require.NoError(t, err)
+
+	require.Equal(t, 2, len(rows))
+	require.Equal(t, "Domain Label", rows[0][0])
+	require.Equal(t, "Total volume", rows[0][1])
+}
+
+func testServer_MetricsViewTimeseries_export_csv(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	maxTime := ctr.Result.Min.AsTime().Add(diff / 2)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "domain",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: ctr.Result.Min,
+			End:   timestamppb.New(maxTime),
+		},
+		// exports does not support sorting on dimension, so this is irrelevant for now
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "domain",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     false,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+
+	var buf bytes.Buffer
+
+	err = q.Export(context.Background(), rt, instanceID, &buf, &runtime.ExportOptions{
+		Format:       runtimev1.ExportFormat_EXPORT_FORMAT_CSV,
+		PreWriteHook: func(filename string) error { return nil },
+	})
+	require.NoError(t, err)
+
+	str := string(buf.Bytes())
+	require.Equal(t, 2, strings.Count(str, "\n"))
+	rowStrings := strings.Split(str, "\n")
+	require.Equal(t, "Domain Label,Total volume", rowStrings[0])
+}
+
+func testMetricsViewsComparisonStarRocks_dim_order(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	maxTime := ctr.Result.Min.AsTime().Add(diff / 2)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: ctr.Result.Min,
+			End:   timestamppb.New(maxTime),
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "dom",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     false,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+
+	err = q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+}
+
+func testMetricsViewsComparisonStarRocks_measure_order(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	maxTime := ctr.Result.Min.AsTime().Add(diff / 2)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: ctr.Result.Min,
+			End:   timestamppb.New(maxTime),
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "measure_1",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+
+	err = q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+}
+
+func testMetricsViewsComparisonStarRocks_measure_filters(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	maxTime := ctr.Result.Min.AsTime().Add(diff / 2)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "dom",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: ctr.Result.Min,
+			End:   timestamppb.New(maxTime),
+		},
+		Having: &runtimev1.Expression{
+			Expression: &runtimev1.Expression_Cond{
+				Cond: &runtimev1.Condition{
+					Op: runtimev1.Operation_OPERATION_GT,
+					Exprs: []*runtimev1.Expression{
+						{
+							Expression: &runtimev1.Expression_Ident{
+								Ident: "measure_1",
+							},
+						},
+						{
+							Expression: &runtimev1.Expression_Val{
+								Val: structpb.NewNumberValue(1),
+							},
+						},
+					},
+				},
+			},
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "measure_1",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit:          10,
+		SecurityClaims: testClaims(),
+	}
+
+	err = q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	require.NotEmpty(t, q.Result)
+}
+
+func testMetricsViewsComparisonStarRocks_null_dim_values(t *testing.T, rt *runtime.Runtime, instanceID string) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	halfTime := ctr.Result.Min.AsTime().Add(diff / 2)
+
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "pub",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: ctr.Result.Min,
+			End:   timestamppb.New(halfTime),
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: timestamppb.New(halfTime),
+			End:   ctr.Result.Max,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "measure_1",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err = q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	expected := []struct {
+		dim  any
+		base float64
+		cmp  float64
+	}{
+		{"Google", 3.2530, 2.5825},
+		{"Yahoo", 3.2528, 2.5814},
+		{nil, 3.0000, 3.0056},
+		{"Facebook", 2.8204, 3.1339},
+		{"Microsoft", 1.5083, 3.6072},
+	}
+	require.Len(t, q.Result.Rows, len(expected))
+	for i, want := range expected {
+		require.Equal(t, want.dim, q.Result.Rows[i].DimensionValue.AsInterface(), "row %d dimension", i)
+		require.InDelta(t, want.base, q.Result.Rows[i].MeasureValues[0].BaseValue.GetNumberValue(), 0.001, "row %d base", i)
+		require.InDelta(t, want.cmp, q.Result.Rows[i].MeasureValues[0].ComparisonValue.GetNumberValue(), 0.001, "row %d comparison", i)
+	}
+}
+
+// adBidsTimeRange resolves the full time range for the ad_bids table and
+// returns min, the halfway point, and max as protobuf timestamps.
+func adBidsTimeRange(t *testing.T, rt *runtime.Runtime, instanceID string) (min, half, max *timestamppb.Timestamp) {
+	ctr := &queries.ColumnTimeRange{
+		TableName:  "ad_bids",
+		ColumnName: "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	return ctr.Result.Min, timestamppb.New(ctr.Result.Min.AsTime().Add(diff / 2)), ctr.Result.Max
+}
+
+// bigQueryAdBidsTimeRange resolves the full time range for the BigQuery ad_bids table and
+// returns min, the halfway point, and max as protobuf timestamps.
+func bigQueryAdBidsTimeRange(t *testing.T, rt *runtime.Runtime, instanceID string) (min, half, max *timestamppb.Timestamp) {
+	ctr := &queries.ColumnTimeRange{
+		Database:       "rilldata",
+		DatabaseSchema: "integration_test",
+		TableName:      "ad_bids",
+		ColumnName:     "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	return ctr.Result.Min, timestamppb.New(ctr.Result.Min.AsTime().Add(diff / 2)), ctr.Result.Max
+}
+
+// databricksAdBidsTimeRange resolves the full time range for the Databricks ad_bids table and
+// returns min, the halfway point, and max as protobuf timestamps.
+func databricksAdBidsTimeRange(t *testing.T, rt *runtime.Runtime, instanceID string) (min, half, max *timestamppb.Timestamp) {
+	ctr := &queries.ColumnTimeRange{
+		DatabaseSchema: "integration_test",
+		TableName:      "ad_bids",
+		ColumnName:     "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	return ctr.Result.Min, timestamppb.New(ctr.Result.Min.AsTime().Add(diff / 2)), ctr.Result.Max
+}
+
+func testMetricsViewsComparison_null_dim_values(t *testing.T, rt *runtime.Runtime, instanceID string, minTime, halfTime, maxTime *timestamppb.Timestamp) {
+	q := &queries.MetricsViewComparison{
+		MetricsViewName: "ad_bids_metrics",
+		DimensionName:   "pub",
+		Measures: []*runtimev1.MetricsViewAggregationMeasure{
+			{
+				Name: "measure_1",
+			},
+		},
+		TimeRange: &runtimev1.TimeRange{
+			Start: minTime,
+			End:   halfTime,
+		},
+		ComparisonTimeRange: &runtimev1.TimeRange{
+			Start: halfTime,
+			End:   maxTime,
+		},
+		Sort: []*runtimev1.MetricsViewComparisonSort{
+			{
+				Name:     "measure_1",
+				SortType: runtimev1.MetricsViewComparisonMeasureType_METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE,
+				Desc:     true,
+			},
+		},
+		Limit:          250,
+		SecurityClaims: testClaims(),
+	}
+
+	err := q.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	expected := []struct {
+		dim  any
+		base float64
+		cmp  float64
+	}{
+		{"Google", 3.2530, 2.5825},
+		{"Yahoo", 3.2528, 2.5814},
+		{nil, 3.0000, 3.0056},
+		{"Facebook", 2.8204, 3.1339},
+		{"Microsoft", 1.5083, 3.6072},
+	}
+	require.Len(t, q.Result.Rows, len(expected))
+	for i, want := range expected {
+		require.Equal(t, want.dim, q.Result.Rows[i].DimensionValue.AsInterface(), "row %d dimension", i)
+		require.InDelta(t, want.base, q.Result.Rows[i].MeasureValues[0].BaseValue.GetNumberValue(), 0.001, "row %d base", i)
+		require.InDelta(t, want.cmp, q.Result.Rows[i].MeasureValues[0].ComparisonValue.GetNumberValue(), 0.001, "row %d comparison", i)
+	}
+}
+
+// snowflakeAdBidsTimeRange resolves the full time range for the Snowflake ad_bids table and
+// returns min, the halfway point, and max as protobuf timestamps.
+func snowflakeAdBidsTimeRange(t *testing.T, rt *runtime.Runtime, instanceID string) (min, half, max *timestamppb.Timestamp) {
+	ctr := &queries.ColumnTimeRange{
+		Database:       "integration_test",
+		DatabaseSchema: "public",
+		TableName:      "ad_bids",
+		ColumnName:     "timestamp",
+	}
+	err := ctr.Resolve(context.Background(), rt, instanceID, 0)
+	require.NoError(t, err)
+	diff := ctr.Result.Max.AsTime().Sub(ctr.Result.Min.AsTime())
+	return ctr.Result.Min, timestamppb.New(ctr.Result.Min.AsTime().Add(diff / 2)), ctr.Result.Max
+}

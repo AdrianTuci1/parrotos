@@ -1,0 +1,555 @@
+package server
+
+import (
+	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"slices"
+	"sort"
+	"strings"
+	"time"
+
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime"
+	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/rilldata/rill/runtime/pkg/pagination"
+	"github.com/rilldata/rill/runtime/server/auth"
+	"go.opentelemetry.io/otel/attribute"
+	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+// ListResources implements runtimev1.RuntimeServiceServer
+func (s *Server) ListResources(ctx context.Context, req *runtimev1.ListResourcesRequest) (*runtimev1.ListResourcesResponse, error) {
+	s.addInstanceRequestAttributes(ctx, req.InstanceId)
+	observability.AddRequestAttributes(ctx,
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.String("args.kind", req.Kind),
+		attribute.Bool("args.skip_security_checks", req.SkipSecurityChecks),
+		attribute.Int64("args.page_size", int64(req.PageSize)),
+	)
+
+	claims := auth.GetClaims(ctx, req.InstanceId)
+	if !claims.Can(runtime.ReadObjects) {
+		return nil, ErrForbidden
+	}
+
+	ctrl, err := s.runtime.Controller(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	rs, err := ctrl.List(ctx, req.Kind, req.Path, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.SkipSecurityChecks {
+		if !claims.Can(runtime.ReadInstance) {
+			return nil, ErrForbidden
+		}
+	} else {
+		i := 0
+		for i < len(rs) {
+			r, access, err := s.runtime.ApplySecurityPolicy(ctx, req.InstanceId, claims, rs[i])
+			if err != nil {
+				return nil, mapGRPCErrorWithFallback(err, codes.InvalidArgument)
+			}
+			if !access {
+				rs[i] = rs[len(rs)-1]
+				rs[len(rs)-1] = nil
+				rs = rs[:len(rs)-1]
+				continue
+			}
+			rs[i] = r
+			i++
+		}
+	}
+
+	slices.SortFunc(rs, func(a, b *runtimev1.Resource) int {
+		an := a.Meta.Name
+		bn := b.Meta.Name
+		if an.Kind != bn.Kind {
+			return strings.Compare(an.Kind, bn.Kind)
+		}
+		return strings.Compare(an.Name, bn.Name)
+	})
+
+	if req.PageSize == 0 {
+		return &runtimev1.ListResourcesResponse{Resources: rs}, nil
+	}
+
+	var afterKind, afterName string
+	if req.PageToken != "" {
+		if err := pagination.UnmarshalPageToken(req.PageToken, &afterKind, &afterName); err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "failed to parse page token: %v", err)
+		}
+	}
+
+	start := sort.Search(len(rs), func(i int) bool {
+		n := rs[i].Meta.Name
+		return n.Kind > afterKind || (n.Kind == afterKind && n.Name > afterName)
+	})
+	end := min(start+int(req.PageSize), len(rs))
+
+	var nextPageToken string
+	if end < len(rs) {
+		last := rs[end-1].Meta.Name
+		nextPageToken = pagination.MarshalPageToken(last.Kind, last.Name)
+	}
+
+	return &runtimev1.ListResourcesResponse{
+		Resources:     rs[start:end],
+		NextPageToken: nextPageToken,
+	}, nil
+}
+
+// WatchResources implements runtimev1.RuntimeServiceServer
+func (s *Server) WatchResources(req *runtimev1.WatchResourcesRequest, ss runtimev1.RuntimeService_WatchResourcesServer) error {
+	observability.AddRequestAttributes(ss.Context(),
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.String("args.kind", req.Kind),
+	)
+
+	claims := auth.GetClaims(ss.Context(), req.InstanceId)
+	if !claims.Can(runtime.ReadObjects) {
+		return ErrForbidden
+	}
+
+	ctrl, err := s.runtime.Controller(ss.Context(), req.InstanceId)
+	if err != nil {
+		return err
+	}
+
+	if req.Replay {
+		rs, err := ctrl.List(ss.Context(), req.Kind, "", false)
+		if err != nil {
+			return err
+		}
+
+		for _, r := range rs {
+			r, access, err := s.runtime.ApplySecurityPolicy(ss.Context(), req.InstanceId, claims, r)
+			if err != nil {
+				return mapGRPCErrorWithFallback(err, codes.InvalidArgument)
+			}
+			if !access {
+				continue
+			}
+
+			err = ss.Send(&runtimev1.WatchResourcesResponse{
+				Event:    runtimev1.ResourceEvent_RESOURCE_EVENT_WRITE,
+				Resource: r,
+			})
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return ctrl.Subscribe(ss.Context(), func(e runtimev1.ResourceEvent, n *runtimev1.ResourceName, r *runtimev1.Resource) {
+		if r != nil { // r is nil for deletion events
+			var access bool
+			var err error
+			r, access, err = s.runtime.ApplySecurityPolicy(ss.Context(), req.InstanceId, claims, r)
+			if err != nil {
+				s.logger.Info("failed to apply security policy", zap.String("name", n.Name), zap.Error(err))
+				return
+			}
+			if !access {
+				return
+			}
+		}
+
+		err = ss.Send(&runtimev1.WatchResourcesResponse{
+			Event:    e,
+			Name:     n,
+			Resource: r,
+		})
+		if err != nil {
+			s.logger.Info("failed to send resource event", zap.Error(err))
+		}
+	})
+}
+
+// GetResource implements runtimev1.RuntimeServiceServer
+func (s *Server) GetResource(ctx context.Context, req *runtimev1.GetResourceRequest) (*runtimev1.GetResourceResponse, error) {
+	s.addInstanceRequestAttributes(ctx, req.InstanceId)
+	observability.AddRequestAttributes(ctx,
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.String("args.name.kind", req.Name.Kind),
+		attribute.String("args.name.name", req.Name.Name),
+		attribute.Bool("args.skip_security_checks", req.SkipSecurityChecks),
+	)
+
+	claims := auth.GetClaims(ctx, req.InstanceId)
+	if !claims.Can(runtime.ReadObjects) {
+		return nil, ErrForbidden
+	}
+
+	ctrl, err := s.runtime.Controller(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := ctrl.Get(ctx, req.Name, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.SkipSecurityChecks {
+		if !claims.Can(runtime.ReadInstance) {
+			return nil, ErrForbidden
+		}
+		return &runtimev1.GetResourceResponse{Resource: r}, nil
+	}
+
+	r, access, err := s.runtime.ApplySecurityPolicy(ctx, req.InstanceId, claims, r)
+	if err != nil {
+		return nil, mapGRPCErrorWithFallback(err, codes.InvalidArgument)
+	}
+	if !access {
+		return nil, ErrForbidden
+	}
+
+	return &runtimev1.GetResourceResponse{Resource: r}, nil
+}
+
+// GetExplore implements runtimev1.RuntimeServiceServer
+func (s *Server) GetExplore(ctx context.Context, req *runtimev1.GetExploreRequest) (*runtimev1.GetExploreResponse, error) {
+	s.addInstanceRequestAttributes(ctx, req.InstanceId)
+	observability.AddRequestAttributes(ctx,
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.String("args.name", req.Name),
+	)
+
+	claims := auth.GetClaims(ctx, req.InstanceId)
+	if !claims.Can(runtime.ReadObjects) {
+		return nil, ErrForbidden
+	}
+
+	ctrl, err := s.runtime.Controller(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	n := &runtimev1.ResourceName{Kind: runtime.ResourceKindExplore, Name: req.Name}
+	e, err := ctrl.Get(ctx, n, false)
+	if err != nil {
+		return nil, err
+	}
+
+	e, access, err := s.runtime.ApplySecurityPolicy(ctx, req.InstanceId, claims, e)
+	if err != nil {
+		return nil, mapGRPCErrorWithFallback(err, codes.InvalidArgument)
+	}
+	if !access {
+		return nil, ErrForbidden
+	}
+
+	validSpec := e.GetExplore().State.ValidSpec
+	if validSpec == nil {
+		return &runtimev1.GetExploreResponse{
+			Explore: e,
+		}, nil
+	}
+
+	n = &runtimev1.ResourceName{Kind: runtime.ResourceKindMetricsView, Name: validSpec.MetricsView}
+	m, err := ctrl.Get(ctx, n, false)
+	if err != nil {
+		if errors.Is(err, drivers.ErrResourceNotFound) {
+			return nil, status.Error(codes.NotFound, "metrics view not found")
+		}
+		return nil, err
+	}
+
+	m, access, err = s.runtime.ApplySecurityPolicy(ctx, req.InstanceId, claims, m)
+	if err != nil {
+		return nil, mapGRPCErrorWithFallback(err, codes.InvalidArgument)
+	}
+	if !access {
+		return nil, ErrForbidden
+	}
+
+	return &runtimev1.GetExploreResponse{
+		Explore:     e,
+		MetricsView: m,
+	}, nil
+}
+
+// GetModelPartitions implements runtimev1.RuntimeServiceServer
+func (s *Server) GetModelPartitions(ctx context.Context, req *runtimev1.GetModelPartitionsRequest) (*runtimev1.GetModelPartitionsResponse, error) {
+	s.addInstanceRequestAttributes(ctx, req.InstanceId)
+	observability.AddRequestAttributes(ctx,
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.String("args.model", req.Model),
+	)
+
+	claims := auth.GetClaims(ctx, req.InstanceId)
+	if !claims.Can(runtime.ReadObjects) {
+		return nil, ErrForbidden
+	}
+
+	ctrl, err := s.runtime.Controller(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	n := &runtimev1.ResourceName{Kind: runtime.ResourceKindModel, Name: req.Model}
+	r, err := ctrl.Get(ctx, n, false)
+	if err != nil {
+		return nil, err
+	}
+
+	r, access, err := s.runtime.ApplySecurityPolicy(ctx, req.InstanceId, claims, r)
+	if err != nil {
+		return nil, mapGRPCErrorWithFallback(err, codes.InvalidArgument)
+	}
+	if !access {
+		return nil, ErrForbidden
+	}
+
+	partitionsModelID := r.GetModel().State.PartitionsModelId
+	if partitionsModelID == "" {
+		return &runtimev1.GetModelPartitionsResponse{}, nil
+	}
+
+	var beforeExecutedOn time.Time
+	afterKey := ""
+	if req.PageToken != "" {
+		err := pagination.UnmarshalPageToken(req.PageToken, &beforeExecutedOn, &afterKey)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "failed to parse page token: %v", err)
+		}
+	}
+
+	catalog, release, err := s.runtime.Catalog(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
+
+	defaultPageSize := 100
+	opts := &drivers.FindModelPartitionsOptions{
+		ModelID:          partitionsModelID,
+		WherePending:     req.Pending,
+		WhereErrored:     req.Errored,
+		WhereSkipped:     req.Skipped,
+		BeforeExecutedOn: beforeExecutedOn,
+		AfterKey:         afterKey,
+		Limit:            pagination.ValidPageSize(req.PageSize, defaultPageSize),
+	}
+
+	partitions, err := catalog.FindModelPartitions(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	var nextPageToken string
+	if len(partitions) == pagination.ValidPageSize(req.PageSize, defaultPageSize) {
+		last := partitions[len(partitions)-1]
+		nextPageToken = pagination.MarshalPageToken(last.ExecutedOn, last.Key)
+	}
+
+	return &runtimev1.GetModelPartitionsResponse{
+		Partitions:    modelPartitionsToPB(partitions),
+		NextPageToken: nextPageToken,
+	}, nil
+}
+
+// SkipModelPartitions implements runtimev1.RuntimeServiceServer
+func (s *Server) SkipModelPartitions(ctx context.Context, req *runtimev1.SkipModelPartitionsRequest) (*runtimev1.SkipModelPartitionsResponse, error) {
+	s.addInstanceRequestAttributes(ctx, req.InstanceId)
+	observability.AddRequestAttributes(ctx,
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.String("args.model", req.Model),
+		attribute.StringSlice("args.partitions", req.Partitions),
+		attribute.Bool("args.pending", req.Pending),
+		attribute.Bool("args.errored", req.Errored),
+	)
+
+	// Skipping mutates partition state, so it requires edit permissions.
+	if !auth.GetClaims(ctx, req.InstanceId).Can(runtime.EditTrigger) {
+		return nil, ErrForbidden
+	}
+
+	if len(req.Partitions) == 0 && !req.Pending && !req.Errored {
+		return nil, status.Error(codes.InvalidArgument, "must specify partitions, pending, or errored")
+	}
+
+	ctrl, err := s.runtime.Controller(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	n := &runtimev1.ResourceName{Kind: runtime.ResourceKindModel, Name: req.Model}
+	r, err := ctrl.Get(ctx, n, false)
+	if err != nil {
+		return nil, err
+	}
+
+	partitionsModelID := r.GetModel().State.PartitionsModelId
+	if partitionsModelID == "" {
+		return nil, status.Errorf(codes.FailedPrecondition, "model %q has no partitions", req.Model)
+	}
+
+	catalog, release, err := s.runtime.Catalog(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
+
+	err = catalog.UpdateModelPartitionsSkipped(ctx, partitionsModelID, req.Partitions, req.Pending, req.Errored)
+	if err != nil {
+		return nil, err
+	}
+
+	// Re-reconcile the model so it recomputes its partition error state (and cancels any in-flight run, which will
+	// re-query pending partitions and observe the newly skipped ones).
+	err = ctrl.Reconcile(ctx, n)
+	if err != nil {
+		return nil, err
+	}
+
+	return &runtimev1.SkipModelPartitionsResponse{}, nil
+}
+
+// CreateTrigger implements runtimev1.RuntimeServiceServer
+func (s *Server) CreateTrigger(ctx context.Context, req *runtimev1.CreateTriggerRequest) (*runtimev1.CreateTriggerResponse, error) {
+	s.addInstanceRequestAttributes(ctx, req.InstanceId)
+	resourceNames := make([]string, len(req.Resources))
+	for i, r := range req.Resources {
+		resourceNames[i] = r.Kind + "/" + r.Name
+	}
+	modelNames := make([]string, len(req.Models))
+	for i, m := range req.Models {
+		modelNames[i] = m.Model
+	}
+	observability.AddRequestAttributes(ctx,
+		attribute.String("args.instance_id", req.InstanceId),
+		attribute.StringSlice("args.resources", resourceNames),
+		attribute.StringSlice("args.models", modelNames),
+		attribute.Bool("args.parser", req.Parser),
+		attribute.Bool("args.all", req.All),
+		attribute.Bool("args.all_full", req.AllFull),
+	)
+
+	if !auth.GetClaims(ctx, req.InstanceId).Can(runtime.EditTrigger) {
+		return nil, ErrForbidden
+	}
+
+	ctrl, err := s.runtime.Controller(ctx, req.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build refresh trigger spec
+	spec := &runtimev1.RefreshTriggerSpec{
+		Resources: req.Resources,
+		Models:    req.Models,
+	}
+
+	// Handle the convenience flag for the project parser.
+	if req.Parser {
+		spec.Resources = append(spec.Resources, runtime.GlobalProjectParserName)
+	}
+
+	// Handle the convenience flags for all (user-facing) resources.
+	// In practice, we only refresh the major user declared resources that impact serving.
+	// For example, we don't currently trigger alerts or reports.
+	if req.All || req.AllFull {
+		kinds := []string{
+			runtime.ResourceKindProjectParser,
+			runtime.ResourceKindConnector,
+			runtime.ResourceKindModel,
+			runtime.ResourceKindMetricsView,
+			runtime.ResourceKindExplore,
+			runtime.ResourceKindComponent,
+			runtime.ResourceKindCanvas,
+		}
+		for _, kind := range kinds {
+			rs, err := ctrl.List(ctx, kind, "", false)
+			if err != nil {
+				return nil, fmt.Errorf("failed to list resources of kind %q: %w", kind, err)
+			}
+			for _, r := range rs {
+				if kind == runtime.ResourceKindModel {
+					spec.Models = append(spec.Models, &runtimev1.RefreshModelTrigger{
+						Model: r.Meta.Name.Name,
+						Full:  req.AllFull,
+					})
+					continue
+				}
+				spec.Resources = append(spec.Resources, r.Meta.Name)
+			}
+		}
+	}
+
+	// Create the trigger resource
+	name := fmt.Sprintf("trigger_%s", randomString(8))
+	n := &runtimev1.ResourceName{Kind: runtime.ResourceKindRefreshTrigger, Name: name}
+	r := &runtimev1.Resource{Resource: &runtimev1.Resource_RefreshTrigger{RefreshTrigger: &runtimev1.RefreshTrigger{Spec: spec}}}
+	err = ctrl.Create(ctx, n, nil, nil, nil, nil, false, r)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create trigger: %w", err)
+	}
+
+	return &runtimev1.CreateTriggerResponse{}, nil
+}
+
+// modelPartitionsToPB converts a slice of drivers.ModelPartition to a slice of runtimev1.ModelPartition.
+func modelPartitionsToPB(partitions []drivers.ModelPartition) []*runtimev1.ModelPartition {
+	pbs := make([]*runtimev1.ModelPartition, len(partitions))
+	for i, partition := range partitions {
+		pbs[i] = modelPartitionToPB(partition)
+	}
+	return pbs
+}
+
+// modelPartitionToPB converts a drivers.ModelPartition to a runtimev1.ModelPartition.
+func modelPartitionToPB(partition drivers.ModelPartition) *runtimev1.ModelPartition {
+	var data map[string]interface{}
+	if err := json.Unmarshal(partition.DataJSON, &data); err != nil {
+		panic(err)
+	}
+
+	var watermark, executedOn *timestamppb.Timestamp
+	if partition.Watermark != nil {
+		watermark = timestamppb.New(*partition.Watermark)
+	}
+	if partition.ExecutedOn != nil {
+		executedOn = timestamppb.New(*partition.ExecutedOn)
+	}
+
+	return &runtimev1.ModelPartition{
+		Key:        partition.Key,
+		Data:       must(structpb.NewStruct(data)),
+		Watermark:  watermark,
+		ExecutedOn: executedOn,
+		Error:      partition.Error,
+		ElapsedMs:  uint32(partition.Elapsed.Milliseconds()),
+		Skipped:    partition.Skipped,
+	}
+}
+
+func randomString(n int) string {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic(err)
+	}
+	return hex.EncodeToString(b)
+}
+
+func must[T any](v T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return v
+}

@@ -1,0 +1,42 @@
+import { EXAMPLES } from "@rilldata/web-common/features/welcome/constants";
+import { expect } from "playwright/test";
+import { test } from "./setup/base";
+import { splitFolderAndFileName } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
+import { waitForReconciliation } from "./utils/wait-for-reconciliation";
+
+test.describe("Example project initialization", () => {
+  EXAMPLES.forEach((example) => {
+    test.describe(`Example project: ${example.title}`, () => {
+      test.setTimeout(180_000);
+      test("should initialize new project", async ({ page }) => {
+        await page.getByLabel(example.title).click();
+
+        const [, fileName] = splitFolderAndFileName(example.firstFile);
+        await page.waitForURL(`**/files${example.firstFile}`);
+
+        await expect(
+          page.getByRole("heading", { name: fileName }),
+        ).toBeVisible();
+
+        // Wait for all resources to reconcile and assert no errors
+        await waitForReconciliation(page);
+      });
+    });
+  });
+
+  test.describe("Empty project", () => {
+    test("should initialize new project", async ({ page }) => {
+      await page.getByLabel("Start a blank project").click();
+
+      await expect(
+        page.getByText("Connect your data", { exact: true }),
+      ).toBeVisible();
+
+      await page.getByRole("link", { name: "rill.yaml" }).click();
+
+      await expect(
+        page.getByRole("heading", { name: "rill.yaml" }),
+      ).toBeVisible();
+    });
+  });
+});

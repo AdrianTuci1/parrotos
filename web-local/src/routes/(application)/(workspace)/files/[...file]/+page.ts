@@ -1,0 +1,61 @@
+import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.js";
+import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.js";
+import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+import { consumeViewSearchParam } from "@rilldata/web-common/layout/workspace/workspace-stores";
+import { error, redirect } from "@sveltejs/kit";
+import { get } from "svelte/store";
+
+export const load = async ({ params: { file }, parent, url }) => {
+  const parentData = await parent();
+
+  if (!parentData.initialized) {
+    throw redirect(303, "/");
+  }
+
+  const readOnly = get(featureFlags.readOnly);
+  const path = addLeadingSlash(file);
+
+  if (readOnly) {
+    throw redirect(303, "/");
+  }
+
+  const urlWithoutViewParam = consumeViewSearchParam(url, path);
+  if (urlWithoutViewParam) {
+    throw redirect(307, urlWithoutViewParam);
+  }
+
+  const fileArtifact = fileArtifacts.getFileArtifact(path);
+
+  if (fileArtifact.fileTypeUnsupported) {
+    throw error(
+      400,
+      "No renderer available for file type: " + fileArtifact.fileExtension,
+    );
+  }
+
+  // Data files like .parquet have no editable text content to fetch; they are
+  // rendered as a queryable data preview instead.
+  if (fileArtifact.isPreviewableDataFile) {
+    return {
+      fileArtifact,
+    };
+  }
+
+  try {
+    await fileArtifact.fetchContent();
+
+    return {
+      fileArtifact,
+    };
+  } catch (e) {
+    // ConnectError has .code/.message; Axios errors have .response.status
+    const statusCode = e?.response?.status ?? 500;
+    const message = e?.response?.data?.message ?? e?.message ?? "Unknown error";
+
+    if (statusCode === 404 || statusCode === 400) {
+      throw error(404, "File not found: " + path);
+    } else {
+      throw error(statusCode, message);
+    }
+  }
+};

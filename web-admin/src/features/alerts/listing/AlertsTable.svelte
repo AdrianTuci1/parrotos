@@ -1,0 +1,87 @@
+<script lang="ts">
+  import ResourceList from "@rilldata/web-common/features/resources/ResourceList.svelte";
+  import ResourceListEmptyState from "@rilldata/web-common/features/resources/ResourceListEmptyState.svelte";
+  import AlertIcon from "@rilldata/web-common/components/icons/AlertIcon.svelte";
+  import type { V1Resource } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+  import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
+  import AlertsTableCompositeCell from "./AlertsTableCompositeCell.svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let data: V1Resource[];
+  export let organization: string;
+  export let project: string;
+
+  /**
+   * Table column definitions.
+   * - "composite": Renders all dashboard data in a single cell.
+   * - Others: Used for sorting and filtering but not displayed.
+   *
+   * Note: TypeScript error prevents using `ColumnDef<DashboardResource, string>[]`.
+   * Relevant issues:
+   * - https://github.com/TanStack/table/issues/4241
+   * - https://github.com/TanStack/table/issues/4302
+   */
+  const columns: ColumnDef<V1Resource, string>[] = [
+    {
+      id: "composite",
+      cell: (info) =>
+        renderComponent(AlertsTableCompositeCell, {
+          organization: organization,
+          project: project,
+          id: info.row.original.meta.name.name,
+          title:
+            info.row.original.alert.spec.displayName ||
+            info.row.original.meta.name.name,
+          lastTrigger:
+            info.row.original.alert.state.executionHistory[0]?.finishedOn ??
+            info.row.original.alert.state.executionHistory[0]?.startedOn,
+          ownerId:
+            info.row.original.alert.spec.annotations["admin_owner_user_id"],
+          lastTriggerErrorMessage:
+            info.row.original.alert.state.executionHistory[0]?.result
+              .errorMessage,
+        }),
+    },
+    {
+      id: "name",
+      accessorFn: (row) => row.meta.name.name,
+    },
+    {
+      id: "lastRun",
+      accessorFn: (row) => row.alert.state.currentExecution?.executionTime,
+    },
+    // {
+    //   id: "actions",
+    //   cell: ({ row }) =>
+    //     renderComponent(AlertsTableActionCell, {
+    //       title: row.original.name,
+    //     }),
+    // },
+  ];
+
+  const columnVisibility = {
+    name: false,
+    lastRun: false,
+  };
+</script>
+
+<ResourceList {columns} {data} {columnVisibility} kind="alert">
+  <ResourceListEmptyState
+    slot="empty"
+    icon={AlertIcon}
+    message={m.alerts_empty_message()}
+  >
+    <span slot="action">
+      {@html m.alerts_empty_action({
+        alertsLink:
+          '<a href="https://docs.rilldata.com/guide/alerts" target="_blank" rel="noopener noreferrer">' +
+          m.alerts_link_text() +
+          "</a>",
+        codeLink:
+          '<a href="https://docs.rilldata.com/reference/project-files/alerts" target="_blank" rel="noopener noreferrer">' +
+          m.alerts_via_code() +
+          "</a>",
+      })}
+    </span>
+  </ResourceListEmptyState>
+</ResourceList>

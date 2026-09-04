@@ -1,0 +1,922 @@
+/**
+ * This module defines configured presets for time ranges & time grains.
+ * We define them as JSON objects primarily users will eventually be able to
+ * manually define these in the dashboard configuration.
+ */
+
+import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import type { Duration, DurationUnit } from "luxon";
+import {
+  Period,
+  RangePresetType,
+  ReferencePoint,
+  TimeComparisonOption,
+  type TimeGrain,
+  TimeOffsetType,
+  type TimeRangeMeta,
+  TimeRangePreset,
+  TimeTruncationType,
+} from "./types";
+
+export type TimeRangeMetaSet = Partial<Record<TimeRangePreset, TimeRangeMeta>>;
+
+/**
+ * The "latest" window time ranges are defined as a set of time ranges that are
+ * anchored to the latest data point in the dataset with a conceptually-fixed
+ * lookback window. For example, the "Last 6 Hours" time range is anchored to
+ * the latest data point in the dataset, and then looks back 6 hours from that
+ * point.
+ *
+ * This description is not 100% accurate, of course, since the latest data point
+ * may be during an incomplete period. For now, we are truncating to a reasonable
+ * periodicity (e.g. to the start of the hour) and then applying the offset.
+ */
+export const LATEST_WINDOW_TIME_RANGES: TimeRangeMetaSet = {
+  [TimeRangePreset.LAST_SIX_HOURS]: {
+    get label() {
+      return m.time_last_n_hours({ count: 6 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_HOUR,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.HOUR, // this is the offset alias for the given time range alias
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        }, // truncation
+        // then offset that by 5 hours
+        { duration: "PT5H", operationType: TimeOffsetType.SUBTRACT }, // operation
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "PT1H", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.HOUR,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+
+  [TimeRangePreset.LAST_24_HOURS]: {
+    get label() {
+      return m.time_last_n_hours({ count: 24 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.DAY,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_HOUR,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.HOUR,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        }, // truncation
+        { duration: "PT23H", operationType: TimeOffsetType.SUBTRACT }, // operation
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "PT1H", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.HOUR,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+
+  [TimeRangePreset.LAST_7_DAYS]: {
+    get label() {
+      return m.time_last_n_days({ count: 7 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.WEEK,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        }, // truncation
+        { duration: "P6D", operationType: TimeOffsetType.SUBTRACT }, // operation
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.LAST_14_DAYS]: {
+    get label() {
+      return m.time_last_n_days({ count: 14 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        { duration: "P13D", operationType: TimeOffsetType.SUBTRACT },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.LAST_4_WEEKS]: {
+    get label() {
+      return m.time_last_n_weeks({ count: 4 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_WEEK,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.WEEK,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        }, // truncation
+        { duration: "P3W", operationType: TimeOffsetType.SUBTRACT },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "P1W", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.WEEK,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.LAST_3_MONTHS]: {
+    get label() {
+      return m.time_last_n_months({ count: 3 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_MONTH,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        }, // truncation
+        { duration: "P3M", operationType: TimeOffsetType.SUBTRACT },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "P1M", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.LAST_12_MONTHS]: {
+    get label() {
+      return m.time_last_n_months({ count: 12 });
+    },
+
+    rangePreset: RangePresetType.OFFSET_ANCHORED,
+    defaultComparison: TimeComparisonOption.YEAR,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_MONTH,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        { duration: "P11M", operationType: TimeOffsetType.SUBTRACT },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        { duration: "P1M", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+};
+
+/**
+ * The "period to date" time ranges are defined as a set of time ranges that are
+ * anchored to the latest data point in the dataset, with a start datetime
+ * that's anchored to the beginning of the period that the latest data point is in.
+ * For example, the "Today" time range is anchored to the latest data point in
+ * the dataset, and then looks back to the start of that day.
+ *
+ * Like the latest window ranges, wetruncate the latest data point datetime to the
+ * start of a reasonable period for now.
+ */
+export const PERIOD_TO_DATE_RANGES: TimeRangeMetaSet = {
+  [TimeRangePreset.TODAY]: {
+    get label() {
+      return m.time_today();
+    },
+    defaultGrain: V1TimeGrain.TIME_GRAIN_HOUR,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.DAY,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_HOUR,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.WEEK_TO_DATE]: {
+    get label() {
+      return m.time_week_to_date_title();
+    },
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.WEEK,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.WEEK,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.MONTH_TO_DATE]: {
+    get label() {
+      return m.time_month_to_date_title();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.MONTH,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.QUARTER_TO_DATE]: {
+    get label() {
+      return m.time_quarter_to_date_title();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_WEEK,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.QUARTER,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.YEAR_TO_DATE]: {
+    get label() {
+      return m.time_year_to_date_title();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.YEAR,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.YEAR,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        { duration: "P1D", operationType: TimeOffsetType.ADD },
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+};
+
+export const PREVIOUS_COMPLETE_DATE_RANGES: TimeRangeMetaSet = {
+  [TimeRangePreset.YESTERDAY_COMPLETE]: {
+    get label() {
+      return m.time_yesterday();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_HOUR,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        {
+          duration: "P1D",
+          operationType: TimeOffsetType.SUBTRACT,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.DAY,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.PREVIOUS_WEEK_COMPLETE]: {
+    get label() {
+      return m.time_previous_week();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.WEEK,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        {
+          duration: "P1W",
+          operationType: TimeOffsetType.SUBTRACT,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.WEEK,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.PREVIOUS_MONTH_COMPLETE]: {
+    get label() {
+      return m.time_previous_month();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_MONTH,
+    start: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        {
+          duration: "P1M",
+          operationType: TimeOffsetType.SUBTRACT,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.LATEST_DATA,
+      transformation: [
+        {
+          period: Period.MONTH,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.PREVIOUS_QUARTER_COMPLETE]: {
+    get label() {
+      return m.time_previous_quarter();
+    },
+
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_QUARTER,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.QUARTER,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        {
+          duration: "P3M",
+          operationType: TimeOffsetType.SUBTRACT,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.QUARTER,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+  [TimeRangePreset.PREVIOUS_YEAR_COMPLETE]: {
+    get label() {
+      return m.time_previous_year();
+    },
+    defaultGrain: V1TimeGrain.TIME_GRAIN_DAY,
+    rangePreset: RangePresetType.PERIOD_ANCHORED,
+    defaultComparison: TimeComparisonOption.CONTIGUOUS,
+    minimumTimeGrain: V1TimeGrain.TIME_GRAIN_YEAR,
+    start: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.YEAR,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+        {
+          duration: "P1Y",
+          operationType: TimeOffsetType.SUBTRACT,
+        },
+      ],
+    },
+    end: {
+      reference: ReferencePoint.MIN_OF_LATEST_DATA_AND_NOW,
+      transformation: [
+        {
+          period: Period.YEAR,
+          truncationType: TimeTruncationType.START_OF_PERIOD,
+        },
+      ],
+    },
+  },
+};
+
+export const ALL_TIME = {
+  get label() {
+    return m.time_all_time_title();
+  },
+  rangePreset: RangePresetType.ALL_TIME,
+  // this comparison period is a no-op
+  defaultComparison: TimeComparisonOption.CONTIGUOUS,
+};
+
+export const CUSTOM = {
+  get label() {
+    return m.time_custom();
+  },
+  rangePreset: RangePresetType.FIXED_RANGE,
+  defaultComparison: TimeComparisonOption.CONTIGUOUS,
+};
+
+export const DEFAULT = {
+  get label() {
+    return m.time_default();
+  },
+  rangePreset: RangePresetType.FIXED_RANGE,
+  defaultComparison: TimeComparisonOption.CONTIGUOUS,
+};
+
+export const DEFAULT_TIME_RANGES: TimeRangeMetaSet = {
+  ...LATEST_WINDOW_TIME_RANGES,
+  ...PERIOD_TO_DATE_RANGES,
+  ...PREVIOUS_COMPLETE_DATE_RANGES,
+  [TimeRangePreset.ALL_TIME]: ALL_TIME,
+  CUSTOM,
+  DEFAULT,
+};
+
+/**
+ * A time grain is a unit of time that is used to group data points,
+ * e.g. "hour" or "day". The time grain is used to aggregate records
+ * for the purposes of time series visualization and analysis.
+ *
+ * TODO: This record duplicates functionality available in Luxon (DateTimeUnit,
+ * Duration, toLocaleString). The application has multiple overlapping types
+ * (TIME_GRAIN, V1TimeGrain, AvailableTimeGrain, Period, TimeUnit) that should
+ * be consolidated. Consider replacing this with Luxon-based utilities and
+ * removing the redundant type definitions. See V1TimeGrainToDateTimeUnit in
+ * new-grains.ts for the mapping approach.
+ */
+
+export const TIME_GRAIN: Record<V1TimeGrain, TimeGrain> = {
+  TIME_GRAIN_MILLISECOND: {
+    grain: V1TimeGrain.TIME_GRAIN_MILLISECOND,
+    unit: "millisecond",
+    get label() {
+      return m.time_grain_millisecond();
+    },
+    duration: Period.MILLISECOND,
+    d3format: "%H:%M:%S.%L",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      fractionalSecondDigits: 3,
+    },
+  },
+  TIME_GRAIN_SECOND: {
+    grain: V1TimeGrain.TIME_GRAIN_SECOND,
+    unit: "second",
+    get label() {
+      return m.time_grain_second();
+    },
+    duration: Period.SECOND,
+    d3format: "%H:%M:%S",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    },
+  },
+  TIME_GRAIN_MINUTE: {
+    grain: V1TimeGrain.TIME_GRAIN_MINUTE,
+    unit: "minute",
+    get label() {
+      return m.time_grain_minute();
+    },
+    duration: Period.MINUTE,
+    d3format: "%M:%S",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    },
+  },
+  TIME_GRAIN_HOUR: {
+    grain: V1TimeGrain.TIME_GRAIN_HOUR,
+    unit: "hour",
+    get label() {
+      return m.time_grain_hour();
+    },
+    duration: Period.HOUR,
+    d3format: "%H:%M",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+    },
+  },
+  TIME_GRAIN_DAY: {
+    grain: V1TimeGrain.TIME_GRAIN_DAY,
+    unit: "day",
+    get label() {
+      return m.time_grain_day();
+    },
+    duration: Period.DAY,
+    d3format: "%b %d",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    },
+  },
+  TIME_GRAIN_WEEK: {
+    grain: V1TimeGrain.TIME_GRAIN_WEEK,
+    unit: "week",
+    get label() {
+      return m.time_grain_week();
+    },
+    duration: Period.WEEK,
+    d3format: "%b %d",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    },
+  },
+  TIME_GRAIN_MONTH: {
+    grain: V1TimeGrain.TIME_GRAIN_MONTH,
+    unit: "month",
+    get label() {
+      return m.time_grain_month();
+    },
+    duration: Period.MONTH,
+    d3format: "%b %Y",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+    },
+  },
+  TIME_GRAIN_QUARTER: {
+    grain: V1TimeGrain.TIME_GRAIN_QUARTER,
+    unit: "quarter",
+    get label() {
+      return m.time_grain_quarter();
+    },
+    duration: Period.QUARTER,
+    d3format: "Q%q %Y",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+    },
+  },
+  TIME_GRAIN_YEAR: {
+    grain: V1TimeGrain.TIME_GRAIN_YEAR,
+    unit: "year",
+    get label() {
+      return m.time_grain_year();
+    },
+    duration: Period.YEAR,
+    d3format: "%Y",
+    formatDate: {
+      year: "numeric",
+    },
+  },
+  // TIME_GRAIN_UNSPECIFIED falls back to MINUTE-level settings as a safe default.
+  // This can occur when viewing infinite time ranges without a valid smallest_time_grain.
+  // The grain value should not be used in queries (filtered out by isGrainAllowed),
+  // but this entry prevents lookup failures in UI formatting code.
+  TIME_GRAIN_UNSPECIFIED: {
+    grain: V1TimeGrain.TIME_GRAIN_MINUTE,
+    unit: "minute",
+    get label() {
+      return m.time_grain_minute();
+    },
+    duration: Period.MINUTE,
+    d3format: "%M:%S",
+    formatDate: {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    },
+  },
+};
+
+/** The default configurations for time comparisons. */
+export const TIME_COMPARISON: Record<
+  TimeComparisonOption,
+  {
+    readonly label: string;
+    shorthand: string;
+    description: string;
+    comparisonType: TimeComparisonOption;
+    offsetIso: string;
+    rillTimeOffset?: string;
+  }
+> = {
+  [TimeComparisonOption.CONTIGUOUS]: {
+    get label() {
+      return m.time_comparison_previous_period();
+    },
+    shorthand: "prev. period",
+    get description() {
+      return m.time_comparison_previous_period_description();
+    },
+    comparisonType: TimeComparisonOption.CONTIGUOUS,
+    offsetIso: "",
+    rillTimeOffset: "-1P",
+  },
+  [TimeComparisonOption.CUSTOM]: {
+    get label() {
+      return m.time_custom_range();
+    },
+    shorthand: "comparing",
+    get description() {
+      return m.time_comparison_custom_description();
+    },
+    comparisonType: TimeComparisonOption.CUSTOM,
+    offsetIso: "",
+  },
+  [TimeComparisonOption.DAY]: {
+    get label() {
+      return m.time_comparison_previous_day();
+    },
+    shorthand: "prev. day",
+    get description() {
+      return m.time_comparison_previous_day_description();
+    },
+    comparisonType: TimeComparisonOption.DAY,
+    offsetIso: "P1D",
+    rillTimeOffset: "-1D",
+  },
+  [TimeComparisonOption.WEEK]: {
+    get label() {
+      return m.time_previous_week();
+    },
+    shorthand: "prev. wk",
+    get description() {
+      return m.time_comparison_previous_week_description();
+    },
+    comparisonType: TimeComparisonOption.WEEK,
+    offsetIso: "P1W",
+    rillTimeOffset: "-1W",
+  },
+  [TimeComparisonOption.MONTH]: {
+    get label() {
+      return m.time_previous_month();
+    },
+    shorthand: "prev. month",
+    get description() {
+      return m.time_comparison_previous_month_description();
+    },
+    comparisonType: TimeComparisonOption.MONTH,
+    // Setting this to P1M prevents month over month comparisons for 31-day months
+    offsetIso: "P31D",
+    rillTimeOffset: "-1M",
+  },
+  [TimeComparisonOption.QUARTER]: {
+    get label() {
+      return m.time_previous_quarter();
+    },
+    shorthand: "prev. qtr",
+    get description() {
+      return m.time_comparison_previous_quarter_description();
+    },
+    comparisonType: TimeComparisonOption.QUARTER,
+    offsetIso: "P3M",
+    rillTimeOffset: "-1Q",
+  },
+
+  [TimeComparisonOption.YEAR]: {
+    get label() {
+      return m.time_previous_year();
+    },
+    shorthand: "prev. yr",
+    get description() {
+      return m.time_comparison_previous_year_description();
+    },
+    comparisonType: TimeComparisonOption.YEAR,
+    offsetIso: "P1Y",
+    rillTimeOffset: "-1Y",
+  },
+};
+
+export function getNoComparisonLabel(): string {
+  return m.time_no_comparison_dimension();
+}
+
+export const DEFAULT_TIMEZONES = [
+  "UTC",
+  "America/Los_Angeles",
+  "America/Chicago",
+  "America/New_York",
+  "Europe/London",
+  "Europe/Paris",
+  "Asia/Jerusalem",
+  "Europe/Moscow",
+  "Asia/Kolkata",
+  "Asia/Shanghai",
+  "Asia/Tokyo",
+  "Australia/Sydney",
+];
+
+/**
+ * Mapping of {@link Period} to the unit in {@link Duration}
+ */
+export const PeriodAndUnits: Array<{
+  period: Period;
+  unit: DurationUnit;
+  grain: V1TimeGrain;
+}> = [
+  {
+    period: Period.MINUTE,
+    unit: "minutes",
+    grain: V1TimeGrain.TIME_GRAIN_MINUTE,
+  },
+  {
+    period: Period.HOUR,
+    unit: "hours",
+    grain: V1TimeGrain.TIME_GRAIN_HOUR,
+  },
+  {
+    period: Period.DAY,
+    unit: "days",
+    grain: V1TimeGrain.TIME_GRAIN_DAY,
+  },
+  {
+    period: Period.WEEK,
+    unit: "weeks",
+    grain: V1TimeGrain.TIME_GRAIN_WEEK,
+  },
+  {
+    period: Period.MONTH,
+    unit: "months",
+    grain: V1TimeGrain.TIME_GRAIN_MONTH,
+  },
+  {
+    period: Period.YEAR,
+    unit: "years",
+    grain: V1TimeGrain.TIME_GRAIN_YEAR,
+  },
+];
+export const PeriodToUnitsMap: Partial<Record<Period, keyof Duration>> = {};
+PeriodAndUnits.forEach(({ period, unit }) => (PeriodToUnitsMap[period] = unit));

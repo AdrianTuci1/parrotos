@@ -1,0 +1,50 @@
+<script lang="ts">
+  import type { NumberParts } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
+  import Base from "./Base.svelte";
+  import { isPercDiff } from "./type-utils";
+
+  export let inTable = false;
+  export let customStyle = "";
+  export let value: string | number | undefined | null | NumberParts;
+  export let color = "!text-fg-primary";
+  export let lowerIsBetter = false;
+
+  let isNull = false;
+  let isValueNegative = false;
+  let isValuePositive = false;
+
+  $: if (isPercDiff(value)) {
+    isNull = true;
+  }
+
+  $: if (value !== null && value !== undefined) {
+    if (typeof value === "number") {
+      isValueNegative = value < 0;
+      isValuePositive = value > 0;
+    } else if (typeof value === "object" && "neg" in value) {
+      isValueNegative = value.neg === "-";
+      isValuePositive = !isValueNegative && value.int !== "0";
+    } else if (typeof value === "string") {
+      isValueNegative = value.startsWith("-");
+      isValuePositive = !isValueNegative && value !== "0";
+    }
+  }
+</script>
+
+<Base
+  {isNull}
+  {color}
+  classes="ui-copy-number w-full font-normal {customStyle} {inTable
+    ? 'text-right'
+    : ''}"
+>
+  {#if lowerIsBetter ? isValuePositive : isValueNegative}
+    <span class="text-kpi-negative">
+      {value}
+    </span>
+  {:else if lowerIsBetter ? isValueNegative : isValuePositive}
+    <span class="text-kpi-positive">{value}</span>
+  {:else}
+    <span class="text-fg-secondary">{value}</span>
+  {/if}
+</Base>

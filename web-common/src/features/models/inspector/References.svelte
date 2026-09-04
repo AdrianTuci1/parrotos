@@ -1,0 +1,119 @@
+<script lang="ts">
+  import { slide } from "svelte/transition";
+  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
+  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import CollapsibleSectionTitle from "@rilldata/web-common/layout/CollapsibleSectionTitle.svelte";
+  import { LIST_SLIDE_DURATION } from "@rilldata/web-common/layout/config";
+  import { formatCompactInteger } from "@rilldata/web-common/lib/formatters";
+  import type { V1ResourceName } from "@rilldata/web-common/runtime-client";
+  import {
+    createRuntimeServiceGetResource,
+    createQueryServiceTableCardinality,
+  } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { derived } from "svelte/store";
+  import { removeLeadingSlash } from "../../entity-management/entity-mappers";
+  import { getFileHref } from "../../../layout/navigation/editor-routing";
+  import WithModelResultTooltip from "./WithModelResultTooltip.svelte";
+
+  export let refs: V1ResourceName[];
+  export let modelHasError: boolean;
+  export let connector: string;
+  export let database: string;
+  export let databaseSchema: string;
+
+  const client = useRuntimeClient();
+
+  let showReferences = true;
+
+  $: referencedResourcesStore = derived(
+    refs.map((ref) => {
+      return createRuntimeServiceGetResource(client, {
+        name: {
+          name: ref.name as string,
+          kind: ref.kind as string,
+        },
+      });
+    }),
+    (refs) => refs.map((ref) => ref.data),
+  );
+  $: referencedResources = $referencedResourcesStore;
+
+  $: referencedResourceCardinalitiesStore = derived(
+    refs.map((ref) => {
+      return createQueryServiceTableCardinality(client, {
+        tableName: ref.name as string,
+        connector,
+        database,
+        databaseSchema,
+      });
+    }),
+    (refs) => refs.map((ref) => Number(ref.data?.cardinality ?? 0)),
+  );
+  $: referencedResourcesCardinalities = $referencedResourceCardinalitiesStore;
+</script>
+
+{#if refs.length}
+  <div>
+    <div class=" pl-4 pr-4">
+      <CollapsibleSectionTitle
+        tooltipText="References"
+        bind:active={showReferences}
+      >
+        Referenced in this model
+      </CollapsibleSectionTitle>
+    </div>
+
+    {#if showReferences}
+      <div transition:slide={{ duration: LIST_SLIDE_DURATION }} class="mt-2">
+        {#each refs as reference, index (reference.name)}
+          {@const resource = referencedResources[index]}
+          {@const cardinality = referencedResourcesCardinalities[index]}
+          {@const filePath = resource?.resource?.meta?.filePaths?.[0]}
+          {#if filePath}
+            <div>
+              <WithModelResultTooltip {modelHasError}>
+                <a
+                  href={getFileHref(`/${removeLeadingSlash(filePath)}`)}
+                  class="text-fg-muted grid justify-between gap-x-2 pl-4 pr-4 hover:bg-yellow-200 hover:cursor-pointer"
+                  style:grid-template-columns="auto max-content"
+                  class:text-fg-secondary={modelHasError}
+                >
+                  <div class="truncate flex items-center gap-x-2">
+                    <div class="truncate">
+                      {reference.name}
+                    </div>
+                  </div>
+
+                  {#if cardinality}
+                    <div class="text-fg-secondary">
+                      {`${formatCompactInteger(cardinality)} rows`}
+                    </div>
+                  {/if}
+                </a>
+
+                <svelte:fragment slot="tooltip-title">
+                  <div class="break-all">
+                    {reference.name}
+                  </div>
+                </svelte:fragment>
+                <svelte:fragment slot="tooltip-right">
+                  {#if resource?.resource?.source}
+                    {resource?.resource?.source?.state?.connector}
+                  {/if}
+                </svelte:fragment>
+
+                <svelte:fragment slot="tooltip-description">
+                  <TooltipShortcutContainer>
+                    <div>Open in workspace</div>
+                    <Shortcut>Click</Shortcut>
+                  </TooltipShortcutContainer>
+                </svelte:fragment>
+              </WithModelResultTooltip>
+            </div>
+          {/if}
+        {/each}
+      </div>
+    {/if}
+  </div>
+{/if}

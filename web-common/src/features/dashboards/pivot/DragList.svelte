@@ -1,0 +1,551 @@
+<script context="module" lang="ts">
+  import { Button } from "@rilldata/web-common/components/button";
+  import Column from "@rilldata/web-common/components/icons/Column.svelte";
+  import Row from "@rilldata/web-common/components/icons/Row.svelte";
+  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { writable } from "svelte/store";
+  import { getStateManagers } from "../state-managers/state-managers";
+  import { metricsExplorerStore } from "../stores/dashboard-stores";
+  import AddField from "./AddField.svelte";
+  import MeasureFormatChip from "./MeasureFormatChip.svelte";
+  import PivotChip from "./PivotChip.svelte";
+  import PivotPortalItem from "./PivotPortalItem.svelte";
+  import { swapListener } from "./swapListener";
+  import TimeDropdownChip from "./TimeDropdownChip.svelte";
+  import {
+    type PivotChipData,
+    PivotChipType,
+    type PivotMeasureFormatting,
+    type PivotTableMode,
+  } from "./types";
+  import {
+    handleTimeChipClick,
+    handleTimeChipDrop,
+    isNewTimeChip,
+    updateTimeChipGrain,
+  } from "@rilldata/web-common/features/dashboards/pivot/time-pill-utils";
+  import { timePillSelectors } from "./time-pill-store";
+
+  export type Zone =
+    | "rows"
+    | "columns"
+    | "Time"
+    | "Measures"
+    | "Dimensions"
+    | "tags";
+
+  // When a tag chip is being dragged the drop receivers do a bulk-add instead
+  // of the per-chip splice path. The dimensions and measures arrays are
+  // precomputed at drag-start so each receiver does not have to re-split.
+  export type TagDragPayload = {
+    tagName: string;
+    dimensions: PivotChipData[];
+    measures: PivotChipData[];
+  };
+
+  export type DragData = {
+    source: Zone;
+    width: number;
+    chip: PivotChipData;
+    tagPayload?: TagDragPayload;
+  };
+
+  export const dragDataStore = writable<null | DragData>(null);
+  export const controllerStore = writable<AbortController | null>(null);
+</script>
+
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let items: PivotChipData[] = [];
+  export let placeholder: string | null = null;
+  export let zone: Zone;
+  export let tableMode: PivotTableMode = "nest";
+  export let onUpdate: (items: PivotChipData[]) => void = () => {};
+  // When provided, measure chips in drop zones expose per-measure conditional
+  // formatting controls in a dropdown on the chip.
+  export let measureFormatting:
+    | Record<string, PivotMeasureFormatting>
+    | undefined = undefined;
+  export let setMeasureFormatting:
+    | ((measureName: string, fmt: PivotMeasureFormatting | null) => void)
+    | undefined = undefined;
+  export let lowerIsBetterMap: Record<string, boolean> = {};
+
+  const isDropLocation = zone === "columns" || zone === "rows";
+  const DRAG_START_THRESHOLD_PX = 4;
+
+  const _ghostIndex = writable<number | null>(null);
+
+  let swap = false;
+  let container: HTMLDivElement;
+  let offset = { x: 0, y: 0 };
+  let dragStart = { left: 0, top: 0 };
+  let pendingDrag: PendingDragState | null = null;
+  let dragActive = false;
+
+  const { exploreName } = getStateManagers();
+
+  $: ghostIndex = $_ghostIndex;
+  $: dragData = $dragDataStore;
+  $: source = dragData?.source;
+  $: dragChip = dragData?.chip;
+  $: ghostWidth = dragData?.width;
+  $: canMixTypes = zone === "columns" && tableMode === "flat";
+  $: zoneStartedDrag = source === zone;
+  $: lastDimensionIndex = items.findLastIndex(
+    (i) => i.type !== PivotChipType.Measure,
+  );
+
+  $: isTagDrag = !!dragData?.tagPayload;
+
+  $: isValidDropZone =
+    isDropLocation &&
+    dragData &&
+    (isTagDrag ||
+      zone === "columns" ||
+      dragChip?.type !== PivotChipType.Measure);
+
+  // Get available grains from the store
+  const availableGrainsStore = timePillSelectors.getAvailableGrains("time");
+  $: availableTimeGrains = $availableGrainsStore;
+
+  type PendingDragState = {
+    item: PivotChipData;
+    index: number;
+    width: number;
+    left: number;
+    top: number;
+    offsetX: number;
+    offsetY: number;
+    startX: number;
+    startY: number;
+  };
+
+  function handleMouseDown(e: MouseEvent, item: PivotChipData) {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest(".grain-dropdown") ||
+      target.closest(".grain-label") ||
+      target.closest(".format-dropdown")
+    )
+      return;
+
+    if (e.button !== 0) return;
+
+    e.preventDefault();
+
+    const dragItem = document.getElementById(item.id);
+    if (!dragItem) return;
+
+    const { width, left, top } = dragItem.getBoundingClientRect();
+
+    const index = Number(dragItem.dataset.index);
+
+    pendingDrag = {
+      item,
+      index,
+      width,
+      left,
+      top,
+      offsetX: e.clientX - left,
+      offsetY: e.clientY - top,
+      startX: e.clientX,
+      startY: e.clientY,
+    };
+
+    window.addEventListener("mousemove", detectDragStart);
+    window.addEventListener("mouseup", handleGlobalMouseUp, {
+      once: true,
+    });
+  }
+
+  function reset() {
+    dragActive = false;
+    swap = false;
+    dragDataStore.set(null);
+    _ghostIndex.set(null);
+    pendingDrag = null;
+    window.removeEventListener("mousemove", detectDragStart);
+  }
+
+  function handleDrop(e: MouseEvent) {
+    if (zoneStartedDrag)
+      $controllerStore?.abort("Drag cancelled - item dropped");
+
+    // Holding CMD (mac) or Ctrl flips the tag drop from append to replace,
+    // matching the click-side affordance on the tag row.
+    const replace = e.metaKey || e.ctrlKey;
+
+    if (isValidDropZone) {
+      if (dragData?.tagPayload) {
+        // Bulk-add path for tag drops. Skips ghost-index positioning since
+        // we are inserting multiple chips, not a single one. Cross-zone
+        // cleanup on replace happens in the auto-arrange zone or the click
+        // affordances on the tag row — DragList only manages its own zone.
+        const { dimensions, measures } = dragData.tagPayload;
+        const newItems =
+          zone === "rows" ? dimensions : [...dimensions, ...measures];
+        if (newItems.length === 0) {
+          // Pure-measure tag dropped on rows, for instance: nothing to do.
+        } else if (replace) {
+          onUpdate(newItems);
+        } else {
+          const existing = new Set(items.map((c) => c.id));
+          const additions = newItems.filter((c) => !existing.has(c.id));
+          if (additions.length > 0) onUpdate([...items, ...additions]);
+        }
+      } else if (dragChip && ghostIndex !== null) {
+        const temp = [...items];
+
+        let chipToAdd = dragChip;
+
+        if (isNewTimeChip(chipToAdd)) {
+          const timeChipsInZone = temp.filter(
+            (chip) => chip.type === PivotChipType.Time,
+          );
+
+          chipToAdd = handleTimeChipDrop(
+            dragChip,
+            ghostIndex,
+            timeChipsInZone,
+            availableTimeGrains,
+          );
+        }
+
+        temp.splice(ghostIndex, 0, chipToAdd);
+        items = temp;
+        onUpdate(items);
+      }
+      swap = false;
+    }
+    reset();
+  }
+
+  function detectDragStart(e: MouseEvent) {
+    if (!pendingDrag || dragActive) return;
+
+    const movedBeyondThreshold =
+      Math.abs(e.clientX - pendingDrag.startX) >= DRAG_START_THRESHOLD_PX ||
+      Math.abs(e.clientY - pendingDrag.startY) >= DRAG_START_THRESHOLD_PX;
+
+    if (!movedBeyondThreshold) return;
+
+    beginDrag();
+  }
+
+  function beginDrag() {
+    if (!pendingDrag) return;
+
+    dragActive = true;
+    window.removeEventListener("mousemove", detectDragStart);
+
+    const { item, index, width, left, top, offsetX, offsetY } = pendingDrag;
+
+    pendingDrag = null;
+
+    dragStart = { left, top };
+    offset = { x: offsetX, y: offsetY };
+    _ghostIndex.set(index);
+
+    if (isDropLocation) {
+      swap = true;
+      const temp = [...items];
+      temp.splice(index, 1);
+      items = temp;
+
+      // Allow us to abort this update if the pill is dropped to the same location
+      // This shouldn't be necessary after state management is updated
+      const controller = new AbortController();
+
+      controllerStore.set(controller);
+
+      window.addEventListener(
+        "mouseup",
+        () => {
+          onUpdate(temp);
+        },
+        {
+          once: true,
+          signal: controller.signal,
+        },
+      );
+    }
+
+    dragDataStore.set({
+      chip: item,
+      source: zone,
+      width,
+    });
+  }
+
+  function handleGlobalMouseUp() {
+    window.removeEventListener("mousemove", detectDragStart);
+
+    if (!dragActive) {
+      pendingDrag = null;
+      return;
+    }
+
+    reset();
+  }
+
+  function handleDragEnter() {
+    if (!dragData) return;
+
+    if (!isValidDropZone) return;
+
+    const defaultIndex =
+      dragChip?.type === PivotChipType.Measure
+        ? items.length
+        : lastDimensionIndex + 1;
+
+    _ghostIndex.set(defaultIndex);
+    swap = true;
+  }
+
+  function handleDragLeave() {
+    if (!dragData) return;
+    if (zone === "columns" || zone === "rows") {
+      _ghostIndex.set(null);
+    }
+
+    swap = false;
+  }
+
+  function handleRowClick(item: PivotChipData) {
+    let itemToAdd = item;
+    if (item.type === PivotChipType.Time) {
+      itemToAdd = handleTimeChipClick(item, availableTimeGrains);
+    }
+    metricsExplorerStore.addPivotField($exploreName, itemToAdd, true);
+  }
+
+  function handleColumnClick(item: PivotChipData) {
+    let itemToAdd = item;
+    if (item.type === PivotChipType.Time) {
+      itemToAdd = handleTimeChipClick(item, availableTimeGrains);
+    }
+    metricsExplorerStore.addPivotField($exploreName, itemToAdd, false);
+  }
+
+  function handleTimeGrainSelect(item: PivotChipData, timeGrain: V1TimeGrain) {
+    const updatedItems = updateTimeChipGrain(items, item, timeGrain);
+    items = updatedItems;
+    onUpdate(updatedItems);
+  }
+</script>
+
+<div
+  role="presentation"
+  class="dnd-zone group"
+  class:valid={isValidDropZone}
+  class:horizontal={isDropLocation}
+  style:--ghost-width="{ghostWidth ?? 0}px"
+  onmouseup={handleDrop}
+  onmouseenter={handleDragEnter}
+  onmouseleave={handleDragLeave}
+  use:swapListener={{
+    condition: isDropLocation && swap,
+    ghostIndex: _ghostIndex,
+    chipType: dragChip?.type,
+    canMixTypes,
+    orientation: "horizontal",
+  }}
+  bind:this={container}
+  aria-label={m.dashboard_drag_list_zone({ zone })}
+>
+  {#each items as item, index (item.id)}
+    <div
+      class="item-wrapper gap-x-2"
+      class:aligned={zone === "Time" ||
+        zone === "Measures" ||
+        zone === "Dimensions"}
+    >
+      {#if index === ghostIndex}
+        <span
+          class="ghost"
+          class:rounded={dragChip?.type !== PivotChipType.Measure}
+        ></span>
+      {/if}
+
+      <div
+        id={item.id}
+        data-type={item.type === PivotChipType.Measure
+          ? "measure"
+          : "dimension"}
+        data-index={index}
+        class="drag-item w-full max-w-fit truncate"
+        class:hidden={dragChip?.id === item.id && zoneStartedDrag}
+        class:rounded-full={item.type !== PivotChipType.Measure}
+      >
+        {#if isDropLocation && item.type === PivotChipType.Time}
+          <TimeDropdownChip
+            {item}
+            grab
+            removable
+            availableGrains={availableTimeGrains}
+            onTimeGrainSelect={(timeGrain) =>
+              handleTimeGrainSelect(item, timeGrain)}
+            onmousedown={(e) => handleMouseDown(e, item)}
+            onRemove={() => {
+              items = items.filter((i) => i.id !== item.id);
+              onUpdate(items);
+            }}
+          />
+        {:else if isDropLocation && item.type === PivotChipType.Measure && setMeasureFormatting}
+          <MeasureFormatChip
+            {item}
+            grab
+            removable
+            fmt={measureFormatting?.[item.id]}
+            lowerIsBetter={lowerIsBetterMap[item.id] ?? false}
+            onFormatChange={(fmt: PivotMeasureFormatting | null) =>
+              setMeasureFormatting?.(item.id, fmt)}
+            onmousedown={(e: MouseEvent) => handleMouseDown(e, item)}
+            onRemove={() => {
+              items = items.filter((i) => i.id !== item.id);
+              onUpdate(items);
+            }}
+          />
+        {:else}
+          <PivotChip
+            {item}
+            grab
+            removable={isDropLocation}
+            onmousedown={(e) => handleMouseDown(e, item)}
+            onRemove={() => {
+              items = items.filter((i) => i.id !== item.id);
+              onUpdate(items);
+            }}
+          />
+        {/if}
+      </div>
+
+      {#if zone !== "rows" && zone !== "columns"}
+        <div class="icons">
+          {#if (zone === "Time" || zone === "Dimensions") && tableMode === "nest"}
+            <Tooltip distance={8} location="top" alignment="start">
+              <button
+                class="icon-wrapper"
+                onclick={() => handleRowClick(item)}
+                aria-label={m.dashboard_add_row()}
+                type="button"
+              >
+                <Row size="16px" />
+              </button>
+              <TooltipContent slot="tooltip-content"
+                >{m.dashboard_add_to_rows()}</TooltipContent
+              >
+            </Tooltip>
+          {/if}
+
+          <Tooltip distance={8} location="top" alignment="start">
+            <button
+              class="icon-wrapper"
+              onclick={() => handleColumnClick(item)}
+              aria-label={m.dashboard_add_column()}
+              type="button"
+            >
+              <Column size="16px" />
+            </button>
+            <TooltipContent slot="tooltip-content">
+              {m.dashboard_add_to_columns()}
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      {/if}
+    </div>
+  {:else}
+    {#if ghostIndex === null}
+      <p>{placeholder}</p>
+    {/if}
+  {/each}
+
+  {#if ghostIndex === items.length}
+    <span class="ghost" class:rounded={dragChip?.type !== PivotChipType.Measure}
+    ></span>
+  {/if}
+
+  {#if zone === "columns" || zone === "rows"}
+    <AddField {zone} />
+    {#if items.length}
+      <Button
+        type="text"
+        onClick={() => {
+          onUpdate([]);
+        }}
+      >
+        {m.dashboard_clear()}
+      </Button>
+    {/if}
+  {/if}
+</div>
+
+{#if dragChip && zoneStartedDrag}
+  <PivotPortalItem
+    {offset}
+    item={dragChip}
+    position={dragStart}
+    removable={isDropLocation}
+    onRelease={() => dragDataStore.set(null)}
+  />
+{/if}
+
+<style lang="postcss">
+  .ghost {
+    @apply bg-gray-100 border rounded-sm pointer-events-none;
+    height: 26px;
+    width: var(--ghost-width);
+  }
+
+  .dnd-zone {
+    @apply w-full max-w-full rounded-sm;
+    @apply flex flex-col;
+    @apply gap-y-2 py-0  text-fg-secondary;
+  }
+
+  .horizontal {
+    @apply flex flex-row flex-wrap bg-input w-full p-1 px-2 gap-x-2 h-fit;
+    @apply items-center;
+    @apply border;
+    /* Cap the drop zone at ~3 chip rows so a large number of chips scrolls
+       within the zone instead of pushing the pivot table out of view. */
+    @apply overflow-y-auto;
+    max-height: 88px;
+  }
+
+  .valid {
+    @apply border-blue-400;
+  }
+
+  .valid:hover {
+    @apply bg-surface-subtle;
+  }
+
+  .rounded {
+    @apply rounded-full;
+  }
+
+  .item-wrapper {
+    @apply flex items-center;
+  }
+
+  .item-wrapper.aligned {
+    @apply justify-between w-full;
+  }
+
+  .icons {
+    @apply gap-x-2 hidden transition-opacity duration-200;
+  }
+
+  .item-wrapper:hover .icons {
+    @apply flex;
+  }
+
+  .icon-wrapper {
+    @apply inline-flex items-center justify-center cursor-pointer;
+  }
+</style>

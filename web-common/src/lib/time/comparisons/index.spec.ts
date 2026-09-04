@@ -1,0 +1,297 @@
+import {
+  getAvailableComparisonsForTimeRange,
+  isComparisonInsideBounds,
+} from ".";
+import { TimeComparisonOption } from "../types";
+import { describe, it, expect } from "vitest";
+import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
+import { DateTime, Interval } from "luxon";
+
+const contiguousAndCustomComparisonRanges = [
+  // contiguous cases
+  {
+    description:
+      "should should return a contiguous time range for a single day when comparison is CONTIGUOUS",
+    input: {
+      start: new Date("2020-03-05T00:00:00.000Z"),
+      end: new Date("2020-03-06T00:00:00.000Z"),
+      comparison: TimeComparisonOption.CONTIGUOUS,
+    },
+    output: {
+      start: new Date("2020-03-04T00:00:00.000Z"),
+      end: new Date("2020-03-05T00:00:00.000Z"),
+    },
+  },
+  {
+    description:
+      "should should return a contiguous, un-quantized time range for six hours when comparison is CONTIGUOUS",
+    input: {
+      start: new Date("2020-03-05T06:05:00.000Z"),
+      end: new Date("2020-03-06T12:05:00.000Z"),
+      comparison: TimeComparisonOption.CONTIGUOUS,
+    },
+    output: {
+      start: new Date("2020-03-04T00:05:00.000Z"),
+      end: new Date("2020-03-05T06:05:00.000Z"),
+    },
+  },
+];
+
+const periodStart = new Date("2020-03-05T00:00:00.000Z");
+const periodEnd = new Date("2020-03-10T00:00:00.000Z");
+const periodicComparisonTests = [
+  {
+    description: "should return a 1 day period when comparison is P1D",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: TimeComparisonOption.DAY,
+    },
+    output: {
+      start: new Date("2020-03-04T00:00:00.000Z"),
+      end: new Date("2020-03-09T00:00:00.000Z"),
+    },
+  },
+  {
+    description: "should return a 1 week period when comparison is P1W",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: TimeComparisonOption.WEEK,
+    },
+    output: {
+      start: new Date("2020-02-27T00:00:00.000Z"),
+      end: new Date("2020-03-03T00:00:00.000Z"),
+    },
+  },
+  {
+    description: "should return a 1 month period when comparison is P1M",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: TimeComparisonOption.MONTH,
+    },
+    output: {
+      start: new Date("2020-02-05T00:00:00.000Z"),
+      end: new Date("2020-02-10T00:00:00.000Z"),
+    },
+  },
+  {
+    description: "should return a 1 year period when comparison is P1Y",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: TimeComparisonOption.YEAR,
+    },
+    output: {
+      start: new Date("2019-03-05T00:00:00.000Z"),
+      end: new Date("2019-03-10T00:00:00.000Z"),
+    },
+  },
+];
+
+const invalidComparisionTests = [
+  {
+    description: "should return undefined when comparison is invalid",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: "invalid" as TimeComparisonOption,
+    },
+    output: undefined,
+  },
+  {
+    description: "should return undefined when comparison is new syntax",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: "7D as of latest/D-7D",
+    },
+    output: undefined,
+  },
+  {
+    description:
+      "should return undefined when comparison is new syntax using offset keyword",
+    input: {
+      start: periodStart,
+      end: periodEnd,
+      comparison: "7D as of latest/D offset -7D",
+    },
+    output: undefined,
+  },
+];
+
+const getComparisonIntervalTests = [
+  ...contiguousAndCustomComparisonRanges,
+  ...periodicComparisonTests,
+  ...invalidComparisionTests,
+];
+
+describe("getComparisonInterval", () => {
+  getComparisonIntervalTests.forEach((test) => {
+    it(test.description, () => {
+      const { start, end, comparison } = test.input;
+      const interval = Interval.fromDateTimes(
+        DateTime.fromJSDate(start, { zone: "UTC" }),
+        DateTime.fromJSDate(end, { zone: "UTC" }),
+      ) as Interval<true>;
+
+      const comparisonInterval = getComparisonInterval(
+        interval,
+        comparison,
+        "UTC",
+      );
+      if (test.output === undefined) {
+        expect(comparisonInterval).toBeUndefined();
+        return;
+      }
+
+      const { start: expectedStart, end: expectedEnd } = test.output;
+      expect(comparisonInterval?.start.toJSDate()).toEqual(expectedStart);
+      expect(comparisonInterval?.end.toJSDate()).toEqual(expectedEnd);
+    });
+  });
+});
+
+const boundsTestStart = new Date("2020-03-05T00:00:00.000Z");
+const boundsTestEnd = new Date("2020-03-12T00:00:00.000Z");
+const rangeStart = new Date("2020-03-06T00:00:00.000Z");
+const rangeEnd = new Date("2020-03-07T00:00:00.000Z");
+
+const isComparisonInsideBoundsTests = [
+  {
+    description:
+      "should return true when a day offset comparison is inside the bounds",
+    input: TimeComparisonOption.DAY,
+    output: true,
+  },
+  {
+    description:
+      "should return false when a week offset comparison is inside the bounds",
+    input: TimeComparisonOption.WEEK,
+    output: false,
+  },
+];
+describe("isComparisonInsideBounds", () => {
+  isComparisonInsideBoundsTests.forEach((test) => {
+    it(test.description, () => {
+      const { input, output } = test;
+      const actual = isComparisonInsideBounds(
+        boundsTestStart,
+        boundsTestEnd,
+        rangeStart,
+        rangeEnd,
+        input,
+        "UTC",
+      );
+      expect(actual).toEqual(output);
+    });
+  });
+});
+
+const getAvailableComparisonsForTimeRangeTests = [
+  {
+    description:
+      "should remove duplicate comparison and return all comparison points for a 1 day range over years",
+    input: {
+      start: new Date("2023-03-04T00:00:00.000Z"),
+      end: new Date("2023-03-05T00:00:00.000Z"),
+      boundStart: new Date("2020-03-05T00:00:00.000Z"),
+      boundEnd: new Date("2023-03-05T00:00:00.000Z"),
+    },
+    output: [
+      TimeComparisonOption.DAY,
+      TimeComparisonOption.WEEK,
+      TimeComparisonOption.MONTH,
+      TimeComparisonOption.QUARTER,
+      TimeComparisonOption.YEAR,
+    ],
+  },
+  {
+    description:
+      "should return all comparison points for a 1 week range over years",
+    input: {
+      start: new Date("2023-02-01T00:00:00.000Z"),
+      end: new Date("2023-02-07T00:00:00.000Z"),
+      boundStart: new Date("2020-03-05T00:00:00.000Z"),
+      boundEnd: new Date("2023-03-05T00:00:00.000Z"),
+    },
+    output: [
+      TimeComparisonOption.CONTIGUOUS,
+      TimeComparisonOption.WEEK,
+      TimeComparisonOption.MONTH,
+      TimeComparisonOption.QUARTER,
+      TimeComparisonOption.YEAR,
+    ],
+  },
+  {
+    description:
+      "should return all comparison points for larger than week range over years",
+    input: {
+      start: new Date("2023-01-20T00:00:00.000Z"),
+      end: new Date("2023-02-18T00:00:00.000Z"),
+      boundStart: new Date("2020-03-05T00:00:00.000Z"),
+      boundEnd: new Date("2023-03-05T00:00:00.000Z"),
+    },
+    output: [
+      TimeComparisonOption.CONTIGUOUS,
+      TimeComparisonOption.MONTH,
+      TimeComparisonOption.QUARTER,
+      TimeComparisonOption.YEAR,
+    ],
+  },
+  {
+    description:
+      "should return all comparison points for larger than month range over years",
+    input: {
+      start: new Date("2023-01-20T00:00:00.000Z"),
+      end: new Date("2023-03-05T00:00:00.000Z"),
+      boundStart: new Date("2020-03-05T00:00:00.000Z"),
+      boundEnd: new Date("2023-03-05T00:00:00.000Z"),
+    },
+    output: [
+      TimeComparisonOption.CONTIGUOUS,
+      TimeComparisonOption.QUARTER,
+      TimeComparisonOption.YEAR,
+    ],
+  },
+  {
+    description:
+      "should return no options if range is too big to have a comparison window",
+    input: {
+      start: new Date("2021-01-01T00:00:00.000Z"),
+      end: new Date("2022-01-01T00:00:00.000Z"),
+      boundStart: new Date("2020-06-01T00:00:00.000Z"),
+      boundEnd: new Date("2023-01-01T00:00:00.000Z"),
+    },
+    output: [],
+  },
+  {
+    description:
+      "should return no options if the range is too close to the end to have a comparison window",
+    input: {
+      start: new Date("2020-01-01T00:00:00.000Z"),
+      end: new Date("2020-02-01T00:00:00.000Z"),
+      boundStart: new Date("2020-01-01T00:00:00.000Z"),
+      boundEnd: new Date("2023-01-01T00:00:00.000Z"),
+    },
+    output: [],
+  },
+];
+
+describe("getAvailableComparisonsForTimeRange", () => {
+  getAvailableComparisonsForTimeRangeTests.forEach((test) => {
+    it(test.description, () => {
+      const { start, end, boundStart, boundEnd } = test.input;
+      const actual = getAvailableComparisonsForTimeRange(
+        boundStart,
+        boundEnd,
+        start,
+        end,
+        [...(Object.values(TimeComparisonOption) as TimeComparisonOption[])],
+        "UTC",
+      );
+      expect(actual).toEqual(test.output);
+    });
+  });
+});

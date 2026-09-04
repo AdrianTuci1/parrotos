@@ -1,0 +1,168 @@
+<script lang="ts">
+  import { beforeNavigate, onNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
+  import {
+    getDashboardFromEmbedRoute,
+    isDifferentDashboard,
+  } from "@rilldata/web-admin/features/embeds/embed-route-utils.ts";
+  import initEmbedPublicAPI from "@rilldata/web-admin/features/embeds/init-embed-public-api.ts";
+  import EmbedHeader from "@rilldata/web-admin/features/embeds/EmbedHeader.svelte";
+  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
+  import { VegaLiteTooltipHandler } from "@rilldata/web-common/components/vega/vega-tooltip.ts";
+  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import DashboardChat from "@rilldata/web-common/features/chat/DashboardChat.svelte";
+  import ThemeProvider from "@rilldata/web-common/features/dashboards/ThemeProvider.svelte";
+  import { activeDashboardTheme } from "@rilldata/web-common/features/themes/active-dashboard-theme";
+  import {
+    createIframeRPCHandler,
+    emitNotification,
+  } from "@rilldata/web-common/lib/rpc";
+  import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
+  import { getRuntimeClient } from "@rilldata/web-common/runtime-client/v2/context";
+  import RuntimeProvider from "@rilldata/web-common/runtime-client/v2/RuntimeProvider.svelte";
+  import { onMount } from "svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import type { PageData } from "./$types";
+
+  export let data: PageData;
+  const {
+    instanceId,
+    missingRequireParams,
+    navigationEnabled,
+    navigationBarEnabled,
+    runtimeHost,
+    accessToken,
+  } = data;
+
+  const { dashboardChat } = featureFlags;
+
+  // Embedded dashboards communicate directly with the project runtime and do not communicate with the admin server.
+  // One by-product of this is that they have no access to control plane features like alerts, bookmarks, and scheduled reports.
+  featureFlags.set(false, "adminServer");
+
+  // Extract active resource info from current route
+  // Falls back to Canvas if route doesn't match a dashboard pattern (e.g., project page)
+  $: activeResource = getDashboardFromEmbedRoute(
+    $page.route.id,
+    $page.params,
+  ) ?? {
+    kind: ResourceKind.Canvas,
+    name: $page.params.name,
+  };
+
+  $: onProjectPage = !activeResource;
+
+  $: showDashboardChat = $dashboardChat && !onProjectPage;
+  // Resource kind can be metrics view in some cases. But internally to render it will have to have an equivalent explore.
+  $: correctedKindForChat =
+    activeResource?.kind === ResourceKind.MetricsView
+      ? ResourceKind.Explore
+      : (activeResource?.kind as
+          | ResourceKind.Explore
+          | ResourceKind.Canvas
+          | undefined);
+
+  $: showTopBar = navigationBarEnabled || showDashboardChat;
+
+  // Suppress browser back/forward
+  beforeNavigate((nav) => {
+    if (!navigationEnabled) {
+      if (nav.type === "popstate") {
+        nav.cancel();
+      }
+    }
+  });
+
+  onNavigate(({ from, to }) => {
+    if (!navigationEnabled) return;
+
+    const fromDashboard = from
+      ? getDashboardFromEmbedRoute(from.route.id, from.params)
+      : null;
+    const toDashboard = to
+      ? getDashboardFromEmbedRoute(to.route.id, to.params)
+      : null;
+
+    if (
+      fromDashboard &&
+      toDashboard &&
+      isDifferentDashboard(fromDashboard, toDashboard)
+    ) {
+      emitNotification("navigation", {
+        from: fromDashboard.name,
+        to: toDashboard.name,
+      });
+    } else if (!fromDashboard && toDashboard) {
+      // Navigating from listing page to a dashboard
+      emitNotification("navigation", {
+        from: "dashboardListing",
+        to: toDashboard.name,
+      });
+    } else if (fromDashboard && !toDashboard) {
+      // Navigating from a dashboard to the listing page
+      emitNotification("navigation", {
+        from: fromDashboard.name,
+        to: "dashboardListing",
+      });
+    }
+  });
+
+  onMount(() => {
+    createIframeRPCHandler();
+    void waitUntil(() => VegaLiteTooltipHandler.resetElement(), 5000, 100);
+
+    // Returns the same cached client that RuntimeProvider uses for this host+instanceId.
+    const client = getRuntimeClient({
+      host: runtimeHost,
+      instanceId,
+      jwt: accessToken,
+      authContext: "embed",
+    });
+    return initEmbedPublicAPI(client);
+  });
+</script>
+
+<svelte:head>
+  {#if activeResource}
+    <title>{m.embed_page_title({ resourceName: activeResource.name })}</title>
+  {:else}
+    <title>{m.embed_default_page_title()}</title>
+  {/if}
+</svelte:head>
+
+{#if missingRequireParams.length}
+  <ErrorPage
+    header={m.embed_missing_required_params({
+      params: missingRequireParams.map((p) => '"' + p + '"').join(", "),
+    })}
+    fatal
+  />
+{:else}
+  <RuntimeProvider
+    {instanceId}
+    host={runtimeHost}
+    jwt={accessToken}
+    authContext="embed"
+  >
+    {#if showTopBar}
+      <ThemeProvider theme={$activeDashboardTheme} applyLayout={false}>
+        <div
+          class="flex items-center w-full pr-4 py-1 min-h-[2.5rem] bg-surface-subtle"
+          class:border-b={!onProjectPage}
+        >
+          <EmbedHeader {activeResource} {navigationBarEnabled} />
+        </div>
+      </ThemeProvider>
+    {/if}
+
+    <div class="flex h-full overflow-hidden">
+      <div class="flex-1 overflow-hidden">
+        <slot />
+      </div>
+      {#if showDashboardChat && correctedKindForChat}
+        <DashboardChat kind={correctedKindForChat} />
+      {/if}
+    </div>
+  </RuntimeProvider>
+{/if}

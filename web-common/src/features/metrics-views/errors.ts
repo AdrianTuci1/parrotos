@@ -1,0 +1,81 @@
+import type { LineStatus } from "@rilldata/web-common/components/editor/line-status/state";
+import type { V1ParseError } from "@rilldata/web-common/runtime-client";
+
+export enum ValidationState {
+  OK = "OK",
+  WARNING = "WARNING",
+  ERROR = "ERROR",
+}
+
+export enum SourceModelValidationStatus {
+  OK = "OK",
+  // No source model selected.
+  EMPTY = "EMPTY",
+  // Source model query is invalid.
+  INVALID = "INVALID",
+  // Selected source model is no longer present.
+  MISSING = "MISSING",
+}
+
+/** a temporary set of enums that shoul be emitted by orval's codegen */
+export enum ConfigErrors {
+  SourceNotSelected = "metrics view source not selected",
+  SourceNotFound = "metrics view source not found",
+  TimestampNotSelected = "metrics view timestamp not selected",
+  TimestampNotFound = "metrics view selected timestamp not found",
+  MissingDimension = "at least one dimension should be present",
+  MissingMeasure = "at least one measure should be present",
+  Malformed = "did not find expected key",
+  InvalidTimeGrainForSmallest = "invalid time grain",
+}
+
+export function runtimeErrorToLine(
+  message: string | undefined,
+  yaml: string,
+): LineStatus {
+  const lines = yaml.split("\n");
+  if (message === ConfigErrors.SourceNotSelected) {
+    /** if this is undefined, then the field isn't here either. */
+    const line = lines.findIndex((line) => line.startsWith("model: "));
+    return { line: line + 1, message, level: "error" };
+  }
+  if (message?.startsWith(ConfigErrors.InvalidTimeGrainForSmallest)) {
+    const line = lines.findIndex((line) =>
+      line.startsWith("smallest_time_grain:"),
+    );
+    return { line: line + 1, message, level: "error" };
+  }
+  if (message === ConfigErrors.TimestampNotFound) {
+    const line = lines.findIndex((line) => line.startsWith("timeseries:")) + 1;
+    return { line: line, message, level: "error" };
+  }
+  if (message === ConfigErrors.MissingMeasure) {
+    const line = lines.findIndex((line) => line.startsWith("measures:"));
+    return { line: line + 1, message, level: "error" };
+  }
+  if (message === ConfigErrors.MissingDimension) {
+    const line = lines.findIndex((line) => line.startsWith("dimensions:"));
+    return { line: line + 1, message, level: "error" };
+  }
+  if (message?.startsWith("yaml: line")) {
+    const line = parseInt(message.split("yaml: line ")[1].split(":")[0]);
+    return { line: line, message, level: "error" };
+  }
+  return { line: 0, message, level: "error" };
+}
+
+export function mapParseErrorToLine(
+  error: V1ParseError | undefined,
+  yaml: string,
+): LineStatus | undefined {
+  if (!error) return undefined;
+  if (error.message === ConfigErrors.Malformed) return undefined;
+  if (error.startLocation) {
+    return {
+      line: error.startLocation.line ?? 0,
+      message: error.message,
+      level: "error",
+    };
+  }
+  return runtimeErrorToLine(error.message, yaml);
+}

@@ -1,0 +1,191 @@
+<script lang="ts">
+  import { page } from "$app/stores";
+  import ContextButton from "@rilldata/web-common/components/button/ContextButton.svelte";
+  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
+  import Alert from "@rilldata/web-common/components/icons/Alert.svelte";
+  import EditIcon from "@rilldata/web-common/components/icons/EditIcon.svelte";
+  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
+  import MoreHorizontal from "@rilldata/web-common/components/icons/MoreHorizontal.svelte";
+  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
+  import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
+  import type { NavDragData } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+  import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry";
+  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import NavigationMenuSeparator from "@rilldata/web-common/layout/navigation/NavigationMenuSeparator.svelte";
+  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
+  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  import {
+    MetricsEventScreenName,
+    MetricsEventSpace,
+    ResourceKindToScreenMap,
+  } from "@rilldata/web-common/metrics/service/MetricsTypes";
+  import type { V1ResourceName } from "@rilldata/web-common/runtime-client";
+  import { Save } from "lucide-svelte";
+  import type { Readable } from "svelte/store";
+  import CopyIcon from "../../components/icons/CopyIcon.svelte";
+  import CanvasMenuItems from "../canvas/CanvasMenuItems.svelte";
+  import { fileArtifacts } from "../entity-management/file-artifacts";
+  import { getIconComponent } from "../entity-management/resource-icon-mapping";
+  import { ResourceKind } from "../entity-management/resource-selectors";
+  import ExploreMenuItems from "../explores/ExploreMenuItems.svelte";
+  import MetricsViewMenuItems from "../metrics-views/MetricsViewMenuItems.svelte";
+  import ModelMenuItems from "../models/navigation/ModelMenuItems.svelte";
+  import SourceMenuItems from "../sources/navigation/SourceMenuItems.svelte";
+  import { isProtectedDirectory } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
+  import { getTopLevelFolder } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
+  import { generatingCanvasFilePath } from "@rilldata/web-common/features/canvas/ai-generation/generateCanvas";
+
+  export let filePath: string;
+  export let onRename: (filePath: string, isDir: boolean) => void;
+  export let onDuplicate: (filePath: string, isDir: boolean) => void;
+  export let onDelete: (filePath: string, isDir: boolean) => void;
+  export let onMouseDown: (e: MouseEvent, dragData: NavDragData) => void;
+
+  let contextMenuOpen = false;
+  let resourceName: Readable<V1ResourceName | undefined>;
+
+  $: id = `${filePath}-nav-link`;
+  $: fileName = filePath.split("/").pop();
+  $: isCurrentFile =
+    removeLeadingSlash(filePath) ===
+    removeLeadingSlash($page.params.file ?? "");
+  $: fileArtifact = fileArtifacts.getFileArtifact(filePath);
+
+  $: ({
+    resourceName,
+    hasUnsavedChanges,
+    saveLocalContent,
+    inferredResourceKind,
+    saveState: { saving, error },
+  } = fileArtifact);
+
+  $: resourceKind = ($resourceName?.kind ??
+    $inferredResourceKind) as ResourceKind;
+  $: padding = getPaddingFromPath(filePath);
+  $: topLevelFolder = getTopLevelFolder(filePath);
+  $: protectedDirectory = isProtectedDirectory(topLevelFolder);
+  $: isDotFile = fileName && fileName.startsWith(".");
+  $: isProtectedFile = fileArtifact.pinned || fileArtifact.managed;
+
+  $: hasErrors = fileArtifact.getHasErrors(queryClient);
+  $: hasWarnings = fileArtifact.getHasWarnings(queryClient);
+  $: isGenerating = $generatingCanvasFilePath === filePath;
+
+  function fireTelemetry() {
+    const previousScreenName = getScreenNameFromPage();
+    behaviourEvent
+      ?.fireNavigationEvent(
+        filePath,
+        BehaviourEventMedium.Menu,
+        MetricsEventSpace.LeftPanel,
+        previousScreenName,
+        ResourceKindToScreenMap[resourceKind] ?? MetricsEventScreenName.Unknown,
+      )
+      .catch(console.error);
+  }
+
+  function handleMouseDown(e: MouseEvent) {
+    if (isProtectedFile) return;
+    onMouseDown(e, { id, filePath, isDir: false, kind: resourceKind });
+  }
+</script>
+
+<li
+  aria-label="{filePath} Nav Entry"
+  class="w-full text-left pr-2 h-6 group flex justify-between gap-x-1 items-center hover:bg-surface-hover"
+  class:bg-surface-active={isCurrentFile}
+  class:opacity-50={$hasUnsavedChanges || $saving || isGenerating}
+>
+  <a
+    class="w-full truncate flex items-center gap-x-1 font-medium {protectedDirectory ||
+    isDotFile
+      ? 'hover:text-fg-secondary text-fg-muted '
+      : 'text-fg-primary hover:text-fg-primary'}"
+    href={getFileHref(filePath)}
+    {id}
+    class:italic={$hasUnsavedChanges || $saving || isGenerating}
+    onclick={fireTelemetry}
+    onmousedown={handleMouseDown}
+    style:padding-left="{padding}px"
+  >
+    <div class="flex-none">
+      {#if $saving || isGenerating}
+        <LoadingSpinner size="14px" />
+      {:else if $error}
+        <Alert size="14px" color="red" />
+      {:else if $hasWarnings && !$hasErrors}
+        <Alert size="14px" color="var(--color-warning-icon, #d97706)" />
+      {:else}
+        <svelte:component
+          this={getIconComponent(resourceKind, filePath)}
+          size="14px"
+        />
+      {/if}
+    </div>
+    <span
+      class="truncate w-full"
+      class:text-red-600={$hasErrors}
+      class:text-yellow-600={$hasWarnings && !$hasErrors}
+    >
+      {fileName}
+    </span>
+  </a>
+  {#if !protectedDirectory && !isProtectedFile}
+    <DropdownMenu.Root bind:open={contextMenuOpen}>
+      <DropdownMenu.Trigger>
+        {#snippet child({ props })}
+          <ContextButton
+            {...props}
+            label="{filePath} actions menu trigger"
+            suppressTooltip={contextMenuOpen}
+            tooltipText="More actions"
+          >
+            <MoreHorizontal />
+          </ContextButton>
+        {/snippet}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content
+        align="start"
+        class="min-w-60"
+        side="right"
+        sideOffset={16}
+      >
+        {#if $hasUnsavedChanges}
+          <NavigationMenuItem onclick={saveLocalContent}>
+            <Save slot="icon" size="12px" />
+            Save file
+          </NavigationMenuItem>
+        {/if}
+        <NavigationMenuItem onclick={() => onRename(filePath, false)}>
+          <EditIcon slot="icon" />
+          Rename
+        </NavigationMenuItem>
+        <NavigationMenuItem onclick={() => onDuplicate(filePath, false)}>
+          <CopyIcon slot="icon" />
+          Duplicate
+        </NavigationMenuItem>
+        {#if resourceKind}
+          {#if resourceKind === ResourceKind.Source}
+            <SourceMenuItems {filePath} />
+          {:else if resourceKind === ResourceKind.Model}
+            <ModelMenuItems {filePath} />
+          {:else if resourceKind === ResourceKind.MetricsView}
+            <MetricsViewMenuItems {filePath} />
+          {:else if resourceKind === ResourceKind.Explore}
+            <ExploreMenuItems {filePath} />
+          {:else if resourceKind === ResourceKind.Canvas}
+            <CanvasMenuItems {filePath} />
+          {/if}
+        {/if}
+        <NavigationMenuSeparator />
+        <NavigationMenuItem onclick={() => onDelete(filePath, false)}>
+          <Trash slot="icon" />
+          Delete
+        </NavigationMenuItem>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  {/if}
+</li>

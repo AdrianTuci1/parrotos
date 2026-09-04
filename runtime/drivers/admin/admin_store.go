@@ -1,0 +1,186 @@
+package admin
+
+import (
+	"context"
+	"time"
+
+	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/rilldata/rill/runtime"
+	"github.com/rilldata/rill/runtime/drivers"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+func (h *Handle) GetReportMetadata(ctx context.Context, reportName, ownerID, webOpenMode string, emailRecipients []string, anonRecipients bool, executionTime time.Time) (*drivers.ReportMetadata, error) {
+	res, err := h.admin.GetReportMeta(ctx, &adminv1.GetReportMetaRequest{
+		ProjectId:       h.config.ProjectID,
+		Report:          reportName,
+		OwnerId:         ownerID,
+		EmailRecipients: emailRecipients,
+		AnonRecipients:  anonRecipients,
+		ExecutionTime:   timestamppb.New(executionTime),
+		Resources: []*adminv1.ResourceName{
+			{
+				Type: runtime.ResourceKindReport,
+				Name: reportName,
+			},
+		},
+		WebOpenMode: webOpenMode,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	delivery := make(map[string]drivers.ReportDelivery, len(res.DeliveryMeta))
+	for k, v := range res.DeliveryMeta {
+		delivery[k] = drivers.ReportDelivery{
+			OpenURL:        v.OpenUrl,
+			ExportURL:      v.ExportUrl,
+			EditURL:        v.EditUrl,
+			UnsubscribeURL: v.UnsubscribeUrl,
+			UserID:         v.UserId,
+			UserAttrs:      v.UserAttrs.AsMap(),
+		}
+	}
+
+	return &drivers.ReportMetadata{
+		ReportDelivery: delivery,
+	}, nil
+}
+
+func (h *Handle) GetAlertMetadata(ctx context.Context, alertName, ownerID string, emailRecipients []string, anonRecipients bool, annotations map[string]string, queryForUserID, queryForUserEmail string) (*drivers.AlertMetadata, error) {
+	req := &adminv1.GetAlertMetaRequest{
+		ProjectId:       h.config.ProjectID,
+		Alert:           alertName,
+		Annotations:     annotations,
+		OwnerId:         ownerID,
+		EmailRecipients: emailRecipients,
+		AnonRecipients:  anonRecipients,
+	}
+
+	if queryForUserID != "" {
+		req.QueryFor = &adminv1.GetAlertMetaRequest_QueryForUserId{QueryForUserId: queryForUserID}
+	} else if queryForUserEmail != "" {
+		req.QueryFor = &adminv1.GetAlertMetaRequest_QueryForUserEmail{QueryForUserEmail: queryForUserEmail}
+	}
+
+	res, err := h.admin.GetAlertMeta(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	recipientURLs := make(map[string]drivers.AlertURLs)
+	for email, urls := range res.RecipientUrls {
+		recipientURLs[email] = drivers.AlertURLs{
+			OpenURL:        urls.OpenUrl,
+			EditURL:        urls.EditUrl,
+			UnsubscribeURL: urls.UnsubscribeUrl,
+		}
+	}
+
+	meta := &drivers.AlertMetadata{
+		RecipientURLs: recipientURLs,
+	}
+
+	if res.QueryForAttributes != nil {
+		meta.QueryForAttributes = res.QueryForAttributes.AsMap()
+	}
+
+	return meta, nil
+}
+
+func (h *Handle) ProvisionConnector(ctx context.Context, name, driver string, args map[string]any) (map[string]any, error) {
+	argsPB, err := structpb.NewStruct(args)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := h.admin.Provision(ctx, &adminv1.ProvisionRequest{
+		DeploymentId: "", // Will default to the deployment ID of the current access token.
+		Type:         driver,
+		Name:         name,
+		Args:         argsPB,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Resource.Config.AsMap(), nil
+}
+
+func (h *Handle) GetConfig(ctx context.Context) (*drivers.Config, error) {
+	res, err := h.admin.GetDeploymentConfig(ctx, &adminv1.GetDeploymentConfigRequest{
+		DeploymentId: "", // Will default to the deployment ID of the current access token.
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &drivers.Config{
+		Variables:             groupVariablesByEnv(res.Variables),
+		SystemVariables:       res.SystemVariables,
+		Annotations:           res.Annotations,
+		FrontendURL:           res.FrontendUrl,
+		UpdatedOn:             res.UpdatedOn.AsTime(),
+		UsesArchive:           res.UsesArchive,
+		DuckdbConnectorConfig: res.DuckdbConnectorConfig.AsMap(),
+		Editable:              res.Editable,
+	}, nil
+}
+
+func (h *Handle) ListDeployments(ctx context.Context) ([]*drivers.Deployment, error) {
+	projectResp, err := h.admin.GetProjectByID(ctx, &adminv1.GetProjectByIDRequest{
+		Id: h.config.ProjectID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := h.admin.ListDeployments(ctx, &adminv1.ListDeploymentsRequest{
+		Org:     projectResp.Project.OrgName,
+		Project: projectResp.Project.Name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*drivers.Deployment, 0, len(resp.Deployments))
+	for _, d := range resp.Deployments {
+		res = append(res, &drivers.Deployment{
+			Branch:   d.Branch,
+			Editable: d.Editable,
+		})
+	}
+
+	return res, nil
+}
+
+func (h *Handle) UpdateProjectVariables(ctx context.Context, environment string, variables map[string]string) error {
+	projectResp, err := h.admin.GetProjectByID(ctx, &adminv1.GetProjectByIDRequest{
+		Id: h.config.ProjectID,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = h.admin.UpdateProjectVariables(ctx, &adminv1.UpdateProjectVariablesRequest{
+		Org:         projectResp.Project.OrgName,
+		Project:     projectResp.Project.Name,
+		Environment: environment,
+		Variables:   variables,
+	})
+	return err
+}
+
+func groupVariablesByEnv(variables []*adminv1.ProjectVariable) map[string]map[string]string {
+	perEnv := make(map[string]map[string]string, len(variables))
+	for _, v := range variables {
+		vars, ok := perEnv[v.Environment]
+		if !ok {
+			vars = make(map[string]string)
+			perEnv[v.Environment] = vars
+		}
+		vars[v.Name] = v.Value
+	}
+	return perEnv
+}

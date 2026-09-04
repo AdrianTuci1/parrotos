@@ -1,0 +1,142 @@
+<script lang="ts">
+  import ContextButton from "@rilldata/web-common/components/button/ContextButton.svelte";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
+  import Cancel from "@rilldata/web-common/components/icons/Cancel.svelte";
+  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import EditIcon from "@rilldata/web-common/components/icons/EditIcon.svelte";
+  import MoreHorizontal from "@rilldata/web-common/components/icons/MoreHorizontal.svelte";
+  import { directoryState } from "@rilldata/web-common/features/file-explorer/directory-store";
+  import type { NavDragData } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+  import {
+    type Directory,
+    getDirectoryHasErrors,
+    getDirectoryHasWarnings,
+  } from "@rilldata/web-common/features/file-explorer/transform-file-list";
+  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import { Folder } from "lucide-svelte";
+  import { createRuntimeServiceCreateDirectoryMutation } from "../../runtime-client";
+  import { useRuntimeClient } from "../../runtime-client/v2";
+  import { removeLeadingSlash } from "../entity-management/entity-mappers";
+  import { getTopLevelFolder } from "../entity-management/file-path-utils";
+  import { useDirectoryNamesInDirectory } from "../entity-management/file-selectors";
+  import { getName } from "../entity-management/name-utils";
+  import { isProtectedDirectory } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
+
+  export let dir: Directory;
+  export let onRename: (filePath: string, isDir: boolean) => void;
+  export let onDelete: (filePath: string, isDir: boolean) => void;
+  export let onMouseDown: (e: MouseEvent, dragData: NavDragData) => void;
+
+  const runtimeClient = useRuntimeClient();
+
+  let contextMenuOpen = false;
+
+  const createFolder =
+    createRuntimeServiceCreateDirectoryMutation(runtimeClient);
+
+  $: id = `${dir.path}-nav-entry`;
+  // Directories are expanded by default; only explicitly collapsed ones are false.
+  $: expanded = $directoryState[dir.path] ?? true;
+  $: padding = getPaddingFromPath(dir.path);
+  $: ({ instanceId } = runtimeClient);
+  $: topLevelFolder = getTopLevelFolder(dir.path);
+  $: protectedDirectory = isProtectedDirectory(topLevelFolder);
+
+  $: hasErrors = getDirectoryHasErrors(queryClient, instanceId, dir);
+  $: hasWarnings = getDirectoryHasWarnings(queryClient, instanceId, dir);
+
+  $: currentDirectoryDirectoryNamesQuery = useDirectoryNamesInDirectory(
+    runtimeClient,
+    dir.path,
+  );
+
+  function toggleDirectory(directory: Directory): void {
+    directoryState.toggle(directory.path);
+  }
+
+  /**
+   * Put a folder in the current directory
+   */
+  async function handleAddFolder() {
+    const nextFolderName = getName(
+      "untitled_folder",
+      $currentDirectoryDirectoryNamesQuery?.data ?? [],
+    );
+
+    const path =
+      dir.path !== ""
+        ? `${removeLeadingSlash(dir.path)}/${nextFolderName}`
+        : nextFolderName;
+
+    await $createFolder.mutateAsync({
+      path: path,
+    });
+
+    // Expand the directory to show the new folder
+    const pathWithLeadingSlash = `/${path}`;
+    directoryState.expand(pathWithLeadingSlash);
+  }
+</script>
+
+<button
+  class="pr-2 w-full h-6 text-left flex justify-between group gap-x-1 items-center
+  {protectedDirectory
+    ? 'hover:text-fg-secondary text-fg-muted '
+    : 'text-fg-primary hover:text-fg-primary'}
+  font-medium hover:bg-surface-hover"
+  {id}
+  onclick={() => toggleDirectory(dir)}
+  onmousedown={(e) => onMouseDown(e, { id, filePath: dir.path, isDir: true })}
+  style:padding-left="{padding}px"
+  aria-controls={`nav-${dir.path}`}
+  aria-expanded={expanded}
+>
+  <CaretDownIcon
+    className="flex-none text-fg-muted {expanded ? '' : 'transform -rotate-90'}"
+    size="14px"
+  />
+  <span
+    class="truncate w-full"
+    class:text-red-600={$hasErrors}
+    class:text-yellow-600={$hasWarnings && !$hasErrors}
+  >
+    {dir.name}
+  </span>
+  {#if !protectedDirectory}
+    <DropdownMenu.Root bind:open={contextMenuOpen}>
+      <DropdownMenu.Trigger>
+        {#snippet child({ props })}
+          <ContextButton
+            {...props}
+            label="{dir.name} actions menu trigger"
+            suppressTooltip={contextMenuOpen}
+            tooltipText="More actions"
+          >
+            <MoreHorizontal />
+          </ContextButton>
+        {/snippet}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content
+        align="start"
+        class="min-w-60"
+        side="right"
+        sideOffset={16}
+      >
+        <NavigationMenuItem onclick={handleAddFolder}>
+          <Folder slot="icon" size="12px" />
+          New folder
+        </NavigationMenuItem>
+        <NavigationMenuItem onclick={() => onRename(dir.path, true)}>
+          <EditIcon slot="icon" />
+          Rename
+        </NavigationMenuItem>
+        <NavigationMenuItem onclick={() => onDelete(dir.path, true)}>
+          <Cancel slot="icon" />
+          Delete
+        </NavigationMenuItem>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  {/if}
+</button>

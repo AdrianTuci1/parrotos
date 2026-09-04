@@ -1,0 +1,101 @@
+package usergroup
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/spf13/cobra"
+)
+
+func AddCmd(ch *cmdutil.Helper) *cobra.Command {
+	var projectName string
+	var role string
+	var groupName string
+	var explores []string
+	var canvases []string
+	var restrictResources bool
+
+	addCmd := &cobra.Command{
+		Use:   "add",
+		Short: "Add a group to a project or organization",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if role == "" {
+				if !ch.Interactive {
+					return fmt.Errorf("--role is required when not running interactively")
+				}
+				var err error
+				role, err = cmdutil.SelectPrompt("Select role", usergroupRoles, "")
+				if err != nil {
+					return err
+				}
+			}
+
+			if groupName == "" {
+				if !ch.Interactive {
+					return fmt.Errorf("--group is required when not running interactively")
+				}
+				var err error
+				groupName, err = cmdutil.InputPrompt("Enter user group name", "")
+				if err != nil {
+					return err
+				}
+			}
+
+			client, err := ch.Client()
+			if err != nil {
+				return err
+			}
+
+			if projectName != "" {
+				resources, err := cmdutil.ParseResourceStrings(explores, canvases)
+				if err != nil {
+					return err
+				}
+				if len(resources) > 0 {
+					restrictResources = true
+				}
+
+				_, err = client.AddProjectMemberUsergroup(cmd.Context(), &adminv1.AddProjectMemberUsergroupRequest{
+					Org:               ch.Org,
+					Project:           projectName,
+					Usergroup:         groupName,
+					Role:              role,
+					Resources:         resources,
+					RestrictResources: &restrictResources,
+				})
+				if err != nil {
+					return err
+				}
+				ch.PrintfSuccess("Role %q added to user group %q in project %q\n", role, groupName, projectName)
+				return nil
+			}
+
+			if len(explores) > 0 || len(canvases) > 0 || restrictResources {
+				return fmt.Errorf("resource restrictions can only be set when adding a user group to a project")
+			}
+			_, err = client.AddOrganizationMemberUsergroup(cmd.Context(), &adminv1.AddOrganizationMemberUsergroupRequest{
+				Org:       ch.Org,
+				Usergroup: groupName,
+				Role:      role,
+			})
+			if err != nil {
+				return err
+			}
+			ch.PrintfSuccess("Role %q added to user group %q in organization %q\n", role, groupName, ch.Org)
+
+			return nil
+		},
+	}
+
+	addCmd.Flags().StringVar(&ch.Org, "org", ch.Org, "Organization")
+	addCmd.Flags().StringVar(&projectName, "project", "", "Project")
+	addCmd.Flags().StringVar(&groupName, "group", "", "User group")
+	addCmd.Flags().StringVar(&role, "role", "", fmt.Sprintf("Role of the user group (options: %s)", strings.Join(usergroupRoles, ", ")))
+	addCmd.Flags().StringArrayVar(&explores, "explore", nil, "Explore resource to restrict to (repeat for multiple)")
+	addCmd.Flags().StringArrayVar(&canvases, "canvas", nil, "Canvas resource to restrict to (repeat for multiple)")
+	addCmd.Flags().BoolVar(&restrictResources, "restrict-resources", false, "Restrict the user group to provided resources (defaults to true when resources are provided)")
+
+	return addCmd
+}

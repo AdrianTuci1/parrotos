@@ -1,0 +1,25 @@
+model: ad_bids_mini
+display_name: Ad bids
+description:
+
+timeseries: timestamp
+smallest_time_grain: ""
+
+dimensions:
+  - display_name: Publisher
+    property: publisher
+    description: ""
+  - display_name: Domain
+    property: domain
+    description: ""
+
+measures:
+  - display_name: "Number of bids"
+    expression: count(*)
+  - display_name: "Total volume"
+    expression: sum(volume)
+  - display_name: "Total impressions"
+    expression: sum(impressions)
+  - display_name: "Total clicks"
+    expression: sum(clicks)
+    format_preset: humanize

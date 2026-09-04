@@ -1,0 +1,267 @@
+package duckdb
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/google/uuid"
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/rilldata/rill/runtime/pkg/observability"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
+	oteltrace "go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
+)
+
+// Create instruments
+var (
+	tracer                = otel.Tracer("github.com/rilldata/rill/runtime/drivers/duckdb")
+	meter                 = otel.Meter("github.com/rilldata/rill/runtime/drivers/duckdb")
+	queriesCounter        = observability.Must(meter.Int64Counter("queries"))
+	queueLatencyHistogram = observability.Must(meter.Int64Histogram("queue_latency", metric.WithUnit("ms")))
+	queryLatencyHistogram = observability.Must(meter.Int64Histogram("query_latency", metric.WithUnit("ms")))
+	totalLatencyHistogram = observability.Must(meter.Int64Histogram("total_latency", metric.WithUnit("ms")))
+	connectionsInUse      = observability.Must(meter.Int64ObservableGauge("connections_in_use"))
+)
+
+func (c *connection) Dialect() drivers.Dialect {
+	if c.config.hasExternalConfig() {
+		return DialectDuckDBGeneric
+	}
+	return DialectDuckDB
+}
+
+func (c *connection) MayBeScaledToZero(ctx context.Context) bool {
+	return c.config.CanScaleToZero
+}
+
+func (c *connection) WithConnection(ctx context.Context, priority int, fn drivers.WithConnectionFunc) error {
+	// Check not nested
+	if connFromContext(ctx) != nil {
+		panic("nested WithConnection")
+	}
+
+	// Acquire connection
+	conn, release, err := c.acquireOLAPConn(ctx, priority, false)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = release() }()
+
+	// Call fn with connection embedded in context
+	wrappedCtx := contextWithConn(ctx, conn)
+	ensuredCtx := contextWithConn(context.Background(), conn)
+	return fn(wrappedCtx, ensuredCtx)
+}
+
+func (c *connection) Exec(ctx context.Context, stmt *drivers.Statement) error {
+	res, err := c.Query(ctx, stmt)
+	if err != nil {
+		return err
+	}
+	if stmt.DryRun {
+		return nil
+	}
+	err = res.Close()
+	return c.checkErr(err)
+}
+
+func (c *connection) Query(ctx context.Context, stmt *drivers.Statement) (res *drivers.Result, outErr error) {
+	// Log query if enabled (usually disabled)
+	if c.config.LogQueries {
+		fields := []zap.Field{
+			zap.String("sql", stmt.Query),
+			zap.Any("args", stmt.Args),
+			observability.ZapCtx(ctx),
+		}
+		if len(stmt.QueryAttributes) > 0 {
+			fields = append(fields, zap.Any("query_attributes", stmt.QueryAttributes))
+		}
+		c.logger.Info("duckdb query", fields...)
+	}
+
+	// We use the meta conn for dry run queries
+	if stmt.DryRun {
+		conn, release, err := c.acquireMetaConn(ctx)
+		if err != nil {
+			return nil, err
+		}
+		defer func() { _ = release() }()
+
+		// TODO: Find way to validate with args
+
+		name := uuid.NewString()
+		_, err = conn.ExecContext(ctx, fmt.Sprintf("CREATE TEMPORARY VIEW %q AS %s", name, stmt.Query))
+		if err != nil {
+			return nil, c.checkErr(err)
+		}
+
+		_, err = conn.ExecContext(context.Background(), fmt.Sprintf("DROP VIEW %q", name))
+		return nil, c.checkErr(err)
+	}
+
+	// Start a span covering connection acquisition + SQL execution to capture total latency and queue latency.
+	ctx, span := tracer.Start(ctx, "olap.query", oteltrace.WithAttributes(attribute.String("driver", "duckdb"), attribute.String("connector", c.connectorName)))
+
+	// Gather metrics only for actual queries
+	var acquiredTime time.Time
+	acquired := false
+	start := time.Now()
+	defer func() {
+		totalLatency := time.Since(start).Milliseconds()
+		queueLatency := acquiredTime.Sub(start).Milliseconds()
+
+		cancelled := errors.Is(outErr, context.Canceled)
+		failed := outErr != nil
+		attrs := []attribute.KeyValue{
+			attribute.Bool("cancelled", cancelled),
+			attribute.Bool("failed", failed),
+			attribute.String("instance_id", c.instanceID),
+		}
+
+		attrSet := attribute.NewSet(attrs...)
+
+		queriesCounter.Add(ctx, 1, metric.WithAttributeSet(attrSet))
+		queueLatencyHistogram.Record(ctx, queueLatency, metric.WithAttributeSet(attrSet))
+		totalLatencyHistogram.Record(ctx, totalLatency, metric.WithAttributeSet(attrSet))
+		if acquired {
+			// Only track query latency when not cancelled in queue
+			queryLatencyHistogram.Record(ctx, totalLatency-queueLatency, metric.WithAttributeSet(attrSet))
+		}
+
+		if c.activity != nil {
+			c.activity.RecordMetric(ctx, "duckdb_queue_latency_ms", float64(queueLatency), attrs...)
+			c.activity.RecordMetric(ctx, "duckdb_total_latency_ms", float64(totalLatency), attrs...)
+			if acquired {
+				c.activity.RecordMetric(ctx, "duckdb_query_latency_ms", float64(totalLatency-queueLatency), attrs...)
+			}
+		}
+
+		// Set attributes and end the span after all metrics are recorded.
+		spanAttrs := []attribute.KeyValue{
+			attribute.Int64("queue_latency_ms", queueLatency),
+			attribute.Int64("total_latency_ms", totalLatency),
+			attribute.Bool("cancelled", cancelled),
+		}
+		if outErr != nil {
+			spanAttrs = append(spanAttrs, attribute.String("error", outErr.Error()))
+		}
+		if acquired {
+			spanAttrs = append(spanAttrs, attribute.Int64("query_latency_ms", totalLatency-queueLatency))
+		}
+		span.SetAttributes(spanAttrs...)
+		span.End()
+	}()
+
+	// Acquire connection
+	conn, release, err := c.acquireOLAPConn(ctx, stmt.Priority, false)
+	acquiredTime = time.Now()
+	if err != nil {
+		return nil, err
+	}
+	acquired = true
+
+	// NOTE: We can't just "defer release()" because release() will block until rows.Close() is called.
+	// We must be careful to make sure release() is called on all code paths.
+
+	var cancelFunc context.CancelFunc
+	if stmt.ExecutionTimeout != 0 {
+		ctx, cancelFunc = context.WithTimeout(ctx, stmt.ExecutionTimeout)
+	}
+
+	rows, err := conn.QueryxContext(ctx, stmt.Query, stmt.Args...)
+	if err != nil {
+		if cancelFunc != nil {
+			cancelFunc()
+		}
+
+		// err must be checked before release
+		err = c.checkErr(err)
+		_ = release()
+		return nil, err
+	}
+
+	schema, err := rowsToSchema(rows)
+	if err != nil {
+		if cancelFunc != nil {
+			cancelFunc()
+		}
+
+		// err must be checked before release
+		err = c.checkErr(err)
+		_ = rows.Close()
+		_ = release()
+		return nil, err
+	}
+
+	res = &drivers.Result{Rows: rows, Schema: schema}
+	res.SetCleanupFunc(func() error {
+		if cancelFunc != nil {
+			cancelFunc()
+		}
+
+		return release()
+	})
+
+	return res, nil
+}
+
+func (c *connection) Head(ctx context.Context, db, schema, table string, limit int64) (*drivers.Result, error) {
+	tbl, err := c.InformationSchema().Lookup(ctx, db, schema, table)
+	if err != nil {
+		return nil, err
+	}
+
+	var columns []string
+	for _, field := range tbl.Schema.Fields {
+		columns = append(columns, c.Dialect().EscapeIdentifier(field.Name))
+	}
+
+	limitClause := ""
+	if limit > 0 {
+		limitClause = fmt.Sprintf(" LIMIT %d", limit)
+	}
+
+	return c.Query(ctx, &drivers.Statement{
+		Query: fmt.Sprintf("SELECT %s FROM %s%s", strings.Join(columns, ", "), c.Dialect().EscapeTable(db, schema, table), limitClause),
+	})
+}
+
+func (c *connection) QuerySchema(ctx context.Context, query string, args []any) (*runtimev1.StructType, error) {
+	query = fmt.Sprintf("SELECT * FROM (%s) LIMIT 0", query)
+
+	res, err := c.Query(ctx, &drivers.Statement{
+		Query:            query,
+		Args:             args,
+		ExecutionTimeout: drivers.DefaultQuerySchemaTimeout,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer res.Close()
+
+	return res.Schema, nil
+}
+
+func (c *connection) InformationSchema() drivers.InformationSchema {
+	return c
+}
+
+func (c *connection) EstimateSize(ctx context.Context) (int64, error) {
+	return c.estimateSize(), nil
+}
+
+func (c *connection) estimateSize() int64 {
+	db, release, err := c.acquireDB()
+	if err != nil {
+		return 0
+	}
+	size := db.Size()
+	_ = release()
+	return size
+}

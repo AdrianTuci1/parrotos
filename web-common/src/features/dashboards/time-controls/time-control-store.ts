@@ -1,0 +1,641 @@
+import {
+  getMetricsViewTimeRangeFromExploreQueryOptions,
+  useMetricsViewTimeRange,
+} from "@rilldata/web-common/features/dashboards/selectors";
+import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+import {
+  useExploreState,
+  useStableExploreState,
+} from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
+import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { getValidComparisonOption } from "@rilldata/web-common/features/dashboards/time-controls/time-range-store";
+import { getOrderedStartEnd } from "@rilldata/web-common/features/dashboards/time-series/utils";
+import {
+  getExploreValidSpecQueryOptions,
+  useExploreValidSpec,
+} from "@rilldata/web-common/features/explores/selectors";
+import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import {
+  getComparionRangeForScrub,
+  getTimeComparisonParametersForComponent,
+} from "@rilldata/web-common/lib/time/comparisons";
+import { DEFAULT_TIME_RANGES } from "@rilldata/web-common/lib/time/config";
+import { getValidatedTimeGrain } from "@rilldata/web-common/lib/time/grains";
+import {
+  allowedGrainsForInterval,
+  V1TimeGrainToDateTimeUnit,
+} from "@rilldata/web-common/lib/time/new-grains";
+import {
+  convertTimeRangePreset,
+  getAdjustedFetchTime,
+} from "@rilldata/web-common/lib/time/ranges";
+import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+import {
+  type DashboardTimeControls,
+  type ScrubRange,
+  TimeComparisonOption,
+  type TimeRange,
+  TimeRangePreset,
+} from "@rilldata/web-common/lib/time/types";
+import {
+  type V1ExploreSpec,
+  type V1ExploreTimeRange,
+  type V1Expression,
+  type V1MetricsViewSpec,
+  type V1MetricsViewTimeRangeResponse,
+  V1TimeGrain,
+  type V1TimeRange,
+  type V1TimeRangeSummary,
+} from "@rilldata/web-common/runtime-client";
+import { createQuery, type QueryObserverResult } from "@tanstack/svelte-query";
+import type { Readable } from "svelte/store";
+import { derived } from "svelte/store";
+import { memoizeMetricsStore } from "../state-managers/memoize-metrics-store";
+import { parseRillTime } from "../url-state/time-ranges/parser";
+import type { RillTime } from "../url-state/time-ranges/RillTime";
+import { DateTime, Interval } from "luxon";
+import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
+
+export type TimeRangeState = {
+  // Selected ranges with start and end filled based on time range type
+  selectedTimeRange?: DashboardTimeControls;
+  // In all of our queries we do a check on hasTime and pass in undefined for start and end if false.
+  // Using these directly will simplify those usages since this store will take care of marking them undefined.
+  timeStart?: string;
+  timeEnd?: string;
+  adjustedStart?: string;
+  adjustedEnd?: string;
+  aggregationOptions?: V1TimeGrain[];
+  interval?: Interval<true>;
+};
+
+export type ComparisonTimeRangeState = {
+  showTimeComparison?: boolean;
+  selectedComparisonTimeRange?: DashboardTimeControls;
+  comparisonTimeStart?: string;
+  comparisonAdjustedStart?: string;
+  comparisonTimeEnd?: string;
+  comparisonAdjustedEnd?: string;
+};
+
+export interface TimeAndFilterStore {
+  timeRange: V1TimeRange;
+  comparisonTimeRange: V1TimeRange | undefined;
+  where: V1Expression | undefined;
+  timeGrain: V1TimeGrain | undefined;
+  showTimeComparison: boolean;
+  timeRangeState: TimeRangeState | undefined;
+  comparisonTimeRangeState: ComparisonTimeRangeState | undefined;
+  hasTimeSeries: boolean | undefined;
+}
+
+export type TimeControlState = {
+  isFetching: boolean;
+
+  // Computed properties from all time range query
+  minTimeGrain?: V1TimeGrain;
+  allTimeRange?: TimeRange;
+  defaultTimeRange?: TimeRange;
+  timeDimension?: string;
+  interval?: Interval;
+  aggregationOptions?: V1TimeGrain[];
+
+  ready?: boolean;
+} & TimeRangeState &
+  ComparisonTimeRangeState;
+export type TimeControlStore = Readable<TimeControlState>;
+
+/**
+ * Returns a TimeControlState. Calls getTimeControlState internally.
+ *
+ * Consumers of this will have a QueryObserverResult for time range summary.
+ * They will need `isFetching` to wait for this response.
+ */
+export const timeControlStateSelector = ([
+  metricsView,
+  explore,
+  timeRangeResponse,
+  exploreState,
+]: [
+  V1MetricsViewSpec | undefined,
+  V1ExploreSpec | undefined,
+  QueryObserverResult<V1MetricsViewTimeRangeResponse, unknown>,
+  ExploreState,
+]): TimeControlState => {
+  const hasTimeSeries = Boolean(metricsView?.timeDimension);
+  if (
+    !metricsView ||
+    !explore ||
+    !exploreState ||
+    !timeRangeResponse ||
+    !timeRangeResponse.isSuccess ||
+    !hasTimeSeries
+  ) {
+    return {
+      isFetching: timeRangeResponse.isRefetching,
+      ready: !exploreState || !hasTimeSeries,
+    } as TimeControlState;
+  }
+
+  const state = getTimeControlState(
+    metricsView,
+    explore,
+    timeRangeResponse.data?.timeRangeSummary,
+    exploreState,
+  );
+
+  if (!state) {
+    return {
+      ready: false,
+      isFetching: false,
+    };
+  }
+
+  return {
+    ...state,
+    isFetching: false,
+    ready: true,
+  } as TimeControlState;
+};
+
+/**
+ * Generates TimeControlState
+ *
+ * Consumers of this will already have a V1TimeRangeSummary.
+ */
+export function getTimeControlState(
+  metricsViewSpec: V1MetricsViewSpec,
+  exploreSpec: V1ExploreSpec,
+  timeRangeSummary: V1TimeRangeSummary | undefined,
+  exploreState: Partial<ExploreState>,
+) {
+  const hasTimeSeries = Boolean(metricsViewSpec.timeDimension);
+  const timeDimension = metricsViewSpec.timeDimension;
+  if (!hasTimeSeries || !timeRangeSummary?.max || !timeRangeSummary?.min)
+    return undefined;
+
+  const allTimeRange = {
+    name: TimeRangePreset.ALL_TIME,
+    start: new Date(timeRangeSummary.min),
+    end: new Date(timeRangeSummary.max),
+  };
+  const minTimeGrain =
+    (metricsViewSpec.smallestTimeGrain as V1TimeGrain) ||
+    V1TimeGrain.TIME_GRAIN_UNSPECIFIED;
+
+  const defaultTimeRange = isoDurationToFullTimeRange(
+    exploreSpec.defaultPreset?.timeRange,
+    allTimeRange.start,
+    allTimeRange.end,
+    exploreState.selectedTimezone,
+  );
+
+  const {
+    selectedTimeRange,
+    selectedComparisonTimeRange,
+    selectedTimezone,
+    lastDefinedScrubRange,
+    showTimeComparison,
+  } = exploreState;
+
+  const timeRangeState = calculateTimeRangePartial(
+    allTimeRange,
+    selectedTimeRange,
+    lastDefinedScrubRange,
+    selectedTimezone,
+    defaultTimeRange,
+    minTimeGrain,
+  );
+  if (!timeRangeState) {
+    return undefined;
+  }
+
+  const comparisonTimeRangeState = calculateComparisonTimeRangePartial(
+    exploreSpec.timeRanges,
+    allTimeRange,
+    selectedComparisonTimeRange,
+    selectedTimezone,
+    lastDefinedScrubRange,
+    !!showTimeComparison,
+    timeRangeState,
+  );
+
+  return {
+    minTimeGrain,
+    allTimeRange,
+    defaultTimeRange,
+    timeDimension,
+
+    ...timeRangeState,
+    ...comparisonTimeRangeState,
+  } as TimeControlState;
+}
+
+export function createTimeControlStore(ctx: StateManagers) {
+  return derived(
+    [ctx.validSpecStore, ctx.timeRangeSummaryStore, ctx.dashboardStore],
+    ([validSpecResp, timeRangeSummaryResp, dashboardStore]) =>
+      timeControlStateSelector([
+        validSpecResp.data?.metricsView,
+        validSpecResp.data?.explore,
+        timeRangeSummaryResp,
+        dashboardStore,
+      ]),
+  );
+}
+
+export function createTimeControlStoreFromName(
+  client: RuntimeClient,
+  metricsViewName: string,
+  exploreName: string,
+) {
+  return derived(
+    [
+      useExploreValidSpec(client, exploreName, undefined, queryClient),
+      useMetricsViewTimeRange(client, metricsViewName, {}, queryClient),
+      useExploreState(exploreName),
+    ],
+    ([validSpecResp, timeRangeSummaryResp, dashboardStore]) =>
+      timeControlStateSelector([
+        validSpecResp.data?.metricsView,
+        validSpecResp.data?.explore,
+        timeRangeSummaryResp,
+        dashboardStore,
+      ]),
+  );
+}
+
+export function createStableTimeControlStoreFromName(
+  client: RuntimeClient,
+  exploreNameStore: Readable<string>,
+) {
+  const validSpecQuery = createQuery(
+    getExploreValidSpecQueryOptions(client, exploreNameStore),
+    queryClient,
+  );
+  const metricsViewTimeRangeQuery = createQuery(
+    getMetricsViewTimeRangeFromExploreQueryOptions(client, exploreNameStore),
+    queryClient,
+  );
+  const exploreStore = useStableExploreState(exploreNameStore);
+
+  return derived(
+    [validSpecQuery, metricsViewTimeRangeQuery, exploreStore],
+    ([validSpecResp, timeRangeSummaryResp, dashboardStore]) => {
+      // Without an access to isPending, the query is never fired.
+      // TODO: find a better way to handle this.
+      if (timeRangeSummaryResp.isPending)
+        return timeControlStateSelector([
+          validSpecResp.data?.metricsViewSpec,
+          validSpecResp.data?.exploreSpec,
+          timeRangeSummaryResp,
+          dashboardStore,
+        ]);
+      return timeControlStateSelector([
+        validSpecResp.data?.metricsViewSpec,
+        validSpecResp.data?.exploreSpec,
+        timeRangeSummaryResp,
+        dashboardStore,
+      ]);
+    },
+  );
+}
+
+/**
+ * Memoized version of the store. Currently, memoized by metrics view name.
+ */
+export const useTimeControlStore = memoizeMetricsStore<TimeControlStore>(
+  (ctx: StateManagers) => createTimeControlStore(ctx),
+);
+
+/**
+ * Calculates time range and grain from all time range and selected time range name.
+ * Also adds start, end and their adjusted counterparts as strings ready to use in requests.
+ */
+export function calculateTimeRangePartial(
+  allTimeRange: DashboardTimeControls,
+  currentSelectedTimeRange: DashboardTimeControls | undefined,
+  lastDefinedScrubRange: ScrubRange | undefined,
+  selectedTimezone: string | undefined,
+  defaultTimeRange: DashboardTimeControls,
+  minTimeGrain: V1TimeGrain,
+): TimeRangeState | undefined {
+  if (!currentSelectedTimeRange) return undefined;
+
+  const selectedTimeRange = getTimeRange(
+    currentSelectedTimeRange,
+    selectedTimezone,
+    allTimeRange,
+    defaultTimeRange,
+    minTimeGrain,
+  );
+  if (!selectedTimeRange) return undefined;
+
+  let parsed: RillTime | undefined;
+
+  if (currentSelectedTimeRange.name === TimeRangePreset.CUSTOM) {
+    parsed = undefined;
+  } else if (currentSelectedTimeRange?.name) {
+    try {
+      parsed = parseRillTime(currentSelectedTimeRange.name);
+    } catch {
+      //no-op
+    }
+  }
+
+  const maybeInterval = selectedTimeRange
+    ? Interval.fromDateTimes(
+        DateTime.fromJSDate(selectedTimeRange.start, {
+          zone: selectedTimezone,
+        }),
+        DateTime.fromJSDate(selectedTimeRange.end, { zone: selectedTimezone }),
+      )
+    : undefined;
+
+  const interval = maybeInterval?.isValid ? maybeInterval : undefined;
+
+  const aggregationOptions = allowedGrainsForInterval(interval, minTimeGrain);
+
+  const validatedGrain = getValidatedTimeGrain(
+    interval,
+    minTimeGrain,
+    currentSelectedTimeRange?.interval,
+    parsed,
+  );
+  if (selectedTimeRange && validatedGrain) {
+    selectedTimeRange.interval = validatedGrain;
+  }
+
+  const { start: adjustedStart, end: adjustedEnd } = getAdjustedFetchTime(
+    selectedTimeRange.start,
+    selectedTimeRange.end,
+    selectedTimezone,
+    selectedTimeRange.interval,
+  );
+
+  let timeStart = selectedTimeRange.start;
+  let timeEnd = selectedTimeRange.end;
+  if (lastDefinedScrubRange) {
+    const { start, end } = getOrderedStartEnd(
+      lastDefinedScrubRange.start,
+      lastDefinedScrubRange.end,
+    );
+    timeStart = start;
+    timeEnd = end;
+  }
+
+  return {
+    selectedTimeRange,
+    timeStart: timeStart.toISOString(),
+    adjustedStart: adjustedStart || undefined,
+    timeEnd: timeEnd.toISOString(),
+    adjustedEnd: adjustedEnd || undefined,
+    aggregationOptions,
+    interval,
+  };
+}
+
+/**
+ * Calculates time range and grain for comparison based on time range and comparison selection.
+ * Also adds start, end and their adjusted counterparts as strings ready to use in requests.
+ */
+export function calculateComparisonTimeRangePartial(
+  timeRanges: V1ExploreTimeRange[] | undefined,
+  allTimeRange: DashboardTimeControls,
+  currentComparisonTimeRange: DashboardTimeControls | undefined,
+  selectedTimezone: string | undefined,
+  lastDefinedScrubRange: ScrubRange | undefined,
+  showTimeComparison: boolean,
+  timeRangeState: TimeRangeState,
+): ComparisonTimeRangeState {
+  const selectedComparisonTimeRange = getComparisonTimeRange(
+    timeRanges,
+    allTimeRange,
+    timeRangeState.selectedTimeRange,
+    currentComparisonTimeRange,
+    selectedTimezone,
+  );
+
+  let comparisonAdjustedStart: string | undefined = undefined;
+  let comparisonAdjustedEnd: string | undefined = undefined;
+  if (selectedComparisonTimeRange?.start && selectedComparisonTimeRange?.end) {
+    const adjustedComparisonTime = getAdjustedFetchTime(
+      selectedComparisonTimeRange.start,
+      selectedComparisonTimeRange.end,
+      selectedTimezone,
+      timeRangeState.selectedTimeRange?.interval,
+    );
+    comparisonAdjustedStart = adjustedComparisonTime.start || undefined;
+    comparisonAdjustedEnd = adjustedComparisonTime.end || undefined;
+  }
+
+  let comparisonTimeStart = selectedComparisonTimeRange?.start;
+  let comparisonTimeEnd = selectedComparisonTimeRange?.end;
+  if (
+    selectedComparisonTimeRange?.start &&
+    selectedComparisonTimeRange?.end &&
+    lastDefinedScrubRange
+  ) {
+    const { start, end } = getOrderedStartEnd(
+      lastDefinedScrubRange.start,
+      lastDefinedScrubRange.end,
+    );
+
+    if (!timeRangeState.selectedTimeRange?.start) {
+      throw new Error("No time range");
+    }
+
+    const comparisonRange = getComparionRangeForScrub(
+      timeRangeState.selectedTimeRange?.start,
+      timeRangeState.selectedTimeRange?.end,
+      selectedComparisonTimeRange.start,
+      selectedComparisonTimeRange.end,
+      start,
+      end,
+    );
+    comparisonTimeStart = comparisonRange.start;
+    comparisonTimeEnd = comparisonRange.end;
+  }
+
+  return {
+    showTimeComparison: showTimeComparison,
+    selectedComparisonTimeRange:
+      selectedComparisonTimeRange as DashboardTimeControls,
+    comparisonTimeStart: comparisonTimeStart?.toISOString(),
+    comparisonAdjustedStart,
+    comparisonTimeEnd: comparisonTimeEnd?.toISOString(),
+    comparisonAdjustedEnd,
+  };
+}
+
+export function getTimeRange(
+  selectedTimeRange: DashboardTimeControls | undefined,
+  selectedTimezone: string | undefined,
+  allTimeRange: DashboardTimeControls,
+  defaultTimeRange: DashboardTimeControls,
+  minTimeGrain: V1TimeGrain | undefined,
+) {
+  if (!selectedTimeRange) return undefined;
+
+  let timeRange: DashboardTimeControls;
+
+  if (selectedTimeRange?.name === TimeRangePreset.CUSTOM) {
+    /** set the time range to the fixed custom time range */
+    timeRange = {
+      name: TimeRangePreset.CUSTOM,
+      start: new Date(selectedTimeRange.start),
+      end: new Date(selectedTimeRange.end),
+    };
+  } else if (selectedTimeRange?.name) {
+    if (selectedTimeRange.start && selectedTimeRange.end) {
+      // Time range already resolved.
+      timeRange = {
+        name: selectedTimeRange.name,
+        start: selectedTimeRange.start,
+        end: selectedTimeRange.end,
+        interval: selectedTimeRange.interval,
+      };
+    } else if (selectedTimeRange?.name in DEFAULT_TIME_RANGES) {
+      const minTimeUnit =
+        V1TimeGrainToDateTimeUnit[
+          minTimeGrain || V1TimeGrain.TIME_GRAIN_UNSPECIFIED
+        ];
+      /** rebuild off of relative time range */
+      timeRange = convertTimeRangePreset(
+        selectedTimeRange?.name ?? TimeRangePreset.ALL_TIME,
+        allTimeRange.start,
+        allTimeRange.end,
+        selectedTimezone,
+        minTimeUnit,
+      );
+    } else {
+      timeRange = isoDurationToFullTimeRange(
+        selectedTimeRange?.name,
+        allTimeRange.start,
+        allTimeRange.end,
+        selectedTimezone,
+      );
+    }
+  } else {
+    /** set the time range to the fixed custom time range */
+    timeRange = {
+      name: defaultTimeRange.name,
+      start: defaultTimeRange.start,
+      end: defaultTimeRange.end,
+    };
+  }
+
+  return timeRange;
+}
+
+export function getComparisonTimeRange(
+  timeRanges: V1ExploreTimeRange[] | undefined,
+  allTimeRange: TimeRange | undefined,
+  timeRange: DashboardTimeControls | undefined,
+  comparisonTimeRange: DashboardTimeControls | undefined,
+  timezone: string | undefined,
+) {
+  if (!timeRange || !timeRange.name || !allTimeRange) return undefined;
+
+  if (!comparisonTimeRange?.name) {
+    const comparisonOption = getValidComparisonOption(
+      timeRanges,
+      timeRange,
+      undefined,
+      allTimeRange,
+      timezone,
+    );
+    const range = getTimeComparisonParametersForComponent(
+      comparisonOption,
+      allTimeRange.start,
+      allTimeRange.end,
+      timeRange.start,
+      timeRange.end,
+      timezone || "UTC",
+    );
+
+    return {
+      start: range.start,
+      end: range.end,
+      name: comparisonOption,
+    };
+  } else if (
+    comparisonTimeRange.name === TimeComparisonOption.CUSTOM ||
+    // 1st step towards using a single `Custom` variable
+    // TODO: replace the usage of TimeComparisonOption.CUSTOM with TimeRangePreset.CUSTOM
+    comparisonTimeRange.name === TimeRangePreset.CUSTOM
+  ) {
+    return comparisonTimeRange;
+  } else {
+    // variable time range of some kind.
+    const comparisonOption = comparisonTimeRange.name as TimeComparisonOption;
+    const interval = Interval.fromDateTimes(
+      DateTime.fromJSDate(timeRange.start, { zone: timezone }),
+      DateTime.fromJSDate(timeRange.end, { zone: timezone }),
+    );
+
+    if (interval.isValid) {
+      const range = getComparisonInterval(
+        interval,
+        comparisonOption,
+        timezone || "UTC",
+      );
+      return {
+        start: range?.start.toJSDate(),
+        end: range?.end.toJSDate(),
+        name: comparisonOption,
+      };
+    } else {
+      return {
+        start: undefined,
+        end: undefined,
+        name: comparisonOption,
+      };
+    }
+  }
+}
+
+/**
+ * Fills in start and end dates based on selected time range and all time range.
+ */
+export function selectedTimeRangeSelector([
+  exploreSpec,
+  timeRangeResponse,
+  explorer,
+  minTimeGrain,
+]: [
+  V1ExploreSpec | undefined,
+  QueryObserverResult<V1MetricsViewTimeRangeResponse, unknown>,
+  ExploreState,
+  V1TimeGrain | undefined,
+]) {
+  if (
+    !exploreSpec ||
+    !timeRangeResponse.data?.timeRangeSummary ||
+    !timeRangeResponse.data.timeRangeSummary.min ||
+    !timeRangeResponse.data.timeRangeSummary.max
+  ) {
+    return undefined;
+  }
+
+  const allTimeRange = {
+    name: TimeRangePreset.ALL_TIME,
+    start: new Date(timeRangeResponse.data.timeRangeSummary.min),
+    end: new Date(timeRangeResponse.data.timeRangeSummary.max),
+  };
+  const defaultTimeRange = isoDurationToFullTimeRange(
+    exploreSpec?.defaultPreset?.timeRange,
+    allTimeRange.start,
+    allTimeRange.end,
+    explorer.selectedTimezone,
+  );
+
+  return getTimeRange(
+    explorer.selectedTimeRange,
+    explorer.selectedTimezone,
+    allTimeRange,
+    defaultTimeRange,
+    minTimeGrain,
+  );
+}

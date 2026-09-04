@@ -1,0 +1,117 @@
+<script lang="ts">
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import {
+    createAdminServiceCreateProjectWhitelistedDomain,
+    type RpcStatus,
+  } from "@rilldata/web-admin/client";
+  import CopyInviteLinkButton from "@rilldata/web-admin/features/projects/user-management/CopyInviteLinkButton.svelte";
+  import {
+    getUserDomain,
+    userDomainIsPublic,
+  } from "@rilldata/web-admin/features/projects/user-management/selectors";
+  import UserInviteForm from "@rilldata/web-admin/features/projects/user-management/UserInviteForm.svelte";
+  import { Button } from "@rilldata/web-common/components/button";
+  import Label from "@rilldata/web-common/components/forms/Label.svelte";
+  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
+  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  import type { AxiosError } from "axios";
+
+  $: organization = $page.params.organization;
+  $: project = $page.params.project;
+
+  let allowDomain = false;
+  let invited = false;
+  $: userDomain = getUserDomain();
+  $: isPublicDomain = userDomainIsPublic();
+  const addToAllowlist = createAdminServiceCreateProjectWhitelistedDomain();
+
+  $: buttonText =
+    invited || allowDomain ? m.auth_continue() : m.auth_skip_for_now();
+
+  $: copyLink = `${$page.url.protocol}//${$page.url.host}/${organization}/${project}`;
+
+  async function onContinue() {
+    if (allowDomain) {
+      try {
+        await $addToAllowlist.mutateAsync({
+          org: organization,
+          project,
+          data: {
+            domain: $userDomain.data,
+            role: ProjectUserRoles.Viewer,
+          },
+        });
+      } catch (e) {
+        eventBus.emit("notification", {
+          type: "error",
+          message:
+            (e as AxiosError<RpcStatus>).response.data?.message ?? e.message,
+          options: {
+            persisted: true,
+          },
+        });
+      }
+    }
+    return goto(getDeployLandingPage());
+  }
+
+  function getDeployLandingPage() {
+    const u = new URL($page.url);
+    u.pathname = `/${organization}/${project}/-/deploying`;
+    return u.toString();
+  }
+</script>
+
+<div class="flex flex-col gap-5 w-[600px] my-16 sm:my-32 md:my-64 mx-auto">
+  <div class="text-xl text-center w-full">{m.auth_invite_teammates()}</div>
+  <div class="flex flex-col gap-y-1">
+    <div class="flex flex-row items-center">
+      <div class="text-sm font-medium">{m.auth_invite_by_email()}</div>
+      <div class="grow"></div>
+      <CopyInviteLinkButton {copyLink} />
+    </div>
+    <UserInviteForm
+      {organization}
+      {project}
+      onInvite={() => (invited = true)}
+    />
+  </div>
+  {#if $userDomain.data && !$isPublicDomain.data}
+    <div class="flex flex-col gap-y-1">
+      <div class="text-sm font-medium">{m.auth_allow_domain_access()}</div>
+      <div class="flex flex-row gap-x-2">
+        <Switch
+          small
+          bind:checked={allowDomain}
+          id="allow-domain"
+          class="mt-1"
+        />
+        <Label for="allow-domain" class="font-normal text-fg-primary text-sm">
+          {@html m.common_allow_domain_join_project({
+            domain: `<b>@${escapeHtml($userDomain.data)}</b>`,
+            role: `<b>${escapeHtml(m.role_viewer())}</b>`,
+          })}
+          <a
+            target="_blank"
+            href="https://docs.rilldata.com/reference/cli/user/whitelist"
+          >
+            {m.common_learn_more()}
+          </a>
+        </Label>
+      </div>
+    </div>
+  {/if}
+  <Button
+    type="primary"
+    onClick={onContinue}
+    loading={$addToAllowlist.isPending}
+    wide
+    class="mx-auto"
+  >
+    {buttonText}
+  </Button>
+</div>

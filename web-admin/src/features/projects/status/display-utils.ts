@@ -1,0 +1,86 @@
+import { V1DeploymentStatus } from "@rilldata/web-admin/client";
+import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+/**
+ * Returns the Tailwind CSS class for a deployment status indicator dot.
+ * Green for running, yellow for in-progress states, red for errors, gray for not deployed.
+ * @param status - The deployment status
+ * @returns Tailwind CSS class for the status dot background color
+ */
+export function getStatusDotClass(status: V1DeploymentStatus): string {
+  switch (status) {
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_RUNNING:
+      return "bg-green-500"; // Green - Ready
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_PENDING:
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_UPDATING:
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_STOPPING:
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_DELETING:
+      return "bg-yellow-500"; // Yellow - In progress
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_ERRORED:
+      return "bg-red-500"; // Red - Error
+    default:
+      return "bg-gray-400"; // Gray - Not deployed
+  }
+}
+
+/**
+ * Returns true for deployment statuses that represent in-progress transitions.
+ */
+export function isTransitoryStatus(status: V1DeploymentStatus): boolean {
+  return (
+    status === V1DeploymentStatus.DEPLOYMENT_STATUS_PENDING ||
+    status === V1DeploymentStatus.DEPLOYMENT_STATUS_UPDATING ||
+    status === V1DeploymentStatus.DEPLOYMENT_STATUS_STOPPING ||
+    status === V1DeploymentStatus.DEPLOYMENT_STATUS_DELETING
+  );
+}
+
+/**
+ * Returns a human-readable label for a deployment status.
+ * @param status - The deployment status
+ * @returns Human-readable status label (e.g., "Ready", "Pending", "Error")
+ */
+export function getStatusLabel(status: V1DeploymentStatus): string {
+  switch (status) {
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_RUNNING:
+      return m.status_deploy_ready();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_PENDING:
+      return m.status_deploy_pending();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_UPDATING:
+      return m.status_deploy_updating();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_STOPPING:
+      return m.status_deploy_stopping();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_DELETING:
+      return m.status_deploy_deleting();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_ERRORED:
+      return m.status_deploy_error();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_STOPPED:
+      return m.status_deploy_stopped();
+    case V1DeploymentStatus.DEPLOYMENT_STATUS_DELETED:
+      return m.status_deploy_deleted();
+    default:
+      return m.status_deploy_not_deployed();
+  }
+}
+
+/**
+ * Returns a color name for a resource kind tag.
+ * @param kind - The fully qualified resource kind (e.g., "rill.runtime.v1.Model")
+ * @returns Color name for the tag (e.g., "blue", "green", "gray")
+ */
+export function getResourceKindTagColor(kind: string) {
+  switch (kind) {
+    case "rill.runtime.v1.MetricsView":
+      return "blue";
+    case "rill.runtime.v1.Model":
+      return "green";
+    case "rill.runtime.v1.Report":
+      return "orange";
+    case "rill.runtime.v1.Source":
+      return "purple";
+    case "rill.runtime.v1.Theme":
+      return "magenta";
+    default:
+      return "gray";
+  }
+}

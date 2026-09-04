@@ -1,0 +1,118 @@
+<script lang="ts">
+  import AddComponentDropdown from "./AddComponentDropdown.svelte";
+  import type { CanvasComponentType } from "./components/types";
+  import Divider from "./Divider.svelte";
+  import { activeDivider, dropZone } from "./stores/ui-stores";
+
+  export let allowDrop: boolean;
+  export let resizeIndex = -1;
+  export let dropIndex: number;
+  export let zoneScope = "canvas";
+  export let position: "top" | "bottom" | undefined = undefined;
+  export let onDrop: (row: number, column: number | null) => void;
+  export let onRowResizeStart: (e: MouseEvent) => void = () => {};
+  export let addItem: (type: CanvasComponentType) => void;
+  // When provided, the add menu offers inserting a tab group at this position.
+  export let onAddTabGroup: (() => void) | undefined = undefined;
+
+  let menuOpen = false;
+
+  $: notResizable = resizeIndex === -1;
+  $: resolvedPosition = position ?? (notResizable ? "top" : "bottom");
+
+  $: dividerId = `${zoneScope}::resize-row:${resizeIndex}::drop-row:${dropIndex}::column:null::position:${resolvedPosition}`;
+  $: dropId = `${zoneScope}::row:${dropIndex}::column:null`;
+
+  $: isDropZone = $dropZone === dropId;
+  $: isActiveDivider = $activeDivider === dividerId;
+
+  $: notActiveDivider = !isActiveDivider && !!$activeDivider;
+
+  $: forceShowDivider = menuOpen || isActiveDivider || isDropZone;
+</script>
+
+<div
+  role="presentation"
+  style:pointer-events={allowDrop ? "auto" : "none"}
+  class:top={resolvedPosition === "top"}
+  class:bottom={resolvedPosition === "bottom"}
+  class="absolute z-10 w-full h-12 flex items-center justify-center px-2"
+  onmouseenter={() => {
+    if (!allowDrop) return;
+
+    dropZone.set(dropId);
+  }}
+  onmouseleave={() => {
+    if (!allowDrop || menuOpen) return;
+    dropZone.clear();
+  }}
+  onmouseup={() => {
+    if (!allowDrop) return;
+    onDrop(dropIndex, null);
+  }}
+>
+  <div class="w-full h-4 z-40 group flex items-center justify-center relative">
+    <button
+      data-row={resizeIndex}
+      class:cursor-default={notResizable && !allowDrop}
+      class:cursor-row-resize={!allowDrop && !notResizable}
+      style:pointer-events={notActiveDivider || allowDrop || menuOpen
+        ? "none"
+        : "auto"}
+      class="peer size-full flex items-center justify-center px-px"
+      onmousedown={(e) => {
+        onRowResizeStart(e);
+        activeDivider.set(dividerId);
+
+        window.addEventListener(
+          "mouseup",
+          () => {
+            activeDivider.set(null);
+          },
+          { once: true },
+        );
+      }}
+    >
+      <Divider horizontal show={forceShowDivider} />
+    </button>
+
+    <span
+      role="presentation"
+      class:shift-down={notResizable}
+      class:not-sr-only={menuOpen}
+      class="sr-only peer-hover:not-sr-only !overflow-hidden peer-active:sr-only hover:not-sr-only flex shadow-sm pointer-events-auto !absolute left-1/2 w-fit z-50 bg-surface-subtle -translate-x-1/2 border rounded-sm"
+    >
+      <AddComponentDropdown
+        rowIndex={dropIndex}
+        bind:open={menuOpen}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            activeDivider.set(null);
+          } else {
+            activeDivider.set(dividerId);
+          }
+        }}
+        onItemClick={addItem}
+        {onAddTabGroup}
+      />
+    </span>
+  </div>
+</div>
+
+<style lang="postcss">
+  /* div {
+    @apply bg-blue-400/20;
+  } */
+
+  .top {
+    @apply top-0 -translate-y-1/2;
+  }
+
+  .bottom {
+    @apply bottom-0 translate-y-1/2;
+  }
+
+  .shift-down {
+    @apply translate-y-[8px];
+  }
+</style>

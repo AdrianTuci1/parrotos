@@ -1,0 +1,160 @@
+<script lang="ts">
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import { page } from "$app/stores";
+  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  import { useQueryClient } from "@tanstack/svelte-query";
+  import {
+    createAdminServiceAddOrganizationMemberUsergroup,
+    createAdminServiceRemoveOrganizationMemberUsergroup,
+    createAdminServiceSetOrganizationMemberUsergroupRole,
+  } from "@rilldata/web-admin/client";
+  import { invalidateOrgUsergroups } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
+  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  import { capitalize } from "@rilldata/web-common/components/table/utils.ts";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let name: string;
+  export let role: string | undefined = undefined;
+  export let manageOrgAdmins: boolean;
+
+  let isDropdownOpen = false;
+
+  $: organization = $page.params.organization;
+
+  const queryClient = useQueryClient();
+  const addUserGroupRole = createAdminServiceAddOrganizationMemberUsergroup();
+  const setUserGroupRole =
+    createAdminServiceSetOrganizationMemberUsergroupRole();
+  const revokeUserGroupRole =
+    createAdminServiceRemoveOrganizationMemberUsergroup();
+
+  async function handleRoleSelect(selectedRole: string) {
+    if (role) {
+      return handleSetRole(selectedRole);
+    } else {
+      return handleAddRole(selectedRole);
+    }
+  }
+
+  async function handleAddRole(role: string) {
+    try {
+      await $addUserGroupRole.mutateAsync({
+        org: organization,
+        usergroup: name,
+        data: {
+          role: role,
+        },
+      });
+
+      await invalidateOrgUsergroups(queryClient, organization);
+
+      eventBus.emit("notification", { message: m.groups_role_added() });
+    } catch (error) {
+      console.error("Error adding role to user group", error);
+      eventBus.emit("notification", {
+        message: m.groups_error_adding_role(),
+        type: "error",
+      });
+    }
+  }
+
+  async function handleSetRole(role: string) {
+    try {
+      await $setUserGroupRole.mutateAsync({
+        org: organization,
+        usergroup: name,
+        data: {
+          role: role,
+        },
+      });
+
+      await invalidateOrgUsergroups(queryClient, organization);
+
+      eventBus.emit("notification", { message: m.groups_role_updated() });
+    } catch {
+      eventBus.emit("notification", {
+        message: m.groups_error_updating_role(),
+        type: "error",
+      });
+    }
+  }
+
+  async function handleRevokeRole() {
+    try {
+      await $revokeUserGroupRole.mutateAsync({
+        org: organization,
+        usergroup: name,
+      });
+
+      await invalidateOrgUsergroups(queryClient, organization);
+
+      eventBus.emit("notification", { message: m.groups_role_revoked() });
+    } catch {
+      eventBus.emit("notification", {
+        message: m.groups_error_revoking_role(),
+        type: "error",
+      });
+    }
+  }
+</script>
+
+<DropdownMenu.Root bind:open={isDropdownOpen}>
+  <DropdownMenu.Trigger
+    class="w-18 flex flex-row gap-1 items-center rounded-sm {isDropdownOpen
+      ? 'bg-gray-200'
+      : 'hover:bg-surface-hover'} px-2 py-1"
+  >
+    {role ? `${capitalize(role)}` : "-"}
+    {#if isDropdownOpen}
+      <CaretUpIcon size="12px" />
+    {:else}
+      <CaretDownIcon size="12px" />
+    {/if}
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content align="start" strategy="fixed" class="w-[200px]">
+    {#if manageOrgAdmins}
+      <DropdownMenu.Item
+        class="font-normal flex flex-col items-start py-2 {role === 'admin'
+          ? 'bg-gray-100'
+          : ''}"
+        onclick={() => handleRoleSelect(OrgUserRoles.Admin)}
+      >
+        <span class="font-medium">{m.role_admin()}</span>
+        <span class="text-xs text-fg-secondary"
+          >{m.role_org_admin_detail()}</span
+        >
+      </DropdownMenu.Item>
+    {/if}
+    <DropdownMenu.Item
+      class="font-normal flex flex-col items-start py-2 {role === 'editor'
+        ? 'bg-gray-100'
+        : ''}"
+      onclick={() => handleRoleSelect(OrgUserRoles.Editor)}
+    >
+      <span class="font-medium">{m.role_editor()}</span>
+      <span class="text-xs text-fg-secondary">{m.role_org_editor_detail()}</span
+      >
+    </DropdownMenu.Item>
+    <DropdownMenu.Item
+      class="font-normal flex flex-col items-start py-2 {role === 'viewer'
+        ? 'bg-gray-100'
+        : ''}"
+      onclick={() => handleRoleSelect(OrgUserRoles.Viewer)}
+    >
+      <span class="font-medium">{m.role_viewer()}</span>
+      <span class="text-xs text-fg-secondary">{m.role_org_viewer_detail()}</span
+      >
+    </DropdownMenu.Item>
+    {#if role}
+      <DropdownMenu.Separator />
+      <DropdownMenu.Item
+        class="font-normal flex items-center"
+        onclick={handleRevokeRole}
+      >
+        <span>{m.users_remove()}</span>
+      </DropdownMenu.Item>
+    {/if}
+  </DropdownMenu.Content>
+</DropdownMenu.Root>

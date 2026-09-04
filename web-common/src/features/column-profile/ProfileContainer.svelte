@@ -1,0 +1,103 @@
+<script lang="ts">
+  import { slide } from "svelte/transition";
+  import { FormattedDataType } from "@rilldata/web-common/components/data-types";
+  import {
+    COLUMN_PROFILE_CONFIG,
+    LIST_SLIDE_DURATION,
+  } from "@rilldata/web-common/layout/config";
+  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+
+  export let columnName: string;
+  export let active = false;
+  export let emphasize = false;
+  export let type;
+  export let example;
+  export let isFetching;
+  export let hideRight = false;
+  export let compact = false;
+  export let hideNullPercentage = false;
+  export let mode = "summaries";
+  export let onShiftClick: () => void;
+  export let onSelect: () => void;
+
+  let columns: string;
+  $: summarySize =
+    COLUMN_PROFILE_CONFIG.summaryVizWidth[compact ? "small" : "medium"];
+  $: if (hideNullPercentage) {
+    columns = `${summarySize}px`;
+  } else {
+    columns = `${summarySize}px ${COLUMN_PROFILE_CONFIG.nullPercentageWidth}px`;
+  }
+
+  $: label = `${columnName} profile${isFetching ? " loading" : ""}`;
+</script>
+
+<div>
+  <button
+    class="
+        px-4
+        select-none
+        flex
+        space-between
+        gap-2
+        hover:bg-surface-hover
+        focus:bg-surface-hover
+        focus:ring-gray-500
+        focus:outline-gray-300 flex-1
+        justify-between w-full"
+    class:text-fg-muted={isFetching}
+    class:bg-surface-background={active}
+    onclick={modified({
+      shift: onShiftClick,
+      click: onSelect,
+    })}
+    aria-label={label}
+  >
+    <div class="flex gap-2 items-baseline flex-1" style:min-width="0px">
+      <div class="self-center flex items-center text-fg-secondary-muted">
+        <slot name="icon" />
+      </div>
+      <div
+        class:font-bold={emphasize}
+        class="text-left w-full text-ellipsis overflow-hidden whitespace-nowrap"
+      >
+        <slot name="left" />
+      </div>
+    </div>
+    <div
+      class:hidden={hideRight || mode !== "summaries"}
+      class="grid gap-x-2"
+      style:grid-template-columns={columns}
+    >
+      {#if mode === "summaries"}
+        <div>
+          <slot name="summary" />
+        </div>
+        {#if !hideNullPercentage}
+          <div>
+            <slot name="nullity" />
+          </div>
+        {/if}
+      {/if}
+      <div>
+        <slot name="context-button" />
+      </div>
+    </div>
+    <div
+      class:hidden={mode !== "example" || hideRight}
+      class="pl-8 text-ellipsis overflow-hidden whitespace-nowrap text-right"
+      style:max-width="240px"
+    >
+      <FormattedDataType
+        {type}
+        isNull={example === null || example === ""}
+        value={example}
+      />
+    </div>
+  </button>
+  {#if active && $$slots["details"]}
+    <div class="w-full" transition:slide={{ duration: LIST_SLIDE_DURATION }}>
+      <slot name="details" />
+    </div>
+  {/if}
+</div>

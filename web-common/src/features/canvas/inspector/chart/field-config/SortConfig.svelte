@@ -1,0 +1,139 @@
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
+  import DraggableList from "@rilldata/web-common/components/draggable-list";
+  import Select from "@rilldata/web-common/components/forms/Select.svelte";
+  import DragHandle from "@rilldata/web-common/components/icons/DragHandle.svelte";
+  import * as Popover from "@rilldata/web-common/components/popover";
+  import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
+  import {
+    ChartSortType,
+    type ChartSortDirectionOptions,
+    type FieldConfig,
+  } from "@rilldata/web-common/features/components/charts/types";
+  import { List } from "lucide-svelte";
+
+  export let fieldConfig: FieldConfig;
+  export let onChange: (property: keyof FieldConfig, value: any) => void;
+  export let sortConfig: ChartFieldInput["sortSelector"];
+
+  let isCustomSortDropdownOpen = false;
+
+  const sortOptions: { label: string; value: ChartSortDirectionOptions }[] = [
+    { label: m.canvas_sort_x_axis_ascending(), value: ChartSortType.X_ASC },
+    { label: m.canvas_sort_x_axis_descending(), value: ChartSortType.X_DESC },
+    { label: m.canvas_sort_y_axis_ascending(), value: ChartSortType.Y_ASC },
+    { label: m.canvas_sort_y_axis_descending(), value: ChartSortType.Y_DESC },
+    {
+      label: m.canvas_sort_y_axis_delta_ascending(),
+      value: ChartSortType.Y_DELTA_ASC,
+    },
+    {
+      label: m.canvas_sort_y_axis_delta_descending(),
+      value: ChartSortType.Y_DELTA_DESC,
+    },
+    { label: m.canvas_sort_color_ascending(), value: ChartSortType.COLOR_ASC },
+    {
+      label: m.canvas_sort_color_descending(),
+      value: ChartSortType.COLOR_DESC,
+    },
+    {
+      label: m.canvas_sort_measure_ascending(),
+      value: ChartSortType.MEASURE_ASC,
+    },
+    {
+      label: m.canvas_sort_measure_descending(),
+      value: ChartSortType.MEASURE_DESC,
+    },
+    { label: m.canvas_sort_custom(), value: ChartSortType.CUSTOM },
+  ];
+
+  $: sortOptionsForChart = sortOptions.filter((option) =>
+    sortConfig?.options?.includes(option.value),
+  );
+
+  $: sortValue = fieldConfig.sort
+    ? typeof fieldConfig.sort === "string"
+      ? fieldConfig.sort
+      : ChartSortType.CUSTOM
+    : (sortConfig?.defaultSort ?? ChartSortType.X_ASC);
+
+  $: customSortDraggableItems = sortConfig?.customSortItems?.map((item) => ({
+    id: sanitizeItemId(item),
+    value: item,
+  }));
+
+  function sanitizeItemId(item: string | null) {
+    if (item === null) return "null-item";
+    if (item === "") return "<empty-string>";
+    return item;
+  }
+
+  function handleReorder(data: {
+    items: { id: string; value: string }[];
+    fromIndex: number;
+    toIndex: number;
+  }) {
+    const reorderedItems = data.items.map((item) => item.value);
+    onChange("sort", reorderedItems);
+  }
+
+  function handleSortChange(newSortValue: string) {
+    if (newSortValue === ChartSortType.CUSTOM) {
+      onChange("sort", sortConfig?.customSortItems);
+    } else {
+      onChange("sort", newSortValue);
+    }
+  }
+</script>
+
+{#if sortConfig?.enable}
+  <div class="py-1 flex items-center justify-between">
+    <span class="text-xs">{m.canvas_sort()}</span>
+    <div class="flex items-center gap-x-1">
+      <Select
+        size="sm"
+        id="sort-select"
+        width={190}
+        options={sortOptionsForChart}
+        value={sortValue}
+        onChange={handleSortChange}
+      />
+      {#if sortValue === ChartSortType.CUSTOM}
+        <Popover.Root bind:open={isCustomSortDropdownOpen}>
+          <Popover.Trigger>
+            <IconButton rounded active={isCustomSortDropdownOpen}>
+              <List size="14px" />
+            </IconButton>
+          </Popover.Trigger>
+          <Popover.Content align="end" class="w-[240px] p-0">
+            <div class="px-3 py-2 border-b border-gray-200">
+              <span class="text-xs font-medium">{m.canvas_sort_order()}</span>
+            </div>
+            <DraggableList
+              items={customSortDraggableItems || []}
+              onReorder={handleReorder}
+              minHeight="auto"
+              maxHeight="300px"
+            >
+              {#snippet empty()}
+                <div class="px-2 py-2 text-xs text-fg-secondary">
+                  {m.canvas_no_sort_item_found()}
+                </div>
+              {/snippet}
+              {#snippet item({ item })}
+                <div class="flex items-center gap-x-1">
+                  <DragHandle
+                    size="16px"
+                    className="text-fg-secondary pointer-events-none"
+                  />
+                  <span class="text-xs truncate">{item.value}</span>
+                </div>
+              {/snippet}
+            </DraggableList>
+          </Popover.Content>
+        </Popover.Root>
+      {/if}
+    </div>
+  </div>
+{/if}

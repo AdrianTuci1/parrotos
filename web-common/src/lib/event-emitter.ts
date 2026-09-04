@@ -1,0 +1,75 @@
+import { v4 as uuidv4 } from "uuid";
+
+type Listener<
+  Events extends Record<string, any>,
+  E extends keyof Events,
+> = Events[E] extends void ? () => void : (arg: Events[E]) => void;
+type EventPayload<
+  Events extends Record<string, any>,
+  E extends keyof Events,
+> = Events[E] extends void ? [] : [Events[E]];
+
+export class EventEmitter<Events extends Record<string, any>> {
+  private readonly listeners = new Map<
+    keyof Events,
+    Map<string, Listener<Events, keyof Events>>
+  >();
+
+  public on<E extends keyof Events>(event: E, listener: Listener<Events, E>) {
+    const key = uuidv4();
+    const eventMap = this.listeners.get(event);
+
+    if (!eventMap) {
+      this.listeners.set(event, new Map([[key, listener]]));
+    } else {
+      eventMap.set(key, listener);
+    }
+
+    const unsubscribe = () => this.listeners.get(event)?.delete(key);
+
+    return unsubscribe;
+  }
+
+  public once<E extends keyof Events>(event: E, listener: Listener<Events, E>) {
+    const unsubscribe = this.on(event, ((...args: EventPayload<Events, E>) => {
+      (listener as any)(...args);
+      unsubscribe();
+    }) as Listener<Events, E>);
+
+    return unsubscribe;
+  }
+
+  public emit<E extends keyof Events>(
+    event: E,
+    ...args: EventPayload<Events, E>
+  ) {
+    const listeners = this.listeners.get(event);
+
+    listeners?.forEach((listener) => {
+      (listener as any)(...args);
+    });
+  }
+
+  public clearListeners() {
+    this.listeners.clear();
+  }
+}
+
+/**
+ * Creates an EventEmitter plus pre-bound method handles. Classes that want
+ * to expose `on`/`once`/`emit`/`clearListeners` as public instance fields
+ * can assign from the returned object, avoiding the manual bind-and-retype
+ * boilerplate at each call site.
+ */
+export function createEventBinding<Events extends Record<string, any>>() {
+  const emitter = new EventEmitter<Events>();
+  return {
+    emitter,
+    on: emitter.on.bind(emitter) as typeof emitter.on,
+    once: emitter.once.bind(emitter) as typeof emitter.once,
+    emit: emitter.emit.bind(emitter) as typeof emitter.emit,
+    clearListeners: emitter.clearListeners.bind(
+      emitter,
+    ) as typeof emitter.clearListeners,
+  };
+}

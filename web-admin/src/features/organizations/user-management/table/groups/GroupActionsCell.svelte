@@ -1,0 +1,53 @@
+<script lang="ts">
+  import IconButton from "web-common/src/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
+  import { Trash2Icon, Pencil } from "lucide-svelte";
+  import DeleteUserGroupConfirmDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/DeleteUserGroupConfirmDialog.svelte";
+  import EditUserGroupDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  export let groupName: string;
+  export let currentUserEmail: string;
+
+  let isDropdownOpen = false;
+  let isDeleteConfirmOpen = false;
+  let isEditDialogOpen = false;
+</script>
+
+<!-- Managed groups cannot be deleted or edited -->
+<DropdownMenu.Root bind:open={isDropdownOpen}>
+  <DropdownMenu.Trigger class="flex-none">
+    <IconButton rounded active={isDropdownOpen}>
+      <ThreeDot size="16px" />
+    </IconButton>
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content align="end">
+    <DropdownMenu.Item
+      class="font-normal flex items-center"
+      onclick={() => {
+        isEditDialogOpen = true;
+      }}
+    >
+      <Pencil size="12px" />
+      <span class="ml-2">{m.groups_edit()}</span>
+    </DropdownMenu.Item>
+    <DropdownMenu.Item
+      class="font-normal flex items-center"
+      type="destructive"
+      onclick={() => {
+        isDeleteConfirmOpen = true;
+      }}
+    >
+      <Trash2Icon size="12px" />
+      <span class="ml-2">{m.groups_delete()}</span>
+    </DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu.Root>
+
+<DeleteUserGroupConfirmDialog bind:open={isDeleteConfirmOpen} {groupName} />
+
+<EditUserGroupDialog
+  bind:open={isEditDialogOpen}
+  {groupName}
+  {currentUserEmail}
+/>

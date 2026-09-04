@@ -1,0 +1,169 @@
+<script lang="ts">
+  import type {
+    RpcStatus,
+    V1ListOrganizationInvitesResponse,
+    V1ListOrganizationMemberUsersResponse,
+    V1OrganizationMemberUser,
+    V1OrganizationInvite,
+    V1OrganizationPermissions,
+  } from "@rilldata/web-admin/client";
+  import UserCompositeCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserCompositeCell.svelte";
+  import UserActionsCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserActionsCell.svelte";
+  import UserRoleCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserRoleCell.svelte";
+  import UserGroupsCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserGroupsCell.svelte";
+  import UserProjectsCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserProjectsCell.svelte";
+  import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
+  import type {
+    InfiniteData,
+    InfiniteQueryObserverResult,
+  } from "@tanstack/svelte-query";
+  import { ExternalLinkIcon } from "lucide-svelte";
+  import InfiniteScrollTable from "@rilldata/web-common/components/table/InfiniteScrollTable.svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  interface OrgUser extends V1OrganizationMemberUser, V1OrganizationInvite {
+    invitedBy?: string;
+  }
+
+  export let organization: string;
+  export let data: OrgUser[];
+  export let usersQuery: InfiniteQueryObserverResult<
+    InfiniteData<V1ListOrganizationMemberUsersResponse, unknown>,
+    RpcStatus
+  >;
+  export let invitesQuery: InfiniteQueryObserverResult<
+    InfiniteData<V1ListOrganizationInvitesResponse, unknown>,
+    RpcStatus
+  >;
+  export let currentUserEmail: string;
+  export let organizationPermissions: V1OrganizationPermissions;
+  export let billingContact: string | undefined;
+  export let scrollToTopTrigger: any = null;
+  export let guestOnly: boolean;
+
+  export let onAttemptRemoveBillingContactUser: () => void;
+  export let onAttemptChangeBillingContactUserRole: () => void;
+  export let onEditUserGroup: (groupName: string) => void;
+  export let onConvertToMember: (user: V1OrganizationMemberUser) => void;
+
+  $: safeData = Array.isArray(data) ? data : [];
+
+  const UserCell = <ColumnDef<OrgUser, any>>{
+    accessorKey: "user",
+    header: m.users_table_header_user(),
+    enableSorting: false,
+    cell: ({ row }) =>
+      renderComponent(UserCompositeCell, {
+        name: row.original.userName ?? row.original.email,
+        email: row.original.userEmail,
+        isCurrentUser: row.original.userEmail === currentUserEmail,
+        pendingAcceptance: "invitedBy" in row.original,
+        photoUrl: row.original.userPhotoUrl,
+        role: row.original.roleName,
+        attributes: row.original.attributes,
+      }),
+    meta: {
+      widthPercent: 50,
+    },
+  };
+  const RoleCell = <ColumnDef<OrgUser, any>>{
+    accessorKey: "roleName",
+    header: m.users_table_header_org_role(),
+    cell: ({ row }) =>
+      renderComponent(UserRoleCell, {
+        email: row.original.userEmail,
+        role: row.original.roleName,
+        isCurrentUser: row.original.userEmail === currentUserEmail,
+        organizationPermissions,
+        isBillingContact: row.original.userEmail === billingContact,
+        onAttemptChangeBillingContactUserRole,
+      }),
+    meta: {
+      widthPercent: 40,
+      marginLeft: "8px",
+    },
+  };
+  const UserGroupCell = <ColumnDef<OrgUser, any>>{
+    accessorKey: "usergroupsCount",
+    header: m.users_table_header_groups(),
+    cell: ({ row }) =>
+      renderComponent(UserGroupsCell, {
+        userId: row.original.userId,
+        organization,
+        groupCount: row.original.usergroupsCount ?? 0,
+        onEditUserGroup,
+      }),
+    meta: {
+      widthPercent: 40,
+      marginLeft: "8px",
+    },
+  };
+  const ProjectsCell = <ColumnDef<OrgUser, any>>{
+    accessorKey: "projectsCount",
+    header: m.users_table_header_projects(),
+    cell: ({ row }) =>
+      renderComponent(UserProjectsCell, {
+        organization,
+        userId: row.original.userId,
+        projectCount: row.original.projectsCount ?? 0,
+      }),
+    meta: {
+      widthPercent: 40,
+      marginLeft: "8px",
+    },
+  };
+  const ContextActionsCell = <ColumnDef<OrgUser, any>>{
+    accessorKey: "actions",
+    header: "",
+    enableSorting: false,
+    cell: ({ row }) =>
+      renderComponent(UserActionsCell, {
+        email: row.original.userEmail,
+        role: row.original.roleName,
+        isCurrentUser: row.original.userEmail === currentUserEmail,
+        organizationPermissions,
+        isBillingContact: row.original.userEmail === billingContact,
+        pendingAcceptance: "invitedBy" in row.original,
+        onAttemptRemoveBillingContactUser,
+        onConvertToMember: () => onConvertToMember(row.original),
+      }),
+    meta: {
+      widthPercent: 5,
+    },
+  };
+  $: columns = guestOnly
+    ? [UserCell, UserGroupCell, ProjectsCell, ContextActionsCell]
+    : [UserCell, RoleCell, UserGroupCell];
+
+  function handleLoadMore() {
+    if (usersQuery.hasNextPage) {
+      usersQuery.fetchNextPage();
+    }
+    if (invitesQuery.hasNextPage) {
+      invitesQuery.fetchNextPage();
+    }
+  }
+
+  $: dynamicTableMaxHeight =
+    safeData.length > 12 ? `calc(100dvh - 300px)` : "auto";
+
+  const headerIcons = {
+    roleName: {
+      icon: ExternalLinkIcon,
+      href: "https://docs.rilldata.com/guide/administration/users-and-access/roles-permissions#organization-level-permissions",
+    },
+  };
+</script>
+
+<InfiniteScrollTable
+  data={safeData}
+  {columns}
+  hasNextPage={usersQuery.hasNextPage || invitesQuery.hasNextPage}
+  isFetchingNextPage={usersQuery.isFetchingNextPage ||
+    invitesQuery.isFetchingNextPage}
+  onLoadMore={handleLoadMore}
+  maxHeight={dynamicTableMaxHeight}
+  emptyStateMessage={m.users_table_empty()}
+  {headerIcons}
+  {scrollToTopTrigger}
+/>

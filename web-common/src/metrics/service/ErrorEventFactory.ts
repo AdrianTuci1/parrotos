@@ -1,0 +1,153 @@
+import { MetricsEventFactory } from "./MetricsEventFactory";
+import type {
+  CommonFields,
+  CommonUserFields,
+  MetricsEvent,
+  MetricsEventScreenName,
+  MetricsEventSpace,
+} from "./MetricsTypes";
+import type {
+  SourceConnectionType,
+  SourceErrorCodes,
+  SourceFileType,
+} from "./SourceEventTypes";
+import type { AddDataBehaviourEventFields } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+import { sanitizePageUrl } from "./sanitizePageUrl";
+
+export enum ErrorEventAction {
+  SourceError = "source-error",
+  AddDataError = "add-data-error",
+  ErrorBoundary = "error-boundary",
+}
+
+export interface SourceErrorEvent extends MetricsEvent {
+  action: ErrorEventAction;
+  error_code: SourceErrorCodes;
+  space: MetricsEventSpace;
+  screen_name: MetricsEventScreenName;
+  file_type: SourceFileType;
+  connection_type: SourceConnectionType;
+  glob: boolean;
+}
+
+export interface HTTPErrorEvent extends MetricsEvent {
+  action: ErrorEventAction;
+  screen_name: MetricsEventScreenName;
+  api: string;
+  status: string;
+  message: string;
+  page_url: string;
+}
+
+export interface JavascriptErrorEvent extends MetricsEvent {
+  action: ErrorEventAction;
+  screen_name: MetricsEventScreenName;
+  stack: string;
+  message: string;
+  page_url: string;
+}
+
+export interface AddDataErrorEvent
+  extends MetricsEvent,
+    AddDataBehaviourEventFields {
+  action: ErrorEventAction;
+  error_code: SourceErrorCodes;
+  space: MetricsEventSpace;
+  screen_name: MetricsEventScreenName;
+}
+
+export class ErrorEventFactory extends MetricsEventFactory {
+  public sourceErrorEvent(
+    commonFields: CommonFields,
+    commonUserFields: CommonUserFields,
+    space: MetricsEventSpace,
+    screen_name: MetricsEventScreenName,
+    error_code: SourceErrorCodes,
+    connection_type: SourceConnectionType,
+    file_type: SourceFileType,
+    glob: boolean,
+  ): SourceErrorEvent {
+    const event = this.getBaseMetricsEvent(
+      "error",
+      ErrorEventAction.SourceError,
+      commonFields,
+      commonUserFields,
+    ) as SourceErrorEvent;
+    event.action = ErrorEventAction.SourceError;
+    event.space = space;
+    event.screen_name = screen_name;
+    event.error_code = error_code;
+    event.connection_type = connection_type;
+    event.file_type = file_type;
+    event.glob = glob;
+    return event;
+  }
+
+  public addDataErrorEvent(
+    commonFields: CommonFields,
+    commonUserFields: CommonUserFields,
+    space: MetricsEventSpace,
+    screen_name: MetricsEventScreenName,
+    error_code: SourceErrorCodes,
+    addDataFields: AddDataBehaviourEventFields,
+  ) {
+    const event = this.getBaseMetricsEvent(
+      "error",
+      ErrorEventAction.AddDataError,
+      commonFields,
+      commonUserFields,
+    ) as AddDataErrorEvent;
+    event.action = ErrorEventAction.AddDataError;
+    event.space = space;
+    event.screen_name = screen_name;
+    event.error_code = error_code;
+    Object.assign(event, addDataFields);
+    return event;
+  }
+
+  public httpErrorEvent(
+    commonFields: CommonFields,
+    commonUserFields: CommonUserFields,
+    screen_name: MetricsEventScreenName,
+    api: string,
+    status: string,
+    message: string,
+    pageUrl: string,
+  ) {
+    const event = this.getBaseMetricsEvent(
+      "error",
+      ErrorEventAction.ErrorBoundary,
+      commonFields,
+      commonUserFields,
+    ) as HTTPErrorEvent;
+    event.action = ErrorEventAction.ErrorBoundary;
+    event.screen_name = screen_name;
+    event.api = api;
+    event.status = status;
+    event.message = message;
+    event.page_url = sanitizePageUrl(pageUrl);
+    return event;
+  }
+
+  public javascriptErrorEvent(
+    commonFields: CommonFields,
+    commonUserFields: CommonUserFields,
+    screen_name: MetricsEventScreenName,
+    stack: string,
+    message: string,
+    pageUrl: string,
+  ) {
+    const event = this.getBaseMetricsEvent(
+      "error",
+      ErrorEventAction.ErrorBoundary,
+      commonFields,
+      commonUserFields,
+    ) as JavascriptErrorEvent;
+    event.action = ErrorEventAction.ErrorBoundary;
+    event.screen_name = screen_name;
+    event.stack = stack;
+    event.message = message;
+    event.page_url = sanitizePageUrl(pageUrl);
+    return event;
+  }
+}

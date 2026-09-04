@@ -1,0 +1,724 @@
+import { getToolConfig } from "@rilldata/web-common/features/chat/core/messages/tools/tool-registry.ts";
+import { EventEmitter } from "@rilldata/web-common/lib/event-emitter.ts";
+import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import {
+  getRuntimeServiceGetConversationQueryKey,
+  getRuntimeServiceGetConversationQueryOptions,
+  runtimeServiceForkConversation,
+  type RuntimeServiceCompleteBody,
+  type V1CompleteStreamingResponse,
+  type V1GetConversationResponse,
+  type V1Message,
+} from "@rilldata/web-common/runtime-client";
+import type { ConnectError } from "@connectrpc/connect";
+import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import {
+  SSEHttpError,
+  createSSEStream,
+  type SSEStream,
+} from "@rilldata/web-common/runtime-client/sse";
+import { createQuery, type CreateQueryResult } from "@tanstack/svelte-query";
+import {
+  derived,
+  get,
+  writable,
+  type Readable,
+  type Writable,
+} from "svelte/store";
+import { extractErrorMessage } from "../../../lib/errors";
+import type {
+  FeedbackCategory,
+  FeedbackSentiment,
+} from "./feedback/feedback-categories";
+import { transformToBlocks, type Block } from "./messages/block-transform";
+import { MessageContentType, MessageType, ToolName } from "./types";
+import {
+  getOptimisticMessageId,
+  invalidateConversationsList,
+  NEW_CONVERSATION_ID,
+} from "./utils";
+import { formatTransportError } from "./errors";
+
+type ConversationEvents = {
+  "conversation-created": string;
+  "conversation-forked": string;
+  "stream-start": void;
+  message: V1Message;
+  "stream-complete": string;
+  error: string;
+};
+
+/**
+ * Application-level error sent by the server over SSE as `event: error`.
+ */
+interface ChatServerError {
+  code?: string;
+  error?: string;
+}
+
+type ChatEventMap = {
+  message: V1CompleteStreamingResponse;
+  error: ChatServerError;
+};
+
+/**
+ * Individual conversation state management.
+ *
+ * Handles streaming message sending, optimistic updates, and conversation-specific queries
+ * for a single conversation using the streaming completion endpoint.
+ */
+export class Conversation {
+  // Public reactive state
+  public readonly draftMessage = writable<string>("");
+  public readonly isStreaming = writable(false);
+  public readonly streamError = writable<string | null>(null);
+
+  // Events
+  private readonly events = new EventEmitter<ConversationEvents>();
+  public readonly on = this.events.on.bind(
+    this.events,
+  ) as typeof this.events.on;
+  public readonly once = this.events.once.bind(
+    this.events,
+  ) as typeof this.events.once;
+
+  // Private state
+  private stream: SSEStream<ChatEventMap> | null = null;
+  private hasReceivedFirstMessage = false;
+  private readonly conversationQuery: CreateQueryResult<
+    V1GetConversationResponse,
+    ConnectError
+  >;
+  private readonly messageById = new Map<string, V1Message>();
+
+  // Reactive store for conversationId - enables query to auto-update when ID changes
+  private readonly conversationIdStore: Writable<string>;
+
+  private get instanceId(): string {
+    return this.client.instanceId;
+  }
+
+  public get runtimeClient(): RuntimeClient {
+    return this.client;
+  }
+
+  public get conversationId(): string {
+    return get(this.conversationIdStore);
+  }
+
+  private set conversationId(value: string) {
+    this.conversationIdStore.set(value);
+  }
+
+  constructor(
+    private readonly client: RuntimeClient,
+    initialConversationId: string,
+    private readonly agent: string = ToolName.ANALYST_AGENT,
+  ) {
+    this.conversationIdStore = writable(initialConversationId);
+
+    // Create query with reactive options that respond to conversationId changes
+    const queryOptionsStore = derived(
+      this.conversationIdStore,
+      ($conversationId) =>
+        getRuntimeServiceGetConversationQueryOptions(
+          this.client,
+          { conversationId: $conversationId },
+          {
+            query: {
+              enabled: $conversationId !== NEW_CONVERSATION_ID,
+              staleTime: Infinity, // We manage cache manually during streaming
+            },
+          },
+        ),
+    );
+
+    this.conversationQuery = createQuery(queryOptionsStore, queryClient);
+  }
+
+  /**
+   * Get ownership status from the conversation query.
+   * Returns true if the current user owns this conversation or if ownership is unknown.
+   */
+  private getIsOwner(): boolean {
+    if (this.conversationId === NEW_CONVERSATION_ID) {
+      return true; // New conversations are always owned by the creator
+    }
+
+    // Default to true if query hasn't loaded yet (optimistic assumption)
+    return get(this.conversationQuery).data?.isOwner ?? true;
+  }
+
+  // ===== PUBLIC API =====
+
+  /**
+   * Get a reactive query for this conversation's data.
+   * The query reacts to conversationId changes (e.g., after fork).
+   */
+  public getConversationQuery(): CreateQueryResult<
+    V1GetConversationResponse,
+    ConnectError
+  > {
+    return this.conversationQuery;
+  }
+
+  /**
+   * Get a reactive store for conversation query errors
+   */
+  public getConversationQueryError(): Readable<string | null> {
+    return derived(this.getConversationQuery(), ($getConversationQuery) =>
+      $getConversationQuery.error
+        ? extractErrorMessage($getConversationQuery.error)
+        : null,
+    );
+  }
+
+  /**
+   * Get message blocks for rendering this conversation.
+   * Transforms raw messages into a structured list of blocks (text, thinking blocks, charts).
+   */
+  public getBlocks(): Readable<Block[]> {
+    return derived(
+      [this.getConversationQuery(), this.isStreaming],
+      ([$query, $isStreaming]) => {
+        const messages = $query.data?.messages ?? [];
+        const isLoading = !!$query.isLoading;
+
+        return transformToBlocks(messages, $isStreaming, isLoading);
+      },
+    );
+  }
+
+  /**
+   * Send a message and handle streaming response
+   *
+   * @param context - Chat context to be sent with the message
+   * @param options - Callback functions for different stages of message sending
+   */
+  public async sendMessage(
+    context: RuntimeServiceCompleteBody,
+    options?: { onStreamStart?: () => void },
+  ): Promise<void> {
+    // Prevent concurrent message sending
+    if (get(this.isStreaming)) {
+      this.streamError.set("Please wait for the current response to complete");
+      return;
+    }
+
+    const prompt = get(this.draftMessage).trim();
+    if (!prompt) throw new Error("Cannot send empty message");
+
+    // Optimistic updates
+    this.draftMessage.set("");
+    this.streamError.set(null);
+    this.isStreaming.set(true);
+    this.hasReceivedFirstMessage = false;
+
+    // Fork conversation if user is not the owner (viewing a shared conversation)
+    const isOwner = this.getIsOwner();
+    if (!isOwner && this.conversationId !== NEW_CONVERSATION_ID) {
+      try {
+        const forkedConversationId = await this.forkConversation();
+        // Update to the forked conversation (setter updates the reactive store)
+        this.conversationId = forkedConversationId;
+        this.events.emit("conversation-forked", forkedConversationId);
+      } catch (error) {
+        console.error("[Conversation] Fork failed:", error);
+        this.isStreaming.set(false);
+        this.streamError.set(
+          "Failed to create your copy of this conversation. Please try again.",
+        );
+        return;
+      }
+    }
+
+    const userMessage = this.addOptimisticUserMessage(prompt);
+
+    try {
+      options?.onStreamStart?.(); // Callback for direct callers
+      this.events.emit("stream-start"); // Event for external listeners
+
+      // Start streaming - this establishes the connection
+      await this.startStreaming({ prompt, context });
+
+      // Stream has completed successfully
+      this.events.emit("stream-complete", this.conversationId);
+
+      // Temporary fix to make sure the title of the conversation is updated.
+      void invalidateConversationsList(this.instanceId);
+    } catch (error) {
+      // Transport errors can occur at two different stages:
+      // 1. Before streaming starts: message not persisted, needs rollback
+      // 2. During streaming: message already persisted, no rollback needed
+      console.error("[Conversation] Message send error:", {
+        error,
+        conversationId: this.conversationId,
+        hasReceivedFirstMessage: this.hasReceivedFirstMessage,
+      });
+      this.handleTransportError(
+        error,
+        userMessage,
+        this.hasReceivedFirstMessage,
+      );
+      this.events.emit("error", formatTransportError(error as Error));
+    } finally {
+      this.isStreaming.set(false);
+    }
+  }
+
+  /**
+   * Submit user feedback for a message.
+   *
+   * Streams the feedback submission to the server. The feedback is stored as messages
+   * in the conversation and will be picked up by transformToBlocks for UI display.
+   */
+  public async submitFeedback(
+    targetMessageId: string,
+    sentiment: FeedbackSentiment,
+    categories?: FeedbackCategory[],
+    comment?: string,
+  ): Promise<void> {
+    // Prevent concurrent operations
+    if (get(this.isStreaming)) {
+      this.streamError.set("Please wait for the current operation to complete");
+      return;
+    }
+
+    this.streamError.set(null);
+    this.isStreaming.set(true);
+
+    try {
+      await this.startStreaming({
+        feedbackAgentContext: {
+          targetMessageId,
+          sentiment,
+          categories: categories ?? [],
+          comment,
+        },
+      });
+    } catch (error) {
+      console.error("[Conversation] Feedback submission error:", {
+        error,
+        conversationId: this.conversationId,
+      });
+      this.streamError.set(formatTransportError(error as Error));
+    } finally {
+      this.isStreaming.set(false);
+    }
+  }
+
+  /**
+   * Cancel the current streaming session (user-initiated)
+   */
+  public cancelStream(): void {
+    this.stream?.close();
+    this.isStreaming.set(false);
+    this.streamError.set(null);
+  }
+
+  /**
+   * Clean up all resources when conversation is no longer needed (lifecycle cleanup)
+   */
+  public cleanup(): void {
+    this.cancelStream();
+
+    if (this.stream) {
+      this.stream.cleanup();
+      this.stream = null;
+    }
+
+    this.events.clearListeners();
+  }
+
+  // ===== PRIVATE IMPLEMENTATION =====
+
+  // ----- Transport Layer: SSE Connection Management -----
+
+  /**
+   * Start streaming completion responses.
+   * Used for both regular messages (with prompt) and feedback submission (with feedbackAgentContext).
+   */
+  private async startStreaming(request: {
+    prompt?: string;
+    context?: RuntimeServiceCompleteBody;
+    feedbackAgentContext?: {
+      targetMessageId: string;
+      sentiment: FeedbackSentiment;
+      categories: FeedbackCategory[];
+      comment?: string;
+    };
+  }): Promise<void> {
+    this.ensureStream();
+    this.stream!.close();
+
+    const baseUrl = `${this.client.host}/v1/instances/${this.instanceId}/ai/complete/stream?stream=messages`;
+
+    const requestBody = {
+      instanceId: this.instanceId,
+      conversationId:
+        this.conversationId === NEW_CONVERSATION_ID
+          ? undefined
+          : this.conversationId,
+      prompt: request.prompt,
+      agent: request.feedbackAgentContext
+        ? ToolName.FEEDBACK_AGENT
+        : this.agent,
+      feedbackAgentContext: request.feedbackAgentContext,
+      ...request.context,
+    };
+
+    this.stream!.start(baseUrl, {
+      method: "POST",
+      body: requestBody,
+      getJwt: () => this.client.getJwt(),
+    });
+
+    // Resolve once the stream closes, matching the old await-on-fetch-client
+    // behavior so callers keep their sequential control flow.
+    await new Promise<void>((resolve) => {
+      const offClose = this.stream!.onceConnection("close", () => {
+        offClose();
+        resolve();
+      });
+    });
+  }
+
+  /**
+   * Ensure the SSE connection + typed subscriber are initialized.
+   *
+   * The admin AI endpoint emits success frames untagged (SSESubscriber
+   * normalizes `type === undefined` → "message") and failures as
+   * `event: error`. Both routes through typed decoders here, so this
+   * method no longer needs to parse JSON itself.
+   */
+  private ensureStream(): void {
+    if (this.stream) return;
+
+    // Chat is a one-shot stream: no retry. SSEConnectionLifecycle is also not
+    // attached — the server ends the stream when the response is complete,
+    // and any cancellation is user-initiated.
+    this.stream = createSSEStream<ChatEventMap>({
+      decoders: {
+        message: (data) => JSON.parse(data) as V1CompleteStreamingResponse,
+        error: (data) => {
+          try {
+            return JSON.parse(data) as ChatServerError;
+          } catch {
+            return { error: data };
+          }
+        },
+      },
+      subscriber: {
+        onParseError: (error, message) => {
+          console.error("Failed to parse streaming response:", {
+            error,
+            type: message.type ?? "message",
+          });
+          this.hasReceivedFirstMessage = true;
+          this.streamError.set("Failed to process server response");
+        },
+      },
+    });
+
+    this.stream.on("message", (response) => {
+      // Receiving any message means the server has persisted our user
+      // message (it echoes it back first).
+      this.hasReceivedFirstMessage = true;
+      try {
+        this.processStreamingResponse(response);
+        if (response.message) this.events.emit("message", response.message);
+      } catch (error) {
+        console.error("Failed to process streaming response:", error);
+        this.streamError.set("Failed to process server response");
+      }
+    });
+
+    this.stream.on("error", (payload) => {
+      this.hasReceivedFirstMessage = true;
+      this.handleServerError(payload);
+    });
+
+    this.stream.onConnection("error", (error) => {
+      // Transport errors: connection, network, HTTP failures.
+      console.error("[SSE] Transport error:", {
+        message: error.message,
+        status: error instanceof SSEHttpError ? error.status : undefined,
+        statusText:
+          error instanceof SSEHttpError ? error.statusText : undefined,
+        name: error.name,
+      });
+      this.streamError.set(formatTransportError(error));
+    });
+  }
+
+  // ----- Business Logic Layer: Message Processing -----
+
+  /**
+   * Process streaming response data and update conversation state
+   * This handles the business logic for each streaming message
+   */
+  private processStreamingResponse(
+    response: V1CompleteStreamingResponse,
+  ): void {
+    // Handle conversation ID transition for new conversations
+    if (
+      response.conversationId &&
+      response.conversationId !== this.conversationId &&
+      this.conversationId === NEW_CONVERSATION_ID
+    ) {
+      this.transitionToRealConversation(response.conversationId);
+    }
+
+    if (response.message) {
+      if (response.message.id)
+        this.messageById.set(response.message.id, response.message);
+
+      // Skip ALL user messages from the stream
+      // Server echoes back the user message
+      // We've already added it optimistically, so we don't want duplicates
+      // Note: Server generates new IDs for streamed messages, can't match by ID
+      if (response.message.role === "user") {
+        return;
+      }
+
+      this.addMessageToCache(response.message);
+      if (response.message.type === MessageType.CALL) {
+        const config = getToolConfig(response.message.tool);
+        config?.onCall?.(response.message);
+      } else if (response.message.type === MessageType.RESULT) {
+        const config = getToolConfig(response.message.tool);
+        config?.onResult?.(
+          this.messageById.get(response.message.parentId ?? ""),
+          response.message,
+        );
+      }
+    }
+  }
+
+  // ----- Conversation Lifecycle -----
+
+  /**
+   * Fork the current conversation to create a copy owned by the current user.
+   * Used when a non-owner wants to continue a shared conversation.
+   *
+   * Note: The cache copying logic here follows the pattern established by
+   * `transitionToRealConversation`—both read from an old cache key and write
+   * to a new one with an updated conversation ID. However, since forking
+   * conceptually creates a new conversation from an existing one, this
+   * responsibility might be better suited for ConversationManager in the future.
+   */
+  private async forkConversation(): Promise<string> {
+    const originalConversationId = this.conversationId;
+
+    const response = await runtimeServiceForkConversation(this.client, {
+      conversationId: this.conversationId,
+    });
+
+    if (!response.conversationId) {
+      throw new Error("Fork response missing conversation ID");
+    }
+
+    const forkedConversationId = response.conversationId;
+
+    // Copy cached messages from original conversation to forked conversation
+    // This ensures the UI shows the conversation history immediately
+    const originalCacheKey = getRuntimeServiceGetConversationQueryKey(
+      this.instanceId,
+      { conversationId: originalConversationId },
+    );
+    const forkedCacheKey = getRuntimeServiceGetConversationQueryKey(
+      this.instanceId,
+      { conversationId: forkedConversationId },
+    );
+    const originalData =
+      queryClient.getQueryData<V1GetConversationResponse>(originalCacheKey);
+
+    if (originalData) {
+      queryClient.setQueryData<V1GetConversationResponse>(forkedCacheKey, {
+        conversation: {
+          ...originalData.conversation,
+          id: forkedConversationId,
+        },
+        messages: originalData.messages || [],
+        isOwner: true, // User now owns the forked conversation
+      });
+    }
+
+    // Invalidate the conversations list to show the new forked conversation
+    void invalidateConversationsList(this.instanceId);
+
+    return forkedConversationId;
+  }
+
+  /**
+   * Transition from NEW_CONVERSATION_ID to real conversation ID
+   * Transfers all cached data to the new conversation cache
+   */
+  private transitionToRealConversation(realConversationId: string): void {
+    const oldCacheKey = getRuntimeServiceGetConversationQueryKey(
+      this.instanceId,
+      { conversationId: this.conversationId }, // This is still "new"
+    );
+
+    const newCacheKey = getRuntimeServiceGetConversationQueryKey(
+      this.instanceId,
+      { conversationId: realConversationId },
+    );
+
+    // Get existing data from "new" conversation cache
+    const existingData =
+      queryClient.getQueryData<V1GetConversationResponse>(oldCacheKey);
+
+    if (existingData?.conversation) {
+      // Transfer the conversation data and messages to the real conversation ID cache
+      queryClient.setQueryData<V1GetConversationResponse>(newCacheKey, {
+        conversation: {
+          ...existingData.conversation,
+          id: realConversationId,
+        },
+        messages: existingData.messages || [],
+      });
+    }
+
+    // Clean up the old "new" conversation cache
+    queryClient.removeQueries({ queryKey: oldCacheKey });
+
+    // Update the conversation ID (setter updates the reactive store)
+    this.conversationId = realConversationId;
+
+    // Notify that conversation was created
+    this.events.emit("conversation-created", realConversationId);
+  }
+
+  // ----- Cache Management -----
+
+  /**
+   * Add optimistic user message to cache
+   */
+  private addOptimisticUserMessage(prompt: string): V1Message {
+    const userMessage: V1Message = {
+      id: getOptimisticMessageId(),
+      role: "user",
+      type: MessageType.CALL,
+      tool: ToolName.ROUTER_AGENT,
+      contentType: MessageContentType.JSON,
+      contentData: JSON.stringify({ prompt }),
+      createdOn: new Date().toISOString(),
+      updatedOn: new Date().toISOString(),
+    };
+
+    this.addMessageToCache(userMessage);
+    return userMessage;
+  }
+
+  /**
+   * Add message to TanStack Query cache
+   */
+  private addMessageToCache(message: V1Message): void {
+    const cacheKey = getRuntimeServiceGetConversationQueryKey(this.instanceId, {
+      conversationId: this.conversationId,
+    });
+    queryClient.setQueryData<V1GetConversationResponse>(cacheKey, (old) => {
+      if (!old?.conversation) {
+        // Create initial conversation structure if it doesn't exist
+        return {
+          conversation: {
+            id: this.conversationId,
+            createdOn: message.createdOn,
+            updatedOn: new Date().toISOString(),
+          },
+          messages: [message],
+        };
+      }
+
+      const existingMessages = old.messages || [];
+
+      // Add new message to the end of the list
+      return {
+        ...old,
+        conversation: {
+          ...old.conversation,
+          updatedOn: new Date().toISOString(),
+        },
+        messages: [...existingMessages, message],
+      };
+    });
+  }
+
+  /**
+   * Remove message from TanStack Query cache (for rollback)
+   */
+  private removeMessageFromCache(messageId: string): void {
+    const cacheKey = getRuntimeServiceGetConversationQueryKey(this.instanceId, {
+      conversationId: this.conversationId,
+    });
+
+    queryClient.setQueryData<V1GetConversationResponse>(cacheKey, (old) => {
+      if (!old?.conversation) return old;
+
+      return {
+        ...old,
+        conversation: {
+          ...old.conversation,
+          updatedOn: new Date().toISOString(),
+        },
+        messages: old.messages?.filter((m) => m.id !== messageId) || [],
+      };
+    });
+  }
+
+  // ----- Error Handling -----
+  // Error handling is split by error type (server vs transport) and responsibility
+  // (formatting vs handling). Each error type has a formatter (pure) and handler (side effects).
+
+  // ----- Server Errors (Application-level) -----
+
+  /**
+   * Format a typed server-side error payload into a user-facing string.
+   */
+  private formatServerError(payload: ChatServerError): string {
+    return payload.error || "Server error occurred";
+  }
+
+  /**
+   * Handle server-sent errors (event: error from SSE)
+   *
+   * These are application-level errors (AI failures, tool errors, etc.) that occur
+   * AFTER the server has already persisted the user's message. No rollback is needed -
+   * the user's message should remain visible in the conversation with an error indicator.
+   */
+  private handleServerError(payload: ChatServerError): void {
+    this.streamError.set(this.formatServerError(payload));
+  }
+
+  // ----- Transport Errors (Connection-level) -----
+
+  /**
+   * Handle transport-level errors with conditional rollback
+   *
+   * Transport errors can occur at two stages:
+   * 1. Before streaming starts: Connection failures, HTTP errors before request completes
+   *    → Rollback needed (message never reached server)
+   * 2. During streaming: Network drops, server crashes while streaming responses
+   *    → No rollback (message already persisted on server)
+   */
+  private handleTransportError(
+    error: unknown,
+    userMessage: V1Message,
+    wasStreaming: boolean,
+  ): void {
+    // Set error message
+    this.streamError.set(formatTransportError(error as Error));
+
+    // Only rollback if we hadn't started streaming yet
+    if (!wasStreaming) {
+      // Message never reached server - remove optimistic update
+      this.removeMessageFromCache(userMessage.id!);
+
+      // Restore draft message so user can easily retry
+      const textContent = userMessage.contentData || "";
+      this.draftMessage.set(textContent);
+    }
+    // If we were streaming, message is already on server - keep it in UI
+  }
+}

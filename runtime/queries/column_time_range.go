@@ -1,0 +1,265 @@
+package queries
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"time"
+
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime"
+	"github.com/rilldata/rill/runtime/drivers"
+	"golang.org/x/sync/errgroup"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+const hourInDay = 24
+
+var microsInDay = hourInDay * time.Hour.Microseconds()
+
+type ColumnTimeRange struct {
+	Connector      string
+	Database       string
+	DatabaseSchema string
+	TableName      string
+	ColumnName     string
+	Result         *runtimev1.TimeRangeSummary
+}
+
+var _ runtime.Query = &ColumnTimeRange{}
+
+func (q *ColumnTimeRange) Key() string {
+	return fmt.Sprintf("ColumnTimeRange:%s:%s", q.TableName, q.ColumnName)
+}
+
+func (q *ColumnTimeRange) Deps() []*runtimev1.ResourceName {
+	return []*runtimev1.ResourceName{
+		{Kind: runtime.ResourceKindSource, Name: q.TableName},
+		{Kind: runtime.ResourceKindModel, Name: q.TableName},
+	}
+}
+
+func (q *ColumnTimeRange) MarshalResult() *runtime.QueryResult {
+	return &runtime.QueryResult{
+		Value: q.Result,
+		Bytes: sizeProtoMessage(q.Result),
+	}
+}
+
+func (q *ColumnTimeRange) UnmarshalResult(v any) error {
+	res, ok := v.(*runtimev1.TimeRangeSummary)
+	if !ok {
+		return fmt.Errorf("ColumnTimeRange: mismatched unmarshal input")
+	}
+	q.Result = res
+	return nil
+}
+
+func (q *ColumnTimeRange) Resolve(ctx context.Context, rt *runtime.Runtime, instanceID string, priority int) error {
+	olap, release, err := rt.OLAP(ctx, instanceID, q.Connector)
+	if err != nil {
+		return err
+	}
+	defer release()
+
+	// TODO: Try and merge this with metrics_time_range. Both use same queries but metrics_time_range uses a specific timestamp column from metrics_view
+	switch olap.Dialect().String() {
+	case drivers.DialectNameDuckDB, drivers.DialectNameClickHouse, drivers.DialectNameSnowflake, drivers.DialectNameBigQuery, drivers.DialectNameDatabricks:
+		return q.resolveGeneric(ctx, olap, priority)
+	case drivers.DialectNameStarRocks:
+		return q.resolveStarRocks(ctx, olap, priority)
+	case drivers.DialectNameDruid:
+		return q.resolveDruid(ctx, olap, priority)
+	default:
+		return fmt.Errorf("not available for dialect '%s'", olap.Dialect())
+	}
+}
+
+func (q *ColumnTimeRange) resolveGeneric(ctx context.Context, olap drivers.OLAPStore, priority int) error {
+	d := olap.Dialect()
+
+	rangeSQL := fmt.Sprintf(
+		"SELECT min(%[1]s) as %[3]s, max(%[1]s) as %[4]s FROM %[2]s",
+		d.EscapeIdentifier(q.ColumnName),
+		d.EscapeTable(q.Database, q.DatabaseSchema, q.TableName),
+		d.EscapeAlias("min"),
+		d.EscapeAlias("max"),
+	)
+
+	rows, err := olap.Query(ctx, &drivers.Statement{
+		Query:            rangeSQL,
+		Priority:         priority,
+		ExecutionTimeout: defaultExecutionTimeout,
+	})
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		summary := &runtimev1.TimeRangeSummary{}
+		rowMap := make(map[string]any)
+		err = rows.MapScan(rowMap)
+		if err != nil {
+			return err
+		}
+		if v := rowMap["min"]; v != nil {
+			minTime, ok := v.(time.Time)
+			if !ok {
+				return fmt.Errorf("not a timestamp column")
+			}
+			summary.Min = timestamppb.New(minTime)
+			summary.Max = timestamppb.New(rowMap["max"].(time.Time))
+		}
+		q.Result = summary
+		return nil
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return err
+	}
+
+	return errors.New("no rows returned")
+}
+
+func (q *ColumnTimeRange) resolveStarRocks(ctx context.Context, olap drivers.OLAPStore, priority int) error {
+	// If schema is not provided, look up the table to get the correct schema
+	if q.DatabaseSchema == "" {
+		table, err := olap.InformationSchema().Lookup(ctx, q.Database, "", q.TableName)
+		if err != nil {
+			return fmt.Errorf("failed to lookup table %q: %w", q.TableName, err)
+		}
+		q.DatabaseSchema = table.DatabaseSchema
+	}
+
+	rangeSQL := fmt.Sprintf(
+		"SELECT min(%[1]s) as \"min\", max(%[1]s) as \"max\" FROM %[2]s",
+		olap.Dialect().EscapeIdentifier(q.ColumnName),
+		olap.Dialect().EscapeTable(q.Database, q.DatabaseSchema, q.TableName),
+	)
+
+	rows, err := olap.Query(ctx, &drivers.Statement{
+		Query:            rangeSQL,
+		Priority:         priority,
+		ExecutionTimeout: defaultExecutionTimeout,
+	})
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		summary := &runtimev1.TimeRangeSummary{}
+		rowMap := make(map[string]any)
+		err = rows.MapScan(rowMap)
+		if err != nil {
+			return err
+		}
+		if v := rowMap["min"]; v != nil {
+			minTime, ok := v.(time.Time)
+			if !ok {
+				return fmt.Errorf("not a timestamp column")
+			}
+			summary.Min = timestamppb.New(minTime)
+			summary.Max = timestamppb.New(rowMap["max"].(time.Time))
+		}
+		q.Result = summary
+		return nil
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return err
+	}
+
+	return errors.New("no rows returned")
+}
+
+func (q *ColumnTimeRange) resolveDruid(ctx context.Context, olap drivers.OLAPStore, priority int) error {
+	var minTime, maxTime time.Time
+	group, ctx := errgroup.WithContext(ctx)
+
+	group.Go(func() error {
+		minSQL := fmt.Sprintf(
+			"SELECT min(%[1]s) as \"min\" FROM %[2]s",
+			olap.Dialect().EscapeIdentifier(q.ColumnName),
+			olap.Dialect().EscapeTable(q.Database, q.DatabaseSchema, q.TableName),
+		)
+
+		rows, err := olap.Query(ctx, &drivers.Statement{
+			Query:            minSQL,
+			Priority:         priority,
+			ExecutionTimeout: defaultExecutionTimeout,
+		})
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		if rows.Next() {
+			err = rows.Scan(&minTime)
+			if err != nil {
+				return err
+			}
+		} else {
+			err = rows.Err()
+			if err != nil {
+				return err
+			}
+			return errors.New("no rows returned for min time")
+		}
+
+		return nil
+	})
+
+	group.Go(func() error {
+		maxSQL := fmt.Sprintf(
+			"SELECT max(%[1]s) as \"max\" FROM %[2]s",
+			olap.Dialect().EscapeIdentifier(q.ColumnName),
+			olap.Dialect().EscapeTable(q.Database, q.DatabaseSchema, q.TableName),
+		)
+
+		rows, err := olap.Query(ctx, &drivers.Statement{
+			Query:            maxSQL,
+			Priority:         priority,
+			ExecutionTimeout: defaultExecutionTimeout,
+		})
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		if rows.Next() {
+			err = rows.Scan(&maxTime)
+			if err != nil {
+				return err
+			}
+		} else {
+			err = rows.Err()
+			if err != nil {
+				return err
+			}
+			return errors.New("no rows returned for max time")
+		}
+
+		return nil
+	})
+
+	err := group.Wait()
+	if err != nil {
+		return err
+	}
+
+	summary := &runtimev1.TimeRangeSummary{}
+	summary.Min = timestamppb.New(minTime)
+	summary.Max = timestamppb.New(maxTime)
+	q.Result = summary
+
+	return nil
+}
+
+func (q *ColumnTimeRange) Export(ctx context.Context, rt *runtime.Runtime, instanceID string, w io.Writer, opts *runtime.ExportOptions) error {
+	return ErrExportNotSupported
+}

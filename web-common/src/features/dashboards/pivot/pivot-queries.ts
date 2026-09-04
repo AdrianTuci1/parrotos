@@ -1,0 +1,326 @@
+import type { ConnectError } from "@connectrpc/connect";
+import {
+  createAndExpression,
+  createInExpression,
+  sanitiseExpression,
+} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+import {
+  type V1Expression,
+  type V1MetricsViewAggregationDimension,
+  type V1MetricsViewAggregationMeasure,
+  type V1MetricsViewAggregationResponse,
+  type V1MetricsViewAggregationResponseDataItem,
+  type V1MetricsViewAggregationSort,
+  createQueryServiceMetricsViewAggregation,
+} from "@rilldata/web-common/runtime-client";
+import {
+  type CreateQueryResult,
+  keepPreviousData,
+} from "@tanstack/svelte-query";
+import { type Readable, derived, readable } from "svelte/store";
+import { mergeFilters } from "./pivot-merge-filters";
+import {
+  getErrorFromResponses,
+  getFilterForMeasuresTotalsAxesQuery,
+  getTimeGrainFromDimension,
+  getUriMeasuresForDimensions,
+  isTimeDimension,
+  prepareMeasureForComparison,
+} from "./pivot-utils";
+import {
+  COMPARISON_DELTA,
+  COMPARISON_PERCENT,
+  type PivotAxesData,
+  type PivotDashboardContext,
+  type PivotDataStoreConfig,
+  type PivotQueryError,
+} from "./types";
+
+/**
+ * Wrapper function for Aggregate Query API
+ */
+export function createPivotAggregationRowQuery(
+  ctx: PivotDashboardContext,
+  config: PivotDataStoreConfig,
+  measures: V1MetricsViewAggregationMeasure[],
+  dimensions: V1MetricsViewAggregationDimension[],
+  whereFilter: V1Expression,
+  sort: V1MetricsViewAggregationSort[] = [],
+  limit = "100",
+  offset = "0",
+  timeRange: TimeRangeString | undefined = undefined,
+): CreateQueryResult<V1MetricsViewAggregationResponse, ConnectError> {
+  if (!sort.length) {
+    sort = [
+      {
+        desc: false,
+        name: measures[0]?.name || dimensions?.[0]?.name,
+      },
+    ];
+  }
+
+  let hasComparison = false;
+  const comparisonTime = config.comparisonTime;
+  if (
+    measures.some(
+      (m) =>
+        m.name?.endsWith(COMPARISON_PERCENT) ||
+        m.name?.endsWith(COMPARISON_DELTA),
+    )
+  ) {
+    hasComparison = true;
+  }
+
+  return derived(
+    [ctx.metricsViewName, ctx.enabled],
+    ([metricsViewName, enabled], set) =>
+      createQueryServiceMetricsViewAggregation(
+        ctx.runtimeClient,
+        {
+          metricsView: metricsViewName,
+          measures: prepareMeasureForComparison(measures),
+          dimensions,
+          where: sanitiseExpression(whereFilter, undefined),
+          timeRange: {
+            start: timeRange?.start ? timeRange.start : config.time.timeStart,
+            end: timeRange?.end ? timeRange.end : config.time.timeEnd,
+            timeDimension: config.time.timeDimension,
+          },
+          comparisonTimeRange:
+            hasComparison && comparisonTime
+              ? {
+                  start: comparisonTime.start,
+                  end: comparisonTime.end,
+                  timeDimension: config.time.timeDimension,
+                }
+              : undefined,
+          sort,
+          limit,
+          offset,
+        },
+        {
+          query: {
+            enabled: enabled && config.ready !== false,
+            placeholderData: keepPreviousData,
+          },
+        },
+        ctx.queryClient,
+      ).subscribe(set),
+  );
+}
+
+/***
+ * Get a list of axis values for a given list of dimension values and filters
+ */
+export function getAxisForDimensions(
+  ctx: PivotDashboardContext,
+  config: PivotDataStoreConfig,
+  dimensions: string[],
+  measures: V1MetricsViewAggregationMeasure[],
+  whereFilter: V1Expression,
+  sortBy: V1MetricsViewAggregationSort[] = [],
+  timeRange: TimeRangeString | undefined = undefined,
+  limit = "100",
+  offset = "0",
+  // When true, append URI measures for dimensions that declare a `uri`, so the
+  // resolved URL rides along on each row. Used for row (not column) dimensions.
+  includeUriMeasures = false,
+): Readable<PivotAxesData | null> {
+  if (!dimensions.length) return readable(null);
+
+  const { time } = config;
+
+  let sortProvided = true;
+  if (!sortBy.length) {
+    sortBy = [
+      {
+        desc: true,
+        name: measures[0]?.name || dimensions?.[0],
+      },
+    ];
+    sortProvided = false;
+  }
+
+  const dimensionBody = dimensions.map((d) => {
+    if (isTimeDimension(d, time.timeDimension)) {
+      return {
+        name: time.timeDimension,
+        timeGrain: getTimeGrainFromDimension(d),
+        timeZone: time.timeZone,
+        alias: d,
+      };
+    } else return { name: d };
+  });
+
+  return derived(
+    dimensionBody.map((dimension) => {
+      let sortByForDimension = sortBy;
+      if (
+        isTimeDimension(dimension.alias, time.timeDimension) &&
+        !sortProvided
+      ) {
+        sortByForDimension = [
+          {
+            desc: false,
+            name: dimension.alias,
+          },
+        ];
+      }
+      // Append the URI measure for this dimension (if it has one) without
+      // affecting the sort, which was derived from `measures` above.
+      const measuresForDimension =
+        includeUriMeasures && !dimension.alias
+          ? [
+              ...measures,
+              ...getUriMeasuresForDimensions([dimension.name], config),
+            ]
+          : measures;
+
+      return createPivotAggregationRowQuery(
+        ctx,
+        config,
+        measuresForDimension,
+        [dimension],
+        whereFilter,
+        sortByForDimension,
+        limit,
+        offset,
+        timeRange,
+      );
+    }),
+    (data) => {
+      const axesMap: Record<string, string[]> = {};
+      const totalsMap: Record<
+        string,
+        V1MetricsViewAggregationResponseDataItem[]
+      > = {};
+
+      // Wait for all data to populate
+      if (data.some((d) => d?.isFetching)) return { isFetching: true };
+
+      // Check for errors in any of the queries
+      const errors: PivotQueryError[] = getErrorFromResponses(data);
+      if (errors.length) {
+        return {
+          isFetching: false,
+          error: errors,
+        };
+      }
+
+      // A disabled query reports `isFetching: false` with no data at all: canvas
+      // components gate their queries on `visible`, so a pivot that just mounted
+      // sits in that state until the intersection observer fires. That is not an
+      // empty result (which still carries a `data` object), so keep waiting
+      // rather than reporting zero axis values downstream.
+      if (data.some((d) => d?.data === undefined)) return { isFetching: true };
+
+      data.forEach((d, i: number) => {
+        const dimensionName = dimensions[i];
+
+        axesMap[dimensionName] = (d?.data?.data || [])?.map(
+          (dimValue) => dimValue[dimensionName] as string,
+        );
+        totalsMap[dimensionName] = d?.data?.data || [];
+      });
+
+      if (Object.values(axesMap).some((d) => !d)) return { isFetching: true };
+      return {
+        isFetching: false,
+        data: axesMap,
+        totals: totalsMap,
+      };
+    },
+  );
+}
+
+export function getAxisQueryForMeasureTotals(
+  ctx: PivotDashboardContext,
+  config: PivotDataStoreConfig,
+  isMeasureSortAccessor: boolean,
+  sortAccessor: string | undefined,
+  anchorDimension: string,
+  rowDimensionValues: string[],
+  timeRange: TimeRangeString,
+  otherFilters: V1Expression | undefined = undefined,
+) {
+  let rowAxesQueryForMeasureTotals: Readable<PivotAxesData | null> =
+    readable(null);
+
+  if (rowDimensionValues.length && isMeasureSortAccessor && sortAccessor) {
+    const { measureNames } = config;
+    const measuresBody = measureNames.map((m) => ({ name: m }));
+
+    const sortedRowFilters = getFilterForMeasuresTotalsAxesQuery(
+      config,
+      anchorDimension,
+      rowDimensionValues,
+    );
+
+    let mergedFilter: V1Expression | undefined = sortedRowFilters;
+
+    if (otherFilters) {
+      mergedFilter = mergeFilters(otherFilters, sortedRowFilters);
+    }
+
+    rowAxesQueryForMeasureTotals = getAxisForDimensions(
+      ctx,
+      config,
+      [anchorDimension],
+      measuresBody,
+      mergedFilter ?? createAndExpression([]),
+      [],
+      timeRange,
+    );
+  }
+
+  return rowAxesQueryForMeasureTotals;
+}
+
+export function getTotalsRowQuery(
+  ctx: PivotDashboardContext,
+  config: PivotDataStoreConfig,
+  colDimensionAxes: Record<string, string[]> = {},
+) {
+  const { colDimensionNames } = config;
+
+  const { time } = config;
+  const measureBody = config.measureNames.map((m) => ({ name: m }));
+  const dimensionBody = colDimensionNames.map((dimension) => {
+    if (isTimeDimension(dimension, time.timeDimension)) {
+      return {
+        name: time.timeDimension,
+        timeGrain: getTimeGrainFromDimension(dimension),
+        timeZone: time.timeZone,
+        alias: dimension,
+      };
+    } else return { name: dimension };
+  });
+
+  const colFilters = colDimensionNames
+    .filter((d) => !isTimeDimension(d, time.timeDimension))
+    .filter((d) => colDimensionAxes[d]?.length > 0)
+    .map((dimension) =>
+      createInExpression(dimension, colDimensionAxes[dimension]),
+    );
+
+  const mergedFilter =
+    mergeFilters(createAndExpression(colFilters), config.whereFilter) ??
+    createAndExpression([]);
+
+  const sortBy = [
+    {
+      desc: true,
+      name: config.measureNames[0],
+    },
+  ];
+  return createPivotAggregationRowQuery(
+    ctx,
+    config,
+    measureBody,
+    dimensionBody,
+    mergedFilter,
+    sortBy,
+    "300",
+  );
+}

@@ -1,0 +1,101 @@
+<script lang="ts">
+  import type { EditorView } from "@codemirror/view";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import { initBlankDashboardYAML } from "@rilldata/web-common/features/metrics-views/metrics-internal-store";
+  import { useModels } from "@rilldata/web-common/features/models/selectors";
+  import {
+    type V1Resource,
+    runtimeServicePutFile,
+  } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useIsModelingSupportedForDefaultOlapDriverOLAP as useIsModelingSupportedForDefaultOlapDriver } from "../../connectors/selectors";
+  import { createDashboardFromTableInMetricsEditor } from "../ai-generation/generateMetricsView";
+
+  export let metricsName: string;
+  export let filePath: string;
+  export let view: EditorView | undefined = undefined;
+
+  const runtimeClient = useRuntimeClient();
+
+  $: isModelingSupportedForDefaultOlapDriver =
+    useIsModelingSupportedForDefaultOlapDriver(runtimeClient);
+  $: isModelingSupported = $isModelingSupportedForDefaultOlapDriver.data;
+  $: models = useModels(runtimeClient);
+
+  const buttonClasses =
+    "inline hover:font-semibold underline underline-offset-2";
+
+  async function onAutogenerateConfigFromModel(modelRes: V1Resource) {
+    await createDashboardFromTableInMetricsEditor(
+      runtimeClient,
+      modelRes?.model?.state?.resultTable ?? "",
+      filePath,
+    );
+  }
+
+  // FIXME: shouldn't these be generalized and used everywhere?
+  async function onCreateSkeletonMetricsConfig() {
+    const yaml = initBlankDashboardYAML(metricsName);
+
+    await runtimeServicePutFile(runtimeClient, {
+      path: filePath,
+      blob: yaml,
+      create: true,
+      createOnly: true,
+    });
+
+    /** optimistically update the editor. We will dispatch
+     * a debounce annotation here to tell the MetricsWorkspace
+     * not to debounce this update.
+     */
+    queueMicrotask(() => {
+      view?.dispatch({
+        changes: {
+          from: 0,
+          to: view.state.doc.length,
+          insert: yaml,
+        },
+      });
+    });
+  }
+</script>
+
+<div class="whitespace-normal">
+  {#if isModelingSupported}
+    Auto-generate a
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        {#snippet child({ props })}
+          <button
+            {...props}
+            class={buttonClasses}
+            disabled={!$models?.data?.length}
+          >
+            metrics configuration from an existing model
+          </button>
+        {/snippet}
+      </DropdownMenu.Trigger>,
+      <DropdownMenu.Content align="start" sameWidth>
+        {#each $models?.data ?? [] as model, i (i)}
+          {#if model?.model?.state?.resultTable}
+            <DropdownMenu.Item
+              onclick={() => {
+                void onAutogenerateConfigFromModel(model);
+              }}
+            >
+              {model?.model?.state?.resultTable}
+            </DropdownMenu.Item>
+          {/if}
+        {/each}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  {/if}
+
+  <button
+    class={buttonClasses}
+    onclick={async () => {
+      onCreateSkeletonMetricsConfig();
+    }}
+    >{#if isModelingSupported}s{:else}S{/if}tart with a skeleton</button
+  >, or just start typing.
+</div>

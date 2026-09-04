@@ -1,0 +1,12 @@
+<script lang="ts">
+  function onClick() {
+    window.Pylon("show");
+  }
+</script>
+
+<p class="flex flex-row text-sm text-fg-secondary text-center">
+  <span>Need help?</span>
+  <button onclick={onClick} class="text-primary-600 text-sm ml-0.5">
+    Contact us
+  </button>
+</p>

@@ -1,0 +1,137 @@
+<script lang="ts">
+  import { page } from "$app/stores";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import BookmarksMenuItem from "@rilldata/web-admin/features/bookmarks/BookmarksMenuItem.svelte";
+  import type { BookmarkEntry } from "@rilldata/web-admin/features/bookmarks/utils.ts";
+  import { Button } from "@rilldata/web-common/components/button";
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@rilldata/web-common/components/dropdown-menu";
+  import HomeBookmark from "@rilldata/web-common/components/icons/HomeBookmark.svelte";
+  import HomeBookmarkPlus from "@rilldata/web-common/components/icons/HomeBookmarkPlus.svelte";
+  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import { clearExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
+  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+
+  export let organization: string;
+  export let project: string;
+  export let resource: { name: string; kind: ResourceKind };
+  export let homeBookmark: BookmarkEntry | undefined;
+  export let defaultHomeBookmarkUrl: string | undefined;
+  export let manageProject: boolean;
+  export let onCreate: () => void;
+  export let onDelete: (bookmark: BookmarkEntry) => Promise<void>;
+
+  $: ({ name: resourceName, kind: resourceKind } = resource);
+
+  // fullHomeBookmarkUrl contains every param where as homeBookmarkUrl will have params that are equal to rill defaults removed.
+  // EG: in explore if all dimensions are shown, fullHomeBookmarkUrl will have `dims=*` where as this will be skipped from homeBookmarkUrl
+  $: fullHomeBookmarkUrl =
+    homeBookmark?.fullUrl ?? defaultHomeBookmarkUrl ?? "";
+  $: homeBookmarkUrl = homeBookmark?.url ?? defaultHomeBookmarkUrl ?? "";
+  // Since we remove default params we need to check the current url with homeBookmarkUrl instead of fullHomeBookmarkUrl
+  $: isHomeBookmarkActive =
+    homeBookmarkUrl === $page.url.searchParams.toString();
+
+  function goToDashboardHome() {
+    if (resourceKind === ResourceKind.Explore) {
+      // Without clearing sessions empty, DashboardStateDataLoader will load from session for explore view
+      clearExploreSessionStore(resourceName, `${organization}__${project}__`);
+    }
+  }
+
+  let open = false;
+</script>
+
+{#if manageProject}
+  <DropdownMenu bind:open>
+    <DropdownMenuTrigger>
+      {#snippet child({ props })}
+        <Button
+          {...props}
+          compact
+          square
+          type="secondary"
+          label={m.bookmark_home_dropdown_label()}
+          active={open || isHomeBookmarkActive}
+        >
+          <HomeBookmark size="16px" className="flex-none" />
+        </Button>
+      {/snippet}
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="w-[330px]">
+      {#if homeBookmark}
+        <BookmarksMenuItem
+          bookmark={homeBookmark}
+          {onDelete}
+          readOnly={!manageProject}
+          showDeleteTooltip
+        />
+      {:else}
+        <DropdownMenuItem class="py-2">
+          <a
+            href={fullHomeBookmarkUrl}
+            class="flex flex-row gap-x-2 w-full min-h-7"
+            aria-label={m.bookmark_home_entry_aria_label()}
+            onclick={goToDashboardHome}
+          >
+            <HomeBookmark size="16px" />
+            <div class="flex flex-col gap-y-0.5">
+              <div
+                class="text-xs font-medium text-fg-primary h-4 text-ellipsis overflow-hidden"
+              >
+                {m.bookmark_go_to_home()}
+              </div>
+            </div>
+          </a>
+        </DropdownMenuItem>
+      {/if}
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onclick={onCreate}>
+        <div class="flex flex-row gap-x-2">
+          <HomeBookmarkPlus size="16px" />
+          <div>
+            <div class="text-xs font-medium text-fg-primary h-4">
+              {m.bookmark_current_view_as_home()}
+            </div>
+            <div class="text-[11px] font-normal text-fg-secondary h-4">
+              {m.bookmark_home_description()}
+            </div>
+          </div>
+        </div>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+{:else}
+  <Tooltip.Root>
+    <Tooltip.Trigger>
+      {#snippet child({ props })}
+        <Button
+          {...props}
+          type="secondary"
+          compact
+          preload={false}
+          href={fullHomeBookmarkUrl}
+          onClick={goToDashboardHome}
+          class="border border-primary-300"
+          label={m.bookmark_go_to_home_label()}
+          active={isHomeBookmarkActive}
+        >
+          <HomeBookmark
+            size="16px"
+            className={isHomeBookmarkActive
+              ? "text-primary-600"
+              : "text-primary-800"}
+          />
+        </Button>
+      {/snippet}
+    </Tooltip.Trigger>
+    <Tooltip.Content side="bottom"
+      >{m.bookmark_return_to_home()}</Tooltip.Content
+    >
+  </Tooltip.Root>
+{/if}

@@ -1,0 +1,145 @@
+<script lang="ts">
+  import { slide } from "svelte/transition";
+  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ColorInput from "@rilldata/web-common/components/color-picker/ColorInput.svelte";
+  import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
+  import type {
+    ColorMapping,
+    FieldConfig,
+  } from "@rilldata/web-common/features/components/charts/types";
+  import {
+    colorToVariableReference,
+    getColorForValues,
+    resolveCSSVariable,
+  } from "@rilldata/web-common/features/components/charts/util";
+  import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
+  import { ChevronDown, ChevronRight } from "lucide-svelte";
+
+  export let colorMapping: ColorMapping | undefined;
+  export let onChange: (property: keyof FieldConfig, value: any) => void;
+  export let colorMapConfig: ChartFieldInput["colorMappingSelector"];
+
+  const THRESHOLD = 11;
+
+  let isExpanded = true;
+  let showAllValues = false;
+
+  $: colorValues = colorMapConfig?.values || [];
+
+  $: currentColorMapping = colorMapping || [];
+
+  $: allColorMappings =
+    getColorForValues(colorValues, currentColorMapping) || [];
+
+  $: displayedColorMappings = showAllValues
+    ? allColorMappings
+    : allColorMappings.slice(0, THRESHOLD);
+
+  $: hasMoreThanThreshold = allColorMappings.length > THRESHOLD;
+
+  function handleColorChange(value: string, newColor: string) {
+    const valueIndex = colorValues.findIndex((v) => v === value);
+    const defaultColorVar =
+      COMPARISON_COLORS[valueIndex % COMPARISON_COLORS.length];
+
+    // Convert the color back to a CSS variable reference if it matches a palette color
+    const colorToSave = colorToVariableReference(newColor);
+
+    let updatedMapping: ColorMapping;
+
+    if (colorToSave === defaultColorVar) {
+      // Remove from custom mappings if it's set back to default
+      updatedMapping = currentColorMapping.filter(
+        (item) => item.value !== value,
+      );
+    } else {
+      // Add or update custom mapping
+      const existingIndex = currentColorMapping.findIndex(
+        (item) => item.value === value,
+      );
+      if (existingIndex >= 0) {
+        updatedMapping = currentColorMapping.map((item, index) =>
+          index === existingIndex ? { ...item, color: colorToSave } : item,
+        );
+      } else {
+        updatedMapping = [
+          ...currentColorMapping,
+          { value, color: colorToSave },
+        ];
+      }
+    }
+
+    onChange(
+      "colorMapping",
+      updatedMapping.length > 0 ? updatedMapping : undefined,
+    );
+  }
+
+  function resetToDefault() {
+    onChange("colorMapping", undefined);
+  }
+
+  function toggleExpanded() {
+    isExpanded = !isExpanded;
+  }
+</script>
+
+{#if colorMapConfig?.enable && colorValues.length > 0}
+  <div>
+    <button
+      class="w-full p-1 flex items-center justify-between hover:bg-surface-background"
+      onclick={toggleExpanded}
+    >
+      <span class="text-xs font-medium">{m.canvas_color_mapping()}</span>
+      <div class="flex items-center gap-x-2">
+        {#if isExpanded}
+          <ChevronDown size="14px" class="text-fg-secondary" />
+        {:else}
+          <ChevronRight size="14px" class="text-fg-secondary" />
+        {/if}
+      </div>
+    </button>
+
+    {#if isExpanded}
+      <div
+        class="px-1 py-2 overflow-y-auto space-y-1"
+        transition:slide={{ duration: 200 }}
+      >
+        {#each displayedColorMappings as { value, color } (value)}
+          <ColorInput
+            small
+            stringColor={resolveCSSVariable(color)}
+            labelFirst
+            allowLightnessControl
+            label={value}
+            onChange={(newColor) => handleColorChange(value, newColor)}
+          />
+        {/each}
+        {#if allColorMappings.length === 0}
+          <div class="px-2 py-2 text-xs text-fg-secondary">
+            {m.canvas_no_color_values_found()}
+          </div>
+        {/if}
+        <div class="p-1 flex items-center justify-between">
+          <div>
+            {#if hasMoreThanThreshold && !showAllValues}
+              <Button type="text" onClick={() => (showAllValues = true)}>
+                {m.canvas_see_more_values({
+                  count: allColorMappings.length - THRESHOLD,
+                })}
+              </Button>
+            {:else if hasMoreThanThreshold && showAllValues}
+              <Button type="text" onClick={() => (showAllValues = false)}>
+                {m.canvas_see_less()}
+              </Button>
+            {/if}
+          </div>
+          <Button type="text" onClick={resetToDefault}
+            >{m.canvas_reset_to_default()}</Button
+          >
+        </div>
+      </div>
+    {/if}
+  </div>
+{/if}

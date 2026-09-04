@@ -1,0 +1,51 @@
+import { parse } from "yaml";
+import { createRuntimeServiceGetFile } from "../../../runtime-client";
+import type { RuntimeClient } from "../../../runtime-client/v2";
+
+export function useDashboardPolicyCheck(
+  client: RuntimeClient,
+  filePath: string,
+) {
+  return createRuntimeServiceGetFile(
+    client,
+    {
+      path: filePath,
+    },
+    {
+      query: {
+        enabled: !!filePath,
+        select: (data) => {
+          if (!data.blob) return false;
+          const yamlObj = parse(data.blob);
+          const securityPolicy = yamlObj?.security;
+          return !!securityPolicy;
+        },
+      },
+    },
+  );
+}
+
+export function useRillYamlPolicyCheck(client: RuntimeClient) {
+  return createRuntimeServiceGetFile(
+    client,
+    {
+      path: "rill.yaml",
+    },
+    {
+      query: {
+        select: (data) => {
+          if (!data.blob) return false;
+          const yamlObj = parse(data.blob);
+          const exploresSecurityPolicy = yamlObj?.explores?.security;
+          const metricsViewsSecurityPolicy = yamlObj?.metricsViews?.security;
+          const canvasesSecurityPolicy = yamlObj?.canvases?.security;
+          return (
+            !!exploresSecurityPolicy ||
+            !!metricsViewsSecurityPolicy ||
+            !!canvasesSecurityPolicy
+          );
+        },
+      },
+    },
+  );
+}

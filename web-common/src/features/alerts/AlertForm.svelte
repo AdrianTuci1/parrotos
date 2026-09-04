@@ -1,0 +1,345 @@
+<script lang="ts" context="module">
+  import type { V1AlertSpec } from "@rilldata/web-common/runtime-client";
+
+  export type CreateAlertProps = {
+    mode: "create";
+    exploreName: string;
+  };
+
+  export type EditAlertProps = {
+    mode: "edit";
+    alertSpec: V1AlertSpec;
+  };
+</script>
+
+<script lang="ts">
+  import { page } from "$app/stores";
+  import {
+    createAdminServiceCreateAlert,
+    createAdminServiceEditAlert,
+  } from "@rilldata/web-admin/client";
+  import {
+    getAlertDashboardName,
+    unwrapQueryData,
+    useAlertDashboardState,
+  } from "@rilldata/web-admin/features/alerts/selectors.ts";
+  import { DialogTitle } from "@rilldata/web-common/components/dialog";
+  import * as DialogTabs from "@rilldata/web-common/components/dialog/tabs";
+  import {
+    getNewAlertInitialFiltersFormValues,
+    getNewAlertInitialFormValues,
+  } from "@rilldata/web-common/features/alerts/create-alert-utils.ts";
+  import AlertDialogCriteriaTab from "@rilldata/web-common/features/alerts/criteria-tab/AlertDialogCriteriaTab.svelte";
+  import AlertDialogDataTab from "@rilldata/web-common/features/alerts/data-tab/AlertDialogDataTab.svelte";
+  import AlertDialogDeliveryTab from "@rilldata/web-common/features/alerts/delivery-tab/AlertDialogDeliveryTab.svelte";
+  import {
+    alertFormValidationSchema,
+    type AlertFormValues,
+    checkIsTabValid,
+    FieldsByTab,
+    getAlertQueryArgsFromFormValues,
+  } from "@rilldata/web-common/features/alerts/form-utils.ts";
+  import {
+    generateAlertName,
+    isSomeFieldTainted,
+  } from "@rilldata/web-common/features/alerts/utils.ts";
+  import { getProtoFromDashboardState } from "@rilldata/web-common/features/dashboards/proto-state/toProto.ts";
+  import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
+  import { useExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores.ts";
+  import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
+  import { convertFormValuesToCronExpression } from "@rilldata/web-common/features/scheduled-reports/time-utils.ts";
+  import { getFiltersAndTimeControlsFromAggregationRequest } from "@rilldata/web-common/features/scheduled-reports/utils.ts";
+  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  import {
+    getRuntimeServiceGetResourceQueryKey,
+    getRuntimeServiceListResourcesQueryKey,
+  } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { X } from "lucide-svelte";
+  import { defaults, superForm } from "sveltekit-superforms";
+  import Button from "web-common/src/components/button/Button.svelte";
+
+  export let onClose: () => void;
+  export let onCancel: () => void;
+  export let props: CreateAlertProps | EditAlertProps;
+  export let initialValues: ReturnType<typeof getNewAlertInitialFormValues>;
+
+  const runtimeClient = useRuntimeClient();
+
+  $: ({ organization, project, alert: alertName } = $page.params);
+  $: ({ instanceId } = runtimeClient);
+
+  // Convenience variable to be used when other fields from props are not needed.
+  // Typescript won't parse the object switch if this is used in conditionals, so some statements below don't use this.
+  const isCreateForm = props.mode === "create";
+
+  const exploreName =
+    props.mode === "create"
+      ? props.exploreName
+      : getAlertDashboardName(props.alertSpec);
+
+  $: validExploreSpec = useExploreValidSpec(runtimeClient, exploreName);
+  $: metricsViewSpec = $validExploreSpec.data?.metricsView ?? {};
+  $: exploreSpec = $validExploreSpec.data?.explore ?? {};
+  $: metricsViewName = exploreSpec.metricsView ?? "";
+
+  $: allTimeRangeResp = useMetricsViewTimeRange(
+    runtimeClient,
+    metricsViewName,
+    undefined,
+    queryClient,
+  );
+
+  const exploreState =
+    props.mode === "create"
+      ? useExploreState(props.exploreName)
+      : unwrapQueryData(useAlertDashboardState(runtimeClient, props.alertSpec));
+
+  const mutation =
+    props.mode === "create"
+      ? createAdminServiceCreateAlert()
+      : createAdminServiceEditAlert();
+
+  $: ({ filters, timeControls } =
+    props.mode === "create"
+      ? getNewAlertInitialFiltersFormValues(
+          runtimeClient,
+          metricsViewName,
+          exploreName,
+          $exploreState!,
+        )
+      : getFiltersAndTimeControlsFromAggregationRequest(
+          runtimeClient,
+          metricsViewName,
+          exploreName,
+          JSON.parse(
+            props.alertSpec.queryArgsJson ||
+              (props.alertSpec.resolverProperties?.query_args_json as
+                | string
+                | undefined) ||
+              "{}",
+          ),
+          $allTimeRangeResp.data?.timeRangeSummary,
+        ));
+  $: ({ selectedComparisonTimeRange } = timeControls);
+
+  const superFormInstance = superForm(
+    defaults(initialValues, alertFormValidationSchema),
+    {
+      SPA: true,
+      validators: alertFormValidationSchema,
+      dataType: "json",
+      async onUpdate({ form }) {
+        if (!form.valid) return;
+        const values = form.data;
+        return handleSubmit(values);
+      },
+      validationMethod: "oninput",
+      invalidateAll: false,
+    },
+  );
+  const { form, errors, enhance, submit, submitting, tainted, validate } =
+    superFormInstance;
+
+  const formId = isCreateForm ? "create-alert-form" : "edit-alert-form";
+  $: dialogTitle = isCreateForm
+    ? m.alert_form_create_title()
+    : m.alert_form_edit_title();
+
+  $: tabs = [
+    m.alert_form_tab_data(),
+    m.alert_form_tab_criteria(),
+    m.alert_form_tab_delivery(),
+  ];
+
+  /**
+   * Because this form's fields are spread over multiple tabs, we implement our own `isValid` logic for each tab.
+   * A tab is valid (i.e. it's okay to proceed to the next tab) if:
+   * 1) The tab's required fields are filled out
+   * 2) The tab's fields don't have errors.
+   */
+  $: isTabValid = checkIsTabValid(currentTabIndex, $form, $errors);
+
+  let currentTabIndex = 0;
+
+  async function handleSubmit(values: AlertFormValues) {
+    const refreshCron = convertFormValuesToCronExpression(
+      values.frequency,
+      values.dayOfWeek,
+      values.timeOfDay,
+      values.dayOfMonth,
+    );
+
+    await $mutation.mutateAsync({
+      org: organization,
+      project,
+      name: alertName,
+      data: {
+        options: {
+          displayName: values.name,
+          queryName: "MetricsViewAggregation",
+          queryArgsJson: JSON.stringify(
+            getAlertQueryArgsFromFormValues(
+              values,
+              filters.toState(),
+              timeControls.toState(),
+              exploreSpec,
+            ),
+          ),
+          metricsViewName: values.metricsViewName,
+          slackChannels: values.enableSlackNotification
+            ? values.slackChannels.filter(Boolean)
+            : undefined,
+          slackUsers: values.enableSlackNotification
+            ? values.slackUsers.filter(Boolean)
+            : undefined,
+          emailRecipients: values.enableEmailNotification
+            ? values.emailRecipients.filter(Boolean)
+            : undefined,
+          refreshCron: !values.refreshWhenDataRefreshes ? refreshCron : "", // for testing: "* * * * *"
+          refreshTimeZone: values.timeZone,
+          renotify: !!values.snooze,
+          renotifyAfterSeconds: values.snooze ? Number(values.snooze) : 0,
+          webOpenPath: `/explore/${encodeURIComponent(exploreName)}`,
+          webOpenState: getProtoFromDashboardState(
+            $exploreState as ExploreState,
+            exploreSpec,
+          ),
+        },
+      },
+    });
+    if (!isCreateForm) {
+      void queryClient.invalidateQueries({
+        queryKey: getRuntimeServiceGetResourceQueryKey(instanceId, {
+          name: {
+            name: alertName,
+            kind: ResourceKind.Alert,
+          },
+        }),
+      });
+    }
+    await queryClient.invalidateQueries({
+      queryKey: getRuntimeServiceListResourcesQueryKey(instanceId),
+    });
+    onClose();
+    if (isCreateForm) {
+      eventBus.emit("notification", {
+        message: m.alert_form_created(),
+        link: {
+          href: `/${organization}/${project}/-/alerts`,
+          text: m.alert_form_go_to_alerts(),
+        },
+      });
+    } else {
+      eventBus.emit("notification", {
+        message: m.alert_form_edited(),
+        type: "success",
+      });
+    }
+  }
+
+  $: measure = $form.measure;
+  function measureUpdated(mes: string) {
+    $form.criteria.forEach((c) => (c.measure = mes));
+    $form.criteria = [...$form.criteria];
+  }
+  $: measureUpdated(measure);
+
+  function handleCancel() {
+    if ($tainted && isSomeFieldTainted($tainted)) {
+      onCancel();
+    } else {
+      onClose();
+    }
+  }
+
+  function handleBack() {
+    currentTabIndex -= 1;
+  }
+
+  function handleNextTab() {
+    if (!isTabValid) {
+      FieldsByTab[currentTabIndex]?.forEach((field) => validate(field as any));
+      return;
+    }
+    currentTabIndex += 1;
+
+    if (!isCreateForm || currentTabIndex !== 2 || $tainted?.name) {
+      return;
+    }
+    // if the user came to the delivery tab and name was not changed then auto generate it
+    const name = generateAlertName(
+      $form,
+      $selectedComparisonTimeRange,
+      metricsViewSpec,
+    );
+    if (!name) return;
+    $form.name = name;
+  }
+</script>
+
+<form
+  autocomplete="off"
+  class="flex flex-col gap-y-3"
+  id={formId}
+  onsubmit={(e) => {
+    e.preventDefault();
+    submit(e);
+  }}
+  use:enhance
+>
+  <DialogTitle
+    class="px-6 py-4 text-fg-primary text-lg font-semibold leading-7 flex flex-row items-center justify-between"
+  >
+    <div>{dialogTitle}</div>
+    <Button type="link" noStroke compact onClick={handleCancel}>
+      <X strokeWidth={3} size={16} class="text-fg-secondary" />
+    </Button>
+  </DialogTitle>
+  <DialogTabs.Root value={tabs[currentTabIndex]}>
+    <DialogTabs.List class="border-t">
+      {#each tabs as tab, i (i)}
+        <!-- inner width is 800px. so, width = ceil(800/3) = 267 -->
+        <DialogTabs.Trigger value={tab} tabIndex={i} class="w-[267px]">
+          {tab}
+        </DialogTabs.Trigger>
+      {/each}
+    </DialogTabs.List>
+    <div class="p-3 bg-surface-subtle h-[600px] overflow-auto">
+      <DialogTabs.Content {currentTabIndex} tabIndex={0} value={tabs[0]}>
+        <AlertDialogDataTab {superFormInstance} {filters} {timeControls} />
+      </DialogTabs.Content>
+      <DialogTabs.Content {currentTabIndex} tabIndex={1} value={tabs[1]}>
+        <AlertDialogCriteriaTab {superFormInstance} {filters} {timeControls} />
+      </DialogTabs.Content>
+      <DialogTabs.Content {currentTabIndex} tabIndex={2} value={tabs[2]}>
+        <AlertDialogDeliveryTab {superFormInstance} {exploreName} />
+      </DialogTabs.Content>
+    </div>
+  </DialogTabs.Root>
+  <div class="px-6 py-3 flex items-center gap-x-2">
+    <div class="grow"></div>
+    {#if currentTabIndex === 0}
+      <Button onClick={handleCancel} type="secondary"
+        >{m.alert_form_cancel()}</Button
+      >
+    {:else}
+      <Button onClick={handleBack} type="secondary"
+        >{m.alert_form_back()}</Button
+      >
+    {/if}
+    {#if currentTabIndex !== 2}
+      <Button type="primary" onClick={handleNextTab}
+        >{m.alert_form_next()}</Button
+      >
+    {:else}
+      <Button type="primary" disabled={$submitting} form={formId} submitForm>
+        {isCreateForm ? m.alert_form_create() : m.alert_form_update()}
+      </Button>
+    {/if}
+  </div>
+</form>

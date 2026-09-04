@@ -1,0 +1,254 @@
+import { expect } from "@playwright/test";
+import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions.ts";
+import { test } from "./setup/base";
+import {
+  getOpenLinkFromEmail,
+  waitForEmail,
+} from "@rilldata/web-common/tests/utils/email-utils.ts";
+
+test.describe.serial("Reports", () => {
+  test("Should create report", async ({ adminPage }) => {
+    test.setTimeout(45_000);
+
+    await adminPage.goto("/e2e/openrtb/explore/auction_explore");
+    // We are seeing some race condition where clicking `App Site Domain` too quickly can get reset with an internal redirect.
+    await adminPage.waitForURL(/tr=P7D/);
+
+    // Wait for explore data to load before interacting with leaderboards.
+    await adminPage.getByLabel("app_site_domain leaderboard").waitFor();
+
+    // Enter dimension table "App Site Domain"
+    await adminPage.getByText("App Site Domain").click();
+
+    // Wait for the dimension table to fully render before interacting.
+    await adminPage.getByLabel("Dimension Display").waitFor();
+
+    // Clicking "App Site Domain" can trigger a tooltip that overlays the export
+    // button. Move the mouse away to dismiss it (Tooltip uses hoverIntent which
+    // only dismisses on mouse leave).
+    await adminPage.mouse.move(0, 0);
+
+    // Open scheduled report dialog
+    await adminPage.getByLabel("Export dimension table data").click();
+    await adminPage
+      .getByRole("menuitem", { name: "Create scheduled report..." })
+      .click();
+
+    const reportForm = adminPage.locator("form#scheduled-report-form");
+
+    // Set the name
+    await reportForm.getByTitle("Report title").fill("Report for last 14 days");
+
+    // Set as a daily report
+    await reportForm.getByLabel("Frequency").click();
+    await adminPage.getByRole("option", { name: "Daily" }).click();
+    // Set to run at 10:00 pm
+    await reportForm.getByLabel("Time", { exact: true }).click();
+    await adminPage.getByRole("option", { name: "10:00 PM" }).click();
+
+    // Select "Last 14 Days" as time range
+    await interactWithTimeRangeMenu(reportForm, async () => {
+      // Menu content is portaled to document.body, so use page-level scope
+      await adminPage.getByRole("menuitem", { name: "Last 14 days" }).click();
+    });
+    // Enable time comparison
+    await reportForm.getByLabel("Toggle time comparison").click();
+
+    // Change rows/columns
+    // Remove "App Site Domain"
+    await reportForm
+      .getByLabel("app_site_domain chip")
+      .getByLabel("Remove")
+      .click();
+    // Add "App Site Name" column
+    await reportForm.getByLabel("Add Columns fields").click();
+    // Menu content is portaled to document.body, so use page-level scope
+    await adminPage
+      .getByRole("menuitem", { name: "App Site Name" })
+      .click({ force: true });
+    // Assert columns
+    await expect(reportForm.getByLabel("Columns field list")).toHaveText(
+      /Requests\s*Avg Bid Floor\s*1D QPS\s*App Site Name/,
+    );
+    // Add "Pub Name" row
+    await reportForm.getByLabel("Add Rows fields").click();
+    // Menu content is portaled to document.body, so use page-level scope
+    await adminPage.getByRole("menuitem", { name: "Pub Name" }).click();
+    // Assert rows and columns
+    await expect(reportForm.getByLabel("Rows field list")).toHaveText(
+      /Pub Name/,
+    );
+    await expect(reportForm.getByLabel("Columns field list")).toHaveText(
+      /App Site Name\s*Requests\s*Avg Bid Floor\s*1D QPS/,
+    );
+
+    // Create the report
+    await adminPage.getByLabel("Create report").click();
+
+    // Notification is shown
+    await expect(adminPage.getByLabel("Notification")).toHaveText(
+      "Report created Go to scheduled reports",
+    );
+    // Clicking "Go to scheduled reports" takes us to the reports page
+    await adminPage
+      .getByRole("link", { name: "Go to scheduled reports" })
+      .click();
+
+    // Go to the newly created report
+    await adminPage
+      .getByRole("link", {
+        name: "Report for last 14 days",
+      })
+      .click();
+
+    // Assert that report is created with correct fields
+    // Assert report name
+    await expect(adminPage.getByLabel("Report name")).toHaveText(
+      "Report for last 14 days",
+    );
+    // Assert report dashboard
+    await expect(adminPage.getByLabel("Report dashboard name")).toHaveText(
+      "Dashboard Programmatic Ads Auction",
+    );
+    // Assert report schedule
+    await expect(adminPage.getByLabel("Report schedule")).toHaveText(
+      /Repeats\s+At 10:00 PM, every day/m,
+    );
+  });
+
+  test("Should run a report and receive an email", async ({ adminPage }) => {
+    // Open the report
+    await adminPage.goto("/e2e/openrtb/-/reports");
+    await adminPage
+      .getByRole("link", {
+        name: "Report for last 14 days",
+      })
+      .click();
+
+    // Store time before clicking run to ensure latest email is fetched.
+    const time = new Date();
+    await adminPage.getByRole("button", { name: "Run now" }).click();
+    // Notification is shown
+    await expect(adminPage.getByLabel("Notification")).toHaveText(
+      "Triggered an ad-hoc run of this report.",
+    );
+
+    // Wait for the email and extract the open url from it.
+    const email = await waitForEmail("Report for last 14 days", time);
+    const link = await getOpenLinkFromEmail(email);
+
+    await adminPage.goto(link);
+
+    // Assert that rows and columns of the landing pivot are as expected.
+    await expect(adminPage.getByLabel("Drag list rows")).toHaveText(/Pub Name/);
+    await expect(adminPage.getByLabel("Drag list columns")).toHaveText(
+      /App Site Name\s*Requests\s*Avg Bid Floor\s*1D QPS/,
+    );
+
+    // Data is not guaranteed since an adhoc run will trigger with current time.
+  });
+
+  test("Should edit report", async ({ adminPage }) => {
+    await adminPage.goto("/e2e/openrtb/-/reports");
+
+    await adminPage
+      .getByRole("link", {
+        name: "Report for last 14 days",
+      })
+      .click();
+
+    // Update the report
+    await adminPage.getByLabel("Report context menu").click();
+    await adminPage.getByRole("menuitem", { name: "Edit Report" }).click();
+
+    const reportForm = adminPage.locator("form#scheduled-report-form");
+
+    // Set as a monthly report
+    await reportForm.getByLabel("Frequency").click();
+    await adminPage.getByRole("option", { name: "Monthly" }).click();
+
+    // Select "Last 4 Weeks" as time range
+    await interactWithTimeRangeMenu(reportForm, async () => {
+      // Menu content is portaled to document.body, so use page-level scope
+      await adminPage.getByRole("menuitem", { name: "Last 4 weeks" }).click();
+    });
+
+    // Change rows/columns
+    // Assert rows and columns
+    await expect(reportForm.getByLabel("Rows field list")).toHaveText(
+      /Pub Name/,
+    );
+    await expect(reportForm.getByLabel("Columns field list")).toHaveText(
+      /App Site Name\s*Requests\s*Avg Bid Floor\s*1D QPS/,
+    );
+    // Remove "Pub Name"
+    await reportForm.getByLabel("pub_name chip").getByLabel("Remove").click();
+    // Remove "App Site Name"
+    await reportForm
+      .getByLabel("app_site_name chip")
+      .getByLabel("Remove")
+      .click();
+    // Add "App Site Domain" row
+    await reportForm.getByLabel("Add Rows fields").click({ force: true });
+    // Menu content is portaled to document.body, so use page-level scope
+    await adminPage
+      .getByRole("menuitem", { name: "App Site Domain" })
+      .click({ force: true });
+    // Add "Time month" column
+    await reportForm.getByLabel("Add Columns fields").click();
+    // Menu content is portaled to document.body, so use page-level scope
+    await adminPage
+      .getByRole("menuitem", { name: "Time month" })
+      .click({ force: true });
+    // Assert rows and columns
+    await expect(reportForm.getByLabel("Rows field list")).toHaveText(
+      /App Site Domain/,
+    );
+    await expect(reportForm.getByLabel("Columns field list")).toHaveText(
+      /Time month\s*Requests\s*Avg Bid Floor\s*1D QPS/,
+    );
+
+    const filtersForm = reportForm.getByLabel("Filters form");
+    // Add "Ad Size" filter
+    await filtersForm.getByLabel("Add filter button").click();
+    // Menu content is portaled to document.body, so use page-level scope
+    await adminPage.getByRole("menuitem", { name: "Ad Size" }).click();
+    // DimensionFilter values are also portaled
+    await adminPage.getByRole("menuitemcheckbox", { name: "1024x768" }).click();
+    await adminPage.getByRole("menuitemcheckbox", { name: "120x600" }).click();
+    await adminPage.getByRole("menuitemcheckbox", { name: "160x600" }).click();
+    await filtersForm.getByLabel("Open ad_size filter").click();
+
+    // Save the report
+    await adminPage.getByLabel("Save report").click();
+
+    // Notification is shown
+    await expect(adminPage.getByLabel("Notification")).toHaveText(
+      "Report edited",
+    );
+
+    // Assert that report is updated with correct schedule
+    await expect(adminPage.getByLabel("Report schedule")).toHaveText(
+      /Repeats\s+At 10:00 PM, on the 1st of each month/m,
+    );
+  });
+
+  test("Should delete report", async ({ adminPage }) => {
+    await adminPage.goto("/e2e/openrtb/-/reports");
+
+    await adminPage
+      .getByRole("link", {
+        name: "Report for last 14 days",
+      })
+      .click();
+
+    // Delete the report
+    await adminPage.getByLabel("Report context menu").click();
+    await adminPage.getByRole("menuitem", { name: "Delete Report" }).click();
+
+    // Back to listing page without any reports
+    await expect(
+      adminPage.getByText("You don't have any reports yet"),
+    ).toBeVisible();
+  });
+});

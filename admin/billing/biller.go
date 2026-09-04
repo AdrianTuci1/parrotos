@@ -1,0 +1,222 @@
+package billing
+
+import (
+	"context"
+	"errors"
+	"time"
+
+	"github.com/rilldata/rill/admin/database"
+	"github.com/rilldata/rill/admin/jobs"
+	"github.com/rilldata/rill/runtime/pkg/httputil"
+)
+
+const (
+	SupportEmail    = "support@rilldata.com"
+	DefaultTimeZone = "UTC"
+	// InternalEmailDomain is excluded from billable seat counts so internal Rill users don't count against an org's seats.
+	InternalEmailDomain = "rilldata.com"
+)
+
+// CreditsCurrency is the pricing-unit used for trial credit balance/alerts/grants. Its a non-monetary custom pricing unit, so trial usage never produces USD invoice line items.
+// 1 credit is equivalent to 1 USD
+const CreditsCurrency = "credits"
+
+// USDCurrency is the standard real-world currency used for paid-plan billing and the USD ledger (e.g., where trial `credits` get rolled over on upgrade).
+const USDCurrency = "USD"
+
+// CreditTrialLowBalanceThreshold is the credit balance at which we trigger a warning email.
+const CreditTrialLowBalanceThreshold = 50
+
+var ErrNotFound = errors.New("not found")
+
+type Biller interface {
+	Name() string
+	// DefaultQuotas returns the default quotas to assign to orgs before billing has been initialized.
+	DefaultQuotas() Quotas
+	// DefaultUserQuotas returns the default quotas to assign to users.
+	DefaultUserQuotas() UserQuotas
+	// GetDefaultPlan returns the default plan for new organizations.
+	GetDefaultPlan(ctx context.Context) (*Plan, error)
+	// GetPlans returns all the plans available in the billing system.
+	GetPlans(ctx context.Context) ([]*Plan, error)
+	// GetPublicPlans for listing purposes
+	GetPublicPlans(ctx context.Context) ([]*Plan, error)
+	// GetPlan returns the plan with the given biller plan ID.
+	GetPlan(ctx context.Context, id string) (*Plan, error)
+	// GetPlanByName returns the plan with the given Rill plan name.
+	GetPlanByName(ctx context.Context, name string) (*Plan, error)
+	// GetPlanByType returns the plan with the given PlanType. Returns ErrNotFound if no plan matches.
+	GetPlanByType(ctx context.Context, planType PlanType) (*Plan, error)
+
+	// CreateCustomer creates a customer for the given organization in the billing system and returns the external customer ID.
+	CreateCustomer(ctx context.Context, organization *database.Organization, provider PaymentProvider) (*Customer, error)
+	FindCustomer(ctx context.Context, customerID string) (*Customer, error)
+	UpdateCustomerPaymentID(ctx context.Context, customerID string, provider PaymentProvider, paymentProviderID string) error
+	UpdateCustomerEmail(ctx context.Context, customerID, email string) error
+	DeleteCustomer(ctx context.Context, customerID string) error
+
+	// CreateCustomerCreditAlerts registers credit-balance alerts for the customer in the given currency.
+	CreateCustomerCreditAlerts(ctx context.Context, customerID, currency string, lowThreshold float64) error
+
+	// GrantCustomerCredits increments credit ledger entry to the customer's balance in the given currency. Description is recorded on the ledger entry; expiryDate may be nil for credits that never expire.
+	GrantCustomerCredits(ctx context.Context, customerID string, amount float64, currency, description string, expiryDate *time.Time) error
+
+	// DebitCustomerCredits posts a `decrement` ledger entry against the customer's balance in the given currency.
+	DebitCustomerCredits(ctx context.Context, customerID string, amount float64, currency, description string) error
+
+	// GetCustomerCreditBalance returns the customer's current credit balance in the given currency.
+	GetCustomerCreditBalance(ctx context.Context, customerID, currency string) (float64, error)
+
+	// CreateSubscription creates a subscription for the given organization. Subscription starts immediately.
+	CreateSubscription(ctx context.Context, customerID string, plan *Plan) (*Subscription, error)
+	// GetActiveSubscription returns the active subscription for the given organization
+	GetActiveSubscription(ctx context.Context, customerID string) (*Subscription, error)
+	// CancelSubscriptionsForCustomer cancels all the subscriptions for the given organization and returns the end date of the subscription
+	CancelSubscriptionsForCustomer(ctx context.Context, customerID string, cancelOption SubscriptionCancellationOption) (time.Time, error)
+
+	// ChangeSubscriptionPlan changes the plan of the given subscription immediately and returns the updated subscription
+	ChangeSubscriptionPlan(ctx context.Context, subscriptionID string, plan *Plan) (*Subscription, error)
+	// UnscheduleCancellation cancels the scheduled cancellation for the given subscription and returns the updated subscription
+	UnscheduleCancellation(ctx context.Context, subscriptionID string) (*Subscription, error)
+
+	GetInvoice(ctx context.Context, invoiceID string) (*Invoice, error)
+	IsInvoiceValid(ctx context.Context, invoice *Invoice) bool
+	IsInvoicePaid(ctx context.Context, invoice *Invoice) bool
+
+	MarkCustomerTaxExempt(ctx context.Context, customerID string) error
+	UnmarkCustomerTaxExempt(ctx context.Context, customerID string) error
+
+	ReportUsage(ctx context.Context, usage []*Usage) error
+
+	GetReportingGranularity() UsageReportingGranularity
+	GetReportingWorkerCron() string
+
+	// WebhookHandlerFunc returns a http.HandlerFunc that can be used to handle incoming webhooks from the payment provider. Return nil if you don't want to register any webhook handlers. jobs is used to enqueue jobs for processing the webhook events.
+	WebhookHandlerFunc(ctx context.Context, jobs jobs.Client) httputil.Handler
+}
+
+type UserQuotas struct {
+	SingleuserOrgs *int
+	TrialOrgs      *int
+}
+
+type PlanType int
+
+const (
+	TrailPlanType PlanType = iota
+	TeamPlanType
+	ManagedPlanType
+	EnterprisePlanType
+	FreePlanType
+	ProPlanType
+	StarterPlanType
+	GrowthPlanType
+)
+
+type Plan struct {
+	ID              string // ID of the plan in the external billing system
+	Name            string // Unique name of the plan in Rill, can be empty if biller does not support it
+	PlanType        PlanType
+	DisplayName     string
+	Description     string
+	TrialPeriodDays int
+	Default         bool
+	Public          bool
+	Quotas          Quotas
+	Metadata        map[string]string
+}
+
+type Quotas struct {
+	StorageLimitBytesPerDeployment *int64
+	NumProjects                    *int
+	NumDeployments                 *int
+	NumSlotsTotal                  *int
+	NumSlotsPerDeployment          *int
+	NumOutstandingInvites          *int
+	NumSeats                       *int
+	NumAPICallsPerSeat             *int
+	NumTokensPerSeat               *int
+}
+
+type planMetadata struct {
+	Default                        bool   `mapstructure:"default"`
+	Public                         bool   `mapstructure:"public"`
+	StorageLimitBytesPerDeployment *int64 `mapstructure:"storage_limit_bytes_per_deployment"`
+	NumProjects                    *int   `mapstructure:"num_projects"`
+	NumDeployments                 *int   `mapstructure:"num_deployments"`
+	NumSlotsTotal                  *int   `mapstructure:"num_slots_total"`
+	NumSlotsPerDeployment          *int   `mapstructure:"num_slots_per_deployment"`
+	NumOutstandingInvites          *int   `mapstructure:"num_outstanding_invites"`
+	NumSeats                       *int   `mapstructure:"num_seats"`
+	NumAPICallsPerSeat             *int   `mapstructure:"num_api_calls_per_seat"`
+	NumTokensPerSeat               *int   `mapstructure:"num_tokens_per_seat"`
+}
+
+type Subscription struct {
+	ID                           string
+	Customer                     *Customer
+	Plan                         *Plan
+	StartDate                    time.Time
+	EndDate                      time.Time
+	CurrentBillingCycleStartDate time.Time
+	CurrentBillingCycleEndDate   time.Time
+	TrialEndDate                 time.Time
+	Metadata                     map[string]string
+}
+
+type Customer struct {
+	ID                string
+	Email             string
+	Name              string
+	PaymentProviderID string
+	PortalURL         string
+}
+
+type Usage struct {
+	CustomerID     string
+	MetricName     string
+	Value          float64
+	ReportingGrain UsageReportingGranularity
+	StartTime      time.Time // Start time of the usage period
+	EndTime        time.Time // End time of the usage period
+	Metadata       map[string]interface{}
+}
+
+type Invoice struct {
+	ID             string
+	Status         string
+	CustomerID     string
+	Amount         string
+	Currency       string
+	DueDate        time.Time
+	CreatedAt      time.Time
+	SubscriptionID string
+	Metadata       map[string]interface{}
+}
+
+type UsageReportingGranularity string
+
+const (
+	UsageReportingGranularityNone UsageReportingGranularity = ""
+	UsageReportingGranularityHour UsageReportingGranularity = "hour"
+)
+
+type SubscriptionCancellationOption int
+
+const (
+	SubscriptionCancellationOptionEndOfSubscriptionTerm SubscriptionCancellationOption = iota
+	SubscriptionCancellationOptionImmediate
+)
+
+type PaymentProvider string
+
+const (
+	PaymentProviderStripe PaymentProvider = "stripe"
+)
+
+func Email(organization *database.Organization) string {
+	if organization.BillingEmail != "" {
+		return organization.BillingEmail
+	}
+	return SupportEmail
+}

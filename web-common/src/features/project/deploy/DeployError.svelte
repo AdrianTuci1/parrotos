@@ -1,0 +1,50 @@
+<script lang="ts">
+  import { Button } from "@rilldata/web-common/components/button";
+  import CTAButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
+  import CTAHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CTAMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
+  import CTAPylonHelp from "@rilldata/web-common/components/calls-to-action/CTAPylonHelp.svelte";
+  import CancelCircleInverse from "@rilldata/web-common/components/icons/CancelCircleInverse.svelte";
+  import {
+    DeployErrorType,
+    getPrettyDeployError,
+    isQuotaDeployError,
+  } from "@rilldata/web-common/features/project/deploy/deploy-errors";
+
+  export let error: Error;
+  export let isOrgOnTrial: boolean;
+  export let planUpgradeUrl: string;
+  export let githubAccessUrl: string = "";
+  export let onRetry: () => void;
+  export let onBack: () => void;
+
+  $: deployError = getPrettyDeployError(error, isOrgOnTrial);
+
+  $: isQuotaError = isQuotaDeployError(deployError);
+  $: isGithubNoAccessError =
+    deployError.type === DeployErrorType.GithubNoAccess && !!githubAccessUrl;
+</script>
+
+{#if isQuotaError}
+  <CTAHeader variant="bold">{deployError.title}</CTAHeader>
+  <p class="text-base text-fg-secondary text-left w-[500px]">
+    {deployError.message}
+  </p>
+  <Button type="primary" href={planUpgradeUrl} wide>Upgrade</Button>
+  <Button type="secondary" noStroke wide onClick={onBack}>Back</Button>
+{:else if isGithubNoAccessError}
+  <CancelCircleInverse size="7rem" className="text-gray-200" />
+  <CTAHeader variant="bold">{deployError.title}</CTAHeader>
+  <CTAMessage>{deployError.message}</CTAMessage>
+  <CTAButton variant="secondary" href={githubAccessUrl}>
+    Retry connection
+  </CTAButton>
+{:else}
+  <CancelCircleInverse size="7rem" className="text-gray-200" />
+  <CTAHeader variant="bold">{deployError.title}</CTAHeader>
+  <CTAMessage>{deployError.message}</CTAMessage>
+  {#if deployError.type === DeployErrorType.Unknown}
+    <CTAButton variant="secondary" onClick={onRetry}>Retry</CTAButton>
+  {/if}
+{/if}
+<CTAPylonHelp />

@@ -1,0 +1,113 @@
+<script lang="ts">
+  import { Chip } from "@rilldata/web-common/components/chip";
+  import { Search } from "@rilldata/web-common/components/search";
+  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
+  import { getNoComparisonLabel } from "@rilldata/web-common/lib/time/config";
+  import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
+  import { matchSorter } from "match-sorter";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let exploreName: string;
+
+  const {
+    dashboardStore,
+    selectors: {
+      dimensions: { allDimensions },
+    },
+  } = getStateManagers();
+
+  let dimensions: MetricsViewSpecDimension[] | undefined = [];
+  let searchText = "";
+  let open = false;
+
+  $: ({ showTimeComparison, selectedComparisonDimension } = $dashboardStore);
+
+  $: dimensions = $allDimensions;
+
+  /** compile the comparison options */
+  $: options = (dimensions || []).map((d) => ({
+    name: d.name,
+    label: d.displayName || d.name,
+  }));
+
+  $: menuOptions = matchSorter(options, searchText, { keys: ["label"] });
+
+  $: label = selectedComparisonDimension
+    ? getLabelForDimension(selectedComparisonDimension)
+    : getNoComparisonLabel();
+
+  function getLabelForDimension(dimension: string) {
+    if (!dimensions) return dimension;
+    const dimensionObj = dimensions.find((d) => d.name === dimension);
+    return dimensionObj?.displayName || dimension;
+  }
+
+  function enableComparison(type: string, name = "") {
+    if (type === "time") {
+      metricsExplorerStore.displayTimeComparison(exploreName, true);
+    } else {
+      // Temporary until these are not mutually exclusive
+      metricsExplorerStore.displayTimeComparison(exploreName, false);
+      metricsExplorerStore.setComparisonDimension(exploreName, name);
+    }
+  }
+
+  function disableAllComparisons() {
+    metricsExplorerStore.disableAllComparisons(exploreName);
+  }
+</script>
+
+<DropdownMenu.Root bind:open>
+  <DropdownMenu.Trigger>
+    <Tooltip distance={8} suppress={open}>
+      <Chip
+        theme
+        label={m.dashboard_select_comparison_dimension()}
+        active={open}
+        type="dimension"
+        caret
+      >
+        <span class="font-bold truncate" slot="body">{label}</span>
+      </Chip>
+
+      <TooltipContent slot="tooltip-content" maxWidth="220px">
+        {m.dashboard_comparison_select_tooltip()}
+      </TooltipContent>
+    </Tooltip>
+  </DropdownMenu.Trigger>
+
+  <DropdownMenu.Content align="start">
+    <div class="p-2">
+      <Search
+        placeholder={m.dashboard_search_dimension()}
+        bind:value={searchText}
+        showBorderOnFocus={false}
+      />
+    </div>
+    <DropdownMenu.Item onclick={disableAllComparisons}>
+      <span
+        class:font-bold={!selectedComparisonDimension && !showTimeComparison}
+      >
+        {getNoComparisonLabel()}
+      </span>
+    </DropdownMenu.Item>
+
+    <div style:max-height="200px" class="overflow-y-auto">
+      {#each menuOptions as option (option.name)}
+        <DropdownMenu.Item
+          onclick={() => {
+            enableComparison("dimension", option.name);
+          }}
+        >
+          <span class:font-bold={selectedComparisonDimension === option.name}>
+            {option.label}
+          </span>
+        </DropdownMenu.Item>
+      {/each}
+    </div>
+  </DropdownMenu.Content>
+</DropdownMenu.Root>

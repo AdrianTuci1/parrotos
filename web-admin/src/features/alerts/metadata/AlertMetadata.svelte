@@ -1,0 +1,261 @@
+<script lang="ts">
+  import { goto } from "$app/navigation";
+  import { isNotFoundError } from "@rilldata/web-common/lib/errors";
+  import { createAdminServiceDeleteAlert } from "@rilldata/web-admin/client";
+  import EditAlert from "@rilldata/web-admin/features/alerts/EditAlert.svelte";
+  import AlertFilterCriteria from "@rilldata/web-admin/features/alerts/metadata/AlertFilterCriteria.svelte";
+  import AlertFilters from "@rilldata/web-admin/features/alerts/metadata/AlertFilters.svelte";
+  import AlertOwnerBlock from "@rilldata/web-admin/features/alerts/metadata/AlertOwnerBlock.svelte";
+  import { humaniseAlertSnoozeOption } from "@rilldata/web-admin/features/alerts/metadata/utils";
+  import {
+    useAlert,
+    useAlertDashboardName,
+    useAlertDashboardState,
+    useIsAlertCreatedByCode,
+  } from "@rilldata/web-admin/features/alerts/selectors";
+  import ProjectAccessControls from "@rilldata/web-admin/features/projects/ProjectAccessControls.svelte";
+  import MetadataLabel from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
+  import MetadataList from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataList.svelte";
+  import MetadataValue from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataValue.svelte";
+  import { extractNotifier } from "@rilldata/web-admin/features/scheduled-reports/metadata/notifiers-utils";
+  import { formatRefreshSchedule } from "@rilldata/web-admin/features/scheduled-reports/metadata/utils.ts";
+  import { IconButton } from "@rilldata/web-common/components/button";
+  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
+  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
+  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { hasValidMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
+  import { getMappedExploreUrl } from "@rilldata/web-common/features/explore-mappers/get-mapped-explore-url.ts";
+  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
+  import {
+    getRuntimeServiceListResourcesQueryKey,
+    type V1MetricsViewAggregationRequest,
+  } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useQueryClient } from "@tanstack/svelte-query";
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+
+  export let organization: string;
+  export let project: string;
+  export let alert: string;
+
+  const runtimeClient = useRuntimeClient();
+
+  $: alertQuery = useAlert(runtimeClient, alert);
+  $: isAlertCreatedByCode = useIsAlertCreatedByCode(runtimeClient, alert);
+
+  // Get dashboard
+  $: exploreName = useAlertDashboardName(runtimeClient, alert);
+  $: validSpecResp = useExploreValidSpec(runtimeClient, $exploreName.data);
+  $: exploreSpec = $validSpecResp.data?.explore;
+  $: metricsViewName = exploreSpec?.metricsView;
+  $: dashboardTitle = exploreSpec?.displayName || $exploreName.data;
+  $: dashboardDoesNotExist =
+    $validSpecResp.isError && isNotFoundError($validSpecResp.error);
+
+  $: exploreIsValid = hasValidMetricsViewTimeRange(
+    runtimeClient,
+    $exploreName.data,
+  );
+
+  $: alertSpec = $alertQuery.data?.resource?.alert?.spec;
+
+  // Get human-readable frequency
+  $: humanReadableFrequency = alertSpec?.refreshSchedule?.cron
+    ? formatRefreshSchedule(alertSpec.refreshSchedule.cron)
+    : m.alert_whenever_data_refreshes();
+
+  $: queryArgsJson =
+    (alertSpec?.resolverProperties?.query_args_json as string) ||
+    alertSpec?.queryArgsJson ||
+    "{}";
+  $: queryName =
+    alertSpec?.queryName ||
+    (alertSpec?.resolverProperties?.query_name as string);
+  $: metricsViewAggregationRequest = JSON.parse(
+    queryArgsJson,
+  ) as V1MetricsViewAggregationRequest;
+
+  $: dashboardState = useAlertDashboardState(runtimeClient, alertSpec);
+
+  $: snoozeLabel = humaniseAlertSnoozeOption(alertSpec);
+
+  $: emailNotifier = extractNotifier(alertSpec?.notifiers, "email");
+  $: slackNotifier = extractNotifier(alertSpec?.notifiers, "slack");
+
+  $: exploreUrl = getMappedExploreUrl(
+    {
+      exploreName: $exploreName.data,
+      queryName,
+      queryArgsJson,
+    },
+    {
+      exploreProtoState: alertSpec?.annotations?.web_open_state,
+    },
+    {
+      client: runtimeClient,
+      organization,
+      project,
+    },
+  );
+
+  // Actions
+  const queryClient = useQueryClient();
+  const deleteAlert = createAdminServiceDeleteAlert();
+
+  async function handleDeleteAlert() {
+    await $deleteAlert.mutateAsync({
+      org: organization,
+      project,
+      name: $alertQuery.data.resource.meta.name.name,
+    });
+    await queryClient.invalidateQueries({
+      queryKey: getRuntimeServiceListResourcesQueryKey(
+        runtimeClient.instanceId,
+      ),
+    });
+    // goto only after invalidate is complete
+    goto(`/${organization}/${project}/-/alerts`);
+  }
+</script>
+
+{#if alertSpec}
+  <div class="flex flex-col gap-y-9 w-full max-w-full 2xl:max-w-[1200px]">
+    <div class="flex flex-col gap-y-2">
+      <!-- Header row 1 -->
+      <div class="uppercase text-xs text-fg-secondary font-semibold">
+        <!-- Author -->
+        <ProjectAccessControls {organization} {project}>
+          <svelte:fragment slot="manage-project">
+            {#if $alertQuery.data}
+              <AlertOwnerBlock
+                {organization}
+                {project}
+                ownerId={alertSpec.annotations["admin_owner_user_id"]}
+              />
+            {/if}
+          </svelte:fragment>
+        </ProjectAccessControls>
+      </div>
+      <div class="flex gap-x-2 items-center">
+        <h1
+          class="text-fg-primary text-lg font-bold"
+          aria-label={m.alert_metadata_name_aria()}
+        >
+          {alertSpec.displayName}
+        </h1>
+        <div class="grow"></div>
+        {#if !$isAlertCreatedByCode.data}
+          <EditAlert {alertSpec} disabled={!$exploreIsValid} />
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton ariaLabel={m.alert_context_menu_aria()}>
+                <ThreeDot size="16px" />
+              </IconButton>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content align="start">
+              <DropdownMenu.Item onclick={handleDeleteAlert}>
+                {m.alert_delete()}
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        {/if}
+      </div>
+    </div>
+
+    <!-- Five columns of metadata -->
+    <div class="flex flex-wrap gap-x-16 gap-y-6">
+      <!-- Dashboard -->
+      <div
+        class="flex flex-col gap-y-3"
+        aria-label={m.alert_metadata_dashboard_name_aria()}
+      >
+        {#if dashboardTitle}
+          <MetadataLabel>{m.alert_dashboard()}</MetadataLabel>
+          <MetadataValue>
+            {#if dashboardDoesNotExist}
+              <div class="flex items-center gap-x-1">
+                {dashboardTitle}
+                <Tooltip distance={8}>
+                  <CancelCircle size="16px" className="text-red-500" />
+                  <TooltipContent slot="tooltip-content">
+                    {m.alert_dashboard_not_exist()}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            {:else}
+              <a href={$exploreUrl}>
+                {dashboardTitle}
+              </a>
+            {/if}
+          </MetadataValue>
+        {:else}
+          <MetadataLabel>{m.alert_name_label()}</MetadataLabel>
+          <MetadataValue>
+            {$alertQuery.data?.resource?.meta?.name?.name}
+          </MetadataValue>
+        {/if}
+      </div>
+
+      <!-- Split by dimension -->
+      <div
+        class="flex flex-col gap-y-3"
+        aria-label={m.alert_metadata_split_by_dimension_aria()}
+      >
+        <MetadataLabel>{m.alert_split_by_dimension()}</MetadataLabel>
+        <MetadataValue>
+          {metricsViewAggregationRequest?.dimensions?.[0]?.name ??
+            m.alert_none()}
+        </MetadataValue>
+      </div>
+
+      <!-- Schedule: TODO: change based on non UI settings -->
+      <div
+        class="flex flex-col gap-y-3"
+        aria-label={m.alert_metadata_schedule_aria()}
+      >
+        <MetadataLabel>{m.alert_schedule()}</MetadataLabel>
+        <MetadataValue>{humanReadableFrequency}</MetadataValue>
+      </div>
+
+      <!-- Snooze -->
+      <div class="flex flex-col gap-y-3">
+        <MetadataLabel>{m.alert_snooze()}</MetadataLabel>
+        <MetadataValue>{snoozeLabel}</MetadataValue>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <AlertFilters
+      {metricsViewName}
+      filters={metricsViewAggregationRequest?.where}
+      dimensionsWithInlistFilter={$dashboardState.data
+        ?.dimensionsWithInlistFilter ?? []}
+      timeRange={metricsViewAggregationRequest?.timeRange}
+      comparisonTimeRange={metricsViewAggregationRequest?.comparisonTimeRange}
+    />
+
+    <!-- Criteria -->
+    <AlertFilterCriteria
+      filters={metricsViewAggregationRequest?.having}
+      comparisonTimeRange={metricsViewAggregationRequest?.comparisonTimeRange}
+    />
+
+    <!-- Slack notification -->
+    {#if slackNotifier}
+      <MetadataList
+        data={[...slackNotifier.channels, ...slackNotifier.users]}
+        label={m.alert_slack_notifications()}
+      />
+    {/if}
+
+    <!-- Email notifications -->
+    {#if emailNotifier}
+      <MetadataList
+        data={emailNotifier.recipients}
+        label={m.alert_email_notifications()}
+      />
+    {/if}
+  </div>
+{/if}

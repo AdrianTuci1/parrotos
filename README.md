@@ -6,6 +6,57 @@ Complete data analytics platform with hierarchical structure: **Account → Orga
 
 ---
 
+## Rill Engine Monolith Port (`feat/rill-bi`)
+
+> **Branch:** `feat/rill-bi` — A source-level adoption of the Rill Go engine into Statsparrot as a monolith.
+
+This branch ports the Rill analytics engine (`github.com/rilldata/rill`) into this repository as a single Go monolith. The upstream Rill source lives at `/Users/adrian.tucicovencogmail.com/Projects/rill`; the Go modules are copied verbatim (byte-for-byte) so Statsparrot can host Rill's runtime, admin server, CLI, and protobuf API alongside its existing Node.js services.
+
+### Adopted from Rill (verbatim copy)
+
+| Module | Path | Go sources | Protobuf sources | Role |
+|---|---|---|---|---|
+| **Runtime** | `runtime/` | 694 | 0 | Query engine, connectors, DuckDB, catalog |
+| **Admin** | `admin/` | 118 | 0 | Control-plane server (accounts, orgs, projects, billing) |
+| **CLI** | `cli/` | 222 | 0 | `rill` command-line interface |
+| **Proto** | `proto/` | 49 | 16 | gRPC/Protobuf API definitions + generated code |
+
+**Key entry points** (all present):
+- `runtime/runtime.go`
+- `admin/admin.go`
+- `proto/rill/runtime/v1/queries.proto`
+- `cli/cmd/start/start.go`
+
+**Module + licensing files:**
+- `go.mod` — single root module (`module github.com/rilldata/rill`, `go 1.26.5`); byte-identical to upstream
+- `go.sum` — byte-identical to upstream
+- `LICENSE.md` — Apache License 2.0 (unchanged from upstream)
+- `NOTICE` — Statsparrot derivative-attribution notice (upstream Rill ships no NOTICE; this is added for the fork)
+
+### Global Go module coherence
+
+There is exactly **one `go.mod` at the repository root** and no `go.work` workspace file. None of the copied modules (`runtime/`, `admin/`, `proto/`, `cli/`) declare their own `go.mod`, so the whole engine resolves as a single Go module.
+
+### Hosted-only placeholders to replace
+
+The Rill engine is adopted as-is; the following upstream hosted/cloud components are present as stubs that must be replaced with Statsparrot implementations (or disabled) before production:
+
+| Placeholder | Location | Current state | Replace with |
+|---|---|---|---|
+| **Noop biller** | `admin/billing/noop.go` | `NewNoop()` returns unlimited/no-op quotas | Stripe-backed biller (`admin/billing/orb.go` is the upstream paid impl) |
+| **Static provisioner** | `admin/provisioner/static/static.go`, `admin/provisioner/clickhousestatic/provisioner.go` | Registers `"static"` provisioner | Statsparrot runtime provisioning |
+| **GitHub App** | `admin/github.go`, `admin/server/github.go`, `admin/server/server.go`, `admin/server/projects.go` | GitHub App auth flow | Statsparrot auth/provisioning |
+| **Telemetry** | `admin/server/telemetry.go`, `proto/rill/admin/v1/telemetry.proto` | Rill telemetry sink | Statsparrot telemetry (or no-op) |
+
+### Build gate (not performed on `feat/rill-bi`)
+
+The `feat/rill-bi` branch is a **source-level port** — no build or install is run here. The following must be verified in a build environment that has the Go toolchain (`go 1.26.5`) and Go module cache, and (for the frontend) Node deps:
+- `go build ./...` resolves and compiles the single root module.
+- Generated protobuf code under `proto/gen/` is consistent with the `.proto` sources.
+- Hosted-only placeholders compile (they are internal stubs, so they should) even before being replaced.
+
+---
+
 ## System Architecture
 
 ```
@@ -431,4 +482,6 @@ The backend runs on Contabo, while `chat`, `harness`, and `observer` run on priv
 
 ## License
 
-Proprietary — Sentry Data Platform
+Apache License 2.0. This product is a derivative fork of Rill (Apache-2.0,
+Copyright Rill Data Inc.) and incorporates the Statsparrot connector,
+reverse-ETL, and Parrot-agent code. See `LICENSE.md` and `NOTICE`.

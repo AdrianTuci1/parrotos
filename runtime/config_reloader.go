@@ -1,0 +1,226 @@
+package runtime
+
+import (
+	"context"
+	"fmt"
+	"maps"
+	"time"
+
+	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/rilldata/rill/runtime/pkg/ctxsync"
+	"github.com/rilldata/rill/runtime/pkg/observability"
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
+)
+
+// configReloader handles reloading instance configurations from admin service
+// periodically reload configs in background
+// config reloads happen in following scenarios:
+// 1. via rt.ReloadConfig whenever admin wants runtime to reload its configs
+// 2. whenever runtime is started to pick up any configs changed while it was down
+// 3. periodically every hour to pick up any changes done outside of runtime. This just adds extra resilience
+type configReloader struct {
+	rt *Runtime
+	// cancel background operations on close
+	cancel context.CancelFunc
+	mu     ctxsync.RWMutex
+	// to avoid repo handshake refresh on each reload we track last updatedon of each deployment
+	// if the deployment has not changed skip the repo pull
+	//
+	// this can further be optimised to only check for properties that affect repo like url, branch etc but keeping it simple for now
+	updatedOn map[string]time.Time
+}
+
+func newConfigReloader(rt *Runtime) *configReloader {
+	bgctx, bgcancel := context.WithCancel(context.Background())
+	c := &configReloader{
+		rt:        rt,
+		cancel:    bgcancel,
+		mu:        ctxsync.NewRWMutex(),
+		updatedOn: make(map[string]time.Time),
+	}
+
+	go c.periodicallyReloadConfigs(bgctx)
+	return c
+}
+
+func (r *configReloader) reloadConfig(ctx context.Context, instanceID string) (varsCount int, modified bool, err error) {
+	err = r.mu.Lock(ctx)
+	if err != nil {
+		return 0, false, err
+	}
+	defer r.mu.Unlock()
+
+	inst, err := r.rt.Instance(ctx, instanceID)
+	if err != nil {
+		return 0, false, err
+	}
+
+	// Nothing to reload without an admin connector (just a defensive check, usually always configured if configReloader is enabled)
+	if inst.AdminConnector == "" {
+		return 0, false, nil
+	}
+
+	admin, release, err := r.rt.Admin(ctx, instanceID)
+	if err != nil {
+		return 0, false, err
+	}
+	defer release()
+
+	r.rt.Logger.Debug("Reloading config for instance", zap.String("instance_id", instanceID), observability.ZapCtx(ctx))
+
+	cfg, err := admin.GetConfig(ctx)
+	if err != nil {
+		return 0, false, err
+	}
+
+	// Clone for editing
+	tmp := *inst
+	inst = &tmp
+	restartController := false
+
+	// Update variables
+	vars := make(map[string]string)
+	// default first
+	for k, v := range cfg.Variables[""] {
+		vars[k] = v
+	}
+	// then overlay env specific
+	for k, v := range cfg.Variables[inst.Environment] {
+		vars[k] = v
+	}
+	varsChanged := !maps.Equal(inst.Variables, vars)
+	if varsChanged {
+		if !cfg.Editable { // for editable deployments we will write vars to `.env` which will also trigger controller restart
+			inst.Variables = vars
+			restartController = true
+		}
+	}
+	systemVarsChanged := !maps.Equal(inst.SystemVariables, cfg.SystemVariables)
+	if systemVarsChanged {
+		inst.SystemVariables = cfg.SystemVariables
+		restartController = true
+	}
+	inst.Annotations = cfg.Annotations
+
+	// Create a new connectors slice to avoid modifying cached objects
+	newConnectors := make([]*runtimev1.Connector, 0, len(inst.Connectors))
+	for _, connector := range inst.Connectors {
+		if connector.Type == "duckdb" {
+			currentDuckdbConfig := connector.Config.AsMap()
+			updatedDuckdbConfig := cfg.DuckdbConnectorConfig
+			connectorConfigChanged := !maps.Equal(currentDuckdbConfig, updatedDuckdbConfig)
+			if connectorConfigChanged {
+				duckdbConfig, err := structpb.NewStruct(updatedDuckdbConfig)
+				if err != nil {
+					return 0, false, err
+				}
+				// Create a new Connector with updated config
+				connector = &runtimev1.Connector{
+					Type:                connector.Type,
+					Name:                connector.Name,
+					Config:              duckdbConfig,
+					TemplatedProperties: connector.TemplatedProperties,
+					Provision:           connector.Provision,
+					ProvisionArgs:       connector.ProvisionArgs,
+				}
+				restartController = true
+			}
+		}
+		newConnectors = append(newConnectors, connector)
+	}
+	inst.Connectors = newConnectors
+
+	inst.FrontendURL = cfg.FrontendURL
+
+	// Force the repo to refresh its handshake if the deployment has changed
+	updatedOn, ok := r.updatedOn[instanceID]
+	if !ok || cfg.UpdatedOn.After(updatedOn) {
+		repo, release, err := r.rt.Repo(ctx, inst.ID)
+		if err != nil {
+			return 0, false, err
+		}
+		defer release()
+
+		err = repo.Pull(ctx, &drivers.PullOptions{ForceHandshake: true})
+		if err != nil {
+			r.rt.Logger.Error("ReloadConfig: failed to pull repo", zap.String("instance_id", inst.ID), zap.Error(err), observability.ZapCtx(ctx))
+		}
+
+		// Update the last updatedOn time
+		r.updatedOn[instanceID] = cfg.UpdatedOn
+		// changes in archive asset IDs are correctly propogated via repo connection reopen only
+		restartController = restartController || cfg.UsesArchive
+		if !restartController {
+			// retrigger parser to pick up changes
+			ctrl, err := r.rt.Controller(ctx, instanceID)
+			if err != nil {
+				return 0, false, err
+			}
+			err = ctrl.Reconcile(ctx, GlobalProjectParserName)
+			if err != nil {
+				return 0, false, fmt.Errorf("failed to trigger parser: %w", err)
+			}
+		}
+	}
+
+	err = r.rt.EditInstance(ctx, inst, restartController)
+	if err != nil {
+		return 0, false, err
+	}
+	if !(varsChanged && cfg.Editable) {
+		return 0, false, nil
+	}
+
+	// write variables to .env files for editable deployments. This will also trigger controller restart via repo watcher
+	var count int
+	repo, release, err := r.rt.Repo(ctx, inst.ID)
+	if err != nil {
+		return 0, false, err
+	}
+	defer release()
+	for env, vars := range cfg.Variables {
+		count += len(vars)
+		err = writeEnv(ctx, env, vars, repo)
+		if err != nil {
+			return 0, false, fmt.Errorf("failed to write env file for %q: %w", env, err)
+		}
+	}
+	return count, true, nil
+}
+
+func (r *configReloader) periodicallyReloadConfigs(ctx context.Context) {
+	reloadAllInstances := func() {
+		r.rt.Logger.Info("periodicallyReloadConfigs: reloading configs for all instances")
+		instances, err := r.rt.Instances(ctx)
+		if err != nil {
+			r.rt.Logger.Error("periodicallyReloadConfigs: failed to list instances", zap.Error(err))
+			return
+		}
+		for _, inst := range instances {
+			_, _, err := r.reloadConfig(ctx, inst.ID)
+			if err != nil {
+				r.rt.Logger.Error("periodicallyReloadConfigs: failed to reload config", zap.String("instance_id", inst.ID), zap.Error(err))
+			}
+		}
+	}
+	// first reload immediately
+	reloadAllInstances()
+
+	// then periodically every hour
+	ticker := time.NewTicker(1 * time.Hour)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			reloadAllInstances()
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+func (r *configReloader) close() {
+	r.cancel()
+}

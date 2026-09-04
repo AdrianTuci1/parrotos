@@ -1,0 +1,1430 @@
+syntax = "proto3";
+package rill.runtime.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "rill/runtime/v1/export_format.proto";
+import "rill/runtime/v1/expression.proto";
+import "rill/runtime/v1/resources.proto";
+import "rill/runtime/v1/schema.proto";
+import "rill/runtime/v1/time_grain.proto";
+import "validate/validate.proto";
+
+service QueryService {
+  // Query runs a SQL query against the instance's OLAP datastore.
+  rpc Query(QueryRequest) returns (QueryResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/query",
+      body: "*"
+    };
+  }
+
+  // Export builds a URL to download the results of a query as a file.
+  rpc Export(ExportRequest) returns (ExportResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/export",
+      body: "*"
+    };
+  }
+
+  // ExportReport builds a URL to download the results of a query as a file.
+  rpc ExportReport(ExportReportRequest) returns (ExportReportResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/reports/{report}/export",
+      body: "*"
+    };
+  }
+
+  // Usage APIs
+
+  // ProjectStorage returns storage usage information for OLAP connectors in the project.
+  // See the project_storage resolver for details.
+  rpc ProjectStorage(ProjectStorageRequest) returns (ProjectStorageResponse) {
+    option (google.api.http) = {
+      get: "/v1/instances/{instance_id}/queries/project-storage"
+    };
+  }
+
+  // Explore APIs
+
+  // MetricsViewAggregation is a generic API for running group-by/pivot queries against a metrics view.
+  rpc MetricsViewAggregation(MetricsViewAggregationRequest) returns (MetricsViewAggregationResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view}/aggregation",
+      body: "*"
+    };
+  }
+
+  /*
+     Deprecated - use MetricsViewComparison instead.
+     MetricsViewToplist returns the top dimension values of a metrics view sorted by one or more measures.
+     It's a convenience API for querying a metrics view.
+  */
+  rpc MetricsViewToplist(MetricsViewToplistRequest) returns (MetricsViewToplistResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/toplist",
+      body: "*"
+    };
+  }
+
+  /*
+     MetricsViewComparison returns a toplist containing comparison data of another toplist (same dimension/measure but a different time range).
+     Returns a toplist without comparison data if comparison time range is omitted.
+
+     ie. comparsion toplist:
+      | measure1_base | measure1_previous   | measure1__delta_abs | measure1__delta_rel | dimension |
+      |---------------|---------------------|---------------------|--------------------|-----------|
+      | 2             | 2                   | 0                   | 0                  | Safari    |
+      | 1             | 0                   | 1                   | N/A                | Chrome    |
+      | 0             | 4                   | -4                  | -1.0               | Firefox   |
+
+     ie. toplist:
+      | measure1 | measure2 | dimension |
+      |----------|----------|-----------|
+      | 2        | 45       | Safari    |
+      | 1        | 350      | Chrome    |
+      | 0        | 25       | Firefox   |
+  */
+  rpc MetricsViewComparison(MetricsViewComparisonRequest) returns (MetricsViewComparisonResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/compare-toplist",
+      body: "*"
+    };
+  }
+
+  // MetricsViewTimeSeries returns time series for the measures in the metrics view.
+  // It's a convenience API for querying a metrics view.
+  rpc MetricsViewTimeSeries(MetricsViewTimeSeriesRequest) returns (MetricsViewTimeSeriesResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/timeseries",
+      body: "*"
+    };
+  }
+
+  // MetricsViewTotals returns totals over a time period for the measures in a metrics view.
+  // It's a convenience API for querying a metrics view.
+  rpc MetricsViewTotals(MetricsViewTotalsRequest) returns (MetricsViewTotalsResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/totals",
+      body: "*"
+    };
+  }
+
+  /*
+     MetricsViewRows returns the underlying model rows matching a metrics view time range and filter(s).
+
+     ie. without granularity
+      | column1 | column2 | dimension |
+      |---------|---------|-----------|
+      | 2       | 2       | Safari    |
+      | 1       | 0       | Chrome    |
+      | 0       | 4       | Firefox   |
+
+     ie. with granularity
+      | timestamp__day0      | column1 | column2 | dimension |
+      |----------------------|---------|---------|-----------|
+      | 2022-01-01T00:00:00Z | 2       | 2       | Safari    |
+      | 2022-01-01T00:00:00Z | 1       | 0       | Chrome    |
+      | 2022-01-01T00:00:00Z | 0       | 4       | Firefox   |
+  */
+  rpc MetricsViewRows(MetricsViewRowsRequest) returns (MetricsViewRowsResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/rows",
+      body: "*"
+    };
+  }
+
+  // MetricsViewTimeRange Get the time range summaries (min, max) for time column in a metrics view.
+  // Deprecated: use MetricsViewTimeRanges instead.
+  rpc MetricsViewTimeRange(MetricsViewTimeRangeRequest) returns (MetricsViewTimeRangeResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/time-range-summary",
+      body: "*"
+    };
+  }
+
+  // MetricsViewSchema Get the data types of measures and dimensions
+  rpc MetricsViewSchema(MetricsViewSchemaRequest) returns (MetricsViewSchemaResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/schema"};
+  }
+
+  // MetricsViewSearch Get the data types of measures and dimensions
+  rpc MetricsViewSearch(MetricsViewSearchRequest) returns (MetricsViewSearchResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/search",
+      body: "*"
+    };
+  }
+
+  // MetricsViewTimeRanges resolves time ranges for a metrics view.
+  rpc MetricsViewTimeRanges(MetricsViewTimeRangesRequest) returns (MetricsViewTimeRangesResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/time-ranges",
+      body: "*"
+    };
+  }
+
+  rpc MetricsViewAnnotations(MetricsViewAnnotationsRequest) returns (MetricsViewAnnotationsResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/metrics-views/{metrics_view_name}/annotations",
+      body: "*"
+    };
+  }
+
+  // ConvertExpressionToMetricsSQL converts a filter expression to a SQL filter string.
+  rpc ConvertExpressionToMetricsSQL(ConvertExpressionToMetricsSQLRequest) returns (ConvertExpressionToMetricsSQLResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/filter-expression/resolve",
+      body: "*"
+    };
+  }
+
+  // Canvas APIs
+
+  // ResolveCanvas is a convenience API that returns a canvas and all its referenced components and metrics views.
+  rpc ResolveCanvas(ResolveCanvasRequest) returns (ResolveCanvasResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/canvases/{canvas}/resolve",
+      body: "*"
+    };
+  }
+
+  // ResolveComponent resolves renderer for a Component resource.
+  rpc ResolveComponent(ResolveComponentRequest) returns (ResolveComponentResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/components/{component}/resolve",
+      body: "*",
+    };
+  }
+
+  // ResolveTemplatedString resolves a templated strings.
+  rpc ResolveTemplatedString(ResolveTemplatedStringRequest) returns (ResolveTemplatedStringResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/resolve-templated-string",
+      body: "*"
+    };
+  }
+
+  // Profiling APIs
+
+  // ColumnRollupInterval returns the minimum time granularity (as well as the time range) for a specified timestamp column
+  rpc ColumnRollupInterval(ColumnRollupIntervalRequest) returns (ColumnRollupIntervalResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/rollup-interval/tables/{table_name}",
+      body: "*"
+    };
+  }
+
+  // Get TopK elements from a table for a column given an agg function
+  // agg function and k are optional, defaults are count(*) and 50 respectively
+  rpc ColumnTopK(ColumnTopKRequest) returns (ColumnTopKResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/topk/tables/{table_name}",
+      body: "*"
+    };
+  }
+
+  // Get the number of nulls in a column
+  rpc ColumnNullCount(ColumnNullCountRequest) returns (ColumnNullCountResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/null-count/tables/{table_name}"};
+  }
+
+  // Get basic stats for a numeric column like min, max, mean, stddev, etc
+  rpc ColumnDescriptiveStatistics(ColumnDescriptiveStatisticsRequest) returns (ColumnDescriptiveStatisticsResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/descriptive-statistics/tables/{table_name}"};
+  }
+
+  // Estimates the smallest time grain present in the column
+  rpc ColumnTimeGrain(ColumnTimeGrainRequest) returns (ColumnTimeGrainResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/smallest-time-grain/tables/{table_name}"};
+  }
+
+  // Get the histogram for values in a column
+  rpc ColumnNumericHistogram(ColumnNumericHistogramRequest) returns (ColumnNumericHistogramResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/numeric-histogram/tables/{table_name}"};
+  }
+
+  // Get outliers for a numeric column
+  rpc ColumnRugHistogram(ColumnRugHistogramRequest) returns (ColumnRugHistogramResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/rug-histogram/tables/{table_name}"};
+  }
+
+  // Get the time range summaries (min, max) for a column
+  rpc ColumnTimeRange(ColumnTimeRangeRequest) returns (ColumnTimeRangeResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/time-range-summary/tables/{table_name}"};
+  }
+
+  // Get cardinality for a column
+  rpc ColumnCardinality(ColumnCardinalityRequest) returns (ColumnCardinalityResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/column-cardinality/tables/{table_name}"};
+  }
+
+  // Generate time series for the given measures (aggregation expressions) along with the sparkline timeseries
+  rpc ColumnTimeSeries(ColumnTimeSeriesRequest) returns (ColumnTimeSeriesResponse) {
+    option (google.api.http) = {
+      post: "/v1/instances/{instance_id}/queries/timeseries/tables/{table_name}",
+      body: "*"
+    };
+  }
+
+  // Tablewide profiling APIs
+
+  // TableCardinality returns row count
+  rpc TableCardinality(TableCardinalityRequest) returns (TableCardinalityResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/table-cardinality/tables/{table_name}"};
+  }
+
+  // TableColumns returns column profiles
+  rpc TableColumns(TableColumnsRequest) returns (TableColumnsResponse) {
+    option (google.api.http) = {post: "/v1/instances/{instance_id}/queries/columns-profile/tables/{table_name}"};
+  }
+
+  // TableRows returns table rows
+  rpc TableRows(TableRowsRequest) returns (TableRowsResponse) {
+    option (google.api.http) = {get: "/v1/instances/{instance_id}/queries/rows/tables/{table_name}"};
+  }
+}
+
+message QueryRequest {
+  string instance_id = 1 [(validate.rules).string = {pattern: "^[_\\-a-zA-Z0-9]+$"}];
+  string connector = 7;
+  string sql = 2;
+  repeated google.protobuf.Value args = 3;
+  int32 priority = 4;
+  bool dry_run = 5;
+  int32 limit = 6 [(validate.rules).int32 = {
+    lte: 10000,
+    gte: 0
+  }];
+}
+
+message QueryResponse {
+  StructType meta = 1;
+  repeated google.protobuf.Struct data = 2;
+}
+
+message ExportRequest {
+  // Instance ID to run the query against.
+  string instance_id = 1;
+  // Optional limit on the number of rows to export. It is applied in addition to any limit specified in the query.
+  int64 limit = 2;
+  // Format of the export.
+  ExportFormat format = 3;
+  // Query to export.
+  Query query = 4;
+  // Deprecated. Use query instead.
+  string baked_query = 5 [deprecated = true];
+  // If true, the export will include header comments with metadata about the export.
+  bool include_header = 6;
+  // Optional name of the dashboard the export originates from.
+  // Only used if include_header is true.
+  ResourceName origin_dashboard = 7;
+  // Optional UI URL that the export originates from.
+  // Only used if include_header is true.
+  string origin_url = 8;
+  // Optional Execution to attach to the underlying query. Used to resolve rill-time expressions.
+  google.protobuf.Timestamp execution_time = 9;
+}
+
+message ExportResponse {
+  string download_url_path = 1;
+}
+
+message ExportReportRequest {
+  // Instance ID that contains the report.
+  string instance_id = 1;
+  // Name of the report to export.
+  string report = 2;
+  // The execution time to evaluate the report relative to.
+  // This is provided by the report implementation when sending a report.
+  google.protobuf.Timestamp execution_time = 5;
+  // Contextual information about the base URL of the UI that initiated the export.
+  // This is used to generate header comments in the exported file when include_header is true in the report spec.
+  string origin_base_url = 6;
+}
+
+message ExportReportResponse {
+  string download_url_path = 1;
+}
+
+// **********
+// All queries
+// **********
+
+message Query {
+  oneof query {
+    ProjectStorageRequest project_storage_request = 21;
+    MetricsViewAggregationRequest metrics_view_aggregation_request = 20;
+    MetricsViewToplistRequest metrics_view_toplist_request = 2;
+    MetricsViewComparisonRequest metrics_view_comparison_request = 3;
+    MetricsViewTimeSeriesRequest metrics_view_time_series_request = 4;
+    MetricsViewTotalsRequest metrics_view_totals_request = 5;
+    MetricsViewRowsRequest metrics_view_rows_request = 6;
+    ColumnRollupIntervalRequest column_rollup_interval_request = 7;
+    ColumnTopKRequest column_top_k_request = 8;
+    ColumnNullCountRequest column_null_count_request = 9;
+    ColumnDescriptiveStatisticsRequest column_descriptive_statistics_request = 10;
+    ColumnTimeGrainRequest column_time_grain_request = 11;
+    ColumnNumericHistogramRequest column_numeric_histogram_request = 12;
+    ColumnRugHistogramRequest column_rug_histogram_request = 13;
+    ColumnTimeRangeRequest column_time_range_request = 14;
+    ColumnCardinalityRequest column_cardinality_request = 15;
+    ColumnTimeSeriesRequest column_time_series_request = 16;
+    TableCardinalityRequest table_cardinality_request = 17;
+    TableColumnsRequest table_columns_request = 18;
+    TableRowsRequest table_rows_request = 19;
+  }
+}
+
+// Span corresponds to a single OTel span captured during a request.
+message Span {
+  string name = 1;
+  string span_id = 2;
+  string parent_span_id = 3;
+  google.protobuf.Timestamp start_time = 4;
+  int64 duration_ms = 5;
+  // span attributes plus driver-set attributes like "cancelled", "failed", "queue_latency_ms", "olap", etc.
+  map<string, string> attributes = 6;
+}
+
+// Trace contains trace spans captured during request execution. Used both in successful responses and as gRPC error details when trace=true and the request fails.
+message Trace {
+  repeated Span spans = 1;
+}
+
+// **********
+// ProjectStorage APIs
+// **********
+
+
+message ProjectStorageRequest {
+  string instance_id = 1;
+}
+
+message ProjectStorageResponse {
+  // Storage usage per relevant connector in the project.
+  repeated ProjectStorageEntry entries = 1;
+  // Aggregated storage usage by managed connectors in the project.
+  // If it is -1, it means the value is unknown.
+  // This is a convenience field derived from the entries.
+  int64 managed_size_bytes = 2;
+  // Storage usage by the default OLAP connector in the project.
+  // If it is -1, it means the value is unknown.
+  // This is a convenience field derived from the entries.
+  int64 default_olap_size_bytes = 3;
+}
+
+message ProjectStorageEntry {
+  // Connector name.
+  string connector = 1;
+  // Connector driver name.
+  string driver = 2;
+  // True if the connector is the project's default OLAP.
+  bool is_default_olap = 3;
+  // True if the connector is managed by Rill (i.e. has `managed: true` in the connector definition).
+  bool managed = 4;
+  // Storage usage in bytes.
+  // If it is -1, it means the value is unknown.
+  int64 size_bytes = 5;
+  // Error message if the connector was unavailable.
+  // This is usually empty.
+  string error = 6;
+}
+
+// **********
+// Metrics APIs
+// **********
+
+message MetricsViewAggregationRequest {
+  string instance_id = 1;
+  // Required
+  string metrics_view = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  repeated MetricsViewAggregationDimension dimensions = 3;
+  // Required
+  repeated MetricsViewAggregationMeasure measures = 4;
+  // Optional. Defaults to unsorted
+  repeated MetricsViewAggregationSort sort = 5;
+  // Optional. Defaults to unbounded
+  TimeRange time_range = 12;
+  // Optional, if omitted than the request prepares an aggregation without a comparison
+  TimeRange comparison_time_range = 16;
+  google.protobuf.Timestamp time_start = 6; // Deprecated in favor of time_range
+  google.protobuf.Timestamp time_end = 7; // Deprecated in favor of time_range
+  // Optional. List of dimensions/measures. No pivot is done if ommitted
+  repeated string pivot_on = 15;
+  // Optional
+  repeated MetricsViewComparisonMeasureAlias aliases = 18;
+  // Optional
+  Expression where = 8;
+  // Optional. If both where and where_sql are set, both will be applied with an AND between them.
+  string where_sql = 19;
+  // Optional
+  Expression having = 13;
+  // Optional. If both having and having_sql are set, both will be applied with an AND between them.
+  string having_sql = 20;
+  // Optional. Defaults to unlimited. Set to 0 to allow the server to pick an appropriate limit
+  int64 limit = 9 [(validate.rules).int64.gte = 0];
+  // Optional. Defaults to 0
+  int64 offset = 10 [(validate.rules).int64.gte = 0];
+  // Optional
+  int32 priority = 11;
+  // Optional
+  MetricsViewFilter filter = 14; // Deprecated. should be removed once UI is moved to use new filters
+  bool exact = 17;
+  bool fill_missing = 21;
+  // Optional. Defaults to false. Used to fetch rows from underlying model
+  bool rows = 22;
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 23;
+}
+
+message MetricsViewAggregationResponse {
+  // Not optional, not null
+  StructType schema = 1;
+  // Not optional, not null
+  repeated google.protobuf.Struct data = 2;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 3;
+}
+
+message MetricsViewAggregationDimension {
+  // Required
+  string name = 1;
+  // Optional
+  TimeGrain time_grain = 2;
+  // Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
+  string time_zone = 3;
+  string alias = 4;
+}
+
+message MetricsViewAggregationMeasure {
+  // Required
+  string name = 1;
+  // Optional
+  BuiltinMeasure builtin_measure = 2;
+  // Required if BUILTIN_MEASURE_COUNT_DISTINCT
+  repeated google.protobuf.Value builtin_measure_args = 3;
+  Expression filter = 4;
+  // Optional
+  oneof compute {
+    MetricsViewAggregationMeasureComputeCount count = 5;
+    MetricsViewAggregationMeasureComputeCountDistinct count_distinct = 6;
+    MetricsViewAggregationMeasureComputeComparisonValue comparison_value = 7;
+    MetricsViewAggregationMeasureComputeComparisonDelta comparison_delta = 8;
+    MetricsViewAggregationMeasureComputeComparisonRatio comparison_ratio = 9;
+    MetricsViewAggregationMeasureComputePercentOfTotal percent_of_total = 10;
+    MetricsViewAggregationMeasureComputeURI uri = 11;
+    MetricsViewAggregationMeasureComputeComparisonTime comparison_time = 12;
+    MetricsViewAggregationMeasureComputeExpression expression = 13;
+  }
+}
+
+message MetricsViewAggregationMeasureComputeCount {}
+
+message MetricsViewAggregationMeasureComputeCountDistinct {
+  string dimension = 1;
+}
+
+message MetricsViewAggregationMeasureComputeComparisonValue {
+  string measure = 1;
+}
+
+message MetricsViewAggregationMeasureComputeComparisonDelta {
+  string measure = 1;
+}
+
+message MetricsViewAggregationMeasureComputeComparisonRatio {
+  string measure = 1;
+}
+
+message MetricsViewAggregationMeasureComputePercentOfTotal {
+  string measure = 1;
+}
+
+message MetricsViewAggregationMeasureComputeURI {
+  string dimension = 1;
+}
+
+message MetricsViewAggregationMeasureComputeComparisonTime {
+  string dimension = 1;
+}
+
+// Computes an ephemeral measure derived from other measures in the metrics view.
+// The expression may only contain measure references, numeric literals, NULL,
+// the arithmetic operators + - * / %, parentheses, and a small allowlist of scalar functions.
+// Referenced measures are subject to the metrics view's security policies.
+message MetricsViewAggregationMeasureComputeExpression {
+  // Arithmetic expression over existing measure names, e.g. "revenue - cost".
+  string expression = 1;
+  // Optional display name used in exports and result metadata.
+  string display_name = 2;
+}
+
+message MetricsViewAggregationSort {
+  // Required. Dimension or measure name
+  string name = 1;
+  // Optional
+  bool desc = 2;
+}
+
+enum BuiltinMeasure {
+  BUILTIN_MEASURE_UNSPECIFIED = 0;
+  BUILTIN_MEASURE_COUNT = 1;
+  BUILTIN_MEASURE_COUNT_DISTINCT = 2;
+}
+
+// Deprecated, use MetricsViewComparisonRequest without a comparison time range
+message MetricsViewToplistRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  string dimension_name = 3 [(validate.rules).string.min_len = 1];
+  repeated string measure_names = 4;
+  google.protobuf.Timestamp time_start = 5;
+  google.protobuf.Timestamp time_end = 6;
+  int64 limit = 7 [(validate.rules).int64.gte = 0];
+  int64 offset = 8 [(validate.rules).int64.gte = 0];
+  repeated MetricsViewSort sort = 9;
+  Expression where = 10;
+  string where_sql = 15;
+  Expression having = 13;
+  string having_sql = 16;
+  int32 priority = 11;
+  MetricsViewFilter filter = 14; // Deprecated. should be removed once UI is moved to use new filters
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 17;
+}
+
+message MetricsViewToplistResponse {
+  // Not optional, not null
+  repeated MetricsViewColumn meta = 1;
+  // Not optional, not null
+  repeated google.protobuf.Struct data = 2;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 3;
+}
+
+// Request message for QueryService.MetricsViewComparison
+message MetricsViewComparisonRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  MetricsViewAggregationDimension dimension = 3 [(validate.rules).message.required = true];
+  // Required
+  repeated MetricsViewAggregationMeasure measures = 4 [(validate.rules).repeated.min_items = 1];
+  // Measures that should be compared
+  // Optional. Defaults to all measures
+  repeated string comparison_measures = 16;
+  // Required
+  repeated MetricsViewComparisonSort sort = 5 [(validate.rules).repeated.min_items = 1];
+  // Optional
+  TimeRange time_range = 6;
+  // Optional, if omitted than the request prepares the toplist without a comparison
+  TimeRange comparison_time_range = 7;
+  // Optional
+  Expression where = 8;
+  // Optional. If both where and where_sql are set, both will be applied with an AND between them.
+  string where_sql = 17;
+  // Optional
+  Expression having = 12;
+  // Optional. If both having and having_sql are set, both will be applied with an AND between them.
+  string having_sql = 18;
+  // Optional
+  repeated MetricsViewComparisonMeasureAlias aliases = 15;
+  // Optional. Defaults to unlimited. Set to 0 to allow the server to pick an appropriate limit
+  int64 limit = 9 [(validate.rules).int64.gte = 0];
+  // Optional. Defaults to 0
+  int64 offset = 10 [(validate.rules).int64.gte = 0];
+  // Optional
+  int32 priority = 11;
+  // Optional, defaults to false
+  bool exact = 13;
+  // Optional
+  MetricsViewFilter filter = 14; // Deprecated. should be removed once UI is moved to use new filters
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 19;
+}
+
+// Response message for QueryService.MetricsViewComparison
+message MetricsViewComparisonResponse {
+  // Not optional, not null
+  repeated MetricsViewComparisonRow rows = 1;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 2;
+}
+
+// 2 of the (start, end, iso_duration) should be set
+message TimeRange {
+  // Optional. Defaults to min
+  google.protobuf.Timestamp start = 1;
+  // Optional. Defaults to max
+  google.protobuf.Timestamp end = 2;
+  // Optional, ie PT1M
+  string iso_duration = 3;
+  // Optional, ie PT1M
+  string iso_offset = 4;
+  TimeGrain round_to_grain = 5;
+  // Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
+  string time_zone = 6;
+  // Optional. Rill format time range. Should only be used for alerts and reports.
+  // For dashboard call ResolveTimeRanges.
+  string expression = 7;
+  string time_dimension = 8; // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
+}
+
+// Present for backwards compatibility
+enum MetricsViewComparisonSortType {
+  METRICS_VIEW_COMPARISON_SORT_TYPE_UNSPECIFIED = 0;
+  METRICS_VIEW_COMPARISON_SORT_TYPE_BASE_VALUE = 1;
+  METRICS_VIEW_COMPARISON_SORT_TYPE_COMPARISON_VALUE = 2;
+  METRICS_VIEW_COMPARISON_SORT_TYPE_ABS_DELTA = 3;
+  METRICS_VIEW_COMPARISON_SORT_TYPE_REL_DELTA = 4;
+}
+
+enum MetricsViewComparisonMeasureType {
+  METRICS_VIEW_COMPARISON_MEASURE_TYPE_UNSPECIFIED = 0;
+  METRICS_VIEW_COMPARISON_MEASURE_TYPE_BASE_VALUE = 1;
+  METRICS_VIEW_COMPARISON_MEASURE_TYPE_COMPARISON_VALUE = 2;
+  METRICS_VIEW_COMPARISON_MEASURE_TYPE_ABS_DELTA = 3;
+  METRICS_VIEW_COMPARISON_MEASURE_TYPE_REL_DELTA = 4;
+}
+
+message MetricsViewComparisonSort {
+  // Required
+  string name = 1 [(validate.rules).string.min_len = 1];
+  // Optional, defaults to false
+  bool desc = 2;
+  MetricsViewComparisonSortType type = 3; // Deprecated. Present for backwards compatibility for older reports
+  MetricsViewComparisonMeasureType sort_type = 4;
+}
+
+message MetricsViewComparisonRow {
+  // Not optional, not null
+  google.protobuf.Value dimension_value = 1;
+  // Not optional, not null
+  repeated MetricsViewComparisonValue measure_values = 2;
+}
+
+message MetricsViewComparisonValue {
+  // Not optional, not null
+  string measure_name = 1;
+  // Can be null
+  google.protobuf.Value base_value = 2;
+  // Can be null
+  google.protobuf.Value comparison_value = 3;
+  // Can be null
+  google.protobuf.Value delta_abs = 4;
+  // Can be null
+  google.protobuf.Value delta_rel = 5;
+}
+
+message MetricsViewComparisonMeasureAlias {
+  string name = 1;
+  MetricsViewComparisonMeasureType type = 2;
+  string alias = 3;
+}
+
+message MetricsViewTimeSeriesRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  // Names of measures in the metrics view to include.
+  // At least one of measure_names or ephemeral_measures must be provided.
+  repeated string measure_names = 3;
+  // Optional ephemeral measures, i.e. measures defined by the query rather than the metrics view.
+  // Only the `expression` compute is supported for time series.
+  repeated MetricsViewAggregationMeasure ephemeral_measures = 17;
+  // Optional. Defaults to min
+  google.protobuf.Timestamp time_start = 4;
+  // Optional. Defaults to max
+  google.protobuf.Timestamp time_end = 5;
+  // Required
+  TimeGrain time_granularity = 6 [(validate.rules).enum = {
+    not_in: [0]
+  }];
+  // Optional
+  Expression where = 7;
+  // Optional. If both where and where_sql are set, both will be applied with an AND between them.
+  string where_sql = 13;
+  // Optional
+  Expression having = 11;
+  // Optional. If both having and having_sql are set, both will be applied with an AND between them.
+  string having_sql = 14;
+  // Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
+  string time_zone = 10;
+  int32 priority = 8;
+  MetricsViewFilter filter = 12; // Deprecated. should be removed once UI is moved to use new filters
+  string time_dimension = 15; // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 16;
+}
+
+message MetricsViewTimeSeriesResponse {
+  // Not optional, not null
+  repeated MetricsViewColumn meta = 1;
+  // Not optional, not null
+  repeated TimeSeriesValue data = 2;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 3;
+}
+
+message MetricsViewTotalsRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  repeated string measure_names = 3 [(validate.rules).repeated.min_items = 1];
+  // Optional. Defaults to min
+  google.protobuf.Timestamp time_start = 4;
+  // Optional. Defaults to max
+  google.protobuf.Timestamp time_end = 5;
+  // Optional
+  Expression where = 7;
+  // Optional. If both where and where_sql are set, both will be applied with an AND between them.
+  string where_sql = 11;
+  int32 priority = 8;
+  MetricsViewFilter filter = 10; // Deprecated. should be removed once UI is moved to use new filters
+  string time_dimension = 12; // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 13;
+}
+
+message MetricsViewTotalsResponse {
+  // Not optional, not null
+  repeated MetricsViewColumn meta = 1;
+  // Not optional, not null
+  google.protobuf.Struct data = 2;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 3;
+}
+
+message MetricsViewRowsRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  // Optional, defaults to min
+  google.protobuf.Timestamp time_start = 3;
+  // Optional, defaults to max
+  google.protobuf.Timestamp time_end = 4;
+  // Optional, doesn't prepend the timestamp rollup column if ommitted
+  TimeGrain time_granularity = 10;
+  // Optional
+  Expression where = 5;
+  // Optional
+  repeated MetricsViewSort sort = 6;
+  // Optional
+  int32 limit = 7 [(validate.rules).int32.gte = 0];
+  // Optional
+  int64 offset = 8 [(validate.rules).int64.gte = 0];
+  int32 priority = 9;
+  // Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
+  string time_zone = 11;
+  MetricsViewFilter filter = 12; // Deprecated. should be removed once UI is moved to use new filters
+  // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
+  string time_dimension = 13;
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 14;
+}
+
+message MetricsViewRowsResponse {
+  // Not optional, not null
+  repeated MetricsViewColumn meta = 1;
+  // Not optional, not null
+  repeated google.protobuf.Struct data = 2;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 3;
+}
+
+message MetricsViewSort {
+  // Required
+  string name = 1 [(validate.rules).string.min_len = 1];
+  // Optional, defaults to false
+  bool ascending = 2;
+}
+
+message MetricsViewFilter {
+  message Cond {
+    string name = 1;
+    repeated google.protobuf.Value in = 2;
+    repeated string like = 3;
+  }
+  repeated Cond include = 2;
+  repeated Cond exclude = 3;
+}
+
+message MetricsViewColumn {
+  // Not optional, not null
+  string name = 1;
+  // Not optional, not null
+  string type = 2;
+  // Not optional, not null
+  bool nullable = 3;
+}
+
+message InlineMeasure {
+  // Required
+  string name = 1 [(validate.rules).string.min_len = 1];
+  // Required, ie 'count(*)'
+  string expression = 2 [(validate.rules).string.min_len = 1];
+}
+
+message MetricsViewTimeRangeRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  int32 priority = 3;
+  // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
+  string time_dimension = 4;
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 5;
+}
+
+message MetricsViewTimeRangeResponse {
+  // Not optional, not null
+  TimeRangeSummary time_range_summary = 1;
+  // The metrics view's max_query_time_range property resolved into milliseconds against the current time.
+  // Zero if the metrics view does not configure max_query_time_range.
+  int64 max_query_time_range_millis = 3;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 2;
+}
+
+message MetricsViewSchemaRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  int32 priority = 3;
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 4;
+}
+
+message MetricsViewSchemaResponse {
+  StructType schema = 1;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 2;
+}
+
+message MetricsViewSearchRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  repeated string dimensions = 3;
+  string search = 4;
+  // Optional
+  TimeRange time_range = 5;
+  // Optional
+  Expression where = 6;
+  // Optional
+  Expression having = 7;
+  // Optional
+  int32 limit = 8 [(validate.rules).int32.gte = 0];
+  int32 priority = 9;
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 10;
+}
+
+message MetricsViewSearchResponse {
+  message SearchResult {
+    string dimension = 1;
+    google.protobuf.Value value = 2;
+  }
+
+  repeated SearchResult results = 1;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 2;
+}
+
+message MetricsViewTimeRangesRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  // Optional time range expressions to resolve (uses the rilltime expression syntax).
+  repeated string expressions = 3;
+  // Optional query priority.
+  int32 priority = 4;
+  // Optional time zone that overrides the time zones used when resolving the time range expressions.
+  string time_zone = 5;
+  // Optional time dimension to return time ranges for. If not specified, it uses the metrics view's default time dimension.
+  string time_dimension = 6;
+  // Optional execution time against which the time ranges needs to be resolved. Watermark, latest and now are all replaced with this if provided.
+  optional google.protobuf.Timestamp execution_time = 7;
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 8;
+}
+
+message MetricsViewTimeRangesResponse {
+  // The full time range summary for the requested time dimension.
+  TimeRangeSummary full_time_range = 1;
+  // The resolved time ranges for the requested rilltime expressions.
+  repeated ResolvedTimeRange resolved_time_ranges = 3;
+  // The same values as resolved_time_ranges for backwards compatibility.
+  // Deprecated: use resolved_time_ranges instead.
+  repeated TimeRange time_ranges = 2;
+  // The metrics view's max_query_time_range property resolved into milliseconds against the request's reference time.
+  // Zero if the metrics view does not configure max_query_time_range.
+  int64 max_query_time_range_millis = 5;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 4;
+}
+
+message ResolvedTimeRange {
+  // The start of the resolved time range.
+  google.protobuf.Timestamp start = 1;
+  // The end of the resolved time range.
+  google.protobuf.Timestamp end = 2;
+  // The time grain of the resolved time range.
+  TimeGrain grain = 3;
+  // The time dimension that was used to resolve the time range.
+  string time_dimension = 4;
+  // The time zone that was used to resolve the time range.
+  string time_zone = 5;
+  // The original expression used to resolve the time range.
+  string expression = 6;
+}
+
+message MetricsViewAnnotationsRequest {
+  string instance_id = 1;
+  string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
+  repeated string measures = 3;
+  int32 priority = 4;
+  TimeRange time_range = 5;
+  // Optional
+  TimeGrain time_grain = 6;
+  // Optional
+  string time_zone = 7;
+  // Optional
+  int64 limit = 8 [(validate.rules).int64.gte = 0];
+  // Optional
+  int64 offset = 9 [(validate.rules).int64.gte = 0];
+  // Optional. If true, the response will include traces of spans captured during execution.
+  bool trace = 10;
+}
+
+message MetricsViewAnnotationsResponse {
+  message Annotation {
+    // Time when the annotation applies. Maps to `time` column from the table.
+    google.protobuf.Timestamp time = 1;
+    // Optional. Time when the annotation ends. Only present if the underlying table has the `time_end` column.
+    optional google.protobuf.Timestamp time_end = 2;
+    // User defined description of the annotation applies. Maps to `description` column from the table.
+    string description = 3;
+    // Optional. Minimum duration this annotation is displayed for. Maps to `duration` column from the table.
+    optional string duration = 4;
+    // Any other fields are captured here. Will be used in predicates in the future.
+    google.protobuf.Struct additional_fields = 5;
+    // List of measure names that this annotation applies to. If empty, no restrictions apply.
+    repeated string for_measures = 6;
+  }
+
+  repeated Annotation rows = 1;
+  // Traces of spans captured during request execution. Only populated if trace was set to true in the request.
+  Trace trace = 2;
+}
+
+message ConvertExpressionToMetricsSQLRequest {
+  string instance_id = 1;
+  Expression expression = 2;
+}
+
+message ConvertExpressionToMetricsSQLResponse {
+  // The SQL filter string representation of the expression.
+  string sql = 1;
+}
+
+// **********
+// Canvas APIs
+// **********
+
+message ResolveCanvasRequest {
+  // Instance ID
+  string instance_id = 1;
+  // Canvas name
+  string canvas = 2;
+  // Optional args for resolving templating in the component properties
+  google.protobuf.Struct args = 3;
+  // If true, fall back to the unvalidated spec when no valid spec is available.
+  // Only for use by the visual editor in Rill Developer. Must never be sent by
+  // Rill Cloud, read-only previews, shared token access, or embedded viewers.
+  bool unsafe = 4;
+}
+
+message ResolveCanvasResponse {
+  // The canvas resource.
+  Resource canvas = 1;
+  // All the component resources referenced by the canvas.
+  // The resources state.valid_spec.renderer_properties will have templating resolved for the provided args.
+  // (Corresponds to calling the ResolveComponent API for each component referenced in the canvas spec).
+  map<string, Resource> resolved_components = 2;
+  // All the metrics view resources referenced in the components' renderer_properties.metrics_view field.
+  map<string, Resource> referenced_metrics_views = 3;
+}
+
+message ResolveComponentRequest {
+  // Instance ID
+  string instance_id = 1;
+  // Component name
+  string component = 2;
+  // Optional args for resolving templating in the renderer properties
+  google.protobuf.Struct args = 3;
+}
+
+message ResolveComponentResponse {
+  // Renderer properties with templating resolved for the provided args
+  google.protobuf.Struct renderer_properties = 2;
+}
+
+message ResolveTemplatedStringRequest {
+  string instance_id = 1;
+  // Any string with Go templating
+  string body = 2;
+  // If true, output format tokens instead of raw values.
+  bool use_format_tokens = 3;
+  // Additional filters to inject into metrics SQL queries by metrics view name
+  map<string, Expression> additional_where_by_metrics_view = 4;
+  // Additional time range to add to metrics SQL queries
+  TimeRange additional_time_range = 5;
+}
+
+message ResolveTemplatedStringResponse {
+  string body = 1;
+}
+
+// **********
+// Profiling APIs
+// **********
+
+message ColumnRollupIntervalRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnRollupIntervalResponse {
+  // Minimum timestamp
+  google.protobuf.Timestamp start = 1;
+  // Maximum timestamp
+  google.protobuf.Timestamp end = 2;
+  // Human friendly time grain that is still bounded by (min, max), ie 'minute' time grain for an hour time range
+  TimeGrain interval = 3;
+}
+
+message ColumnTopKRequest {
+  string instance_id = 1;
+  string connector = 7;
+  string database = 8;
+  string database_schema = 9;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  string agg = 4; // default is count(*)
+  int32 k = 5; // default is 50
+  int32 priority = 6;
+}
+
+message ColumnTopKResponse {
+  CategoricalSummary categorical_summary = 1;
+}
+
+message CategoricalSummary {
+  oneof case {
+    TopK top_k = 1;
+    double cardinality = 2;
+  }
+}
+
+message TopK {
+  // Not optional, not null
+  repeated Entry entries = 1;
+  message Entry {
+    // Not optional, not null
+    google.protobuf.Value value = 1;
+    // Not optional, not null
+    double count = 2;
+  }
+}
+
+message ColumnNullCountRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnNullCountResponse {
+  // Not optional, not null
+  double count = 1;
+}
+
+message ColumnDescriptiveStatisticsRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnDescriptiveStatisticsResponse {
+  NumericSummary numeric_summary = 1;
+}
+
+message NumericSummary {
+  oneof case {
+    NumericHistogramBins numeric_histogram_bins = 1;
+    NumericStatistics numeric_statistics = 2;
+    NumericOutliers numeric_outliers = 3;
+  }
+}
+
+// All fields are not null
+message NumericHistogramBins {
+  message Bin {
+    int32 bucket = 1;
+    double low = 2;
+    double midpoint = 3;
+    double high = 4;
+    double count = 5;
+  }
+  repeated Bin bins = 1;
+}
+
+// All fields are not null
+message NumericStatistics {
+  double min = 1;
+  double max = 2;
+  double mean = 3;
+  double q25 = 4;
+  double q50 = 5;
+  double q75 = 6;
+  double sd = 7;
+}
+
+// All fields are not null
+message NumericOutliers {
+  message Outlier {
+    int32 bucket = 1;
+    double low = 2;
+    double high = 3;
+    bool present = 4;
+    int32 count = 5;
+  }
+  repeated Outlier outliers = 1;
+}
+
+message ColumnTimeGrainRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnTimeGrainResponse {
+  TimeGrain time_grain = 1;
+}
+
+message ColumnNumericHistogramRequest {
+  string instance_id = 1;
+  string connector = 6;
+  string database = 7;
+  string database_schema = 8;
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  HistogramMethod histogram_method = 4;
+  int32 priority = 5;
+}
+
+message ColumnNumericHistogramResponse {
+  NumericSummary numeric_summary = 1;
+}
+
+enum HistogramMethod {
+  HISTOGRAM_METHOD_UNSPECIFIED = 0;
+  HISTOGRAM_METHOD_FD = 1;
+  HISTOGRAM_METHOD_DIAGNOSTIC = 2;
+}
+
+message ColumnRugHistogramRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnRugHistogramResponse {
+  NumericSummary numeric_summary = 1;
+}
+
+message ColumnTimeRangeRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnTimeRangeResponse {
+  TimeRangeSummary time_range_summary = 1;
+}
+
+message TimeRangeSummary {
+  // Not optional, not null
+  google.protobuf.Timestamp min = 1;
+  // Not optional, not null
+  google.protobuf.Timestamp max = 2;
+  // Not optional, not null
+  google.protobuf.Timestamp watermark = 4;
+}
+
+message ColumnCardinalityRequest {
+  // Required
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Required
+  string column_name = 3 [(validate.rules).string.min_len = 1];
+  int32 priority = 4;
+}
+
+message ColumnCardinalityResponse {
+  // Not optional, not null
+  CategoricalSummary categorical_summary = 1;
+}
+
+message ColumnTimeSeriesRequest {
+  string instance_id = 1;
+  string connector = 11;
+  string database = 12;
+  string database_schema = 13;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  // Optional. Defaults to [count(*)]
+  repeated BasicMeasure measures = 3 [(validate.rules).repeated.min_items = 1];
+  // Required
+  string timestamp_column_name = 4 [(validate.rules).string.min_len = 1];
+  // Optional. Defaults to [min, max)
+  TimeSeriesTimeRange time_range = 5;
+  // Optional. Spark is not calculated if ommitted. See http://www.vldb.org/pvldb/vol7/p797-jugel.pdf
+  int32 pixels = 7 [(validate.rules).int32.gte = 0];
+  // Unused
+  int32 sample_size = 8 [(validate.rules).int32.gte = 0];
+  int32 priority = 9;
+  // Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
+  string time_zone = 10;
+  message BasicMeasure {
+    // Unused
+    string id = 1;
+    // Required. IE 'count(*)'
+    string expression = 2 [(validate.rules).string.min_len = 1];
+    // Optional. Defaults to 'measure_{i}', ie measure_0
+    string sql_name = 3;
+  }
+}
+
+message ColumnTimeSeriesResponse {
+  TimeSeriesResponse rollup = 1;
+}
+
+// Either [start, end] or interval should be specified
+message TimeSeriesTimeRange {
+  // Optional. Defaults to min
+  google.protobuf.Timestamp start = 2;
+  // Optional. Defaults to max
+  google.protobuf.Timestamp end = 3;
+  // Optional. Defaults to the most human friendly for [min, max) range, ie 'minute' for hour range
+  TimeGrain interval = 4 [(validate.rules).enum.defined_only = true];
+}
+
+message TimeSeriesResponse {
+  // Not optional, not null
+  repeated TimeSeriesValue results = 1;
+  // Not optional, not null, empty if 'pixels' is not specified
+  repeated TimeSeriesValue spark = 2;
+  // Not optional, not null, unused
+  int32 sample_size = 4;
+}
+
+message TimeSeriesValue {
+  // Not optional, not null
+  google.protobuf.Timestamp ts = 1;
+  // 0-based. Can be NaN if timestamps are the same. (Used for spark data only.)
+  double bin = 2;
+  // Not optional, not null
+  google.protobuf.Struct records = 3;
+}
+
+// **********
+// Tablewide profiling API
+// **********
+
+message TableCardinalityRequest {
+  string instance_id = 1;
+  string connector = 4;
+  string database = 5;
+  string database_schema = 6;
+  // Required
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  int32 priority = 3;
+}
+
+message TableCardinalityResponse {
+  // Not optional, not null
+  int64 cardinality = 1;
+}
+
+message TableColumnsRequest {
+  string instance_id = 1;
+  string connector = 4;
+  string database = 5;
+  string database_schema = 6;
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  int32 priority = 3;
+}
+
+message TableColumnsResponse {
+  repeated ProfileColumn profile_columns = 1;
+  map<string, string> unsupported_columns = 2;
+}
+
+message ProfileColumn {
+  // Not optional, not null
+  string name = 1;
+  // Not optional, not null
+  string type = 2;
+  // Unused
+  int32 largest_string_length = 3;
+}
+
+message TableRowsRequest {
+  string instance_id = 1;
+  string connector = 5;
+  string database = 6;
+  string database_schema = 7;
+  string table_name = 2 [(validate.rules).string.min_len = 1];
+  int32 limit = 3 [(validate.rules).int32.gte = 0];
+  int32 priority = 4;
+}
+
+message TableRowsResponse {
+  repeated google.protobuf.Struct data = 1;
+}

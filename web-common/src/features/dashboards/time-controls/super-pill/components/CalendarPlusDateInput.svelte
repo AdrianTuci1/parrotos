@@ -1,0 +1,167 @@
+<script lang="ts">
+  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import Calendar from "@rilldata/web-common/components/date-picker/Calendar.svelte";
+  import DateInput from "@rilldata/web-common/components/date-picker/DateInput.svelte";
+  import { DateTime, Duration, Interval, type DateTimeUnit } from "luxon";
+  import { snapToDayOrLargerGrain } from "@rilldata/web-common/lib/time/new-grains.ts";
+
+  export let interval: Interval<true> | undefined;
+  export let minDate: DateTime | undefined = undefined;
+  export let maxDate: DateTime | undefined = undefined;
+  export let minTimeGrain: DateTimeUnit;
+  export let zone: string;
+  export let maxQueryTimeRange: Duration | undefined = undefined;
+  export let updateRange: (range: string) => void = () => {};
+  export let onApply: (interval: Interval<true>) => void;
+  export let closeMenu: () => void;
+
+  const now = DateTime.now().setZone(zone);
+  const today: Interval<true> = Interval.fromDateTimes(
+    now.startOf("day"),
+    now.plus({ day: 1 }).startOf("day"),
+  ) as Interval<true>;
+
+  let inputInterval = interval || today;
+  let firstVisibleMonth = inputInterval.start;
+  let anchorDay: DateTime<true> | undefined = undefined;
+
+  $: startDate = inputInterval?.start;
+  // Do not deduct 1ms if the interval is of zero length to avoid having end before start.
+  $: isZeroInterval = inputInterval?.start.equals(inputInterval.end);
+  $: endDate = isZeroInterval
+    ? inputInterval?.end
+    : inputInterval?.end.minus({ millisecond: 1 });
+
+  // Calender picker is for selecting days. So always snap to day.
+  $: adjustedMinDate = minDate?.startOf("day");
+  // The exception is end date and the min grain is larger than day.
+  // For grains like week, month, year, etc. we need to snap to that instead.
+  $: adjustedMaxDate = maxDate
+    ? snapToDayOrLargerGrain(maxDate, minTimeGrain, zone)
+    : undefined;
+
+  $: capMs = maxQueryTimeRange?.as("milliseconds") ?? 0;
+  $: exceedsCap =
+    capMs > 0 &&
+    !!inputInterval?.isValid &&
+    inputInterval.toDuration("milliseconds").as("milliseconds") > capMs;
+  $: capLabel = maxQueryTimeRange
+    ?.shiftTo("days")
+    .toHuman({ listStyle: "long" });
+
+  function onValidDateInput(date: DateTime<true>, boundary?: "start" | "end") {
+    let newInterval: Interval;
+
+    if (boundary) {
+      if (boundary === "start") {
+        newInterval = Interval.fromDateTimes(date, inputInterval.end);
+      } else {
+        newInterval = Interval.fromDateTimes(inputInterval.start, date);
+      }
+    } else if (!anchorDay) {
+      anchorDay = date;
+      newInterval = Interval.fromDateTimes(
+        anchorDay,
+        anchorDay.plus({ day: 1 }).startOf("day"),
+      ) as Interval<true>;
+    } else if (date > anchorDay) {
+      newInterval = Interval.fromDateTimes(
+        anchorDay,
+        date.plus({ day: 1 }).startOf("day"),
+      ) as Interval<true>;
+      anchorDay = undefined;
+    } else {
+      newInterval = Interval.fromDateTimes(
+        date.startOf("day"),
+        anchorDay.plus({ day: 1 }).startOf("day"),
+      ) as Interval<true>;
+      anchorDay = undefined;
+    }
+
+    if (newInterval.isValid) {
+      inputInterval = newInterval;
+    } else {
+      const singleDay = Interval.fromDateTimes(date, date.endOf("day"));
+      if (singleDay.isValid) {
+        inputInterval = singleDay;
+      }
+    }
+
+    updateRange(
+      `${inputInterval.start.toFormat("yyyy-MM-dd")} to ${inputInterval.end.toFormat("yyyy-MM-dd")}`,
+    );
+  }
+</script>
+
+<svelte:window
+  on:keydown|capture={(e) => {
+    if (e.key === "Tab") {
+      e.stopImmediatePropagation();
+    }
+  }}
+/>
+
+<div class="flex flex-col w-full gap-y-3">
+  <Calendar
+    minDate={adjustedMinDate}
+    maxDate={adjustedMaxDate}
+    selection={inputInterval}
+    {anchorDay}
+    {firstVisibleMonth}
+    onSelectDay={onValidDateInput}
+  />
+
+  <!-- {#if usingRillTime} -->
+  <div class="w-full h-px bg-border"></div>
+
+  <div class="flex flex-col gap-y-2">
+    <DateInput
+      boundary="start"
+      {zone}
+      date={startDate}
+      minDate={adjustedMinDate}
+      maxDate={adjustedMaxDate}
+      currentYear={firstVisibleMonth.year}
+      {onValidDateInput}
+      onFocus={() => {
+        firstVisibleMonth = inputInterval.start;
+      }}
+    />
+
+    <DateInput
+      boundary="end"
+      {zone}
+      date={endDate}
+      minDate={adjustedMinDate}
+      maxDate={adjustedMaxDate}
+      currentYear={firstVisibleMonth.year}
+      {onValidDateInput}
+      onFocus={() => {
+        firstVisibleMonth = inputInterval.end;
+      }}
+    />
+  </div>
+  <!-- {/if} -->
+  {#if exceedsCap}
+    <div class="text-red-500 text-xs px-1" role="alert">
+      {m.calendar_range_exceeds_limit({ capLabel: capLabel ?? "" })}
+    </div>
+  {/if}
+  <div class="flex justify-end w-full">
+    <Button
+      fit
+      compact
+      theme
+      type="secondary"
+      disabled={!inputInterval?.isValid || exceedsCap}
+      onClick={() => {
+        onApply(inputInterval);
+
+        closeMenu();
+      }}
+    >
+      <span class="px-2 w-fit">{m.calendar_apply()}</span>
+    </Button>
+  </div>
+</div>

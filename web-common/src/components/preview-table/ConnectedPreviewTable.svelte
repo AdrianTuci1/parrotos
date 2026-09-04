@@ -1,0 +1,62 @@
+<script lang="ts">
+  import ReconcilingSpinner from "@rilldata/web-common/features/entity-management/ReconcilingSpinner.svelte";
+  import {
+    type V1TableRowsResponseDataItem,
+    createQueryServiceTableColumns,
+    createQueryServiceTableRows,
+  } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+
+  const runtimeClient = useRuntimeClient();
+  import WorkspaceError from "../WorkspaceError.svelte";
+  import type { VirtualizedTableColumns } from "../virtualized-table/types";
+  import PreviewTable from "./PreviewTable.svelte";
+
+  export let connector: string;
+  export let database: string = ""; // The backend interprets an empty string as the default database
+  export let databaseSchema: string = ""; // The backend interprets an empty string as the default schema
+  export let table: string;
+  export let limit = 150;
+
+  let columns: VirtualizedTableColumns[] | undefined;
+  let rows: V1TableRowsResponseDataItem[] | undefined;
+
+  $: columnsQuery = createQueryServiceTableColumns(runtimeClient, {
+    tableName: table,
+    connector,
+    database,
+    databaseSchema,
+  });
+  $: ({
+    data: columnsData,
+    isLoading: columnsIsLoading,
+    error: columnsError,
+  } = $columnsQuery);
+
+  $: rowsQuery = createQueryServiceTableRows(runtimeClient, {
+    tableName: table,
+    connector,
+    database,
+    databaseSchema,
+    limit,
+  });
+  $: ({
+    data: rowsData,
+    isLoading: rowsIsLoading,
+    error: rowsError,
+  } = $rowsQuery);
+
+  $: columns =
+    (columnsData?.profileColumns as VirtualizedTableColumns[]) ?? columns; // Retain old profileColumns
+  $: rows = rowsData?.data ?? rows; // Retain old rows
+</script>
+
+{#if rowsIsLoading || columnsIsLoading}
+  <ReconcilingSpinner />
+{:else if rowsError || columnsError}
+  <WorkspaceError
+    message={`Error loading table: ${(rowsError ?? columnsError)?.message ?? "Unknown error"}`}
+  />
+{:else if rows && columns}
+  <PreviewTable {rows} columnNames={columns} name={table} />
+{/if}

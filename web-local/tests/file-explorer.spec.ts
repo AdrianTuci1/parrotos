@@ -1,0 +1,132 @@
+import { expect } from "playwright/test";
+import { test } from "./setup/base";
+
+test.describe("File Explorer", () => {
+  test.use({ project: "Blank" });
+
+  test.describe("File CRUD Operations", () => {
+    test.describe.configure({ retries: 2 }); // Problem: flaky tests!
+    test("should create, rename, edit, copy, and delete a file", async ({
+      page,
+    }) => {
+      // Create a new file
+      await page.getByLabel("Add Asset").click();
+      await page.getByRole("menuitem", { name: "More" }).hover();
+      await page.getByRole("menuitem", { name: "Blank file" }).click();
+      await expect(
+        page
+          .getByLabel("/untitled_file Nav Entry")
+          .getByRole("link", { name: "untitled_file" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "untitled_file", exact: true }),
+      ).toBeVisible();
+
+      // Rename the file
+      await page.getByRole("listitem", { name: "/untitled_file" }).hover();
+      await page.getByLabel("/untitled_file actions menu").click();
+      await page.getByRole("menuitem", { name: "Rename" }).click();
+      await page.getByLabel("File name").click();
+      await page.getByLabel("File name").press("Meta+a");
+      await page.getByLabel("File name").fill("README.md");
+      await page.getByLabel("File name").press("Enter");
+      await expect(
+        page.getByRole("link", { name: "README.md" }).nth(1),
+      ).toBeVisible();
+
+      // Edit the file
+      await page.getByLabel("Auto-save").click(); // Turn off auto-save
+      await page.getByRole("textbox").nth(1).click();
+      await page.keyboard.type("Here's a README.md file for the e2e test!");
+      const saveButton = page.getByRole("button", { name: "Save" });
+      await saveButton.click();
+      // The Save button disables once the write finishes; wait for that UI
+      // feedback so navigating away doesn't race the save.
+      await expect(saveButton).toBeDisabled();
+      // Navigate away from the file and back to it to verify the changes
+      await page.getByRole("link", { name: "rill.yaml" }).click();
+      await page.getByRole("link", { name: "README.md" }).first().click();
+      await expect(
+        page.getByText("Here's a README.md file for the e2e test!"),
+      ).toBeVisible();
+
+      // Duplicate the file
+      await page.getByRole("listitem", { name: "/README.md" }).hover();
+      await page.getByLabel("/README.md actions menu").click();
+      await page.getByRole("menuitem", { name: "Duplicate" }).click();
+      await expect(
+        page.getByRole("link", { name: "README (copy).md" }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("Here's a README.md file for the e2e test!"),
+      ).toBeVisible();
+
+      // Delete the file
+      await page.getByRole("listitem", { name: "/README.md" }).hover();
+      await page.getByLabel("/README.md actions menu").click();
+      await page.getByRole("menuitem", { name: "Delete" }).click();
+      await expect(
+        page.getByRole("link", { name: "README.md" }),
+      ).not.toBeVisible();
+    });
+  });
+
+  test.describe("Folder CRUD Operations", () => {
+    test("should create, rename, add sub-folder, and delete the folder", async ({
+      page,
+    }) => {
+      // Create a new folder
+      await page.getByLabel("Add Asset").click();
+      await page.getByRole("menuitem", { name: "More" }).hover();
+      await page.getByRole("menuitem", { name: "Folder" }).click();
+      await expect(
+        page.getByRole("directory", { name: "untitled_folder" }),
+      ).toBeVisible();
+
+      // Rename the folder
+      await page.getByRole("directory", { name: "untitled_folder" }).hover();
+      await page.getByLabel("untitled_folder actions menu").click();
+      await page.getByRole("menuitem", { name: "Rename" }).click();
+      await page.getByLabel("Folder name").click();
+      await page.getByLabel("Folder name").press("Meta+a");
+      await page.getByLabel("Folder name").fill("my-directory");
+      await page.getByLabel("Folder name").press("Enter");
+
+      // The rename triggers a reload in the test environment; wait for the
+      // renamed entry to render before interacting with it.
+      await expect(
+        page.getByRole("directory", { name: "my-directory" }),
+      ).toBeVisible();
+
+      // Add something to the folder
+      await page.getByRole("directory", { name: "my-directory" }).hover();
+      await page.getByLabel("my-directory actions menu").click();
+      await page.getByRole("menuitem", { name: "New folder" }).hover();
+      const [createDirectoryResponse, getFilesResponse] = await Promise.all([
+        page.waitForResponse(
+          "**/rill.runtime.v1.RuntimeService/CreateDirectory",
+        ),
+        page.waitForResponse("**/rill.runtime.v1.RuntimeService/ListFiles"),
+        page.getByRole("menuitem", { name: "New folder" }).click(),
+      ]);
+
+      expect(createDirectoryResponse.status()).toBe(200);
+      expect(getFilesResponse.status()).toBe(200);
+      const resp = await getFilesResponse.json();
+      expect(resp.files.length).toBe(4);
+      await expect(
+        page.getByRole("directory", {
+          name: "my-directory/untitled_folder",
+        }),
+      ).toBeVisible();
+
+      // Delete the folder
+      await page
+        .getByRole("button", { name: "my-directory my-directory" })
+        .hover();
+      await page.getByLabel("my-directory actions menu").click();
+      await page.getByRole("menuitem", { name: "Delete" }).click();
+      await page.getByRole("button", { name: "Delete" }).click();
+    });
+  });
+});
