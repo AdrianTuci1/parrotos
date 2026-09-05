@@ -2,6 +2,7 @@
 node_modules
 .DS_Store
 .venv
+.svelte-kit
 layout00
 venv
 dist

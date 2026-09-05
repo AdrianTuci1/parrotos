@@ -9,6 +9,13 @@ const alias: Alias[] = [
     replacement: "/src",
   },
   {
+    // Must precede the generic `@rilldata/web-common` alias below: Vite resolves
+    // aliases in order, and the generic one would otherwise capture the generated
+    // i18n module path before the specific stub can match.
+    find: "@rilldata/web-common/lib/i18n/gen/messages",
+    replacement: "/../web-common/tests/i18n-messages.mock.ts",
+  },
+  {
     find: "@rilldata/web-common",
     replacement: "/../web-common/src",
   },
@@ -31,6 +38,12 @@ export default defineConfig(({ mode }) => {
   return {
     resolve: {
       alias,
+    },
+    // The React port components live as .tsx alongside the Svelte sources. Enable
+    // the automatic JSX runtime so vitest can compile them; the `/test` project
+    // below is the only consumer, the Svelte build is unaffected.
+    esbuild: {
+      jsx: "automatic",
     },
     plugins: [sveltekit()],
     test: {
