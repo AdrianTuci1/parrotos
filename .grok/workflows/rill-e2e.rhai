@@ -69,6 +69,10 @@ fn build_int_prompt(id, gaps_json, runtime_url) {
         p += "SCOPE (dashboard/explore): assemble a real React Metrics Explorer / Dashboard view in sentry-data/frontend/src that composes already-ported Rill leaf widgets (import from @rilldata/web-common: RillChart, DimensionTable, Leaderboard, MeasureBigNumber, TimeGrainSelector) into ONE working view, feeding them data from the data layer (mock adapter at minimum; real runtime if runtime_url is set). Wire it into sentry-data/frontend/src/components/shell/DashboardPage.jsx sectionComponents as a new section 'explore' and add 'explore' to projectSections in sentry-data/frontend/src/components/app-shared.jsx. New view component lives under frontend/src/components/shell/. Do NOT touch SettingsView/ChatPanel/App.jsx beyond what the new section needs.";
     } else if id == "chat" {
         p += "SCOPE (chat charts): wire the ported Rill chat into the product chat so assistant messages render real charts. Use the ported messages/chart React components from @rilldata/web-common (ChartBlock / Messages). Add a message-render adapter that maps the store's chat toolCalls (see sentry-data/frontend/src/stores/useAppStore.js) onto the Rill block model (ChartBlockModel) and renders via ChartBlock, feeding chart data from the data layer. Wire into sentry-data/frontend/src/components/shell/ChatPanel.jsx / ChatView.jsx. Keep the existing chat composer/tool behavior working. Do NOT touch SettingsView or DashboardPage beyond what is needed.";
+    } else if id == "route" {
+        p += "SCOPE (route model): align the product's client routing/navigation to Rill's artifact-level navigation model so every artifact is reachable at a Rill-style path (/files, /explore, /canvas, /dashboard, /ai, /settings). Inspect sentry-data/frontend/src/App.jsx (route table), sentry-data/frontend/src/components/shell/DashboardPage.jsx (sectionComponents), sentry-data/frontend/src/components/shell/ProjectSubNavbar.jsx (tabs), sentry-data/frontend/src/components/app-shared.jsx (projectSections), and the sidebar. Add the missing artifact sections (files, canvas, dashboard, ai) as real routes backed by React views; where a view already exists (explore, analytics, chat, settings) keep that as the active view. Keep existing routes working; scope edits to routing + navigation + the view components you add. Do NOT rewrite the data layer or chat internals, and do NOT delete the connector-scrubbed demo-views unless they are superseded by a ported artifact view.";
+    } else if id == "ai" {
+        p += "SCOPE (AI chat): wire Rill's agent-based chat into the product chat. Rill routes a user request to an agent and exposes tools (create_chart, run_sql, list_metrics_views, list_metrics_view_columns, etc.) that return structured results; the create_chart tool returns {chart_type, spec} which the chart renderer consumes (the chart rendering path already exists via ChartContainer). Add a modular router/adapter in sentry-data/frontend/src that maps the product chat (ChatView.jsx, ChatComposer.jsx, ChatPanel.jsx, stores/useAppStore.js) onto Rill's agent router so a create_chart tool call yields a real rendered chart. If no AI backend is reachable, provide a deterministic mock router that answers simple prompts with a create_chart tool call against a default metrics view (the .rill-demo orders_metrics view). Allowed: chat files + a new adapter module; do NOT touch settings or dashboard wiring beyond what chat needs.";
     } else if id == "settings" {
         p += "SCOPE (settings): port Rill's settings into the product app at sentry-data/frontend/src. Rill ORG settings = General, Billing, Usage + Users (Members, Guests, Groups); Rill PROJECT settings = General (name, GitHub, visibility, danger zone), Environment Variables, Public URLs. Build React settings views matching Rill's sections, wired into the existing settings surfaces: global /settings/* (SettingsPage.jsx), project SettingsView.jsx, and org OrganizationSettingsView.jsx. Terminology: org = Rill organization, project = Rill project. Reuse existing settings layout/sidebars. Do NOT break existing settings; scope edits to settings files only.";
     }
@@ -98,8 +102,10 @@ let runtime_url = ();
 if args != () && args.runtime_url != () { runtime_url = args.runtime_url; }
 
 let areas = [
+    #{ id: "route", label: "Route model (Rill artifact-level react-router paths)" },
     #{ id: "dashboard", label: "Dashboard / Explore view (assembled React metric explorer)" },
     #{ id: "chat", label: "Chat chart rendering (Rill ChartBlock port)" },
+    #{ id: "ai", label: "AI chat: Rill agent router + modular Parrot adapter" },
     #{ id: "settings", label: "Settings (org + project)" },
     #{ id: "data", label: "Runtime + mock data wiring (RuntimeClientProvider / QueryClientProvider + metrics view)" },
 ];
@@ -110,7 +116,7 @@ for a in areas {
     else if scope == a.id { sel.push(a); }
 }
 if sel.len() == 0 {
-    pause("verification", "args.scope must be all|dashboard|chat|settings|data");
+    pause("verification", "args.scope must be all|route|dashboard|chat|ai|settings|data");
 }
 
 phase("Evaluate");
@@ -136,7 +142,7 @@ for a in sel {
 let int_results = [];
 if mode == "integrate" || mode == "all" {
     phase("Integrate");
-    let order = ["data", "dashboard", "chat", "settings"];
+    let order = ["data", "route", "dashboard", "chat", "ai", "settings"];
     for oid in order {
         for a in sel {
             if a.id == oid {
