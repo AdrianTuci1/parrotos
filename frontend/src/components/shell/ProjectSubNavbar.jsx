@@ -5,8 +5,6 @@ import "@/styles/topbar.css";
 
 const projectTabs = [
   { id: "analytics", label: "Analytics" },
-  { id: "sources", label: "Sources" },
-  { id: "destinations", label: "Destinations" },
   { id: "storage", label: "Storage" },
   { id: "graph", label: "Graph" },
   { id: "chat", label: "Chat" },

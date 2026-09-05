@@ -3,7 +3,6 @@ import { useAppStore } from "@/stores/useAppStore";
 import { apiClient } from "@/services/ApiClient";
 import { cn } from "@/lib/utils";
 import { ChatPanel } from "@/components/shell/ChatPanel";
-import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connectorAuthFields";
 import { ChatComposer } from "@/components/shell/ChatComposer";
 import "@/styles/chat.css";
 
@@ -22,7 +21,6 @@ export function ChatView() {
     demoMode,
     currentOrganization,
     currentWorkspace,
-    fetchConnectorAuthConfig,
     submitToolResponse,
   } = useAppStore();
 
@@ -30,7 +28,6 @@ export function ChatView() {
   const [streaming, setStreaming] = useState(false);
   const [streamContent, setStreamContent] = useState("");
   const [approvalStates, setApprovalStates] = useState({});
-  const [connectorAuthFields, setConnectorAuthFields] = useState({});
   const [demoBannerVisible, setDemoBannerVisible] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -56,56 +53,11 @@ export function ChatView() {
     return null;
   })();
 
-  const pendingConnector = pendingAction?.toolCall?.connector;
-
-
   useEffect(() => {
     if (currentOrganization?.id && currentWorkspace?.id) {
       useAppStore.getState().fetchChatSessions(currentOrganization.id, currentWorkspace.id);
     }
   }, [currentOrganization?.id, currentWorkspace?.id]);
-
-
-
-  useEffect(() => {
-    const connector = pendingConnector;
-    if (!connector || demoMode || !currentOrganization?.id || !currentWorkspace?.id) {
-      return;
-    }
-    if (connectorAuthFields[connector]) {
-      return;
-    }
-
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const config = await fetchConnectorAuthConfig(currentOrganization.id, currentWorkspace.id, connector);
-        if (!cancelled && config) {
-          setConnectorAuthFields((current) => ({ ...current, [connector]: config }));
-        }
-      } catch (error) {
-        void error;
-        if (!cancelled) {
-          setConnectorAuthFields((current) => ({
-            ...current,
-            [connector]: CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS,
-          }));
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    pendingConnector,
-    demoMode,
-    currentOrganization?.id,
-    currentWorkspace?.id,
-    fetchConnectorAuthConfig,
-    connectorAuthFields,
-  ]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -214,23 +166,16 @@ export function ChatView() {
       let finalPayload = payload;
 
       if (isKeyInput) {
-        if (!finalPayload || !finalPayload.credentials) {
-          const connector = tc.connector || "integration";
-          const authConfig = connectorAuthFields[connector] || CONNECTOR_AUTH_FIELDS[connector] || DEFAULT_FIELDS;
-          const fields = authConfig.fields || DEFAULT_FIELDS.fields;
-          const values = {};
-          // Extract values from input fields in the DOM (fallback)
-          const container = document.querySelector('.chat-pending-action-fields');
-          if (container) {
-            const inputs = container.querySelectorAll('input');
-            inputs.forEach((input, idx) => {
-              if (fields[idx]) values[fields[idx].key] = input.value;
-            });
-          }
-          finalPayload = { connector_type: connector, credentials: values };
-        } else {
-          finalPayload = { connector_type: tc.connector || "integration", credentials: finalPayload.credentials };
+        const connector = tc.connector || "integration";
+        const values = {};
+        // Extract values from the rendered credential fields (generic)
+        const container = document.querySelector('.chat-pending-action-fields');
+        if (container) {
+          container.querySelectorAll('input').forEach((input, idx) => {
+            values[`field${idx}`] = input.value;
+          });
         }
+        finalPayload = { connector_type: connector, credentials: values };
       } else if (tc.type === "choice" || tc.action === "show_choices") {
         if (!finalPayload || !finalPayload.selected) {
           finalPayload = { selected: tc.choices?.[0]?.label };
@@ -251,7 +196,7 @@ export function ChatView() {
     } catch {
       setApprovalStates(prev => ({ ...prev, [key]: "rejected" }));
     }
-  }, [pendingAction, currentOrganization, currentWorkspace, connectorAuthFields, submitToolResponse]);
+  }, [pendingAction, currentOrganization, currentWorkspace, submitToolResponse]);
 
   const handleReject = useCallback((key) => {
     setApprovalStates(prev => ({ ...prev, [key]: "rejected" }));
@@ -297,7 +242,6 @@ export function ChatView() {
             onApprove={handleApprove}
             onReject={handleReject}
             messagesEndRef={messagesEndRef}
-            connectorAuthFields={connectorAuthFields}
           />
           {!pendingAction && (
             <ChatComposer

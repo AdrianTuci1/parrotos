@@ -70,8 +70,8 @@ export function ProjectEmptyState({ mode = "analytics" }) {
         </h2>
         <p className="project-empty-description">
           {isGraph
-            ? "Add at least one connector and let the first sync complete to unlock entities, lineage, and relationships in the graph."
-            : "Use chat and connector setup to bring the first live datasets into analytics."}
+            ? "Add at least one model and let the first sync complete to unlock entities, lineage, and relationships in the graph."
+            : "Use chat to bring the first live datasets into analytics."}
         </p>
 
         <div className="project-empty-actions">
@@ -81,14 +81,6 @@ export function ProjectEmptyState({ mode = "analytics" }) {
             onClick={handleNewChat}
           >
             Chat with our AI Assistant to help you with the onboarding process.
-          </button>
-
-          <button
-            type="button"
-            className="project-empty-action-row"
-            onClick={() => goTo("sources")}
-          >
-            Add connectors so you can see live data.
           </button>
         </div>
       </div>

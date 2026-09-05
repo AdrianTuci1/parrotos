@@ -2,8 +2,6 @@ import { useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/app-shell";
 import { AnalyticsView } from "@/components/shell/AnalyticsView";
-import { IntegrationsView } from "@/components/shell/IntegrationsView";
-import { DestinationsView } from "@/components/shell/DestinationsView";
 import { StorageView } from "@/components/shell/StorageView";
 import { GraphView } from "@/components/shell/GraphView";
 import { SettingsView } from "@/components/shell/SettingsView";
@@ -18,8 +16,6 @@ import { orgSections, projectSections } from "@/components/app-shared";
 const sectionComponents = {
   "create-project": CreateProjectView,
   analytics: AnalyticsView,
-  sources: IntegrationsView,
-  destinations: DestinationsView,
   storage: StorageView,
   graph: GraphView,
   settings: SettingsView,
@@ -110,12 +106,10 @@ export function DashboardPage() {
     return () => { cancelled = true; };
   }, [orgSlug, projectSlug, section, organizations.length, workspaces.length, currentOrganization?.id, currentWorkspace?.id, activeSection, setActiveSection, selectOrganization, selectWorkspace, fetchProjects, navigate, urlSection]);
 
-  const isSlimProjectView = viewKey === "sources" || viewKey === "destinations";
-
   return (
     <Layout>
       {projectSlug ? (
-        <div className={`project-view-wrapper${isSlimProjectView ? " is-slim" : ""}`}>
+        <div className="project-view-wrapper">
           <ActiveView />
         </div>
       ) : (

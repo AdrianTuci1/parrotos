@@ -4,17 +4,14 @@ import { config } from '@/config';
 import { organizationService } from '@/services/OrganizationService';
 import { projectService } from '@/services/ProjectService';
 import { agentService } from '@/services/AgentService';
-import { integrationService } from '@/services/IntegrationService';
 import { authService } from '@/services/AuthService';
 import { serviceAccountService } from '@/services/ServiceAccountService';
 import { apiTokenService } from '@/services/ApiTokenService';
 import { billingService } from '@/services/BillingService';
 import { userService } from '@/services/UserService';
 import { alertService } from '@/services/AlertService.js';
-import { connectorAuthService } from '@/services/ConnectorAuthService.js';
 import { notificationService } from '@/services/NotificationService.js';
 import { apiClient } from '@/services/ApiClient.js';
-import connectorsData from '@/data/connectors.json';
 import { analyticsService } from '@/services/AnalyticsService';
 import { specService } from '@/services/SpecService';
 import { storageService } from '@/services/StorageService';
@@ -439,7 +436,7 @@ export const useAppStore = create(
 
       isChatPanelOpen: true,
       organizationsData: [], projectsData: [], agentsData: [],
-      integrationsData: [], analyticsData: null, currentUser: null,
+      analyticsData: null, currentUser: null,
       serviceAccounts: [], apiTokens: [],
       subscription: null,
       accountMetrics: null,
@@ -541,7 +538,6 @@ export const useAppStore = create(
         currentUser: null,
         organizationsData: [],
         projectsData: [],
-        integrationsData: [],
         analyticsData: null,
         serviceAccounts: [],
         apiTokens: [],
@@ -572,7 +568,6 @@ export const useAppStore = create(
       organizationsData: [],
       projectsData: [],
       agentsData: [],
-      integrationsData: [],
       analyticsData: null,
       serviceAccounts: [],
       apiTokens: [],
@@ -726,17 +721,6 @@ export const useAppStore = create(
       return [];
     }
   },
-  fetchIntegrations: async (orgId, projectId) => {
-    if (isMockModeState(get())) return get().integrationsData;
-    try {
-      const integrations = await integrationService.list(orgId, projectId);
-      set({ integrationsData: integrations });
-      return integrations;
-    } catch (err) {
-      set({ error: err.message });
-      return [];
-    }
-  },
 
   selectOrganization: (organizationId) => {
     const organization = get().organizations.find((item) => item.id === organizationId);
@@ -755,7 +739,6 @@ export const useAppStore = create(
     set((state) => ({ currentOrganization: organization || state.currentOrganization, currentWorkspace: workspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
     if (get().shouldFetchApi() && organization) {
       get().fetchAgents(organization.id, workspaceId);
-      get().fetchIntegrations(organization.id, workspaceId);
     }
   },
 
@@ -1177,63 +1160,6 @@ export const useAppStore = create(
     }
   },
 
-  createIntegration: async (orgId, projectId, dto) => {
-    if (get().devMode) {
-      const integration = { id: `int_${Date.now()}`, ...dto, createdAt: new Date().toISOString() };
-      set((state) => ({ integrationsData: [...state.integrationsData, integration] }));
-      return integration;
-    }
-    set({ isLoading: true });
-    try {
-      const integration = await integrationService.create(orgId, projectId, dto);
-      set((state) => ({ integrationsData: [...state.integrationsData, integration], isLoading: false }));
-      return integration;
-    } catch (err) {
-      set({ error: err.message, isLoading: false });
-      throw err;
-    }
-  },
-
-  deleteIntegration: async (orgId, projectId, integrationId) => {
-    if (get().devMode) {
-      set((state) => ({ integrationsData: state.integrationsData.filter((i) => i.id !== integrationId) }));
-      return;
-    }
-    set({ isLoading: true });
-    try {
-      await integrationService.delete(orgId, projectId, integrationId);
-      set((state) => ({ integrationsData: state.integrationsData.filter((i) => i.id !== integrationId), isLoading: false }));
-    } catch (err) {
-      set({ error: err.message, isLoading: false });
-      throw err;
-    }
-  },
-
-  updateIntegration: async (orgId, projectId, integrationId, dto) => {
-    if (get().devMode) {
-      set((state) => ({
-        integrationsData: state.integrationsData.map((i) =>
-          i.id === integrationId ? { ...i, ...dto } : i
-        ),
-      }));
-      return;
-    }
-    set({ isLoading: true });
-    try {
-      const updated = await integrationService.update(orgId, projectId, integrationId, dto);
-      set((state) => ({
-        integrationsData: state.integrationsData.map((i) =>
-          i.id === integrationId ? { ...i, ...updated } : i
-        ),
-        isLoading: false,
-      }));
-      return updated;
-    } catch (err) {
-      set({ error: err.message, isLoading: false });
-      throw err;
-    }
-  },
-
   // ═══════════════════════════════════════════════
   // STORAGE
   // ═══════════════════════════════════════════════
@@ -1303,25 +1229,6 @@ export const useAppStore = create(
   getStorageDownloadUrl: async (orgId, projectId, volumeName, filePath) => {
     if (get().devMode || get().demoMode) return { url: null };
     return storageService.getDownloadUrl(orgId, projectId, volumeName, filePath);
-  },
-
-  // ═══════════════════════════════════════════════
-  // CONNECTOR SYNC
-  // ═══════════════════════════════════════════════
-
-  triggerConnectorSync: async (orgId, projectId, integrationId) => {
-    if (get().devMode || get().demoMode) {
-      return { status: 'triggered', message: 'Mock sync triggered' };
-    }
-    set({ isLoading: true });
-    try {
-      const result = await integrationService.triggerSync(orgId, projectId, integrationId);
-      set({ isLoading: false });
-      return result;
-    } catch (err) {
-      set({ error: err.message, isLoading: false });
-      throw err;
-    }
   },
 
   // ═══════════════════════════════════════════════
@@ -1825,65 +1732,6 @@ export const useAppStore = create(
           : get().currentWorkspace,
         isLoading: false,
       });
-      return result;
-    } catch (err) {
-      set({ error: err.message, isLoading: false });
-      throw err;
-    }
-  },
-
-  // ═══════════════════════════════════════════════
-  // INTEGRATION AUTH & DEPLOY
-  // ═══════════════════════════════════════════════
-
-  fetchIntegrationCatalog: async (orgId, projectId) => {
-    if (get().devMode) return connectorsData;
-    try {
-      return await integrationService.getCatalog(orgId, projectId);
-    } catch (err) {
-      set({ error: err.message });
-      return null;
-    }
-  },
-
-  fetchConnectorAuthConfig: async (orgId, projectId, connectorName) => {
-    if (get().devMode) {
-      const mockConfigs = {
-        Stripe: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Secret Key', type: 'password' }] },
-        GA4: { method: 'OAuth 2.0', fields: [{ key: 'propertyId', label: 'Property ID', type: 'text' }] },
-        'Search Console': { method: 'OAuth 2.0', fields: [{ key: 'siteUrl', label: 'Site URL', type: 'text' }] },
-        'Google Ads': { method: 'OAuth 2.0', fields: [{ key: 'customerId', label: 'Customer ID', type: 'text' }] },
-        'Meta Ads': { method: 'OAuth 2.0', fields: [{ key: 'adAccountId', label: 'Ad Account ID', type: 'text' }, { key: 'accessToken', label: 'Access Token', type: 'password' }] },
-        'TikTok Ads': { method: 'OAuth 2.0', fields: [{ key: 'advertiserId', label: 'Advertiser ID', type: 'text' }, { key: 'accessToken', label: 'Access Token', type: 'password' }] },
-        Shopify: { method: 'API Key', fields: [{ key: 'shopDomain', label: 'Shop Domain', type: 'text' }, { key: 'apiKey', label: 'API Key', type: 'password' }] },
-        WooCommerce: { method: 'API Key', fields: [{ key: 'storeUrl', label: 'Store URL', type: 'text' }, { key: 'consumerKey', label: 'Consumer Key', type: 'password' }, { key: 'consumerSecret', label: 'Consumer Secret', type: 'password' }] },
-        HubSpot: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Private App Token', type: 'password' }] },
-        Salesforce: { method: 'OAuth 2.0', fields: [{ key: 'clientId', label: 'Client ID', type: 'text' }, { key: 'clientSecret', label: 'Client Secret', type: 'password' }, { key: 'instanceUrl', label: 'Instance URL', type: 'text' }] },
-        PostHog: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Personal API Key', type: 'password' }, { key: 'projectId', label: 'Project ID', type: 'text' }] },
-        Klaviyo: { method: 'API Key', fields: [{ key: 'apiKey', label: 'Private API Key', type: 'password' }] },
-        Sentry: { method: 'API Key', fields: [{ key: 'authToken', label: 'Auth Token', type: 'password' }, { key: 'organizationSlug', label: 'Organization Slug', type: 'text' }] },
-        PostgreSQL: { method: 'Database Credentials', fields: [{ key: 'host', label: 'Host', type: 'text' }, { key: 'port', label: 'Port', type: 'text' }, { key: 'database', label: 'Database', type: 'text' }, { key: 'username', label: 'Username', type: 'text' }, { key: 'password', label: 'Password', type: 'password' }] },
-        MySQL: { method: 'Database Credentials', fields: [{ key: 'host', label: 'Host', type: 'text' }, { key: 'port', label: 'Port', type: 'text' }, { key: 'database', label: 'Database', type: 'text' }, { key: 'username', label: 'Username', type: 'text' }, { key: 'password', label: 'Password', type: 'password' }] },
-        MongoDB: { method: 'Database Credentials', fields: [{ key: 'uri', label: 'Connection URI', type: 'text' }, { key: 'database', label: 'Database', type: 'text' }] },
-        Prometheus: { method: 'None', fields: [{ key: 'url', label: 'Prometheus URL', type: 'text' }] },
-        BigQuery: { method: 'Service Account', fields: [{ key: 'serviceAccountKey', label: 'Service Account JSON', type: 'textarea' }] },
-      };
-      return mockConfigs[connectorName] || { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password' }] };
-    }
-    try {
-      return await connectorAuthService.getAuthConfig(orgId, projectId, connectorName);
-    } catch (err) {
-      set({ error: err.message });
-      throw err;
-    }
-  },
-
-  deployConnector: async (orgId, projectId, connectorName, credentials) => {
-    if (get().devMode) return { deployed: true, connectorName };
-    set({ isLoading: true });
-    try {
-      const result = await connectorAuthService.deployConnector(orgId, projectId, connectorName, credentials);
-      set({ isLoading: false });
       return result;
     } catch (err) {
       set({ error: err.message, isLoading: false });

@@ -2,7 +2,7 @@
 export const orgSections = ['stats', 'access', 'org-settings', 'metrics', 'invitations'];
 
 // Project-level sub-navbar items
-export const projectSections = ['analytics', 'sources', 'destinations', 'storage', 'graph', 'chat', 'settings'];
+export const projectSections = ['analytics', 'storage', 'graph', 'chat', 'settings'];
 
 export const analyticsViews = [
   { id: 'servers', label: 'Servers' },

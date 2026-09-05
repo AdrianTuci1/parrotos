@@ -2,7 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import { BarChart3, Plug, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { cn } from "@/lib/utils";
-import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connectorAuthFields";
+
+const DEFAULT_FIELDS = { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter key...' }], help: '' };
 
 // ═══════════════════════════════════════════════
 // CHAT PANEL — scrollable messages + inline composers
@@ -14,7 +15,7 @@ import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connec
  * When an inline composer is pending (waiting for user input),
  * the parent should hide the main ChatComposer.
  */
-export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
+export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef }) {
   const containerRef = useRef(null);
 
   // When pending action appears, scroll chat to bottom
@@ -56,7 +57,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                           approvalState={approvalStates[`${message.id}-${idx}`] || tool.status || "pending"}
                           onApprove={onApprove}
                           onReject={onReject}
-                          connectorAuthFields={connectorAuthFields}
                         />
                       ))}
                     </div>
@@ -78,7 +78,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                         approvalState={approvalStates[`${message.id}-${idx}`] || tool.status || "pending"}
                         onApprove={onApprove}
                         onReject={onReject}
-                        connectorAuthFields={connectorAuthFields}
                       />
                     );
                   }
@@ -116,7 +115,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
             action={pendingAction}
             onApprove={onApprove}
             onReject={onReject}
-            connectorAuthFields={connectorAuthFields}
           />
         </div>
       )}
@@ -128,7 +126,7 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
 // TOOL RESULT DISPATCHER
 // ═══════════════════════════════════════════════
 
-function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
+function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) {
   const key = `${msgId}-${tcIdx}`;
 
   if (tool.type === "widget") {
@@ -163,7 +161,6 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, co
         status={approvalState}
         onApprove={onApprove}
         onReject={onReject}
-        connectorAuthFields={connectorAuthFields}
       />
     );
   }
@@ -181,11 +178,11 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, co
 
 
 
-function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
+function PendingActionBar({ action, onApprove, onReject }) {
   const tc = action.toolCall;
   const isKeyInput = tc.action === "open_integration_modal";
   const connector = tc.connector || "integration";
-  const auth = isKeyInput ? (connectorAuthFields[connector] || DEFAULT_FIELDS) : null;
+  const auth = isKeyInput ? DEFAULT_FIELDS : null;
   const fields = auth?.fields || [];
   const [fieldValues, setFieldValues] = useState(() =>
     Object.fromEntries(fields.map((f) => [f.key, ""]))
@@ -266,10 +263,10 @@ function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = C
  * variant="key-input"  → form fields (API keys, domain, etc.) + Approve/Cancel
  * variant="choice"     → list of clickable option buttons
  */
-function InlineActionComposer({ variant, connector, approvalKey, status, onApprove, onReject, choices, title, subtitle, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
-  // --- KEY-INPUT variant (connector auth form) ---
+function InlineActionComposer({ variant, connector, approvalKey, status, onApprove, onReject, choices, title, subtitle }) {
+  // --- KEY-INPUT variant (credential form) ---
   if (variant === "key-input") {
-    const auth = connectorAuthFields[connector] || { ...DEFAULT_FIELDS, method: `${connector} API` };
+    const auth = DEFAULT_FIELDS;
 
     if (status === "approved") {
       return (
