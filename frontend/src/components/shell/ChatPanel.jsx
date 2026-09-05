@@ -1,5 +1,8 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { BarChart3, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
+import { readable } from "svelte/store";
+import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { cn } from "@/lib/utils";
 
@@ -162,7 +165,67 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) 
     return <QueryResultTable tool={tool} />;
   }
 
+  // Chart tool-call: render a real Vega-Lite chart from the runtime via the
+  // ported ChartContainer. `chartSpec`/`chartType` are produced by the AI
+  // `create_chart` tool; absent a spec, fall through to a neutral card.
+  if (tool.type === "chart" || tool.action === "create_chart") {
+    if (!tool.chartSpec) return null;
+    return <ChatChart tool={tool} />;
+  }
+
   return null;
+}
+
+// ═══════════════════════════════════════════════
+// CHAT CHART — real chart rendered from the runtime
+// ═══════════════════════════════════════════════
+
+function ChatChart({ tool }) {
+  const runtimeClient = useRuntimeClient();
+  const chartType = tool.chartType || tool.config?.chart_type || "bar_chart";
+
+  // The create_chart spec is parsed JSON shaped like a CartesianChartSpec.
+  const chartSpec = useMemo(() => tool.chartSpec ?? {}, [tool.chartSpec]);
+  const spec = useMemo(() => readable(chartSpec), [chartSpec]);
+  const tafs = useMemo(() => readable(buildChatTafs(chartSpec)), [chartSpec]);
+
+  return (
+    <div className="chat-embedded-widget">
+      <div className="chat-embedded-widget-header">
+        <BarChart3 size={14} />
+        <span>{tool.title || tool.question || "Chart"}</span>
+      </div>
+      <div className="h-72">
+        <ChartContainer
+          runtimeClient={runtimeClient}
+          chartType={chartType}
+          spec={spec}
+          timeAndFilterStore={tafs}
+          themeMode="light"
+        />
+      </div>
+    </div>
+  );
+}
+
+function buildChatTafs(chartSpec) {
+  const timeRange = chartSpec?.time_range
+    ? {
+        start: chartSpec.time_range.start,
+        end: chartSpec.time_range.end,
+        timeZone: chartSpec.time_range.time_zone || "UTC",
+      }
+    : undefined;
+  return {
+    timeRange,
+    comparisonTimeRange: undefined,
+    showTimeComparison: false,
+    where: { cond: { op: "OPERATION_AND", exprs: [] } },
+    timeGrain: chartSpec?.time_grain || "TIME_GRAIN_DAY",
+    timeRangeState: undefined,
+    comparisonTimeRangeState: undefined,
+    hasTimeSeries: !!timeRange?.start && !!timeRange?.end,
+  };
 }
 
 // ═══════════════════════════════════════════════

@@ -4,6 +4,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import "@/styles/topbar.css";
 
 const projectTabs = [
+  { id: "explore", label: "Explore" },
   { id: "analytics", label: "Analytics" },
   { id: "storage", label: "Storage" },
   { id: "graph", label: "Graph" },

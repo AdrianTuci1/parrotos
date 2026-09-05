@@ -7,8 +7,11 @@ import { useRuntimeTenancy } from '@/services/RuntimeTenancy';
  * tree mountable when no deployment exists yet (demo mode): the widget data path
  * short-circuits to mocks before it ever calls into the runtime client.
  */
-const FALLBACK_HOST = import.meta.env.VITE_RUNTIME_HOST || 'http://localhost:8081';
-const FALLBACK_INSTANCE_ID = import.meta.env.VITE_RUNTIME_INSTANCE_ID || 'local';
+// In local dev there is no admin Postgres deployment to resolve, so we target the
+// self-hosted Rill runtime that the dev loop runs directly (`rill start`). Override
+// via VITE_RUNTIME_HOST / VITE_RUNTIME_INSTANCE_ID to point elsewhere.
+const FALLBACK_HOST = import.meta.env.VITE_RUNTIME_HOST || 'http://localhost:9009';
+const FALLBACK_INSTANCE_ID = import.meta.env.VITE_RUNTIME_INSTANCE_ID || 'default';
 
 /**
  * Wraps the React app in the Rill runtime-client <RuntimeClientProvider>, wiring

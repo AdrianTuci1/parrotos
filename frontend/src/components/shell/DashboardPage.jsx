@@ -6,6 +6,7 @@ import { StorageView } from "@/components/shell/StorageView";
 import { GraphView } from "@/components/shell/GraphView";
 import { SettingsView } from "@/components/shell/SettingsView";
 import { ChatView } from "@/components/shell/ChatView";
+import { ExploreView } from "@/components/shell/ExploreView";
 import { CreateProjectView } from "@/components/shell/CreateProjectView";
 import { OrganizationStatsView } from "@/components/shell/OrganizationStatsView";
 import { OrganizationAccessView } from "@/components/shell/OrganizationAccessView";
@@ -15,6 +16,7 @@ import { orgSections, projectSections } from "@/components/app-shared";
 
 const sectionComponents = {
   "create-project": CreateProjectView,
+  explore: ExploreView,
   analytics: AnalyticsView,
   storage: StorageView,
   graph: GraphView,
