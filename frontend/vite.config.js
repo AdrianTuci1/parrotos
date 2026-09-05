@@ -11,6 +11,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // Fixture the Rill source packages into the standalone React app so the BI
+      // query path can reuse the framework-agnostic runtime-client verbatim.
+      '@rilldata/web-common': path.resolve(__dirname, '../web-common/src'),
+      '@rilldata/web-admin': path.resolve(__dirname, '../web-admin/src'),
     }
   },
   server: {

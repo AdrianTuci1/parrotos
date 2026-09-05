@@ -4,6 +4,7 @@ import {
   WIDGET_TYPES,
 } from './widget-spec';
 import { resolveWidgetData } from './DataResolver';
+import { useRuntimeClient } from '@rilldata/web-common/runtime-client/react';
 import { useAppStore } from '@/stores/useAppStore';
 import { MetricWidget } from './widgets/MetricWidget';
 import { SparklineWidget } from './widgets/SparklineWidget';
@@ -50,6 +51,7 @@ export function WidgetRenderer({ spec, layoutSpec }) {
 
   const { demoMode, currentOrganization, currentWorkspace, timeRange } = useAppStore();
   const [data, setData] = useState(null);
+  const runtimeClient = useRuntimeClient();
 
   useEffect(() => {
     let cancelled = false;
@@ -65,13 +67,14 @@ export function WidgetRenderer({ spec, layoutSpec }) {
         projectId: currentWorkspace?.id,
         demoMode,
         workspace: currentWorkspace,
+        runtimeClient,
       }
     ).then((result) => {
       if (!cancelled) setData(result);
     });
 
     return () => { cancelled = true; };
-  }, [type, config, queryRef, id, timeRange, demoMode, currentOrganization?.id, currentWorkspace, layoutSpec]);
+  }, [type, config, queryRef, id, timeRange, demoMode, currentOrganization?.id, currentWorkspace, layoutSpec, runtimeClient]);
 
   const WidgetComponent = widgetComponents[type];
   if (!WidgetComponent) {

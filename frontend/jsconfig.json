@@ -11,7 +11,9 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@rilldata/web-common/*": ["../web-common/src/*"],
+      "@rilldata/web-admin/*": ["../web-admin/src/*"]
     }
   },
   "include": ["src/**/*"]

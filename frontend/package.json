@@ -13,7 +13,11 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "@bufbuild/protobuf": "^1.0.0",
+    "@connectrpc/connect": "^1.4.0",
+    "@connectrpc/connect-web": "^1.4.0",
     "@fontsource-variable/geist": "^5.2.9",
+    "svelte": "^5.0.0",
     "@radix-ui/react-slot": "^1.2.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

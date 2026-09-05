@@ -1,5 +1,5 @@
 import { generateMockData } from './widget-spec';
-import { analyticsService } from '@/services/AnalyticsService';
+import { QueryRequest } from '@rilldata/web-common/proto/gen/rill/runtime/v1/queries_pb';
 import { executeDirectQuery } from '@/services/DirectQueryService';
 import { cacheService } from '@/services/CacheService';
 
@@ -8,12 +8,38 @@ import { cacheService } from '@/services/CacheService';
  * 
  * Routing table:
  *   demoMode ON          → generateMockData (local)
- *   analytics/warehouse  → cacheService.withCache() → BigQuery
+ *   analytics/warehouse  → runtimeClient.queryService.query() → Go runtime (Connect)
+ *   mongodb/postgresql/mysql → runtimeClient.queryService.query(connector) → Go runtime
  *   prometheus           → executeDirectQuery() → Prometheus REST API
  *   api                  → executeDirectQuery() → REST endpoint
  *   ga4                  → executeDirectQuery() → GA4 API (future)
  *   unknown/fallback     → generateMockData (safe default)
+ *
+ * The analytics/warehouse/database branches no longer POST /api/v1 to the
+ * Node/Express backend. They go through the v2 RuntimeClient's Connect transport
+ * straight to the Go runtime service, targeting the project's runtime instance
+ * (instanceId) resolved from admin Postgres via RuntimeTenancy.
  */
+
+/**
+ * Run a SQL query against the Go runtime over Connect using the v2 RuntimeClient.
+ * Prefers the query's declared connector; an empty connector makes the runtime use
+ * the instance's default (project OLAP) connector. Rows come back as
+ * google.protobuf.Struct and are projected to plain objects for widget transforms.
+ */
+async function runRuntimeQuery(runtimeClient, connector, sql) {
+  if (!runtimeClient?.queryService) {
+    throw new Error('No runtime client available for the BI query path');
+  }
+  const response = await runtimeClient.queryService.query(
+    new QueryRequest({
+      instanceId: runtimeClient.instanceId,
+      connector,
+      sql,
+    })
+  );
+  return (response.data || []).map((row) => row.toJson?.() ?? row);
+}
 
 function substituteParams(template, params, context) {
   let sql = template;
@@ -227,7 +253,7 @@ function getAvailableConnectorsForQuery(queryRef, workspace) {
  * Resolve widget data — the single entry point for all widget data.
  */
 export async function resolveWidgetData(spec, widgetType, config, queryRef, context) {
-  const { timeRange, orgId, projectId, demoMode, workspace } = context;
+  const { timeRange, orgId, projectId, demoMode, workspace, runtimeClient } = context;
 
   // Demo mode — always use mock data
   if (demoMode) {
@@ -267,7 +293,7 @@ export async function resolveWidgetData(spec, widgetType, config, queryRef, cont
           query.refresh || '60s',
           orgId,
           projectId,
-          () => analyticsService.query(orgId, projectId, sql)
+          () => runRuntimeQuery(runtimeClient, query.connector || '', sql)
         );
         return transformBigQueryResult(rows, widgetType);
       }
@@ -296,7 +322,7 @@ export async function resolveWidgetData(spec, widgetType, config, queryRef, cont
           query.refresh || '60s',
           orgId,
           projectId,
-          () => analyticsService.queryDatabase(orgId, projectId, query.source, dbQuery)
+          () => runRuntimeQuery(runtimeClient, query.source, dbQuery)
         );
         return transformBigQueryResult(rows, widgetType);
       }
@@ -319,7 +345,7 @@ export async function resolveWidgetData(spec, widgetType, config, queryRef, cont
           query.refresh || '60s',
           orgId,
           projectId,
-          () => analyticsService.query(orgId, projectId, sql)
+          () => runRuntimeQuery(runtimeClient, query.connector || '', sql)
         );
         const data = transformBigQueryResult(rows, widgetType);
         if (data) results.push({ source: query.sourceId, data });
@@ -340,7 +366,7 @@ export async function resolveWidgetData(spec, widgetType, config, queryRef, cont
 }
 
 async function executeQueryForConnector(query, connector, context) {
-  const { timeRange, orgId, projectId, widgetType } = context;
+  const { timeRange, orgId, projectId, widgetType, runtimeClient } = context;
   
   // Modify query template to include connector filter
   let template = query.template;
@@ -365,7 +391,7 @@ async function executeQueryForConnector(query, connector, context) {
         query.refresh || '60s',
         orgId,
         projectId,
-        () => analyticsService.query(orgId, projectId, sql)
+        () => runRuntimeQuery(runtimeClient, query.connector || '', sql)
       );
       return transformBigQueryResult(rows, widgetType);
     }
@@ -380,7 +406,7 @@ async function executeQueryForConnector(query, connector, context) {
         query.refresh || '60s',
         orgId,
         projectId,
-        () => analyticsService.queryDatabase(orgId, projectId, query.source, dbQuery)
+        () => runRuntimeQuery(runtimeClient, query.source, dbQuery)
       );
       return transformBigQueryResult(rows, widgetType);
     }
