@@ -21,7 +21,7 @@ const projectSettingsItems = [
   { id: "general", label: "General", icon: <Globe size={16} /> },
   { id: "team", label: "Team", icon: <Users size={16} /> },
   { id: "notifications", label: "Notifications", icon: <Bell size={16} /> },
-  { id: "integrations", label: "Integrations & Hooks", icon: <LinkIcon size={16} /> },
+  { id: "integrations", label: "Webhooks", icon: <LinkIcon size={16} /> },
   { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
 ];
 
@@ -154,7 +154,7 @@ export function PlaceholderSection({ title, description }) {
 function IntegrationsSection() {
   return (
     <div className="settings-page">
-      <SectionHeader title="Integrations & Hooks" description="Incoming webhooks and outgoing connectors." />
+      <SectionHeader title="Webhooks" description="Incoming ingestion and outbound data delivery." />
 
       <div className="settings-card">
         <div className="settings-card-header">
@@ -179,7 +179,7 @@ function IntegrationsSection() {
         <div className="settings-card-header">
           <div className="settings-card-header-text">
             <h3 className="settings-card-title">Connected Sources</h3>
-            <p className="settings-card-subtitle">Live integrations feeding this project.</p>
+            <p className="settings-card-subtitle">Live webhooks feeding this project.</p>
           </div>
         </div>
         <div className="settings-card-body">
@@ -263,7 +263,7 @@ export function SettingsView() {
       <div className="settings-main">
         {activeTab === "general" && (
           <>
-            <SectionHeader title="Settings" description="Manage project configuration, team access, and integrations." />
+            <SectionHeader title="Settings" description="Manage project configuration, team access, and webhooks." />
             <GeneralSection />
             <PublicLinkRow />
           </>

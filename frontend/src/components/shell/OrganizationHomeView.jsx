@@ -65,7 +65,6 @@ export function OrganizationHomeView() {
   const totalProjects = metrics?.totalProjects ?? workspaces.length;
   const healthyProjects = metrics?.healthyProjects ?? workspaces.filter((w) => w.status === 'Healthy').length;
   const totalEvents = metrics?.totalEvents ?? 0;
-  const uniqueConnectors = metrics?.uniqueConnectors ?? [...new Set(workspaces.flatMap((w) => w.connectors || []))].length;
   const orgsList = metrics?.orgsList ?? organizations.map((o) => ({
     id: o.id,
     name: o.name,
@@ -78,9 +77,7 @@ export function OrganizationHomeView() {
   const workspacesTrend = totalOrgs > 0 ? '+1 this quarter' : 'No data';
   const projectsTrend = totalProjects > 0 ? '+2 this month' : 'No data';
   const eventsTrend = totalEvents > 0 ? '+15.3%' : 'No data';
-  const connectorsTrend = uniqueConnectors > 0 ? '+3 this quarter' : 'No data';
   const healthTrend = totalProjects > 0 ? 'Stable' : 'No data';
-  const dataSourcesTrend = uniqueConnectors > 0 ? '+7.3%' : 'No data';
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="full-width">
@@ -90,7 +87,7 @@ export function OrganizationHomeView() {
             <span className="organization-home-kicker">Account home</span>
             <h1 className="organization-home-title">Overview</h1>
             <p className="organization-home-copy">
-              Account-wide metrics across all workspaces, projects, and connectors.
+              Account-wide metrics across all workspaces and projects.
             </p>
           </div>
         </div>
@@ -149,12 +146,6 @@ export function OrganizationHomeView() {
                     detail={totalEvents > 0 ? 'Across all projects' : 'No project events yet'}
                     trend={eventsTrend}
                   />
-                  <AccountTile
-                    label="Active connectors"
-                    value={String(uniqueConnectors)}
-                    detail={uniqueConnectors > 0 ? 'Unique connector types deployed' : 'No connectors deployed'}
-                    trend={connectorsTrend}
-                  />
                 </>
               )}
             </div>
@@ -180,12 +171,6 @@ export function OrganizationHomeView() {
                     value={`${totalProjects > 0 ? Math.round((healthyProjects / totalProjects) * 100) : 0}%`}
                     detail={`${healthyProjects} of ${totalProjects} projects`}
                     trend={healthTrend}
-                  />
-                  <AccountTile
-                    label="Data sources"
-                    value={String(uniqueConnectors)}
-                    detail={uniqueConnectors > 0 ? 'Connected across all workspaces' : 'No connected sources'}
-                    trend={dataSourcesTrend}
                   />
                 </>
               )}

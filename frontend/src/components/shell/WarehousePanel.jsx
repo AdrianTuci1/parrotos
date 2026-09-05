@@ -173,7 +173,7 @@ export function WarehousePanel() {
                         <div className="warehouse-rec-item-header">
                           <Sparkles size={18} className="warehouse-rec-icon text-sky-400" />
                           <span className="warehouse-rec-desc">
-                            <strong>Query Partitioning:</strong> 3 heavy unscanned queries on <code>shopify_orders</code> causing query timeouts. Optimize partitions to free BigQuery slots.
+                            <strong>Query Partitioning:</strong> 3 heavy unscanned queries on <code>orders</code> causing query timeouts. Optimize partitions to free BigQuery slots.
                           </span>
                         </div>
                         <button 

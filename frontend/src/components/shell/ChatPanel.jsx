@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { BarChart3, Plug, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
+import { BarChart3, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
 import { cn } from "@/lib/utils";
 
@@ -85,13 +85,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                 flushGroup();
                 return result;
               })()}
-              {message.toolCalls?.find(t => t.type === "suggestion") && (
-                <ConnectorSuggestions
-                  tool={message.toolCalls.find(t => t.type === "suggestion")}
-                  msgId={message.id}
-                  onApprove={onApprove}
-                />
-              )}
             </div>
           </div>
         );
@@ -411,33 +404,6 @@ function InlineActionComposer({ variant, connector, approvalKey, status, onAppro
   return null;
 }
 
-// ═══════════════════════════════════════════════
-// CONNECTOR SUGGESTIONS
-// ═══════════════════════════════════════════════
-
-function ConnectorSuggestions({ tool, msgId, onApprove }) {
-  if (!tool) return null;
-  return (
-    <div className="chat-suggestions">
-      {tool.reason && <p className="chat-suggestion-reason">{tool.reason}</p>}
-      <div className="chat-suggestion-list">
-        {(tool.connectors || []).map((name) => (
-          <button
-            key={name}
-            className="chat-suggestion-btn"
-            onClick={() => {
-              const fakeKey = `${msgId}-suggest-${name}`;
-              onApprove(fakeKey);
-            }}
-          >
-            <Plug size={14} />
-            Connect {name}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ═══════════════════════════════════════════════
 // FORMATTED TEXT

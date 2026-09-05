@@ -32,11 +32,10 @@ export function isProjectEmpty(workspace) {
     return true;
   }
 
-  const connectorCount = Array.isArray(workspace.connectors) ? workspace.connectors.length : 0;
   const eventCount = parseEventCount(workspace.monthlyEvents);
   const sessionCount = Number(workspace.stats?.sessionsCount || 0);
 
-  return connectorCount === 0 && eventCount === 0 && sessionCount === 0;
+  return eventCount === 0 && sessionCount === 0;
 }
 
 export function ProjectEmptyState({ mode = "analytics" }) {
@@ -65,7 +64,7 @@ export function ProjectEmptyState({ mode = "analytics" }) {
         </span>
         <h2 className="project-empty-title">
           {isGraph
-            ? "The graph will populate after connectors start sending data."
+            ? "The graph will populate after models start producing data."
             : "This project does not have live data yet."}
         </h2>
         <p className="project-empty-description">

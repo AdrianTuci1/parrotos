@@ -37,7 +37,6 @@ function normalizeWorkspace(workspace) {
     monthlyEvents: workspace.monthlyEvents ?? String(workspace.stats?.sessionsCount ?? 0),
     dataConsumption: workspace.dataConsumption || '0 GB',
     lastUpdated: workspace.lastUpdated || 'just now',
-    connectors: Array.isArray(workspace.connectors) ? workspace.connectors : [],
   };
 }
 
@@ -48,10 +47,10 @@ const mockOrganizations = [
 ];
 
 const mockWorkspaces = [
-  { id: 'demo-project-1', organizationId: 'demo-org-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', lastUpdated: '4 min ago', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
-  { id: 'demo-project-2', organizationId: 'demo-org-3', name: 'Secondary Project', slug: 'secondary-project', domain: 'secondary-project.dev', status: 'Healthy', monthlyEvents: '2.7K', dataConsumption: '421 GB', lastUpdated: '11 min ago', connectors: ['Stripe', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL'] },
-  { id: 'demo-project-3', organizationId: 'demo-org-2', name: 'Monitoring Project', slug: 'monitoring-project', domain: 'monitoring-project.example', status: 'Monitoring', monthlyEvents: '1.9K', dataConsumption: '286 GB', lastUpdated: '18 min ago', connectors: ['Shopify', 'Klaviyo', 'PostHog', 'Meta Ads', 'TikTok Ads', 'MongoDB'] },
-  { id: 'demo-project-4', organizationId: 'demo-org-1', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] },
+  { id: 'demo-project-1', organizationId: 'demo-org-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', lastUpdated: '4 min ago' },
+  { id: 'demo-project-2', organizationId: 'demo-org-3', name: 'Secondary Project', slug: 'secondary-project', domain: 'secondary-project.dev', status: 'Healthy', monthlyEvents: '2.7K', dataConsumption: '421 GB', lastUpdated: '11 min ago' },
+  { id: 'demo-project-3', organizationId: 'demo-org-2', name: 'Monitoring Project', slug: 'monitoring-project', domain: 'monitoring-project.example', status: 'Monitoring', monthlyEvents: '1.9K', dataConsumption: '286 GB', lastUpdated: '18 min ago' },
+  { id: 'demo-project-4', organizationId: 'demo-org-1', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now' },
 ];
 
 const mockMetrics = {
@@ -61,8 +60,6 @@ const mockMetrics = {
   healthyProjects: 3,
   totalEvents: 17600,
   totalStorage: 1319,
-  uniqueConnectors: 12,
-  connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB', 'Sentry', 'GA4', 'Prometheus', 'PostgreSQL', 'Shopify', 'Klaviyo', 'Meta Ads', 'TikTok Ads'],
   orgsList: [
     { id: 'demo-org-1', name: 'Demo Organization', slug: 'demo-organization', plan: 'Agency', projectCount: 2 },
     { id: 'demo-org-2', name: 'Second Workspace', slug: 'second-workspace', plan: 'Growth', projectCount: 1 },
@@ -70,7 +67,6 @@ const mockMetrics = {
   ],
   recentActivity: [
     { title: 'Project updated', meta: 'Demo Project in Demo Organization' },
-    { title: 'Connector active', meta: 'Stripe connected to Demo Project' },
     { title: 'New project created', meta: 'Fresh Project added to Demo Organization' },
   ],
   // Org-level metrics (for OrganizationStatsView) - default for first org
@@ -79,18 +75,9 @@ const mockMetrics = {
   events: { total: 13000, formatted: '13K' },
   storage: { total: 612, formatted: '612 GB' },
   compute: { value: '30.6 GB', detail: 'BigQuery + orchestration', trend: '-8.1%' },
-  connectedSources: { value: '5', detail: 'Stripe most used', trend: '+12%' },
-  topConnector: { value: 'Stripe', detail: '2 projects', trend: '+5%' },
-  connectorUsage: [
-    { name: 'Stripe', count: 2, share: 100 },
-    { name: 'PostHog', count: 1, share: 50 },
-    { name: 'HubSpot', count: 1, share: 50 },
-    { name: 'GitHub', count: 1, share: 50 },
-    { name: 'MongoDB', count: 1, share: 50 },
-  ],
   projectList: [
-    { id: 'demo-project-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB', connectors: ['Stripe', 'PostHog', 'HubSpot', 'GitHub', 'MongoDB'] },
-    { id: 'demo-project-4', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', connectors: [] },
+    { id: 'demo-project-1', name: 'Demo Project', slug: 'demo-project', domain: 'demo-project.com', status: 'Healthy', monthlyEvents: '13K', dataConsumption: '612 GB' },
+    { id: 'demo-project-4', name: 'Fresh Project', slug: 'fresh-project', domain: 'fresh-project.dev', status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB' },
   ],
 };
 
@@ -101,8 +88,6 @@ const emptyMetrics = {
   healthyProjects: 0,
   totalEvents: 0,
   totalStorage: 0,
-  uniqueConnectors: 0,
-  connectors: [],
   orgsList: [],
   recentActivity: [],
   // Org-level
@@ -111,9 +96,6 @@ const emptyMetrics = {
   events: { total: 0, formatted: '0' },
   storage: { total: 0, formatted: '0 GB' },
   compute: { value: '0 GB', detail: '', trend: '' },
-  connectedSources: { value: '0', detail: '', trend: '' },
-  topConnector: { value: '-', detail: '', trend: '' },
-  connectorUsage: [],
   projectList: [],
 };
 
@@ -172,70 +154,41 @@ function getCurrentOrganizationForState(state) {
 // ═══════════════════════════════════════════════
 
 const mockChatSessions = [
-  // 1. Stripe connected → approved badge in chat → widgets → suggestions
+  // 1. Revenue overview — insights from the project data model
   {
-    id: 'chat_stripe_revenue',
-    title: 'Connect Stripe + revenue widgets',
+    id: 'chat_revenue_overview',
+    title: 'Monthly revenue overview',
     createdAt: new Date(Date.now() - 3600000).toISOString(),
     messages: [
       {
         id: 'msg_s1_1',
         role: 'user',
-        content: 'Connect my Stripe account so I can see revenue data.',
+        content: 'Show me a revenue overview for the last 30 days.',
         timestamp: new Date(Date.now() - 3500000).toISOString(),
       },
       {
         id: 'msg_s1_2',
         role: 'assistant',
-        content: 'To pull your Stripe data, I need your **Secret Key**. It stays encrypted — I only read charges, subscriptions, and payouts.',
+        content: 'Here\u2019s your revenue overview, built from the revenue model:',
         timestamp: new Date(Date.now() - 3490000).toISOString(),
         toolCalls: [
-          {
-            id: 'tc_s1_1',
-            type: 'action',
-            action: 'open_integration_modal',
-            connector: 'Stripe',
-            status: 'approved',
-          },
+          { id: 'tc_s1_2', type: 'widget', widgetType: 'metric', size: '2x1', queryRef: 'revenue_monthly', title: 'Monthly Revenue (30d)', config: { sparkline: true } },
+          { id: 'tc_s1_3', type: 'widget', widgetType: 'metric', size: '2x1', queryRef: 'revenue_mrr', title: 'Current MRR', config: { sparkline: true } },
         ],
       },
       {
         id: 'msg_s1_3',
-        role: 'user',
-        content: 'Done. What insights can you show me?',
-        timestamp: new Date(Date.now() - 3400000).toISOString(),
-      },
-      {
-        id: 'msg_s1_4',
         role: 'assistant',
-        content: 'Stripe is connected. Here\u2019s your revenue overview for the last 30 days:',
-        timestamp: new Date(Date.now() - 3390000).toISOString(),
-toolCalls: [
-          { id: 'tc_s1_2', type: 'widget', widgetType: 'metric', size: '2x1', queryRef: 'stripe_monthly_revenue', title: 'Monthly Revenue (30d)', config: { sparkline: true } },
-          { id: 'tc_s1_3', type: 'widget', widgetType: 'metric', size: '2x1', queryRef: 'stripe_mrr', title: 'Current MRR', config: { sparkline: true } },
-        ],
-      },
-      {
-        id: 'msg_s1_5',
-        role: 'assistant',
-        content: 'You\u2019ve processed **1,247 charges** this month totaling **\u20ac84,320**. Subscriptions are up 12% vs last month.\n\nI\u2019d recommend connecting **GA4** next — correlating revenue with traffic sources tells you which channels actually convert.',
+        content: 'You\u2019ve recorded **1,247 transactions** this month totaling **\u20ac84,320**. Recurring revenue is up 12% vs last month.\n\nI can break this down by product, region, or channel if you want to see where the growth is coming from.',
         timestamp: new Date(Date.now() - 3380000).toISOString(),
-        toolCalls: [
-          {
-            id: 'tc_s1_4',
-            type: 'suggestion',
-            reason: 'See which traffic channels and landing pages drive the most revenue.',
-            connectors: ['GA4', 'Search Console', 'Google Ads'],
-          },
-        ],
       },
     ],
   },
 
-  // 2. Sales data query → Shopify pending (key input)
+  // 2. Sales report for the board — raw numbers queried from the model
   {
-    id: 'chat_sales_csv',
-    title: 'Export sales data + connect Shopify',
+    id: 'chat_sales_report',
+    title: 'Export sales data',
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     messages: [
       {
@@ -257,12 +210,12 @@ toolCalls: [
             result: {
               columns: ['Date', 'Revenue', 'Orders', 'AOV', 'Channel'],
               rows: [
-                ['2026-04-01', '\u20ac12,450', '218', '\u20ac57.11', 'Shopify'],
-                ['2026-05-01', '\u20ac14,820', '256', '\u20ac57.89', 'Shopify'],
-                ['2026-06-01', '\u20ac13,900', '241', '\u20ac57.68', 'Shopify'],
-                ['2026-04-01', '\u20ac8,200', '94', '\u20ac87.23', 'Stripe'],
-                ['2026-05-01', '\u20ac9,650', '112', '\u20ac86.16', 'Stripe'],
-                ['2026-06-01', '\u20ac10,100', '118', '\u20ac85.59', 'Stripe'],
+                ['2026-04-01', '\u20ac12,450', '218', '\u20ac57.11', 'Online'],
+                ['2026-05-01', '\u20ac14,820', '256', '\u20ac57.89', 'Online'],
+                ['2026-06-01', '\u20ac13,900', '241', '\u20ac57.68', 'Online'],
+                ['2026-04-01', '\u20ac8,200', '94', '\u20ac87.23', 'Retail'],
+                ['2026-05-01', '\u20ac9,650', '112', '\u20ac86.16', 'Retail'],
+                ['2026-06-01', '\u20ac10,100', '118', '\u20ac85.59', 'Retail'],
               ],
               total: { revenue: '\u20ac69,120', orders: '1,039', aov: '\u20ac66.53' },
             },
@@ -272,82 +225,13 @@ toolCalls: [
       {
         id: 'msg_s2_3',
         role: 'assistant',
-        content: 'You\u2019re missing Shopify order tracking — we can see revenue through Stripe, but not product SKUs, order status, or inventory levels. Connect Shopify to get the full picture.',
+        content: 'Total revenue is **\u20ac69,120** across **1,039** orders, with an average order value of **\u20ac66.53**. I can add a channel breakdown or product-level pivot if you want more detail for the meeting.',
         timestamp: new Date(Date.now() - 86100000).toISOString(),
-        toolCalls: [
-          {
-            id: 'tc_s2_2',
-            type: 'action',
-            action: 'open_integration_modal',
-            connector: 'Shopify',
-          },
-        ],
       },
     ],
   },
 
-  // 3. CRM choice — which system? (choice pending)
-  {
-    id: 'chat_choice_pending',
-    title: 'Sales pipeline — choose CRM',
-    createdAt: new Date(Date.now() - 1800000).toISOString(),
-    messages: [
-      {
-        id: 'msg_c1_1',
-        role: 'user',
-        content: 'I want to build a sales pipeline dashboard. We use a CRM but I\u2019m not sure which integration fits best.',
-        timestamp: new Date(Date.now() - 1700000).toISOString(),
-      },
-      {
-        id: 'msg_c1_2',
-        role: 'assistant',
-        content: 'I can pull pipeline data from any of these CRMs. **Which one does your team use?**',
-        timestamp: new Date(Date.now() - 1690000).toISOString(),
-        toolCalls: [
-          {
-            id: 'tc_c1_1',
-            type: 'choice',
-            title: 'Which CRM does your team use?',
-            choices: [
-              { label: 'HubSpot', description: 'Deals, contacts, companies — full CRM suite' },
-              { label: 'Salesforce', description: 'Opportunities, accounts, leads — enterprise CRM' },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-
-  // 4. HubSpot credentials (key-input pending)
-  {
-    id: 'chat_hubspot_pending',
-    title: 'Connect HubSpot — enter token',
-    createdAt: new Date(Date.now() - 1600000).toISOString(),
-    messages: [
-      {
-        id: 'msg_s3_1',
-        role: 'user',
-        content: 'We use HubSpot. Connect it so I can see our deal pipeline and contacts.',
-        timestamp: new Date(Date.now() - 1500000).toISOString(),
-      },
-      {
-        id: 'msg_s3_2',
-        role: 'assistant',
-        content: 'HubSpot is a great fit for pipeline analytics. I\u2019ll sync your deals, contacts, and companies into the warehouse automatically.\n\nI need your **Private App Token** — it\u2019s read-only and scoped to CRM objects only. No passwords involved.',
-        timestamp: new Date(Date.now() - 1490000).toISOString(),
-        toolCalls: [
-          {
-            id: 'tc_s3_1',
-            type: 'action',
-            action: 'open_integration_modal',
-            connector: 'HubSpot',
-          },
-        ],
-      },
-    ],
-  },
-
-  // 5. Analytics deep-dive — advanced widgets (marketing, financial, sales)
+  // 3. Analytics deep-dive — advanced widgets (marketing, financial, sales)
   {
     id: 'chat_analytics_deep',
     title: 'Marketing & financial analytics',
@@ -386,16 +270,8 @@ toolCalls: [
       {
         id: 'msg_s4_4',
         role: 'assistant',
-        content: '**Summary:** Gross revenue is trending **+17%** vs yesterday. Your budget is at 46% utilization with 14h left in the day. Most active campaigns are driving healthy ROAS across channels.\n\nRevenue per transaction averages **\u20ac67.58** with a 3.2% conversion rate. The Enterprise plan accounts for the highest single-transaction value at \u20ac2,400.\n\nI recommend connecting **HubSpot** to layer your CRM pipeline on top — you\u2019ll be able to forecast deal-stage revenue directly.',
+        content: '**Summary:** Gross revenue is trending **+17%** vs yesterday. Your budget is at 46% utilization with 14h left in the day. Most active campaigns are driving healthy ROAS across channels.\n\nRevenue per transaction averages **\u20ac67.58** with a 3.2% conversion rate. The Enterprise plan accounts for the highest single-transaction value at \u20ac2,400.',
         timestamp: new Date(Date.now() - 7070000).toISOString(),
-        toolCalls: [
-          {
-            id: 'tc_s4_9',
-            type: 'suggestion',
-            reason: 'Combine financial analytics with CRM pipeline forecasting.',
-            connectors: ['HubSpot', 'Salesforce'],
-          },
-        ],
       },
     ],
   },
@@ -485,7 +361,7 @@ export const useAppStore = create(
       const orgName = getOrganizationNameFromEmail(dto.username || dto.email);
       const orgSlug = slugify(orgName);
       const org = { id: `org_${Date.now()}`, name: orgName, slug: orgSlug, owner: dto.email, plan: 'Starter', isDefault: true };
-      const workspace = { id: `project_${Date.now()}`, organizationId: org.id, name: `${orgName} Default`, slug: `${orgSlug}-default`, domain: `${orgSlug}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] };
+      const workspace = { id: `project_${Date.now()}`, organizationId: org.id, name: `${orgName} Default`, slug: `${orgSlug}-default`, domain: `${orgSlug}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now' };
       set({ currentUser: { id: `user_${Date.now()}`, email: dto.email, username: dto.username, roles: ['user'] }, organizations: [org], workspaces: [workspace], currentOrganization: org, currentWorkspace: null, activeScope: 'organization', activeSection: 'home', authInitialized: true, isLoading: false, error: null });
       return { user: { email: dto.email, username: dto.username } };
     }
@@ -749,7 +625,7 @@ export const useAppStore = create(
     if (get().devMode) {
       const id = `org_${Date.now()}`, slug = slugify(name);
       const newOrg = { id, name, slug, owner: 'you@example.com', plan: 'Starter' };
-      const newWorkspace = { id: `project_${Date.now()}`, organizationId: id, name: `${name} Default`, slug: `${slug}-default`, domain: `${slug}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now', connectors: [] };
+      const newWorkspace = { id: `project_${Date.now()}`, organizationId: id, name: `${name} Default`, slug: `${slug}-default`, domain: `${slug}.workspace`, status: 'Healthy', monthlyEvents: '0', dataConsumption: '0 GB', lastUpdated: 'just now' };
       set((state) => ({ organizations: [...state.organizations, newOrg], workspaces: [...state.workspaces, newWorkspace], currentOrganization: newOrg, currentWorkspace: null, activeScope: 'organization', activeSection: 'stats' }));
       return newOrg;
     }
@@ -1466,7 +1342,6 @@ export const useAppStore = create(
     if (isMockModeState(get())) {
       const sub = get().subscription || mockSubscription;
       return {
-        connectors: { limit: 10, current: 0, peak: 1 },
         projects: { limit: sub.limits?.maxProjects ?? 20, current: get().workspaces.length, peak: get().workspaces.length },
         storage: { limit: sub.limits?.maxStorage ? Math.round(sub.limits.maxStorage / (1024 ** 3)) : 500, current: 0, peak: 12 },
         queries: { limit: sub.limits?.maxQueries ?? 50000, current: 0, peak: 1200 },
@@ -1481,7 +1356,6 @@ export const useAppStore = create(
       const projects = metrics?.projects?.total ?? get().workspaces.length ?? 0;
       const storageGb = metrics?.storage?.total ?? 0;
       return {
-        connectors: { limit: sub.limits?.maxConnectors ?? 10, current: metrics?.connectedSources?.value ? parseInt(metrics.connectedSources.value, 10) : 0, peak: 1 },
         projects: { limit: sub.limits?.maxProjects ?? 20, current: projects, peak: projects },
         storage: { limit: sub.limits?.maxStorage ? Math.round(sub.limits.maxStorage / (1024 ** 3)) : 500, current: storageGb, peak: Math.max(storageGb, 12) },
         queries: { limit: sub.limits?.maxQueries ?? 50000, current: metrics?.events?.total ?? 0, peak: 1200 },
