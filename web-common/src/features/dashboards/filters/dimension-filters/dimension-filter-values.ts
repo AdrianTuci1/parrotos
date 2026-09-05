@@ -92,33 +92,44 @@ export function useDimensionSearch(
 
   return getCompoundQuery(mainQueries, (responses) => {
     // Get main results (above the fold)
-    const mainValues = responses
+    const mainValues: Array<string | null | undefined> = responses
       .filter((r) => !!r?.data)
-      .map((r) => r!.data!.map((i) => i[dimensionName]))
+      .map((r) => r!.data!.map((i) => i[dimensionName] as string | null | undefined))
       .flat();
 
-    // For Select and InList modes, ensure selected values are included
-    // This is the "below the fold" behavior - no query needed, just merge the values
-    const shouldIncludeSelectedValues =
-      (mode === DimensionFilterMode.InList && values.length > 0) ||
-      (mode === DimensionFilterMode.Select && values.length > 0);
-
-    if (shouldIncludeSelectedValues) {
-      // Merge results: main results first, then any selected values not already included
-      const mainSet = new Set(mainValues);
-      const actualSelectedValues = values.filter(
-        (value) => !mainSet.has(value),
-      );
-      const combinedValues = [...mainValues, ...actualSelectedValues];
-
-      const dedupedValues = new Set(combinedValues);
-      return [...dedupedValues] as string[];
-    }
-
-    // For Contains mode or when no selected values, just return main results
-    const dedupedValues = new Set(mainValues);
-    return [...dedupedValues] as string[];
+    return combineDimensionSearchResults(mainValues, mode, values);
   });
+}
+
+/**
+ * Framework-agnostic merge of the "above the fold" search results with any selected
+ * values (the "below the fold" behavior). Shared by the Svelte `useDimensionSearch`
+ * query and the React renderer so both apply identical deduplication logic.
+ */
+export function combineDimensionSearchResults(
+  mainValues: Array<string | null | undefined>,
+  mode: DimensionFilterMode,
+  values: string[],
+): string[] {
+  // For Select and InList modes, ensure selected values are included
+  // This is the "below the fold" behavior - no query needed, just merge the values
+  const shouldIncludeSelectedValues =
+    (mode === DimensionFilterMode.InList && values.length > 0) ||
+    (mode === DimensionFilterMode.Select && values.length > 0);
+
+  if (shouldIncludeSelectedValues) {
+    // Merge results: main results first, then any selected values not already included
+    const mainSet = new Set(mainValues);
+    const actualSelectedValues = values.filter((value) => !mainSet.has(value));
+    const combinedValues = [...mainValues, ...actualSelectedValues];
+
+    const dedupedValues = new Set(combinedValues);
+    return [...dedupedValues] as string[];
+  }
+
+  // For Contains mode or when no selected values, just return main results
+  const dedupedValues = new Set(mainValues);
+  return [...dedupedValues] as string[];
 }
 
 /**
@@ -192,8 +203,16 @@ export function useAllSearchResultsCount(
         r!.data!.map((i) => i[dimensionName + "__distinct_count"] as number),
       )
       .flat();
-    return values.reduce((s, v) => s + v, 0);
+    return combineDimensionSearchCounts(values);
   });
+}
+
+/**
+ * Framework-agnostic sum of per-metrics-view distinct counts. Shared by the Svelte
+ * `useAllSearchResultsCount` query and the React renderer so both apply identical logic.
+ */
+export function combineDimensionSearchCounts(counts: number[]): number {
+  return counts.reduce((s, v) => s + v, 0);
 }
 
 /**
@@ -204,7 +223,7 @@ export function useAllSearchResultsCount(
  * 2. For InList mode it is an `in` filter with all the selected values.
  * 3. For Contains mode it is a `like` filter.
  */
-function getFilterForSearchArgs(
+export function getFilterForSearchArgs(
   dimensionName: string,
   {
     mode,
