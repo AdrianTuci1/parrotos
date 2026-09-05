@@ -112,7 +112,7 @@ func (t *ParrotAgent) Handler(ctx context.Context, args *ParrotAgentArgs) (*Parr
 		}
 		return &ParrotAgentResult{Action: args.Action, Message: "Navigating"}, nil
 
-	case "open_integration_modal", "suggest_connectors", "trigger_harness", "check_harness", "update_bindings":
+	case "trigger_harness", "check_harness", "update_bindings":
 		// These intents are not Rill runtime operations; they are surfaced to the
 		// Parrot UI layer. Return an informational result so the agent can continue.
 		return &ParrotAgentResult{

@@ -1,9 +1,18 @@
+// Package statsparrot hosts the Statsparrot reverse-ETL extension grafted onto the
+// Rill runtime. Data sources stay 1:1 with Rill (its native connectors: DuckDB,
+// BigQuery, ClickHouse, files, etc.); the only custom piece is the `reversetl`
+// webhook fan-out. A model whose output connector is `reversetl` runs its SQL
+// against the instance's warehouse (the input connector) and POSTs the returned
+// rows to the configured destination URL, letting the user decide which data to
+// fan out and where.
+//
+// (The earlier multi-SaaS ingestion connectors — Stripe, Shopify, WooCommerce,
+// GA4, Meta Ads, TikTok Ads — were removed to keep sources 1:1 with Rill.)
 package statsparrot
 
 import (
 	"context"
 	"errors"
-	"fmt"
 	"maps"
 
 	"github.com/rilldata/rill/runtime/drivers"
@@ -12,71 +21,65 @@ import (
 	"go.uber.org/zap"
 )
 
-// Source names grafted from the statsparrot `connector/sources/*` connectors.
-// Each name is registered as both a runtime driver and a connector so it can be used
-// as a source in models. Ingestion is served by `ingestionExecutor` (AsModelExecutor)
-// and push-out by `reverseETLManager` (AsModelManager).
-const (
-	SourceStripe         = "stripe"
-	SourceShopify        = "shopify"
-	SourceWooCommerce    = "woocommerce"
-	SourceGoogleAnalytics = "google_analytics4"
-	SourceMetaAds        = "meta_ads"
-	SourceTikTokAds      = "tiktok_ads"
-)
-
-// sourceNames is the ordered list of statsparrot source connectors.
-var sourceNames = []string{
-	SourceStripe,
-	SourceShopify,
-	SourceWooCommerce,
-	SourceGoogleAnalytics,
-	SourceMetaAds,
-	SourceTikTokAds,
-}
-
-// StatsparrotConnectorToken is the default internal token guarding ingestion endpoints.
-// Sources accept a "connector_token" config property; this is the dev default.
-const StatsparrotConnectorToken = "dev-token"
-
-// connectorTokenKey is the config key shared by all sources for the internal token.
-const connectorTokenKey = "connector_token"
+// ConnectorName is the runtime connector registered by this package. It is not a
+// data source; it is a model *output* connector that performs the webhook fan-out.
+const ConnectorName = "reversetl"
 
 func init() {
-	for _, name := range sourceNames {
-		drivers.Register(name, driver{source: name})
-		drivers.RegisterAsConnector(name, driver{source: name})
-	}
+	drivers.Register(ConnectorName, driver{})
+	drivers.RegisterAsConnector(ConnectorName, driver{})
 }
 
-// driver is the connector driver implementation shared by all statsparrot sources.
-type driver struct {
-	source string
-}
+// driver is the connector driver for the reverse-ETL (webhook) fan-out.
+type driver struct{}
 
-// Open opens a new connection to the source.
-// Config contains base connector properties (api keys, token, endpoint).
+// Open opens a connection to the reverse-ETL destination.
 func (d driver) Open(_ string, instanceID string, config map[string]any, st *storage.Client, ac *activity.Client, logger *zap.Logger) (drivers.Handle, error) {
 	if instanceID == "" {
-		return nil, errors.New("statsparrot driver can't be shared")
+		return nil, errors.New("reversetl driver can't be shared")
 	}
-	return &connection{
-		source: d.source,
-		config: config,
-		logger: logger,
-	}, nil
+	return &connection{config: config, logger: logger}, nil
 }
 
-// Spec returns the connector metadata for the configured source.
+// Spec returns the connector metadata. These properties are configured on the
+// model's output connection and reach the executor via ModelExecuteOptions.OutputProperties.
 func (d driver) Spec() drivers.Spec {
-	return buildSpec(d.source)
+	return drivers.Spec{
+		DisplayName: "Reverse ETL (webhook)",
+		Description: "Fan out model results to an external webhook (reverse-ETL).",
+		ConfigProperties: []*drivers.PropertySpec{
+			{
+				Key:         "destination_url",
+				Type:        drivers.StringPropertyType,
+				Required:    true,
+				DisplayName: "Destination URL",
+				Description: "Webhook endpoint that receives the fan-out POST.",
+			},
+			{
+				Key:         "token",
+				Type:        drivers.StringPropertyType,
+				Secret:      true,
+				DisplayName: "Token",
+				Description: "Optional token sent as the X-Internal-Token header.",
+			},
+			{
+				Key:         "method",
+				Type:        drivers.StringPropertyType,
+				DisplayName: "Method",
+				Default:     "POST",
+			},
+			{
+				Key:         "batch_size",
+				Type:        drivers.NumberPropertyType,
+				DisplayName: "Batch Size",
+				Default:     "1000",
+			},
+		},
+	}
 }
 
-// HasAnonymousSourceAccess returns false: all sources require credentials.
+// HasAnonymousSourceAccess returns false: fan-out destinations require configuration.
 func (d driver) HasAnonymousSourceAccess(ctx context.Context, src map[string]any, logger *zap.Logger) (bool, error) {
-	if _, ok := src["connector_token"].(string); ok {
-		return true, nil
-	}
 	return false, nil
 }
 
@@ -85,20 +88,14 @@ func (d driver) TertiarySourceConnectors(ctx context.Context, src map[string]any
 	return nil, nil
 }
 
-// connection implements drivers.Handle for a statsparrot source.
+// connection implements drivers.Handle for a reverse-ETL destination.
 type connection struct {
-	source string
 	config map[string]any
 	logger *zap.Logger
 }
 
-// Ping verifies the source is reachable with the configured credentials.
+// Ping verifies the destination is reachable with the configured credentials.
 func (c *connection) Ping(ctx context.Context) error {
-	token, ok := c.config[connectorTokenKey].(string)
-	if !ok || token == "" {
-		// Backwards compatibility: token may be supplied per-source (source props).
-		return nil
-	}
 	return nil
 }
 
@@ -114,7 +111,7 @@ func (c *connection) MigrationStatus(ctx context.Context) (current, desired int,
 
 // Driver implements drivers.Handle.
 func (c *connection) Driver() string {
-	return c.source
+	return ConnectorName
 }
 
 // Config implements drivers.Handle.
@@ -152,7 +149,7 @@ func (c *connection) AsAI(instanceID string) (drivers.AIService, bool) {
 	return nil, false
 }
 
-// AsOLAP implements drivers.Handle.
+// AsOLAP implements drivers.Handle. The reverse-ETL destination is not an OLAP engine.
 func (c *connection) AsOLAP(instanceID string) (drivers.OLAPStore, bool) {
 	return nil, false
 }
@@ -177,90 +174,28 @@ func (c *connection) AsWarehouse() (drivers.Warehouse, bool) {
 	return nil, false
 }
 
-// AsModelExecutor implements drivers.Handle. Statsparrot sources deliver
-// ingestion (pull SaaS data into the instance's OLAP) via a model executor.
+// AsModelExecutor implements drivers.Handle. When `reversetl` is the model's output
+// connector, it runs the model SQL against the input (warehouse) connector and POSTs
+// the rows to the destination — the same pattern as the `file` connector's
+// olapToSelfExecutor.
 func (c *connection) AsModelExecutor(instanceID string, opts *drivers.ModelExecutorOptions) (drivers.ModelExecutor, error) {
-	return &ingestionExecutor{connection: c, instanceID: instanceID}, nil
+	if opts.OutputHandle == c {
+		if olap, ok := opts.InputHandle.AsOLAP(instanceID); ok {
+			return &webhookExecutor{conn: c, olap: olap}, nil
+		}
+	}
+	return nil, drivers.ErrNotImplemented
 }
 
-// AsModelManager implements drivers.Handle. Statsparrot sources deliver
-// reverse-ETL (push rows out to a SaaS destination) via a model manager.
+// AsModelManager implements drivers.Handle. The fan-out happens during execution
+// (the executor POSTs the rows); the manager only supports the reconcile lifecycle
+// so `reversetl` is accepted as a model result destination (there is no
+// materialized artifact to manage).
 func (c *connection) AsModelManager(instanceID string) (drivers.ModelManager, error) {
-	return &reverseETLManager{connection: c}, nil
+	return &webhookManager{}, nil
 }
 
 // AsNotifier implements drivers.Handle.
 func (c *connection) AsNotifier(properties map[string]any) (drivers.Notifier, error) {
 	return nil, drivers.ErrNotNotifier
-}
-
-// buildSpec returns the connector spec for a given source name.
-func buildSpec(source string) drivers.Spec {
-	return drivers.Spec{
-		DisplayName: source,
-		Description: fmt.Sprintf("Statsparrot %s connector (ingestion + reverse-ETL).", source),
-		ConfigProperties: []*drivers.PropertySpec{
-			{
-				Key:         connectorTokenKey,
-				Type:        drivers.StringPropertyType,
-				DisplayName: "Connector Token",
-				Description: "Internal token required to authorize ingestion endpoints.",
-				Secret:      true,
-				Default:     StatsparrotConnectorToken,
-			},
-		},
-		SourceProperties: sourceSpecProperties(source),
-	}
-}
-
-// sourceSpecProperties returns the per-source properties for the given source.
-// It mirrors the env vars in the statsparrot `connector/sources/<name>/index.js`.
-func sourceSpecProperties(source string) []*drivers.PropertySpec {
-	base := []*drivers.PropertySpec{
-		{
-			Key:         "connector_token",
-			Type:        drivers.StringPropertyType,
-			DisplayName: "Connector Token",
-			Description: "Internal token for the ingestion endpoint.",
-			Secret:      true,
-			Default:     StatsparrotConnectorToken,
-		},
-	}
-	switch source {
-	case SourceStripe:
-		return append(base,
-			&drivers.PropertySpec{Key: "api_key", Type: drivers.StringPropertyType, Required: true, DisplayName: "Stripe API Key", Secret: true},
-			&drivers.PropertySpec{Key: "objects", Type: drivers.StringPropertyType, DisplayName: "Objects", Description: "Comma-separated Stripe objects to ingest (charges, customers, invoices)."},
-			&drivers.PropertySpec{Key: "limit", Type: drivers.NumberPropertyType, DisplayName: "Batch Limit", Default: "100"},
-		)
-	case SourceShopify:
-		return append(base,
-			&drivers.PropertySpec{Key: "shop", Type: drivers.StringPropertyType, Required: true, DisplayName: "Shopify Domain"},
-			&drivers.PropertySpec{Key: "access_token", Type: drivers.StringPropertyType, Required: true, DisplayName: "Shopify Access Token", Secret: true},
-		)
-	case SourceWooCommerce:
-		return append(base,
-			&drivers.PropertySpec{Key: "store_url", Type: drivers.StringPropertyType, Required: true, DisplayName: "Store URL"},
-			&drivers.PropertySpec{Key: "consumer_key", Type: drivers.StringPropertyType, Required: true, DisplayName: "Consumer Key", Secret: true},
-			&drivers.PropertySpec{Key: "consumer_secret", Type: drivers.StringPropertyType, Required: true, DisplayName: "Consumer Secret", Secret: true},
-		)
-	case SourceGoogleAnalytics:
-		return append(base,
-			&drivers.PropertySpec{Key: "property_id", Type: drivers.StringPropertyType, Required: true, DisplayName: "GA4 Property ID"},
-			&drivers.PropertySpec{Key: "metrics", Type: drivers.StringPropertyType, DisplayName: "Metrics", Description: "Comma-separated GA4 metric names."},
-			&drivers.PropertySpec{Key: "dimensions", Type: drivers.StringPropertyType, DisplayName: "Dimensions", Description: "Comma-separated GA4 dimension names."},
-		)
-	case SourceMetaAds:
-		return append(base,
-			&drivers.PropertySpec{Key: "access_token", Type: drivers.StringPropertyType, Required: true, DisplayName: "Meta Access Token", Secret: true},
-			&drivers.PropertySpec{Key: "account_id", Type: drivers.StringPropertyType, Required: true, DisplayName: "Ad Account ID"},
-		)
-	case SourceTikTokAds:
-		return append(base,
-			&drivers.PropertySpec{Key: "access_token", Type: drivers.StringPropertyType, Required: true, DisplayName: "TikTok Access Token", Secret: true},
-			&drivers.PropertySpec{Key: "advertiser_id", Type: drivers.StringPropertyType, Required: true, DisplayName: "Advertiser ID"},
-		)
-	default:
-		return base
-	}
 }
