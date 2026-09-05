@@ -98,6 +98,8 @@ interface ExpandedDataStageArgs extends CellDataStageArgs {
   columnDef: ColumnDef<PivotDataRow>[];
   pivotData: PivotDataRow[];
   isCellDataEmpty: boolean;
+  // Column axes (sliced to the column page) used to build the column def.
+  columnDimensionAxesForColumnDef?: Record<string, string[]>;
 }
 
 /**
@@ -254,15 +256,19 @@ function createRowAxesStage(args: RowAxesStageArgs): Readable<PivotDataState> {
         (totalsRowResponse !== null && totalsRowResponse?.isFetching) ||
         rowAxesResult?.isFetching
       ) {
+        const totalsRowSkeleton = getTotalsRowSkeleton(
+          config,
+          columnDimensionAxes,
+        );
         return {
           isFetching: true,
           data: cache.lastPivotData,
           columnDef: cache.lastPivotColumnDef,
           assembled: false,
           totalColumns: cache.lastTotalColumns,
-          totalsRowData: plan.displayTotalsRow
-            ? getTotalsRowSkeleton(config, columnDimensionAxes)
-            : undefined,
+          totalsRowData: plan.displayTotalsRow ? totalsRowSkeleton : undefined,
+          totalsRowDataForColumnDef: totalsRowSkeleton,
+          columnDimensionAxesForColumnDef: columnDimensionAxes,
         };
       }
 
@@ -288,6 +294,8 @@ function createRowAxesStage(args: RowAxesStageArgs): Readable<PivotDataState> {
           assembled: true,
           totalColumns: 0,
           totalsRowData: plan.displayTotalsRow ? {} : undefined,
+          totalsRowDataForColumnDef: {},
+          columnDimensionAxesForColumnDef: columnDimensionAxes,
         };
       }
 
@@ -347,12 +355,21 @@ function createCellDataStage(
 
   let tableCellQuery: AggregationQuery = readable(null);
   let columnDef: ColumnDef<PivotDataRow>[] = [];
+  // Records the exact column axes the columnDef below is built from. The
+  // Svelte store always builds columnDef with the real `totalsRowData`
+  // (independent of whether the totals ROW is displayed) and, in the
+  // non-flat + colDimensions case, with the axes sliced to the current column
+  // page. Exposing these lets the React port recompute an equivalent React
+  // columnDef.
+  let columnDimensionAxesForColumnDef: Record<string, string[]> | undefined =
+    columnDimensionAxes;
   if (isFlat || colDimensionNames.length || !rowDimensionNames.length) {
     const slicedAxesDataForDef = sliceColumnAxesDataForDef(
       config,
       columnDimensionAxes,
       totalsRowData,
     );
+    columnDimensionAxesForColumnDef = slicedAxesDataForDef;
 
     columnDef = getColumnDefForPivot(
       config,
@@ -390,6 +407,8 @@ function createCellDataStage(
           assembled: false,
           totalColumns,
           totalsRowData: plan.displayTotalsRow ? totalsRowData : undefined,
+          totalsRowDataForColumnDef: totalsRowData,
+          columnDimensionAxesForColumnDef,
         };
       }
 
@@ -429,6 +448,8 @@ function createCellDataStage(
             assembled: false,
             totalColumns,
             totalsRowData: plan.displayTotalsRow ? totalsRowData : undefined,
+            totalsRowDataForColumnDef: totalsRowData,
+            columnDimensionAxesForColumnDef,
           };
         }
         cellData = (tableCellResponse.data?.data || []) as PivotDataRow[];
@@ -451,6 +472,7 @@ function createCellDataStage(
         columnDef,
         pivotData,
         isCellDataEmpty,
+        columnDimensionAxesForColumnDef,
       });
     },
   );
@@ -475,6 +497,7 @@ function createExpandedDataStage(
     columnDef,
     pivotData,
     isCellDataEmpty,
+    columnDimensionAxesForColumnDef,
   } = args;
 
   const expandedRowMeasureValuesQuery = queryExpandedRowMeasureValues(
@@ -532,6 +555,8 @@ function createExpandedDataStage(
       reachedEndForRowData,
       totalsRowData: plan.displayTotalsRow ? totalsRowData : undefined,
       columnDimensionAxes,
+      totalsRowDataForColumnDef: totalsRowData,
+      columnDimensionAxesForColumnDef,
     };
   });
 }

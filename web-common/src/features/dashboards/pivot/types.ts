@@ -32,6 +32,14 @@ export interface PivotDataState {
   totalsRowData?: PivotDataRow;
   activeCellFilters?: PivotFilter;
   columnDimensionAxes?: Record<string, string[]>;
+  // Column-definition inputs. The Svelte data store always builds `columnDef`
+  // with the real row totals (independent of whether the totals ROW is
+  // displayed, which is gated by `totalsRowData`) and with the column axes
+  // sliced to the current column page. These are exposed so the React port
+  // can recompute equivalent React columnDefs using the React
+  // `getColumnDefForPivot` without re-deriving the display gating.
+  totalsRowDataForColumnDef?: PivotDataRow;
+  columnDimensionAxesForColumnDef?: Record<string, string[]>;
 }
 
 export type PivotDataStore = Readable<PivotDataState>;

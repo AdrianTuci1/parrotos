@@ -36,6 +36,8 @@
     "@sveltejs/kit": "^2.55.0",
     "@tanstack/svelte-query": "~5.76.0",
     "@tanstack/svelte-virtual": "^3.0.1",
+    "@tanstack/react-table": "^8.20.5",
+    "@tanstack/react-virtual": "^3.10.8",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/svelte": "^5.2.7",
     "@tiptap/core": "^3.20.1",

@@ -1,0 +1,630 @@
+import type { ComponentType } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { makeDimensionHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+import {
+  getNextLimitLabel,
+  LOADING_CELL,
+  SHOW_MORE_BUTTON,
+} from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
+import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
+import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
+import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
+import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { convertISOStringToJSDateWithSameTimeAsSelectedTimeZone } from "@rilldata/web-common/lib/time/timezone";
+import { timeFormat } from "d3-time-format";
+import {
+  createIndexMap,
+  getAccessorForCell,
+  getTimeGrainFromDimension,
+  isShowMoreRow,
+  isTimeDimension,
+} from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+import {
+  DeltaChange,
+  DeltaChangePercentage,
+  PercentageChange,
+  PivotDeltaCell,
+  PivotExpandableCell,
+  PivotMeasureCell,
+  PivotShowMoreCell,
+} from "@rilldata/web-common/features/dashboards/pivot/react/CellComponents";
+import {
+  COMPARISON_DELTA,
+  COMPARISON_PERCENT,
+  PivotChipType,
+  type MeasureType,
+  type PivotDataRow,
+  type PivotDataStoreConfig,
+  type PivotMeasureFormatting,
+  type PivotTimeConfig,
+} from "@rilldata/web-common/features/dashboards/pivot/types";
+
+function sanitizeHeaderValue(value: unknown): string {
+  if (value === "") return "\u00A0";
+  if (typeof value === "string") return value;
+  return String(value);
+}
+
+/***
+ * Create nested and grouped column definitions for pivot table.
+ * React translation of the Svelte view-layer column builder; the pure
+ * framework-agnostic helpers (createIndexMap, getAccessorForCell,
+ * isTimeDimension, getTimeGrainFromDimension, isShowMoreRow) are reused
+ * verbatim from pivot-utils.
+ */
+function createColumnDefinitionForDimensions(
+  config: PivotDataStoreConfig,
+  colDimensions: { label: string; name: string }[],
+  headers: Record<string, string[]>,
+  leafData: ColumnDef<PivotDataRow>[],
+  totals: PivotDataRow,
+): ColumnDef<PivotDataRow>[] {
+  const dimensionNames = config.colDimensionNames;
+  const timeConfig = config.time;
+
+  const filterColumns = Boolean(dimensionNames.length);
+
+  const colValuesIndexMaps = dimensionNames?.map((colDimension) =>
+    createIndexMap(headers[colDimension]),
+  );
+
+  const levels = dimensionNames.length;
+
+  function createNestedColumns(
+    level: number,
+    colValuePair: { [key: string]: string },
+  ): ColumnDef<PivotDataRow>[] {
+    if (level === levels) {
+      const accessors = getAccessorForCell(
+        dimensionNames,
+        colValuesIndexMaps,
+        leafData.length,
+        colValuePair,
+      );
+
+      const leafNodes = leafData.map((leaf, i) => ({
+        ...leaf,
+        accessorKey: accessors[i],
+      }));
+
+      if (!filterColumns) {
+        return leafNodes;
+      }
+      return leafNodes.filter((leaf) =>
+        Object.keys(totals).includes(leaf.accessorKey as string),
+      );
+    }
+
+    const headerValues = headers[dimensionNames?.[level]];
+    return headerValues
+      ?.map((value) => {
+        let displayValue = value;
+        if (
+          isTimeDimension(dimensionNames?.[level], timeConfig?.timeDimension)
+        ) {
+          const timeGrain = getTimeGrainFromDimension(dimensionNames?.[level]);
+
+          const dt = convertISOStringToJSDateWithSameTimeAsSelectedTimeZone(
+            value,
+            timeConfig?.timeZone || "UTC",
+          );
+          const timeFormatter = timeFormat(
+            timeGrain ? TIME_GRAIN[timeGrain].d3format : "%H:%M",
+          ) as (d: Date) => string;
+
+          displayValue = timeFormatter(dt);
+        }
+
+        const nestedColumns = createNestedColumns(level + 1, {
+          ...colValuePair,
+          [dimensionNames[level]]: value,
+        });
+
+        const dimensionPath = {
+          ...colValuePair,
+          [dimensionNames[level]]: value,
+        };
+
+        return {
+          header: sanitizeHeaderValue(displayValue),
+          columns: nestedColumns,
+          meta: {
+            dimensionPath,
+          },
+        };
+      })
+      .filter((column) => column.columns.length > 0);
+  }
+
+  // Construct column def for Row Totals
+  let rowTotalsColumns: ColumnDef<PivotDataRow>[] = [];
+  if (
+    config.pivot.showTotalsColumn !== false &&
+    config.rowDimensionNames.length &&
+    config.colDimensionNames.length
+  ) {
+    // The row-totals column reuses the leaf measure defs but holds aggregate
+    // values, so mark them to exclude from conditional formatting (their
+    // magnitudes would dominate the per-measure color domain).
+    const totalsLeafData: ColumnDef<PivotDataRow>[] = leafData.map((leaf) => ({
+      ...leaf,
+      meta: { ...leaf.meta, isRowTotal: true },
+    }));
+    rowTotalsColumns = colDimensions.reverse().reduce((acc, dimension) => {
+      const { name } = dimension;
+      return [
+        {
+          id: name,
+          header: "",
+          columns: acc,
+        },
+      ];
+    }, totalsLeafData);
+  }
+
+  const nestedColumns = createNestedColumns(0, {});
+
+  return [...rowTotalsColumns, ...nestedColumns];
+}
+
+/**
+ * Get formatted value for dimension values. Format time dimension values
+ * if present.
+ */
+function formatDimensionValue(
+  value: string,
+  depth: number,
+  timeConfig: PivotTimeConfig,
+  rowDimensionNames: string[],
+) {
+  const dimension = rowDimensionNames?.[depth];
+  if (isTimeDimension(dimension, timeConfig?.timeDimension)) {
+    if (
+      value === "Total" ||
+      value === LOADING_CELL ||
+      value === undefined ||
+      value === null
+    )
+      return value;
+
+    const timeGrain = getTimeGrainFromDimension(dimension);
+
+    const dt = convertISOStringToJSDateWithSameTimeAsSelectedTimeZone(
+      value,
+      timeConfig?.timeZone || "UTC",
+    );
+    const timeFormatter = timeFormat(
+      timeGrain ? TIME_GRAIN[timeGrain]?.d3format : "%H:%M",
+    ) as (d: Date) => string;
+
+    return timeFormatter(dt);
+  }
+  return value;
+}
+
+export type MeasureColumnProps = Array<{
+  label: string;
+  // React component in the port (the Svelte version uses a SvelteComponent).
+  icon?: ComponentType;
+  formatter: (value: string | number | null | undefined) => string | null | undefined;
+  tooltipFormatter: (value: unknown) => string | null | undefined;
+  name: string;
+  type: MeasureType;
+  lowerIsBetter: boolean;
+  description?: string;
+  // Base measure name (without comparison suffix), used to key the color domain.
+  measureName: string;
+  // Conditional formatting for the main measure column (heatmap/data bar).
+  conditionalFormat?: PivotMeasureFormatting;
+}>;
+
+export function getMeasureColumnProps(
+  config: PivotDataStoreConfig,
+): MeasureColumnProps {
+  const { measureNames } = config;
+  return measureNames.map((m) => {
+    let measureName = m;
+    let label: string = "";
+    let icon: ComponentType | undefined;
+    let type: MeasureType = "measure";
+    if (m.endsWith(COMPARISON_DELTA)) {
+      icon = DeltaChange;
+      label = "Δ";
+      type = "comparison_delta";
+      measureName = m.replace(COMPARISON_DELTA, "");
+    } else if (m.endsWith(COMPARISON_PERCENT)) {
+      icon = DeltaChangePercentage;
+      label = "Δ %";
+      type = "comparison_percent";
+      measureName = m.replace(COMPARISON_PERCENT, "");
+    }
+    const measure = config.allMeasures.find(
+      (measure) => measure.name === measureName,
+    );
+
+    if (!measure) {
+      console.warn(`Measure ${m} not found in config.allMeasures`);
+    }
+
+    const tooltipFormatter: (value: unknown) => string | null | undefined =
+      type === "comparison_percent"
+        ? (v) =>
+            v != null
+              ? numberPartsToString(
+                  formatMeasurePercentageDifference(v as number),
+                )
+              : undefined
+        : measure
+          ? createMeasureValueFormatter<null | undefined>(measure, "tooltip")
+          : (v) => (v != null ? String(v) : undefined);
+
+    return {
+      label: label || measure?.displayName || measureName,
+      formatter: measure
+        ? createMeasureValueFormatter<null | undefined>(measure)
+        : (v: string | number | null | undefined) => v?.toString(),
+      tooltipFormatter,
+      name: m,
+      type,
+      icon,
+      lowerIsBetter: measure?.lowerIsBetter ?? false,
+      description: measure?.description,
+      measureName,
+      conditionalFormat:
+        type === "measure"
+          ? config.pivot.measureFormatting?.[measureName]
+          : undefined,
+    };
+  });
+}
+
+export type DimensionColumnProps = Array<{
+  label: string;
+  name: string;
+  description?: string;
+}>;
+
+export function getDimensionColumnProps(
+  dimensionNames: string[],
+  config: PivotDataStoreConfig,
+): DimensionColumnProps {
+  return dimensionNames.map((d) => {
+    const dimension = config.allDimensions.find(
+      (dimension) => dimension.name === d || dimension.column === d,
+    );
+    let label = dimension?.displayName || d;
+    let description = dimension?.description;
+    if (isTimeDimension(d, config.time.timeDimension)) {
+      const timeGrain = getTimeGrainFromDimension(d);
+      const grainLabel = TIME_GRAIN[timeGrain]?.label || d;
+      label = m.pivot_time_dimension_header({ grain: grainLabel });
+      description = undefined;
+    }
+    return {
+      label,
+      name: d,
+      description,
+    };
+  });
+}
+
+/**
+ * Create column definitions object for pivot table as required by TanStack
+ * Table (React binding).
+ */
+export function getColumnDefForPivot(
+  config: PivotDataStoreConfig,
+  columnDimensionAxes: Record<string, string[]> | undefined,
+  totals: PivotDataRow,
+): ColumnDef<PivotDataRow>[] {
+  const { rowDimensionNames, colDimensionNames, isFlat } = config;
+
+  const measures = getMeasureColumnProps(config);
+  const rowDimensions = getDimensionColumnProps(rowDimensionNames, config);
+  const colDimensions = getDimensionColumnProps(colDimensionNames, config);
+
+  return isFlat
+    ? getFlatColumnDef(config, measures, rowDimensions, rowDimensionNames)
+    : getNestedColumnDef(
+        config,
+        measures,
+        rowDimensions,
+        colDimensions,
+        columnDimensionAxes,
+        totals,
+        rowDimensionNames,
+      );
+}
+
+function getFlatColumnDef(
+  config: PivotDataStoreConfig,
+  measures: MeasureColumnProps,
+  rowDimensions: DimensionColumnProps,
+  rowDimensionNames: string[],
+): ColumnDef<PivotDataRow>[] {
+  const rowDefinitions: ColumnDef<PivotDataRow>[] = rowDimensions.map(
+    (d, i) => ({
+      id: d.name,
+      accessorFn: (row) => row[d.name],
+      header: d.label || d.name,
+      meta: {
+        description: d.description,
+      },
+      cell: ({ row, getValue }) => {
+        const rawValue = getValue() as string;
+        const value = formatDimensionValue(
+          rawValue,
+          i,
+          config.time,
+          rowDimensionNames,
+        );
+        const href = makeDimensionHref(row.original, d.name, rawValue);
+        if (href) {
+          return (
+            <PivotExpandableCell
+              value={value === null ? "null" : value}
+              row={row}
+              href={href}
+              expandable={false}
+            />
+          );
+        }
+        if (value === null) return "null";
+        return value;
+      },
+    }),
+  );
+
+  const leafColumns: (ColumnDef<PivotDataRow> & { name: string })[] = measures.map((m) => ({
+    accessorKey: m.name,
+    header: m.label || m.name,
+    name: m.name,
+    meta: {
+      icon: m.icon,
+      tooltipFormatter: m.tooltipFormatter,
+      description: m.description,
+      conditionalFormat: m.conditionalFormat,
+      measureName: m.measureName,
+    },
+    cell: (info) => {
+      const measureValue = info.getValue() as number | null | undefined;
+      const row = info.row;
+      const isShowMore = isShowMoreRow(row);
+
+      if (m.type === "comparison_percent") {
+        return (
+          <PercentageChange
+            isNull={measureValue == null}
+            color="text-fg-secondary"
+            value={
+              measureValue !== null && measureValue !== undefined
+                ? formatMeasurePercentageDifference(measureValue)
+                : null
+            }
+            inTable
+            lowerIsBetter={m.lowerIsBetter}
+          />
+        );
+      } else if (m.type === "comparison_delta") {
+        return (
+          <PivotDeltaCell
+            formattedValue={m.formatter(measureValue) as string}
+            value={measureValue}
+            lowerIsBetter={m.lowerIsBetter}
+          />
+        );
+      }
+      const value = m.formatter(measureValue);
+
+      if (value == null)
+        return <PivotMeasureCell isShowMoreRow={isShowMore} />;
+      return value;
+    },
+  }));
+
+  const columns = config.pivot.columns;
+  const timeDimension = config.time?.timeDimension;
+
+  const measureDefMap = new Map<string, ColumnDef<PivotDataRow>>();
+  const dimensionDefMap = new Map<string, ColumnDef<PivotDataRow>>();
+
+  measures.forEach((m, i) => {
+    measureDefMap.set(m.name, leafColumns[i]);
+  });
+
+  rowDimensions.forEach((d, i) => {
+    dimensionDefMap.set(d.name, rowDefinitions[i]);
+  });
+
+  const orderedColumnDefs: ColumnDef<PivotDataRow>[] = [];
+
+  columns.forEach((column) => {
+    const id = column.id;
+    const type = column.type;
+
+    if (type === PivotChipType.Measure) {
+      const measureDef = measureDefMap.get(id);
+      if (measureDef) {
+        orderedColumnDefs.push(measureDef);
+
+        const deltaMeasureName = `${id}${COMPARISON_DELTA}`;
+        const deltaMeasureDef = measureDefMap.get(deltaMeasureName);
+        if (deltaMeasureDef) {
+          orderedColumnDefs.push(deltaMeasureDef);
+        }
+
+        const percentMeasureName = `${id}${COMPARISON_PERCENT}`;
+        const percentMeasureDef = measureDefMap.get(percentMeasureName);
+        if (percentMeasureDef) {
+          orderedColumnDefs.push(percentMeasureDef);
+        }
+      }
+    } else {
+      let dimensionId = id;
+      if (type === PivotChipType.Time) {
+        dimensionId = `${timeDimension}_rill_${id}`;
+      }
+
+      const dimensionDef = dimensionDefMap.get(dimensionId);
+      if (dimensionDef) {
+        orderedColumnDefs.push(dimensionDef);
+      }
+    }
+  });
+
+  return orderedColumnDefs;
+}
+
+export function getRowNestedLabel(
+  rowDimensions: Array<{ label: string; name: string }>,
+) {
+  return rowDimensions.map((d) => d.label || d.name).join(" > ");
+}
+
+function getNestedColumnDef(
+  config: PivotDataStoreConfig,
+  measures: MeasureColumnProps,
+  rowDimensions: DimensionColumnProps,
+  colDimensions: DimensionColumnProps,
+  columnDimensionAxes: Record<string, string[]> | undefined,
+  totals: PivotDataRow,
+  rowDimensionNames: string[],
+): ColumnDef<PivotDataRow>[] {
+  // For nested tables, we only use the first row dimension in the column definition
+  const rowDimensionsForColumnDef = rowDimensions.slice(0, 1);
+  const nestedLabel = getRowNestedLabel(rowDimensions);
+
+  const hasNestedDimensions = rowDimensions.length > 1;
+
+  const rowDefinitions: ColumnDef<PivotDataRow>[] =
+    rowDimensionsForColumnDef.map((d) => ({
+      id: d.name,
+      accessorFn: (row) => row[d.name],
+      header: nestedLabel,
+      meta: {
+        // The header collapses multiple row dimensions into one label, so a
+        // single description only makes sense when there is one row dimension.
+        description: rowDimensions.length === 1 ? d.description : undefined,
+      },
+      cell: ({ row, getValue }) => {
+        const value = getValue() as string;
+
+        // Handle Show More button
+        if (value === SHOW_MORE_BUTTON) {
+          const rowData = row.original;
+          const dimensionLabel =
+            rowDimensions?.[row.depth]?.label ||
+            rowDimensions?.[row.depth]?.name;
+          const currentLimit = rowData.__currentLimit as number;
+          const label = `Increase limit to ${getNextLimitLabel(currentLimit)} on "${dimensionLabel}"`;
+          return (
+            <PivotShowMoreCell
+              value={label}
+              row={row}
+              hasNestedDimensions={hasNestedDimensions}
+            />
+          );
+        }
+
+        const formattedDimensionValue = formatDimensionValue(
+          value,
+          row.depth,
+          config.time,
+          rowDimensionNames,
+        );
+
+        const href = makeDimensionHref(
+          row.original,
+          rowDimensionNames[row.depth],
+          value,
+        );
+
+        return (
+          <PivotExpandableCell
+            value={formattedDimensionValue as string}
+            row={row}
+            hasNestedDimensions={hasNestedDimensions}
+            href={href}
+          />
+        );
+      },
+    }));
+
+  let firstDimensionColumns: ColumnDef<PivotDataRow>[] = rowDefinitions;
+  if (config.rowDimensionNames.length && config.colDimensionNames.length) {
+    firstDimensionColumns = colDimensions.reverse().reduce((acc, dimension) => {
+      const { label, name, description } = dimension;
+      return [
+        {
+          id: name,
+          header: label || name,
+          meta: { description },
+          columns: acc,
+        },
+      ];
+    }, rowDefinitions);
+  }
+
+  const leafColumns: (ColumnDef<PivotDataRow> & { name: string })[] =
+    measures.map((m) => ({
+      accessorKey: m.name,
+      header: m.label || m.name,
+      name: m.name,
+      meta: {
+        icon: m.icon,
+        tooltipFormatter: m.tooltipFormatter,
+        description: m.description,
+        conditionalFormat: m.conditionalFormat,
+        measureName: m.measureName,
+      },
+      cell: (info) => {
+        const measureValue = info.getValue() as number | null | undefined;
+        const row = info.row;
+        const isShowMore = isShowMoreRow(row);
+
+        if (isShowMore) {
+          return <PivotMeasureCell isShowMoreRow={true} />;
+        }
+
+        if (m.type === "comparison_percent") {
+          return (
+            <PercentageChange
+              isNull={measureValue == null}
+              color="text-fg-secondary"
+              value={
+                measureValue !== null && measureValue !== undefined
+                  ? formatMeasurePercentageDifference(measureValue)
+                  : null
+              }
+              inTable
+              lowerIsBetter={m.lowerIsBetter}
+            />
+          );
+        } else if (m.type === "comparison_delta") {
+          return (
+            <PivotDeltaCell
+              formattedValue={m.formatter(measureValue) as string}
+              value={measureValue}
+              lowerIsBetter={m.lowerIsBetter}
+            />
+          );
+        }
+        const value = m.formatter(measureValue);
+
+        if (value == null)
+          return <PivotMeasureCell isShowMoreRow={isShowMore} />;
+        return value;
+      },
+    }));
+
+  const groupedColDef = createColumnDefinitionForDimensions(
+    config,
+    colDimensions,
+    columnDimensionAxes || {},
+    leafColumns,
+    totals,
+  );
+
+  return [...firstDimensionColumns, ...groupedColDef];
+}
