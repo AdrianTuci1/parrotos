@@ -42,7 +42,6 @@
   "include": [
     "**/*.d.ts",
     "**/*.ts",
-    "**/*.tsx",
     "**/*.svelte",
     "**/rollup.config.js",
     "scripts/**.js"
