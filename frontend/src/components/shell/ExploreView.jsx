@@ -1,10 +1,12 @@
 import { useMemo } from "react";
+import { useParams } from "react-router-dom";
 import { readable } from "svelte/store";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
 import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
 import { ViewFrame } from "@/components/shell/ViewFrame";
+import { DEFAULT_METRICS_VIEW } from "@/data/dataSource";
 
-const METRICS_VIEW = "orders_metrics";
+const METRICS_VIEW = DEFAULT_METRICS_VIEW;
 
 /**
  * Minimal Explore/Dashboard view that renders real Rill charts fed from the Go
@@ -17,6 +19,9 @@ const METRICS_VIEW = "orders_metrics";
  * store-based contract `ChartContainer` consumes), memoized for stable identity.
  */
 export function ExploreView() {
+  const { name } = useParams();
+  const metricsView = name || METRICS_VIEW;
+
   return (
     <ViewFrame>
       <div className="flex flex-col gap-4 p-4">
@@ -24,7 +29,7 @@ export function ExploreView() {
           <div>
             <h2 className="text-lg font-semibold">Explore</h2>
             <p className="text-sm text-muted-foreground">
-              Live charts from the <code className="rounded bg-muted px-1">{METRICS_VIEW}</code> metrics view
+              Live charts from the <code className="rounded bg-muted px-1">{metricsView}</code> metrics view
             </p>
           </div>
         </div>
@@ -34,7 +39,7 @@ export function ExploreView() {
             title="Revenue by channel"
             chartType="bar_chart"
             spec={{
-              metrics_view: METRICS_VIEW,
+              metrics_view: metricsView,
               x: { field: "channel", type: "nominal" },
               y: { field: "total_revenue", type: "quantitative" },
               isInteractive: false,
@@ -46,7 +51,7 @@ export function ExploreView() {
             title="Orders by channel"
             chartType="bar_chart"
             spec={{
-              metrics_view: METRICS_VIEW,
+              metrics_view: metricsView,
               x: { field: "channel", type: "nominal" },
               y: { field: "order_count", type: "quantitative" },
               isInteractive: false,
@@ -58,7 +63,7 @@ export function ExploreView() {
             title="Revenue over time"
             chartType="area_chart"
             spec={{
-              metrics_view: METRICS_VIEW,
+              metrics_view: metricsView,
               x: { field: "time", type: "temporal" },
               y: { field: "total_revenue", type: "quantitative" },
               isInteractive: false,

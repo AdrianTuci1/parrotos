@@ -5,10 +5,15 @@ import "@/styles/topbar.css";
 
 const projectTabs = [
   { id: "explore", label: "Explore" },
+  { id: "dashboard", label: "Dashboards" },
   { id: "analytics", label: "Analytics" },
+  { id: "canvas", label: "Canvas" },
+  { id: "files", label: "Files" },
   { id: "storage", label: "Storage" },
   { id: "graph", label: "Graph" },
   { id: "chat", label: "Chat" },
+  { id: "ai", label: "AI" },
+  { id: "settings", label: "Settings" },
 ];
 
 export function ProjectSubNavbar({ open, setOpen }) {

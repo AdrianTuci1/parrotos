@@ -1,12 +1,16 @@
 import { useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Layout } from "@/components/app-shell";
 import { AnalyticsView } from "@/components/shell/AnalyticsView";
 import { StorageView } from "@/components/shell/StorageView";
 import { GraphView } from "@/components/shell/GraphView";
 import { SettingsView } from "@/components/shell/SettingsView";
 import { ChatView } from "@/components/shell/ChatView";
-import { ExploreView } from "@/components/shell/ExploreView";
+import { MetricsExploreView } from "@/components/shell/MetricsExploreView";
+import { FilesView } from "@/components/shell/FilesView";
+import { DashboardView } from "@/components/shell/DashboardView";
+import { CanvasView } from "@/components/shell/CanvasView";
+import { AiView } from "@/components/shell/AiView";
 import { CreateProjectView } from "@/components/shell/CreateProjectView";
 import { OrganizationStatsView } from "@/components/shell/OrganizationStatsView";
 import { OrganizationAccessView } from "@/components/shell/OrganizationAccessView";
@@ -16,12 +20,16 @@ import { orgSections, projectSections } from "@/components/app-shared";
 
 const sectionComponents = {
   "create-project": CreateProjectView,
-  explore: ExploreView,
+  explore: MetricsExploreView,
+  dashboard: DashboardView,
   analytics: AnalyticsView,
+  canvas: CanvasView,
+  files: FilesView,
   storage: StorageView,
   graph: GraphView,
   settings: SettingsView,
   chat: ChatView,
+  ai: AiView,
   stats: OrganizationStatsView,
   access: OrganizationAccessView,
   "org-settings": OrganizationSettingsView,
@@ -30,13 +38,24 @@ const sectionComponents = {
 };
 
 export function DashboardPage() {
-  const { orgSlug, projectSlug, section } = useParams();
+  const { orgSlug, projectSlug, section, name, ["*"]: filePath } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { organizations, workspaces, currentOrganization, currentWorkspace, activeSection, setActiveSection, selectOrganization, selectWorkspace, fetchProjects } = useAppStore();
+
+  // The Rill `/files/[...file]` route is matched as a splat (literal `files`
+  // segment), so `section` is undefined there; derive it from the path.
+  const isFileRoute =
+    section === undefined &&
+    (filePath !== undefined || location.pathname.includes("/files"));
+  const effectiveSection = isFileRoute ? "files" : section;
 
   // Derive scope and view key directly from URL params, not stale state
   const scope = projectSlug ? "project" : "organization";
-  const urlSection = section || (projectSlug ? "analytics" : "stats");
+  const urlSection = effectiveSection || (projectSlug ? "analytics" : "stats");
+
+  // Artifact name (metrics view / canvas / file path) carried by the URL.
+  const artifactName = name || filePath;
   const viewKey = useMemo(() => {
     if (scope === "project") {
       if (projectSections.includes(urlSection)) return urlSection;
@@ -112,10 +131,10 @@ export function DashboardPage() {
     <Layout>
       {projectSlug ? (
         <div className="project-view-wrapper">
-          <ActiveView />
+          <ActiveView artifactName={artifactName} />
         </div>
       ) : (
-        <ActiveView />
+        <ActiveView artifactName={artifactName} />
       )}
     </Layout>
   );

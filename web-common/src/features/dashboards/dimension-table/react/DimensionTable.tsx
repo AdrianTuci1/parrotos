@@ -138,7 +138,7 @@ export default function DimensionTable({
     () => isBeingCompared?.(dimensionName),
     [isBeingCompared, dimensionName],
   );
-  const isBeingCompared = useReadable(isBeingComparedStore) ?? false;
+  const isBeingComparedValue = useReadable(isBeingComparedStore) ?? false;
 
   // ── Column geometry (framework-agnostic, reused verbatim) ────────────────
   const { columnWidths, largestColumnLength } = useMemo(
@@ -284,7 +284,7 @@ export default function DimensionTable({
                 virtualRowItems={virtualRows}
                 totalHeight={virtualHeight}
                 selectedIndex={selectedIndex}
-                isBeingCompared={isBeingCompared}
+                isBeingCompared={isBeingComparedValue}
                 excludeMode={excludeMode}
                 dimensionName={dimensionName}
                 toggleComparisonDimension={toggleComparisonDimension}

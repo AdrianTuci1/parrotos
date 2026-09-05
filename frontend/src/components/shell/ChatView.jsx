@@ -1,10 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAppStore } from "@/stores/useAppStore";
-import { apiClient } from "@/services/ApiClient";
+import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import { resolveRuntimeConfig } from "@/data/dataSource";
 import { cn } from "@/lib/utils";
 import { ChatPanel } from "@/components/shell/ChatPanel";
 import { ChatComposer } from "@/components/shell/ChatComposer";
+import { sendToRillRouter, DEFAULT_AGENT } from "@/components/shell/rillRouter";
 import "@/styles/chat.css";
+
+// Metrics view targeted by the ported Rill chart path. Injected into chart specs
+// that omit one so ChartBlock queries a real metrics view from the runtime.
+const CHART_METRICS_VIEW = resolveRuntimeConfig().defaultMetricsView;
 
 /**
  * ChatView — orchestrator.
@@ -13,12 +19,13 @@ import "@/styles/chat.css";
  * form renders inside ChatPanel at the end of the message stream.
  */
 export function ChatView() {
+  const runtimeClient = useRuntimeClient();
   const {
     chatSessions,
     activeChatId,
     createChatSession,
     addMessage,
-    demoMode,
+    setChatConversationId,
     currentOrganization,
     currentWorkspace,
     submitToolResponse,
@@ -28,7 +35,6 @@ export function ChatView() {
   const [streaming, setStreaming] = useState(false);
   const [streamContent, setStreamContent] = useState("");
   const [approvalStates, setApprovalStates] = useState({});
-  const [demoBannerVisible, setDemoBannerVisible] = useState(false);
   const messagesEndRef = useRef(null);
 
   const activeChat = chatSessions.find((chat) => chat.id === activeChatId);
@@ -64,7 +70,7 @@ export function ChatView() {
   }, [messages.length, streamContent]);
 
   // ═══════════════════════════════════════════════
-  // SSE STREAMING
+  // RILL AGENT ROUTER SEND
   // ═══════════════════════════════════════════════
 
   const handleSend = async () => {
@@ -73,12 +79,6 @@ export function ChatView() {
 
     if (!currentWorkspace?.id) {
       alert("Please select or create a workspace first.");
-      return;
-    }
-
-    if (demoMode) {
-      setDemoBannerVisible(true);
-      setTimeout(() => setDemoBannerVisible(false), 1000);
       return;
     }
 
@@ -96,50 +96,34 @@ export function ChatView() {
       }));
     }
 
+    // Continue the same Rill runtime conversation (if any) for this session.
+    const rillConversationId = activeChat?.conversationId;
+
     addMessage(currentChatId, { role: "user", content: text });
     setInput("");
     setStreaming(true);
     setStreamContent("");
 
     try {
-      const baseUrl = apiClient.baseUrl;
-      const token = localStorage.getItem("token") || "";
-      const url = `${baseUrl}/organizations/${currentOrganization?.id}/projects/${currentWorkspace?.id}/chat/message`;
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ sessionId: currentChatId, message: text, title: chatTitle }),
+      // Route the prompt through Rill's agent router (analyst_agent). The runtime
+      // emits router_agent text + create_chart tool calls, which the adapter maps
+      // into product-shaped toolCalls so ChatPanel renders a real chart.
+      const result = await sendToRillRouter({
+        runtimeClient,
+        prompt: text,
+        conversationId: rillConversationId,
+        agent: DEFAULT_AGENT,
       });
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let fullContent = "";
-      const toolResults = [];
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          try {
-            const event = JSON.parse(line.slice(6));
-            if (event.type === "text") { fullContent += event.content; setStreamContent(fullContent); }
-            else if (event.type !== "done" && event.id) { event.status = "pending"; toolResults.push(event); }
-            else if (event.type === "error") { fullContent = event.message; setStreamContent(fullContent); }
-          } catch (error) {
-            void error;
-          }
-        }
+      if (result.conversationId) {
+        setChatConversationId(currentChatId, result.conversationId);
       }
 
-      if (fullContent || toolResults.length > 0) {
-        addMessage(currentChatId, { role: "assistant", content: fullContent || null, toolCalls: toolResults.length > 0 ? toolResults : undefined });
-      }
+      addMessage(currentChatId, {
+        role: "assistant",
+        content: result.text || null,
+        toolCalls: result.toolCalls.length > 0 ? result.toolCalls : undefined,
+      });
     } catch (error) {
       void error;
       addMessage(currentChatId, { role: "assistant", content: "Sorry, I couldn\u2019t reach the AI service." });
@@ -221,16 +205,6 @@ export function ChatView() {
 
   return (
     <div className={cn("chat-main-wrapper", messages.length > 0 ? "chat-active-mode" : "chat-empty-mode")}>
-      {demoBannerVisible && (
-        <div className="chat-demo-banner">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>You can't send messages in demo mode.</span>
-        </div>
-      )}
       {messages.length > 0 ? (
         <>
           <ChatPanel
@@ -242,6 +216,7 @@ export function ChatView() {
             onApprove={handleApprove}
             onReject={handleReject}
             messagesEndRef={messagesEndRef}
+            metricsView={CHART_METRICS_VIEW}
           />
           {!pendingAction && (
             <ChatComposer

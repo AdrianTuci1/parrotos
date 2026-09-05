@@ -998,6 +998,235 @@
   color: #ffffff;
 }
 
+/* ==========================================================================
+   Rill settings port (org + project sections) — appended by Statsparrot
+   ========================================================================== */
+
+/* Branding (logo / favicon) */
+.settings-brand-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.settings-brand-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 260px;
+  flex: 1;
+}
+
+.settings-brand-preview {
+  width: 64px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 0.375rem;
+  border: 1px solid #262626;
+  background-color: rgba(255, 255, 255, 0.02);
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #8e918f;
+}
+
+.settings-brand-preview-empty {
+  background-color: #0e0f11;
+}
+
+/* Domain allow-list list */
+.settings-card-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Billing plan grid */
+.settings-plan-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.settings-plan-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex: 1 1 200px;
+  min-width: 190px;
+  padding: 0.875rem 1rem;
+  border: 1px solid #262626;
+  border-radius: 0.5rem;
+  background-color: #0e0f11;
+}
+
+.settings-plan-card.selected {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.03);
+}
+
+.settings-plan-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #34d399;
+}
+
+/* Status chip */
+.settings-status-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background-color: #1f1f1f;
+  border: 1px solid #262626;
+  color: #a1a1aa;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.125rem 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.settings-status-chip.ok {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* Toolbar (env vars, public URLs) */
+.settings-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.settings-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 200px;
+  max-width: 320px;
+  color: #8e918f;
+}
+
+.settings-search .settings-input {
+  padding-left: 0.25rem;
+}
+
+.settings-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.settings-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid #262626;
+  background-color: #0e0f11;
+  color: #a1a1aa;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.settings-filter-chip:hover {
+  color: #ffffff;
+}
+
+.settings-filter-chip.active {
+  border-color: #3b82f6;
+  color: #ffffff;
+  background-color: rgba(59, 130, 246, 0.12);
+}
+
+/* Env / public-URL table */
+.settings-env-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #262626;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.settings-env-table-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 150px minmax(120px, 1.5fr) 80px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid #262626;
+  font-size: 0.8125rem;
+}
+
+.settings-env-table-row:last-child {
+  border-bottom: none;
+}
+
+.settings-env-table-head {
+  background-color: #0e0f11;
+  color: #8e918f;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.settings-mono {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #e3e3e3;
+}
+
+.settings-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* Runtime metrics card */
+.metrics-summary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.metrics-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 140px;
+  flex: 1 1 140px;
+  padding: 0.75rem;
+  border: 1px solid #262626;
+  border-radius: 0.5rem;
+  background-color: #0e0f11;
+}
+
+.metrics-summary-label {
+  font-size: 0.75rem;
+  color: #8e918f;
+}
+
+.metrics-summary-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f3f4f6;
+}
+
 /* User table access list */
 .settings-users-list {
   display: flex;

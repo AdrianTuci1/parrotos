@@ -174,6 +174,7 @@ const mockChatSessions = [
         toolCalls: [
           { id: 'tc_s1_2', type: 'widget', widgetType: 'metric', size: '2x1', queryRef: 'revenue_monthly', title: 'Monthly Revenue (30d)', config: { sparkline: true } },
           { id: 'tc_s1_3', type: 'widget', widgetType: 'metric', size: '2x1', queryRef: 'revenue_mrr', title: 'Current MRR', config: { sparkline: true } },
+          { id: 'tc_s1_chart', type: 'chart', chartType: 'bar_chart', title: 'Revenue by Channel', chartSpec: { metrics_view: 'orders_metrics', time_range: { start: '2019-01-01T00:00:00Z', end: '2030-12-31T23:59:59Z', time_zone: 'UTC' }, x: { field: 'channel', type: 'nominal', sort: '-y' }, y: { field: 'total_revenue', type: 'quantitative', zeroBasedOrigin: true } } },
         ],
       },
       {
@@ -1825,6 +1826,9 @@ export const useAppStore = create(
     });
   },
   addMessage: (chatId, message) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => chat.id === chatId ? { ...chat, messages: [...chat.messages, { id: `msg_${Date.now()}`, ...message, timestamp: new Date().toISOString() }] } : chat) })),
+  // Stash the Rill conversation ID (from the agent router) on the session so
+  // subsequent messages in the same chat continue the same runtime conversation.
+  setChatConversationId: (chatId, conversationId) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => chat.id === chatId ? { ...chat, conversationId } : chat) })),
   updateToolStatus: (chatId, messageId, toolIdx, status) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => {
     if (chat.id !== chatId) return chat;
     return { ...chat, messages: chat.messages.map((msg) => {

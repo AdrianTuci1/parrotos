@@ -4,6 +4,8 @@ import { readable } from "svelte/store";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
 import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
+import { RillChartStream } from "@/components/shell/RillChartStream";
+import { isChartToolCall } from "@/components/shell/rillChatAdapter";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_FIELDS = { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter key...' }], help: '' };
@@ -18,7 +20,7 @@ const DEFAULT_FIELDS = { method: 'API Key', fields: [{ key: 'apiKey', label: 'AP
  * When an inline composer is pending (waiting for user input),
  * the parent should hide the main ChatComposer.
  */
-export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef }) {
+export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef, metricsView }) {
   const containerRef = useRef(null);
 
   // When pending action appears, scroll chat to bottom
@@ -41,8 +43,9 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                   {isUser ? message.content : <FormattedText text={message.content} />}
                 </div>
               )}
+              {!isUser && <RillChartStream message={message} metricsView={metricsView} />}
               {(() => {
-                const calls = message.toolCalls || [];
+                const calls = (message.toolCalls || []).filter((tc) => !isChartToolCall(tc));
                 const result = [];
                 let smallGroup = [];
                 const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !== "4x2";
@@ -165,9 +168,10 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) 
     return <QueryResultTable tool={tool} />;
   }
 
-  // Chart tool-call: render a real Vega-Lite chart from the runtime via the
-  // ported ChartContainer. `chartSpec`/`chartType` are produced by the AI
-  // `create_chart` tool; absent a spec, fall through to a neutral card.
+  // Chart tool-call: charts are normally rendered by RillChartStream (the ported
+  // ChartBlock path) ahead of this dispatcher, which filters chart tool calls out.
+  // This branch is an overflow fallback for chart-shaped calls that slip through,
+  // rendering a real Vega-Lite chart from the runtime via ChartContainer.
   if (tool.type === "chart" || tool.action === "create_chart") {
     if (!tool.chartSpec) return null;
     return <ChatChart tool={tool} />;

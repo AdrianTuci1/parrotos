@@ -1,32 +1,26 @@
 import { RuntimeClientProvider } from '@rilldata/web-common/runtime-client/react';
+import { resolveRuntimeConfig } from '@/data/dataSource';
 import { useRuntimeTenancy } from '@/services/RuntimeTenancy';
-
-/**
- * Local dev escape hatches. In production the host/instanceId are resolved from
- * the deployment record in admin Postgres (see RuntimeTenancy.js). These make the
- * tree mountable when no deployment exists yet (demo mode): the widget data path
- * short-circuits to mocks before it ever calls into the runtime client.
- */
-// In local dev there is no admin Postgres deployment to resolve, so we target the
-// self-hosted Rill runtime that the dev loop runs directly (`rill start`). Override
-// via VITE_RUNTIME_HOST / VITE_RUNTIME_INSTANCE_ID to point elsewhere.
-const FALLBACK_HOST = import.meta.env.VITE_RUNTIME_HOST || 'http://localhost:9009';
-const FALLBACK_INSTANCE_ID = import.meta.env.VITE_RUNTIME_INSTANCE_ID || 'default';
 
 /**
  * Wraps the React app in the Rill runtime-client <RuntimeClientProvider>, wiring
  * the BI UI directly to the Go admin/runtime Connect service. The host + instanceId
  * come from the org -> project -> deployment mapping (RuntimeTenancy); the jwt is
  * the runtime JWT minted by the admin service.
+ *
+ * When no deployment is resolved (demo/local dev) the data layer's runtime config
+ * (data/dataSource.js) supplies the default: the local `rill start` runtime at
+ * localhost:9009 on the `default` instance.
  */
 export function RuntimeHostProvider({ children }) {
   const { host, instanceId, jwt } = useRuntimeTenancy();
+  const fallback = resolveRuntimeConfig();
 
   return (
     <RuntimeClientProvider
-      host={host || FALLBACK_HOST}
-      instanceId={instanceId || FALLBACK_INSTANCE_ID}
-      jwt={jwt}
+      host={host || fallback.host}
+      instanceId={instanceId || fallback.instanceId}
+      jwt={jwt || fallback.jwt}
     >
       {children}
     </RuntimeClientProvider>
