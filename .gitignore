@@ -16,3 +16,8 @@ terraform-sa-key.json
 .env.k8s-secrets
 gcp-sa-key.json
 vps-key*
+
+# Local Rill runtime dev scratch
+.rill-demo/
+rill-linux-arm64
+rill-runtime.Dockerfile
