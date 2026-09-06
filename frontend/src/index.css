@@ -3,6 +3,13 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+/* The ported Rill React components live in ../web-common (aliased as
+   @rilldata/web-common). Tailwind v4's auto content detection does not scan that
+   sibling package, so their utility classes (text-fg-secondary, bg-surface-subtle,
+   ...) were never emitted and the ported UI rendered with default browser styling.
+   Scan it explicitly so the ported components pick up the theme tokens. */
+@source "../../web-common/src";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -29,6 +36,7 @@
   --color-fg-primary: #E3E3E3;
   --color-fg-secondary: #C4C7C5;
   --color-fg-muted: #8E918F;
+  --color-fg-disabled: #565A5B;
   --color-popover-accent: #2A2D31;
   --color-accent-primary-action: #A8C7FA;
 

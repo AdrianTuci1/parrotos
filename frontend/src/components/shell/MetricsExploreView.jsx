@@ -618,12 +618,21 @@ function MockMetricsExplorer({ metricsView }) {
     dimensions.find((d) => d.type !== "DIMENSION_TYPE_TIME")?.name ?? "channel",
   );
   const [rightPane, setRightPane] = useState("leaderboard");
+  const [timeGrain, setTimeGrain] = useState("day");
 
   const rows = getMockAggregationRows(metricsView, { dimension: selectedDimension });
   const timeSeriesRows = buildMockTimeSeries();
   const measureNames = measures.map((m) => m.name);
   const hasTimeSeries = Boolean(getMockMetricsView(metricsView)?.timeDimension);
   const primaryMeasure = measures[0]?.name || "total_revenue";
+
+  // Span of the mock time series (Rill's SuperPill shows the selected range).
+  const mockTimeRange = useMemo(() => {
+    const times = timeSeriesRows.map((r) => r.time).filter(Boolean);
+    if (times.length === 0) return { start: "", end: "" };
+    const sorted = [...times].sort();
+    return { start: sorted[0], end: sorted[sorted.length - 1] };
+  }, [timeSeriesRows]);
 
   // Pre-aggregate the per-channel time series into daily totals per measure so each
   // area chart renders a clean single-series line (Vega-Lite's transform aggregate
@@ -725,6 +734,14 @@ function MockMetricsExplorer({ metricsView }) {
             hasTimeSeries={hasTimeSeries}
             timeRanges={[]}
             stateManagers={mockStateManagers}
+            timeControls={
+              <MockTimeControls
+                timeStart={mockTimeRange.start}
+                timeEnd={mockTimeRange.end}
+                timeGrain={timeGrain}
+                onTimeGrainSelect={setTimeGrain}
+              />
+            }
           />
         </ExploreSafeBoundary>
       ) : null}
@@ -800,6 +817,65 @@ function MockMetricsExplorer({ metricsView }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Rill SuperPill stand-in for the mock filter bar: the time-range pill, a time-grain
+ * selector, and an "as of" timestamp. Presentational in mock mode (no live query to
+ * re-bucket), but mirrors the time-controls row Rill renders above the filters.
+ */
+function MockTimeControls({ timeStart, timeEnd, timeGrain, onTimeGrainSelect }) {
+  return (
+    <div className="mock-time-controls">
+      <span className="mock-time-calendar" title="Time range">
+        <CalendarIcon size={16} />
+      </span>
+      {timeStart && timeEnd ? (
+        <div className="mock-time-pill">
+          <span>{timeStart}</span>
+          <span className="mock-time-sep">→</span>
+          <span>{timeEnd}</span>
+        </div>
+      ) : null}
+      <div className="mock-time-grain">
+        <select
+          value={timeGrain}
+          onChange={(e) => onTimeGrainSelect(e.target.value)}
+          aria-label="Time grain"
+        >
+          {["day", "week", "month"].map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
+      </div>
+      {timeEnd ? (
+        <span className="mock-time-asof">as of {timeEnd}</span>
+      ) : null}
+    </div>
+  );
+}
+
+/** Rill `Calendar.svelte` icon stand-in. */
+function CalendarIcon({ size = "16px", className = "" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
   );
 }
 

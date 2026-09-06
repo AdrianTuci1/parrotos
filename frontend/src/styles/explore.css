@@ -52,6 +52,69 @@
   overflow: hidden;
 }
 
+/* Rill-style mock time-controls row (SuperPill stand-in) for the Explore filter bar. */
+.mock-time-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 8px;
+  min-height: 26px;
+}
+
+.mock-time-calendar {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-fg-secondary, #c4c7c5);
+}
+
+.mock-time-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--color-surface-subtle, #131314);
+  color: var(--color-fg-primary, #e3e3e3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mock-time-pill .mock-time-sep {
+  color: var(--color-fg-muted, #8e918f);
+}
+
+.mock-time-grain {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--color-surface-subtle, #131314);
+}
+
+.mock-time-grain select {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--color-fg-secondary, #c4c7c5);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  outline: none;
+  cursor: pointer;
+}
+
+.mock-time-asof {
+  color: var(--color-fg-secondary, #c4c7c5);
+  font-size: 12px;
+  font-style: italic;
+}
+
 .mock-explore-timeseries-card {
   display: flex;
   flex-direction: column;
