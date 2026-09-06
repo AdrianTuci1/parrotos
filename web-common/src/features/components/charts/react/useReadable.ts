@@ -16,7 +16,11 @@ export function useReadable<T>(store: Readable<T> | undefined): T | undefined {
     if (!store) return;
     let active = true;
     const unsubscribe = store.subscribe((next) => {
-      if (active) setValue(next);
+      // Wrap in a thunk so React stores `next` as-is. Svelte stores can hold
+      // function values (dimension-filter selectors emit the selector function),
+      // and React's `setState` would otherwise interpret a function as a state
+      // updater and invoke it with the previous state, corrupting the value.
+      if (active) setValue(() => next);
     });
     return () => {
       active = false;

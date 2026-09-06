@@ -2,10 +2,11 @@ import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { readable } from "svelte/store";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
+import { getRuntimeServiceListResourcesQueryOptions } from "@rilldata/web-common/runtime-client";
+import { useQuery } from "@tanstack/react-query";
 import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
 import { ViewFrame } from "@/components/shell/ViewFrame";
-import { DEFAULT_METRICS_VIEW, MOCK_METRICS_VIEWS } from "@/data/dataSource";
+import { DEFAULT_METRICS_VIEW, MOCK_METRICS_VIEWS, getMockMetricsView } from "@/data/dataSource";
 import { useAppStore } from "@/stores/useAppStore";
 
 /**
@@ -25,12 +26,17 @@ export function DashboardView() {
   const oSlug = currentOrganization?.slug || currentOrganization?.id;
   const pSlug = currentWorkspace?.slug || currentWorkspace?.id;
 
-  const dashboardsQuery = createRuntimeServiceListResources(runtimeClient, {}, {
-    query: {
-      select: (data) =>
-        (data.resources ?? []).filter((res) => res.canvas || res.explore),
-    },
-  });
+  const dashboardsQuery = useQuery(
+    getRuntimeServiceListResourcesQueryOptions(runtimeClient, {}, {
+      query: {
+        // Fail fast when no Rill runtime is reachable so the mock list renders
+        // instead of retrying a connection-refused request in the background.
+        retry: false,
+        select: (data) =>
+          (data.resources ?? []).filter((res) => res.canvas || res.explore),
+      },
+    }),
+  );
 
   const dashboards = useMemo(() => {
     const fromRuntime = (dashboardsQuery.data ?? []).map(
@@ -52,18 +58,44 @@ export function DashboardView() {
       maxWidthClassName="full-width"
     >
       <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
-        {dashboards.map((dashboardName) => (
-          <button
-            key={dashboardName}
-            onClick={() => navigate(`/app/${oSlug}/${pSlug}/dashboard/${dashboardName}`)}
-            className="rounded-xl border bg-card p-4 text-left shadow-sm transition-colors hover:bg-accent/5"
-          >
-            <h3 className="text-sm font-medium">{dashboardName}</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Live charts from the {dashboardName} metrics view
-            </p>
-          </button>
-        ))}
+        {dashboards.map((dashboardName) => {
+          const view = getMockMetricsView(dashboardName);
+          const measureCount = view?.measures?.length ?? 0;
+          const dimensionCount = (view?.dimensions ?? []).filter(
+            (d) => d.type !== "DIMENSION_TYPE_TIME",
+          ).length;
+          return (
+            <button
+              key={dashboardName}
+              onClick={() => navigate(`/app/${oSlug}/${pSlug}/dashboard/${dashboardName}`)}
+              className="group flex flex-col rounded-xl border bg-card p-4 text-left shadow-sm transition-colors hover:border-primary/40 hover:bg-accent/5"
+            >
+              <div className="flex items-center justify-between">
+                <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wide text-muted-foreground">
+                  dashboard
+                </span>
+                <span className="text-muted-foreground transition-transform group-hover:translate-x-0.5">
+                  →
+                </span>
+              </div>
+              <h3 className="mt-2 text-sm font-medium">{dashboardName}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {measureCount} measure{measureCount === 1 ? "" : "s"} ·{" "}
+                {dimensionCount} dimension{dimensionCount === 1 ? "" : "s"}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1">
+                {(view?.measures ?? []).slice(0, 3).map((m) => (
+                  <span
+                    key={m.name}
+                    className="rounded-full border px-2 py-0.5 text-[10px] text-muted-foreground"
+                  >
+                    {m.displayName || m.name}
+                  </span>
+                ))}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </ViewFrame>
   );

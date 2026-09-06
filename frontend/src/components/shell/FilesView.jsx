@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { createRuntimeServiceListFiles } from "@rilldata/web-common/runtime-client";
+import { getRuntimeServiceListFilesQueryOptions } from "@rilldata/web-common/runtime-client";
+import { useQuery } from "@tanstack/react-query";
 import FileExplorer from "@rilldata/web-common/features/file-explorer/react/FileExplorer";
 import { transformFileList } from "@rilldata/web-common/features/file-explorer/react/transform-file-list";
 import { ViewFrame } from "@/components/shell/ViewFrame";
@@ -43,9 +44,14 @@ export function FilesView() {
   const runtimeClient = useRuntimeClient();
 
   // Runtime file-tree query (React hook). `enabled` is governed by the generated
-  // query options (instanceId present), so the request is skipped when no runtime
-  // is configured and `listFiles.data` stays undefined -> sample tree renders.
-  const listFiles = createRuntimeServiceListFiles(runtimeClient, {});
+  // query options (instanceId present), so the request fails fast (retry:false)
+  // when no runtime is reachable and `listFiles.data` stays undefined -> the
+  // sample tree renders instead of crashing the view.
+  const listFiles = useQuery(
+    getRuntimeServiceListFilesQueryOptions(runtimeClient, {}, {
+      query: { retry: false },
+    }),
+  );
 
   const fileTree = useMemo(() => {
     const files = listFiles.data?.files;

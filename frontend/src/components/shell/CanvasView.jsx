@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { readable } from "svelte/store";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
+import { getRuntimeServiceListResourcesQueryOptions } from "@rilldata/web-common/runtime-client";
+import { useQuery } from "@tanstack/react-query";
 import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import { DEFAULT_METRICS_VIEW, MOCK_METRICS_VIEWS } from "@/data/dataSource";
@@ -26,12 +27,16 @@ export function CanvasView() {
   const oSlug = currentOrganization?.slug || currentOrganization?.id;
   const pSlug = currentWorkspace?.slug || currentWorkspace?.id;
 
-  const canvasesQuery = createRuntimeServiceListResources(runtimeClient, {}, {
-    query: {
-      select: (data) =>
-        (data.resources ?? []).filter((res) => res.canvas),
-    },
-  });
+  const canvasesQuery = useQuery(
+    getRuntimeServiceListResourcesQueryOptions(runtimeClient, {}, {
+      query: {
+        // Fail fast when no Rill runtime is reachable so the mock list renders.
+        retry: false,
+        select: (data) =>
+          (data.resources ?? []).filter((res) => res.canvas),
+      },
+    }),
+  );
 
   const canvases = useMemo(() => {
     const fromRuntime = (canvasesQuery.data ?? []).map(

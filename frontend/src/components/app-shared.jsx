@@ -1,16 +1,16 @@
 // Organization-level sub-navbar items (workspace landing + management)
 export const orgSections = ['stats', 'access', 'org-settings', 'metrics', 'invitations'];
 
-// Project-level sub-navbar items
+// Project-level sub-navbar items.
+// Storage/Graph/Chat were removed as redundant: they duplicate the data surfaced in
+// Settings, the Canvas/Files editors and the AI assistant respectively (matching
+// Rill's artefact-driven navigation, which has no flat tabs for these).
 export const projectSections = [
   'explore',
   'dashboard',
   'analytics',
   'canvas',
   'files',
-  'storage',
-  'graph',
-  'chat',
   'ai',
   'settings',
 ];
@@ -30,9 +30,6 @@ export const projectNavItems = [
   { id: 'analytics', title: 'Analytics', icon: 'briefcase' },
   { id: 'canvas', title: 'Canvas', icon: 'git-branch' },
   { id: 'files', title: 'Files', icon: 'files' },
-  { id: 'storage', title: 'Storage', icon: 'database' },
-  { id: 'graph', title: 'Graph', icon: 'git-branch' },
-  { id: 'chat', title: 'Chat', icon: 'message-square' },
   { id: 'ai', title: 'AI', icon: 'sparkles' },
   { id: 'settings', title: 'Settings', icon: 'settings' },
 ];

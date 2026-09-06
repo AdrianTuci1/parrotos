@@ -105,7 +105,10 @@ export function DashboardPage() {
           selectWorkspace(proj.id);
         }
         if (!projectSections.includes(urlSection)) {
-          navigate(`/app/${orgSlug}/${projectSlug}/analytics`, { replace: true });
+          // Section removed from the nav (Storage/Graph/Chat were redundant with
+          // Settings/Canvas+Files/AI) — redirect legacy URLs to their replacement.
+          const legacyTarget = { storage: "settings", graph: "canvas", chat: "ai" }[urlSection];
+          navigate(`/app/${orgSlug}/${projectSlug}/${legacyTarget || "analytics"}`, { replace: true });
           return;
         }
       } else {

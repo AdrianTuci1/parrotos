@@ -68,7 +68,13 @@ export default function Filters({
 
   // ── Store subscriptions (Svelte `$:` store reads) ─────────────────────────
   const dashboard = useReadable(stateManagers.dashboardStore);
-  const timeControlsStore = useTimeControlStore(stateManagers);
+  // `useTimeControlStore` (via memoizeMetricsStore) mints a new derived store on
+  // every call, so memoize it on the stable `stateManagers` to avoid an infinite
+  // subscribe -> setState -> re-render loop in the React bridge.
+  const timeControlsStore = useMemo(
+    () => useTimeControlStore(stateManagers),
+    [stateManagers],
+  );
   const timeControlsValue = useReadable(timeControlsStore);
 
   const { timeStart, timeEnd, ready: timeControlsReady } =

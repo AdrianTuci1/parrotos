@@ -1,8 +1,14 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Component, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { readable } from "svelte/store";
 import { useQuery } from "@tanstack/react-query";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import {
+  StateManagersProvider,
+  useStateManagers,
+  useRillExploreState,
+} from "@rilldata/web-common/features/dashboards/state-managers/react";
+import { Filters } from "@rilldata/web-common/features/dashboards/filters/react";
 import {
   getQueryServiceMetricsViewTimeRangeQueryOptions,
   getQueryServiceMetricsViewAggregationQueryOptions,
@@ -23,11 +29,14 @@ import {
   resolveDataSource,
   DEFAULT_METRICS_VIEW,
 } from "@/data/dataSource";
+import { createMockStateManagers } from "@/data/mockStateManagers";
 import {
   getMockMetricsView,
   getMockAggregationRows,
   getMockTotalRow,
+  buildMockTimeSeries,
 } from "@/data/mockAdapter";
+import MockChart from "@/components/widgets/MockChart";
 
 /**
  * React Metrics Explorer / Dashboard.
@@ -53,6 +62,7 @@ const EMPTY_WHERE = { cond: { op: "OPERATION_AND", exprs: [] } };
 
 export function MetricsExploreView() {
   const { name } = useParams();
+  const [searchParams] = useSearchParams();
   const metricsView = name || DEFAULT_METRICS_VIEW;
   const dataSource = resolveDataSource();
 
@@ -63,7 +73,15 @@ export function MetricsExploreView() {
       maxWidthClassName="full-width"
     >
       {dataSource.mode === "runtime" ? (
-        <RuntimeMetricsExplorer metricsView={metricsView} />
+        <StateManagersProvider
+          metricsViewName={metricsView}
+          exploreName={metricsView}
+        >
+          <RuntimeMetricsExplorer
+            metricsView={metricsView}
+            searchParams={searchParams}
+          />
+        </StateManagersProvider>
       ) : (
         <MockMetricsExplorer metricsView={metricsView} />
       )}
@@ -75,9 +93,17 @@ export function MetricsExploreView() {
  * Live runtime explorer. All widgets query the real metrics view through the runtime
  * client; this component only wires their shared state (time range, grain, filters).
  */
-function RuntimeMetricsExplorer({ metricsView }) {
+function RuntimeMetricsExplorer({ metricsView, searchParams }) {
   const runtimeClient = useRuntimeClient();
   const runtimeHost = resolveDataSource().host;
+  const stateManagers = useStateManagers();
+  const { timeRanges } = useRillExploreState({
+    exploreName: metricsView,
+    metricsViewName: metricsView,
+    searchParams,
+  });
+  const dashboard = useReadable(stateManagers.dashboardStore);
+  const whereFilter = dashboard?.whereFilter ?? EMPTY_WHERE;
 
   // ── Metrics view schema (measures / dimensions / time-dimension) ─────────
   const selectors = useMemo(
@@ -142,13 +168,13 @@ function RuntimeMetricsExplorer({ metricsView }) {
           : undefined,
       comparisonTimeRange: undefined,
       showTimeComparison: false,
-      where: EMPTY_WHERE,
+      where: whereFilter,
       timeGrain: selectedTimeGrain,
       timeRangeState: undefined,
       comparisonTimeRangeState: undefined,
       hasTimeSeries,
     }),
-    [hasTimeSeries, timeStart, timeEnd, selectedTimeGrain],
+    [hasTimeSeries, timeStart, timeEnd, selectedTimeGrain, whereFilter],
   );
 
   if (!ready) {
@@ -168,6 +194,13 @@ function RuntimeMetricsExplorer({ metricsView }) {
 
   return (
     <div className="flex flex-col gap-4 p-4">
+      <Filters
+        metricsViewName={metricsView}
+        hasTimeSeries={hasTimeSeries}
+        timeRanges={timeRanges}
+        stateManagers={stateManagers}
+      />
+
       <MetricsHeader
         metricsView={metricsView}
         measures={measures}
@@ -191,6 +224,7 @@ function RuntimeMetricsExplorer({ metricsView }) {
         timeEnd={timeEnd}
         ready={ready}
         hasTimeSeries={hasTimeSeries}
+        where={whereFilter}
       />
 
       <ChartGrid
@@ -216,6 +250,7 @@ function RuntimeMetricsExplorer({ metricsView }) {
             leaderboardSortByMeasureName={leaderboardSortByMeasureName}
             ready={ready}
             hasTimeSeries={hasTimeSeries}
+            where={whereFilter}
           />
           <DimensionTablePanel
             runtimeClient={runtimeClient}
@@ -296,6 +331,7 @@ function KpiRow({
   timeEnd,
   ready,
   hasTimeSeries,
+  where,
 }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -305,7 +341,7 @@ function KpiRow({
           runtimeClient={runtimeClient}
           measure={measure}
           metricsViewName={metricsView}
-          where={EMPTY_WHERE}
+          where={where}
           timeDimension={timeDimension}
           timeStart={timeStart}
           timeEnd={timeEnd}
@@ -424,6 +460,7 @@ function LeaderboardPanel({
   leaderboardSortByMeasureName,
   ready,
   hasTimeSeries,
+  where,
 }) {
   const formatters = useMemo(
     () =>
@@ -458,7 +495,7 @@ function LeaderboardPanel({
         runtimeClient={runtimeClient}
         dimension={dimension}
         timeRange={timeRange}
-        whereFilter={EMPTY_WHERE}
+        whereFilter={where}
         dimensionThresholdFilters={[]}
         leaderboardSortByMeasureName={leaderboardSortByMeasureName}
         leaderboardMeasures={measures}
@@ -498,6 +535,7 @@ function DimensionTablePanel({
   timeDimension,
   leaderboardSortByMeasureName,
   ready,
+  where,
 }) {
   const dimensionName = dimension.name ?? dimension.column;
 
@@ -506,7 +544,7 @@ function DimensionTablePanel({
       metricsView: metricsView,
       dimensions: [{ name: dimensionName }],
       measures: measurementsFromNames(measures),
-      where: EMPTY_WHERE,
+      where,
       timeRange: timeStart && timeEnd ? { start: timeStart, end: timeEnd, timeDimension } : undefined,
       sort: [{ name: leaderboardSortByMeasureName, desc: true }],
       limit: "50",
@@ -579,7 +617,45 @@ function MockMetricsExplorer({ metricsView }) {
   );
 
   const rows = getMockAggregationRows(metricsView, { dimension: selectedDimension });
+  const timeSeriesRows = buildMockTimeSeries();
+  // Pre-aggregate the per-channel time series into daily totals so the area chart
+  // renders a clean single-series series (Vega-Lite's transform aggregate is finicky).
+  const primaryMeasure = measures[0]?.name || "total_revenue";
+  const dailyTotals = useMemo(() => {
+    const byDay = new Map();
+    for (const row of timeSeriesRows) {
+      byDay.set(row.time, (byDay.get(row.time) || 0) + (row[primaryMeasure] ?? 0));
+    }
+    return [...byDay.entries()].map(([time, value]) => ({
+      time,
+      [primaryMeasure]: value,
+    }));
+  }, [timeSeriesRows, primaryMeasure]);
   const measureNames = measures.map((m) => m.name);
+  const hasTimeSeries = Boolean(getMockMetricsView(metricsView)?.timeDimension);
+  const formatMockValue = (value, measure) => {
+    if (value == null) return "—";
+    const preset = measure?.formatPreset;
+    if (preset === "currency") {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0,
+      }).format(value);
+    }
+    if (preset === "percent") return `${value}%`;
+    return new Intl.NumberFormat("en-US").format(value);
+  };
+  // The Faza-1 filter grid is driven by a StateManagers. Without a runtime we build
+  // one from the mock adapter; if it cannot be built for this metrics view, skip the
+  // bar entirely rather than break the demo.
+  const mockStateManagers = useMemo(() => {
+    try {
+      return createMockStateManagers(metricsView);
+    } catch {
+      return null;
+    }
+  }, [metricsView]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -606,28 +682,81 @@ function MockMetricsExplorer({ metricsView }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      {mockStateManagers ? (
+        <ExploreSafeBoundary>
+          <Filters
+            metricsViewName={metricsView}
+            hasTimeSeries={hasTimeSeries}
+            timeRanges={[]}
+            stateManagers={mockStateManagers}
+          />
+        </ExploreSafeBoundary>
+      ) : null}
+
+      {/* Big-number cards (Rill-style measures container) */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {measures.map((measure) => (
           <div
             key={measure.name}
-            className="m-0.5 rounded border bg-card p-2 shadow-sm min-h-[85px] min-w-[138px] flex flex-col items-start flex-none"
+            className="flex flex-col rounded-lg border bg-card p-4 shadow-sm"
           >
-            <span className="text-sm font-semibold">{measure.displayName || measure.name}</span>
-            <span className="text-xl font-light">{total[measure.name] ?? "—"}</span>
+            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {measure.displayName || measure.name}
+            </span>
+            <span className="mt-1 text-2xl font-semibold tabular-nums">
+              {formatMockValue(total[measure.name], measure)}
+            </span>
           </div>
         ))}
       </div>
 
-      <div className="rounded-xl border bg-card p-3 shadow-sm">
-        <h3 className="mb-2 text-sm font-medium">
+      {/* Chart cards (mock data via vega-lite; real runtime path uses ChartContainer) */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border bg-card p-4 shadow-sm">
+          <h3 className="mb-2 text-sm font-medium">
+            {(measures[0]?.displayName || measures[0]?.name || "Metric")} over time
+          </h3>
+          <div className="h-56">
+            <MockChart
+              values={dailyTotals}
+              xField="time"
+              yField={primaryMeasure}
+              mark="area"
+              xType="nominal"
+            />
+          </div>
+        </div>
+        <div className="rounded-xl border bg-card p-4 shadow-sm">
+          <h3 className="mb-2 text-sm font-medium">
+            {(measures[0]?.displayName || measures[0]?.name || "Metric")} by {selectedDimension}
+          </h3>
+          <div className="h-56">
+            <MockChart
+              values={rows}
+              xField={selectedDimension}
+              yField={measures[0]?.name || "total_revenue"}
+              mark="bar"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Dimension breakdown table */}
+      <div className="rounded-xl border bg-card p-4 shadow-sm">
+        <h3 className="mb-3 text-sm font-medium">
           {measureNames[0] || "Metric"} by {selectedDimension}
         </h3>
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b">
-              <th className="py-1 pr-2">{selectedDimension}</th>
+            <tr className="border-b text-muted-foreground">
+              <th className="py-1.5 pr-2 text-xs font-medium uppercase tracking-wide">
+                {selectedDimension}
+              </th>
               {measureNames.map((name) => (
-                <th key={name} className="py-1 pr-2 text-right">
+                <th
+                  key={name}
+                  className="py-1.5 pr-2 text-right text-xs font-medium uppercase tracking-wide"
+                >
                   {measures.find((m) => m.name === name)?.displayName || name}
                 </th>
               ))}
@@ -636,9 +765,9 @@ function MockMetricsExplorer({ metricsView }) {
           <tbody>
             {rows.map((row, i) => (
               <tr key={i} className="border-b last:border-0">
-                <td className="py-1 pr-2">{row[selectedDimension]}</td>
+                <td className="py-1.5 pr-2 font-medium">{row[selectedDimension]}</td>
                 {measureNames.map((name) => (
-                  <td key={name} className="py-1 pr-2 text-right">
+                  <td key={name} className="py-1.5 pr-2 text-right tabular-nums">
                     {row[name] ?? "—"}
                   </td>
                 ))}
@@ -649,6 +778,24 @@ function MockMetricsExplorer({ metricsView }) {
       </div>
     </div>
   );
+}
+
+/**
+ * Error boundary so the mock explorer's filter grid degrades gracefully: if the mock
+ * StateManagers or the shared Filters bar throw, the base mock view (KPI + table) still
+ * renders instead of blanking the whole explorer.
+ */
+class ExploreSafeBoundary extends Component {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    if (this.state.failed) return null;
+    return this.props.children;
+  }
 }
 
 export default MetricsExploreView;
