@@ -16,11 +16,8 @@ export function AiView() {
     chatSessions,
     activeChatId,
     messages,
-    input,
-    setInput,
     streaming,
     pendingAction,
-    approvalStates,
     handleSend,
     handleApprove,
     handleReject,
@@ -55,12 +52,9 @@ export function AiView() {
           messages={messages}
           streaming={streaming}
           pendingAction={pendingAction}
-          approvalStates={approvalStates}
           metricsView={metricsView}
           onApprove={handleApprove}
           onReject={handleReject}
-          input={input}
-          onInputChange={setInput}
           onSend={handleSend}
         />
       </div>

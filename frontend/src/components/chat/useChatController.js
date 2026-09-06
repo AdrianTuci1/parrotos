@@ -56,8 +56,8 @@ export function useChatController() {
     return null;
   })();
 
-  const handleSend = useCallback(async () => {
-    const text = input.trim();
+  const handleSend = useCallback(async (promptArg) => {
+    const text = (promptArg ?? input).trim();
     if (!text || streaming || pendingAction) return;
     if (!currentWorkspace?.id) {
       alert("Please select or create a workspace first.");

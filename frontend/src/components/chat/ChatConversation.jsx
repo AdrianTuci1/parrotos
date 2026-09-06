@@ -1,9 +1,8 @@
 import { useEffect, useRef } from "react";
 import { CornerDownLeft } from "lucide-react";
 import { Messages } from "@rilldata/web-common/features/chat/core/messages/react";
-import { ChatComposer } from "@/components/shell/ChatComposer";
+import { ContextComposer } from "@/components/chat/ContextComposer";
 import { toV1Messages } from "@/components/chat/v1Messages";
-import { cn } from "@/lib/utils";
 
 /**
  * Full-page conversation pane for the AI view.
@@ -19,8 +18,6 @@ export function ChatConversation({
   metricsView,
   onApprove,
   onReject,
-  input,
-  onInputChange,
   onSend,
 }) {
   const containerRef = useRef(null);
@@ -43,13 +40,7 @@ export function ChatConversation({
         <PendingBar action={pendingAction} onApprove={onApprove} onReject={onReject} />
       ) : (
         <div className="ai-composer">
-          <ChatComposer
-            input={input}
-            onInputChange={onInputChange}
-            onSend={onSend}
-            streaming={streaming}
-            placeholder="Ask about your data…"
-          />
+          <ContextComposer onSend={onSend} streaming={streaming} />
         </div>
       )}
     </div>
