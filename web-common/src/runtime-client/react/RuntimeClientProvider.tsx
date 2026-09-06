@@ -86,3 +86,13 @@ export function useRuntimeClient(): RuntimeClient {
   }
   return client;
 }
+
+/**
+ * Non-throwing counterpart of useRuntimeClient(). Returns the injected client, or
+ * null when no <RuntimeClientProvider> is present. Lets callers (e.g. the canvas
+ * persistence layer) degrade gracefully to a mock/offline transport.
+ */
+export function useOptionalRuntimeClient(): RuntimeClient | null {
+  const client = useContext(RuntimeClientContext);
+  return client ?? null;
+}

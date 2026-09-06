@@ -16,9 +16,10 @@ const LABELS = {
 
 /**
  * Add-component dropdown. `onPick(type)` is called with the component type when a
- * menu item is clicked; the caller decides the target row / new row.
+ * menu item is clicked; the caller decides the target row / new row. `onTabGroup()`
+ * is called when the user opts to add a new tab group.
  */
-export function AddComponentMenu({ onPick }) {
+export function AddComponentMenu({ onPick, onTabGroup }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -58,6 +59,17 @@ export function AddComponentMenu({ onPick }) {
               {LABELS[type] || type}
             </button>
           ))}
+          <div className="add-component-popover-divider" />
+          <button
+            type="button"
+            className="add-component-item"
+            onClick={() => {
+              setOpen(false);
+              if (onTabGroup) onTabGroup();
+            }}
+          >
+            Tab group
+          </button>
         </div>
       ) : null}
     </div>

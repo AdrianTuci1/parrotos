@@ -15,8 +15,14 @@ import { applyMockAgentEdit } from "@/data/mockAgent";
  * localStorage, so the interactive canvas builder is fully usable in mock mode.
  *
  * Model shape (kept close to Rill's YAML so a later swap to the real file layer is
- * mechanical):
- *   { rows: [{ id, height, items: [{ id, type, width, spec, yamlPath }] }] }
+ * mechanical). A row is either a plain row or a tab group, matching Rill's
+ * `V1CanvasRow` where `items` and `tabGroup` are mutually exclusive:
+ *   { rows: [ row ] }
+ *   row =
+ *     { id, kind:'row', height, items: [{ id, type, width, spec, yamlPath }] }
+ *   | { id, kind:'tabgroup', name, activeTab,
+ *       tabs: [{ id, name, displayName, rows: [plain row] }] }
+ * A tab's rows are always plain rows (never a nested tab group), exactly as in Rill.
  * where `spec` holds the per-renderer properties (metrics_view, measures, x/y/color,
  * mark, title, description, etc.) matching the Rill `inputParams()` contract.
  */
@@ -145,18 +151,86 @@ export function makeItem(type, width = 6, { metricsView, parentRow } = {}) {
 
 /** Seed canvas model: a KPI grid row, a line + bar row, a leaderboard + markdown row. */
 export function defaultCanvas(name) {
-  const row1 = { id: genId("r"), height: 180, items: [makeItem("kpi_grid", 12)] };
+  const row1 = { id: genId("r"), kind: "row", height: 180, items: [makeItem("kpi_grid", 12)] };
   const row2 = {
     id: genId("r"),
+    kind: "row",
     height: DEFAULT_ROW_HEIGHT,
     items: [makeItem("line", 7), makeItem("bar", 5)],
   };
   const row3 = {
     id: genId("r"),
+    kind: "row",
     height: DEFAULT_ROW_HEIGHT,
     items: [makeItem("leaderboard", 6), makeItem("markdown", 6)],
   };
   return { name, rows: [row1, row2, row3] };
+}
+
+/** Build a plain row container holding one item of `type`. */
+export function makeRow(type, height = 300) {
+  return { id: genId("r"), kind: "row", height, items: [makeItem(type, 12)] };
+}
+
+/** Build a tab within a tab group; a tab's rows are plain rows only (Rill parity). */
+export function makeTab(index = 0) {
+  const displayName = `Tab ${index + 1}`;
+  return {
+    id: genId("t"),
+    name: displayName.toLowerCase().replace(/\s+/g, "-"),
+    displayName,
+    rows: [],
+  };
+}
+
+/** Build a new tab group containing a single empty tab. */
+export function makeTabGroup(index = 1) {
+  const tabs = [makeTab(0)];
+  return {
+    id: genId("g"),
+    kind: "tabgroup",
+    name: `group-${index}`,
+    activeTab: tabs[0].id,
+    tabs,
+  };
+}
+
+/** Normalize a saved (or freshly built) rows tree to the canonical model shape. */
+function normalizeTab(tab, i) {
+  if (!tab || typeof tab !== "object") return makeTab(i);
+  return {
+    id: tab.id || genId("t"),
+    name: tab.name || `tab-${i + 1}`,
+    displayName: tab.displayName || tab.name || `Tab ${i + 1}`,
+    rows: normalizeRows(tab.rows),
+  };
+}
+
+function normalizeRows(rows) {
+  return (rows || []).map((row, i) => {
+    if (Array.isArray(row.tabs) || row.kind === "tabgroup") {
+      const tabs = (row.tabs || []).map(normalizeTab);
+      return {
+        id: row.id || genId("g"),
+        kind: "tabgroup",
+        name: row.name || `group-${i + 1}`,
+        activeTab: row.activeTab || (tabs[0] && tabs[0].id),
+        tabs,
+      };
+    }
+    return {
+      id: row.id || genId("r"),
+      kind: "row",
+      height: row.height ?? DEFAULT_ROW_HEIGHT,
+      items: (row.items || []).map((it) => ({ ...it, id: it.id || genId() })),
+    };
+  });
+}
+
+/** Ensure a parsed model object (from storage or a runtime YAML blob) matches shape. */
+export function normalizeCanvasModel(parsed) {
+  if (!parsed || !Array.isArray(parsed.rows)) return parsed;
+  return { ...parsed, rows: normalizeRows(parsed.rows) };
 }
 
 export function loadCanvas(name) {
@@ -164,7 +238,7 @@ export function loadCanvas(name) {
     const raw = localStorage.getItem(`${STORAGE_PREFIX}${name}`);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && Array.isArray(parsed.rows)) return parsed;
+      return normalizeCanvasModel(parsed);
     }
   } catch {
     // Ignore malformed storage; fall back to the seed.
