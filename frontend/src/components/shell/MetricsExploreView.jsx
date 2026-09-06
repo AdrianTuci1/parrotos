@@ -39,6 +39,7 @@ import {
 } from "@/data/mockAdapter";
 import MockChart from "@/components/widgets/MockChart";
 import KpiInspector from "@/components/shell/KpiInspector";
+import { applyMockAgentEdit } from "@/data/mockAgent";
 import "@/styles/explore.css";
 
 /**
@@ -624,7 +625,12 @@ function MockMetricsExplorer({ metricsView }) {
   // Editable copy of the mock measures so the KPI inspector's edits (display name,
   // format, description, hide) reflect live on the cards.
   const [editableMeasures, setEditableMeasures] = useState(() =>
-    measures.map((m) => ({ ...m })),
+    measures.map((m) => ({
+      ...m,
+      sparkline: true,
+      comparison: false,
+      mark: "area",
+    })),
   );
   const [selectedMeasureName, setSelectedMeasureName] = useState(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
@@ -726,6 +732,20 @@ function MockMetricsExplorer({ metricsView }) {
     );
   };
 
+  // "Edit with AI": run the mock agent against the selected card. In Rill this routes
+  // to the developer agent; here it maps prompt intents to card-field patches.
+  const handleAiEdit = async (prompt) => {
+    const measure = editableMeasures.find((m) => m.name === selectedMeasureName);
+    if (!measure) return "Nothing to edit.";
+    const { patch, message } = applyMockAgentEdit(prompt, measure);
+    setEditableMeasures((prev) =>
+      prev.map((m) =>
+        m.name === selectedMeasureName ? { ...m, ...patch } : m,
+      ),
+    );
+    return message;
+  };
+
   // Independent resizer for the KPI inspector (right column), so the split resizer
   // and the inspector resizer both work.
   const startInspectorResize = (e) => {
@@ -822,19 +842,26 @@ function MockMetricsExplorer({ metricsView }) {
                         <EditIcon size={12} />
                       </span>
                     </div>
-                    <span className="mock-kpi-value">
-                      {formatMockValue(total[measure.name], measure)}
-                    </span>
-                    <div className="h-44">
-                      <MockChart
-                        values={dailyByMeasure[measure.name] ?? []}
-                        xField="time"
-                        yField={measure.name}
-                        mark="area"
-                        xType="nominal"
-                        height={168}
-                      />
+                    <div className="mock-kpi-value-row">
+                      <span className="mock-kpi-value">
+                        {formatMockValue(total[measure.name], measure)}
+                      </span>
+                      {measure.comparison ? (
+                        <ComparisonPill series={dailyByMeasure[measure.name] ?? []} measure={measure} />
+                      ) : null}
                     </div>
+                    {measure.sparkline !== false ? (
+                      <div className="h-44">
+                        <MockChart
+                          values={dailyByMeasure[measure.name] ?? []}
+                          xField="time"
+                          yField={measure.name}
+                          mark={measure.mark || "area"}
+                          xType="nominal"
+                          height={168}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}
@@ -904,6 +931,7 @@ function MockMetricsExplorer({ metricsView }) {
           onResizeStart={startInspectorResize}
           onClose={() => setInspectorOpen(false)}
           onChange={handleInspectorChange}
+          onAiEdit={handleAiEdit}
         />
       </div>
     </div>
@@ -987,6 +1015,20 @@ function EditIcon({ size = "16px", className = "" }) {
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
     </svg>
+  );
+}
+
+/** Day-over-day % change pill shown on a KPI card when comparison is enabled. */
+function ComparisonPill({ series, measure }) {
+  const last = series[series.length - 1]?.[measure.name];
+  const prev = series[series.length - 2]?.[measure.name];
+  if (last == null || prev == null || prev === 0) return null;
+  const delta = ((last - prev) / prev) * 100;
+  const up = delta >= 0;
+  return (
+    <span className={cn("mock-kpi-comparison", up ? "up" : "down")}>
+      {up ? "▲" : "▼"}{Math.abs(delta).toFixed(1)}% vs prev
+    </span>
   );
 }
 
