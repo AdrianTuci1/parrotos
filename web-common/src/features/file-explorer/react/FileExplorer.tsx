@@ -31,6 +31,7 @@ export interface FileExplorerProps {
   onDelete: (filePath: string, isDir: boolean) => void;
   onMouseDown: (e: MouseEvent, dragData: NavDragData) => void;
   onDropSuccess?: (fromPath: string, toDir: string) => Promise<void>;
+  hrefPrefix?: string;
 }
 
 export default function FileExplorer({
@@ -43,6 +44,7 @@ export default function FileExplorer({
   onDuplicate,
   onDelete,
   onMouseDown,
+  hrefPrefix = "",
 }: FileExplorerProps) {
   const state = useReadable(directoryState) ?? {};
   const directoryPaths = fileTree ? collectDirectoryPaths(fileTree) : [];
@@ -114,6 +116,7 @@ export default function FileExplorer({
             onDuplicate={onDuplicate}
             onDelete={handleDelete}
             onMouseDown={onMouseDown}
+            hrefPrefix={hrefPrefix}
           />
         ) : isLoading ? (
           <div className="flex flex-col gap-y-1.5 w-full px-2 py-2">

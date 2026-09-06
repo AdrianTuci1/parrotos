@@ -1,0 +1,270 @@
+/* ==========================================================================
+   Rill-style project navigation sidebar
+   ========================================================================== */
+
+/* Make the project body a positioning context so the rail (and the floating
+   "reopen" toggle when collapsed) anchor below the topbar. */
+.layout-body {
+  position: relative;
+}
+
+.rill-sidebar {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--color-surface-base, #0b0d0e);
+  border-right: 1px solid #25282c;
+  width: var(--rill-nav-width, 240px);
+  transition: width 0.3s ease-in-out;
+  user-select: none;
+  z-index: 0;
+}
+
+.rill-sidebar.resizing {
+  transition: none;
+}
+
+/* Manual collapse to zero width (desktop). */
+.rill-sidebar.collapsed {
+  width: 0 !important;
+}
+
+.rill-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Header: project name + rail-collapse toggle ─────────────────────────── */
+.rill-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 10px 0 12px;
+  border-bottom: 1px solid #25282c;
+  flex: none;
+}
+
+.rill-sidebar-project-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e3e3e3;
+  letter-spacing: -0.01em;
+}
+
+.rill-sidebar-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-fg-muted, #8e918f);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.rill-sidebar-collapse-btn:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+/* ── Add Asset ───────────────────────────────────────────────────────────── */
+.rill-sidebar-add {
+  flex: none;
+  padding: 8px 12px 6px;
+}
+
+.rill-add-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #25282c;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-fg-secondary, #c4c7c5);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.rill-add-trigger:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  border-color: #32363b;
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+.rill-add-trigger .rill-add-caret {
+  margin-left: auto;
+}
+
+.rill-add-menu {
+  min-width: 220px;
+}
+
+.rill-add-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* ── File tree ───────────────────────────────────────────────────────────── */
+.rill-sidebar-tree {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* The ported FileExplorer's top-level tree list scrolls within the rail. */
+.rill-sidebar-tree > ul {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Keep the FileExplorer's pinned project header at a fixed height. */
+.rill-sidebar-tree > .project-header {
+  flex: none;
+}
+
+/* ── Footer: section navigation ──────────────────────────────────────────── */
+.rill-sidebar-footer {
+  flex: none;
+  border-top: 1px solid #25282c;
+  padding: 8px 8px 10px;
+}
+
+.rill-sidebar-footer-label {
+  padding: 0 6px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fg-muted, #8e918f);
+}
+
+.rill-sidebar-footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rill-sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 28px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-fg-muted, #8e918f);
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.rill-sidebar-nav-item svg {
+  flex: none;
+  color: inherit;
+}
+
+.rill-sidebar-nav-item:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+.rill-sidebar-nav-item.active {
+  background-color: #1c1c1e;
+  color: #f3f4f6;
+  font-weight: 500;
+}
+
+/* ── Resizable rail handle ───────────────────────────────────────────────── */
+.rill-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.rill-sidebar-resizer:hover {
+  background-color: rgba(168, 199, 250, 0.25);
+}
+
+/* Floating "reopen" button shown when the rail is collapsed to zero. */
+.rill-sidebar-reopen {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #25282c;
+  border-radius: 6px;
+  background-color: var(--color-surface-base, #0b0d0e);
+  color: var(--color-fg-muted, #8e918f);
+  cursor: pointer;
+  z-index: 50;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.rill-sidebar-reopen:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+/* ── Mobile: hide the rail unless the topbar hamburger opens it ──────────── */
+@media (max-width: 768px) {
+  .rill-sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0 !important;
+    z-index: 40;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .rill-sidebar.mobile-open {
+    width: var(--rill-nav-width, 240px) !important;
+  }
+
+  /* A manually-collapsed rail stays hidden even when the hamburger is open. */
+  .rill-sidebar.collapsed.mobile-open {
+    width: 0 !important;
+  }
+
+  .rill-sidebar-reopen {
+    display: none;
+  }
+}

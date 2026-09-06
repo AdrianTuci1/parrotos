@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { Topbar } from "@/components/shell/Topbar";
-import { ProjectSubNavbar } from "@/components/shell/ProjectSubNavbar";
+import { RillSidebar } from "@/components/shell/RillSidebar";
 import { ChatSidebar } from "@/components/shell/ChatSidebar";
 import { cn } from "@/lib/utils";
 import "@/styles/shell.css";
@@ -14,8 +14,8 @@ export function Layout({ children }) {
   return (
     <div className="layout-root">
       <Topbar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
-      <ProjectSubNavbar open={mobileMenuOpen} setOpen={setMobileMenuOpen} />
       <div className={cn("layout-body", isChat && "layout-body-chat")}>
+        <RillSidebar isMobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
         {isChat && <ChatSidebar />}
         <main className="layout-main">
           {children}

@@ -22,8 +22,10 @@ export default function NavDirectory({
   onDuplicate,
   onDelete,
   onMouseDown,
+  hrefPrefix = "",
 }: {
   directory: Directory;
+  hrefPrefix?: string;
 } & TreeHandlers) {
   const state = useReadable(directoryState) ?? {};
   const expanded = state[directory.path] ?? true;
@@ -54,6 +56,7 @@ export default function NavDirectory({
               onDuplicate={onDuplicate}
               onDelete={onDelete}
               onMouseDown={onMouseDown}
+              hrefPrefix={hrefPrefix}
             />
           ))}
           {directory.files.map((file) => {
@@ -67,6 +70,7 @@ export default function NavDirectory({
                 onDuplicate={onDuplicate}
                 onDelete={onDelete}
                 onMouseDown={onMouseDown}
+                hrefPrefix={hrefPrefix}
               />
             );
           })}

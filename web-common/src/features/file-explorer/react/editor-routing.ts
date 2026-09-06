@@ -10,8 +10,8 @@ export function withEditorPrefix(path: string): string {
   return `${editorRoutePrefix}${path}`;
 }
 
-export function getFileHref(filePath: string, view?: string): string {
-  return withEditorPrefix(`/files${filePath}${view ? `?view=${view}` : ""}`);
+export function getFileHref(filePath: string, view?: string, basePath = ""): string {
+  return withEditorPrefix(`${basePath}/files${filePath}${view ? `?view=${view}` : ""}`);
 }
 
 export function getHomeHref(): string {

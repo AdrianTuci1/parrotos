@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import FileExplorer from "@rilldata/web-common/features/file-explorer/react/FileExplorer";
 import { transformFileList } from "@rilldata/web-common/features/file-explorer/react/transform-file-list";
 import { ViewFrame } from "@/components/shell/ViewFrame";
+import { SAMPLE_TREE } from "@/data/mockFileTree";
 
 /**
  * Rill-style `/files` artifact view. Queries the runtime for the project's file
@@ -19,26 +20,6 @@ import { ViewFrame } from "@/components/shell/ViewFrame";
  * here because mutating project files belongs to the (deferred) runtime-bound phase
  * and is outside this route-model change.
  */
-const SAMPLE_TREE = {
-  name: "",
-  path: "/",
-  directories: [
-    {
-      name: "models",
-      path: "/models",
-      directories: [],
-      files: ["orders.sql", "users.sql"],
-    },
-    {
-      name: "sources",
-      path: "/sources",
-      directories: [],
-      files: ["adwords.csv", "shopify.csv"],
-    },
-  ],
-  files: ["rill.yaml"],
-};
-
 export function FilesView() {
   const { ["*"]: filePath } = useParams();
   const runtimeClient = useRuntimeClient();

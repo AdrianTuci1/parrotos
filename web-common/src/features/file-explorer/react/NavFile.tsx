@@ -24,6 +24,7 @@ export default function NavFile({
   protectedDirectory = false,
   isProtectedFile = false,
   icon,
+  hrefPrefix = "",
 }: {
   filePath: string;
   onRename: (filePath: string, isDir: boolean) => void;
@@ -39,6 +40,7 @@ export default function NavFile({
   protectedDirectory?: boolean;
   isProtectedFile?: boolean;
   icon?: ReactNode;
+  hrefPrefix?: string;
 }) {
   const fileName = filePath.split("/").pop();
   const id = `${filePath}-nav-link`;
@@ -59,7 +61,7 @@ export default function NavFile({
     >
       <a
         className={`w-full truncate flex items-center gap-x-1 font-medium ${muted ? "hover:text-fg-secondary text-fg-muted" : "text-fg-primary hover:text-fg-primary"}`}
-        href={getFileHref(filePath)}
+        href={getFileHref(filePath, undefined, hrefPrefix)}
         id={id}
         onMouseDown={handleMouseDown}
         style={{ paddingLeft: `${padding}px` }}
