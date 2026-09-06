@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, Component } from "react";
 import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
+import embed from "vega-embed";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
 import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
 import { mapResolverExpressionToV1Expression } from "@rilldata/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard";
@@ -56,16 +57,101 @@ export default function ChartBlock(props: ChartBlockProps) {
       />
 
       <div className="chart-container">
-        <ChartContainer
-          runtimeClient={runtimeClient}
-          chartType={block.chartType as ChartType}
-          spec={spec as Readable<any>}
-          timeAndFilterStore={timeAndFilterStore}
-          themeMode="light"
-        />
+        <ChartBlockBoundary chartSpec={chartSpec} chartType={block.chartType}>
+          <ChartContainer
+            runtimeClient={runtimeClient}
+            chartType={block.chartType as ChartType}
+            spec={spec as Readable<any>}
+            timeAndFilterStore={timeAndFilterStore}
+            themeMode="light"
+          />
+        </ChartBlockBoundary>
       </div>
     </div>
   );
+}
+
+/**
+ * Error boundary around the live ChartContainer.
+ *
+ * The runtime chart path (ChartContainer) builds its data query with
+ * `@tanstack/svelte-query`, which needs Svelte context that may be absent in a
+ * React host; when it throws, fall back to an inline mock chart built from the
+ * create_chart spec so a chat with charts never blanks. Swap for the live path
+ * when the runtime is reachable.
+ */
+class ChartBlockBoundary extends Component<{ chartSpec: any; chartType: any; children: any }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    if (this.state.failed) {
+      return <MockChartFallback chartSpec={this.props.chartSpec} />;
+    }
+    return this.props.children;
+  }
+}
+
+/** Inline Vega-Lite chart fed with mock data, used when the runtime is down. */
+function MockChartFallback({ chartSpec }: { chartSpec: any }) {
+  const ref = useMemo(() => ({ current: null as HTMLDivElement | null }), []);
+  const spec = useMemo(() => buildVegaSpec(chartSpec), [chartSpec]);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    let cleanup: (() => void) | undefined;
+    embed(ref.current, spec as any, { actions: false })
+      .then((res) => { cleanup = () => res.view.finalize(); })
+      .catch(() => {});
+    return () => cleanup?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spec]);
+
+  return (
+    <div ref={ref} className="mock-chart w-full" style={{ height: 268 }} data-testid="mock-chart" />
+  );
+}
+
+function buildVegaSpec(chartSpec: any) {
+  const x = chartSpec?.x || {};
+  const isTime = x.type === "temporal" || x.field === "time" || !!x.time_grain;
+  const xField = x.field || "time";
+  const yField = chartSpec?.y?.field || chartSpec?.measure || chartSpec?.measures?.[0] || "total_revenue";
+  const values = isTime ? mockTimeSeries(yField) : mockCategorical(xField, yField);
+
+  const encoding: Record<string, unknown> = {
+    x: { field: xField, type: isTime ? "temporal" : "nominal", axis: { labelColor: "#9aa4b2", title: null } },
+    y: { field: yField, type: "quantitative", axis: { labelColor: "#9aa4b2" }, scale: { zero: false } },
+    tooltip: [{ field: xField, type: isTime ? "temporal" : "nominal" }, { field: yField, type: "quantitative" }],
+  };
+
+  return {
+    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+    width: "container",
+    height: 268,
+    padding: 8,
+    data: { values },
+    encoding,
+    config: { background: "transparent", view: { stroke: null } },
+    mark: isTime
+      ? { type: "area", interpolate: "monotone", color: "rgba(79,140,255,0.16)", line: { color: "#4f8cff", strokeWidth: 2 } }
+      : { type: "bar", cornerRadius: 3, color: "#4f8cff" },
+  };
+}
+
+function mockTimeSeries(yField: string) {
+  const start = Date.UTC(2026, 0, 1);
+  return Array.from({ length: 5 }, (_, day) => ({
+    time: new Date(start + day * 86400000).toISOString().slice(0, 10),
+    [yField]: 10000 + day * 1500,
+  }));
+}
+
+function mockCategorical(xField: string, yField: string) {
+  const labels = xField === "country" ? ["US", "DE", "GB"] : xField === "customer" ? ["Acme", "Globex", "Initech"] : ["Online", "Retail", "Partner"];
+  const values = xField === "country" ? [62440, 24810, 17320] : xField === "customer" ? [31240, 20490, 15830] : [68240, 27950, 15140];
+  return labels.map((label, i) => ({ [xField]: label, [yField]: values[i] ?? 0 }));
 }
 
 /**

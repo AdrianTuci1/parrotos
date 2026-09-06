@@ -67,12 +67,20 @@ function BlockRenderer(props: { block: Block; tools?: V1Tool[] | undefined }) {
     case "text": {
       const tb = block as TextBlock;
       const content = extractMessageText(tb.message);
+      const isUser = tb.message.role === "user";
+      if (tb.isError) {
+        return (
+          <div className="ai-message ai-message--error" data-testid="text-message">
+            {content}
+          </div>
+        );
+      }
       return (
         <div
-          className={`chat-message-content ${tb.isError ? "text-error" : ""}`}
+          className={`ai-message ${isUser ? "ai-message--user" : "ai-message--assistant"}`}
           data-testid="text-message"
         >
-          {content}
+          {isUser ? content : <MarkdownText content={content} />}
         </div>
       );
     }
@@ -115,4 +123,33 @@ function BlockRenderer(props: { block: Block; tools?: V1Tool[] | undefined }) {
     default:
       return null;
   }
+}
+
+/** Lightweight markdown render for assistant text (headings, lists, bold, code). */
+function MarkdownText({ content }: { content: string }) {
+  const blocks = (content || "").split(/\n{2,}/);
+  return (
+    <div className="chat-markdown">
+      {blocks.map((block, i) => {
+        const t = block.trim();
+        if (/^###\s+/.test(t)) return <h4 key={i}>{t.replace(/^###\s+/, "")}</h4>;
+        if (/^##\s+/.test(t)) return <h3 key={i}>{t.replace(/^##\s+/, "")}</h3>;
+        if (/^#\s+/.test(t)) return <h2 key={i}>{t.replace(/^#\s+/, "")}</h2>;
+        if (/^[-*]\s+/.test(t)) {
+          const items = t.split("\n").filter((l) => /^[-*]\s+/.test(l)).map((l) => l.replace(/^[-*]\s+/, ""));
+          return <ul key={i}>{items.map((it, j) => <li key={j}>{inlineMd(it)}</li>)}</ul>;
+        }
+        return <p key={i}>{inlineMd(t)}</p>;
+      })}
+    </div>
+  );
+}
+
+function inlineMd(text: string) {
+  return (text || "").split(/(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g).map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) return <strong key={i}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("`") && part.endsWith("`")) return <code key={i}>{part.slice(1, -1)}</code>;
+    if (part.startsWith("*") && part.endsWith("*")) return <em key={i}>{part.slice(1, -1)}</em>;
+    return <span key={i}>{part}</span>;
+  });
 }

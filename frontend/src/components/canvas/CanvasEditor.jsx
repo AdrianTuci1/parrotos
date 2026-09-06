@@ -1,0 +1,87 @@
+import { useEffect } from "react";
+import { useCanvasState } from "@/components/canvas/useCanvasState";
+import { CanvasGrid } from "@/components/canvas/CanvasGrid";
+import { AddComponentMenu } from "@/components/canvas/AddComponentMenu";
+import { ComponentEditor } from "@/components/canvas/ComponentEditor";
+import "@/styles/canvas-editor.css";
+
+/**
+ * Rill-style canvas editor surface. Hosts the builder toolbar, the card grid, and the
+ * per-card inspector. The same select / edit / add / remove / reorder / resize / AI-edit
+ * interactions Rill surfaces in its Canvas workspace, persisted to localStorage in mock mode.
+ */
+export function CanvasEditor({ canvasName }) {
+  const {
+    model,
+    selectedComponentId,
+    selectedComponent,
+    select,
+    addRow,
+    addToRow,
+    removeComponent,
+    updateComponent,
+    resizeItemWidth,
+    setRowHeight,
+    moveComponentWithinRow,
+    applyAiEdit,
+  } = useCanvasState(canvasName);
+
+  // Esc closes the inspector, unless a form field has focus.
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key !== "Escape") return;
+      const tag = e.target?.tagName?.toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+      select(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [select]);
+
+  const handlePick = (type) => {
+    addRow(type);
+  };
+
+  return (
+    <div className="canvas-editor">
+      <div className="canvas-editor-toolbar">
+        <div className="canvas-editor-toolbar-left">
+          <span className="canvas-editor-name">{canvasName}</span>
+          <span className="canvas-editor-hint">Editing mode</span>
+        </div>
+        <AddComponentMenu onPick={handlePick} />
+      </div>
+
+      <div className="canvas-editor-body">
+        <div className="canvas-editor-canvas">
+          <CanvasGrid
+            model={model}
+            selectedComponentId={selectedComponentId}
+            onSelect={select}
+            onDelete={removeComponent}
+            onAddRow={addRow}
+            onMoveWithinRow={moveComponentWithinRow}
+            onResizeWidth={resizeItemWidth}
+            onSetRowHeight={setRowHeight}
+          />
+          <div className="canvas-editor-tip">
+            Select a card to edit it, drag the handle to reorder, drag card edges to resize.
+          </div>
+        </div>
+
+        {selectedComponent ? (
+          <ComponentEditor
+            key={selectedComponent.id}
+            component={selectedComponent}
+            onClose={() => select(null)}
+            onChange={(specPatch) => updateComponent(selectedComponent.id, specPatch)}
+            onDelete={() => removeComponent(selectedComponent.id)}
+            onAiEdit={applyAiEdit}
+          />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+export default CanvasEditor;
