@@ -305,7 +305,7 @@ export const useAppStore = create(
       activeScope: 'organization',
       activeSection: 'home',
       activeOrganizationSection: 'stats',
-      activeProjectSection: 'analytics',
+      activeProjectSection: 'explore',
 
       activeAnalyticsView: 'servers',
       timeRange: '1h',
@@ -613,7 +613,7 @@ export const useAppStore = create(
     const workspace = get().workspaces.find((item) => item.id === workspaceId);
     if (!workspace) return;
     const organization = get().organizations.find((item) => item.id === workspace.organizationId);
-    set((state) => ({ currentOrganization: organization || state.currentOrganization, currentWorkspace: workspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
+    set((state) => ({ currentOrganization: organization || state.currentOrganization, currentWorkspace: workspace, activeScope: 'project', activeSection: state.activeProjectSection || 'explore' }));
     if (get().shouldFetchApi() && organization) {
       get().fetchAgents(organization.id, workspaceId);
     }
@@ -660,7 +660,7 @@ export const useAppStore = create(
         description: payload.description || '',
         modules,
       });
-      set((state) => ({ workspaces: [...state.workspaces, newWorkspace], currentWorkspace: newWorkspace, activeScope: 'project', activeSection: state.activeProjectSection || 'analytics' }));
+      set((state) => ({ workspaces: [...state.workspaces, newWorkspace], currentWorkspace: newWorkspace, activeScope: 'project', activeSection: state.activeProjectSection || 'explore' }));
       return newWorkspace;
     }
     const orgId = get().currentOrganization?.id;

@@ -2,13 +2,13 @@
 export const orgSections = ['stats', 'access', 'org-settings', 'metrics', 'invitations'];
 
 // Project-level sub-navbar items.
-// Storage/Graph/Chat were removed as redundant: they duplicate the data surfaced in
-// Settings, the Canvas/Files editors and the AI assistant respectively (matching
-// Rill's artefact-driven navigation, which has no flat tabs for these).
+// Storage/Graph/Chat/Analytics were removed as redundant or non-Rill surfaces:
+// analytics duplicated the metrics explorer (Explore) + dashboard cards, matching
+// Rill's artefact-driven navigation, which has no flat tab for a raw analytics
+// dashboard.
 export const projectSections = [
   'explore',
   'dashboard',
-  'analytics',
   'canvas',
   'files',
   'ai',
@@ -27,7 +27,6 @@ export const analyticsViews = [
 export const projectNavItems = [
   { id: 'explore', title: 'Explore', icon: 'bar-chart-3' },
   { id: 'dashboard', title: 'Dashboards', icon: 'layout-dashboard' },
-  { id: 'analytics', title: 'Analytics', icon: 'briefcase' },
   { id: 'canvas', title: 'Canvas', icon: 'git-branch' },
   { id: 'files', title: 'Files', icon: 'files' },
   { id: 'ai', title: 'AI', icon: 'sparkles' },

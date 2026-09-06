@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Layout } from "@/components/app-shell";
-import { AnalyticsView } from "@/components/shell/AnalyticsView";
 import { StorageView } from "@/components/shell/StorageView";
 import { GraphView } from "@/components/shell/GraphView";
 import { SettingsView } from "@/components/shell/SettingsView";
@@ -22,7 +21,6 @@ const sectionComponents = {
   "create-project": CreateProjectView,
   explore: MetricsExploreView,
   dashboard: DashboardView,
-  analytics: AnalyticsView,
   canvas: CanvasView,
   files: FilesView,
   storage: StorageView,
@@ -52,14 +50,14 @@ export function DashboardPage() {
 
   // Derive scope and view key directly from URL params, not stale state
   const scope = projectSlug ? "project" : "organization";
-  const urlSection = effectiveSection || (projectSlug ? "analytics" : "stats");
+  const urlSection = effectiveSection || (projectSlug ? "explore" : "stats");
 
   // Artifact name (metrics view / canvas / file path) carried by the URL.
   const artifactName = name || filePath;
   const viewKey = useMemo(() => {
     if (scope === "project") {
       if (projectSections.includes(urlSection)) return urlSection;
-      return "analytics";
+      return "explore";
     }
     if (orgSections.includes(urlSection)) return urlSection;
     return "stats";
@@ -105,10 +103,15 @@ export function DashboardPage() {
           selectWorkspace(proj.id);
         }
         if (!projectSections.includes(urlSection)) {
-          // Section removed from the nav (Storage/Graph/Chat were redundant with
-          // Settings/Canvas+Files/AI) — redirect legacy URLs to their replacement.
-          const legacyTarget = { storage: "settings", graph: "canvas", chat: "ai" }[urlSection];
-          navigate(`/app/${orgSlug}/${projectSlug}/${legacyTarget || "analytics"}`, { replace: true });
+          // Section removed from the nav (Storage/Graph/Chat/Analytics were redundant
+          // with Settings/Canvas+Files/AI/Explore) — redirect legacy URLs to replacement.
+          const legacyTarget = {
+            storage: "settings",
+            graph: "canvas",
+            chat: "ai",
+            analytics: "explore",
+          }[urlSection];
+          navigate(`/app/${orgSlug}/${projectSlug}/${legacyTarget || "explore"}`, { replace: true });
           return;
         }
       } else {

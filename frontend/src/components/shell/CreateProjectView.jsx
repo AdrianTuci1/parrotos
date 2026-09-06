@@ -98,7 +98,7 @@ export function CreateProjectView() {
         modules: defaultModules,
       });
       const projectSlug = project.slug || project.id;
-      navigate(`/app/${organizationSlug}/${projectSlug}/analytics`);
+      navigate(`/app/${organizationSlug}/${projectSlug}/explore`);
     } catch (error) {
       setSubmitError(error.message || "Project creation failed.");
     }
@@ -181,7 +181,7 @@ export function CreateProjectView() {
                   className="create-project-input"
                 />
                 <div className="create-project-field-hint">
-                  Route preview: <span>{`/app/${organizationSlug || "organization"}/${slugify(slug) || "project"}/analytics`}</span>
+                  Route preview: <span>{`/app/${organizationSlug || "organization"}/${slugify(slug) || "project"}/explore`}</span>
                 </div>
               </div>
             </div>

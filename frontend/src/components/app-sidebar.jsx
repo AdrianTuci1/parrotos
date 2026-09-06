@@ -86,7 +86,7 @@ export function AppSidebar() {
     const org = organizations.find((o) => o.id === proj?.organizationId);
     const oSlug = org?.slug || org?.id;
     const pSlug = proj?.slug || workspaceId;
-    navigate(`/app/${oSlug}/${pSlug}/analytics`);
+    navigate(`/app/${oSlug}/${pSlug}/explore`);
   };
 
   const navToOrgHome = () => {
@@ -103,7 +103,7 @@ export function AppSidebar() {
         navigate(`/app/${oSlug}/stats`);
       } else {
         const pSlug = state.currentWorkspace?.slug || state.currentWorkspace?.id;
-        navigate(`/app/${oSlug}/${pSlug}/analytics`);
+        navigate(`/app/${oSlug}/${pSlug}/explore`);
       }
     }, 0);
   };

@@ -122,7 +122,7 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
   // Derive the active section from the URL (matching ProjectSubNavbar); the
   // `/files/:path` splat route is matched as the `files` section.
   const urlSection = location.pathname.match(/\/app\/[^/]+\/[^/]+\/(\w+)/)?.[1];
-  const activeTab = urlSection || activeSection || "analytics";
+  const activeTab = urlSection || activeSection || "explore";
 
   // Dragging the right-edge handle resizes the rail between Rill's min/max.
   const startResize = (e) => {
