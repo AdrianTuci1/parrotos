@@ -25,6 +25,7 @@ import { SortType } from "@rilldata/web-common/features/dashboards/proto-state/d
 import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
 import { prepareDimensionTableRows } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-utils";
 import { ViewFrame } from "@/components/shell/ViewFrame";
+import { cn } from "@/lib/utils";
 import {
   resolveDataSource,
   DEFAULT_METRICS_VIEW,
@@ -37,6 +38,7 @@ import {
   buildMockTimeSeries,
 } from "@/data/mockAdapter";
 import MockChart from "@/components/widgets/MockChart";
+import "@/styles/explore.css";
 
 /**
  * React Metrics Explorer / Dashboard.
@@ -615,24 +617,33 @@ function MockMetricsExplorer({ metricsView }) {
   const [selectedDimension, setSelectedDimension] = useState(
     dimensions.find((d) => d.type !== "DIMENSION_TYPE_TIME")?.name ?? "channel",
   );
+  const [rightPane, setRightPane] = useState("leaderboard");
 
   const rows = getMockAggregationRows(metricsView, { dimension: selectedDimension });
   const timeSeriesRows = buildMockTimeSeries();
-  // Pre-aggregate the per-channel time series into daily totals so the area chart
-  // renders a clean single-series series (Vega-Lite's transform aggregate is finicky).
-  const primaryMeasure = measures[0]?.name || "total_revenue";
-  const dailyTotals = useMemo(() => {
-    const byDay = new Map();
-    for (const row of timeSeriesRows) {
-      byDay.set(row.time, (byDay.get(row.time) || 0) + (row[primaryMeasure] ?? 0));
-    }
-    return [...byDay.entries()].map(([time, value]) => ({
-      time,
-      [primaryMeasure]: value,
-    }));
-  }, [timeSeriesRows, primaryMeasure]);
   const measureNames = measures.map((m) => m.name);
   const hasTimeSeries = Boolean(getMockMetricsView(metricsView)?.timeDimension);
+  const primaryMeasure = measures[0]?.name || "total_revenue";
+
+  // Pre-aggregate the per-channel time series into daily totals per measure so each
+  // area chart renders a clean single-series line (Vega-Lite's transform aggregate
+  // is finicky). This mirrors Rill's left "time series" pane (one big number + chart
+  // per measure).
+  const dailyByMeasure = useMemo(() => {
+    const byMeasure = {};
+    for (const name of measureNames) {
+      const byDay = new Map();
+      for (const row of timeSeriesRows) {
+        byDay.set(row.time, (byDay.get(row.time) || 0) + (row[name] ?? 0));
+      }
+      byMeasure[name] = [...byDay.entries()].map(([time, value]) => ({
+        time,
+        [name]: value,
+      }));
+    }
+    return byMeasure;
+  }, [timeSeriesRows, measureNames]);
+
   const formatMockValue = (value, measure) => {
     if (value == null) return "—";
     const preset = measure?.formatPreset;
@@ -646,6 +657,7 @@ function MockMetricsExplorer({ metricsView }) {
     if (preset === "percent") return `${value}%`;
     return new Intl.NumberFormat("en-US").format(value);
   };
+
   // The Faza-1 filter grid is driven by a StateManagers. Without a runtime we build
   // one from the mock adapter; if it cannot be built for this metrics view, skip the
   // bar entirely rather than break the demo.
@@ -656,6 +668,30 @@ function MockMetricsExplorer({ metricsView }) {
       return null;
     }
   }, [metricsView]);
+
+  // Left "time series" pane is resizable against the right sub-view pane, mirroring
+  // Rill's dashboard EW resizer.
+  const [leftPct, setLeftPct] = useState(46);
+  const [resizing, setResizing] = useState(false);
+  const startResize = (e) => {
+    e.preventDefault();
+    setResizing(true);
+    const split = e.currentTarget.parentElement;
+    const rect = split.getBoundingClientRect();
+    const onMove = (ev) => {
+      const pct = ((ev.clientX - rect.left) / rect.width) * 100;
+      setLeftPct(Math.min(72, Math.max(28, pct)));
+    };
+    const onUp = () => {
+      setResizing(false);
+      document.body.style.cursor = "";
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.body.style.cursor = "col-resize";
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -693,70 +729,99 @@ function MockMetricsExplorer({ metricsView }) {
         </ExploreSafeBoundary>
       ) : null}
 
-      {/* Big-number cards (Rill-style measures container) */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {measures.map((measure) => (
-          <div
-            key={measure.name}
-            className="flex flex-col rounded-lg border bg-card p-4 shadow-sm"
-          >
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {measure.displayName || measure.name}
-            </span>
-            <span className="mt-1 text-2xl font-semibold tabular-nums">
-              {formatMockValue(total[measure.name], measure)}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Chart cards (mock data via vega-lite; real runtime path uses ChartContainer) */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <h3 className="mb-2 text-sm font-medium">
-            {(measures[0]?.displayName || measures[0]?.name || "Metric")} over time
-          </h3>
-          <div className="h-56">
-            <MockChart
-              values={dailyTotals}
-              xField="time"
-              yField={primaryMeasure}
-              mark="area"
-              xType="nominal"
-            />
-          </div>
+      {/* Rill-style dashboard body: left time-series pane + right sub-view pane. */}
+      <div className={cn("mock-explore-split", resizing && "resizing")}>
+        <div className="mock-explore-left" style={{ width: `${leftPct}%` }}>
+          {measures.map((measure) => (
+            <div key={measure.name} className="mock-explore-timeseries-card">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {measure.displayName || measure.name}
+                </span>
+                <span className="text-xl font-semibold tabular-nums">
+                  {formatMockValue(total[measure.name], measure)}
+                </span>
+              </div>
+              <div className="h-44">
+                <MockChart
+                  values={dailyByMeasure[measure.name] ?? []}
+                  xField="time"
+                  yField={measure.name}
+                  mark="area"
+                  xType="nominal"
+                  height={168}
+                />
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <h3 className="mb-2 text-sm font-medium">
-            {(measures[0]?.displayName || measures[0]?.name || "Metric")} by {selectedDimension}
-          </h3>
-          <div className="h-56">
-            <MockChart
-              values={rows}
-              xField={selectedDimension}
-              yField={measures[0]?.name || "total_revenue"}
-              mark="bar"
-            />
+
+        <div
+          className="mock-explore-resizer"
+          onMouseDown={startResize}
+          onDoubleClick={() => setLeftPct(46)}
+          title="Drag to resize (double-click to reset)"
+        />
+
+        <div className="mock-explore-right" style={{ width: `${100 - leftPct}%` }}>
+          <div className="sub-view-tabs">
+            <button
+              type="button"
+              className={cn("sub-view-tab", rightPane === "leaderboard" && "active")}
+              onClick={() => setRightPane("leaderboard")}
+            >
+              Leaderboard
+            </button>
+            <button
+              type="button"
+              className={cn("sub-view-tab", rightPane === "table" && "active")}
+              onClick={() => setRightPane("table")}
+            >
+              Dimension table
+            </button>
           </div>
+
+          {rightPane === "leaderboard" ? (
+            <LeaderboardCard
+              dimension={selectedDimension}
+              rows={rows}
+              measures={measures}
+              measureNames={measureNames}
+              formatMockValue={formatMockValue}
+            />
+          ) : (
+            <DimensionTableCard
+              dimension={selectedDimension}
+              rows={rows}
+              measures={measures}
+              measureNames={measureNames}
+            />
+          )}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Dimension breakdown table */}
-      <div className="rounded-xl border bg-card p-4 shadow-sm">
-        <h3 className="mb-3 text-sm font-medium">
-          {measureNames[0] || "Metric"} by {selectedDimension}
-        </h3>
-        <table className="w-full text-left text-sm">
+/** Right-pane leaderboard: the selected dimension's values ranked by measure. */
+function LeaderboardCard({ dimension, rows, measures, measureNames, formatMockValue }) {
+  const primary = measureNames[0];
+  const max = Math.max(1, ...rows.map((r) => r[primary] ?? 0));
+
+  return (
+    <div className="mock-explore-subview-card">
+      <div className="mock-explore-subview-title">
+        <h3>Leaderboard</h3>
+        <span>by {dimension}</span>
+      </div>
+      <div className="mock-table-wrap">
+        <table className="mock-table">
           <thead>
-            <tr className="border-b text-muted-foreground">
-              <th className="py-1.5 pr-2 text-xs font-medium uppercase tracking-wide">
-                {selectedDimension}
-              </th>
+            <tr>
+              <th className="mock-table-rank">#</th>
+              <th>{dimension}</th>
               {measureNames.map((name) => (
-                <th
-                  key={name}
-                  className="py-1.5 pr-2 text-right text-xs font-medium uppercase tracking-wide"
-                >
+                <th key={name} className="mock-table-num">
                   {measures.find((m) => m.name === name)?.displayName || name}
                 </th>
               ))}
@@ -764,10 +829,57 @@ function MockMetricsExplorer({ metricsView }) {
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className="border-b last:border-0">
-                <td className="py-1.5 pr-2 font-medium">{row[selectedDimension]}</td>
+              <tr key={i}>
+                <td className="mock-table-rank">{i + 1}</td>
+                <td>
+                  <div className="mock-leaderboard-cell">
+                    <span className="mock-leaderboard-label">{row[dimension]}</span>
+                    <span
+                      className="mock-leaderboard-bar"
+                      style={{ width: `${((row[primary] ?? 0) / max) * 100}%` }}
+                    />
+                  </div>
+                </td>
                 {measureNames.map((name) => (
-                  <td key={name} className="py-1.5 pr-2 text-right tabular-nums">
+                  <td key={name} className="mock-table-num">
+                    {formatMockValue(row[name], measures.find((m) => m.name === name))}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/** Right-pane dimension table: a clean, bounded breakdown table. */
+function DimensionTableCard({ dimension, rows, measures, measureNames }) {
+  return (
+    <div className="mock-explore-subview-card">
+      <div className="mock-explore-subview-title">
+        <h3>Dimension table</h3>
+        <span>by {dimension}</span>
+      </div>
+      <div className="mock-table-wrap">
+        <table className="mock-table">
+          <thead>
+            <tr>
+              <th>{dimension}</th>
+              {measureNames.map((name) => (
+                <th key={name} className="mock-table-num">
+                  {measures.find((m) => m.name === name)?.displayName || name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i}>
+                <td className="mock-table-label">{row[dimension]}</td>
+                {measureNames.map((name) => (
+                  <td key={name} className="mock-table-num">
                     {row[name] ?? "—"}
                   </td>
                 ))}

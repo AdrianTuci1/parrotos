@@ -47,9 +47,20 @@ export default function MockChart({
     if (!ref.current || values.length === 0) return;
     let cleanup: (() => void) | undefined;
 
+    // Line/area charts hug their data so the plot fills the card instead of leaving
+    // a tall empty band when the y-domain starts at zero.
+    const yScale =
+      mark === "area" || mark === "line"
+        ? { zero: false }
+        : undefined;
+
     const encoding: Record<string, unknown> = {
-      x: { field: xField, type: xType, axis: { labelColor: "#9aa4b2", labelAngle: 0 } },
-      y: { field: yField, type: "quantitative", axis: { labelColor: "#9aa4b2" } },
+      x: { field: xField, type: xType, axis: { labelColor: "#9aa4b2", labelAngle: 0, title: null } },
+      y: { field: yField, type: "quantitative", axis: { labelColor: "#9aa4b2" }, ...(yScale ? { scale: yScale } : {}) },
+      tooltip: [
+        { field: xField, type: xType },
+        { field: yField, type: "quantitative" },
+      ],
     };
     if (colorField) {
       encoding.color = {
