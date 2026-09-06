@@ -38,6 +38,7 @@ import {
   buildMockTimeSeries,
 } from "@/data/mockAdapter";
 import MockChart from "@/components/widgets/MockChart";
+import KpiInspector from "@/components/shell/KpiInspector";
 import "@/styles/explore.css";
 
 /**
@@ -620,9 +621,18 @@ function MockMetricsExplorer({ metricsView }) {
   const [rightPane, setRightPane] = useState("leaderboard");
   const [timeGrain, setTimeGrain] = useState("day");
 
+  // Editable copy of the mock measures so the KPI inspector's edits (display name,
+  // format, description, hide) reflect live on the cards.
+  const [editableMeasures, setEditableMeasures] = useState(() =>
+    measures.map((m) => ({ ...m })),
+  );
+  const [selectedMeasureName, setSelectedMeasureName] = useState(null);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [inspectorWidth, setInspectorWidth] = useState(320);
+
   const rows = getMockAggregationRows(metricsView, { dimension: selectedDimension });
   const timeSeriesRows = buildMockTimeSeries();
-  const measureNames = measures.map((m) => m.name);
+  const measureNames = editableMeasures.map((m) => m.name);
   const hasTimeSeries = Boolean(getMockMetricsView(metricsView)?.timeDimension);
   const primaryMeasure = measures[0]?.name || "total_revenue";
 
@@ -702,6 +712,42 @@ function MockMetricsExplorer({ metricsView }) {
     document.addEventListener("mouseup", onUp);
   };
 
+  // KPI inspector: select a measure to edit, apply display-field patches live.
+  const openInspector = (measureName) => {
+    setSelectedMeasureName(measureName);
+    setInspectorOpen(true);
+  };
+  const handleInspectorChange = ({ field, value }) => {
+    if (!selectedMeasureName) return;
+    setEditableMeasures((prev) =>
+      prev.map((m) =>
+        m.name === selectedMeasureName ? { ...m, [field]: value } : m,
+      ),
+    );
+  };
+
+  // Independent resizer for the KPI inspector (right column), so the split resizer
+  // and the inspector resizer both work.
+  const startInspectorResize = (e) => {
+    e.preventDefault();
+    setResizing(true);
+    const inspector = e.currentTarget.parentElement;
+    const right = inspector.getBoundingClientRect().right;
+    const onMove = (ev) => {
+      const w = right - ev.clientX;
+      setInspectorWidth(Math.min(460, Math.max(280, w)));
+    };
+    const onUp = () => {
+      setResizing(false);
+      document.body.style.cursor = "";
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.body.style.cursor = "col-resize";
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -746,75 +792,119 @@ function MockMetricsExplorer({ metricsView }) {
         </ExploreSafeBoundary>
       ) : null}
 
-      {/* Rill-style dashboard body: left time-series pane + right sub-view pane. */}
-      <div className={cn("mock-explore-split", resizing && "resizing")}>
-        <div className="mock-explore-left" style={{ width: `${leftPct}%` }}>
-          {measures.map((measure) => (
-            <div key={measure.name} className="mock-explore-timeseries-card">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {measure.displayName || measure.name}
-                </span>
-                <span className="text-xl font-semibold tabular-nums">
-                  {formatMockValue(total[measure.name], measure)}
-                </span>
-              </div>
-              <div className="h-44">
-                <MockChart
-                  values={dailyByMeasure[measure.name] ?? []}
-                  xField="time"
-                  yField={measure.name}
-                  mark="area"
-                  xType="nominal"
-                  height={168}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div
-          className="mock-explore-resizer"
-          onMouseDown={startResize}
-          onDoubleClick={() => setLeftPct(46)}
-          title="Drag to resize (double-click to reset)"
-        />
-
-        <div className="mock-explore-right" style={{ width: `${100 - leftPct}%` }}>
-          <div className="sub-view-tabs">
-            <button
-              type="button"
-              className={cn("sub-view-tab", rightPane === "leaderboard" && "active")}
-              onClick={() => setRightPane("leaderboard")}
-            >
-              Leaderboard
-            </button>
-            <button
-              type="button"
-              className={cn("sub-view-tab", rightPane === "table" && "active")}
-              onClick={() => setRightPane("table")}
-            >
-              Dimension table
-            </button>
+      {/* Rill-style dashboard body: left KPI pane + right sub-view pane + inspector. */}
+      <div className="mock-explore-shell">
+        <div className={cn("mock-explore-split", resizing && "resizing")}>
+          <div className="mock-explore-left" style={{ width: `${leftPct}%` }}>
+            {editableMeasures
+              .filter((m) => !m.hide)
+              .map((measure) => {
+                const selected = measure.name === selectedMeasureName;
+                return (
+                  <div
+                    key={measure.name}
+                    className={cn("mock-kpi-card", selected && "selected")}
+                    onClick={() => openInspector(measure.name)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openInspector(measure.name);
+                      }
+                    }}
+                  >
+                    <div className="mock-kpi-head">
+                      <span className="mock-kpi-label">
+                        {measure.displayName || measure.name}
+                      </span>
+                      <span className="mock-kpi-edit" aria-hidden="true">
+                        <EditIcon size={12} />
+                      </span>
+                    </div>
+                    <span className="mock-kpi-value">
+                      {formatMockValue(total[measure.name], measure)}
+                    </span>
+                    <div className="h-44">
+                      <MockChart
+                        values={dailyByMeasure[measure.name] ?? []}
+                        xField="time"
+                        yField={measure.name}
+                        mark="area"
+                        xType="nominal"
+                        height={168}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
           </div>
 
-          {rightPane === "leaderboard" ? (
-            <LeaderboardCard
-              dimension={selectedDimension}
-              rows={rows}
-              measures={measures}
-              measureNames={measureNames}
-              formatMockValue={formatMockValue}
-            />
-          ) : (
-            <DimensionTableCard
-              dimension={selectedDimension}
-              rows={rows}
-              measures={measures}
-              measureNames={measureNames}
-            />
-          )}
+          <div
+            className="mock-explore-resizer"
+            onMouseDown={startResize}
+            onDoubleClick={() => setLeftPct(46)}
+            title="Drag to resize (double-click to reset)"
+          />
+
+          <div className="mock-explore-right" style={{ width: `${100 - leftPct}%` }}>
+            <div className="sub-view-tabs">
+              <button
+                type="button"
+                className={cn("sub-view-tab", rightPane === "leaderboard" && "active")}
+                onClick={() => setRightPane("leaderboard")}
+              >
+                Leaderboard
+              </button>
+              <button
+                type="button"
+                className={cn("sub-view-tab", rightPane === "table" && "active")}
+                onClick={() => setRightPane("table")}
+              >
+                Dimension table
+              </button>
+              <button
+                type="button"
+                className={cn("sub-view-tab", rightPane === "summary" && "active")}
+                onClick={() => setRightPane("summary")}
+              >
+                Summary
+              </button>
+            </div>
+
+            {rightPane === "leaderboard" ? (
+              <LeaderboardCard
+                dimension={selectedDimension}
+                rows={rows}
+                measures={editableMeasures}
+                measureNames={measureNames}
+                formatMockValue={formatMockValue}
+              />
+            ) : rightPane === "table" ? (
+              <DimensionTableCard
+                dimension={selectedDimension}
+                rows={rows}
+                measures={editableMeasures}
+                measureNames={measureNames}
+              />
+            ) : (
+              <SummaryCard
+                measures={editableMeasures}
+                total={total}
+                formatMockValue={formatMockValue}
+              />
+            )}
+          </div>
         </div>
+
+        <KpiInspector
+          measure={editableMeasures.find((m) => m.name === selectedMeasureName)}
+          open={inspectorOpen}
+          width={inspectorWidth}
+          onResizeStart={startInspectorResize}
+          onClose={() => setInspectorOpen(false)}
+          onChange={handleInspectorChange}
+        />
       </div>
     </div>
   );
@@ -875,6 +965,27 @@ function CalendarIcon({ size = "16px", className = "" }) {
     >
       <rect x="3" y="4" width="18" height="18" rx="2" />
       <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+}
+
+/** Edit (pencil) icon for the KPI card affordance. */
+function EditIcon({ size = "16px", className = "" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
     </svg>
   );
 }
@@ -961,6 +1072,51 @@ function DimensionTableCard({ dimension, rows, measures, measureNames }) {
                 ))}
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/** Right-pane summary: each measure's overall total + share of the total. */
+function SummaryCard({ measures, total, formatMockValue }) {
+  const visible = measures.filter((m) => !m.hide);
+  const grandTotal = visible.reduce((sum, m) => sum + (total[m.name] ?? 0), 0);
+  return (
+    <div className="mock-explore-subview-card">
+      <div className="mock-explore-subview-title">
+        <h3>Summary</h3>
+        <span>all measures</span>
+      </div>
+      <div className="mock-table-wrap">
+        <table className="mock-table">
+          <thead>
+            <tr>
+              <th>Measure</th>
+              <th className="mock-table-num">Total</th>
+              <th className="mock-table-num">Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visible.map((m) => {
+                const value = total[m.name] ?? 0;
+                const share = grandTotal ? (value / grandTotal) * 100 : 0;
+                return (
+                  <tr key={m.name}>
+                    <td className="mock-table-label">{m.displayName || m.name}</td>
+                    <td className="mock-table-num">
+                      {formatMockValue(value, m)}
+                    </td>
+                    <td className="mock-table-num">
+                      <div className="mock-summary-row" style={{ gridTemplateColumns: "auto minmax(0,1fr)" }}>
+                        <span className="mock-summary-value">{share.toFixed(1)}%</span>
+                        <span className="mock-leaderboard-bar" style={{ width: `${share}%` }} />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>
