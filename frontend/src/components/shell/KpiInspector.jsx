@@ -1,4 +1,10 @@
 import { useState } from "react";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import "@/styles/explore.css";
 
 const FORMAT_OPTIONS = [
@@ -156,35 +162,31 @@ export default function KpiInspector({
             <label className="mock-inspector-label" htmlFor="kpi-mark">
               Chart type
             </label>
-            <select
-              id="kpi-mark"
-              className="mock-inspector-select"
-              value={measure.mark ?? "area"}
-              onChange={(e) => handleChange("mark", e.target.value)}
-            >
-              {MARK_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            <Select value={measure.mark ?? "area"} onValueChange={(value) => handleChange("mark", value)}>
+              <SelectTrigger id="kpi-mark" className="w-full bg-surface-subtle" />
+              <SelectContent>
+                {MARK_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="mock-inspector-field">
             <label className="mock-inspector-label" htmlFor="kpi-format">
               Format preset
             </label>
-            <select
-              id="kpi-format"
-              className="mock-inspector-select"
-              value={measure.formatPreset ?? "number"}
-              onChange={(e) => handleChange("formatPreset", e.target.value)}
-            >
-              {FORMAT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            <Select value={measure.formatPreset ?? "number"} onValueChange={(value) => handleChange("formatPreset", value)}>
+              <SelectTrigger id="kpi-format" className="w-full bg-surface-subtle" />
+              <SelectContent>
+                {FORMAT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="mock-inspector-note">
             Preview: <span className="mock-inspector-preview">{preview}</span>

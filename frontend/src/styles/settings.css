@@ -1610,6 +1610,24 @@
   text-overflow: ellipsis;
 }
 
+/* Organization scope is the top-level settings scope; the Project section is
+   visually nested beneath it so the org → project hierarchy reads clearly. */
+.settings-org-section .settings-workspace-heading {
+  color: #a8c7fa;
+}
+
+.settings-project-section {
+  margin-left: 0.5rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid #25282c;
+  border-radius: 0;
+  border-top: 1px solid #25282c;
+}
+
+.settings-project-section .settings-workspace-heading {
+  color: #8e918f;
+}
+
 .settings-workspace-trigger {
   display: flex;
   align-items: center;

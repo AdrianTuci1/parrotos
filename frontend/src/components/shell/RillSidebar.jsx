@@ -5,6 +5,7 @@ import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
 import { getRuntimeServiceListFilesQueryOptions } from "@rilldata/web-common/runtime-client";
 import FileExplorer from "@rilldata/web-common/features/file-explorer/react/FileExplorer";
 import { transformFileList } from "@rilldata/web-common/features/file-explorer/react/transform-file-list";
+import { ConversationSidebar } from "@/components/chat/ConversationSidebar";
 import { useAppStore } from "@/stores/useAppStore";
 import { projectNavItems } from "@/components/app-shared";
 import { cn } from "@/lib/utils";
@@ -76,7 +77,15 @@ const addMoreOptions = [
 export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentOrganization, currentWorkspace, activeSection } = useAppStore();
+  const {
+    currentOrganization,
+    currentWorkspace,
+    activeSection,
+    chatSessions,
+    activeChatId,
+    selectChat,
+    createChatSession,
+  } = useAppStore();
 
   const [width, setWidth] = useState(DEFAULT_NAV_WIDTH);
   const [collapsed, setCollapsed] = useState(false);
@@ -250,17 +259,27 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
           </div>
 
           <div className="rill-sidebar-tree" onClick={handleTreeNavClick}>
-            <FileExplorer
-              fileTree={tree}
-              projectTitle={projectName}
-              isLoading={listFiles.isLoading}
-              isError={listFiles.isError}
-              onRename={() => {}}
-              onDuplicate={() => {}}
-              onDelete={() => {}}
-              onMouseDown={() => {}}
-              hrefPrefix={basePath}
-            />
+            {activeTab === "ai" ? (
+              <ConversationSidebar
+                embedded
+                chatSessions={chatSessions}
+                activeChatId={activeChatId}
+                onSelect={selectChat}
+                onNew={() => createChatSession()}
+              />
+            ) : (
+              <FileExplorer
+                fileTree={tree}
+                projectTitle={projectName}
+                isLoading={listFiles.isLoading}
+                isError={listFiles.isError}
+                onRename={() => {}}
+                onDuplicate={() => {}}
+                onDelete={() => {}}
+                onMouseDown={() => {}}
+                hrefPrefix={basePath}
+              />
+            )}
           </div>
 
           {/* Footer: compact section navigation so every existing reachable section stays reachable. */}

@@ -1418,6 +1418,14 @@ main:has(.chat-active-mode),
 }
 .ai-sidebar--collapsed { width: 56px; }
 
+/* Embedded inside the main project sidebar (AI menu): fill the file-tree slot. */
+.ai-sidebar--embedded {
+  flex: 1 1 auto;
+  width: 100%;
+  border-right: none;
+  background: transparent;
+}
+
 .ai-sidebar-header {
   flex: none;
   display: flex;

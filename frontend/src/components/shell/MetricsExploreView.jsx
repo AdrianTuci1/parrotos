@@ -40,6 +40,12 @@ import {
 } from "@/data/mockAdapter";
 import MockChart from "@/components/widgets/MockChart";
 import KpiInspector from "@/components/shell/KpiInspector";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { applyMockAgentEdit } from "@/data/mockAgent";
 import "@/styles/explore.css";
 
@@ -304,18 +310,20 @@ function MetricsHeader({
       </div>
       <div className="flex items-center gap-2">
         {dimensions.length > 0 ? (
-          <select
-            className="rounded border bg-card px-2 py-1 text-sm"
+          <Select
             value={selectedDimension || dimensions[0]?.name || dimensions[0]?.column}
-            onChange={(e) => onDimensionSelect(e.target.value)}
+            onValueChange={(value) => onDimensionSelect(value)}
             aria-label="Dimension"
           >
-            {dimensions.map((dim) => (
-              <option key={dim.name ?? dim.column} value={dim.name ?? dim.column}>
-                {dim.displayName || dim.name || dim.column}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-auto bg-card" aria-label="Dimension" />
+            <SelectContent>
+              {dimensions.map((dim) => (
+                <SelectItem key={dim.name ?? dim.column} value={dim.name ?? dim.column}>
+                  {dim.displayName || dim.name || dim.column}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         ) : null}
         <span className="text-xs text-muted-foreground">
           {measures.length} measure{measures.length === 1 ? "" : "s"} ·{" "}
@@ -776,20 +784,22 @@ export function MockMetricsExplorer({ metricsView }) {
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span>demo data</span>
           {dimensions.length ? (
-            <select
-              className="rounded border bg-card px-2 py-1 text-sm"
+            <Select
               value={selectedDimension}
-              onChange={(e) => setSelectedDimension(e.target.value)}
+              onValueChange={setSelectedDimension}
               aria-label="Dimension"
             >
-              {dimensions
-                .filter((d) => d.type !== "DIMENSION_TYPE_TIME")
-                .map((dim) => (
-                  <option key={dim.name} value={dim.name}>
-                    {dim.displayName || dim.name}
-                  </option>
-                ))}
-            </select>
+              <SelectTrigger className="w-auto bg-card" aria-label="Dimension" />
+              <SelectContent>
+                {dimensions
+                  .filter((d) => d.type !== "DIMENSION_TYPE_TIME")
+                  .map((dim) => (
+                    <SelectItem key={dim.name} value={dim.name}>
+                      {dim.displayName || dim.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           ) : null}
         </div>
       </div>
@@ -972,17 +982,23 @@ function MockTimeControls({ timeStart, timeEnd, timeGrain, onTimeGrainSelect }) 
         </div>
       ) : null}
       <div className="mock-time-grain">
-        <select
+        <Select
           value={timeGrain}
-          onChange={(e) => onTimeGrainSelect(e.target.value)}
+          onValueChange={onTimeGrainSelect}
           aria-label="Time grain"
         >
-          {["day", "week", "month"].map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger
+            aria-label="Time grain"
+            className="h-auto border-none bg-transparent px-1 py-0 text-[11px] font-medium uppercase tracking-[0.04em] text-fg-secondary"
+          />
+          <SelectContent className="min-w-[5rem]">
+            {["day", "week", "month"].map((g) => (
+              <SelectItem key={g} value={g}>
+                {g}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       {timeEnd ? (
         <span className="mock-time-asof">as of {timeEnd}</span>
@@ -1221,34 +1237,30 @@ function MockPivot({ metricsView, dimensions, measures, formatMockValue }) {
       <div className="flex flex-wrap items-center gap-2 px-1 pb-2 text-xs text-muted-foreground">
         <label className="flex items-center gap-1">
           Rows
-          <select
-            className="rounded border bg-card px-2 py-1 text-sm"
-            value={rowDim}
-            onChange={(e) => setRowDim(e.target.value)}
-            aria-label="Pivot row dimension"
-          >
-            {dimensions.map((d) => (
-              <option key={d.name} value={d.name}>
-                {d.displayName || d.name}
-              </option>
-            ))}
-          </select>
+          <Select value={rowDim} onValueChange={setRowDim} aria-label="Pivot row dimension">
+            <SelectTrigger className="h-7 w-auto bg-card px-2 py-0 text-xs" aria-label="Pivot row dimension" />
+            <SelectContent>
+              {dimensions.map((d) => (
+                <SelectItem key={d.name} value={d.name}>
+                  {d.displayName || d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
         <label className="flex items-center gap-1">
           Columns
-          <select
-            className="rounded border bg-card px-2 py-1 text-sm"
-            value={colDim}
-            onChange={(e) => setColDim(e.target.value)}
-            aria-label="Pivot column dimension"
-          >
-            <option value="">Measures</option>
-            {dimensions.map((d) => (
-              <option key={d.name} value={d.name}>
-                {d.displayName || d.name}
-              </option>
-            ))}
-          </select>
+          <Select value={colDim} onValueChange={setColDim} aria-label="Pivot column dimension">
+            <SelectTrigger className="h-7 w-auto bg-card px-2 py-0 text-xs" aria-label="Pivot column dimension" />
+            <SelectContent>
+              <SelectItem value="">Measures</SelectItem>
+              {dimensions.map((d) => (
+                <SelectItem key={d.name} value={d.name}>
+                  {d.displayName || d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
         <span className="flex flex-wrap items-center gap-2">
           {measures.map((m) => (
