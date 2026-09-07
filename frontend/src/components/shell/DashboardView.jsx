@@ -1,13 +1,18 @@
 import { useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { readable } from "svelte/store";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
 import { getRuntimeServiceListResourcesQueryOptions } from "@rilldata/web-common/runtime-client";
 import { useQuery } from "@tanstack/react-query";
-import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
+import { StateManagersProvider } from "@rilldata/web-common/features/dashboards/state-managers/react";
 import { ViewFrame } from "@/components/shell/ViewFrame";
-import { DEFAULT_METRICS_VIEW, MOCK_METRICS_VIEWS, getMockMetricsView } from "@/data/dataSource";
+import {
+  DEFAULT_METRICS_VIEW,
+  MOCK_METRICS_VIEWS,
+  getMockMetricsView,
+  resolveDataSource,
+} from "@/data/dataSource";
 import { useAppStore } from "@/stores/useAppStore";
+import { MockMetricsExplorer, RuntimeMetricsExplorer } from "@/components/shell/MetricsExploreView";
 
 /**
  * Rill-style `/dashboard` artifact view.
@@ -102,12 +107,30 @@ export function DashboardView() {
 }
 
 /**
- * Renders a compact real dashboard for a specific metrics view. Each chart is a
- * ported `ChartContainer` fed by the runtime client, mirroring `ExploreView`.
+ * Renders a real dashboard for a specific metrics view by reusing the same
+ * explorer surface that powers the Explore route (filters, KPI cards, charts,
+ * leaderboard / dimension table / pivot). In runtime mode the live explorer is
+ * used; otherwise the mock explorer keeps the dashboard populated without a
+ * running Rill runtime.
  */
 function DashboardDetail({ metricsView }) {
-  const runtimeClient = useRuntimeClient();
   const viewName = metricsView || DEFAULT_METRICS_VIEW;
+  const dataSource = resolveDataSource();
+  const [searchParams] = useSearchParams();
+
+  if (dataSource.mode === "runtime") {
+    return (
+      <ViewFrame
+        title={viewName}
+        description={`Live dashboard for the ${viewName} metrics view.`}
+        className="full-width"
+      >
+        <StateManagersProvider metricsViewName={viewName} exploreName={viewName}>
+          <RuntimeMetricsExplorer metricsView={viewName} searchParams={searchParams} />
+        </StateManagersProvider>
+      </ViewFrame>
+    );
+  }
 
   return (
     <ViewFrame
@@ -115,70 +138,9 @@ function DashboardDetail({ metricsView }) {
       description={`Live dashboard for the ${viewName} metrics view.`}
       className="full-width"
     >
-      <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-2">
-        <DashboardChart
-          title="Revenue by channel"
-          chartType="bar_chart"
-          metricsView={viewName}
-          spec={{
-            metrics_view: viewName,
-            x: { field: "channel", type: "nominal" },
-            y: { field: "total_revenue", type: "quantitative" },
-            isInteractive: false,
-          }}
-          tafs={buildStaticTafs()}
-        />
-        <DashboardChart
-          title="Orders by channel"
-          chartType="bar_chart"
-          metricsView={viewName}
-          spec={{
-            metrics_view: viewName,
-            x: { field: "channel", type: "nominal" },
-            y: { field: "order_count", type: "quantitative" },
-            isInteractive: false,
-          }}
-          tafs={buildStaticTafs()}
-        />
-      </div>
+      <MockMetricsExplorer metricsView={viewName} />
     </ViewFrame>
   );
-}
-
-function DashboardChart({ title, chartType, spec, tafs }) {
-  const runtimeClient = useRuntimeClient();
-  const specStore = useMemo(() => readable(spec), [spec]);
-  const tafsStore = useMemo(() => readable(tafs), [tafs]);
-
-  return (
-    <div className="rounded-xl border bg-card p-3 shadow-sm">
-      <div className="mb-2 flex items-center justify-between px-1">
-        <h3 className="text-sm font-medium">{title}</h3>
-      </div>
-      <div className="h-72">
-        <ChartContainer
-          runtimeClient={runtimeClient}
-          chartType={chartType}
-          spec={specStore}
-          timeAndFilterStore={tafsStore}
-          themeMode="light"
-        />
-      </div>
-    </div>
-  );
-}
-
-function buildStaticTafs() {
-  return {
-    timeRange: undefined,
-    comparisonTimeRange: undefined,
-    showTimeComparison: false,
-    where: { cond: { op: "OPERATION_AND", exprs: [] } },
-    timeGrain: undefined,
-    timeRangeState: undefined,
-    comparisonTimeRangeState: undefined,
-    hasTimeSeries: false,
-  };
 }
 
 export default DashboardView;

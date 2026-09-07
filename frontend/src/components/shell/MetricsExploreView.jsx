@@ -30,6 +30,7 @@ import {
   resolveDataSource,
   DEFAULT_METRICS_VIEW,
 } from "@/data/dataSource";
+import { buildMockPivotData } from "@/data/mockPivot";
 import { createMockStateManagers } from "@/data/mockStateManagers";
 import {
   getMockMetricsView,
@@ -97,7 +98,7 @@ export function MetricsExploreView() {
  * Live runtime explorer. All widgets query the real metrics view through the runtime
  * client; this component only wires their shared state (time range, grain, filters).
  */
-function RuntimeMetricsExplorer({ metricsView, searchParams }) {
+export function RuntimeMetricsExplorer({ metricsView, searchParams }) {
   const runtimeClient = useRuntimeClient();
   const runtimeHost = resolveDataSource().host;
   const stateManagers = useStateManagers();
@@ -612,7 +613,7 @@ function measurementsFromNames(measures) {
  * explorer surface from the mock adapter (mockAdapter.js) so it stays populated in
  * demo / runtime-less environments.
  */
-function MockMetricsExplorer({ metricsView }) {
+export function MockMetricsExplorer({ metricsView }) {
   const measures = getMockMetricsView(metricsView)?.measures ?? [];
   const dimensions = getMockMetricsView(metricsView)?.dimensions ?? [];
   const total = getMockTotalRow();
@@ -897,6 +898,13 @@ function MockMetricsExplorer({ metricsView }) {
               >
                 Summary
               </button>
+              <button
+                type="button"
+                className={cn("sub-view-tab", rightPane === "pivot" && "active")}
+                onClick={() => setRightPane("pivot")}
+              >
+                Pivot
+              </button>
             </div>
 
             {rightPane === "leaderboard" ? (
@@ -913,6 +921,13 @@ function MockMetricsExplorer({ metricsView }) {
                 rows={rows}
                 measures={editableMeasures}
                 measureNames={measureNames}
+              />
+            ) : rightPane === "pivot" ? (
+              <MockPivot
+                metricsView={metricsView}
+                dimensions={dimensions.filter((d) => d.type !== "DIMENSION_TYPE_TIME")}
+                measures={measures}
+                formatMockValue={formatMockValue}
               />
             ) : (
               <SummaryCard
@@ -1159,6 +1174,120 @@ function SummaryCard({ measures, total, formatMockValue }) {
                   </tr>
                 );
               })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/** Right-pane pivot: row × column × measure axes driven by mock data. */
+function MockPivot({ metricsView, dimensions, measures, formatMockValue }) {
+  const defaultRow = dimensions[0]?.name || "channel";
+  const [rowDim, setRowDim] = useState(defaultRow);
+  const [colDim, setColDim] = useState("");
+  const [activeMeasures, setActiveMeasures] = useState(() =>
+    new Set(measures.slice(0, 1).map((m) => m.name)),
+  );
+
+  const selectedMeasures = measures.filter((m) => activeMeasures.has(m.name));
+  const pivot = useMemo(
+    () =>
+      buildMockPivotData(
+        (dimension) => getMockAggregationRows(metricsView, { dimension }),
+        rowDim,
+        colDim || null,
+        selectedMeasures.length ? selectedMeasures : measures.slice(0, 1),
+      ),
+    // `getMockAggregationRows` is a stable module fn keyed on metricsView,
+    // which is the only consuming dependency here.
+    [metricsView, rowDim, colDim, selectedMeasures, measures],
+  );
+
+  const toggleMeasure = (name) => {
+    setActiveMeasures((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
+      return next;
+    });
+  };
+
+  return (
+    <div className="mock-explore-subview-card">
+      <div className="flex flex-wrap items-center gap-2 px-1 pb-2 text-xs text-muted-foreground">
+        <label className="flex items-center gap-1">
+          Rows
+          <select
+            className="rounded border bg-card px-2 py-1 text-sm"
+            value={rowDim}
+            onChange={(e) => setRowDim(e.target.value)}
+            aria-label="Pivot row dimension"
+          >
+            {dimensions.map((d) => (
+              <option key={d.name} value={d.name}>
+                {d.displayName || d.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex items-center gap-1">
+          Columns
+          <select
+            className="rounded border bg-card px-2 py-1 text-sm"
+            value={colDim}
+            onChange={(e) => setColDim(e.target.value)}
+            aria-label="Pivot column dimension"
+          >
+            <option value="">Measures</option>
+            {dimensions.map((d) => (
+              <option key={d.name} value={d.name}>
+                {d.displayName || d.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <span className="flex flex-wrap items-center gap-2">
+          {measures.map((m) => (
+            <label key={m.name} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={activeMeasures.has(m.name)}
+                onChange={() => toggleMeasure(m.name)}
+              />
+              {m.displayName || m.name}
+            </label>
+          ))}
+        </span>
+      </div>
+      <div className="mock-table-wrap">
+        <table className="mock-table">
+          <thead>
+            <tr>
+              <th>{dimensions.find((d) => d.name === rowDim)?.displayName || rowDim}</th>
+              {pivot.columns.map((c) => (
+                <th key={c.value} className="mock-table-num">
+                  {c.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {pivot.rows.map((row, i) => (
+              <tr key={i}>
+                <td className="mock-table-label">{row.label}</td>
+                {row.cells.map((cell, j) => (
+                  <td key={j} className="mock-table-num">
+                    {cell == null
+                      ? "—"
+                      : formatMockValue(cell, pivot.columns[j].measure)}
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
