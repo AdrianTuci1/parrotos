@@ -13,6 +13,7 @@ export const projectSections = [
   'files',
   'ai',
   'alerts',
+  'reports',
   'settings',
 ];
 
@@ -32,6 +33,7 @@ export const projectNavItems = [
   { id: 'files', title: 'Files', icon: 'files' },
   { id: 'ai', title: 'AI', icon: 'sparkles' },
   { id: 'alerts', title: 'Alerts', icon: 'bell' },
+  { id: 'reports', title: 'Reports', icon: 'file-text' },
   { id: 'settings', title: 'Settings', icon: 'settings' },
 ];
 
