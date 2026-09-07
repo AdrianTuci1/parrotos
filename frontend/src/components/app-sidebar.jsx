@@ -14,7 +14,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import {
   Plus, LayoutDashboard, BarChart3, Briefcase, Plug, Settings,
   Rocket, GitBranch, MessageSquare, Undo2, Users, CreditCard, Power,
-  Database, ArrowRightFromLine, House, File, Sparkles,
+  Database, ArrowRightFromLine, House, File, Sparkles, Bell,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -29,7 +29,7 @@ const sectionIcons = {
   house: House,
   "message-square": MessageSquare, plug: Plug, rocket: Rocket,
   settings: Settings, users: Users, database: Database, files: File,
-  sparkles: Sparkles,
+  sparkles: Sparkles, bell: Bell,
   "arrow-right-from-line": ArrowRightFromLine,
 };
 

@@ -10,6 +10,7 @@ import { FilesView } from "@/components/shell/FilesView";
 import { DashboardView } from "@/components/shell/DashboardView";
 import { CanvasView } from "@/components/shell/CanvasView";
 import { AiView } from "@/components/shell/AiView";
+import { AlertsView } from "@/components/shell/AlertsView";
 import { CreateProjectView } from "@/components/shell/CreateProjectView";
 import { OrganizationStatsView } from "@/components/shell/OrganizationStatsView";
 import { OrganizationAccessView } from "@/components/shell/OrganizationAccessView";
@@ -28,6 +29,7 @@ const sectionComponents = {
   settings: SettingsView,
   chat: ChatView,
   ai: AiView,
+  alerts: AlertsView,
   stats: OrganizationStatsView,
   access: OrganizationAccessView,
   "org-settings": OrganizationSettingsView,

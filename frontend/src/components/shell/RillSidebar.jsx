@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { SAMPLE_TREE } from "@/data/mockFileTree";
 import {
   BarChart3,
+  Bell,
   Briefcase,
   ChevronDown,
   Database,
@@ -51,6 +52,7 @@ const sectionIcons = {
   "git-branch": GitBranch,
   files: File,
   sparkles: Sparkles,
+  bell: Bell,
   settings: Settings,
 };
 

@@ -12,6 +12,7 @@ export const projectSections = [
   'canvas',
   'files',
   'ai',
+  'alerts',
   'settings',
 ];
 
@@ -30,6 +31,7 @@ export const projectNavItems = [
   { id: 'canvas', title: 'Canvas', icon: 'git-branch' },
   { id: 'files', title: 'Files', icon: 'files' },
   { id: 'ai', title: 'AI', icon: 'sparkles' },
+  { id: 'alerts', title: 'Alerts', icon: 'bell' },
   { id: 'settings', title: 'Settings', icon: 'settings' },
 ];
 
