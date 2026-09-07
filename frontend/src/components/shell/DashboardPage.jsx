@@ -102,6 +102,11 @@ export function DashboardPage() {
         if (proj.id !== currentWorkspace?.id) {
           selectWorkspace(proj.id);
         }
+        // Project settings moved to the unified global /settings page (topbar).
+        if (urlSection === "settings") {
+          navigate("/settings", { replace: true });
+          return;
+        }
         if (!projectSections.includes(urlSection)) {
           // Section removed from the nav (Storage/Graph/Chat/Analytics were redundant
           // with Settings/Canvas+Files/AI/Explore) — redirect legacy URLs to replacement.

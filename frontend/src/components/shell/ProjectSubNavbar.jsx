@@ -30,7 +30,9 @@ export function ProjectSubNavbar({ open, setOpen }) {
 
   const goTo = (tabId) => {
     setOpen(false);
-    navigate(`/app/${orgSlug}/${pSlug}/${tabId}`);
+    // Unified settings live at the global /settings page (topbar), also reached
+    // from the sub-nav so both entry points open the same surface.
+    navigate(tabId === "settings" ? "/settings" : `/app/${orgSlug}/${pSlug}/${tabId}`);
   };
 
   return (

@@ -23,7 +23,7 @@ import {
 } from "@/components/shell/ProjectSettingsSections";
 import "@/styles/settings.css";
 
-const projectSettingsItems = [
+export const projectSettingsItems = [
   { id: "general", label: "General", icon: <Globe size={16} /> },
   { id: "github", label: "GitHub", icon: <GitBranch size={16} /> },
   { id: "environment-variables", label: "Environment Variables", icon: <Database size={16} /> },
@@ -160,7 +160,7 @@ export function PlaceholderSection({ title, description }) {
   );
 }
 
-function IntegrationsSection() {
+export function IntegrationsSection() {
   return (
     <div className="settings-page">
       <SectionHeader title="Webhooks" description="Incoming ingestion and outbound data delivery." />

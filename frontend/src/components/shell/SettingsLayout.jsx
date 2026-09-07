@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import "@/styles/settings.css";
 import { CreateModal } from "@/components/shell/CreateModal";
+import { projectSettingsItems } from "@/components/shell/SettingsView";
 
 const settingsLinks = [
   { to: "/settings/profile", icon: User, label: "Profile" },
@@ -75,6 +76,7 @@ export function SettingsLayout({ children }) {
   const {
     organizations,
     currentOrganization,
+    currentWorkspace,
     selectOrganization,
     createOrganization,
     fetchOrganizations,
@@ -232,6 +234,30 @@ export function SettingsLayout({ children }) {
           ))}
         </nav>
       </div>
+
+      {currentWorkspace && (
+        <div className="settings-workspace-section">
+          <span className="settings-workspace-heading">Project</span>
+          <span className="settings-nav-project-name" title={currentWorkspace.name}>
+            {currentWorkspace.name}
+          </span>
+          <nav className="settings-workspace-menu-list">
+            {projectSettingsItems.map((item) => (
+              <NavLink
+                key={item.id}
+                to={`/settings/project/${item.id}`}
+                className={({ isActive }) =>
+                  cn("settings-workspace-menu-link", isActive && "active")
+                }
+                onClick={() => isMobile && setMobileOpen(false)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+      )}
     </>
   );
 

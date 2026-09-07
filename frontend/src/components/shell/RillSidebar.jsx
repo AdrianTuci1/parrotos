@@ -159,7 +159,9 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
 
   const navToSection = (sectionId) => {
     onCloseMobile?.();
-    navigate(`${basePath}/${sectionId}`);
+    // Unified settings live at the global /settings page (topbar), reached also
+    // from the sidebar so both entry points open the same surface.
+    navigate(sectionId === "settings" ? "/settings" : `${basePath}/${sectionId}`);
   };
 
   // Mock/presentational: open the file editor for a new metrics view. The other
