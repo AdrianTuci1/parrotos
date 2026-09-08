@@ -1,5 +1,5 @@
-import type { V1MetricsViewSpec } from "@rilldata/web-common/runtime-client";
-import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
+import type { V1MetricsViewSpec } from "@statsparrot/web-common/runtime-client";
+import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
 import type { QueryObserverResult } from "@tanstack/svelte-query";
 
 export const isMeasureValid = (

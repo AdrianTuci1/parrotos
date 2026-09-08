@@ -9,7 +9,7 @@
     RUNTIME_CONTEXT_KEY,
   } from "./context";
   import type { AuthContext } from "./runtime-client";
-  import { createEnvFileStore } from "@rilldata/web-common/features/env-management/env-file-store.ts";
+  import { createEnvFileStore } from "@statsparrot/web-common/features/env-management/env-file-store.ts";
 
   const queryClient = useQueryClient();
 

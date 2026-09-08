@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Dialog as DialogPrimitive } from "bits-ui";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
 
   type $$Props = DialogPrimitive.TitleProps;
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
   import { Trash2Icon, Pencil } from "lucide-svelte";
   import EditDialog from "./EditDialog.svelte";
   import DeleteDialog from "./DeleteDialog.svelte";
   import type { VariableNames } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let id: string;
   export let environment: string;

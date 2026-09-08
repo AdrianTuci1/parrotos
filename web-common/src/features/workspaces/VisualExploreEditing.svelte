@@ -1,31 +1,31 @@
 <script lang="ts">
   import { replaceState } from "$app/navigation";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import TagInput from "@rilldata/web-common/components/forms/TagInput.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import TagInput from "@statsparrot/web-common/components/forms/TagInput.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import {
     DEFAULT_RANGES,
     isString,
     stringGuard,
-  } from "@rilldata/web-common/features/workspaces/visual-util";
-  import Inspector from "@rilldata/web-common/layout/workspace/Inspector.svelte";
+  } from "@statsparrot/web-common/features/workspaces/visual-util";
+  import Inspector from "@statsparrot/web-common/layout/workspace/Inspector.svelte";
   import {
     DEFAULT_TIMEZONES,
     DEFAULT_TIME_RANGES,
-  } from "@rilldata/web-common/lib/time/config";
-  import { allTimeZones } from "@rilldata/web-common/lib/time/timezone";
+  } from "@statsparrot/web-common/lib/time/config";
+  import { allTimeZones } from "@statsparrot/web-common/lib/time/timezone";
   import {
     TimeRangePreset,
     type DashboardTimeControls,
-  } from "@rilldata/web-common/lib/time/types";
+  } from "@statsparrot/web-common/lib/time/types";
   import {
     createRuntimeServiceGetInstance,
     createRuntimeServiceListResources,
     type V1Explore,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { InfoIcon } from "lucide-svelte";
   import { Scalar, YAMLMap, YAMLSeq, parseDocument } from "yaml";
   import { getStateManagers } from "../dashboards/state-managers/state-managers";
@@ -397,7 +397,7 @@
     {/if}
 
     <Input
-      hint="Shown in global header and when deployed to Rill Cloud"
+      hint="Shown in global header and when deployed to Parrot Cloud"
       capitalizeLabel={false}
       textClass="text-sm"
       label="Display name"
@@ -419,7 +419,7 @@
     {#if !isInlineExplore}
       <Input
         hint="View documentation"
-        link="https://docs.rilldata.com/reference/project-files/metrics-views"
+        link="https://docs.statsparrot.com/reference/project-files/metrics-views"
         lockable
         lockTooltip="Unlock to change metrics view"
         label="Metrics view referenced"

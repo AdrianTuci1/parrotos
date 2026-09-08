@@ -15,8 +15,8 @@ import (
 	"github.com/MicahParks/keyfunc"
 	"github.com/go-jose/go-jose/v3"
 	"github.com/golang-jwt/jwt/v4"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 )

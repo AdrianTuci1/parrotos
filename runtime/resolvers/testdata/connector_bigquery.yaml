@@ -13,22 +13,22 @@ project_files:
     type: model
     connector: bigquery
     # not support for parquet export from bigquery geography_col,json_col,range_date_col,range_datetime_col,range_timestamp_col,array_json_col,array_geography_col,array_range_date_col,array_range_datetime_col,array_range_timestamp_col, array_struct_col,struct_col
-    sql: "select int_col,float_col,numeric_col,bignumeric_col,bool_col,string_col,bytes_col,date_col,datetime_col,time_col,timestamp_col,array_int_col,array_float_col,array_numeric_col,array_bignumeric_col,array_bool_col,array_string_col,array_bytes_col,array_date_col,array_datetime_col,array_time_col,array_timestamp_col from rilldata.integration_test.all_datatypes"
+    sql: "select int_col,float_col,numeric_col,bignumeric_col,bool_col,string_col,bytes_col,date_col,datetime_col,time_col,timestamp_col,array_int_col,array_float_col,array_numeric_col,array_bignumeric_col,array_bool_col,array_string_col,array_bytes_col,array_date_col,array_datetime_col,array_time_col,array_timestamp_col from staticlabs.integration_test.all_datatypes"
     stage:
       connector: gcs_hmac
-      path: gs://integration-test.rilldata.com/biquery_clickhouse_stage/
+      path: gs://integration-test.statsparrot.com/biquery_clickhouse_stage/
     output:
       connector: clickhouse
   model_bigquery_to_duckdb_for_external_google_sheet.yaml:
     type: model
     connector: bigquery
-    sql: "select * from rilldata.integration_test.external_google_sheet"
+    sql: "select * from staticlabs.integration_test.external_google_sheet"
     output:
       connector: duckdb
   model_bigquery_to_duckdb_for_partition_overwrite.yaml:
     type: model
     connector: "bigquery"
-    project_id: "rilldata"
+    project_id: "staticlabs"
     partitions:
       connector: duckdb
       sql: SELECT range, now() as watermark from range(1, 3);
@@ -42,14 +42,14 @@ project_files:
     type: model
     connector: bigquery
     materialize: true
-    sql: "select * from rilldata.integration_test.all_datatypes"
+    sql: "select * from staticlabs.integration_test.all_datatypes"
     output:
       connector: duckdb
   model_bigquery_to_duckdb_for_selected_columns.yaml:
     type: model
     connector: bigquery
     materialize: true
-    sql: "select int_col,float_col,numeric_col,bignumeric_col,bool_col,string_col,bytes_col,date_col,datetime_col,time_col,timestamp_col,json_col,geography_col,range_date_col,range_datetime_col,range_timestamp_col,array_int_col,array_float_col,array_numeric_col,array_bignumeric_col,array_bool_col,array_string_col,array_bytes_col,array_date_col,array_datetime_col,array_time_col,array_timestamp_col,array_json_col,array_geography_col,array_range_date_col,array_range_datetime_col,array_range_timestamp_col,array_struct_col,struct_col from rilldata.integration_test.all_datatypes"
+    sql: "select int_col,float_col,numeric_col,bignumeric_col,bool_col,string_col,bytes_col,date_col,datetime_col,time_col,timestamp_col,json_col,geography_col,range_date_col,range_datetime_col,range_timestamp_col,array_int_col,array_float_col,array_numeric_col,array_bignumeric_col,array_bool_col,array_string_col,array_bytes_col,array_date_col,array_datetime_col,array_time_col,array_timestamp_col,array_json_col,array_geography_col,array_range_date_col,array_range_datetime_col,array_range_timestamp_col,array_struct_col,struct_col from staticlabs.integration_test.all_datatypes"
     output:
       connector: duckdb
 tests:

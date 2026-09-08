@@ -28,7 +28,7 @@ type IntakeSinkOptions struct {
 	SinkInterval   time.Duration
 }
 
-// NewIntakeSink creates a new sink that sends events to the Rill intake API.
+// NewIntakeSink creates a new sink that sends events to the Parrot intake API.
 func NewIntakeSink(logger *zap.Logger, opts IntakeSinkOptions) Sink {
 	sink := &intakeSink{
 		opts:   opts,

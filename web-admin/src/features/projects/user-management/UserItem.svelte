@@ -1,12 +1,12 @@
 <script lang="ts">
-  import AvatarListItem from "@rilldata/web-common/components/avatar/AvatarListItem.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  import AvatarListItem from "@statsparrot/web-common/components/avatar/AvatarListItem.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
   import UserSetRole from "./UserSetRole.svelte";
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
   import type {
     V1ProjectMemberUser,
     V1ProjectInvite,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
 
   type User = V1ProjectMemberUser | V1ProjectInvite;
 

@@ -3,19 +3,19 @@ import {
   navigateToCanvas,
   navigateToFile,
   withEditorPrefix,
-} from "@rilldata/web-common/layout/navigation/editor-routing";
-import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
-import { createCanvasDashboardWithoutNavigation } from "@rilldata/web-common/features/canvas/ai-generation/generateCanvas";
-import { pollForFileCreation } from "@rilldata/web-common/features/entity-management/actions/actions.ts";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
+} from "@statsparrot/web-common/layout/navigation/editor-routing";
+import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
+import { createCanvasDashboardWithoutNavigation } from "@statsparrot/web-common/features/canvas/ai-generation/generateCanvas";
+import { pollForFileCreation } from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
 import {
   ResourceKind,
   resourceIsLoading,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry";
-import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { getScreenNameFromPage } from "@statsparrot/web-common/features/file-explorer/telemetry";
+import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 import { get } from "svelte/store";
 import { overlay } from "../../../layout/overlay-store";
 import { queryClient } from "../../../lib/svelte-query/globalQueryClient";
@@ -34,7 +34,7 @@ import type {
 import {
   runtimeServiceGenerateMetricsViewFile,
   runtimeServiceGetFile,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { createYamlModelFromTable } from "../../connectors/code-utils";
 import { getName } from "../../entity-management/name-utils";
 import { featureFlags } from "../../feature-flags";
@@ -284,7 +284,7 @@ export async function generateMetricsFromTable(
     );
     await createMetricsViewFromTable();
   } else {
-    // For non-OLAP connectors, follow Rill architecture: Model → Metrics → (Optional) Explore
+    // For non-OLAP connectors, follow Parrot architecture: Model → Metrics → (Optional) Explore
     await createModelAndMetricsAndExplore(
       client,
       instanceId,
@@ -299,7 +299,7 @@ export async function generateMetricsFromTable(
 
 /**
  * Creates a model from a table, then generates a metrics view and optionally an explore dashboard.
- * This is used for non-OLAP connectors that need to follow the Rill architecture:
+ * This is used for non-OLAP connectors that need to follow the Parrot architecture:
  * 1. Create model (ingests from source → OLAP)
  * 2. Create metrics view (on top of model)
  * 3. Optionally create explore dashboard (on top of metrics view)
@@ -808,4 +808,4 @@ export {
   createCanvasDashboardFromMetricsView,
   createCanvasDashboardFromMetricsViewWithAgent,
   createCanvasDashboardFromTableWithAgent,
-} from "@rilldata/web-common/features/canvas/ai-generation/generateCanvas";
+} from "@statsparrot/web-common/features/canvas/ai-generation/generateCanvas";

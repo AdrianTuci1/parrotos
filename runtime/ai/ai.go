@@ -16,12 +16,12 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/google/uuid"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
@@ -33,7 +33,7 @@ import (
 )
 
 // Tracer for instrumenting requests.
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/ai")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/ai")
 
 // Runner tracks available tools and manages the lifecycle of AI sessions.
 type Runner struct {
@@ -113,7 +113,7 @@ func (r *Runner) Session(ctx context.Context, opts *SessionOptions) (res *Sessio
 		session, err = catalog.FindAISession(ctx, opts.SessionID)
 		if err != nil {
 			// If CreateIfNotExists is set, an unknown session ID is created below instead of erroring.
-			// This lets a caller that doesn't know Rill's session IDs address a stable session,
+			// This lets a caller that doesn't know Parrot's session IDs address a stable session,
 			// which the unified MCP server in the admin service relies on to keep one session per project.
 			if !errors.Is(err, drivers.ErrNotFound) || !opts.CreateIfNotExists {
 				return nil, fmt.Errorf("failed to find session %q: %w", opts.SessionID, err)
@@ -124,7 +124,7 @@ func (r *Runner) Session(ctx context.Context, opts *SessionOptions) (res *Sessio
 		// Check access: you can access anonymous sessions, your own sessions, and shared sessions.
 		// For shared sessions, if you are not the owner, you can only see messages up to the SharedUntilMessageID (inclusive).
 		// For sessions without an owner (unauthenticated users using a public project), we don't check access and rely on security by obscurity (generally a decent trade-off, but specifically introduced to get citation links over MCP working for unauthenticated demos).
-		// It's important to respect SkipChecks to ensure access in Rill Developer (where auth is disabled, but SkipChecks is true).
+		// It's important to respect SkipChecks to ensure access in Parrot Developer (where auth is disabled, but SkipChecks is true).
 		var retrieveUntilMessageID string
 		if session.OwnerID != "" && session.OwnerID != opts.Claims.UserID && !opts.Claims.SkipChecks {
 			if session.SharedUntilMessageID == "" {
@@ -529,7 +529,7 @@ type BaseSession struct {
 	logger              *zap.Logger
 	activity            *activity.Client
 	projectInstructions string
-	managedAI           bool // true if completions use the Rill-managed AI connector (billable tokens); false for bring-your-own-model
+	managedAI           bool // true if completions use the Parrot-managed AI connector (billable tokens); false for bring-your-own-model
 	acquireLLM          func(ctx context.Context) (drivers.AIService, func(), error)
 	acquireCatalog      func(ctx context.Context) (drivers.CatalogStore, func(), error)
 
@@ -1273,7 +1273,7 @@ func (s *Session) Complete(ctx context.Context, name string, out any, opts *Comp
 			)
 
 			// Emit billable token metrics. Tagged with the request source, the LLM provider, and whether the completion used
-			// the Rill-managed AI connector, so the billable scope is decided downstream in SQL (emitted for every completion,
+			// the Parrot-managed AI connector, so the billable scope is decided downstream in SQL (emitted for every completion,
 			// unlike tool_call). Values are reported as the provider returns them; cached_input_tokens is emitted separately
 			// so billing can price cached input at the cheaper rate (its relationship to input_tokens is provider-specific).
 			source := attribute.String("source", string(runtime.RequestSourceFromContext(ctx)))

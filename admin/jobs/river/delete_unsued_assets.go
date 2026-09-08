@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"cloud.google.com/go/storage"
-	"github.com/rilldata/rill/admin"
+	"github.com/staticlabs/statsparrot/admin"
 	"github.com/riverqueue/river"
 	"golang.org/x/sync/errgroup"
 )

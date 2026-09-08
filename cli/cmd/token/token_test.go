@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rilldata/rill/admin/testadmin"
-	"github.com/rilldata/rill/cli/testcli"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	"github.com/staticlabs/statsparrot/cli/testcli"
 	"github.com/stretchr/testify/require"
 )
 

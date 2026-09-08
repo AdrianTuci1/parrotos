@@ -25,7 +25,7 @@ coverage.go:
 	mkdir -p coverage
 	# Run tests with coverage output. First builds the list of packages to include in coverage, excluding generated code in 'proto/gen'.
 	set -e ; \
-		PACKAGES=$$(go list ./... | grep -v 'proto/gen/' | tr '\n' ',' | sed -e 's/,$$//' | sed -e 's/github.com\/rilldata\/rill/./g') ;\
+		PACKAGES=$$(go list ./... | grep -v 'proto/gen/' | tr '\n' ',' | sed -e 's/,$$//' | sed -e 's/github.com\/staticlabs\/statsparrot/./g') ;\
 		go test ./... -short -v -coverprofile ./coverage/go.out -coverpkg $$PACKAGES
 	go tool cover -func coverage/go.out
 
@@ -43,21 +43,21 @@ docs.generate: runtime.examples.embed
 
 .PHONY: proto.generate
 proto.generate:
-	cd proto && buf generate --exclude-path rill/ui
-	cd proto && buf generate --template buf.gen.openapi-admin.yaml --path rill/admin
-	cd proto && buf generate --template buf.gen.openapi-runtime.yaml --path rill/runtime
-	cd proto && buf generate --template buf.gen.runtime.yaml --path rill/runtime
-	cd proto && buf generate --template buf.gen.local.yaml --path rill/local
+	cd proto && buf generate --exclude-path statsparrot/ui
+	cd proto && buf generate --template buf.gen.openapi-admin.yaml --path statsparrot/admin
+	cd proto && buf generate --template buf.gen.openapi-runtime.yaml --path statsparrot/runtime
+	cd proto && buf generate --template buf.gen.runtime.yaml --path statsparrot/runtime
+	cd proto && buf generate --template buf.gen.local.yaml --path statsparrot/local
 	cd proto && buf generate --template buf.gen.ui.yaml
 	go run scripts/convert-openapi-v2-to-v3/convert.go --force \
-		proto/gen/rill/admin/v1/admin.swagger.yaml proto/gen/rill/admin/v1/openapi.yaml
+		proto/gen/statsparrot/admin/v1/admin.swagger.yaml proto/gen/statsparrot/admin/v1/openapi.yaml
 	go run scripts/convert-openapi-v2-to-v3/convert.go --force --public-only \
-		proto/gen/rill/admin/v1/admin.swagger.yaml proto/gen/rill/admin/v1/public.openapi.yaml
+		proto/gen/statsparrot/admin/v1/admin.swagger.yaml proto/gen/statsparrot/admin/v1/public.openapi.yaml
 	npm install
 	npm run generate:runtime-client -w web-common
 	npm run generate:client -w web-admin
 
-KEEP_EXAMPLES := rill-openrtb-prog-ads rill-github-analytics rill-cost-monitoring
+KEEP_EXAMPLES := statsparrot-openrtb-prog-ads statsparrot-github-analytics statsparrot-cost-monitoring
 
 .PHONY: runtime.examples.embed
 runtime.examples.embed:
@@ -67,7 +67,7 @@ runtime.examples.embed:
 	# Create a temp dir (GNU mktemp first, then BSD/macOS fallback)
 	TMP_CLONE_DIR=$$(mktemp -d 2>/dev/null || mktemp -d -t rill-examples); \
 	trap 'rm -rf "$$TMP_CLONE_DIR"' EXIT; \
-	git clone --quiet --depth=1 https://github.com/rilldata/rill-examples.git "$$TMP_CLONE_DIR"; \
+	git clone --quiet --depth=1 https://github.com/staticlabs/statsparrot-examples.git "$$TMP_CLONE_DIR"; \
 	for d in $(KEEP_EXAMPLES); do \
 		cp -R "$$TMP_CLONE_DIR/$$d" runtime/pkg/examples/embed/dist/; \
 	done

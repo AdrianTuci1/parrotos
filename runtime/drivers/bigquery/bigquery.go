@@ -8,10 +8,10 @@ import (
 
 	"cloud.google.com/go/bigquery"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/gcputil"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gcputil"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"golang.org/x/sync/semaphore"
 	"google.golang.org/api/option"
@@ -26,7 +26,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "BigQuery",
 	Description: "Import data from BigQuery.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/bigquery",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/bigquery",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "project_id",
@@ -34,7 +34,7 @@ var spec = drivers.Spec{
 			DisplayName: "Project ID",
 			Description: "Google project ID.",
 			Placeholder: "my-project",
-			Hint:        "Rill will use the project ID from your local credentials, unless set here. Set this if no project ID configured in credentials.",
+			Hint:        "Parrot will use the project ID from your local credentials, unless set here. Set this if no project ID configured in credentials.",
 		},
 		{
 			Key:         "google_application_credentials",
@@ -57,7 +57,7 @@ type configProperties struct {
 	ProjectID  string `mapstructure:"project_id"`
 	// MaxBytesBilled is the maximum number of bytes billed for a query. This is a safety mechanism to prevent accidentally running large queries.
 	// Set this to 0 for project defaults.
-	// Only applies to dashboard queries and does not apply when ingesting data from BigQuery into Rill.
+	// Only applies to dashboard queries and does not apply when ingesting data from BigQuery into Parrot.
 	MaxBytesBilled int64 `mapstructure:"max_bytes_billed"`
 	// AllowStandardAPI lets users query BigQuery using the standard API instead of the Storage Read API.
 	// This is less efficient but may be necessary if users don't have access to the Storage Read API.

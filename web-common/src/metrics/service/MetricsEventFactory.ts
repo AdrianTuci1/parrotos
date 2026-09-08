@@ -15,7 +15,7 @@ export class MetricsEventFactory {
       ...commonUserFields,
       ...commonFields,
       event_datetime: Date.now(),
-      // Add event fields required by the telemetry service. For details, see rill/runtime/pkg/activity/README.md.
+      // Add event fields required by the telemetry service. For details, see statsparrot/runtime/pkg/activity/README.md.
       event_id: uuidv4(),
       event_time: new Date().toISOString(),
       event_type: eventType,

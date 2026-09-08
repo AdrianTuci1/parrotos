@@ -1,7 +1,7 @@
 import type { QueryClient, QueryKey } from "@tanstack/svelte-query";
 import { get, type Readable } from "svelte/store";
 import { tick } from "svelte";
-import type { CanvasEntity } from "@rilldata/web-common/features/canvas/stores/canvas-entity";
+import type { CanvasEntity } from "@statsparrot/web-common/features/canvas/stores/canvas-entity";
 
 const DEFAULT_TIMEOUT_MS = 60_000;
 // How often waitUntilQueriesIdle polls for in-flight queries. Frame-rate polling

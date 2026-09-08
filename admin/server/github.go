@@ -16,17 +16,17 @@ import (
 
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/google/go-github/v71/github"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/urlutil"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/archive"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/middleware"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/archive"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/middleware"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/oauth2"
 	githuboauth "golang.org/x/oauth2/github"
@@ -521,7 +521,7 @@ func (g *githubConnectState) isEmpty() bool {
 
 // githubConnect starts an installation flow of the Github App.
 // It's implemented as a non-gRPC endpoint mounted directly on /github/connect.
-// It redirects the user to Github to authorize Rill to access one or more repositories.
+// It redirects the user to Github to authorize Parrot to access one or more repositories.
 // After the Github flow completes, the user is redirected back to githubConnectCallback.
 func (s *Server) githubConnect(w http.ResponseWriter, r *http.Request) {
 	// Check the request is made by an authenticated user

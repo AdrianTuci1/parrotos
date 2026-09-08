@@ -6,13 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/clickhouseutil"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/clickhouseutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -499,7 +499,7 @@ func testDictionary(t *testing.T, c *Connection, olap drivers.OLAPStore) {
 	require.NoError(t, c.dropTable(context.Background(), "dict1"))
 
 	// A dictionary can also be pointed at a table the user manages. Dropping the dictionary must leave that table
-	// alone, since only the source tables Rill creates for a dictionary are safe to garbage collect.
+	// alone, since only the source tables Parrot creates for a dictionary are safe to garbage collect.
 	_, err = c.createTableAsSelect(context.Background(), "user_src", "SELECT 1 AS id, 'Venus' AS planet", &ModelOutputProperties{Engine: "MergeTree"}, "", "")
 	require.NoError(t, err)
 	_, err = c.createTableAsSelect(context.Background(), "user_dict", "", &ModelOutputProperties{
@@ -1077,7 +1077,7 @@ func testQueryAttributesAsSettings(t *testing.T, olap drivers.OLAPStore) {
 func testEntityTypeRestrictedUser(t *testing.T, olap drivers.OLAPStore, dsn, cluster string) {
 	ctx := context.Background()
 	const (
-		username = "rill_restricted"
+		username = "statsparrot_restricted"
 		password = "test_password"
 	)
 

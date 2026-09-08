@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Button } from "@rilldata/web-common/components/button";
-  import UserRoleSelect from "@rilldata/web-admin/features/projects/user-management/UserRoleSelect.svelte";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import UserRoleSelect from "@statsparrot/web-admin/features/projects/user-management/UserRoleSelect.svelte";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import SearchAndInviteListItem from "./SearchAndInviteListItem.svelte";
-  import Close from "@rilldata/web-common/components/icons/Close.svelte";
+  import Close from "@statsparrot/web-common/components/icons/Close.svelte";
   import {
     type SearchResult,
     type DropdownPosition,
@@ -20,7 +20,7 @@
     shouldMaintainFocus,
     getResultIndex,
   } from "./utils";
-  import { debounce } from "@rilldata/web-common/lib/create-debouncer";
+  import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
 
   export let placeholder: string | undefined = undefined;
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CanvasDashboardEmbed from "@rilldata/web-common/features/canvas/CanvasDashboardEmbed.svelte";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CanvasDashboardEmbed from "@statsparrot/web-common/features/canvas/CanvasDashboardEmbed.svelte";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let data;
 

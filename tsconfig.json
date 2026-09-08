@@ -6,17 +6,17 @@
     "target": "esnext",
     "jsx": "react-jsx",
 
-    /**
+    **
       ignoreDeprecations is recommended by the SvelteKit maintainers until SvelteKit 2.0.
-      See: https://github.com/sveltejs/kit/issues/8650#issuecomment-1607282327
-    */
+      See: https:github.comsveltejskitissues8650#issuecomment-1607282327
+    *
     "ignoreDeprecations": "5.0",
     "isolatedModules": true,
     "resolveJsonModule": true,
-    /**
-      To have warnings/errors of the Svelte compiler at the correct position,
+    **
+      To have warningserrors of the Svelte compiler at the correct position,
       enable source maps by default.
-    */
+    *
     "verbatimModuleSyntax": true,
     "sourceMap": true,
     "esModuleInterop": true,
@@ -29,21 +29,21 @@
     "allowJs": true,
     "checkJs": true,
     "paths": {
-      "@rilldata/web-admin/*": ["web-admin/src/*"],
-      "@rilldata/web-common/*": ["web-common/src/*"],
-      "@rilldata/web-common/tests/*": ["web-common/tests/*"],
-      "@rilldata/web-integration/tests/*": ["web-integration/tests/*"],
-      "@rilldata/web-local/lib/*": ["web-local/src/lib/*"]
+      "@rilldataweb-admin*": ["web-adminsrc*"],
+      "@rilldataweb-common*": ["web-commonsrc*"],
+      "@rilldataweb-commontests*": ["web-commontests*"],
+      "@rilldataweb-integrationtests*": ["web-integrationtests*"],
+      "@rilldataweb-locallib*": ["web-localsrclib*"]
     },
     "incremental": true,
-    "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo",
+    "tsBuildInfoFile": ".node_modules.cachetsbuildinfo",
     "outDir": "dist"
   },
   "include": [
-    "**/*.d.ts",
-    "**/*.ts",
-    "**/*.svelte",
-    "**/rollup.config.js",
-    "scripts/**.js"
+    "***.d.ts",
+    "***.ts",
+    "***.svelte",
+    "**rollup.config.js",
+    "scripts**.js"
   ]
 }

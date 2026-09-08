@@ -29,5 +29,5 @@ CREATE EXTERNAL TABLE all_datatypes (
     >
 )
 STORED AS PARQUET
-LOCATION 's3://integration-test.rilldata.com/parquet_test/'
+LOCATION 's3://integration-test.statsparrot.com/parquet_test/'
 TBLPROPERTIES ('parquet.compress'='SNAPPY');

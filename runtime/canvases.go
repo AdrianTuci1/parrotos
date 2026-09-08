@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview/metricssql"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/metricssql"
 )
 
 // CollectCanvasComponentNames collects the names of all components referenced by the given rows,
@@ -52,7 +52,7 @@ func (r *Runtime) ResolveCanvas(ctx context.Context, instanceID, canvas string, 
 	}
 
 	// Use the valid spec if available. If unsafe is set, fall back to the unvalidated spec.
-	// unsafe is only sent by the visual editor in Rill Developer; it must never be set by Rill Cloud,
+	// unsafe is only sent by the visual editor in Parrot Developer; it must never be set by Parrot Cloud,
 	// read-only previews, shared token access, or embedded viewers.
 	spec := res.GetCanvas().State.ValidSpec
 	if spec == nil && unsafe {

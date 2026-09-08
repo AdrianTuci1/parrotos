@@ -1,12 +1,12 @@
-import { isParamCommonButDifferentMeaning } from "@rilldata/web-common/features/dashboards/url-state/explore-web-view-specific-url-params";
-import { ExploreUrlWebView } from "@rilldata/web-common/features/dashboards/url-state/mappers";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
+import { isParamCommonButDifferentMeaning } from "@statsparrot/web-common/features/dashboards/url-state/explore-web-view-specific-url-params";
+import { ExploreUrlWebView } from "@statsparrot/web-common/features/dashboards/url-state/mappers";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
 
 /**
  * Removes any params that are equal to default param value.
  * If there is no default param then we remove params with empty value.
  *
- * Right now the defaults are either the rill opinionated defaults or from yaml config.
+ * Right now the defaults are either the statsparrot opinionated defaults or from yaml config.
  */
 export function cleanUrlParams(
   searchParams: URLSearchParams,

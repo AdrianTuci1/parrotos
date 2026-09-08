@@ -1,4 +1,4 @@
-import type { ChartDataResult } from "@rilldata/web-common/features/components/charts";
+import type { ChartDataResult } from "@statsparrot/web-common/features/components/charts";
 import {
   createColorEncoding,
   createConfigWithLegend,
@@ -6,7 +6,7 @@ import {
   createPositionEncoding,
   createSingleLayerBaseSpec,
   createSizeEncoding,
-} from "@rilldata/web-common/features/components/charts/builder";
+} from "@statsparrot/web-common/features/components/charts/builder";
 import type { VisualizationSpec } from "svelte-vega";
 import type { ScatterPlotChartSpec } from "./ScatterPlotChartProvider";
 

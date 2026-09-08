@@ -13,9 +13,9 @@ import (
 	"github.com/apache/arrow-go/v18/arrow/memory"
 	"github.com/apache/arrow-go/v18/parquet/pqarrow"
 	"github.com/c2h5oh/datasize"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/jsonval"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/jsonval"
 	"github.com/xuri/excelize/v2"
 )
 

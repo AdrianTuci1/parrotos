@@ -9,7 +9,7 @@
         For context, here are some details about the project's default OLAP connector: name: "duckdb", driver: "duckdb", dialect: "duckdb", readonly: false.
         Note that you can only use it in model resources if it is not readonly.
 
-        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?
+        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?
     - role: assistant
       content_type: tool_call
       id: d9eb2b8f649340a8
@@ -38,7 +38,7 @@
       content_type: tool_call
       id: call_QqsmsOsfnrMCsCMJjl48RN9q
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":10,"path":"glob_test/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":10,"path":"glob_test/"}'
 - index: 2
   input:
     - role: system
@@ -50,7 +50,7 @@
         For context, here are some details about the project's default OLAP connector: name: "duckdb", driver: "duckdb", dialect: "duckdb", readonly: false.
         Note that you can only use it in model resources if it is not readonly.
 
-        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?
+        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?
     - role: assistant
       content_type: tool_call
       id: d9eb2b8f649340a8
@@ -77,12 +77,12 @@
     - role: tool
       content_type: tool_response
       id: 43deeb90f9cd4795
-      content: '{"buckets":["integration-test.rilldata.com"]}'
+      content: '{"buckets":["integration-test.statsparrot.com"]}'
     - role: assistant
       content_type: tool_call
       id: c533be9be4234b24
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":10,"path":"glob_test/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":10,"path":"glob_test/"}'
     - role: tool
       content_type: tool_response
       id: c533be9be4234b24
@@ -92,7 +92,7 @@
       content_type: tool_call
       id: call_Le7g4EMuNCwem8tv558dfDYv
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
 - index: 3
   input:
     - role: system
@@ -104,7 +104,7 @@
         For context, here are some details about the project's default OLAP connector: name: "duckdb", driver: "duckdb", dialect: "duckdb", readonly: false.
         Note that you can only use it in model resources if it is not readonly.
 
-        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?
+        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?
     - role: assistant
       content_type: tool_call
       id: d9eb2b8f649340a8
@@ -131,12 +131,12 @@
     - role: tool
       content_type: tool_response
       id: 43deeb90f9cd4795
-      content: '{"buckets":["integration-test.rilldata.com"]}'
+      content: '{"buckets":["integration-test.statsparrot.com"]}'
     - role: assistant
       content_type: tool_call
       id: c533be9be4234b24
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":10,"path":"glob_test/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":10,"path":"glob_test/"}'
     - role: tool
       content_type: tool_response
       id: c533be9be4234b24
@@ -145,7 +145,7 @@
       content_type: tool_call
       id: 63ba378ddd804e3d
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
     - role: tool
       content_type: tool_response
       id: 63ba378ddd804e3d
@@ -155,7 +155,7 @@
       content_type: tool_call
       id: call_nc2baUndnyNka26El4ZvdLrX
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
 - index: 4
   input:
     - role: system
@@ -167,7 +167,7 @@
         For context, here are some details about the project's default OLAP connector: name: "duckdb", driver: "duckdb", dialect: "duckdb", readonly: false.
         Note that you can only use it in model resources if it is not readonly.
 
-        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?
+        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?
     - role: assistant
       content_type: tool_call
       id: d9eb2b8f649340a8
@@ -194,12 +194,12 @@
     - role: tool
       content_type: tool_response
       id: 43deeb90f9cd4795
-      content: '{"buckets":["integration-test.rilldata.com"]}'
+      content: '{"buckets":["integration-test.statsparrot.com"]}'
     - role: assistant
       content_type: tool_call
       id: c533be9be4234b24
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":10,"path":"glob_test/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":10,"path":"glob_test/"}'
     - role: tool
       content_type: tool_response
       id: c533be9be4234b24
@@ -208,7 +208,7 @@
       content_type: tool_call
       id: 63ba378ddd804e3d
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
     - role: tool
       content_type: tool_response
       id: 63ba378ddd804e3d
@@ -217,7 +217,7 @@
       content_type: tool_call
       id: 58138ec7c28e484a
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
     - role: tool
       content_type: tool_response
       id: 58138ec7c28e484a
@@ -227,7 +227,7 @@
       content_type: tool_call
       id: call_LLvJ78vDDWPiUhdwFipeL6Il
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2010/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2010/"}'
 - index: 5
   input:
     - role: system
@@ -239,7 +239,7 @@
         For context, here are some details about the project's default OLAP connector: name: "duckdb", driver: "duckdb", dialect: "duckdb", readonly: false.
         Note that you can only use it in model resources if it is not readonly.
 
-        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?
+        Task: I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?
     - role: assistant
       content_type: tool_call
       id: d9eb2b8f649340a8
@@ -266,12 +266,12 @@
     - role: tool
       content_type: tool_response
       id: 43deeb90f9cd4795
-      content: '{"buckets":["integration-test.rilldata.com"]}'
+      content: '{"buckets":["integration-test.statsparrot.com"]}'
     - role: assistant
       content_type: tool_call
       id: c533be9be4234b24
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":10,"path":"glob_test/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":10,"path":"glob_test/"}'
     - role: tool
       content_type: tool_response
       id: c533be9be4234b24
@@ -280,7 +280,7 @@
       content_type: tool_call
       id: 63ba378ddd804e3d
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
     - role: tool
       content_type: tool_response
       id: 63ba378ddd804e3d
@@ -289,7 +289,7 @@
       content_type: tool_call
       id: 58138ec7c28e484a
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
     - role: tool
       content_type: tool_response
       id: 58138ec7c28e484a
@@ -298,7 +298,7 @@
       content_type: tool_call
       id: bbbec00a58004694
       tool_name: list_bucket_objects
-      content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2010/"}'
+      content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2010/"}'
     - role: tool
       content_type: tool_response
       id: bbbec00a58004694
@@ -309,9 +309,9 @@
       content: |-
         Buckets available via the project’s `s3` connector:
 
-        - `integration-test.rilldata.com`
+        - `integration-test.statsparrot.com`
 
-        Preview of what’s under `s3://integration-test.rilldata.com/glob_test/`:
+        Preview of what’s under `s3://integration-test.statsparrot.com/glob_test/`:
 
         **Top-level prefixes**
         - `glob_test/y=2010/`

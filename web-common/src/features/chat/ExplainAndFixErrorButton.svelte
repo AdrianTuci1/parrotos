@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
   import { SparklesIcon } from "lucide-svelte";
   import { developerChatActions } from "./layouts/sidebar/sidebar-store";
 

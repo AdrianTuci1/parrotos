@@ -13,9 +13,9 @@ func TestLoad(t *testing.T) {
 	require.NotNil(t, inst)
 
 	require.Equal(t, "development", inst.Name)
-	require.Equal(t, "Overview of how to develop a Rill project", inst.Description)
+	require.Equal(t, "Overview of how to develop a Parrot project", inst.Description)
 	require.NotEmpty(t, inst.Body)
-	require.Contains(t, inst.Body, "# Instructions for developing a Rill project")
+	require.Contains(t, inst.Body, "# Instructions for developing a Parrot project")
 }
 
 func TestLoadAnalysis(t *testing.T) {
@@ -24,7 +24,7 @@ func TestLoadAnalysis(t *testing.T) {
 	internal, err := Load("analysis.md", Options{External: false})
 	require.NoError(t, err)
 	require.Equal(t, "analysis", internal.Name)
-	require.Equal(t, "Overview of how to analyze data in a Rill project", internal.Description)
+	require.Equal(t, "Overview of how to analyze data in a Parrot project", internal.Description)
 	require.NotEmpty(t, internal.Body)
 	require.Contains(t, internal.Body, "Citation requirements")
 
@@ -54,8 +54,8 @@ func TestLoadAgentsMD(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, inst)
 	require.Equal(t, "AGENTS", inst.Name)
-	require.Equal(t, "Entry point for Rill project development instructions", inst.Description)
-	require.Contains(t, inst.Body, "rill-development")
+	require.Equal(t, "Entry point for Parrot project development instructions", inst.Description)
+	require.Contains(t, inst.Body, "statsparrot-development")
 }
 
 func TestLoadAll(t *testing.T) {

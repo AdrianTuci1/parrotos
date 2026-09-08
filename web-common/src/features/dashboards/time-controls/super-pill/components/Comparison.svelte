@@ -1,18 +1,18 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config";
   import {
     type DashboardTimeControls,
     TimeComparisonOption,
-  } from "@rilldata/web-common/lib/time/types";
+  } from "@statsparrot/web-common/lib/time/types";
   import { DateTime, Interval } from "luxon";
   import CalendarPlusDateInput from "./CalendarPlusDateInput.svelte";
   import RangeDisplay from "./RangeDisplay.svelte";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-  import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
-  import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
+  import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   type Option = {
     name: TimeComparisonOption;
     key: number;

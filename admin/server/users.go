@@ -11,11 +11,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/authtoken"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/authtoken"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -428,7 +428,7 @@ func (s *Server) IssueRepresentativeAuthToken(ctx context.Context, req *adminv1.
 	ttl := time.Duration(req.TtlMinutes) * time.Minute
 	displayName := fmt.Sprintf("Support for %s", u.Email)
 
-	token, err := s.admin.IssueUserAuthToken(ctx, claims.OwnerID(), database.AuthClientIDRillSupport, displayName, &u.ID, &ttl, false)
+	token, err := s.admin.IssueUserAuthToken(ctx, claims.OwnerID(), database.AuthClientIDParrotSupport, displayName, &u.ID, &ttl, false)
 	if err != nil {
 		return nil, err
 	}
@@ -755,8 +755,8 @@ func (s *Server) findUserAuthTokenFuzzy(ctx context.Context, input string) (*dat
 	}
 
 	// Validate input length and prefix
-	if len(input) < 10 || !strings.HasPrefix(input, "rill_usr_") {
-		return nil, status.Error(codes.InvalidArgument, "invalid token ID (must be at least 10 characters and start with 'rill_usr_')")
+	if len(input) < 10 || !strings.HasPrefix(input, "statsparrot_usr_") {
+		return nil, status.Error(codes.InvalidArgument, "invalid token ID (must be at least 10 characters and start with 'statsparrot_usr_')")
 	}
 
 	// Find all tokens for the user and match by prefix

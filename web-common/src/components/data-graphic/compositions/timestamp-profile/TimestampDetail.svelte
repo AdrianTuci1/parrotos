@@ -4,25 +4,25 @@ Enables zoom (ctrl+drag), pan (drag when zoomed), and shift+click to copy.
 Uses index-based scales and TimeSeriesChart for rendering.
 -->
 <script lang="ts">
-  import TimeSeriesChart from "@rilldata/web-common/components/time-series-chart/TimeSeriesChart.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import TimeSeriesChart from "@statsparrot/web-common/components/time-series-chart/TimeSeriesChart.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
   import type {
     ChartScales,
     ChartSeries,
-  } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/types";
-  import { snapIndex } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/utils";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/types";
+  import { snapIndex } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/utils";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
   import {
     datePortion,
     formatInteger,
     timePortion,
-  } from "@rilldata/web-common/lib/formatters";
-  import { guidGenerator } from "@rilldata/web-common/lib/guid";
-  import { timeGrainToDuration } from "@rilldata/web-common/lib/time/grains";
-  import { removeLocalTimezoneOffset } from "@rilldata/web-common/lib/time/timezone";
-  import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-  import { createLineGenerator } from "@rilldata/web-common/components/data-graphic/utils";
+  } from "@statsparrot/web-common/lib/formatters";
+  import { guidGenerator } from "@statsparrot/web-common/lib/guid";
+  import { timeGrainToDuration } from "@statsparrot/web-common/lib/time/grains";
+  import { removeLocalTimezoneOffset } from "@statsparrot/web-common/lib/time/timezone";
+  import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import { createLineGenerator } from "@statsparrot/web-common/components/data-graphic/utils";
   import { max } from "d3-array";
   import { scaleLinear } from "d3-scale";
   import { onMount } from "svelte";
@@ -30,7 +30,7 @@ Uses index-based scales and TimeSeriesChart for rendering.
   import TimestampBound from "./TimestampBound.svelte";
   import TimestampProfileSummary from "./TimestampProfileSummary.svelte";
   import TimestampTooltipContent from "./TimestampTooltipContent.svelte";
-  import type { TimestampDataPoint } from "@rilldata/web-common/features/column-profile/queries";
+  import type { TimestampDataPoint } from "@statsparrot/web-common/features/column-profile/queries";
 
   const id = guidGenerator();
   const tooltipSparkWidth = 84;

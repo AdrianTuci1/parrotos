@@ -1,5 +1,5 @@
-import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import type { Interval } from "luxon";
 import { useMemo } from "react";
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { sql } from "@codemirror/lang-sql";
   import { EditorState } from "@codemirror/state";
   import { EditorView, placeholder } from "@codemirror/view";
-  import { base as baseExtensions } from "@rilldata/web-common/components/editor/presets/base";
-  import { DuckDBSQL } from "@rilldata/web-common/components/editor/presets/duckDBDialect";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
+  import { base as baseExtensions } from "@statsparrot/web-common/components/editor/presets/base";
+  import { DuckDBSQL } from "@statsparrot/web-common/components/editor/presets/duckDBDialect";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
   import { tick } from "svelte";
 
   export let key: string;

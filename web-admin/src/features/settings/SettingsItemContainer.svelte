@@ -1,6 +1,6 @@
 <script lang="ts">
-  import InfoCircleFilled from "@rilldata/web-common/components/icons/InfoCircleFilled.svelte";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
+  import InfoCircleFilled from "@statsparrot/web-common/components/icons/InfoCircleFilled.svelte";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
 
   export let title: string;
   export let titleIcon: "none" | "info" | "error" = "none";

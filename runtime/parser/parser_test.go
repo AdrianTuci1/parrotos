@@ -9,21 +9,21 @@ import (
 	"strings"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	_ "github.com/rilldata/rill/runtime/drivers/file"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/file"
 )
 
-func TestRillYAML(t *testing.T) {
+func TestParrotYAML(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: `
+		`statsparrot.yaml`: `
 display_name: Hello world
 description: This project says hello to the world
 
@@ -42,7 +42,7 @@ mock_users:
 `,
 	})
 
-	res, err := ParseRillYAML(ctx, repo, "")
+	res, err := ParseParrotYAML(ctx, repo, "")
 	require.NoError(t, err)
 
 	require.Equal(t, res.DisplayName, "Hello world")
@@ -59,7 +59,7 @@ mock_users:
 	require.Equal(t, "bar", res.Variables[0].Default)
 }
 
-func TestRillYAMLFeatures(t *testing.T) {
+func TestParrotYAMLFeatures(t *testing.T) {
 	tt := []struct {
 		yaml    string
 		want    map[string]string
@@ -101,9 +101,9 @@ features:
 			yaml: `
 features:
   templated_embed: '{{ .user.embed }}'
-  templated_user: '{{ eq (.user.domain) "rilldata.com" }}'
+  templated_user: '{{ eq (.user.domain) "staticlabs.com" }}'
 `,
-			want: map[string]string{"templated_embed": "{{ .user.embed }}", "templated_user": "{{ eq (.user.domain) \"rilldata.com\" }}"},
+			want: map[string]string{"templated_embed": "{{ .user.embed }}", "templated_user": "{{ eq (.user.domain) \"staticlabs.com\" }}"},
 		},
 		{
 			yaml: `
@@ -126,10 +126,10 @@ features:
 		t.Run(fmt.Sprintf("case=%d", i), func(t *testing.T) {
 			ctx := context.Background()
 			repo := makeRepo(t, map[string]string{
-				`rill.yaml`: tc.yaml,
+				`statsparrot.yaml`: tc.yaml,
 			})
 
-			res, err := ParseRillYAML(ctx, repo, "")
+			res, err := ParseParrotYAML(ctx, repo, "")
 			if tc.wantErr {
 				require.Error(t, err)
 				return
@@ -143,8 +143,8 @@ features:
 
 func TestComplete(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// init.sql
 		`init.sql`: `
 {{ configure "max_version" 2 }}
@@ -417,8 +417,8 @@ schema: default
 
 func TestLocationError(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// source s1
 		`sources/s1.yaml`: `
 connector: s3
@@ -459,7 +459,7 @@ func TestReparse(t *testing.T) {
 	ctx := context.Background()
 
 	// Create empty project
-	repo := makeRepo(t, map[string]string{`rill.yaml`: ``})
+	repo := makeRepo(t, map[string]string{`statsparrot.yaml`: ``})
 	p, err := Parse(ctx, repo, "", "", "duckdb", true)
 	require.NoError(t, err)
 	requireResourcesAndErrors(t, p, nil, nil)
@@ -602,7 +602,7 @@ func TestReparseSourceModelCollision(t *testing.T) {
 	// Create project with model m1
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`models/m1.sql`: `
 SELECT 10
 		`,
@@ -661,7 +661,7 @@ func TestReparseNameCollision(t *testing.T) {
 	// Create project with model m1
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`models/m1.sql`: `
 SELECT 10
 		`,
@@ -726,7 +726,7 @@ SELECT * FROM m1
 	}, diff)
 }
 
-func TestReparseRillYAML(t *testing.T) {
+func TestReparseParrotYAML(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{})
 
@@ -742,50 +742,50 @@ func TestReparseRillYAML(t *testing.T) {
 		},
 	}
 	perr := &runtimev1.ParseError{
-		Message:  "rill.yaml not found",
-		FilePath: "/rill.yaml",
+		Message:  "statsparrot.yaml not found",
+		FilePath: "/statsparrot.yaml",
 	}
 
-	// Parse empty project. Expect rill.yaml error.
+	// Parse empty project. Expect statsparrot.yaml error.
 	p, err := Parse(ctx, repo, "", "", "duckdb", true)
 	require.NoError(t, err)
-	require.Nil(t, p.RillYAML)
+	require.Nil(t, p.ParrotYAML)
 	requireResourcesAndErrors(t, p, nil, []*runtimev1.ParseError{perr})
 
-	// Add rill.yaml. Expect success.
+	// Add statsparrot.yaml. Expect success.
 	putRepo(t, repo, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 	})
-	diff, err := p.Reparse(ctx, []string{"/rill.yaml"})
+	diff, err := p.Reparse(ctx, []string{"/statsparrot.yaml"})
 	require.NoError(t, err)
 	require.True(t, diff.Reloaded)
-	require.NotNil(t, p.RillYAML)
+	require.NotNil(t, p.ParrotYAML)
 	requireResourcesAndErrors(t, p, nil, nil)
 
-	// Remove rill.yaml and add a model. Expect reloaded.
-	deleteRepo(t, repo, "/rill.yaml")
+	// Remove statsparrot.yaml and add a model. Expect reloaded.
+	deleteRepo(t, repo, "/statsparrot.yaml")
 	putRepo(t, repo, map[string]string{"/models/m1.sql": "SELECT 10"})
-	diff, err = p.Reparse(ctx, []string{"/rill.yaml", "/models/m1.sql"})
+	diff, err = p.Reparse(ctx, []string{"/statsparrot.yaml", "/models/m1.sql"})
 	require.NoError(t, err)
 	require.True(t, diff.Reloaded)
-	require.Nil(t, p.RillYAML)
+	require.Nil(t, p.ParrotYAML)
 	requireResourcesAndErrors(t, p, []*Resource{mdl}, []*runtimev1.ParseError{perr})
 
-	// Edit model. Expect nothing to happen because rill.yaml is still broken.
+	// Edit model. Expect nothing to happen because statsparrot.yaml is still broken.
 	putRepo(t, repo, map[string]string{"/models/m1.sql": "SELECT 20"})
 	diff, err = p.Reparse(ctx, []string{"/models/m1.sql"})
 	require.NoError(t, err)
 	require.Equal(t, &Diff{Skipped: true}, diff)
-	require.Nil(t, p.RillYAML)
+	require.Nil(t, p.ParrotYAML)
 	requireResourcesAndErrors(t, p, []*Resource{mdl}, []*runtimev1.ParseError{perr})
 
-	// Fix rill.yaml. Expect reloaded.
+	// Fix statsparrot.yaml. Expect reloaded.
 	mdl.ModelSpec.InputProperties = must(structpb.NewStruct(map[string]any{"sql": "SELECT 20"}))
-	putRepo(t, repo, map[string]string{"/rill.yaml": ""})
-	diff, err = p.Reparse(ctx, []string{"/rill.yaml"})
+	putRepo(t, repo, map[string]string{"/statsparrot.yaml": ""})
+	diff, err = p.Reparse(ctx, []string{"/statsparrot.yaml"})
 	require.NoError(t, err)
 	require.True(t, diff.Reloaded)
-	require.NotNil(t, p.RillYAML)
+	require.NotNil(t, p.ParrotYAML)
 	requireResourcesAndErrors(t, p, []*Resource{mdl}, nil)
 }
 
@@ -804,8 +804,8 @@ func TestRefInferrence(t *testing.T) {
 	}
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// model foo
 		`models/foo.sql`: `SELECT * FROM bar`,
 	})
@@ -852,8 +852,8 @@ func TestRefInferrence(t *testing.T) {
 func TestConnectorRef(t *testing.T) {
 	ctx := context.Background()
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// connector duckdb
 		`connectors/duckdb.yaml`: `
 driver: duckdb
@@ -895,7 +895,7 @@ SELECT 1
 func TestConnectorDeletion(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`connectors/duckdb.yaml`: `
 type: connector
 driver: duckdb
@@ -928,8 +928,8 @@ driver: duckdb
 func BenchmarkReparse(b *testing.B) {
 	ctx := context.Background()
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `
 SELECT 1
@@ -988,8 +988,8 @@ func TestProjectModelDefaults(t *testing.T) {
 	ctx := context.Background()
 
 	files := map[string]string{
-		// Provide dashboard defaults in rill.yaml
-		`rill.yaml`: `
+		// Provide dashboard defaults in statsparrot.yaml
+		`statsparrot.yaml`: `
 models:
   materialize: true
 `,
@@ -1042,8 +1042,8 @@ SELECT * FROM t2
 func TestProjectMetricsViewDefaults(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		// Provide metrics view defaults in rill.yaml
-		`rill.yaml`: `
+		// Provide metrics view defaults in statsparrot.yaml
+		`statsparrot.yaml`: `
 metrics_views:
   first_day_of_week: 7
   security:
@@ -1138,8 +1138,8 @@ security:
 func TestEnvironmentOverrides(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		// Provide dashboard defaults in rill.yaml
-		`rill.yaml`: `
+		// Provide dashboard defaults in statsparrot.yaml
+		`statsparrot.yaml`: `
 dev:
   sources:
     limit: 10000
@@ -1272,7 +1272,7 @@ environment_overrides:
 func TestMetricsViewSecurity(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`metrics/d1.yaml`: `
 version: 1
 type: metrics_view
@@ -1354,7 +1354,7 @@ security:
 func TestReport(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`reports/r1.yaml`: `
 type: report
 display_name: My Report
@@ -1527,7 +1527,7 @@ annotations:
 func TestReportPdfValidation(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// PDF export with a query is not allowed
 		`reports/r1.yaml`: `
 type: report
@@ -1587,7 +1587,7 @@ notify:
 func TestAlert(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `SELECT 1`,
 		`alerts/a1.yaml`: `
@@ -1677,7 +1677,7 @@ annotations:
 func TestMetricsViewAvoidSelfCyclicRef(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// dashboard d1
 		`metrics/d1.yaml`: `
 version: 1
@@ -1719,7 +1719,7 @@ measures:
 func TestTheme(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// Theme resource
 		`themes/t1.yaml`: `
 type: theme
@@ -1850,7 +1850,7 @@ theme:
 func TestComponentsAndCanvas(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`components/c1.yaml`: `
 type: component
 kpi:
@@ -1987,7 +1987,7 @@ func TestComponentInputDateValue(t *testing.T) {
 	// which structpb.NewValue rejects and previously caused a panic that aborted the entire parse.
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`components/c1.yaml`: `
 type: component
 markdown:
@@ -2022,7 +2022,7 @@ input:
 func TestCanvasTabGroups(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`components/c1.yaml`: `
 type: component
 kpi:
@@ -2188,7 +2188,7 @@ rows:
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			repo := makeRepo(t, map[string]string{
-				`rill.yaml`:        ``,
+				`statsparrot.yaml`:        ``,
 				`canvases/d1.yaml`: tc.yaml,
 			})
 			p, err := Parse(ctx, repo, "", "", "duckdb", true)
@@ -2204,7 +2204,7 @@ rows:
 func TestCanvasTabNameUniqueness(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`canvases/d1.yaml`: `
 type: canvas
 rows:
@@ -2241,7 +2241,7 @@ rows:
 func TestCanvasTabExplicitName(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`canvases/d1.yaml`: `
 type: canvas
 rows:
@@ -2277,8 +2277,8 @@ rows:
 
 func TestKindBackwardsCompatibility(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// source s1
 		`sources/s1.yaml`: `
 type: s3
@@ -2359,8 +2359,8 @@ select 3
 
 func TestAdvancedMeasures(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// dashboard d1
 		`metrics/d1.yaml`: `
 version: 1
@@ -2458,7 +2458,7 @@ measures:
 func TestRefreshInDev(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// model m1
 		`m1.yaml`: `
 type: model
@@ -2516,7 +2516,7 @@ refresh:
 
 func TestConnector(t *testing.T) {
 	ctx := context.Background()
-	repo := makeRepo(t, map[string]string{`rill.yaml`: ``})
+	repo := makeRepo(t, map[string]string{`statsparrot.yaml`: ``})
 
 	putRepo(t, repo, map[string]string{
 		`connectors/clickhouse.yaml`: `
@@ -2594,7 +2594,7 @@ managed: 10
 func TestNamespace(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`models/m1.yaml`: `
 type: model
 sql: SELECT 1
@@ -2640,7 +2640,7 @@ metrics_view: missing
 func TestSecurityPolicyWithRef(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`models/mappings.sql`: `
 SELECT * FROM domain_mappings
 `,
@@ -2758,7 +2758,7 @@ change_mode: patch
 		t.Run(fmt.Sprintf("Test %s", tt.name), func(t *testing.T) {
 			ctx := context.Background()
 			repo := makeRepo(t, map[string]string{
-				`rill.yaml`:      ``,
+				`statsparrot.yaml`:      ``,
 				`models/m1.yaml`: tt.yamlInput,
 			})
 
@@ -2778,7 +2778,7 @@ change_mode: patch
 func TestModelAssertions(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`models/m1.yaml`: `
 type: model
 sql: SELECT * FROM range(5)
@@ -3102,7 +3102,7 @@ light:
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			repo := makeRepo(t, map[string]string{
-				"rill.yaml":        "", // Minimal rill.yaml to avoid "not found" error
+				"statsparrot.yaml":        "", // Minimal statsparrot.yaml to avoid "not found" error
 				"themes/test.yaml": tt.yaml,
 			})
 

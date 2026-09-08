@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import {
     createRuntimeServiceGitPushMutation,
     createRuntimeServiceGitStatus,
     getRuntimeServiceGitStatusQueryKey,
     type RpcStatus,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let commitMessage = "";
   let isCommitting = false;

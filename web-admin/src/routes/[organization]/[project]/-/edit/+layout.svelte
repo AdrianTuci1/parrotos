@@ -5,33 +5,33 @@
     getAdminServiceGetProjectQueryKey,
     V1DeploymentStatus,
     type V1Organization,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     branchPathPrefix,
     extractBranchFromPath,
-  } from "@rilldata/web-admin/features/branches/branch-utils";
-  import BranchDeploymentStopped from "@rilldata/web-admin/features/branches/BranchDeploymentStopped.svelte";
-  import EditSessionLoading from "@rilldata/web-admin/features/edit-session/EditSessionLoading.svelte";
-  import EditSessionTimeoutBanner from "@rilldata/web-admin/features/edit-session/EditSessionTimeoutBanner.svelte";
+  } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import BranchDeploymentStopped from "@statsparrot/web-admin/features/branches/BranchDeploymentStopped.svelte";
+  import EditSessionLoading from "@statsparrot/web-admin/features/edit-session/EditSessionLoading.svelte";
+  import EditSessionTimeoutBanner from "@statsparrot/web-admin/features/edit-session/EditSessionTimeoutBanner.svelte";
   import ProjectHeader from "../../../../../features/projects/header/ProjectHeader.svelte";
-  import { baseGetProjectQueryOptions } from "@rilldata/web-admin/features/projects/project-query-options";
-  import SlimProjectHeader from "@rilldata/web-admin/features/projects/SlimProjectHeader.svelte";
-  import { getThemedLogoUrl } from "@rilldata/web-admin/features/themes/organization-logo";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import FileAndResourceWatcher from "@rilldata/web-common/features/entity-management/FileAndResourceWatcher.svelte";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
-  import { editorRoutePrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import RuntimeProvider from "@rilldata/web-common/runtime-client/v2/RuntimeProvider.svelte";
+  import { baseGetProjectQueryOptions } from "@statsparrot/web-admin/features/projects/project-query-options";
+  import SlimProjectHeader from "@statsparrot/web-admin/features/projects/SlimProjectHeader.svelte";
+  import { getThemedLogoUrl } from "@statsparrot/web-admin/features/themes/organization-logo";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import FileAndResourceWatcher from "@statsparrot/web-common/features/entity-management/FileAndResourceWatcher.svelte";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
+  import { editorRoutePrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import RuntimeProvider from "@statsparrot/web-common/runtime-client/v2/RuntimeProvider.svelte";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { onDestroy } from "svelte";
-  import { setCloudReadonlyNotice } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
-  import { isProjectWelcomePage } from "@rilldata/web-admin/features/navigation/nav-utils.ts";
-  import WelcomeRedirector from "@rilldata/web-admin/features/welcome/project/WelcomeRedirector.svelte";
+  import { setCloudReadonlyNotice } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
+  import { isProjectWelcomePage } from "@statsparrot/web-admin/features/navigation/nav-utils.ts";
+  import WelcomeRedirector from "@statsparrot/web-admin/features/welcome/project/WelcomeRedirector.svelte";
   import { InfoIcon } from "lucide-svelte";
-  import { overlay } from "@rilldata/web-common/layout/overlay-store";
-  import BlockingOverlayContainer from "@rilldata/web-common/layout/BlockingOverlayContainer.svelte";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { overlay } from "@statsparrot/web-common/layout/overlay-store";
+  import BlockingOverlayContainer from "@statsparrot/web-common/layout/BlockingOverlayContainer.svelte";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

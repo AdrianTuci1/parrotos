@@ -2,8 +2,8 @@ import type {
   V1GetDeploymentCredentialsResponse,
   V1GetProjectResponse,
   V1ProjectPermissions,
-} from "@rilldata/web-admin/client";
-import type { AuthContext } from "@rilldata/web-common/runtime-client/v2/runtime-client";
+} from "@statsparrot/web-admin/client";
+import type { AuthContext } from "@statsparrot/web-common/runtime-client/v2/runtime-client";
 
 /**
  * Resolves the effective runtime connection based on which auth mode is active.

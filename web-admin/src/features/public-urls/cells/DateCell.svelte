@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+  import { getLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 
   let { value }: { value: string | undefined } = $props();
 

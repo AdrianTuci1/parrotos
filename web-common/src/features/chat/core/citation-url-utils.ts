@@ -1,15 +1,15 @@
 import {
   type V1GetAIMessageResponse,
   type V1Message,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type {
   Schema as MetricsResolverQuery,
   TimeRange,
-} from "@rilldata/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
+} from "@statsparrot/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
 import {
   MessageType,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
 import { error } from "@sveltejs/kit";
 
 interface RuntimeInfo {

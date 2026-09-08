@@ -1,12 +1,12 @@
-import { validateRillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types";
+import { validateParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types";
 import {
   getQueryServiceMetricsViewTimeRangesQueryKey,
   queryServiceMetricsViewTimeRanges,
   type V1ExploreSpec,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 
 export async function resolveTimeRanges(
   client: RuntimeClient,
@@ -16,8 +16,8 @@ export async function resolveTimeRanges(
   executionTime: string | undefined = undefined,
   timeDimension: string | undefined = undefined,
 ) {
-  const rillTimes: string[] = [];
-  const rillTimeToTimeRange = new Map<number, number>();
+  const statsparrotTimes: string[] = [];
+  const statsparrotTimeToTimeRange = new Map<number, number>();
   const timeRangesToReturn = new Array<DashboardTimeControls | undefined>(
     timeRanges.length,
   );
@@ -30,15 +30,15 @@ export async function resolveTimeRanges(
       // already resolved
       tr.start ||
       tr.end ||
-      !!validateRillTime(tr.name)
+      !!validateParrotTime(tr.name)
     )
       return;
 
-    rillTimeToTimeRange.set(rillTimes.length, i);
-    rillTimes.push(tr.name);
+    statsparrotTimeToTimeRange.set(statsparrotTimes.length, i);
+    statsparrotTimes.push(tr.name);
   });
 
-  if (rillTimes.length === 0) return timeRangesToReturn;
+  if (statsparrotTimes.length === 0) return timeRangesToReturn;
 
   const metricsViewName = exploreSpec.metricsView!;
 
@@ -46,14 +46,14 @@ export async function resolveTimeRanges(
     const timeRangesResp = await fetchTimeRanges({
       client,
       metricsViewName,
-      rillTimes,
+      statsparrotTimes,
       timeZone,
       timeDimension,
       executionTime,
     });
 
     timeRangesResp.resolvedTimeRanges?.forEach((tr, index) => {
-      const mappedIndex = rillTimeToTimeRange.get(index);
+      const mappedIndex = statsparrotTimeToTimeRange.get(index);
       if (mappedIndex === undefined || !timeRangesToReturn[mappedIndex]) return;
       timeRangesToReturn[mappedIndex].start = new Date(tr.start!);
       timeRangesToReturn[mappedIndex].end = new Date(tr.end!);
@@ -72,7 +72,7 @@ export async function resolveTimeRanges(
 export async function fetchTimeRanges({
   client,
   metricsViewName,
-  rillTimes,
+  statsparrotTimes,
   timeZone,
   timeDimension,
   executionTime,
@@ -80,7 +80,7 @@ export async function fetchTimeRanges({
 }: {
   client: RuntimeClient;
   metricsViewName: string;
-  rillTimes: string[];
+  statsparrotTimes: string[];
   timeDimension?: string | undefined;
   timeZone: string | undefined;
   executionTime?: string;
@@ -88,7 +88,7 @@ export async function fetchTimeRanges({
 }) {
   const requestBody = {
     metricsViewName,
-    expressions: rillTimes,
+    expressions: statsparrotTimes,
     timeZone,
     executionTime: executionTime as any,
     timeDimension,

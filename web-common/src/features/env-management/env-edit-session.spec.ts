@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-import { makeTestEnvStore } from "@rilldata/web-common/features/env-management/test/test-env-store.ts";
+import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+import { makeTestEnvStore } from "@statsparrot/web-common/features/env-management/test/test-env-store.ts";
 
 describe("EnvEditSession", () => {
   it("reuses the same mapped name for a key across preview edits", async () => {

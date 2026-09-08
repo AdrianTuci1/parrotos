@@ -2,8 +2,8 @@ import {
   getRuntimeServiceListResourcesQueryKey,
   runtimeServiceListResources,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { queryClient } from "../../lib/svelte-query/globalQueryClient";
 
 export async function isLeafResource(

@@ -10,7 +10,7 @@ Complete data analytics platform with hierarchical structure: **Account → Orga
 
 > **Branch:** `feat/rill-bi` — A source-level adoption of the Rill Go engine into Statsparrot as a monolith.
 
-This branch ports the Rill analytics engine (`github.com/rilldata/rill`) into this repository as a single Go monolith. The upstream Rill source lives at `/Users/adrian.tucicovencogmail.com/Projects/rill`; the Go modules are copied verbatim (byte-for-byte) so Statsparrot can host Rill's runtime, admin server, CLI, and protobuf API alongside its existing Node.js services.
+This branch ports the Rill analytics engine (`github.com/staticlabs/statsparrot`) into this repository as a single Go monolith. The upstream Rill source lives at `/Users/adrian.tucicovencogmail.com/Projects/rill`; the Go modules are copied verbatim (byte-for-byte) so Statsparrot can host Rill's runtime, admin server, CLI, and protobuf API alongside its existing Node.js services.
 
 ### Adopted from Rill (verbatim copy)
 
@@ -18,17 +18,17 @@ This branch ports the Rill analytics engine (`github.com/rilldata/rill`) into th
 |---|---|---|---|---|
 | **Runtime** | `runtime/` | 694 | 0 | Query engine, connectors, DuckDB, catalog |
 | **Admin** | `admin/` | 118 | 0 | Control-plane server (accounts, orgs, projects, billing) |
-| **CLI** | `cli/` | 222 | 0 | `rill` command-line interface |
+| **CLI** | `cli/` | 222 | 0 | `statsparrot` command-line interface |
 | **Proto** | `proto/` | 49 | 16 | gRPC/Protobuf API definitions + generated code |
 
 **Key entry points** (all present):
 - `runtime/runtime.go`
 - `admin/admin.go`
-- `proto/rill/runtime/v1/queries.proto`
+- `proto/statsparrot/runtime/v1/queries.proto`
 - `cli/cmd/start/start.go`
 
 **Module + licensing files:**
-- `go.mod` — single root module (`module github.com/rilldata/rill`, `go 1.26.5`); byte-identical to upstream
+- `go.mod` — single root module (`module github.com/staticlabs/statsparrot`, `go 1.26.5`); byte-identical to upstream
 - `go.sum` — byte-identical to upstream
 - `LICENSE.md` — Apache License 2.0 (unchanged from upstream)
 - `NOTICE` — Statsparrot derivative-attribution notice (upstream Rill ships no NOTICE; this is added for the fork)
@@ -46,7 +46,7 @@ The Rill engine is adopted as-is; the following upstream hosted/cloud components
 | **Noop biller** | `admin/billing/noop.go` | `NewNoop()` returns unlimited/no-op quotas | Stripe-backed biller (`admin/billing/orb.go` is the upstream paid impl) |
 | **Static provisioner** | `admin/provisioner/static/static.go`, `admin/provisioner/clickhousestatic/provisioner.go` | Registers `"static"` provisioner | Statsparrot runtime provisioning |
 | **GitHub App** | `admin/github.go`, `admin/server/github.go`, `admin/server/server.go`, `admin/server/projects.go` | GitHub App auth flow | Statsparrot auth/provisioning |
-| **Telemetry** | `admin/server/telemetry.go`, `proto/rill/admin/v1/telemetry.proto` | Rill telemetry sink | Statsparrot telemetry (or no-op) |
+| **Telemetry** | `admin/server/telemetry.go`, `proto/statsparrot/admin/v1/telemetry.proto` | Rill telemetry sink | Statsparrot telemetry (or no-op) |
 
 ### Build gate (not performed on `feat/rill-bi`)
 

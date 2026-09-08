@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
   import type { Confirmation } from "./lib";
 
   export let confirmation: Confirmation;

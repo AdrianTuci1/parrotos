@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/google/go-github/v71/github"
-	"github.com/rilldata/rill/admin/testadmin"
-	"github.com/rilldata/rill/cli/testcli"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	"github.com/staticlabs/statsparrot/cli/testcli"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,18 +28,18 @@ func TestRuntimeDeployments(t *testing.T) {
 
 	// deploy the project
 	tempDir := t.TempDir()
-	putFiles(t, tempDir, map[string]string{"rill.yaml": `compiler: rillv1
-display_name: Untitled Rill Project
+	putFiles(t, tempDir, map[string]string{"statsparrot.yaml": `compiler: statsparrotv1
+display_name: Untitled Parrot Project
 olap_connector: duckdb
 vars:
   limit: 1`,
 	})
 	putFiles(t, tempDir, map[string]string{"models/model.sql": "SELECT {{ .env.limit }} AS lmt"})
-	result = u1.Run(t, "project", "deploy", "--interactive=false", "--org=reload-configs-test", "--project=rill-mgd-deploy", "--path="+tempDir)
+	result = u1.Run(t, "project", "deploy", "--interactive=false", "--org=reload-configs-test", "--project=statsparrot-mgd-deploy", "--path="+tempDir)
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// manually trigger deployment
-	depl := adm.TriggerDeployment(t, "reload-configs-test", "rill-mgd-deploy")
+	depl := adm.TriggerDeployment(t, "reload-configs-test", "statsparrot-mgd-deploy")
 
 	// check model output
 	checkModelOutput := func() (int, error) {
@@ -71,12 +71,12 @@ vars:
 		return modelOutputFn == 1
 	}, 10*time.Second, 100*time.Millisecond, "unexpected model output")
 
-	// set env via `rill env set limit 10`
-	result = u1.Run(t, "env", "set", "limit", "10", "--org=reload-configs-test", "--project=rill-mgd-deploy")
+	// set env via `statsparrot env set limit 10`
+	result = u1.Run(t, "env", "set", "limit", "10", "--org=reload-configs-test", "--project=statsparrot-mgd-deploy")
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// manually trigger deployment
-	depl = adm.TriggerDeployment(t, "reload-configs-test", "rill-mgd-deploy")
+	depl = adm.TriggerDeployment(t, "reload-configs-test", "statsparrot-mgd-deploy")
 
 	// query the model and verify env variable is applied
 	require.Eventually(t, func() bool {
@@ -84,24 +84,24 @@ vars:
 		return modelOutputFn == 10
 	}, 10*time.Second, 100*time.Millisecond, "unexpected model output after env set")
 
-	// stop the deployment - rill project deployments stop main
-	result = u1.Run(t, "project", "deployment", "stop", "main", "--org=reload-configs-test", "--project=rill-mgd-deploy")
+	// stop the deployment - statsparrot project deployments stop main
+	result = u1.Run(t, "project", "deployment", "stop", "main", "--org=reload-configs-test", "--project=statsparrot-mgd-deploy")
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// manually trigger deployment
-	depl = adm.TriggerDeployment(t, "reload-configs-test", "rill-mgd-deploy")
+	depl = adm.TriggerDeployment(t, "reload-configs-test", "statsparrot-mgd-deploy")
 
 	// verify deployment is stopped
 	deploymentsResp, err := c.ListDeployments(t.Context(), &adminv1.ListDeploymentsRequest{
 		Org:     "reload-configs-test",
-		Project: "rill-mgd-deploy",
+		Project: "statsparrot-mgd-deploy",
 	})
 	require.NoError(t, err)
 	require.Len(t, deploymentsResp.Deployments, 1)
 	require.Equal(t, adminv1.DeploymentStatus_DEPLOYMENT_STATUS_STOPPED, deploymentsResp.Deployments[0].Status)
 
 	// modify the env to set limit to 20
-	result = u1.Run(t, "env", "set", "limit", "20", "--org=reload-configs-test", "--project=rill-mgd-deploy")
+	result = u1.Run(t, "env", "set", "limit", "20", "--org=reload-configs-test", "--project=statsparrot-mgd-deploy")
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// restart the deployment - use the api directly since the CLI commands wait for deployment to be running which is not possible without river workers
@@ -111,7 +111,7 @@ vars:
 	require.NoError(t, err)
 
 	// manually trigger deployment
-	depl = adm.TriggerDeployment(t, "reload-configs-test", "rill-mgd-deploy")
+	depl = adm.TriggerDeployment(t, "reload-configs-test", "statsparrot-mgd-deploy")
 
 	// query the model and verify env variable is applied
 	require.Eventually(t, func() bool {
@@ -132,7 +132,7 @@ func TestPrimaryBranchChange(t *testing.T) {
 
 	// deploy the project on main branch
 	tempDir := t.TempDir()
-	putFiles(t, tempDir, map[string]string{"rill.yaml": `compiler: rillv1
+	putFiles(t, tempDir, map[string]string{"statsparrot.yaml": `compiler: statsparrotv1
 display_name: Branch Change Test
 olap_connector: duckdb`,
 	})

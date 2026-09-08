@@ -3,11 +3,11 @@ import {
   getExistingReportInitialFormValues,
   getNewCanvasReportInitialFormValues,
   isCanvasReportSpec,
-} from "@rilldata/web-common/features/scheduled-reports/utils";
+} from "@statsparrot/web-common/features/scheduled-reports/utils";
 import {
   V1ExportFormat,
   type V1ReportSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 
 describe("getDashboardNameFromReport", () => {

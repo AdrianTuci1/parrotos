@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	runtimeauth "github.com/rilldata/rill/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	runtimeauth "github.com/staticlabs/statsparrot/runtime/server/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -26,7 +26,7 @@ type issueRuntimeTokenOptions struct {
 	projectPermissions *adminv1.ProjectPermissions
 	// forOwner issues the token for the current claims owner (user/service/anon/etc).
 	forOwner bool
-	// forUserID issues the token for a specific Rill user. Mutually exclusive with the other for* fields.
+	// forUserID issues the token for a specific Parrot user. Mutually exclusive with the other for* fields.
 	forUserID string
 	// forUserEmail issues the token for a user by email.
 	// The email does not have to correspond to an existing user; if it doesn't, synthetic attributes are generated based on the email.
@@ -36,7 +36,7 @@ type issueRuntimeTokenOptions struct {
 	// A non-nil empty map counts as set and selects this mode.
 	// Mutually exclusive with the other for* fields.
 	forUserAttributes map[string]any
-	// externalUserID is an optional external user ID to be used when the token is issued for a non-Rill end user (usually in an embedded context).
+	// externalUserID is an optional external user ID to be used when the token is issued for a non-Parrot end user (usually in an embedded context).
 	// It will be hashed and used as the JWT's subject.
 	// It cannot be combined with forOwner or forUserID.
 	// It may be set on its own, i.e. you do not have to set any of the for* fields.

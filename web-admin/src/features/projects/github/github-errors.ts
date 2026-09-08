@@ -1,6 +1,6 @@
-import type { RpcStatus } from "@rilldata/web-admin/client";
+import type { RpcStatus } from "@statsparrot/web-admin/client";
 import type { AxiosError } from "axios";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function extractGithubConnectError(err: AxiosError<RpcStatus>) {
   if (!err) {

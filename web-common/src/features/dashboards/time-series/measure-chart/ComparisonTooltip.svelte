@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   export let valueFormatter: (value: number | null) => string;
   export let tooltipCurrentValue: number | null;
   export let tooltipComparisonValue: number | null;

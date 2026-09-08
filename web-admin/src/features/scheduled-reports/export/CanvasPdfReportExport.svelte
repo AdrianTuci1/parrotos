@@ -1,18 +1,18 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import CanvasDashboardEmbed from "@rilldata/web-common/features/canvas/CanvasDashboardEmbed.svelte";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import { exportCanvasPdf } from "@rilldata/web-common/features/exports/pdf/export-canvas-pdf";
-  import type { ExportProgress } from "@rilldata/web-common/features/exports/pdf/types";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { stripInternalReportParams } from "@rilldata/web-common/features/scheduled-reports/utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import CanvasDashboardEmbed from "@statsparrot/web-common/features/canvas/CanvasDashboardEmbed.svelte";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import { exportCanvasPdf } from "@statsparrot/web-common/features/exports/pdf/export-canvas-pdf";
+  import type { ExportProgress } from "@statsparrot/web-common/features/exports/pdf/types";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { stripInternalReportParams } from "@statsparrot/web-common/features/scheduled-reports/utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onDestroy, onMount } from "svelte";
 
   export let canvasName: string;

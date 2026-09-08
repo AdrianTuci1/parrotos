@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -20,7 +20,7 @@ const (
 	virtualMaxPages  = 500
 )
 
-// virtualRepo represents a repository of virtual files loaded from the Rill Admin service.
+// virtualRepo represents a repository of virtual files loaded from the Parrot Admin service.
 // It presents all virtual files as residing under the /__virtual__ path, in order to avoid conflicts with files in archiveRepo or gitRepo.
 // It is unsafe for concurrent reads and writes.
 type virtualRepo struct {

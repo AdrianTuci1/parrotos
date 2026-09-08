@@ -7,17 +7,17 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	activity "github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	activity "github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 
 	_ "github.com/duckdb/duckdb-go/v2"
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestDuckDBToDuckDBTransfer(t *testing.T) {
@@ -91,7 +91,7 @@ func TestDuckDBToDuckDBTransfer(t *testing.T) {
 
 func TestPartitionOverwrite(t *testing.T) {
 	files := map[string]string{
-		"rill.yaml": "olap_connector: duckdb",
+		"statsparrot.yaml": "olap_connector: duckdb",
 		// Model that creates 10 distinct partitions with 10 rows each.
 		// We'll expect the output to have 100 rows.
 		"partition_overwrite1.yaml": `
@@ -156,10 +156,10 @@ sql: SELECT range as num FROM range(10)
 		Result:     []map[string]any{{"count": 10, "min": 0, "max": 9}},
 	})
 
-	// partition_overwrite3 should have 100 rows and a __rill_partition column
+	// partition_overwrite3 should have 100 rows and a __statsparrot_partition column
 	testruntime.RequireResolve(t, rt, id, &testruntime.RequireResolveOptions{
 		Resolver:   "sql",
-		Properties: map[string]any{"sql": `SELECT COUNT(*) AS count, COUNT(DISTINCT __rill_partition) AS partitions, MIN(num) AS min_num, MAX(num) AS max_num FROM partition_overwrite3`},
+		Properties: map[string]any{"sql": `SELECT COUNT(*) AS count, COUNT(DISTINCT __statsparrot_partition) AS partitions, MIN(num) AS min_num, MAX(num) AS max_num FROM partition_overwrite3`},
 		Result:     []map[string]any{{"count": 100, "partitions": 10, "min_num": 0, "max_num": 9}},
 	})
 }

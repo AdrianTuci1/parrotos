@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import embed from "vega-embed";
 import type { SignalListeners, View, VisualizationSpec } from "svelte-vega";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { ColorMapping } from "../types";
 import type { Config } from "vega-lite";
-import type { ExpressionFunction, VLTooltipFormatter } from "@rilldata/web-common/components/vega/types";
-import { useEmbedOptions } from "@rilldata/web-common/components/vega/react/useEmbedOptions";
-import { VegaLiteTooltipHandler } from "@rilldata/web-common/components/vega/vega-tooltip";
+import type { ExpressionFunction, VLTooltipFormatter } from "@statsparrot/web-common/components/vega/types";
+import { useEmbedOptions } from "@statsparrot/web-common/components/vega/react/useEmbedOptions";
+import { VegaLiteTooltipHandler } from "@statsparrot/web-common/components/vega/vega-tooltip";
 
-export interface RillChartProps {
+export interface ParrotChartProps {
   /** Runtime client used to build the vega-embed loader (asset baseURL + JWT). */
   runtimeClient: RuntimeClient;
   data: Record<string, unknown>;
@@ -33,9 +33,9 @@ export interface RillChartProps {
  * Drives vega/vega-lite/vega-embed directly instead of `svelte-vega`. It keeps the
  * embed options identity-stable via `useEmbedOptions` so brush state is preserved
  * when only the container size changes (the view is resized, not re-embedded), and
- * keeps the dataset convention `{ "metrics-view": data }` plus the Rill theme config.
+ * keeps the dataset convention `{ "metrics-view": data }` plus the Parrot theme config.
  */
-export default function RillChart(props: RillChartProps) {
+export default function ParrotChart(props: ParrotChartProps) {
   const {
     runtimeClient,
     data,
@@ -182,7 +182,7 @@ export default function RillChart(props: RillChartProps) {
     <div
       ref={containerRef}
       role="presentation"
-      className={`rill-vega-container overflow-y-auto overflow-x-hidden size-full flex flex-col items-center${
+      className={`statsparrot-vega-container overflow-y-auto overflow-x-hidden size-full flex flex-col items-center${
         canvasDashboard ? " px-2" : ""
       }`}
       onMouseLeave={handleMouseLeave}

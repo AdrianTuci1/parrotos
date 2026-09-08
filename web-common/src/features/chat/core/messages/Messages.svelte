@@ -2,7 +2,7 @@
   import { createQuery } from "@tanstack/svelte-query";
   import { afterUpdate } from "svelte";
   import { getRuntimeServiceListToolsQueryOptions } from "../../../../runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import DelayedSpinner from "../../../entity-management/DelayedSpinner.svelte";
   import type { ConversationManager } from "../conversation-manager";
   import FeedbackModal from "../feedback/FeedbackModal.svelte";
@@ -14,9 +14,9 @@
   import UserMessage from "./text/UserMessage.svelte";
   import ThinkingBlock from "./thinking/ThinkingBlock.svelte";
   import WorkingBlock from "./working/WorkingBlock.svelte";
-  import SimpleToolCallBlock from "@rilldata/web-common/features/chat/core/messages/simple-tool-call/SimpleToolCallBlock.svelte";
-  import ErrorMessage from "@rilldata/web-common/features/chat/core/messages/error/ErrorMessage.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import SimpleToolCallBlock from "@statsparrot/web-common/features/chat/core/messages/simple-tool-call/SimpleToolCallBlock.svelte";
+  import ErrorMessage from "@statsparrot/web-common/features/chat/core/messages/error/ErrorMessage.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let conversationManager: ConversationManager;
   export let layout: "sidebar" | "fullpage";

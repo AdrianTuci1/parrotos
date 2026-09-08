@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PivotMeasureFormatting } from "@rilldata/web-common/features/dashboards/pivot/types";
+  import type { PivotMeasureFormatting } from "@statsparrot/web-common/features/dashboards/pivot/types";
   import ChipDragList from "../ChipDragList.svelte";
   import type { FieldType } from "../types";
 

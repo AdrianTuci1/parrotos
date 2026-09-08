@@ -3,7 +3,7 @@ package executor
 import (
 	"fmt"
 
-	"github.com/rilldata/rill/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 )
 
 // rewriteQueryEnforceCaps rewrites the query to enforce system limits.

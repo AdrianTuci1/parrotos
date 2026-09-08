@@ -2,15 +2,15 @@ import {
   InlineContextType,
   type InlineContext,
   convertContextToInlinePrompt,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-import { dashboardChatActions } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store.ts";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+import { dashboardChatActions } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store.ts";
 import { get, writable } from "svelte/store";
-import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-import { getExploreNameStore } from "@rilldata/web-common/features/dashboards/nav-utils.ts";
+import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+import { getExploreNameStore } from "@statsparrot/web-common/features/dashboards/nav-utils.ts";
 import { derived } from "svelte/store";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-import { roundDownToTimeUnit } from "@rilldata/web-common/features/dashboards/time-series/round-to-nearest-time-unit.ts";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config.ts";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+import { roundDownToTimeUnit } from "@statsparrot/web-common/features/dashboards/time-series/round-to-nearest-time-unit.ts";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config.ts";
 
 export class MeasureSelection {
   public readonly measure = writable<string | null>(null);

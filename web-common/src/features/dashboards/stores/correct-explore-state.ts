@@ -1,9 +1,9 @@
-import { type V1MetricsViewSpec } from "@rilldata/web-common/runtime-client";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
-import { AdvancedMeasureCorrector } from "@rilldata/web-common/features/dashboards/stores/AdvancedMeasureCorrector.ts";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types.ts";
-import { parseRillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser.ts";
-import { getRangePrecision } from "@rilldata/web-common/lib/time/rill-time-grains.ts";
+import { type V1MetricsViewSpec } from "@statsparrot/web-common/runtime-client";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
+import { AdvancedMeasureCorrector } from "@statsparrot/web-common/features/dashboards/stores/AdvancedMeasureCorrector.ts";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types.ts";
+import { parseParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser.ts";
+import { getRangePrecision } from "@statsparrot/web-common/lib/time/statsparrot-time-grains.ts";
 
 /**
  * Corrects the final merged explore state.
@@ -20,7 +20,7 @@ export function correctExploreState(
   correctLeaderboardMeasures(exploreState);
 
   if (exploreState.selectedTimeRange) {
-    deriveIntervalFromRillTimeName(exploreState.selectedTimeRange);
+    deriveIntervalFromParrotTimeName(exploreState.selectedTimeRange);
   }
 }
 
@@ -47,18 +47,18 @@ function correctLeaderboardMeasures(exploreState: ExploreState) {
 }
 
 /**
- * Derives and sets the interval (time grain) on a time range from its RillTime name.
+ * Derives and sets the interval (time grain) on a time range from its ParrotTime name.
  * This is needed when the URL doesn't explicitly specify a grain.
  */
-function deriveIntervalFromRillTimeName(
+function deriveIntervalFromParrotTimeName(
   selectedRange: DashboardTimeControls | undefined,
 ): void {
   if (!selectedRange?.name || selectedRange.interval) return;
 
   try {
-    const parsed = parseRillTime(selectedRange.name);
+    const parsed = parseParrotTime(selectedRange.name);
     selectedRange.interval = getRangePrecision(parsed);
   } catch {
-    // Parsing fails for non-rill-time names like "CUSTOM" - use undefined
+    // Parsing fails for non-statsparrot-time names like "CUSTOM" - use undefined
   }
 }

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import * as Dropdown from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import FeatherEditIcon from "@rilldata/web-common/components/icons/FeatherEditIcon.svelte";
-  import PencilIcon from "@rilldata/web-common/components/icons/PencilIcon.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
+  import * as Dropdown from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import FeatherEditIcon from "@statsparrot/web-common/components/icons/FeatherEditIcon.svelte";
+  import PencilIcon from "@statsparrot/web-common/components/icons/PencilIcon.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
   import { ShareIcon } from "lucide-svelte";
 
   let {

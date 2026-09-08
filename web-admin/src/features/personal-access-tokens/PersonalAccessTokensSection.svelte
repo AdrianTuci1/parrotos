@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { createAdminServiceIssueUserAuthToken } from "@rilldata/web-admin/client";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { createAdminServiceIssueUserAuthToken } from "@statsparrot/web-admin/client";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let issuedToken: string | null = null;
 

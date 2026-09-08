@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rilldata/rill/cli/cmd/project"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/cmd/project"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/spf13/cobra"
 )
 
@@ -23,12 +23,12 @@ func SeedCmd(ch *cmdutil.Helper) *cobra.Command {
 			}
 
 			// clone examples to a temp dir and deploy
-			temp, err := os.MkdirTemp("", "rill-seed-*")
+			temp, err := os.MkdirTemp("", "statsparrot-seed-*")
 			if err != nil {
 				return err
 			}
 			defer os.RemoveAll(temp)
-			err = gitutil.Clone(cmd.Context(), temp, "https://github.com/rilldata/rill-examples.git", "", false, false)
+			err = gitutil.Clone(cmd.Context(), temp, "https://github.com/staticlabs/statsparrot-examples.git", "", false, false)
 			if err != nil {
 				return err
 			}
@@ -40,7 +40,7 @@ func SeedCmd(ch *cmdutil.Helper) *cobra.Command {
 					return err
 				}
 				_, err = client.CreateOrganization(cmd.Context(), &adminv1.CreateOrganizationRequest{
-					Name: "rilldata",
+					Name: "staticlabs",
 				})
 				if err != nil {
 					return err
@@ -48,8 +48,8 @@ func SeedCmd(ch *cmdutil.Helper) *cobra.Command {
 			}
 			return project.ConnectGithubFlow(cmd.Context(), ch, &project.DeployOpts{
 				GitPath:     temp,
-				SubPath:     "rill-openrtb-prog-ads",
-				Name:        "rill-openrtb-prog-ads",
+				SubPath:     "statsparrot-openrtb-prog-ads",
+				Name:        "statsparrot-openrtb-prog-ads",
 				RemoteName:  "origin",
 				ProdVersion: "latest",
 				Slots:       2,

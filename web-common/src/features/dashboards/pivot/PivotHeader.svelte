@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Column from "@rilldata/web-common/components/icons/Column.svelte";
-  import Row from "@rilldata/web-common/components/icons/Row.svelte";
-  import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils.ts";
+  import Column from "@statsparrot/web-common/components/icons/Column.svelte";
+  import Row from "@statsparrot/web-common/components/icons/Row.svelte";
+  import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils.ts";
   import { slide } from "svelte/transition";
   import DragList from "./DragList.svelte";
   import PivotAutoArrangeZone from "./PivotAutoArrangeZone.svelte";
@@ -12,7 +12,7 @@
     type PivotMeasureFormatting,
     type PivotState,
   } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let pivotState: PivotState;
   export let setRows: (items: PivotChipData[]) => void;

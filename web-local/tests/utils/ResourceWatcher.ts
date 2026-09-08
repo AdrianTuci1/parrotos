@@ -1,4 +1,4 @@
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
 import type { Page } from "playwright";
 import { updateCodeEditor } from "web-local/tests/utils/commonHelpers";
 

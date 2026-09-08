@@ -4,18 +4,18 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestCanvasValidState(t *testing.T) {
 	// Create an instance with StageChanges==true
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:        map[string]string{"rill.yaml": ""},
+		Files:        map[string]string{"statsparrot.yaml": ""},
 		StageChanges: true,
 	})
 
@@ -109,7 +109,7 @@ rows:
 func TestCanvasValidateMetricsViewTimeConsistency(t *testing.T) {
 	// Create an instance with StageChanges==true
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:        map[string]string{"rill.yaml": ""},
+		Files:        map[string]string{"statsparrot.yaml": ""},
 		StageChanges: true,
 	})
 
@@ -243,7 +243,7 @@ first_month_of_year: 3
 func TestCanvasDataRefreshedOn(t *testing.T) {
 	// Create an instance with StageChanges==true
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:        map[string]string{"rill.yaml": ""},
+		Files:        map[string]string{"statsparrot.yaml": ""},
 		StageChanges: true,
 	})
 
@@ -300,7 +300,7 @@ rows:
 
 func TestCanvasResolveTransitiveAccess(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files: map[string]string{"rill.yaml": ""},
+		Files: map[string]string{"statsparrot.yaml": ""},
 	})
 
 	// Create three models, three metrics views, and a canvas with components using metrics_view, metrics_sql, and markdown.

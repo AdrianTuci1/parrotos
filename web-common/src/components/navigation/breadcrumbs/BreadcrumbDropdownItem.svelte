@@ -1,11 +1,11 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping.ts";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping.ts";
   import type {
     BreadcrumbItemDropdownProps,
     PathOption,
-  } from "@rilldata/web-common/components/navigation/breadcrumbs/types.ts";
+  } from "@statsparrot/web-common/components/navigation/breadcrumbs/types.ts";
 
   let {
     id,

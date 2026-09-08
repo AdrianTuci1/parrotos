@@ -1,18 +1,18 @@
 <script lang="ts">
   import type { PartialMessage, Struct } from "@bufbuild/protobuf";
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import PreviewTable from "@rilldata/web-common/components/preview-table/PreviewTable.svelte";
-  import { getRillTheme } from "@rilldata/web-common/components/vega/vega-config";
-  import VegaLiteRenderer from "@rilldata/web-common/components/vega/VegaLiteRenderer.svelte";
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
-  import ReconcilingSpinner from "@rilldata/web-common/features/entity-management/ReconcilingSpinner.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import PreviewTable from "@statsparrot/web-common/components/preview-table/PreviewTable.svelte";
+  import { getParrotTheme } from "@statsparrot/web-common/components/vega/vega-config";
+  import VegaLiteRenderer from "@statsparrot/web-common/components/vega/VegaLiteRenderer.svelte";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
+  import ReconcilingSpinner from "@statsparrot/web-common/features/entity-management/ReconcilingSpinner.svelte";
   import {
     createRuntimeServiceQueryResolver,
     type V1Expression,
     type V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { View, VisualizationSpec } from "svelte-vega";
   import { derived, get } from "svelte/store";
   import { convertV1ExpressionToMapstructure } from "./expression-utils";
@@ -162,7 +162,7 @@
             {renderer}
             spec={parsedSpec}
             canvasDashboard
-            config={getRillTheme(true)}
+            config={getParrotTheme(true)}
             data={vegaData}
             bind:viewVL
           />

@@ -1,4 +1,4 @@
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
 import type { DimensionTableRow } from "../dimension-table-types";
 import type { VirtualItem } from "./useVirtualizer";
 import { Cell } from "./Cell";

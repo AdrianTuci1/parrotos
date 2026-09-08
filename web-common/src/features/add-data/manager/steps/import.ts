@@ -5,7 +5,7 @@ import {
   type ImportFromConfig,
   type ImportStepConfig,
   type ImportToConfig,
-} from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+} from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
 import {
   getRuntimeServiceGetInstanceQueryKey,
   runtimeServiceCreateTrigger,
@@ -13,29 +13,29 @@ import {
   runtimeServiceGenerateMetricsViewFile,
   runtimeServiceGetInstance,
   runtimeServicePutFile,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   maybeDeleteFileArtifact,
   waitForResourceReconciliation,
-} from "@rilldata/web-common/features/entity-management/actions/actions.ts";
+} from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
 import {
   fetchResource,
   ResourceKind,
-} from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import { get } from "svelte/store";
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   generateSourceYAML,
   inferModelNameFromSQL,
-} from "@rilldata/web-common/features/sources/sourceUtils.ts";
-import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-import { generateBlobForNewResourceFile } from "@rilldata/web-common/features/entity-management/add/new-files.ts";
-import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
-import { maybeGetConnectorDriver } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics.ts";
-import { BehaviourEventAction } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+} from "@statsparrot/web-common/features/sources/sourceUtils.ts";
+import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+import { generateBlobForNewResourceFile } from "@statsparrot/web-common/features/entity-management/add/new-files.ts";
+import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
+import { maybeGetConnectorDriver } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics.ts";
+import { BehaviourEventAction } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 
 export async function runImportSteps(
   runtimeClient: RuntimeClient,

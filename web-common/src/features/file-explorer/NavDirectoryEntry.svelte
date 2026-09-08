@@ -1,20 +1,20 @@
 <script lang="ts">
-  import ContextButton from "@rilldata/web-common/components/button/ContextButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import Cancel from "@rilldata/web-common/components/icons/Cancel.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import EditIcon from "@rilldata/web-common/components/icons/EditIcon.svelte";
-  import MoreHorizontal from "@rilldata/web-common/components/icons/MoreHorizontal.svelte";
-  import { directoryState } from "@rilldata/web-common/features/file-explorer/directory-store";
-  import type { NavDragData } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
-  import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+  import ContextButton from "@statsparrot/web-common/components/button/ContextButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import Cancel from "@statsparrot/web-common/components/icons/Cancel.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import EditIcon from "@statsparrot/web-common/components/icons/EditIcon.svelte";
+  import MoreHorizontal from "@statsparrot/web-common/components/icons/MoreHorizontal.svelte";
+  import { directoryState } from "@statsparrot/web-common/features/file-explorer/directory-store";
+  import type { NavDragData } from "@statsparrot/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  import { getPaddingFromPath } from "@statsparrot/web-common/features/file-explorer/nav-tree-spacing";
   import {
     type Directory,
     getDirectoryHasErrors,
     getDirectoryHasWarnings,
-  } from "@rilldata/web-common/features/file-explorer/transform-file-list";
-  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-common/features/file-explorer/transform-file-list";
+  import NavigationMenuItem from "@statsparrot/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import { Folder } from "lucide-svelte";
   import { createRuntimeServiceCreateDirectoryMutation } from "../../runtime-client";
   import { useRuntimeClient } from "../../runtime-client/v2";
@@ -22,7 +22,7 @@
   import { getTopLevelFolder } from "../entity-management/file-path-utils";
   import { useDirectoryNamesInDirectory } from "../entity-management/file-selectors";
   import { getName } from "../entity-management/name-utils";
-  import { isProtectedDirectory } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
+  import { isProtectedDirectory } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
 
   export let dir: Directory;
   export let onRename: (filePath: string, isDir: boolean) => void;

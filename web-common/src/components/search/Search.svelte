@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { onMount } from "svelte";
   import Search from "../icons/Search.svelte";
 

@@ -4,7 +4,7 @@
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import ConnectorEntry from "./ConnectorEntry.svelte";
   import type { ConnectorExplorerStore } from "./connector-explorer-store";
-  import { getAnalyzedConnectors } from "@rilldata/web-common/features/connectors/selectors.ts";
+  import { getAnalyzedConnectors } from "@statsparrot/web-common/features/connectors/selectors.ts";
 
   export let store: ConnectorExplorerStore;
   export let olapOnly: boolean = false;

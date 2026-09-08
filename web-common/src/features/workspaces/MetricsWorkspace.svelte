@@ -1,30 +1,30 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { getNameFromFile } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { createRootCauseErrorQuery } from "@rilldata/web-common/features/entity-management/error-utils";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { getNameFromFile } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { createRootCauseErrorQuery } from "@statsparrot/web-common/features/entity-management/error-utils";
   import {
     resourceIsLoading,
     ResourceKind,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { handleEntityRename } from "@rilldata/web-common/features/entity-management/actions/ui-actions.ts";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import MetricsInspector from "@rilldata/web-common/features/metrics-views/MetricsInspector.svelte";
-  import MetricsEditor from "@rilldata/web-common/features/metrics-views/editor/MetricsEditor.svelte";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { handleEntityRename } from "@statsparrot/web-common/features/entity-management/actions/ui-actions.ts";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import MetricsInspector from "@statsparrot/web-common/features/metrics-views/MetricsInspector.svelte";
+  import MetricsEditor from "@statsparrot/web-common/features/metrics-views/editor/MetricsEditor.svelte";
   import {
     parseInlineExploreState,
     type MetricsWorkspaceView,
-  } from "@rilldata/web-common/features/metrics-views/inline-explore";
-  import WorkspaceContainer from "@rilldata/web-common/layout/workspace/WorkspaceContainer.svelte";
-  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
-  import WorkspaceHeader from "@rilldata/web-common/layout/workspace/WorkspaceHeader.svelte";
-  import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+  } from "@statsparrot/web-common/features/metrics-views/inline-explore";
+  import WorkspaceContainer from "@statsparrot/web-common/layout/workspace/WorkspaceContainer.svelte";
+  import WorkspaceEditorContainer from "@statsparrot/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import WorkspaceHeader from "@statsparrot/web-common/layout/workspace/WorkspaceHeader.svelte";
+  import { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import ExplainAndFixErrorButton from "@statsparrot/web-common/features/chat/ExplainAndFixErrorButton.svelte";
   import { Code2Icon } from "lucide-svelte";
   import {
     useIsModelingSupportedForConnectorOLAP as useIsModelingSupportedForConnector,

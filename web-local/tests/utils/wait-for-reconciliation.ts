@@ -1,8 +1,8 @@
-import { asyncWaitUntil } from "@rilldata/web-common/lib/waitUtils";
+import { asyncWaitUntil } from "@statsparrot/web-common/lib/waitUtils";
 import {
   V1ReconcileStatus,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client/gen/index.schemas";
+} from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import type { Page } from "playwright";
 
 // Inline the kind string to avoid importing resource-selectors.ts,

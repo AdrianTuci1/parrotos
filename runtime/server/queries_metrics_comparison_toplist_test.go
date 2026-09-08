@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/expressionpb"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/expressionpb"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -180,7 +180,7 @@ func TestServer_MetricsViewComparison_nulls(t *testing.T) {
 	// NOTE: Unstable due to sleep. Commenting until we support configuring settings at instance create time.
 	t.Skip()
 
-	server, instanceId := getMetricsTestServerWithDefaultInstanceConfigs(t, "ad_bids_2rows", map[string]string{"rill.metrics.approximate_comparisons": "true"})
+	server, instanceId := getMetricsTestServerWithDefaultInstanceConfigs(t, "ad_bids_2rows", map[string]string{"statsparrot.metrics.approximate_comparisons": "true"})
 
 	tr, err := server.MetricsViewComparison(testCtx(), &runtimev1.MetricsViewComparisonRequest{
 		InstanceId:      instanceId,

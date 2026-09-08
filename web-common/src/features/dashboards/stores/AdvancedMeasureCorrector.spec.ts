@@ -1,16 +1,16 @@
 import {
   MeasureFilterOperation,
   MeasureFilterType,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import { AdvancedMeasureCorrector } from "@rilldata/web-common/features/dashboards/stores/AdvancedMeasureCorrector";
-import { getFullInitExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-store-defaults";
-import { getInitExploreStateForTest } from "@rilldata/web-common/features/dashboards/stores/test-data/helpers";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import { AdvancedMeasureCorrector } from "@statsparrot/web-common/features/dashboards/stores/AdvancedMeasureCorrector";
+import { getFullInitExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-store-defaults";
+import { getInitExploreStateForTest } from "@statsparrot/web-common/features/dashboards/stores/test-data/helpers";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types";
 import {
   V1TimeGrain,
   type V1ExploreSpec,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 import {
   AD_BIDS_ADVANCED_MEASURES,

@@ -10,9 +10,9 @@
 </script>
 
 <script lang="ts">
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { connectorExplorerStore } from "@rilldata/web-common/features/connectors/explorer/connector-explorer-store";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { connectorExplorerStore } from "@statsparrot/web-common/features/connectors/explorer/connector-explorer-store";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
   import { writable } from "svelte/store";
   import ConnectorExplorer from "../../features/connectors/explorer/ConnectorExplorer.svelte";
   import AddAssetButton from "../../features/entity-management/add/AddAssetButton.svelte";
@@ -21,7 +21,7 @@
   import { DEFAULT_NAV_WIDTH, MAX_NAV_WIDTH, MIN_NAV_WIDTH } from "../config";
   import Footer from "./Footer.svelte";
   import SurfaceControlButton from "./SurfaceControlButton.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   // When false, hides the footer (version info, links, traffic light).
   // Used in cloud editing where the footer isn't relevant.

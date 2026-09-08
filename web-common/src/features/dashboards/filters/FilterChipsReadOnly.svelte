@@ -2,16 +2,16 @@
 The main feature-set component for dashboard filters
  -->
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import TimeRangeReadOnly from "@rilldata/web-common/features/dashboards/filters/TimeRangeReadOnly.svelte";
-  import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-  import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import TimeRangeReadOnly from "@statsparrot/web-common/features/dashboards/filters/TimeRangeReadOnly.svelte";
+  import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+  import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils";
   import type {
     MetricsViewSpecDimension,
     MetricsViewSpecMeasure,
     V1Expression,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { flip } from "svelte/animate";
   import { getDimensionFilters } from "../state-managers/selectors/dimension-filters";
   import { getMeasureFilters } from "../state-managers/selectors/measure-filters";

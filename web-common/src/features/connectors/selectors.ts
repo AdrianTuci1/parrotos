@@ -16,9 +16,9 @@ import {
   createConnectorServiceListDatabaseSchemas,
   createConnectorServiceGetTable,
   createConnectorServiceListTablesInfinite,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { ResourceKind } from "../entity-management/resource-selectors";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 
 /**
  * Creates query options for checking modeling support of a connector

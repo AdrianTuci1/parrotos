@@ -1,6 +1,6 @@
 <script lang="ts">
   import { DateTime } from "luxon";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
   import AlertTriangle from "../icons/AlertTriangle.svelte";
 
   const formatsWithoutYear = [

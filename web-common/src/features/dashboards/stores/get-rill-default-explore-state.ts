@@ -1,42 +1,42 @@
 import {
   contextColWidthDefaults,
   LeaderboardContextColumn,
-} from "@rilldata/web-common/features/dashboards/leaderboard-context-column";
-import { getDefaultTimeGrain } from "@rilldata/web-common/features/dashboards/time-controls/time-range-utils";
-import { DEFAULT_TIMEZONES } from "@rilldata/web-common/lib/time/config";
-import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+} from "@statsparrot/web-common/features/dashboards/leaderboard-context-column";
+import { getDefaultTimeGrain } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-utils";
+import { DEFAULT_TIMEZONES } from "@statsparrot/web-common/lib/time/config";
+import { isoDurationToFullTimeRange } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import {
   getLocalIANA,
   getUTCIANA,
-} from "@rilldata/web-common/lib/time/timezone";
+} from "@statsparrot/web-common/lib/time/timezone";
 import {
   type DashboardTimeControls,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   type V1ExploreSpec,
   type V1MetricsViewSpec,
   V1TimeGrain,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { DateTime, IANAZone, Interval } from "luxon";
 import type { ExploreState } from "web-common/src/features/dashboards/stores/explore-state";
 import {
   DashboardState_ActivePage,
   DashboardState_LeaderboardSortDirection,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import { createAndExpression } from "./filter-utils";
 import { TDDChart } from "../time-dimension-details/types";
 import {
   isGrainAllowed,
   V1TimeGrainToAlias,
   V1TimeGrainToOrder,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { getAggregationGrain } from "@rilldata/web-common/lib/time/rill-time-grains";
-import { parseRillTime } from "../url-state/time-ranges/parser";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { getAggregationGrain } from "@statsparrot/web-common/lib/time/statsparrot-time-grains";
+import { parseParrotTime } from "../url-state/time-ranges/parser";
 
-export function getRillDefaultExploreState(
+export function getParrotDefaultExploreState(
   metricsViewSpec: V1MetricsViewSpec,
   exploreSpec: V1ExploreSpec,
   timeRangeSummary: V1TimeRangeSummary | undefined,
@@ -50,25 +50,25 @@ export function getRillDefaultExploreState(
     dimensionFilterExcludeMode: new Map(),
     temporaryFilterName: null,
 
-    ...getRillDefaultExploreTimeState(
+    ...getParrotDefaultExploreTimeState(
       metricsViewSpec,
       exploreSpec,
       timeRangeSummary,
     ),
 
-    ...getRillDefaultExploreViewState(exploreSpec),
+    ...getParrotDefaultExploreViewState(exploreSpec),
 
     selectedComparisonDimension: "",
 
-    ...getRillDefaultTDDViewState(),
+    ...getParrotDefaultTDDViewState(),
 
-    ...getRillDefaultPivotViewState(),
+    ...getParrotDefaultPivotViewState(),
 
     contextColumnWidths: { ...contextColWidthDefaults },
   };
 }
 
-function getRillDefaultExploreTimeState(
+function getParrotDefaultExploreTimeState(
   metricsViewSpec: V1MetricsViewSpec,
   exploreSpec: V1ExploreSpec,
   timeRangeSummary: V1TimeRangeSummary | undefined,
@@ -112,7 +112,7 @@ function getRillDefaultExploreTimeState(
   };
 }
 
-function getRillDefaultExploreViewState(
+function getParrotDefaultExploreViewState(
   exploreSpec: V1ExploreSpec,
 ): Partial<ExploreState> {
   const defaultMeasure = exploreSpec.measures?.[0];
@@ -227,7 +227,7 @@ export function getGrainForRange(
   if (!timeRangeName) return undefined;
 
   try {
-    const parsed = parseRillTime(timeRangeName);
+    const parsed = parseParrotTime(timeRangeName);
     const grain = getAggregationGrain(parsed);
 
     return grain;
@@ -265,7 +265,7 @@ export function getDefaultTimeZone(explore: V1ExploreSpec) {
   }
 }
 
-function getRillDefaultTDDViewState() {
+function getParrotDefaultTDDViewState() {
   return <Partial<ExploreState>>{
     tdd: {
       expandedMeasureName: "",
@@ -275,7 +275,7 @@ function getRillDefaultTDDViewState() {
   };
 }
 
-function getRillDefaultPivotViewState() {
+function getParrotDefaultPivotViewState() {
   return <Partial<ExploreState>>{
     pivot: {
       active: false,

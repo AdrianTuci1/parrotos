@@ -1,4 +1,4 @@
-import type { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import type { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import type { Snippet } from "svelte";
 
 export type Param = string;

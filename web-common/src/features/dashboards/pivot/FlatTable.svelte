@@ -1,14 +1,14 @@
 <script lang="ts">
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
-  import type { MeasureColumnProps } from "@rilldata/web-common/features/dashboards/pivot/pivot-column-definition";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
+  import type { MeasureColumnProps } from "@statsparrot/web-common/features/dashboards/pivot/pivot-column-definition";
   import {
     COLUMN_WIDTH_CONSTANTS as WIDTHS,
     calculateColumnWidth,
     calculateMeasureWidth,
     distributeColumnWidthsToFillContainer,
-  } from "@rilldata/web-common/features/dashboards/pivot/pivot-column-width-utils";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  } from "@statsparrot/web-common/features/dashboards/pivot/pivot-column-width-utils";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
   import { writable } from "svelte/store";
   import type {
     Cell,

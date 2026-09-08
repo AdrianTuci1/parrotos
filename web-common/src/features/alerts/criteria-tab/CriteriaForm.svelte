@@ -1,18 +1,18 @@
 <script lang="ts">
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getTypeOptions } from "@rilldata/web-common/features/alerts/criteria-tab/getTypeOptions";
-  import { CriteriaOperationOptions } from "@rilldata/web-common/features/alerts/criteria-tab/operations";
-  import { parseCriteriaError } from "@rilldata/web-common/features/alerts/criteria-tab/parseCriteriaError";
-  import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
-  import { useMetricsViewValidSpec } from "@rilldata/web-common/features/dashboards/selectors";
-  import type { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
-  import { debounce } from "@rilldata/web-common/lib/create-debouncer";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getTypeOptions } from "@statsparrot/web-common/features/alerts/criteria-tab/getTypeOptions";
+  import { CriteriaOperationOptions } from "@statsparrot/web-common/features/alerts/criteria-tab/operations";
+  import { parseCriteriaError } from "@statsparrot/web-common/features/alerts/criteria-tab/parseCriteriaError";
+  import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
+  import { useMetricsViewValidSpec } from "@statsparrot/web-common/features/dashboards/selectors";
+  import type { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
+  import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import type { SuperForm } from "sveltekit-superforms/client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let superFormInstance: SuperForm<AlertFormValues>;
   export let timeControls: TimeControls;

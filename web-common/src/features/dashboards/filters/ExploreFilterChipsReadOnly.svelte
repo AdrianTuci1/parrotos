@@ -1,12 +1,12 @@
 <script lang="ts">
-  import FilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/FilterChipsReadOnly.svelte";
-  import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-  import { getCombinedMeasuresAndDimensionsForMetricsViews } from "@rilldata/web-common/features/metrics-views/get-combined-measures-and-dimensions-for-metrics-views.ts";
+  import FilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/FilterChipsReadOnly.svelte";
+  import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+  import { getCombinedMeasuresAndDimensionsForMetricsViews } from "@statsparrot/web-common/features/metrics-views/get-combined-measures-and-dimensions-for-metrics-views.ts";
   import type {
     V1Expression,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { writable } from "svelte/store";
 
   export let metricsViewNames: string[];

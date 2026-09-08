@@ -15,8 +15,8 @@ import {
   type AdminServiceUnsubscribeAlertBodyBody,
   type RpcStatus,
   type V1UnsubscribeAlertResponse,
-} from "@rilldata/web-admin/client";
-import httpClient from "@rilldata/web-admin/client/http-client";
+} from "@statsparrot/web-admin/client";
+import httpClient from "@statsparrot/web-admin/client/http-client";
 
 const adminServiceUnsubscribeAlertWithToken = (
   organization: string,

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/server/auth"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 )
 
 // runtimeProxyAccessTokenTTL is the TTL for tokens minted by the runtime proxy.
@@ -223,7 +223,7 @@ func runtimeHTTPHost(runtimeHost string) string {
 	if !strings.HasPrefix(runtimeHost, "http://localhost:") {
 		return runtimeHost
 	}
-	if host := os.Getenv("RILL_RUNTIME_AUTH_AUDIENCE_URL"); host != "" {
+	if host := os.Getenv("STATSPARROT_RUNTIME_AUTH_AUDIENCE_URL"); host != "" {
 		return host
 	}
 	return "http://localhost:8081"

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Switch as SwitchPrimitive } from "bits-ui";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
 
   type $$Props = SwitchPrimitive.RootProps & {
     label?: string;

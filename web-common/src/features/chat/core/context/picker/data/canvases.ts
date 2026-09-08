@@ -1,22 +1,22 @@
-import type { PickerItem } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
+import type { PickerItem } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
 import { derived, type Readable } from "svelte/store";
 import {
   getClientFilteredResourcesQueryOptions,
   ResourceKind,
-} from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-import { getCanvasNameStore } from "@rilldata/web-common/features/dashboards/nav-utils.ts";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+import { getCanvasNameStore } from "@statsparrot/web-common/features/dashboards/nav-utils.ts";
 import { createQuery } from "@tanstack/svelte-query";
-import { getQueryServiceResolveCanvasQueryOptions } from "@rilldata/web-common/runtime-client";
+import { getQueryServiceResolveCanvasQueryOptions } from "@statsparrot/web-common/runtime-client";
 import {
   getIdForContext,
   type InlineContext,
   InlineContextType,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-import { ContextPickerUIState } from "@rilldata/web-common/features/chat/core/context/picker/ui-state.ts";
-import { getLatestConversationQueryOptions } from "@rilldata/web-common/features/chat/core/utils.ts";
-import { MessageType } from "@rilldata/web-common/features/chat/core/types.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+import { ContextPickerUIState } from "@statsparrot/web-common/features/chat/core/context/picker/ui-state.ts";
+import { getLatestConversationQueryOptions } from "@statsparrot/web-common/features/chat/core/utils.ts";
+import { MessageType } from "@statsparrot/web-common/features/chat/core/types.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 export function getCanvasesPickerOptions(
   client: RuntimeClient,

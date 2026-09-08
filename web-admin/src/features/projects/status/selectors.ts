@@ -1,7 +1,7 @@
 import {
   createAdminServiceGetProject,
   type V1Deployment,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import {
   createRuntimeServiceGetResource,
   createRuntimeServiceListResources,
@@ -9,16 +9,16 @@ import {
   type V1ListResourcesResponse,
   type V1OlapTableInfo,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import { connectorServiceOLAPListTables } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { connectorServiceOLAPListTables } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createInfiniteQuery } from "@tanstack/svelte-query";
 import {
   ResourceKind,
   SingletonProjectParserName,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import { derived, type Readable } from "svelte/store";
-import { createSmartRefetchInterval } from "@rilldata/web-admin/lib/refetch-interval-store";
+import { createSmartRefetchInterval } from "@statsparrot/web-admin/lib/refetch-interval-store";
 
 export function useProjectDeployment(
   orgName: string,

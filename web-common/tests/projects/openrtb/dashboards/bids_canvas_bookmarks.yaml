@@ -1,5 +1,5 @@
 # Explore YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/canvas-dashboards
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/canvas-dashboards
 
 type: canvas
 display_name: "Bids Canvas Dashboard For Bookmarks"

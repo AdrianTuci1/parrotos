@@ -1,14 +1,14 @@
-import { runtimeServiceUnpackEmpty } from "@rilldata/web-common/runtime-client";
-import { ToolName } from "@rilldata/web-common/features/chat/core/types.ts";
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
+import { runtimeServiceUnpackEmpty } from "@statsparrot/web-common/runtime-client";
+import { ToolName } from "@statsparrot/web-common/features/chat/core/types.ts";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
 import { get, writable } from "svelte/store";
-import { EMPTY_PROJECT_TITLE } from "@rilldata/web-common/features/welcome/constants.ts";
-import { overlay } from "@rilldata/web-common/layout/overlay-store.ts";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-import { developerChatActions } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store.ts";
-import { getConversationManager } from "@rilldata/web-common/features/chat/core/conversation-manager.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { navigateToHome } from "@rilldata/web-common/layout/navigation/editor-routing";
+import { EMPTY_PROJECT_TITLE } from "@statsparrot/web-common/features/welcome/constants.ts";
+import { overlay } from "@statsparrot/web-common/layout/overlay-store.ts";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+import { developerChatActions } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store.ts";
+import { getConversationManager } from "@statsparrot/web-common/features/chat/core/conversation-manager.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { navigateToHome } from "@statsparrot/web-common/layout/navigation/editor-routing";
 
 export const generatingSampleData = writable(false);
 const PROJECT_INIT_TIMEOUT_MS = 10_000;
@@ -24,11 +24,11 @@ export async function generateSampleData(
         title: `Hang tight! We're initialising an empty project.`,
       });
 
-      // UnpackEmpty create a new rill.yaml file. In backend it triggers a reset and cancels any pending requests.
-      // The way we get around this is by invalidating all queries in WatchFilesClient on a rill.yaml write.
-      // On a rill.yaml write, WatchFilesClient also fires `rill-yaml-updated` which acts as a signal here to make sure any new requests are not canceled.
+      // UnpackEmpty create a new statsparrot.yaml file. In backend it triggers a reset and cancels any pending requests.
+      // The way we get around this is by invalidating all queries in WatchFilesClient on a statsparrot.yaml write.
+      // On a statsparrot.yaml write, WatchFilesClient also fires `statsparrot-yaml-updated` which acts as a signal here to make sure any new requests are not canceled.
       const projectResetPromise = new Promise<void>((resolve, reject) => {
-        const unsub = eventBus.once("rill-yaml-updated", () => resolve());
+        const unsub = eventBus.once("statsparrot-yaml-updated", () => resolve());
         setTimeout(() => {
           reject(new Error("Project init timed out"));
           unsub();

@@ -1,9 +1,9 @@
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   createRuntimeServiceAnalyzeConnectors,
   type V1AnalyzedConnector,
-} from "@rilldata/web-common/runtime-client";
-import { connectorInfoMap } from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
+} from "@statsparrot/web-common/runtime-client";
+import { connectorInfoMap } from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
 
 type ConnectorForSchema = {
   displayName: string;

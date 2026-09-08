@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
   import type { KPIGridComponent } from ".";
   import ComponentHeader from "../../ComponentHeader.svelte";
   import { getMinWidth, getOptimalColumns, type KPISpec } from "../kpi";

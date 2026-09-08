@@ -1,26 +1,26 @@
-import { DashboardFetchMocks } from "@rilldata/web-common/features/dashboards/dashboard-fetch-mocks";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
+import { DashboardFetchMocks } from "@statsparrot/web-common/features/dashboards/dashboard-fetch-mocks";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
 import {
   AD_BIDS_EXPLORE_INIT,
   AD_BIDS_EXPLORE_NAME,
   AD_BIDS_METRICS_INIT,
   AD_BIDS_METRICS_INIT_WITH_TIME,
   AD_BIDS_NAME,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import { initStateManagers } from "@rilldata/web-common/features/dashboards/stores/test-data/helpers";
-import TimeControlsStoreTest from "@rilldata/web-common/features/dashboards/time-controls/TimeControlsStoreTest.svelte";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import { initStateManagers } from "@statsparrot/web-common/features/dashboards/stores/test-data/helpers";
+import TimeControlsStoreTest from "@statsparrot/web-common/features/dashboards/time-controls/TimeControlsStoreTest.svelte";
 import {
   type TimeControlState,
   type TimeControlStore,
   createTimeControlStore,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
-import type { V1MetricsViewSpec } from "@rilldata/web-common/runtime-client";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/types";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
+import type { V1MetricsViewSpec } from "@statsparrot/web-common/runtime-client";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { render } from "@testing-library/svelte";
 import { get } from "svelte/store";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -179,7 +179,7 @@ describe("time-control-store", () => {
     assertComparisonStartAndEnd(
       get(timeControlsStore),
       // Sets to default comparison
-      "rill-PD",
+      "statsparrot-PD",
       "2022-03-29T01:00:00.000Z",
       "2022-03-30T01:00:00.000Z",
       "2022-03-29T00:00:00.000Z",
@@ -212,7 +212,7 @@ describe("time-control-store", () => {
     assertComparisonStartAndEnd(
       get(timeControlsStore),
       // Sets to the one selected
-      "rill-PW",
+      "statsparrot-PW",
       "2022-03-18T00:00:00.000Z",
       "2022-03-25T00:00:00.000Z",
       "2022-03-17T00:00:00.000Z",
@@ -264,7 +264,7 @@ describe("time-control-store", () => {
     assertComparisonStartAndEnd(
       get(timeControlsStore),
       // Sets to default comparison
-      "rill-PD",
+      "statsparrot-PD",
       "2022-03-29T00:30:00.000Z",
       "2022-03-30T00:30:00.000Z",
       "2022-03-28T23:30:00.000Z",
@@ -307,7 +307,7 @@ describe("time-control-store", () => {
     assertComparisonStartAndEnd(
       get(timeControlsStore),
       // Sets to default comparison
-      "rill-PQ",
+      "statsparrot-PQ",
       "2021-10-01T00:00:00.000Z",
       "2022-01-01T00:00:00.000Z",
       "2021-09-20T00:00:00.000Z",
@@ -329,7 +329,7 @@ describe("time-control-store", () => {
     assertComparisonStartAndEnd(
       get(timeControlsStore),
       // Sets to default comparison
-      "rill-PQ",
+      "statsparrot-PQ",
       "2021-10-01T00:00:00.000Z",
       "2022-01-01T00:00:00.000Z",
       "2021-09-20T00:00:00.000Z",

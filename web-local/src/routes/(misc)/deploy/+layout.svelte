@@ -1,6 +1,6 @@
 <script lang="ts">
-  import CTAContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CTALayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CTAContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CTALayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
 </script>
 
 <div class="bg-surface-background h-full">

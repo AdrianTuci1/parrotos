@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CustomChartRenderer from "@rilldata/web-common/features/components/charts/custom/CustomChartRenderer.svelte";
+  import CustomChartRenderer from "@statsparrot/web-common/features/components/charts/custom/CustomChartRenderer.svelte";
   import { onDestroy } from "svelte";
   import AgenticChartPrompt from "./AgenticChartPrompt.svelte";
   import { clearComponentConversation } from "./chart-ai-agent";

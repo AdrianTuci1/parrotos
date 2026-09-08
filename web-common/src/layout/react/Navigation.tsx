@@ -5,13 +5,13 @@
 // (`./store`) and the dragged-width / connector-height state mirror the Svelte
 // original, including the cmd/ctrl+B toggle and the responsive auto-collapse.
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import {
   DEFAULT_NAV_WIDTH,
   MAX_NAV_WIDTH,
   MIN_NAV_WIDTH,
-} from "@rilldata/web-common/layout/config";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/layout/config";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { navigationOpen } from "./store";
 import { Resizer } from "./Resizer";
 import Footer from "./Footer";

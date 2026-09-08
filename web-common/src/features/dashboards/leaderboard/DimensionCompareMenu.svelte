@@ -1,9 +1,9 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import Compare from "@rilldata/web-common/components/icons/Compare.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import Compare from "@statsparrot/web-common/components/icons/Compare.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let dimensionName: string | undefined;
   export let isBeingCompared: boolean;

@@ -1,6 +1,6 @@
 # admin
 
-This directory contains the control-plane for the managed, multi-user version of Rill (currently available on `ui.rilldata.com`).
+This directory contains the control-plane for the managed, multi-user version of Rill (currently available on `ui.statsparrot.com`).
 
 ## Running in development
 
@@ -9,7 +9,7 @@ Run the following command from the repository root to start a full development e
 rill devtool start cloud --except admin # optional: --reset 
 ```
 
-For as long as the devtool is running, `rill` commands will target your local development environment instead of `rilldata.com` (you can manually switch environments using `rill devtool switch-env`.)
+For as long as the devtool is running, `rill` commands will target your local development environment instead of `staticlabs.com` (you can manually switch environments using `rill devtool switch-env`.)
 
 Then separately start the admin service (and start/stop it when you make code changes):
 ```bash

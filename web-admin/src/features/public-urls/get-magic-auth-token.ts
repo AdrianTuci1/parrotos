@@ -10,8 +10,8 @@
 import type {
   RpcStatus,
   V1GetCurrentMagicAuthTokenResponse,
-} from "@rilldata/web-admin/client";
-import httpClient from "@rilldata/web-admin/client/http-client";
+} from "@statsparrot/web-admin/client";
+import httpClient from "@statsparrot/web-admin/client/http-client";
 import {
   createQuery,
   type CreateQueryOptions,

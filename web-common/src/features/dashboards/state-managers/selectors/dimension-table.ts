@@ -1,8 +1,8 @@
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
 import type {
   MetricsViewSpecDimension,
   V1MetricsViewAggregationResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
 import type { QueryObserverResult } from "@tanstack/svelte-query";
 import type { DimensionTableRow } from "../../dimension-table/dimension-table-types";

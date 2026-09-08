@@ -11,7 +11,7 @@ There are currently two supported provisioner implementations:
 
 ## Configuration
 
-The provisioners are configured using the environment variable `RILL_ADMIN_PROVISIONER_SET_JSON` with a named set of provisioners using a format like the following example. More provisioners of the same type can be configured, this is a useful for example to support deployments to different Kubernetes clusters. Furthermore the name of the default provisioner needs to be specified with `RILL_ADMIN_DEFAULT_PROVISIONER`, this provisioner will be used for all deployed projects where a provisioner is not explicitly chosen.
+The provisioners are configured using the environment variable `STATSPARROT_ADMIN_PROVISIONER_SET_JSON` with a named set of provisioners using a format like the following example. More provisioners of the same type can be configured, this is a useful for example to support deployments to different Kubernetes clusters. Furthermore the name of the default provisioner needs to be specified with `STATSPARROT_ADMIN_DEFAULT_PROVISIONER`, this provisioner will be used for all deployed projects where a provisioner is not explicitly chosen.
 ```json
 {
   "static-example":
@@ -40,7 +40,7 @@ The provisioners are configured using the environment variable `RILL_ADMIN_PROVI
           "data_dir": "/mnt/data",                            // Directory to use for data storage like DB files etc.
           "host": "http://node-*.localhost",                  // The wildcard '*' will be replaced with the deployment's 'provision_id'
           "namespace": "cloud-runtime",                       // Namespace to use in the K8s cluster
-          "image": "rilldata/rill",                           // Rill Docker image
+          "image": "staticlabs/rill",                           // Rill Docker image
           "kubeconfig_path": "kubeconfig.yaml",               // K8s config file to authenticate against the cluster
           "template_paths":
             {

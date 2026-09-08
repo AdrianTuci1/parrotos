@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaNeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { isEmbedPage } from "@rilldata/web-common/layout/navigation/navigation-utils.ts";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { isEmbedPage } from "@statsparrot/web-common/layout/navigation/navigation-utils.ts";
 
   export let branch: string | undefined = undefined;
 

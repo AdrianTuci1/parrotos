@@ -1,16 +1,16 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import SettingsSlider from "@rilldata/web-common/components/icons/SettingsSlider.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import SettingsSlider from "@statsparrot/web-common/components/icons/SettingsSlider.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import type { ChartFieldInput } from "@statsparrot/web-common/features/canvas/inspector/types";
   import type {
     ChartLegend,
     FieldConfig,
-  } from "@rilldata/web-common/features/components/charts/types";
+  } from "@statsparrot/web-common/features/components/charts/types";
   import SortConfig from "./SortConfig.svelte";
 
   export let fieldConfig: FieldConfig;

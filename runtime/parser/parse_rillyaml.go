@@ -8,16 +8,16 @@ import (
 	"strings"
 
 	"github.com/iancoleman/strcase"
-	"github.com/rilldata/rill/runtime/pkg/env"
+	"github.com/staticlabs/statsparrot/runtime/pkg/env"
 	"gopkg.in/yaml.v3"
 )
 
 var _reservedConnectorNames = map[string]bool{"admin": true, "repo": true, "metastore": true}
 
-var ErrRillYAMLNotFound = errors.New("rill.yaml not found")
+var ErrParrotYAMLNotFound = errors.New("statsparrot.yaml not found")
 
-// RillYAML is the parsed contents of rill.yaml
-type RillYAML struct {
+// ParrotYAML is the parsed contents of statsparrot.yaml
+type ParrotYAML struct {
 	DisplayName    string
 	Description    string
 	AIInstructions string
@@ -31,25 +31,25 @@ type RillYAML struct {
 	PublicPaths    []string
 }
 
-// ConnectorDef is a subtype of RillYAML, defining connectors required by the project
+// ConnectorDef is a subtype of ParrotYAML, defining connectors required by the project
 type ConnectorDef struct {
 	Type     string
 	Name     string
 	Defaults map[string]any
 }
 
-// VariableDef is a subtype of RillYAML, defining defaults for project variables
+// VariableDef is a subtype of ParrotYAML, defining defaults for project variables
 type VariableDef struct {
 	Name    string
 	Default string
 }
 
-// rillYAML is the raw YAML structure of rill.yaml
-type rillYAML struct {
+// statsparrotYAML is the raw YAML structure of statsparrot.yaml
+type statsparrotYAML struct {
 	// Compiler is the parser version to use. It is not consumed here because at this point a parser has already been chosen.
 	Compiler string `yaml:"compiler"`
-	// RillVersion is deprecated and not used anymore.
-	RillVersion any `yaml:"rill_version"`
+	// ParrotVersion is deprecated and not used anymore.
+	ParrotVersion any `yaml:"statsparrot_version"`
 	// Title of the project
 	DisplayName string `yaml:"display_name"`
 	// Title of the project
@@ -77,7 +77,7 @@ type rillYAML struct {
 	Env map[string]yaml.Node `yaml:"env"`
 	// Deprecated: Use "env" instead.
 	Vars map[string]string `yaml:"vars"`
-	// Environment-specific overrides for rill.yaml
+	// Environment-specific overrides for statsparrot.yaml
 	EnvironmentOverrides map[string]yaml.Node `yaml:"environment_overrides"`
 	// Shorthand for setting "environment:dev:"
 	Dev yaml.Node `yaml:"dev"`
@@ -118,14 +118,14 @@ type rillYAML struct {
 	} `yaml:"mock_users"`
 }
 
-// parseRillYAML parses rill.yaml
-func (p *Parser) parseRillYAML(ctx context.Context, path string) error {
+// parseParrotYAML parses statsparrot.yaml
+func (p *Parser) parseParrotYAML(ctx context.Context, path string) error {
 	data, err := p.Repo.Get(ctx, path)
 	if err != nil {
 		return fmt.Errorf("error loading %q: %w", path, err)
 	}
 
-	tmp := &rillYAML{}
+	tmp := &statsparrotYAML{}
 
 	if err := yaml.Unmarshal([]byte(data), tmp); err != nil {
 		return newYAMLError(err)
@@ -301,7 +301,7 @@ func (p *Parser) parseRillYAML(ctx context.Context, path string) error {
 		defaults[ResourceKindMetricsView] = tmp.MetricsViewsLegacy
 	}
 
-	res := &RillYAML{
+	res := &ParrotYAML{
 		DisplayName:    tmp.DisplayName,
 		Description:    tmp.Description,
 		AIInstructions: tmp.AIInstructions,
@@ -335,6 +335,6 @@ func (p *Parser) parseRillYAML(ctx context.Context, path string) error {
 		i++
 	}
 
-	p.RillYAML = res
+	p.ParrotYAML = res
 	return nil
 }

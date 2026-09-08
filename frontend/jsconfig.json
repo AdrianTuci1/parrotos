@@ -11,10 +11,10 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@rilldata/web-common/*": ["../web-common/src/*"],
-      "@rilldata/web-admin/*": ["../web-admin/src/*"]
+      "@*": [".src*"],
+      "@rilldataweb-common*": ["..web-commonsrc*"],
+      "@rilldataweb-admin*": ["..web-adminsrc*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src***"]
 }

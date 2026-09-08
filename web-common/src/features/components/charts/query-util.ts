@@ -1,20 +1,20 @@
-import type { CartesianChartSpec } from "@rilldata/web-common/features/components/charts/cartesian/CartesianChartProvider";
-import type { ComboChartSpec } from "@rilldata/web-common/features/components/charts/combo/ComboChartProvider";
-import type { HeatmapChartSpec } from "@rilldata/web-common/features/components/charts/heatmap/HeatmapChartProvider";
+import type { CartesianChartSpec } from "@statsparrot/web-common/features/components/charts/cartesian/CartesianChartProvider";
+import type { ComboChartSpec } from "@statsparrot/web-common/features/components/charts/combo/ComboChartProvider";
+import type { HeatmapChartSpec } from "@statsparrot/web-common/features/components/charts/heatmap/HeatmapChartProvider";
 import {
   ChartSortType,
   type ChartSortDirection,
   type FieldConfig,
-} from "@rilldata/web-common/features/components/charts/types";
-import { isFieldConfig } from "@rilldata/web-common/features/components/charts/util";
-import { ComparisonDeltaAbsoluteSuffix } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { mergeFilters } from "@rilldata/web-common/features/dashboards/pivot/pivot-merge-filters";
-import { createInExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/components/charts/types";
+import { isFieldConfig } from "@statsparrot/web-common/features/components/charts/util";
+import { ComparisonDeltaAbsoluteSuffix } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { mergeFilters } from "@statsparrot/web-common/features/dashboards/pivot/pivot-merge-filters";
+import { createInExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import type {
   V1Expression,
   V1MetricsViewAggregationSort,
   V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export function canQueryWithTimeRange(
   hasTimeSeries: boolean | undefined,
@@ -49,7 +49,7 @@ export function isSortByDelta(sort: ChartSortDirection | undefined) {
 }
 
 /**
- * Converts a Vega-style sort configuration to Rill's aggregation sort format.
+ * Converts a Vega-style sort configuration to Parrot's aggregation sort format.
  */
 export function vegaSortToAggregationSort(
   encoder: "x" | "y",

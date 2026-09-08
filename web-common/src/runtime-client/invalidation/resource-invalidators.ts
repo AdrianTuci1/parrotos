@@ -1,8 +1,8 @@
-import { connectorExplorerStore } from "@rilldata/web-common/features/connectors/explorer/connector-explorer-store";
-import { isLeafResource } from "@rilldata/web-common/features/entity-management/dag-utils";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { sourceIngestionTracker } from "@rilldata/web-common/features/sources/sources-store";
+import { connectorExplorerStore } from "@statsparrot/web-common/features/connectors/explorer/connector-explorer-store";
+import { isLeafResource } from "@statsparrot/web-common/features/entity-management/dag-utils";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { sourceIngestionTracker } from "@statsparrot/web-common/features/sources/sources-store";
 import {
   getConnectorServiceOLAPListTablesQueryKey,
   getQueryServiceResolveCanvasQueryKey,
@@ -15,14 +15,14 @@ import {
   type V1Resource,
   V1ResourceEvent,
   type V1WatchResourcesResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   invalidateComponentData,
   invalidateConnectorQueries,
   invalidateMetricsViewData,
   invalidateProfilingQueries,
-} from "@rilldata/web-common/runtime-client/invalidation";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/invalidation";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 
 export interface ResourceInvalidatorState {

@@ -1,31 +1,31 @@
 import {
   type CompoundQueryResult,
   getCompoundQuery,
-} from "@rilldata/web-common/features/compound-query-result";
-import { getMetricsViewTimeRangeFromExploreQueryOptions } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import { getRillDefaultExploreState } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
+} from "@statsparrot/web-common/features/compound-query-result";
+import { getMetricsViewTimeRangeFromExploreQueryOptions } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
 import {
   getExploreValidSpecQueryOptions,
   useExploreValidSpec,
-} from "@rilldata/web-common/features/explores/selectors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/explores/selectors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   type V1ExploreSpec,
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { createQuery } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 
-export function getRillDefaultExploreUrlParams(
+export function getParrotDefaultExploreUrlParams(
   metricsViewSpec: V1MetricsViewSpec,
   exploreSpec: V1ExploreSpec,
   timeRangeSummary: V1TimeRangeSummary | undefined,
 ) {
-  const rillDefaultExploreState = getRillDefaultExploreState(
+  const statsparrotDefaultExploreState = getParrotDefaultExploreState(
     metricsViewSpec,
     exploreSpec,
     timeRangeSummary,
@@ -34,17 +34,17 @@ export function getRillDefaultExploreUrlParams(
     metricsViewSpec,
     exploreSpec,
     timeRangeSummary,
-    rillDefaultExploreState,
+    statsparrotDefaultExploreState,
   );
   return convertPartialExploreStateToUrlParams(
     exploreSpec,
     metricsViewSpec,
-    rillDefaultExploreState,
+    statsparrotDefaultExploreState,
     timeControlState,
   );
 }
 
-export function createRillDefaultExploreUrlParams(
+export function createParrotDefaultExploreUrlParams(
   validSpecQuery: ReturnType<typeof useExploreValidSpec>,
   fullTimeRangeQuery: CompoundQueryResult<V1MetricsViewTimeRangeResponse>,
 ) {
@@ -64,7 +64,7 @@ export function createRillDefaultExploreUrlParams(
         return undefined;
       }
 
-      return getRillDefaultExploreUrlParams(
+      return getParrotDefaultExploreUrlParams(
         metricsViewSpec,
         exploreSpec,
         metricsViewTimeRangeResp?.timeRangeSummary,
@@ -74,13 +74,13 @@ export function createRillDefaultExploreUrlParams(
 }
 
 /**
- * Version of createRillDefaultExploreUrlParams that is meant to have a stable non-reactive query object.
+ * Version of createParrotDefaultExploreUrlParams that is meant to have a stable non-reactive query object.
  * All reactivity will instead be in the query options.
  *
  * Uses {@link getExploreValidSpecQueryOptions} and {@link getMetricsViewTimeRangeFromExploreQueryOptions} for reactive query options.
- * TODO: replace {@link createRillDefaultExploreUrlParams} with this
+ * TODO: replace {@link createParrotDefaultExploreUrlParams} with this
  */
-export function createRillDefaultExploreUrlParamsV2(
+export function createParrotDefaultExploreUrlParamsV2(
   client: RuntimeClient,
   exploreNameStore: Readable<string>,
 ) {
@@ -107,7 +107,7 @@ export function createRillDefaultExploreUrlParamsV2(
         return undefined;
       }
 
-      return getRillDefaultExploreUrlParams(
+      return getParrotDefaultExploreUrlParams(
         metricsViewSpec,
         exploreSpec,
         timeRangeSummary,

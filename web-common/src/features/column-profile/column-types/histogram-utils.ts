@@ -1,9 +1,9 @@
 import { extent, max, min } from "d3-array";
 import type { ScaleLinear } from "d3-scale";
 import { scaleLinear } from "d3-scale";
-import { barplotPolyline } from "@rilldata/web-common/components/data-graphic/utils";
-import { INTEGERS } from "@rilldata/web-common/lib/duckdb-data-types";
-import type { NumericHistogramBinsBin } from "@rilldata/web-common/runtime-client";
+import { barplotPolyline } from "@statsparrot/web-common/components/data-graphic/utils";
+import { INTEGERS } from "@statsparrot/web-common/lib/duckdb-data-types";
+import type { NumericHistogramBinsBin } from "@statsparrot/web-common/runtime-client";
 
 interface PlotBounds {
   left: number;

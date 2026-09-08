@@ -2,18 +2,18 @@ import { test as base, type Page } from "@playwright/test";
 import {
   cliLogin,
   cliLogout,
-} from "@rilldata/web-common/tests/fixtures/cli.ts";
+} from "@statsparrot/web-common/tests/fixtures/cli.ts";
 import path from "path";
 import {
   ADMIN_STORAGE_STATE,
   VIEWER_STORAGE_STATE,
-  RILL_EMBED_SERVICE_TOKEN_FILE,
-  RILL_ORG_NAME,
-  RILL_PROJECT_NAME,
-  RILL_EMBED_HTML_FILE,
-} from "@rilldata/web-integration/tests/constants.ts";
+  STATSPARROT_EMBED_SERVICE_TOKEN_FILE,
+  STATSPARROT_ORG_NAME,
+  STATSPARROT_PROJECT_NAME,
+  STATSPARROT_EMBED_HTML_FILE,
+} from "@statsparrot/web-integration/tests/constants.ts";
 import fs from "fs";
-import { generateEmbed } from "@rilldata/web-common/tests/utils/generate-embed.ts";
+import { generateEmbed } from "@statsparrot/web-common/tests/utils/generate-embed.ts";
 
 type MyFixtures = {
   adminPage: Page;
@@ -87,12 +87,12 @@ export const rillCloud = base.extend<MyFixtures>({
       },
       use,
     ) => {
-      const readPath = path.join(process.cwd(), RILL_EMBED_SERVICE_TOKEN_FILE);
+      const readPath = path.join(process.cwd(), STATSPARROT_EMBED_SERVICE_TOKEN_FILE);
       const rillServiceToken = fs.readFileSync(readPath, "utf-8");
 
       await generateEmbed({
-        organization: RILL_ORG_NAME,
-        project: RILL_PROJECT_NAME,
+        organization: STATSPARROT_ORG_NAME,
+        project: STATSPARROT_PROJECT_NAME,
         resourceName: embeddedResourceName,
         resourceType: embeddedResourceType,
         serviceToken: rillServiceToken,
@@ -100,7 +100,7 @@ export const rillCloud = base.extend<MyFixtures>({
         hideNavigationBar: embeddedHideNavigationBar,
       });
       const filePath =
-        "file://" + path.resolve(process.cwd(), RILL_EMBED_HTML_FILE);
+        "file://" + path.resolve(process.cwd(), STATSPARROT_EMBED_HTML_FILE);
 
       const context = await browser.newContext();
       const embedPage = await context.newPage();

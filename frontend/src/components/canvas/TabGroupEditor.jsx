@@ -18,7 +18,7 @@ const TYPE_LABELS = {
 /**
  * Per-tab-group inspector. Lets you rename the group, add / remove / rename tabs,
  * switch the active tab, and add a card to the active tab. Mirrors the tab management
- * Rill surfaces when a canvas tab group is selected.
+ * Parrot surfaces when a canvas tab group is selected.
  */
 export function TabGroupEditor({ group, onClose, onRename, onAddTab, onRemoveTab, onRenameTab, onSetActive, onAddRow }) {
   const [name, setName] = useState(group.name);

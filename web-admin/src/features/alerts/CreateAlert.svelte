@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import GuardedDialog from "@rilldata/web-common/components/dialog/GuardedDialog.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import GuardedDialog from "@statsparrot/web-common/components/dialog/GuardedDialog.svelte";
   import {
     DialogContent,
     DialogTrigger,
-  } from "@rilldata/web-common/components/dialog/index";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import AlertFormDataWrapper from "@rilldata/web-common/features/alerts/AlertFormDataWrapper.svelte";
-  import { useMetricsViewValidSpec } from "@rilldata/web-common/features/dashboards/selectors";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/dialog/index";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import AlertFormDataWrapper from "@statsparrot/web-common/features/alerts/AlertFormDataWrapper.svelte";
+  import { useMetricsViewValidSpec } from "@statsparrot/web-common/features/dashboards/selectors";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { BellPlusIcon } from "lucide-svelte";
 
   const {

@@ -1,4 +1,4 @@
-import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
 
 export interface SearchResult {
   identifier: string;

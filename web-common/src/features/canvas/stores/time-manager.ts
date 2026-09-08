@@ -1,15 +1,15 @@
-import { isGrainBigger } from "@rilldata/web-common/lib/time/grains";
+import { isGrainBigger } from "@statsparrot/web-common/lib/time/grains";
 import {
   V1ExploreComparisonMode,
   V1TimeGrain,
   type V1ExploreTimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { Duration, Settings } from "luxon";
 import { derived, get, writable, type Readable } from "svelte/store";
 import { normalizeWeekday } from "../../dashboards/time-controls/new-time-controls";
 import { type CanvasResponse } from "../selector";
 import type { CanvasEntity, SearchParamsStore } from "./canvas-entity";
-import { maybeWritable } from "@rilldata/web-common/lib/store-utils";
+import { maybeWritable } from "@statsparrot/web-common/lib/store-utils";
 import { TimeState, type MinMax } from "./time-state";
 
 export class TimeManager {
@@ -92,7 +92,7 @@ export class TimeManager {
       defaultPreset?.comparisonMode ===
       V1ExploreComparisonMode.EXPLORE_COMPARISON_MODE_TIME
     ) {
-      this.defaultComparisonRangeStore.set("rill-PP");
+      this.defaultComparisonRangeStore.set("statsparrot-PP");
     } else {
       this.defaultComparisonRangeStore.set(undefined);
     }

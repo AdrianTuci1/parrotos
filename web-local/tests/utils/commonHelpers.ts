@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { asyncWaitUntil } from "@rilldata/web-common/lib/waitUtils";
+import { asyncWaitUntil } from "@statsparrot/web-common/lib/waitUtils";
 import type { Page } from "playwright";
 
 export async function openFileNavEntryContextMenu(

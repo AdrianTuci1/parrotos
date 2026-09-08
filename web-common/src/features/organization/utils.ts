@@ -1,9 +1,9 @@
 import { page } from "$app/stores";
-import { getNeverSubscribedIssue } from "@rilldata/web-common/features/billing/issues";
+import { getNeverSubscribedIssue } from "@statsparrot/web-common/features/billing/issues";
 import {
   createLocalServiceGetMetadata,
   createLocalServiceListOrganizationsAndBillingMetadataRequest,
-} from "@rilldata/web-common/runtime-client/local-service";
+} from "@statsparrot/web-common/runtime-client/local-service";
 import { derived } from "svelte/store";
 
 export function getPlanUpgradeUrl(orgName: string) {
@@ -26,7 +26,7 @@ export function getPlanUpgradeUrl(orgName: string) {
 
       // TODO: Find a better solution and get a url from backend.
       //       We should add an endpoint to get frontendUrl from the urls.go util on cloud.
-      let cloudUrl = adminUrl.replace("admin.rilldata", "ui.rilldata");
+      let cloudUrl = adminUrl.replace("admin.staticlabs", "ui.staticlabs");
       // hack for dev env
       if (cloudUrl === "http://localhost:8080") {
         cloudUrl = "http://localhost:3000";

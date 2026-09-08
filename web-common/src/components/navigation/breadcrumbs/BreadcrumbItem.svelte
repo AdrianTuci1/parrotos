@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import type { PathOption, PathOptions } from "./types";
-  import { getCarryOverSubRoute } from "@rilldata/web-common/components/navigation/breadcrumbs/utils.ts";
-  import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params.ts";
-  import BreadcrumbDropdownItem from "@rilldata/web-common/components/navigation/breadcrumbs/BreadcrumbDropdownItem.svelte";
+  import { getCarryOverSubRoute } from "@statsparrot/web-common/components/navigation/breadcrumbs/utils.ts";
+  import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params.ts";
+  import BreadcrumbDropdownItem from "@statsparrot/web-common/components/navigation/breadcrumbs/BreadcrumbDropdownItem.svelte";
 
   let {
     pathOptions,

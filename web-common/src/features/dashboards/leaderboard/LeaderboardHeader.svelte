@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
-  import Spacer from "@rilldata/web-common/components/icons/Spacer.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
+  import Spacer from "@statsparrot/web-common/components/icons/Spacer.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
   import { fly } from "svelte/transition";
   import DeltaChange from "../dimension-table/DeltaChange.svelte";
   import DeltaChangePercentage from "../dimension-table/DeltaChangePercentage.svelte";

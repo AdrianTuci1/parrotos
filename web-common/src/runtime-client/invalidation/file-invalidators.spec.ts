@@ -1,11 +1,11 @@
-import { Throttler } from "@rilldata/web-common/lib/throttler";
+import { Throttler } from "@statsparrot/web-common/lib/throttler";
 import {
   getRuntimeServiceGetFileQueryKey,
   getRuntimeServiceGitStatusQueryKey,
   getRuntimeServiceIssueDevJWTQueryKey,
   getRuntimeServiceListFilesQueryKey,
   V1FileEvent,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -19,7 +19,7 @@ vi.mock("$app/navigation", () => ({
 }));
 
 vi.mock(
-  "@rilldata/web-common/features/entity-management/file-artifacts",
+  "@statsparrot/web-common/features/entity-management/file-artifacts",
   () => ({
     fileArtifacts: {
       getFileArtifact: vi.fn(() => ({ fetchContent })),
@@ -28,13 +28,13 @@ vi.mock(
   }),
 );
 
-vi.mock("@rilldata/web-common/lib/event-bus/event-bus", () => ({
+vi.mock("@statsparrot/web-common/lib/event-bus/event-bus", () => ({
   eventBus: { emit: vi.fn() },
 }));
 
 import { invalidate } from "$app/navigation";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   handleFileEvent,
   type FileInvalidatorState,
@@ -96,13 +96,13 @@ describe("handleFileEvent", () => {
     expect(fetchContent).not.toHaveBeenCalled();
   });
 
-  it("write on /rill.yaml invalidates the dev JWT key + reruns app:init + emits rill-yaml-updated", async () => {
+  it("write on /statsparrot.yaml invalidates the dev JWT key + reruns app:init + emits statsparrot-yaml-updated", async () => {
     const qc = fakeQueryClient();
     const state = makeState();
 
     await handleFileEvent(
       {
-        path: "/rill.yaml",
+        path: "/statsparrot.yaml",
         event: V1FileEvent.FILE_EVENT_WRITE,
         isDir: false,
       },
@@ -115,18 +115,18 @@ describe("handleFileEvent", () => {
       queryKey: getRuntimeServiceIssueDevJWTQueryKey(INSTANCE_ID),
     });
     expect(invalidate).toHaveBeenCalledWith("app:init");
-    expect(eventBus.emit).toHaveBeenCalledWith("rill-yaml-updated");
-    expect(state.seenFiles.has("/rill.yaml")).toBe(true);
+    expect(eventBus.emit).toHaveBeenCalledWith("statsparrot-yaml-updated");
+    expect(state.seenFiles.has("/statsparrot.yaml")).toBe(true);
   });
 
-  it("delete on /rill.yaml reruns app:init but does not invalidate the dev JWT key", async () => {
+  it("delete on /statsparrot.yaml reruns app:init but does not invalidate the dev JWT key", async () => {
     const qc = fakeQueryClient();
     const state = makeState();
-    state.seenFiles.add("/rill.yaml");
+    state.seenFiles.add("/statsparrot.yaml");
 
     await handleFileEvent(
       {
-        path: "/rill.yaml",
+        path: "/statsparrot.yaml",
         event: V1FileEvent.FILE_EVENT_DELETE,
         isDir: false,
       },
@@ -142,7 +142,7 @@ describe("handleFileEvent", () => {
       ([arg]) => arg.queryKey === devJwtKey,
     );
     expect(devJwtHit).toBe(false);
-    expect(state.seenFiles.has("/rill.yaml")).toBe(false);
+    expect(state.seenFiles.has("/statsparrot.yaml")).toBe(false);
   });
 
   it("write on a new file triggers a throttled listFiles refetch", async () => {

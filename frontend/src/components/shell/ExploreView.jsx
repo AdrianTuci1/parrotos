@@ -1,15 +1,15 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { readable } from "svelte/store";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import ChartContainer from "@statsparrot/web-common/features/components/charts/react/ChartContainer";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import { DEFAULT_METRICS_VIEW } from "@/data/dataSource";
 
 const METRICS_VIEW = DEFAULT_METRICS_VIEW;
 
 /**
- * Minimal Explore/Dashboard view that renders real Rill charts fed from the Go
+ * Minimal Explore/Dashboard view that renders real Parrot charts fed from the Go
  * runtime (not mock data). Each `ExploreChart` wraps the ported React
  * `ChartContainer`, which builds the aggregation query from a chart spec and the
  * metrics-view schema, runs it over the RuntimeClient Connect transport and

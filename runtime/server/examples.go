@@ -6,12 +6,12 @@ import (
 	"io/fs"
 	"path"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/examples"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/server/auth"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/examples"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -133,7 +133,7 @@ func (s *Server) UnpackEmpty(ctx context.Context, req *runtimev1.UnpackEmptyRequ
 	defer release()
 
 	if parser.IsInit(ctx, repo, req.InstanceId) && !req.Force {
-		return nil, fmt.Errorf("a Rill project already exists")
+		return nil, fmt.Errorf("a Parrot project already exists")
 	}
 
 	// Init empty project

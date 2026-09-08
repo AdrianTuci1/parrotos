@@ -11,14 +11,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/provisioner"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -299,7 +299,7 @@ func (s *Server) CreateDeployment(ctx context.Context, req *adminv1.CreateDeploy
 			if err != nil {
 				return nil, status.Error(codes.Internal, err.Error())
 			}
-			branch = fmt.Sprintf("rill/%s", hex.EncodeToString(b))
+			branch = fmt.Sprintf("statsparrot/%s", hex.EncodeToString(b))
 		}
 		slots = proj.DevSlots
 	default:
@@ -874,7 +874,7 @@ func (s *Server) getAttributesForUser(ctx context.Context, orgID, projID, userID
 
 		user, err := s.admin.DB.FindUserByEmail(ctx, userEmail)
 		if err != nil {
-			// For user attributes, we do not require the email to exist as a Rill user.
+			// For user attributes, we do not require the email to exist as a Parrot user.
 			// For example, the attributes may be used for a dashboard embedded as an iframe on a third-party website.
 			// For these cases, we return attributes that present the email as a non-admin user.
 			if errors.Is(err, database.ErrNotFound) {

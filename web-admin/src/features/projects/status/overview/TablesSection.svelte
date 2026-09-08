@@ -1,15 +1,15 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useInfiniteTablesList } from "../selectors";
   import {
     filterTemporaryTables,
     isLikelyView,
-  } from "@rilldata/web-common/features/projects/status/tables/utils";
+  } from "@statsparrot/web-common/features/projects/status/tables/utils";
   import { writable } from "svelte/store";
-  import OverviewCard from "@rilldata/web-common/features/projects/status/overview/OverviewCard.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import OverviewCard from "@statsparrot/web-common/features/projects/status/overview/OverviewCard.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
   $: basePage = `/${$page.params.organization}/${$page.params.project}/-/status`;

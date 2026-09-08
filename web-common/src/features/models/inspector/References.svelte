@@ -1,16 +1,16 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import CollapsibleSectionTitle from "@rilldata/web-common/layout/CollapsibleSectionTitle.svelte";
-  import { LIST_SLIDE_DURATION } from "@rilldata/web-common/layout/config";
-  import { formatCompactInteger } from "@rilldata/web-common/lib/formatters";
-  import type { V1ResourceName } from "@rilldata/web-common/runtime-client";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import CollapsibleSectionTitle from "@statsparrot/web-common/layout/CollapsibleSectionTitle.svelte";
+  import { LIST_SLIDE_DURATION } from "@statsparrot/web-common/layout/config";
+  import { formatCompactInteger } from "@statsparrot/web-common/lib/formatters";
+  import type { V1ResourceName } from "@statsparrot/web-common/runtime-client";
   import {
     createRuntimeServiceGetResource,
     createQueryServiceTableCardinality,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { derived } from "svelte/store";
   import { removeLeadingSlash } from "../../entity-management/entity-mappers";
   import { getFileHref } from "../../../layout/navigation/editor-routing";

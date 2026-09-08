@@ -1,20 +1,20 @@
 <script lang="ts">
-  import * as Collapsible from "@rilldata/web-common/components/collapsible";
+  import * as Collapsible from "@statsparrot/web-common/components/collapsible";
   import { ChevronDownIcon, ChevronRightIcon } from "lucide-svelte";
   import { readable, type Readable } from "svelte/store";
-  import type { PickerTreeNode } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-  import type { KeyboardNavigationManager } from "@rilldata/web-common/features/chat/core/context/picker/keyboard-navigation.ts";
+  import type { PickerTreeNode } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+  import type { KeyboardNavigationManager } from "@statsparrot/web-common/features/chat/core/context/picker/keyboard-navigation.ts";
   import {
     getIdForContext,
     type InlineContext,
     inlineContextIsWithin,
-  } from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-  import { InlineContextConfig } from "@rilldata/web-common/features/chat/core/context/config.ts";
-  import type { ContextPickerUIState } from "@rilldata/web-common/features/chat/core/context/picker/ui-state.ts";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import SimpleOption from "@rilldata/web-common/features/chat/core/context/picker/SimpleOption.svelte";
-  import { getInlineChatContextMetadata } from "@rilldata/web-common/features/chat/core/context/metadata.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+  import { InlineContextConfig } from "@statsparrot/web-common/features/chat/core/context/config.ts";
+  import type { ContextPickerUIState } from "@statsparrot/web-common/features/chat/core/context/picker/ui-state.ts";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import SimpleOption from "@statsparrot/web-common/features/chat/core/context/picker/SimpleOption.svelte";
+  import { getInlineChatContextMetadata } from "@statsparrot/web-common/features/chat/core/context/metadata.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let node: PickerTreeNode;
   export let selectedChatContext: InlineContext | null;

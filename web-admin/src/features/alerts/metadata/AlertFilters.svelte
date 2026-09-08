@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import MetadataLabel from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
-  import TimeRangeReadOnly from "@rilldata/web-common/features/dashboards/filters/TimeRangeReadOnly.svelte";
-  import DimensionFilterReadOnlyChip from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilterReadOnlyChip.svelte";
-  import MeasureFilterReadOnlyChip from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilterReadOnlyChip.svelte";
-  import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-  import { useMetricsView } from "@rilldata/web-common/features/dashboards/selectors";
-  import { getDimensionFilters } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-  import { getMeasureFilters } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measure-filters";
-  import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-  import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import MetadataLabel from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
+  import TimeRangeReadOnly from "@statsparrot/web-common/features/dashboards/filters/TimeRangeReadOnly.svelte";
+  import DimensionFilterReadOnlyChip from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilterReadOnlyChip.svelte";
+  import MeasureFilterReadOnlyChip from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilterReadOnlyChip.svelte";
+  import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+  import { useMetricsView } from "@statsparrot/web-common/features/dashboards/selectors";
+  import { getDimensionFilters } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+  import { getMeasureFilters } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measure-filters";
+  import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+  import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils";
   import type {
     V1Expression,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { flip } from "svelte/animate";
   import { fly } from "svelte/transition";
 

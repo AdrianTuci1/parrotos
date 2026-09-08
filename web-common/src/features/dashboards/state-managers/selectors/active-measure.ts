@@ -1,4 +1,4 @@
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
 import type { DashboardDataSources } from "./types";
 
 export const activeMeasure = (

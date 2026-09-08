@@ -62,7 +62,7 @@ export const athenaSchema: MultiStepFormSchema = {
       type: "string",
       title: "Role Session Name",
       description: "Session name for STS AssumeRole",
-      "x-placeholder": "rill-session",
+      "x-placeholder": "statsparrot-session",
       "x-step": "connector",
       "x-advanced": true,
     },

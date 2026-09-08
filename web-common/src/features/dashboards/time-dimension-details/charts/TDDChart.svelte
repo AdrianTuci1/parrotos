@@ -1,29 +1,29 @@
 <script lang="ts">
-  import Chart from "@rilldata/web-common/features/components/charts/Chart.svelte";
-  import { CHART_CONFIG } from "@rilldata/web-common/features/components/charts/config";
-  import { getChartData } from "@rilldata/web-common/features/components/charts/data-provider";
+  import Chart from "@statsparrot/web-common/features/components/charts/Chart.svelte";
+  import { CHART_CONFIG } from "@statsparrot/web-common/features/components/charts/config";
+  import { getChartData } from "@statsparrot/web-common/features/components/charts/data-provider";
   import {
     clearExternalHover,
     setExternalHover,
-  } from "@rilldata/web-common/features/components/charts/highlight-controller";
-  import type { ChartProvider } from "@rilldata/web-common/features/components/charts/types";
-  import { THEME_STORE_CONTEXT_KEY } from "@rilldata/web-common/features/themes/theme-boundary";
-  import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+  } from "@statsparrot/web-common/features/components/charts/highlight-controller";
+  import type { ChartProvider } from "@statsparrot/web-common/features/components/charts/types";
+  import { THEME_STORE_CONTEXT_KEY } from "@statsparrot/web-common/features/themes/theme-boundary";
+  import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
   import {
     chartBrushStore,
     chartHoverStore,
-  } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/hover-index";
-  import type { DimensionSeriesData } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/types";
-  import { MetricsViewSelectors } from "@rilldata/web-common/features/metrics-views/metrics-view-selectors";
-  import type { Theme } from "@rilldata/web-common/features/themes/theme";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
+  } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/hover-index";
+  import type { DimensionSeriesData } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/types";
+  import { MetricsViewSelectors } from "@statsparrot/web-common/features/metrics-views/metrics-view-selectors";
+  import type { Theme } from "@statsparrot/web-common/features/themes/theme";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
   import type {
     MetricsViewSpecMeasure,
     V1Expression,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { Interval } from "luxon";
   import { getContext } from "svelte";
   import type { View } from "svelte-vega";

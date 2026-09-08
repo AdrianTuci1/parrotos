@@ -7,27 +7,27 @@ import { V1Operation } from "web-common/src/runtime-client";
 import {
   createBinaryExpression,
   createSubQueryExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
 
 describe("splitDimensionSearchText", () => {
   it("should split by comma and return trimmed parts", () => {
-    const result = splitDimensionSearchText("facebook, google   ,   rill,");
-    expect(result).toEqual(["facebook", "google", "rill"]);
+    const result = splitDimensionSearchText("facebook, google   ,   statsparrot,");
+    expect(result).toEqual(["facebook", "google", "statsparrot"]);
   });
 
   it("should split by newline and return trimmed parts", () => {
     const result = splitDimensionSearchText(`facebook
     google
-    rill
+    statsparrot
     `);
-    expect(result).toEqual(["facebook", "google", "rill"]);
+    expect(result).toEqual(["facebook", "google", "statsparrot"]);
   });
 
   it("should split by newline when comma is present and return trimmed parts", () => {
     const result = splitDimensionSearchText(`facebook  ,  google
-    rill
+    statsparrot
     `);
-    expect(result).toEqual(["facebook  ,  google", "rill"]);
+    expect(result).toEqual(["facebook  ,  google", "statsparrot"]);
   });
 });
 

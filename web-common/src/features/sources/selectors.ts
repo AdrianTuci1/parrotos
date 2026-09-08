@@ -1,13 +1,13 @@
 import {
   ResourceKind,
   useClientFilteredResources,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   type V1ProfileColumn,
   createQueryServiceTableColumns,
   createRuntimeServiceGetFile,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { CreateQueryResult, QueryClient } from "@tanstack/svelte-query";
 import { type Readable, derived } from "svelte/store";
 import { parse } from "yaml";

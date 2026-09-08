@@ -1,10 +1,10 @@
 <script lang="ts">
-  import * as Dialog from "@rilldata/web-common/components/dialog";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
   import ProjectRenameForm, {
     ProjectRenameFormId,
-  } from "@rilldata/web-admin/features/projects/settings/ProjectRenameForm.svelte";
-  import { Button } from "@rilldata/web-common/components/button/index.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/features/projects/settings/ProjectRenameForm.svelte";
+  import { Button } from "@statsparrot/web-common/components/button/index.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

@@ -1,29 +1,29 @@
 <script lang="ts">
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
   import {
     createRuntimeServiceCreateTriggerMutation,
     createRuntimeServiceGetResource,
     getRuntimeServiceListResourcesQueryKey,
-  } from "@rilldata/web-common/runtime-client";
-  import { SingletonProjectParserName } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { SingletonProjectParserName } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { TableToolbar } from "@rilldata/web-common/components/table-toolbar";
-  import type { FilterGroup } from "@rilldata/web-common/components/table-toolbar/types";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { TableToolbar } from "@statsparrot/web-common/components/table-toolbar";
+  import type { FilterGroup } from "@statsparrot/web-common/components/table-toolbar/types";
   import {
     ResourceKind,
     prettyResourceKind,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import ProjectResourcesTable from "./ProjectResourcesTable.svelte";
-  import RefreshAllSourcesAndModelsConfirmDialog from "@rilldata/web-common/features/resources/RefreshAllSourcesAndModelsConfirmDialog.svelte";
+  import RefreshAllSourcesAndModelsConfirmDialog from "@statsparrot/web-common/features/resources/RefreshAllSourcesAndModelsConfirmDialog.svelte";
   import { useResources } from "../selectors";
-  import { isResourceReconciling } from "@rilldata/web-admin/lib/refetch-interval-store";
-  import { filterResources } from "@rilldata/web-common/features/resources/resource-filter-utils";
-  import { getAllTagsForResources } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
-  import { UrlParamsState } from "@rilldata/web-common/lib/store-utils/url-params-state.svelte.ts";
-  import { DebouncedRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { isResourceReconciling } from "@statsparrot/web-admin/lib/refetch-interval-store";
+  import { filterResources } from "@statsparrot/web-common/features/resources/resource-filter-utils";
+  import { getAllTagsForResources } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
+  import { UrlParamsState } from "@statsparrot/web-common/lib/store-utils/url-params-state.svelte.ts";
+  import { DebouncedRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
   const queryClient = useQueryClient();

@@ -13,25 +13,25 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rilldata/rill/admin/client"
-	"github.com/rilldata/rill/cli/pkg/dotrill"
-	"github.com/rilldata/rill/cli/pkg/printer"
-	"github.com/rilldata/rill/cli/pkg/version"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	runtimeclient "github.com/rilldata/rill/runtime/client"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/admin/client"
+	"github.com/staticlabs/statsparrot/cli/pkg/dotstatsparrot"
+	"github.com/staticlabs/statsparrot/cli/pkg/printer"
+	"github.com/staticlabs/statsparrot/cli/pkg/version"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	runtimeclient "github.com/staticlabs/statsparrot/runtime/client"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/term"
 )
 
 const (
-	defaultAdminURL = "https://admin.rilldata.com"
+	defaultAdminURL = "https://admin.statsparrot.com"
 
 	telemetryServiceName    = "cli"
-	telemetryIntakeURL      = "https://intake.rilldata.io/events/data-modeler-metrics"
+	telemetryIntakeURL      = "https://intake.staticlabs.io/events/data-modeler-metrics"
 	telemetryIntakeUser     = "data-modeler"
 	telemetryIntakePassword = "lkh8T90ozWJP/KxWnQ81PexRzpdghPdzuB0ly2/86TeUU8q/bKiVug==" // nolint:gosec // secret is safe for public use
 )
@@ -41,7 +41,7 @@ var ErrInferProjectFailed = fmt.Errorf("could not infer project")
 type Helper struct {
 	*printer.Printer
 	Version            version.Version
-	DotRill            dotrill.DotRill
+	DotStatsparrot            dotstatsparrot.DotStatsparrot
 	HomeDir            string
 	Interactive        bool
 	Org                string
@@ -63,22 +63,22 @@ func NewHelper(ver version.Version, homeDir string) (*Helper, error) {
 	// Create it
 	ch := &Helper{
 		Printer:     printer.NewPrinter(printer.FormatHuman),
-		DotRill:     dotrill.New(homeDir),
+		DotStatsparrot:     dotstatsparrot.New(homeDir),
 		HomeDir:     homeDir,
 		Version:     ver,
 		Interactive: isTerminal(),
 	}
 
-	// Load base admin config from ~/.rill
+	// Load base admin config from ~/.statsparrot
 	err := ch.ReloadAdminConfig()
 	if err != nil {
 		return nil, err
 	}
 
 	// Load default org
-	defaultOrg, err := ch.DotRill.GetDefaultOrg()
+	defaultOrg, err := ch.DotStatsparrot.GetDefaultOrg()
 	if err != nil {
-		return nil, fmt.Errorf("could not parse default org from ~/.rill: %w", err)
+		return nil, fmt.Errorf("could not parse default org from ~/.statsparrot: %w", err)
 	}
 	ch.Org = defaultOrg
 
@@ -113,7 +113,7 @@ func (h *Helper) SetOrg(org string) error {
 		return nil
 	}
 	h.Org = org
-	err := h.DotRill.SetDefaultOrg(org)
+	err := h.DotStatsparrot.SetDefaultOrg(org)
 	if err != nil {
 		return fmt.Errorf("failed to set default org: %w", err)
 	}
@@ -132,16 +132,16 @@ func (h *Helper) IsAuthenticated() bool {
 	return h.AdminToken() != ""
 }
 
-// ReloadAdminConfig populates the helper's AdminURL, AdminTokenDefault, and Org properties from ~/.rill.
+// ReloadAdminConfig populates the helper's AdminURL, AdminTokenDefault, and Org properties from ~/.statsparrot.
 func (h *Helper) ReloadAdminConfig() error {
-	adminToken, err := h.DotRill.GetAccessToken()
+	adminToken, err := h.DotStatsparrot.GetAccessToken()
 	if err != nil {
-		return fmt.Errorf("could not parse access token from ~/.rill: %w", err)
+		return fmt.Errorf("could not parse access token from ~/.statsparrot: %w", err)
 	}
 
-	adminURL, err := h.DotRill.GetDefaultAdminURL()
+	adminURL, err := h.DotStatsparrot.GetDefaultAdminURL()
 	if err != nil {
-		return fmt.Errorf("could not parse default api URL from ~/.rill: %w", err)
+		return fmt.Errorf("could not parse default api URL from ~/.statsparrot: %w", err)
 	}
 	if adminURL == "" {
 		adminURL = defaultAdminURL
@@ -192,7 +192,7 @@ func (h *Helper) Client() (*client.Client, error) {
 			cliVersion = "unknown"
 		}
 
-		userAgent := fmt.Sprintf("rill-cli/%v", cliVersion)
+		userAgent := fmt.Sprintf("statsparrot-cli/%v", cliVersion)
 		c, err := client.New(h.AdminURL(), h.AdminToken(), userAgent)
 		if err != nil {
 			return nil, err
@@ -206,7 +206,7 @@ func (h *Helper) Client() (*client.Client, error) {
 
 // Telemetry returns a client for recording events.
 // Note: It should only be used for parts of the CLI that run on users' local computer because:
-// a) it accesses ~/.rill and adds information about the current user,
+// a) it accesses ~/.statsparrot and adds information about the current user,
 // b) it sends events to the public intake endpoint instead of directly to Kafka.
 func (h *Helper) Telemetry(ctx context.Context) *activity.Client {
 	// If the admin token or URL changes, the user ID of the telemetry client may have changed.
@@ -223,7 +223,7 @@ func (h *Helper) Telemetry(ctx context.Context) *activity.Client {
 	h.activityClientHash = hash
 
 	// Load telemetry config
-	installID, analyticsEnabled, err := h.DotRill.AnalyticsInfo()
+	installID, analyticsEnabled, err := h.DotStatsparrot.AnalyticsInfo()
 	if err != nil {
 		analyticsEnabled = false
 	}
@@ -277,7 +277,7 @@ func (h *Helper) Telemetry(ctx context.Context) *activity.Client {
 }
 
 // CurrentUserID fetches the ID of the current user.
-// It caches the result in ~/.rill, along with a hash of the current admin token for cache invalidation in case of login/logout.
+// It caches the result in ~/.statsparrot, along with a hash of the current admin token for cache invalidation in case of login/logout.
 func (h *Helper) CurrentUserID(ctx context.Context) (string, error) {
 	if h.AdminToken() == "" {
 		return "", nil
@@ -285,13 +285,13 @@ func (h *Helper) CurrentUserID(ctx context.Context) (string, error) {
 
 	newHash := hashStr(h.AdminToken(), h.AdminURL())
 
-	oldHash, err := h.DotRill.GetUserCheckHash()
+	oldHash, err := h.DotStatsparrot.GetUserCheckHash()
 	if err != nil {
 		return "", err
 	}
 
 	if oldHash == newHash {
-		userID, err := h.DotRill.GetUserID()
+		userID, err := h.DotStatsparrot.GetUserID()
 		if err != nil {
 			return "", err
 		}
@@ -313,12 +313,12 @@ func (h *Helper) CurrentUserID(ctx context.Context) (string, error) {
 		userID = res.User.Id
 	}
 
-	err = h.DotRill.SetUserID(userID)
+	err = h.DotStatsparrot.SetUserID(userID)
 	if err != nil {
 		return "", err
 	}
 
-	err = h.DotRill.SetUserCheckHash(newHash)
+	err = h.DotStatsparrot.SetUserCheckHash(newHash)
 	if err != nil {
 		return "", err
 	}
@@ -416,8 +416,8 @@ func (h *Helper) InferProjects(ctx context.Context, org, path string) ([]*adminv
 	remote, err := gitutil.ExtractRemotes(repoRoot, false)
 	if err == nil {
 		for _, r := range remote {
-			if r.Name == "__rill_remote" {
-				req.RillMgdGitRemote = r.URL
+			if r.Name == "__statsparrot_remote" {
+				req.StatsparrotMgdGitRemote = r.URL
 			} else {
 				gitRemote, err := r.Github()
 				if err == nil {
@@ -451,8 +451,8 @@ func (h *Helper) InferProjects(ctx context.Context, org, path string) ([]*adminv
 	if len(orgFiltered) == 0 {
 		return nil, ErrInferProjectFailed
 	}
-	// cleanup rill managed remote
-	if len(orgFiltered) == 1 && orgFiltered[0].ManagedGitId == "" && req.RillMgdGitRemote != "" {
+	// cleanup statsparrot managed remote
+	if len(orgFiltered) == 1 && orgFiltered[0].ManagedGitId == "" && req.StatsparrotMgdGitRemote != "" {
 		err := h.HandleRepoTransfer(repoRoot, req.GitRemote)
 		if err != nil {
 			return nil, err
@@ -467,8 +467,8 @@ func (h *Helper) InferProjects(ctx context.Context, org, path string) ([]*adminv
 func (h *Helper) OpenRuntimeClient(ctx context.Context, org, project, branch string, local bool) (*runtimeclient.Client, string, error) {
 	var host, instanceID, jwt string
 	if local {
-		// This is the default port that Rill localhost uses for gRPC.
-		// TODO: In the future, we should capture the gRPC port in ~/.rill and use it here.
+		// This is the default port that Parrot localhost uses for gRPC.
+		// TODO: In the future, we should capture the gRPC port in ~/.statsparrot and use it here.
 		host = "http://localhost:49009"
 		instanceID = "default"
 	} else {
@@ -518,12 +518,12 @@ func (h *Helper) GitHelper(org, project, localPath string) *GitHelper {
 	return h.gitHelper
 }
 
-// GitSignature returns the author to attribute Rill's git commits to.
+// GitSignature returns the author to attribute Parrot's git commits to.
 //
 // The path must be the root of the git working tree (the directory that contains .git), not a
 // subpath within it. Callers working from a monorepo subpath must resolve the root first, e.g.
 // via gitutil.InferRepoRootAndSubpath. This matters because the local git identity is only read
-// when .git is found directly at path: a subpath would silently fall back to the Rill user even
+// when .git is found directly at path: a subpath would silently fall back to the Parrot user even
 // when a local identity is configured.
 func (h *Helper) GitSignature(ctx context.Context, path string) (gitutil.Signature, error) {
 	// Only read the user's git config when path is an existing repo: without this exact-path
@@ -534,10 +534,10 @@ func (h *Helper) GitSignature(ctx context.Context, path string) (gitutil.Signatu
 		if err == nil {
 			return sig, nil
 		}
-		// git identity not configured: fall through to the Rill user
+		// git identity not configured: fall through to the Parrot user
 	}
 
-	// use email of rill user
+	// use email of statsparrot user
 	c, err := h.Client()
 	if err != nil {
 		return gitutil.Signature{}, err
@@ -547,7 +547,7 @@ func (h *Helper) GitSignature(ctx context.Context, path string) (gitutil.Signatu
 		if strings.Contains(err.Error(), "not authenticated as a user") {
 			return gitutil.Signature{
 				Name:  "service-account",
-				Email: "service-account@rilldata.com", // not an actual email
+				Email: "service-account@staticlabs.com", // not an actual email
 			}, nil
 		}
 		return gitutil.Signature{}, err
@@ -565,8 +565,8 @@ func (h *Helper) HandleRepoTransfer(path, remote string) error {
 	h.gitHelper = nil
 	h.gitHelperMu.Unlock()
 
-	// remove rill managed remote
-	err := gitutil.RemoveRemote(path, "__rill_remote")
+	// remove statsparrot managed remote
+	err := gitutil.RemoveRemote(path, "__statsparrot_remote")
 	if err != nil {
 		return err
 	}
@@ -656,9 +656,9 @@ func (h *Helper) CommitAndSafePush(ctx context.Context, root string, config *git
 	}
 }
 
-// IsLocalRillRunning checks whether rill start is listening on the default HTTP port (9009).
+// IsLocalParrotRunning checks whether statsparrot start is listening on the default HTTP port (9009).
 // This is a best-effort check that assumes the default port.
-func IsLocalRillRunning(ctx context.Context) bool {
+func IsLocalParrotRunning(ctx context.Context) bool {
 	d := net.Dialer{Timeout: time.Second}
 	conn, err := d.DialContext(ctx, "tcp", "localhost:9009")
 	if err != nil {
@@ -681,9 +681,9 @@ func hashStr(ss ...string) string {
 }
 
 // isTerminal reports whether both stdin and stdout are connected to an interactive terminal.
-// It can be overridden by setting RILL_DOCS_GENERATE=true (used in CI for docs generation).
+// It can be overridden by setting STATSPARROT_DOCS_GENERATE=true (used in CI for docs generation).
 func isTerminal() bool {
-	if os.Getenv("RILL_DOCS_GENERATE") == "true" {
+	if os.Getenv("STATSPARROT_DOCS_GENERATE") == "true" {
 		// Used for generating docs with `make docs.generate`.
 		// This ensures --interactive defaults to "true", which makes the generated docs appear the way the CLI help menus appear to a real user (e.g. strips agent instructions).
 		return true

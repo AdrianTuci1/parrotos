@@ -7,19 +7,19 @@ The goal is to make sure that even if the data isn't fetched, the component does
 Otherwise, the page will jump around as the data is fetched.
 -->
 <script lang="ts">
-  import { IconButton } from "@rilldata/web-common/components/button";
-  import SummaryStatistics from "@rilldata/web-common/components/icons/SummaryStatistics.svelte";
-  import TopKIcon from "@rilldata/web-common/components/icons/TopK.svelte";
+  import { IconButton } from "@statsparrot/web-common/components/button";
+  import SummaryStatistics from "@statsparrot/web-common/components/icons/SummaryStatistics.svelte";
+  import TopKIcon from "@statsparrot/web-common/components/icons/TopK.svelte";
   import {
     formatInteger,
     justEnoughPrecision,
-  } from "@rilldata/web-common/lib/formatters";
+  } from "@statsparrot/web-common/lib/formatters";
   import type {
     NumericHistogramBinsBin,
     NumericOutliersOutlier,
     TopKEntry,
     V1NumericStatistics,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { bisector } from "d3-array";
   import { scaleLinear } from "d3-scale";
   import { createHistogramScales } from "../histogram-utils";

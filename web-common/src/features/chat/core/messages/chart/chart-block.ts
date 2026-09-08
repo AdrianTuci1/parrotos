@@ -1,5 +1,5 @@
-import type { ChartType } from "@rilldata/web-common/features/components/charts";
-import type { V1Message } from "@rilldata/web-common/runtime-client";
+import type { ChartType } from "@statsparrot/web-common/features/components/charts";
+import type { V1Message } from "@statsparrot/web-common/runtime-client";
 import { MessageContentType } from "../../types";
 
 // =============================================================================

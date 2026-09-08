@@ -1,6 +1,6 @@
 <script lang="ts">
-  import CLICommandDisplay from "@rilldata/web-common/components/commands/CLICommandDisplay.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import CLICommandDisplay from "@statsparrot/web-common/components/commands/CLICommandDisplay.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let apiUrl: string;
 </script>
@@ -13,7 +13,7 @@
   <p class="text-xs text-fg-secondary">
     {m.mcp_oauth_auto()}
     <a
-      href="https://docs.rilldata.com/guide/ai/mcp#connect-using-oauth-recommended"
+      href="https://docs.statsparrot.com/guide/ai/mcp#connect-using-oauth-recommended"
       target="_blank"
       rel="noopener"
     >

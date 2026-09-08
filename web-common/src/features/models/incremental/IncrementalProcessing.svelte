@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CollapsibleSectionTitle from "@rilldata/web-common/layout/CollapsibleSectionTitle.svelte";
+  import CollapsibleSectionTitle from "@statsparrot/web-common/layout/CollapsibleSectionTitle.svelte";
   import type { V1Resource } from "../../../runtime-client";
   import IncrementalStateTable from "./IncrementalStateTable.svelte";
 

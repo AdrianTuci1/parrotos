@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { LOADING_CELL } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+import { LOADING_CELL } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import { addExpandedDataToPivot } from "./pivot-expansion";
 import { type PivotDataRow, type PivotDataStoreConfig } from "./types";
 

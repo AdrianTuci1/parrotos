@@ -1,8 +1,8 @@
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import {
   adminServiceListOrganizations,
   getAdminServiceListOrganizationsQueryKey,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import { redirect } from "@sveltejs/kit";
 
 export const load = async () => {

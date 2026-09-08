@@ -1,30 +1,30 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import RenameAssetModal from "@rilldata/web-common/features/entity-management/actions/RenameAssetModal.svelte";
+  import RenameAssetModal from "@statsparrot/web-common/features/entity-management/actions/RenameAssetModal.svelte";
   import {
     navigateToFile,
     navigateToHome,
-  } from "@rilldata/web-common/layout/navigation/editor-routing";
+  } from "@statsparrot/web-common/layout/navigation/editor-routing";
   import {
     deleteFileArtifact,
     duplicateFileArtifact,
     renameFileArtifact,
-  } from "@rilldata/web-common/features/entity-management/actions/actions.ts";
-  import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
+  } from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
+  import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers";
   import {
     getTopLevelFolder,
     splitFolderAndFileName,
-  } from "@rilldata/web-common/features/entity-management/file-path-utils";
-  import ForceDeleteConfirmation from "@rilldata/web-common/features/file-explorer/ForceDeleteConfirmationDialog.svelte";
-  import NavEntryPortal from "@rilldata/web-common/features/file-explorer/NavEntryPortal.svelte";
-  import { navEntryDragDropStore } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
-  import { isCurrentActivePage } from "@rilldata/web-common/features/file-explorer/utils";
-  import { createRuntimeServiceListFiles } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/entity-management/file-path-utils";
+  import ForceDeleteConfirmation from "@statsparrot/web-common/features/file-explorer/ForceDeleteConfirmationDialog.svelte";
+  import NavEntryPortal from "@statsparrot/web-common/features/file-explorer/NavEntryPortal.svelte";
+  import { navEntryDragDropStore } from "@statsparrot/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  import { isCurrentActivePage } from "@statsparrot/web-common/features/file-explorer/utils";
+  import { createRuntimeServiceListFiles } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { eventBus } from "../../lib/event-bus/event-bus";
   import { fileArtifacts } from "../entity-management/file-artifacts";
-  import { useProjectTitle } from "@rilldata/web-common/features/project/selectors";
-  import { createLocalServiceGetMetadata } from "@rilldata/web-common/runtime-client/local-service";
+  import { useProjectTitle } from "@statsparrot/web-common/features/project/selectors";
+  import { createLocalServiceGetMetadata } from "@statsparrot/web-common/runtime-client/local-service";
   import { ChevronsDownUp, ChevronsUpDown } from "lucide-svelte";
   import NavDirectory from "./NavDirectory.svelte";
   import { directoryState } from "./directory-store";
@@ -33,12 +33,12 @@
     findDirectory,
     transformFileList,
   } from "./transform-file-list";
-  import QuickView from "@rilldata/web-common/features/resource-graph/quick-view/QuickView.svelte";
+  import QuickView from "@statsparrot/web-common/features/resource-graph/quick-view/QuickView.svelte";
   import {
     isPinned,
     isProtectedDirectory,
     isManaged,
-  } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
+  } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
 
   export let hasUnsaved: boolean;
 
@@ -81,10 +81,10 @@
   $: ({ data: fileTree } = $getFileTree);
 
   $: projectTitleQuery = useProjectTitle(runtimeClient);
-  $: projectTitle = $projectTitleQuery?.data ?? "Untitled Rill Project";
+  $: projectTitle = $projectTitleQuery?.data ?? "Untitled Parrot Project";
 
   // Scope the persisted expand/collapse state per project. In the cloud the
-  // instanceId is unique per project; in Rill Developer it is always "default",
+  // instanceId is unique per project; in Parrot Developer it is always "default",
   // so fall back to the on-disk project path there (GetMetadata is a local-only
   // endpoint that simply errors in the cloud).
   $: ({ instanceId } = runtimeClient);

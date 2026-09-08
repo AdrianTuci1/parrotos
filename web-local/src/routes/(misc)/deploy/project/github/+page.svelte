@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
-  import { getDeployRouteForProject } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import { createRuntimeServiceGitStatus } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import GithubRepoDetails from "@rilldata/web-common/features/project/GithubRepoDetails.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
+  import { getDeployRouteForProject } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import { createRuntimeServiceGitStatus } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import GithubRepoDetails from "@statsparrot/web-common/features/project/GithubRepoDetails.svelte";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -37,8 +37,8 @@
   />
 {/if}
 <div class="text-base text-fg-secondary">
-  In order to link Rill Cloud to this repo to sync project updates, you’ll need
-  to authenticate and install Rill
+  In order to link Parrot Cloud to this repo to sync project updates, you’ll need
+  to authenticate and install Parrot
 </div>
 
 <Button

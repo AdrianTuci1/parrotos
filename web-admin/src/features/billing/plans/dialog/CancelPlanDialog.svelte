@@ -6,20 +6,20 @@
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-  } from "@rilldata/web-common/components/alert-dialog/index.ts";
-  import { Button } from "@rilldata/web-common/components/button/index.ts";
-  import { getPlanTierForSubscription } from "@rilldata/web-admin/features/billing/plans/selectors.ts";
+  } from "@statsparrot/web-common/components/alert-dialog/index.ts";
+  import { Button } from "@statsparrot/web-common/components/button/index.ts";
+  import { getPlanTierForSubscription } from "@statsparrot/web-admin/features/billing/plans/selectors.ts";
   import {
     createAdminServiceCancelBillingSubscription,
     createAdminServiceGetBillingSubscription,
     V1BillingIssueType,
-  } from "@rilldata/web-admin/client";
-  import { getErrorForMutation } from "@rilldata/web-admin/client/utils.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
-  import { invalidateBillingInfo } from "@rilldata/web-admin/features/billing/invalidations.ts";
+  } from "@statsparrot/web-admin/client";
+  import { getErrorForMutation } from "@statsparrot/web-admin/client/utils.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
+  import { invalidateBillingInfo } from "@statsparrot/web-admin/features/billing/invalidations.ts";
 
   let {
     open = $bindable(false),

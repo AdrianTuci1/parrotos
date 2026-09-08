@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { Dashboard } from "@rilldata/web-common/features/dashboards";
-  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
-  import StateManagersProvider from "@rilldata/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
-  import { getHomeHref } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { Dashboard } from "@statsparrot/web-common/features/dashboards";
+  import DashboardStateManager from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  import StateManagersProvider from "@statsparrot/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
+  import { getHomeHref } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { PageData } from "./$types";
 
   export let data: PageData;

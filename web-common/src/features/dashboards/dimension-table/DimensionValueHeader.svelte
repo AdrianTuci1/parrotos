@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import StickyHeader from "@rilldata/web-common/components/virtualized-table/core/StickyHeader.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import StickyHeader from "@statsparrot/web-common/components/virtualized-table/core/StickyHeader.svelte";
   import { getContext } from "svelte";
   import Cell from "../../../components/virtualized-table/core/Cell.svelte";
   import type {
     VirtualizedTableColumns,
     VirtualizedTableConfig,
   } from "../../../components/virtualized-table/types";
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
   import { fly } from "svelte/transition";
   import { getStateManagers } from "../state-managers/state-managers";
   import type { VirtualItem } from "@tanstack/svelte-virtual";
-  import { makeDimensionHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+  import { makeDimensionHref } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
   import type { DimensionTableRow } from "./dimension-table-types";
 
   const config: VirtualizedTableConfig = getContext("config");

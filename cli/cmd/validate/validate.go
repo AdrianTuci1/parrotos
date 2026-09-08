@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/rilldata/rill/cli/cmd/start"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/local"
-	"github.com/rilldata/rill/cli/pkg/printer"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/cli/cmd/start"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/local"
+	"github.com/staticlabs/statsparrot/cli/pkg/printer"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 	"github.com/spf13/cobra"
 )
 
@@ -81,8 +81,8 @@ func ValidateCmd(ch *cmdutil.Helper) *cobra.Command {
 				return fmt.Errorf("only human and json output format is supported for validate command")
 			}
 
-			if cmdutil.IsLocalRillRunning(cmd.Context()) {
-				return fmt.Errorf("`rill start` appears to be running on http://localhost:9009; stop it and rerun validate")
+			if cmdutil.IsLocalParrotRunning(cmd.Context()) {
+				return fmt.Errorf("`statsparrot start` appears to be running on http://localhost:9009; stop it and rerun validate")
 			}
 
 			var projectPath string
@@ -97,16 +97,16 @@ func ValidateCmd(ch *cmdutil.Helper) *cobra.Command {
 			}
 
 			if !local.IsProjectInit(projectPath) {
-				return fmt.Errorf("no Rill project found at %q (missing rill.yaml)", projectPath)
+				return fmt.Errorf("no Parrot project found at %q (missing statsparrot.yaml)", projectPath)
 			}
 
 			envVarsMap, err := start.ParseVariables(envVars)
 			if err != nil {
 				return err
 			}
-			envVarsMap["rill.model.timeout_override"] = fmt.Sprintf("%d", modelTimeoutSeconds)
+			envVarsMap["statsparrot.model.timeout_override"] = fmt.Sprintf("%d", modelTimeoutSeconds)
 			// Prevent resource updates when parse errors are present and surface the actual parser output instead of re-parsing here.
-			envVarsMap["rill.parser.skip_updates_if_parse_errors"] = "true"
+			envVarsMap["statsparrot.parser.skip_updates_if_parse_errors"] = "true"
 
 			ch.Interactive = false
 			app, err := local.NewApp(cmd.Context(), &local.AppOptions{
@@ -136,7 +136,7 @@ func ValidateCmd(ch *cmdutil.Helper) *cobra.Command {
 	validateCmd.Flags().SortFlags = false
 	validateCmd.Flags().StringSliceVarP(&envVars, "env", "e", []string{}, "Set environment variables")
 	validateCmd.Flags().BoolVar(&reset, "reset", false, "Clear and re-ingest source data")
-	validateCmd.Flags().BoolVar(&pullEnv, "pull-env", true, "Pull environment variables from Rill Cloud before starting the project")
+	validateCmd.Flags().BoolVar(&pullEnv, "pull-env", true, "Pull environment variables from Parrot Cloud before starting the project")
 	validateCmd.Flags().StringVar(&environment, "environment", "dev", `Environment name`)
 	validateCmd.Flags().BoolVar(&verbose, "verbose", false, "Sets the log level to debug")
 	validateCmd.Flags().BoolVar(&silent, "silent", false, "Suppress all log output by setting log level to panic, overrides verbose flag")

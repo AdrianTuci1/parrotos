@@ -15,16 +15,16 @@ import (
 	"github.com/aws/smithy-go/tracing/smithyoteltracing"
 	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/blob"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/blob"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"go.uber.org/zap"
 	"gocloud.dev/blob/s3blob"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/drivers/redshift")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/redshift")
 
 var _ drivers.Warehouse = &Connection{}
 
@@ -57,9 +57,9 @@ func (c *Connection) QueryAsFiles(ctx context.Context, props map[string]any) (ou
 	}
 
 	// outputLocation s3://bucket/path
-	// unloadLocation s3://bucket/path/rill-tmp-<uuid>
-	// unloadPath path/rill-tmp-redshift-<uuid>
-	unloadFolderName := "rill-tmp-redshift-" + uuid.New().String()
+	// unloadLocation s3://bucket/path/statsparrot-tmp-<uuid>
+	// unloadPath path/statsparrot-tmp-redshift-<uuid>
+	unloadFolderName := "statsparrot-tmp-redshift-" + uuid.New().String()
 	bucketName := outputURL.Hostname()
 	unloadURL := outputURL.JoinPath(unloadFolderName)
 	unloadLocation := unloadURL.String()

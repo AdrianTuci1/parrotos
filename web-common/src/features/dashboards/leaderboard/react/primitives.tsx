@@ -10,13 +10,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import type { NumberParts } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-import { formatDataType } from "@rilldata/web-common/lib/formatters";
-import { isPercDiff } from "@rilldata/web-common/components/data-types/type-utils";
+import type { NumberParts } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+import { formatDataType } from "@statsparrot/web-common/lib/formatters";
+import { isPercDiff } from "@statsparrot/web-common/components/data-types/type-utils";
 import type {
   Alignment,
   Location,
-} from "@rilldata/web-common/lib/place-element";
+} from "@statsparrot/web-common/lib/place-element";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data-type rendering (data-types/Base.svelte, Number.svelte, Varchar.svelte,
@@ -132,9 +132,9 @@ export interface FormattedDataTypeProps {
  * React translation of `components/data-types/FormattedDataType.svelte`.
  *
  * Only the code paths the Leaderboard exercises are retained faithfully:
- * the `RILL_PERCENTAGE_CHANGE` dispatch to `PercentageChange` and the
+ * the `STATSPARROT_PERCENTAGE_CHANGE` dispatch to `PercentageChange` and the
  * numeric/varchar fallback (`Number.svelte` / `Varchar.svelte`). The unused
- * `RILL_CHANGE` (`MeasureChange`), timestamp and interval dispatches are treated
+ * `STATSPARROT_CHANGE` (`MeasureChange`), timestamp and interval dispatches are treated
  * as the varchar fallback, which is a safe visual default for those cells.
  */
 export function FormattedDataType({
@@ -147,7 +147,7 @@ export function FormattedDataType({
   color = "",
   lowerIsBetter = false,
 }: FormattedDataTypeProps) {
-  if (type === "RILL_PERCENTAGE_CHANGE" && typeof value !== "boolean") {
+  if (type === "STATSPARROT_PERCENTAGE_CHANGE" && typeof value !== "boolean") {
     return (
       <PercentageChange
         value={value as unknown}

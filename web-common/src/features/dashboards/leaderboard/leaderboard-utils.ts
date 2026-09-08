@@ -2,16 +2,16 @@ import {
   ComparisonDeltaAbsoluteSuffix,
   ComparisonDeltaPreviousSuffix,
   ComparisonDeltaRelativeSuffix,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   V1MetricsViewComparisonMeasureType as ApiSortType,
   type V1MetricsViewAggregationResponseDataItem,
   type V1MetricsViewComparisonValue,
   type MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { SortType } from "../proto-state/derived-types";
-import { DashboardState_LeaderboardSortType } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-import { URI_DIMENSION_SUFFIX } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+import { DashboardState_LeaderboardSortType } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+import { URI_DIMENSION_SUFFIX } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
 
 export type LeaderboardItemData = {
   /**

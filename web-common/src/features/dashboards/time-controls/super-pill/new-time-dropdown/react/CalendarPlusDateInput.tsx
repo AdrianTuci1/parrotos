@@ -1,7 +1,7 @@
 import { useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { DateTime, Duration, Interval, type DateTimeUnit } from "luxon";
-import { snapToDayOrLargerGrain } from "@rilldata/web-common/lib/time/new-grains";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { snapToDayOrLargerGrain } from "@statsparrot/web-common/lib/time/new-grains";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { Calendar } from "./Calendar";
 import { DateInput } from "./DateInput";
 

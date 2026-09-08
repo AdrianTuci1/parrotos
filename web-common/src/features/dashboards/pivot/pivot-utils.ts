@@ -1,19 +1,19 @@
 import {
   itemsInTag,
   type TagIndex,
-} from "@rilldata/web-common/components/menu/tag-utils";
-import { getValuesForExpandedKey } from "@rilldata/web-common/features/dashboards/pivot/pivot-expansion";
+} from "@statsparrot/web-common/components/menu/tag-utils";
+import { getValuesForExpandedKey } from "@statsparrot/web-common/features/dashboards/pivot/pivot-expansion";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-import { getOffset } from "@rilldata/web-common/lib/time/transforms";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+import { getOffset } from "@statsparrot/web-common/lib/time/transforms";
 import {
   TimeOffsetType,
   type AvailableTimeGrain,
   type TimeRangeString,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
@@ -21,12 +21,12 @@ import type {
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationResponse,
   V1MetricsViewAggregationSort,
-} from "@rilldata/web-common/runtime-client";
-import { connectCodeToHTTPStatus } from "@rilldata/web-common/lib/errors";
+} from "@statsparrot/web-common/runtime-client";
+import { connectCodeToHTTPStatus } from "@statsparrot/web-common/lib/errors";
 import type { ConnectError } from "@connectrpc/connect";
 import type { QueryObserverResult } from "@tanstack/svelte-query";
 import type { Row } from "tanstack-table-8-svelte-5";
-import { getURIRequestMeasure } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+import { getURIRequestMeasure } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
 import { SHOW_MORE_BUTTON } from "./pivot-constants";
 import { getColumnFiltersForPage } from "./pivot-infinite-scroll";
 import { mergeFilters } from "./pivot-merge-filters";
@@ -176,11 +176,11 @@ export function isTimeDimension(
   timeDimension: string,
 ) {
   if (!dimension) return false;
-  return dimension.startsWith(`${timeDimension}_rill_`);
+  return dimension.startsWith(`${timeDimension}_statsparrot_`);
 }
 
 export function getTimeGrainFromDimension(dimension: string) {
-  const grainLabel = dimension.split("_rill_")[1];
+  const grainLabel = dimension.split("_statsparrot_")[1];
   return grainLabel as AvailableTimeGrain;
 }
 

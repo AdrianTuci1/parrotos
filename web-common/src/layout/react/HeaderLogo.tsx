@@ -1,6 +1,6 @@
 // React translation of `layout/header/HeaderLogo.svelte`. When `logoUrl` is set
-// it renders the project logo image; otherwise the default Rill mark is shown.
-import { RillLogoIcon } from "./icons";
+// it renders the project logo image; otherwise the default Parrot mark is shown.
+import { ParrotLogoIcon } from "./icons";
 
 export default function HeaderLogo({
   href = "/",
@@ -17,7 +17,7 @@ export default function HeaderLogo({
       {logoUrl ? (
         <img src={logoUrl} alt="logo" className="h-7" />
       ) : (
-        <RillLogoIcon />
+        <ParrotLogoIcon />
       )}
     </a>
   );

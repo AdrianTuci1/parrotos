@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { PaidPlanTypes } from "@rilldata/web-admin/features/billing/plans/utils.ts";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
-  import { createAdminServiceGetBillingSubscription } from "@rilldata/web-admin/client";
-  import CancelPlanDialog from "@rilldata/web-admin/features/billing/plans/dialog/CancelPlanDialog.svelte";
-  import { SELF_SERVE_PLANS_BY_NAME } from "@rilldata/web-admin/features/billing/plans/plan-details.ts";
-  import ChoosePlanDialog from "@rilldata/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { PaidPlanTypes } from "@statsparrot/web-admin/features/billing/plans/utils.ts";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
+  import { createAdminServiceGetBillingSubscription } from "@statsparrot/web-admin/client";
+  import CancelPlanDialog from "@statsparrot/web-admin/features/billing/plans/dialog/CancelPlanDialog.svelte";
+  import { SELF_SERVE_PLANS_BY_NAME } from "@statsparrot/web-admin/features/billing/plans/plan-details.ts";
+  import ChoosePlanDialog from "@statsparrot/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

@@ -2,7 +2,7 @@ import {
   createAndExpression,
   createInExpression,
   createLikeExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import { PERC_DIFF } from "../../../components/data-types/type-utils";
 import {
   computePercentOfTotal,

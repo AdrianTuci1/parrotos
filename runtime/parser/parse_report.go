@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers/slack"
-	"github.com/rilldata/rill/runtime/pkg/duration"
-	"github.com/rilldata/rill/runtime/pkg/pbutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers/slack"
+	"github.com/staticlabs/statsparrot/runtime/pkg/duration"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pbutil"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -98,7 +98,7 @@ func (p *Parser) parseReport(node *Node) error {
 		}
 	}
 
-	// Validate the interval duration as a standard ISO8601 duration (without Rill extensions) with only one component
+	// Validate the interval duration as a standard ISO8601 duration (without Parrot extensions) with only one component
 	if tmp.Intervals.Duration != "" {
 		err := duration.ValidateISO8601(tmp.Intervals.Duration, true, true)
 		if err != nil {

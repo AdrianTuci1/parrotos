@@ -1,28 +1,28 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ContextButton from "@rilldata/web-common/components/button/ContextButton.svelte";
-  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import Alert from "@rilldata/web-common/components/icons/Alert.svelte";
-  import EditIcon from "@rilldata/web-common/components/icons/EditIcon.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
-  import MoreHorizontal from "@rilldata/web-common/components/icons/MoreHorizontal.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
-  import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import type { NavDragData } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
-  import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
-  import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry";
-  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
-  import NavigationMenuSeparator from "@rilldata/web-common/layout/navigation/NavigationMenuSeparator.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  import ContextButton from "@statsparrot/web-common/components/button/ContextButton.svelte";
+  import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import Alert from "@statsparrot/web-common/components/icons/Alert.svelte";
+  import EditIcon from "@statsparrot/web-common/components/icons/EditIcon.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
+  import MoreHorizontal from "@statsparrot/web-common/components/icons/MoreHorizontal.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
+  import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import type { NavDragData } from "@statsparrot/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  import { getPaddingFromPath } from "@statsparrot/web-common/features/file-explorer/nav-tree-spacing";
+  import { getScreenNameFromPage } from "@statsparrot/web-common/features/file-explorer/telemetry";
+  import NavigationMenuItem from "@statsparrot/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import NavigationMenuSeparator from "@statsparrot/web-common/layout/navigation/NavigationMenuSeparator.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
     ResourceKindToScreenMap,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes";
-  import type { V1ResourceName } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes";
+  import type { V1ResourceName } from "@statsparrot/web-common/runtime-client";
   import { Save } from "lucide-svelte";
   import type { Readable } from "svelte/store";
   import CopyIcon from "../../components/icons/CopyIcon.svelte";
@@ -34,9 +34,9 @@
   import MetricsViewMenuItems from "../metrics-views/MetricsViewMenuItems.svelte";
   import ModelMenuItems from "../models/navigation/ModelMenuItems.svelte";
   import SourceMenuItems from "../sources/navigation/SourceMenuItems.svelte";
-  import { isProtectedDirectory } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
-  import { getTopLevelFolder } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
-  import { generatingCanvasFilePath } from "@rilldata/web-common/features/canvas/ai-generation/generateCanvas";
+  import { isProtectedDirectory } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
+  import { getTopLevelFolder } from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
+  import { generatingCanvasFilePath } from "@statsparrot/web-common/features/canvas/ai-generation/generateCanvas";
 
   export let filePath: string;
   export let onRename: (filePath: string, isDir: boolean) => void;

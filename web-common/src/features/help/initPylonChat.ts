@@ -1,4 +1,4 @@
-const appId = import.meta.env.RILL_UI_PUBLIC_PYLON_APP_ID as string;
+const appId = import.meta.env.STATSPARROT_UI_PUBLIC_PYLON_APP_ID as string;
 
 // Right now both local and cloud return the same V1User from admin.
 // Until we figure out a good place to put those common types (not the admin clients),

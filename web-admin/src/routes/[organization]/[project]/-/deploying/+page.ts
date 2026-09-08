@@ -1,7 +1,7 @@
 import {
   TargetDashboardUrlParam,
   PreCommitShaUrlParam,
-} from "@rilldata/web-common/features/project/deploy/utils.ts";
+} from "@statsparrot/web-common/features/project/deploy/utils.ts";
 
 export const load = ({ url: { searchParams } }) => {
   const targetDashboard = searchParams.get(TargetDashboardUrlParam);

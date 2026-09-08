@@ -1,17 +1,17 @@
 import { useMemo } from "react";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
 import {
   TimeComparisonOption,
   TimeRangePreset,
   type DashboardTimeControls,
   type TimeRange,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import { DateTime, Interval } from "luxon";
-import { SortType } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { V1MetricsViewSpec, V1TimeGrain } from "@rilldata/web-common/runtime-client";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import { SortType } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { V1MetricsViewSpec, V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import { Comparison } from "./Comparison";
 
 /**

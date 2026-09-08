@@ -2,20 +2,20 @@ export const SLOT_RATE_PER_HR = 0.15;
 export const HOURS_PER_MONTH = 730;
 
 // Default slots by deployment type
-export const DEFAULT_MANAGED_SLOTS = 2; // Rill-managed (DuckDB)
+export const DEFAULT_MANAGED_SLOTS = 2; // Parrot-managed (DuckDB)
 export const DEFAULT_SELF_MANAGED_SLOTS = 4; // Self-managed (MotherDuck, ClickHouse, Druid, Pinot, StarRocks)
 
 export interface SlotTier {
   slots: number;
   instance: string;
-  rillBill: number;
+  statsparrotBill: number;
 }
 
 function tier(slots: number, rate = SLOT_RATE_PER_HR): SlotTier {
   return {
     slots,
     instance: `${slots * 4}GiB / ${slots}vCPU`,
-    rillBill: Math.round(slots * rate * HOURS_PER_MONTH),
+    statsparrotBill: Math.round(slots * rate * HOURS_PER_MONTH),
   };
 }
 

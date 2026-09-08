@@ -1,5 +1,5 @@
 import { goto } from "$app/navigation";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import { buildGraphUrlNew, type KindToken } from "./seed-parser";
 
 /**
@@ -38,7 +38,7 @@ export function navigateToResourceGraphByKind(kindToken: KindToken): void {
 
 /**
  * Convert a fully qualified kind to its short name.
- * @param kind - Fully qualified kind (e.g., "rill.runtime.v1.Model")
+ * @param kind - Fully qualified kind (e.g., "statsparrot.runtime.v1.Model")
  * @returns Short kind name (e.g., "model") or null if unknown
  */
 function getShortKindName(kind: string): string | null {

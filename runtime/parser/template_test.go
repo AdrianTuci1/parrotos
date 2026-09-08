@@ -92,12 +92,12 @@ func TestResolve(t *testing.T) {
 	resolved, err := ResolveTemplate(template, TemplateData{
 		Environment: "dev",
 		User: map[string]any{
-			"domain": "rilldata.com",
+			"domain": "staticlabs.com",
 			"groups": []string{"admin", "user"},
 		},
 	}, false)
 	require.NoError(t, err)
-	require.Equal(t, "SELECT partner_id FROM domain_partner_mapping WHERE domain = 'rilldata.com' AND groups IN ('admin', 'user') OR true", resolved)
+	require.Equal(t, "SELECT partner_id FROM domain_partner_mapping WHERE domain = 'staticlabs.com' AND groups IN ('admin', 'user') OR true", resolved)
 }
 
 func TestVariables(t *testing.T) {

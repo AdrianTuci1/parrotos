@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
 )
 
 var ErrAINotConfigured = fmt.Errorf("an AI service is not configured for this instance")
@@ -321,7 +321,7 @@ func resolveConnectorProperties(environment string, vars map[string]string, c *r
 // ConnectorConfig holds and resolves connector configuration.
 // We support three levels of configuration:
 // 1. Preset: provided when creating the instance (or set by the system, such as allow_host_access). Cannot be overridden.
-// 2. Project: defined in the rill.yaml file. Can be overridden by the env.
+// 2. Project: defined in the statsparrot.yaml file. Can be overridden by the env.
 // 3. Env: defined in the instance's variables (in the format "connector.name.var").
 type ConnectorConfig struct {
 	Driver  string

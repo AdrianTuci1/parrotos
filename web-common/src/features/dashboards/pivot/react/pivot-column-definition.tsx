@@ -1,17 +1,17 @@
 import type { ComponentType } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { makeDimensionHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+import { makeDimensionHref } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
 import {
   getNextLimitLabel,
   LOADING_CELL,
   SHOW_MORE_BUTTON,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { convertISOStringToJSDateWithSameTimeAsSelectedTimeZone } from "@rilldata/web-common/lib/time/timezone";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { convertISOStringToJSDateWithSameTimeAsSelectedTimeZone } from "@statsparrot/web-common/lib/time/timezone";
 import { timeFormat } from "d3-time-format";
 import {
   createIndexMap,
@@ -19,7 +19,7 @@ import {
   getTimeGrainFromDimension,
   isShowMoreRow,
   isTimeDimension,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import {
   DeltaChange,
   DeltaChangePercentage,
@@ -28,7 +28,7 @@ import {
   PivotExpandableCell,
   PivotMeasureCell,
   PivotShowMoreCell,
-} from "@rilldata/web-common/features/dashboards/pivot/react/CellComponents";
+} from "@statsparrot/web-common/features/dashboards/pivot/react/CellComponents";
 import {
   COMPARISON_DELTA,
   COMPARISON_PERCENT,
@@ -38,7 +38,7 @@ import {
   type PivotDataStoreConfig,
   type PivotMeasureFormatting,
   type PivotTimeConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 
 function sanitizeHeaderValue(value: unknown): string {
   if (value === "") return "\u00A0";
@@ -463,7 +463,7 @@ function getFlatColumnDef(
     } else {
       let dimensionId = id;
       if (type === PivotChipType.Time) {
-        dimensionId = `${timeDimension}_rill_${id}`;
+        dimensionId = `${timeDimension}_statsparrot_${id}`;
       }
 
       const dimensionDef = dimensionDefMap.get(dimensionId);

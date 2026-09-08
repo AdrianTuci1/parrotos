@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { createConnectorForm } from "@rilldata/web-common/features/sources/modal/FormValidation.ts";
-  import { getConnectorSchema } from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
+  import { createConnectorForm } from "@statsparrot/web-common/features/sources/modal/FormValidation.ts";
+  import { getConnectorSchema } from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
   import { getConnectorYAML } from "./connector-source-yaml-generator.ts";
-  import AddDataFormStructure from "@rilldata/web-common/features/add-data/form/AddDataFormStructure.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import AddDataFormStructure from "@statsparrot/web-common/features/add-data/form/AddDataFormStructure.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     connectorFormCache,
     createConnector,
     maybeDeleteConnector,
-  } from "@rilldata/web-common/features/add-data/manager/steps/connector.ts";
-  import { getLabelsForConnector } from "@rilldata/web-common/features/add-data/form/form-labels.ts";
-  import { setSubmitError } from "@rilldata/web-common/features/add-data/form/errors.ts";
-  import type { CreateConnectorStep } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { getConnectorDriverForSchema } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-  import type { AddDataStateManager } from "@rilldata/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
-  import { getEnvFileStore } from "@rilldata/web-common/features/env-management/env-file-store.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/connector.ts";
+  import { getLabelsForConnector } from "@statsparrot/web-common/features/add-data/form/form-labels.ts";
+  import { setSubmitError } from "@statsparrot/web-common/features/add-data/form/errors.ts";
+  import type { CreateConnectorStep } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { getConnectorDriverForSchema } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+  import type { AddDataStateManager } from "@statsparrot/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
+  import { getEnvFileStore } from "@statsparrot/web-common/features/env-management/env-file-store.ts";
 
   export let stateManager: AddDataStateManager;
   export let step: CreateConnectorStep;

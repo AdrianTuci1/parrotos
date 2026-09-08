@@ -4,9 +4,9 @@
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-  } from "@rilldata/web-common/components/dropdown-menu";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  } from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import { getProjectRolesOptions } from "./constants";
 
   export let value: string;

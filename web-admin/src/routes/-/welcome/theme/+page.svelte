@@ -1,12 +1,12 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import RillLogoSquareNegative from "@rilldata/web-common/components/icons/RillLogoSquareNegative.svelte";
-  import { Button } from "@rilldata/web-common/components/button/index.ts";
+  import ParrotLogoSquareNegative from "@statsparrot/web-common/components/icons/ParrotLogoSquareNegative.svelte";
+  import { Button } from "@statsparrot/web-common/components/button/index.ts";
   import {
     themeControl,
     type ThemeMode,
-  } from "@rilldata/web-common/features/themes/theme-control.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/themes/theme-control.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const { preference } = themeControl;
   $: selectedPreference = $preference;
@@ -49,7 +49,7 @@
 </script>
 
 <div class="flex flex-col gap-4 justify-center">
-  <RillLogoSquareNegative size="36px" />
+  <ParrotLogoSquareNegative size="36px" />
   <div class="text-2xl font-extrabold text-fg-accent text-center">
     {m.welcome_theme_heading()}
   </div>

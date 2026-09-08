@@ -7,18 +7,18 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/expressionpb"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/expressionpb"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
 )
 
 func TestMetricViewAggregationAgainstClickHouse(t *testing.T) {
@@ -799,7 +799,7 @@ func TestMetricsViewsAggregation_pivot_export_labels_2_time_columns(t *testing.T
 
 func TestMetricsViewsAggregation_pivot_export_column_limit_exceeded(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceForProjectWithConfigs(t, "ad_bids", map[string]string{
-		"rill.metrics.pivot_export_column_limit": "2",
+		"statsparrot.metrics.pivot_export_column_limit": "2",
 	})
 
 	limit := int64(1000)
@@ -1316,7 +1316,7 @@ func TestMetricsViewsAggregation_pivot_dim_and_measure(t *testing.T) {
 // 1. Unpack Druid distribution.
 // 2. Run ./bin/start-micro-quickstart
 // 3. Go to localhost:8888 -> Load data and index AdBids.csv as `test_data“ datasource.
-// 4. Create Rill project named `rill-untitled` with `test_data`.
+// 4. Create Parrot project named `statsparrot-untitled` with `test_data`.
 // 5. Run this config in VSCode:
 //
 //	{
@@ -1332,7 +1332,7 @@ func TestMetricsViewsAggregation_pivot_dim_and_measure(t *testing.T) {
 //			"druid",
 //			"--db",
 //			"http://localhost:8082/druid/v2/sql/avatica-protobuf?authentication=BASIC&avaticaUser=1&avaticaPassword=2",
-//			"rill-untitled"
+//			"statsparrot-untitled"
 //		],
 //	}
 //
@@ -1731,7 +1731,7 @@ func testDatabricksMetricsViewAggregation_measure_filters(t *testing.T, rt *runt
 
 func testBigQueryMetricsViewAggregation_measure_filters(t *testing.T, rt *runtime.Runtime, instanceID string) {
 	ctr := &queries.ColumnTimeRange{
-		Database:       "rilldata",
+		Database:       "staticlabs",
 		DatabaseSchema: "integration_test",
 		TableName:      "ad_bids",
 		ColumnName:     "timestamp",
@@ -2670,7 +2670,7 @@ func testMetricsViewsAggregation_2time_aggregations(t *testing.T, rt *runtime.Ru
 func testMetricsViewAggregationClickhouseEnum(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"models/foo.sql": `
 				SELECT
 				-- Enum
@@ -5487,13 +5487,13 @@ func newBigQueryInstance(t testruntime.TestingT) (*runtime.Runtime, string) {
 	return testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"bigquery"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: bigquery",
+			"statsparrot.yaml": "olap_connector: bigquery",
 			"metrics/ad_bids_metrics.yaml": `version: 1
 type: metrics_view
 
 display_name: Ad Bids
 table: ad_bids
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: timestamp
 
@@ -5533,7 +5533,7 @@ type: metrics_view
 
 display_name: Ad Bids
 table: ad_bids
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: timestamp
 
@@ -5561,7 +5561,7 @@ func newSnowflakeInstance(t testruntime.TestingT) (*runtime.Runtime, string) {
 	return testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"snowflake"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: snowflake",
+			"statsparrot.yaml": "olap_connector: snowflake",
 			"metrics/ad_bids_metrics.yaml": `version: 1
 type: metrics_view
 
@@ -5635,7 +5635,7 @@ func newDatabricksInstance(t testruntime.TestingT) (*runtime.Runtime, string) {
 	return testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"databricks"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: databricks",
+			"statsparrot.yaml": "olap_connector: databricks",
 			"metrics/ad_bids_metrics.yaml": `version: 1
 type: metrics_view
 

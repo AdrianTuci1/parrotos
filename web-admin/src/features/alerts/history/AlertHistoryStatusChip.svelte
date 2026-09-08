@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Tag } from "@rilldata/web-common/components/tag";
-  import type { Color } from "@rilldata/web-common/components/tag/Tag.svelte";
+  import { Tag } from "@statsparrot/web-common/components/tag";
+  import type { Color } from "@statsparrot/web-common/components/tag/Tag.svelte";
   import {
     type V1AlertExecution,
     V1AssertionStatus,
     type V1AssertionResult,
-  } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let currentExecution: V1AlertExecution;
   export let result: V1AssertionResult;

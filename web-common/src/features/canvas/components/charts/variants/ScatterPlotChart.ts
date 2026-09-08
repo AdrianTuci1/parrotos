@@ -1,19 +1,19 @@
-import type { ComponentInputParam } from "@rilldata/web-common/features/canvas/inspector/types";
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+import type { ComponentInputParam } from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
 import {
   ScatterPlotChartProvider,
   type ScatterPlotChartSpec as ScatterPlotChartSpecBase,
-} from "@rilldata/web-common/features/components/charts/scatter/ScatterPlotChartProvider";
+} from "@statsparrot/web-common/features/components/charts/scatter/ScatterPlotChartProvider";
 import {
   type ChartDataQuery,
   type ChartFieldsMap,
-} from "@rilldata/web-common/features/components/charts/types";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+} from "@statsparrot/web-common/features/components/charts/types";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   MetricsViewSpecDimensionType,
   type V1MetricsViewSpec,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { type Readable } from "svelte/store";
 import type {
   CanvasEntity,
@@ -21,7 +21,7 @@ import type {
 } from "../../../stores/canvas-entity";
 import { BaseChart, type BaseChartConfig } from "../BaseChart";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export type ScatterPlotCanvasChartSpec = BaseChartConfig &
   ScatterPlotChartSpecBase;

@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
   import { fly } from "svelte/transition";
-  import { createLocalServiceGetMetadata } from "@rilldata/web-common/runtime-client/local-service";
-  import RuntimeTrafficLights from "@rilldata/web-common/features/entity-management/RuntimeTrafficLights.svelte";
-  import GithubStarButton from "@rilldata/web-common/features/github-star/GithubStarButton.svelte";
+  import { createLocalServiceGetMetadata } from "@statsparrot/web-common/runtime-client/local-service";
+  import RuntimeTrafficLights from "@statsparrot/web-common/features/entity-management/RuntimeTrafficLights.svelte";
+  import GithubStarButton from "@statsparrot/web-common/features/github-star/GithubStarButton.svelte";
 
   const metadataQuery = createLocalServiceGetMetadata();
 
@@ -21,7 +21,7 @@
     {
       icon: Github,
       label: m.footer_report_issue(),
-      href: "https://github.com/rilldata/rill/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
+      href: "https://github.com/staticlabs/statsparrot/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
       className: "fill-fg-secondary",
       shrinkIcon: true,
     },
@@ -60,7 +60,7 @@
     <span>
       <Tooltip alignment="start" distance={16} location="top">
         <a
-          href="https://docs.rilldata.com"
+          href="https://docs.statsparrot.com"
           target="_blank"
           rel="noreferrer noopener"
           class="text-fg-secondary"
@@ -74,7 +74,7 @@
           <TooltipContent>
             <TooltipTitle>
               <svelte:fragment slot="name"
-                >{m.footer_rill_developer()}</svelte:fragment
+                >{m.footer_statsparrot_developer()}</svelte:fragment
               >
             </TooltipTitle>
             <TooltipShortcutContainer>

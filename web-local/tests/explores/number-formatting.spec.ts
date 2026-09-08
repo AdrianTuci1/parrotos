@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { ResourceWatcher } from "../utils/ResourceWatcher";
 import { gotoNavEntry } from "../utils/waitHelpers";
 import { test } from "../setup/base";
@@ -13,7 +13,7 @@ test.describe("smoke tests for number formatting", () => {
     await gotoNavEntry(page, "/metrics/AdBids_metrics.yaml");
 
     // This is a metrics spec with all available formatting options
-    const formatterFlowDashboard = `# Visit https://docs.rilldata.com/reference/project-files to learn more about Rill project files.
+    const formatterFlowDashboard = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Rill project files.
 kind: metrics_view
 title: "AdBids_dashboard"
 table: "AdBids"

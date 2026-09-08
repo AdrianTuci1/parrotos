@@ -1,7 +1,7 @@
 import {
   getRuntimeClient,
   type RuntimeClient,
-} from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/v2";
 
 /** For load functions and tests. In components, use {@link useRuntimeClient} instead. */
 export function getCloudRuntimeClient(runtime: {

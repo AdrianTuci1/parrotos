@@ -1,9 +1,9 @@
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getRuntimeServiceGetConversationQueryKey,
   type V1GetConversationResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { get, writable } from "svelte/store";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -73,7 +73,7 @@ let latestCreateOptions:
     }
   | undefined;
 
-vi.mock("@rilldata/web-common/runtime-client/sse", () => {
+vi.mock("@statsparrot/web-common/runtime-client/sse", () => {
   // Defined inside the factory so vi.mock's hoisting doesn't hit a TDZ when
   // resolving this module graph.
   class FakeSSEHttpError extends Error {
@@ -103,7 +103,7 @@ vi.mock("@rilldata/web-common/runtime-client/sse", () => {
   };
 });
 
-import { SSEHttpError as MockedSSEHttpError } from "@rilldata/web-common/runtime-client/sse";
+import { SSEHttpError as MockedSSEHttpError } from "@statsparrot/web-common/runtime-client/sse";
 
 import { Conversation } from "./conversation";
 

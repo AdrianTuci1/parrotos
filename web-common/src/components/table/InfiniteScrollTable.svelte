@@ -20,7 +20,7 @@
     getCoreRowModel,
     getSortedRowModel,
   } from "tanstack-table-8-svelte-5";
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
 
   export let data: any[];
   export let columns: ColumnDef<any, any>[];

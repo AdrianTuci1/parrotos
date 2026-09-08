@@ -1,9 +1,9 @@
 import {
   createAndExpression,
   flattenInExpressionValues,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { convertFilterParamToExpression } from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { convertFilterParamToExpression } from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 
 const SPLIT_DIMENSION_BY_NEW_LINE = /\s*\n\s*/g;
 const SPLIT_DIMENSION_BY_COMMA = /\s*,\s*/g;

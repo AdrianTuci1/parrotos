@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { createAdminServiceGetOrganization } from "@rilldata/web-admin/client";
+  import { createAdminServiceGetOrganization } from "@statsparrot/web-admin/client";
   import {
     getPaymentIssueErrorText,
     needsPaymentSetup,
-  } from "@rilldata/web-admin/features/billing/issues/getMessageForPaymentIssues";
-  import { fetchPaymentsPortalURL } from "@rilldata/web-admin/features/billing/plans/selectors";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/features/billing/issues/getMessageForPaymentIssues";
+  import { fetchPaymentsPortalURL } from "@statsparrot/web-admin/features/billing/plans/selectors";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization }: { organization: string } = $props();
 

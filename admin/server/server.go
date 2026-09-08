@@ -14,18 +14,18 @@ import (
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/hashicorp/go-version"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/server/auth"
-	"github.com/rilldata/rill/admin/server/cookies"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/middleware"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	runtimeauth "github.com/rilldata/rill/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	"github.com/staticlabs/statsparrot/admin/server/cookies"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/middleware"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	runtimeauth "github.com/staticlabs/statsparrot/runtime/server/auth"
 	"github.com/rs/cors"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
@@ -43,10 +43,10 @@ var favicon []byte
 var (
 	_minCliVersion         = version.Must(version.NewVersion("0.20.0"))
 	_minCliVersionByMethod = map[string]*version.Version{
-		"/rill.admin.v1.AdminService/UpdateProject":          version.Must(version.NewVersion("0.28.0")),
-		"/rill.admin.v1.AdminService/UpdateOrganization":     version.Must(version.NewVersion("0.28.0")),
-		"/rill.admin.v1.AdminService/UpdateProjectVariables": version.Must(version.NewVersion("0.51.0")),
-		"/rill.admin.v1.AdminService/CreateService":          version.Must(version.NewVersion("0.67.0")),
+		"/statsparrot.admin.v1.AdminService/UpdateProject":          version.Must(version.NewVersion("0.28.0")),
+		"/statsparrot.admin.v1.AdminService/UpdateOrganization":     version.Must(version.NewVersion("0.28.0")),
+		"/statsparrot.admin.v1.AdminService/UpdateProjectVariables": version.Must(version.NewVersion("0.51.0")),
+		"/statsparrot.admin.v1.AdminService/CreateService":          version.Must(version.NewVersion("0.67.0")),
 	}
 )
 
@@ -64,7 +64,7 @@ type Options struct {
 	GithubClientID         string
 	GithubClientSecret     string
 	GithubManagedAccount   string
-	// AssetsBucket is the path on gcs where rill managed project artifacts are stored.
+	// AssetsBucket is the path on gcs where statsparrot managed project artifacts are stored.
 	AssetsBucket string
 	// PylonIdentitySecret is an optional secret for Pylon identity verification.
 	PylonIdentitySecret []byte
@@ -106,14 +106,14 @@ func New(logger *zap.Logger, adm *admin.Service, issuer *runtimeauth.Issuer, lim
 	// Only the admin server reads its cookies, so we can set HttpOnly (i.e. UI should not access cookie contents).
 	cookieStore.Options.HttpOnly = true
 
-	// Only the admin server reads its cookies, so we can set Domain to be the admin server's sub-domain (e.g. admin.rilldata.com).
+	// Only the admin server reads its cookies, so we can set Domain to be the admin server's sub-domain (e.g. admin.statsparrot.com).
 	// That is automatically accomplished when Domain is not set.
 	cookieStore.Options.Domain = ""
 
 	// We need to protect against CSRF and clickjacking attacks, but still support requests from the UI to the admin service.
 	// This is accomplished by setting SameSite=Lax (note that "site" just means the same root domain, not sub-domain).
-	// For example, cookies will be passed on requests from ui.rilldata.com to admin.rilldata.com (or localhost:3000 to localhost:8080),
-	// but not for requests from a different site AND NOT from an iframe of ui.rilldata.com on a different site.
+	// For example, cookies will be passed on requests from ui.statsparrot.com to admin.statsparrot.com (or localhost:3000 to localhost:8080),
+	// but not for requests from a different site AND NOT from an iframe of ui.statsparrot.com on a different site.
 	//
 	// Note: We use Lax instead of Strict because we need cookies to be passed on redirects to the admin service from external providers, namely Auth0 and Github.
 	//
@@ -189,11 +189,11 @@ func (s *Server) HTTPHandler(ctx context.Context) (http.Handler, error) {
 	// Prepare CORS config.
 	// We currently only add CORS config on the transcoder and runtime proxy handlers.
 	// Other endpoints here don't need CORS config because they should not be used in cross-origin browser requests.
-	transcoderCORSMiddleware := cors.New(newCORSOptions(s.opts.AllowedOrigins, true)).Handler // Allow cookies for calls from ui.rilldata.com to admin.rilldata.com
+	transcoderCORSMiddleware := cors.New(newCORSOptions(s.opts.AllowedOrigins, true)).Handler // Allow cookies for calls from ui.statsparrot.com to admin.statsparrot.com
 	runtimeProxyCORSMiddleware := cors.New(newCORSOptions([]string{"*"}, false)).Handler      // Allow any origin but no cookies. In the longer term, we should add explicit domain allowlisting per org or project.
 
 	// Add gRPC and gRPC-to-REST transcoder.
-	// This will be the fallback for REST routes like `/v1/ping` and GPRC routes like `/rill.admin.v1.AdminService/Ping`.
+	// This will be the fallback for REST routes like `/v1/ping` and GPRC routes like `/statsparrot.admin.v1.AdminService/Ping`.
 	var transcoder http.Handler
 	transcoder, err := vanguardgrpc.NewTranscoder(grpcServer)
 	if err != nil {
@@ -206,9 +206,9 @@ func (s *Server) HTTPHandler(ctx context.Context) (http.Handler, error) {
 	mux.Handle("/v1/users/current", s.authenticator.CookieRefreshMiddleware(transcoder))
 
 	mux.Handle("/v1/", transcoder)
-	mux.Handle("/rill.admin.v1.AdminService/", transcoder)
-	mux.Handle("/rill.admin.v1.AIService/", transcoder)
-	mux.Handle("/rill.admin.v1.TelemetryService/", transcoder)
+	mux.Handle("/statsparrot.admin.v1.AdminService/", transcoder)
+	mux.Handle("/statsparrot.admin.v1.AIService/", transcoder)
+	mux.Handle("/statsparrot.admin.v1.TelemetryService/", transcoder)
 
 	// Add runtime proxy.
 	proxyHandler := observability.Middleware(
@@ -361,7 +361,7 @@ func (s *Server) checkRateLimit(ctx context.Context) (context.Context, error) {
 	}
 
 	limit := ratelimit.Default
-	if strings.HasPrefix(method, "/rill.admin.v1.AIService") {
+	if strings.HasPrefix(method, "/statsparrot.admin.v1.AIService") {
 		limit = ratelimit.Sensitive
 	}
 
@@ -425,11 +425,11 @@ func (s *Server) jwtAttributesForService(ctx context.Context, serviceID string, 
 }
 
 func timeoutSelector(fullMethodName string) time.Duration {
-	if strings.HasPrefix(fullMethodName, "/rill.admin.v1.AIService") {
+	if strings.HasPrefix(fullMethodName, "/statsparrot.admin.v1.AIService") {
 		// NOTE: The runtime usually sets a lower timeout through its AILLMTimeoutSeconds config, so this is more of a hard upper bound.
 		return time.Minute * 10
 	}
-	if fullMethodName == "/rill.admin.v1.AdminService/DeleteProject" {
+	if fullMethodName == "/statsparrot.admin.v1.AdminService/DeleteProject" {
 		return time.Minute * 4
 	}
 	return time.Minute
@@ -480,13 +480,13 @@ func mapGRPCError(err error) error {
 	return status.Error(codes.Internal, err.Error())
 }
 
-// checkUserAgent is an interceptor that checks rejects from requests from old versions of the Rill CLI.
+// checkUserAgent is an interceptor that checks rejects from requests from old versions of the Parrot CLI.
 func checkUserAgent(ctx context.Context) (context.Context, error) {
 	userAgent := strings.Split(metautils.ExtractIncoming(ctx).Get("user-agent"), " ")
 	var ver string
 	for _, s := range userAgent {
-		if strings.HasPrefix(s, "rill-cli/") {
-			ver = strings.TrimPrefix(s, "rill-cli/")
+		if strings.HasPrefix(s, "statsparrot-cli/") {
+			ver = strings.TrimPrefix(s, "statsparrot-cli/")
 		}
 	}
 
@@ -497,7 +497,7 @@ func checkUserAgent(ctx context.Context) (context.Context, error) {
 
 	v, err := version.NewVersion(ver)
 	if err != nil {
-		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("could not parse rill-cli version: %s", err.Error()))
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("could not parse statsparrot-cli version: %s", err.Error()))
 	}
 
 	method, _ := grpc.Method(ctx)
@@ -507,7 +507,7 @@ func checkUserAgent(ctx context.Context) (context.Context, error) {
 	}
 
 	if v.LessThan(minVersion) {
-		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("Rill %s is no longer supported for this operation, run `rill upgrade` to upgrade to the latest version", v))
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("Parrot %s is no longer supported for this operation, run `statsparrot upgrade` to upgrade to the latest version", v))
 	}
 
 	return ctx, nil
@@ -515,7 +515,7 @@ func checkUserAgent(ctx context.Context) (context.Context, error) {
 
 // newCORSOptions creates config for the CORS middleware.
 // It supports passing a wildcard "*" in allowed origins to allow all origins.
-// Pass allowCredentials=true to allow cookies to be sent in CORS requests (necessary for endpoints accessed from ui.rilldata.com).
+// Pass allowCredentials=true to allow cookies to be sent in CORS requests (necessary for endpoints accessed from ui.statsparrot.com).
 func newCORSOptions(allowedOrigins []string, allowCredentials bool) cors.Options {
 	// If the AllowedOrigins contains a "*" we want to return the requester's origin instead of "*" in the "Access-Control-Allow-Origin" header.
 	// This is useful in development. In production, we set AllowedOrigins to non-wildcard values, so this does not have security implications.
@@ -541,7 +541,7 @@ func newCORSOptions(allowedOrigins []string, allowCredentials bool) cors.Options
 			http.MethodDelete,
 		},
 		AllowedHeaders: []string{"*"},
-		// We use cookies for browser sessions, so this must be true on endpoints that ui.rilldata.com access on admin.rilldata.com.
+		// We use cookies for browser sessions, so this must be true on endpoints that ui.statsparrot.com access on admin.statsparrot.com.
 		AllowCredentials: allowCredentials,
 		// Set max age to 1 hour (default if not set is 5 seconds)
 		MaxAge: 60 * 60,

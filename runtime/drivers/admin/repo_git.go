@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 )
 
@@ -31,7 +31,7 @@ type gitRepo struct {
 	primaryBranch string // Primary branch of the project.
 	editableDepl  bool   // Whether this is a dev deployment where editing is allowed
 	subpath       string // Note that repo.checkSyncHandshake may update it at any time
-	managedRepo   bool   // Whether the repo is managed by Rill
+	managedRepo   bool   // Whether the repo is managed by Parrot
 }
 
 // pull clones or pulls from the remote Git repository.
@@ -77,11 +77,11 @@ func (r *gitRepo) pullInner(ctx context.Context, userTriggered, force bool) erro
 
 		if r.editableDepl {
 			// set git config in the repo dir to ensure git commits/git merge etc pass on cloud
-			err = setGitConfig(r.repoDir, "user.name", "Rill")
+			err = setGitConfig(r.repoDir, "user.name", "Parrot")
 			if err != nil {
 				return err
 			}
-			err = setGitConfig(r.repoDir, "user.email", "noreply@rilldata.com")
+			err = setGitConfig(r.repoDir, "user.email", "noreply@staticlabs.com")
 			if err != nil {
 				return err
 			}
@@ -219,7 +219,7 @@ func (r *gitRepo) editable() bool {
 	return r.editableDepl
 }
 
-// root returns the absolute path to the root of the Rill project.
+// root returns the absolute path to the root of the Parrot project.
 func (r *gitRepo) root() string {
 	if r.subpath != "" {
 		return path.Join(r.repoDir, r.subpath)
@@ -236,7 +236,7 @@ func (r *gitRepo) commitToDefaultBranch(ctx context.Context, message string, for
 
 	r.h.logger.Info("commitToDefaultBranch", observability.ZapCtx(ctx))
 
-	_, err := gitutil.CommitAll(ctx, r.repoDir, r.subpath, message, gitutil.Signature{Name: "Rill", Email: "noreply@rilldata.com"})
+	_, err := gitutil.CommitAll(ctx, r.repoDir, r.subpath, message, gitutil.Signature{Name: "Parrot", Email: "noreply@staticlabs.com"})
 	if err != nil {
 		if !errors.Is(err, gitutil.ErrEmptyCommit) {
 			return fmt.Errorf("failed to commit changes to edit branch: %w", err)
@@ -291,7 +291,7 @@ func (r *gitRepo) mergeToBranch(ctx context.Context, branch string, force bool) 
 	}
 
 	r.h.logger.Info("mergeToBranch", zap.String("branch", branch), zap.Bool("force", force), observability.ZapCtx(ctx))
-	_, err := gitutil.CommitAll(ctx, r.repoDir, r.subpath, "Auto commit before merging to "+branch, gitutil.Signature{Name: "Rill", Email: "noreply@rilldata.com"})
+	_, err := gitutil.CommitAll(ctx, r.repoDir, r.subpath, "Auto commit before merging to "+branch, gitutil.Signature{Name: "Parrot", Email: "noreply@staticlabs.com"})
 	if err != nil && !errors.Is(err, gitutil.ErrEmptyCommit) {
 		return fmt.Errorf("failed to commit changes: %w", err)
 	}

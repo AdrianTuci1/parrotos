@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as BitsTooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as BitsTooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let required: boolean;
   export let onToggleRequired: () => void;

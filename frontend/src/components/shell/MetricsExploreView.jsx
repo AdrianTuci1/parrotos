@@ -2,28 +2,28 @@ import { Component, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { readable } from "svelte/store";
 import { useQuery } from "@tanstack/react-query";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
 import {
   StateManagersProvider,
   useStateManagers,
-  useRillExploreState,
-} from "@rilldata/web-common/features/dashboards/state-managers/react";
-import { Filters } from "@rilldata/web-common/features/dashboards/filters/react";
+  useParrotExploreState,
+} from "@statsparrot/web-common/features/dashboards/state-managers/react";
+import { Filters } from "@statsparrot/web-common/features/dashboards/filters/react";
 import {
   getQueryServiceMetricsViewTimeRangeQueryOptions,
   getQueryServiceMetricsViewAggregationQueryOptions,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
-import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
-import MeasureBigNumber from "@rilldata/web-common/features/dashboards/big-number/react/MeasureBigNumber";
-import TimeGrainSelector from "@rilldata/web-common/features/dashboards/time-controls/react/TimeGrainSelector";
-import Leaderboard from "@rilldata/web-common/features/dashboards/leaderboard/react/Leaderboard";
-import DimensionTable from "@rilldata/web-common/features/dashboards/dimension-table/react/DimensionTable";
-import { MetricsViewSelectors } from "@rilldata/web-common/features/metrics-views/metrics-view-selectors";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
-import { SortType } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-import { prepareDimensionTableRows } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-utils";
+} from "@statsparrot/web-common/runtime-client";
+import ChartContainer from "@statsparrot/web-common/features/components/charts/react/ChartContainer";
+import MeasureBigNumber from "@statsparrot/web-common/features/dashboards/big-number/react/MeasureBigNumber";
+import TimeGrainSelector from "@statsparrot/web-common/features/dashboards/time-controls/react/TimeGrainSelector";
+import Leaderboard from "@statsparrot/web-common/features/dashboards/leaderboard/react/Leaderboard";
+import DimensionTable from "@statsparrot/web-common/features/dashboards/dimension-table/react/DimensionTable";
+import { MetricsViewSelectors } from "@statsparrot/web-common/features/metrics-views/metrics-view-selectors";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
+import { SortType } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+import { prepareDimensionTableRows } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-utils";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import { cn } from "@/lib/utils";
 import {
@@ -52,12 +52,12 @@ import "@/styles/explore.css";
 /**
  * React Metrics Explorer / Dashboard.
  *
- * Composes the already-ported Rill React leaf widgets (MeasureBigNumber, Chart /
- * RillChart via ChartContainer, TimeGrainSelector, Leaderboard, DimensionTable) into a
+ * Composes the already-ported Parrot React leaf widgets (MeasureBigNumber, Chart /
+ * ParrotChart via ChartContainer, TimeGrainSelector, Leaderboard, DimensionTable) into a
  * single metrics-explorer surface and feeds them from the product data layer.
  *
  * Two modes (see data/dataSource.js):
- *   - `runtime` — a Rill runtime_url is resolved (e.g. the local `rill start` at
+ *   - `runtime` — a Parrot runtime_url is resolved (e.g. the local `statsparrot start` at
  *     localhost:9009). The app-root RuntimeClientProvider + QueryClientProvider are
  *     already mounted (AppDataProvider), so this view queries a REAL metrics view over
  *     the Go Connect transport. The leaf widgets run their own queries against the
@@ -108,7 +108,7 @@ export function RuntimeMetricsExplorer({ metricsView, searchParams }) {
   const runtimeClient = useRuntimeClient();
   const runtimeHost = resolveDataSource().host;
   const stateManagers = useStateManagers();
-  const { timeRanges } = useRillExploreState({
+  const { timeRanges } = useParrotExploreState({
     exploreName: metricsView,
     metricsViewName: metricsView,
     searchParams,
@@ -195,7 +195,7 @@ export function RuntimeMetricsExplorer({ metricsView, searchParams }) {
       <div className="flex flex-col gap-2 p-4">
         <div className="rounded border border-amber-300/40 bg-amber-300/10 p-3 text-sm text-amber-700 dark:text-amber-300">
           The metrics view <code className="rounded bg-muted px-1">{metricsView}</code>{" "}
-          could not be loaded from the Rill runtime
+          could not be loaded from the Parrot runtime
           {runtimeHost ? ` at ${runtimeHost}` : ""}. Showing demo data instead.
         </div>
         <MockMetricsExplorer metricsView={metricsView} />
@@ -617,7 +617,7 @@ function measurementsFromNames(measures) {
 }
 
 /**
- * Mock explorer — rendered when no Rill runtime_url is configured. Renders the same
+ * Mock explorer — rendered when no Parrot runtime_url is configured. Renders the same
  * explorer surface from the mock adapter (mockAdapter.js) so it stays populated in
  * demo / runtime-less environments.
  */
@@ -651,7 +651,7 @@ export function MockMetricsExplorer({ metricsView }) {
   const hasTimeSeries = Boolean(getMockMetricsView(metricsView)?.timeDimension);
   const primaryMeasure = measures[0]?.name || "total_revenue";
 
-  // Span of the mock time series (Rill's SuperPill shows the selected range).
+  // Span of the mock time series (Parrot's SuperPill shows the selected range).
   const mockTimeRange = useMemo(() => {
     const times = timeSeriesRows.map((r) => r.time).filter(Boolean);
     if (times.length === 0) return { start: "", end: "" };
@@ -661,7 +661,7 @@ export function MockMetricsExplorer({ metricsView }) {
 
   // Pre-aggregate the per-channel time series into daily totals per measure so each
   // area chart renders a clean single-series line (Vega-Lite's transform aggregate
-  // is finicky). This mirrors Rill's left "time series" pane (one big number + chart
+  // is finicky). This mirrors Parrot's left "time series" pane (one big number + chart
   // per measure).
   const dailyByMeasure = useMemo(() => {
     const byMeasure = {};
@@ -704,7 +704,7 @@ export function MockMetricsExplorer({ metricsView }) {
   }, [metricsView]);
 
   // Left "time series" pane is resizable against the right sub-view pane, mirroring
-  // Rill's dashboard EW resizer.
+  // Parrot's dashboard EW resizer.
   const [leftPct, setLeftPct] = useState(46);
   const [resizing, setResizing] = useState(false);
   const startResize = (e) => {
@@ -741,7 +741,7 @@ export function MockMetricsExplorer({ metricsView }) {
     );
   };
 
-  // "Edit with AI": run the mock agent against the selected card. In Rill this routes
+  // "Edit with AI": run the mock agent against the selected card. In Parrot this routes
   // to the developer agent; here it maps prompt intents to card-field patches.
   const handleAiEdit = async (prompt) => {
     const measure = editableMeasures.find((m) => m.name === selectedMeasureName);
@@ -823,7 +823,7 @@ export function MockMetricsExplorer({ metricsView }) {
         </ExploreSafeBoundary>
       ) : null}
 
-      {/* Rill-style dashboard body: left KPI pane + right sub-view pane + inspector. */}
+      {/* Parrot-style dashboard body: left KPI pane + right sub-view pane + inspector. */}
       <div className="mock-explore-shell">
         <div className={cn("mock-explore-split", resizing && "resizing")}>
           <div className="mock-explore-left" style={{ width: `${leftPct}%` }}>
@@ -964,9 +964,9 @@ export function MockMetricsExplorer({ metricsView }) {
 }
 
 /**
- * Rill SuperPill stand-in for the mock filter bar: the time-range pill, a time-grain
+ * Parrot SuperPill stand-in for the mock filter bar: the time-range pill, a time-grain
  * selector, and an "as of" timestamp. Presentational in mock mode (no live query to
- * re-bucket), but mirrors the time-controls row Rill renders above the filters.
+ * re-bucket), but mirrors the time-controls row Parrot renders above the filters.
  */
 function MockTimeControls({ timeStart, timeEnd, timeGrain, onTimeGrainSelect }) {
   return (
@@ -1007,7 +1007,7 @@ function MockTimeControls({ timeStart, timeEnd, timeGrain, onTimeGrainSelect }) 
   );
 }
 
-/** Rill `Calendar.svelte` icon stand-in. */
+/** Parrot `Calendar.svelte` icon stand-in. */
 function CalendarIcon({ size = "16px", className = "" }) {
   return (
     <svg

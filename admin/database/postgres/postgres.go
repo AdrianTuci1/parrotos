@@ -19,7 +19,7 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgtype"
 	"github.com/jmoiron/sqlx"
-	"github.com/rilldata/rill/admin/database"
+	"github.com/staticlabs/statsparrot/admin/database"
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 
 	// Load postgres driver
@@ -306,13 +306,13 @@ func (c *connection) FindProjectsForUser(ctx context.Context, userID string) ([]
 // FindProjectsForUserAndFingerprint returns projects for the user based on fingerprint.
 // The fingerprint is simply git_remote + subpath for git based projects.
 // For archive projects it is directory_name.
-func (c *connection) FindProjectsForUserAndFingerprint(ctx context.Context, userID, directoryName, gitRemote, subpath, rillMgdRemote string) ([]*database.Project, error) {
+func (c *connection) FindProjectsForUserAndFingerprint(ctx context.Context, userID, directoryName, gitRemote, subpath, statsparrotMgdRemote string) ([]*database.Project, error) {
 	// Shouldn't happen, but just to be safe and not return all projects.
 	if directoryName == "" && gitRemote == "" {
 		return nil, nil
 	}
 
-	args := []any{userID, directoryName, gitRemote, subpath, rillMgdRemote}
+	args := []any{userID, directoryName, gitRemote, subpath, statsparrotMgdRemote}
 	qry := `
 		SELECT p.* FROM projects p
 		WHERE p.id IN (

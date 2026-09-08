@@ -1,5 +1,5 @@
 <script>
-  import TopToBottomGradient from "@rilldata/web-common/components/icons/TopToBottomGradient.svelte";
+  import TopToBottomGradient from "@statsparrot/web-common/components/icons/TopToBottomGradient.svelte";
 
   export let size = "1em";
   export let color = "currentColor";

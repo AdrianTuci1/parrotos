@@ -3,7 +3,7 @@ package metricsview
 import (
 	"time"
 
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
 )
 
 // ResolveMaxQueryTimeRange resolves a metrics view's max_query_time_range property to a duration relative to now.
@@ -12,11 +12,11 @@ func ResolveMaxQueryTimeRange(maxQueryTimeRange string, now time.Time) time.Dura
 	if maxQueryTimeRange == "" {
 		return 0
 	}
-	expr, err := rilltime.Parse(maxQueryTimeRange, rilltime.ParseOptions{})
+	expr, err := statspartime.Parse(maxQueryTimeRange, statspartime.ParseOptions{})
 	if err != nil {
 		return 0
 	}
-	start, end, _ := expr.Eval(rilltime.EvalOptions{
+	start, end, _ := expr.Eval(statspartime.EvalOptions{
 		Now:       now,
 		MinTime:   now,
 		MaxTime:   now,

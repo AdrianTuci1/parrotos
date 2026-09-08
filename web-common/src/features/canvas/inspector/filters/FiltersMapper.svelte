@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { LeaderboardSpec } from "@rilldata/web-common/features/canvas/components/leaderboard";
-  import DimensionFiltersInput from "@rilldata/web-common/features/canvas/inspector/filters/DimensionFiltersInput.svelte";
-  import TimeFiltersInput from "@rilldata/web-common/features/canvas/inspector/filters/TimeFiltersInput.svelte";
+  import type { LeaderboardSpec } from "@statsparrot/web-common/features/canvas/components/leaderboard";
+  import DimensionFiltersInput from "@statsparrot/web-common/features/canvas/inspector/filters/DimensionFiltersInput.svelte";
+  import TimeFiltersInput from "@statsparrot/web-common/features/canvas/inspector/filters/TimeFiltersInput.svelte";
   import type { BaseCanvasComponent } from "../../components/BaseCanvasComponent";
   import type { ComponentSpec } from "../../components/types";
   import type { AllKeys, FilterInputParam } from "../types";

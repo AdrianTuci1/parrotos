@@ -1,11 +1,11 @@
-import { ADMIN_URL } from "@rilldata/web-admin/client/http-client";
-import type { MetricsEvent } from "@rilldata/web-common/metrics/service/MetricsTypes";
-import type { TelemetryClient } from "@rilldata/web-common/metrics/service/RillIntakeClient";
+import { ADMIN_URL } from "@statsparrot/web-admin/client/http-client";
+import type { MetricsEvent } from "@statsparrot/web-common/metrics/service/MetricsTypes";
+import type { TelemetryClient } from "@statsparrot/web-common/metrics/service/ParrotIntakeClient";
 
 const BATCH_SIZE = 10;
 const BATCH_TIMEOUT_MS = 30 * 1000; // 30 seconds
 
-export class RillAdminTelemetryClient implements TelemetryClient {
+export class ParrotAdminTelemetryClient implements TelemetryClient {
   private eventQueue: MetricsEvent[] = [];
   private batchTimer: ReturnType<typeof setTimeout> | null = null;
 

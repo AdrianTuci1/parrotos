@@ -4,7 +4,7 @@ import {
   convertPromptValueToContext,
   convertContextToInlinePrompt,
   normalizeInlineContext,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
 import { describe, it, expect } from "vitest";
 
 describe("should convert to and from inline prompt", () => {

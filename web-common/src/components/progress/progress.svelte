@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import { Progress as ProgressPrimitive } from "bits-ui";
 
   type $$Props = ProgressPrimitive.RootProps;

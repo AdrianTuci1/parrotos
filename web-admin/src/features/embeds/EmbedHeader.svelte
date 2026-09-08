@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { isErrorStoreEmpty } from "@rilldata/web-admin/components/errors/error-store";
-  import BreadcrumbItem from "@rilldata/web-common/components/navigation/breadcrumbs/BreadcrumbItem.svelte";
-  import TwoTieredBreadcrumbItem from "@rilldata/web-common/components/navigation/breadcrumbs/TwoTieredBreadcrumbItem.svelte";
-  import { useValidDashboards } from "@rilldata/web-common/features/dashboards/selectors";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import LastRefreshedDate from "@rilldata/web-admin/features/dashboards/listing/LastRefreshedDate.svelte";
-  import ChatToggle from "@rilldata/web-common/features/chat/layouts/sidebar/ChatToggle.svelte";
+  import { isErrorStoreEmpty } from "@statsparrot/web-admin/components/errors/error-store";
+  import BreadcrumbItem from "@statsparrot/web-common/components/navigation/breadcrumbs/BreadcrumbItem.svelte";
+  import TwoTieredBreadcrumbItem from "@statsparrot/web-common/components/navigation/breadcrumbs/TwoTieredBreadcrumbItem.svelte";
+  import { useValidDashboards } from "@statsparrot/web-common/features/dashboards/selectors";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import LastRefreshedDate from "@statsparrot/web-admin/features/dashboards/listing/LastRefreshedDate.svelte";
+  import ChatToggle from "@statsparrot/web-common/features/chat/layouts/sidebar/ChatToggle.svelte";
   import {
     dashboardChatActions,
     dashboardChatOpen,
-  } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store";
+  } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store";
   import type {
     V1Resource,
     V1ResourceName,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let activeResource: V1ResourceName;
   export let navigationBarEnabled: boolean = true;

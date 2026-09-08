@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
 import { assemblePdf, TITLE_BAND_PT } from "./assemble";
 import { captureCanvasBlocks } from "./capture";
 import { buildPdfFilename } from "./filename";

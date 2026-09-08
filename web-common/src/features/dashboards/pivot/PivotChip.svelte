@@ -1,16 +1,16 @@
 <script context="module" lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-  import type { AvailableTimeGrain } from "@rilldata/web-common/lib/time/types";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+  import type { AvailableTimeGrain } from "@statsparrot/web-common/lib/time/types";
   import type { PivotChipData } from "./types";
   import { PivotChipType } from "./types";
 </script>
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { translateGrainName } from "@rilldata/web-common/lib/time/new-grains";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { translateGrainName } from "@statsparrot/web-common/lib/time/new-grains";
 
   export let item: PivotChipData;
   export let removable = false;

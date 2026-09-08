@@ -3,9 +3,9 @@ package ai_test
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,7 +23,7 @@ func TestListBucketObjects(t *testing.T) {
 		var res *ai.ListBucketObjectsResult
 		_, err := s.CallTool(t.Context(), ai.RoleUser, ai.ListBucketObjectsName, &res, &ai.ListBucketObjectsArgs{
 			Connector: "s3",
-			Bucket:    "integration-test.rilldata.com",
+			Bucket:    "integration-test.statsparrot.com",
 		})
 		require.NoError(t, err)
 		require.NotNil(t, res)
@@ -35,7 +35,7 @@ func TestListBucketObjects(t *testing.T) {
 		var res *ai.ListBucketObjectsResult
 		_, err := s.CallTool(t.Context(), ai.RoleUser, ai.ListBucketObjectsName, &res, &ai.ListBucketObjectsArgs{
 			Connector: "s3",
-			Bucket:    "integration-test.rilldata.com",
+			Bucket:    "integration-test.statsparrot.com",
 			Path:      "glob_test/",
 		})
 		require.NoError(t, err)
@@ -75,7 +75,7 @@ func TestListBucketObjects(t *testing.T) {
 		var res *ai.ListBucketObjectsResult
 		_, err := s.CallTool(t.Context(), ai.RoleUser, ai.ListBucketObjectsName, &res, &ai.ListBucketObjectsArgs{
 			Connector: "s3",
-			Bucket:    "integration-test.rilldata.com",
+			Bucket:    "integration-test.statsparrot.com",
 			Path:      "glob_test/y=*",
 			PageSize:  100,
 		})
@@ -93,7 +93,7 @@ func TestListBucketObjects(t *testing.T) {
 		var res *ai.ListBucketObjectsResult
 		_, err := s.CallTool(t.Context(), ai.RoleUser, ai.ListBucketObjectsName, &res, &ai.ListBucketObjectsArgs{
 			Connector: "s3",
-			Bucket:    "integration-test.rilldata.com",
+			Bucket:    "integration-test.statsparrot.com",
 			Path:      "glob_test/y=*/*.csv",
 			PageSize:  100,
 		})
@@ -111,7 +111,7 @@ func TestListBucketObjects(t *testing.T) {
 		var res *ai.ListBucketObjectsResult
 		_, err := s.CallTool(t.Context(), ai.RoleUser, ai.ListBucketObjectsName, &res, &ai.ListBucketObjectsArgs{
 			Connector: "s3",
-			Bucket:    "integration-test.rilldata.com",
+			Bucket:    "integration-test.statsparrot.com",
 			Path:      "glob_test/y=999*/*.csv",
 			PageSize:  100,
 		})

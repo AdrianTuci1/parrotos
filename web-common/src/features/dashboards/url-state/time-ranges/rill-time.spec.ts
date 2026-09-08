@@ -1,21 +1,21 @@
 import {
-  overrideRillTimeRef,
-  parseRillTime,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
+  overrideParrotTimeRef,
+  parseParrotTime,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
 import {
   capitalizeFirstChar,
-  type RillTimeAsOfLabel,
-  RillTimeLabel,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/RillTime.ts";
+  type ParrotTimeAsOfLabel,
+  ParrotTimeLabel,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/ParrotTime.ts";
 import {
   getLowerOrderGrain,
   GrainAliasToV1TimeGrain,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import type { DateTimeUnit } from "luxon";
 import nearley from "nearley";
 import { describe, expect, it } from "vitest";
-import grammar from "./rill-time.js";
+import grammar from "./statsparrot-time.js";
 
 const GRAINS = ["Y", "Q", "M", "W", "D", "H", "m", "s"] as const;
 const GRAIN_TO_LUXON: Record<string, DateTimeUnit> = {
@@ -148,39 +148,39 @@ function getLegacyISOTestCases(): TestCase[] {
 
 function getLegacyDAXTestCases(): TestCase[] {
   return [
-    ["rill-TD", "Today", false, V1TimeGrain.TIME_GRAIN_HOUR, undefined],
-    ["rill-WTD", "Week to Date", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
+    ["statsparrot-TD", "Today", false, V1TimeGrain.TIME_GRAIN_HOUR, undefined],
+    ["statsparrot-WTD", "Week to Date", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
     [
-      "rill-QTD",
+      "statsparrot-QTD",
       "Quarter to Date",
       false,
       V1TimeGrain.TIME_GRAIN_WEEK,
       undefined,
     ],
-    ["rill-MTD", "Month to Date", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
-    ["rill-YTD", "Year to Date", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
+    ["statsparrot-MTD", "Month to Date", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
+    ["statsparrot-YTD", "Year to Date", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
 
-    ["rill-PDC", "Yesterday", false, V1TimeGrain.TIME_GRAIN_HOUR, undefined],
-    ["rill-PWC", "Previous week", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
+    ["statsparrot-PDC", "Yesterday", false, V1TimeGrain.TIME_GRAIN_HOUR, undefined],
+    ["statsparrot-PWC", "Previous week", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
     [
-      "rill-PQC",
+      "statsparrot-PQC",
       "Previous quarter",
       false,
       V1TimeGrain.TIME_GRAIN_DAY,
       undefined,
     ],
     [
-      "rill-PMC",
+      "statsparrot-PMC",
       "Previous month",
       false,
       V1TimeGrain.TIME_GRAIN_DAY,
       undefined,
     ],
-    ["rill-PYC", "Previous year", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
+    ["statsparrot-PYC", "Previous year", false, V1TimeGrain.TIME_GRAIN_DAY, undefined],
   ];
 }
 
-describe("rill time", () => {
+describe("statsparrot time", () => {
   describe("positive cases", () => {
     const Cases: TestCase[] = [
       ...getSinglePeriodTestCases(),
@@ -223,79 +223,79 @@ describe("rill time", () => {
     ];
 
     const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
-    for (const [rillTime, label, complete, rangeGrain, byGrain] of Cases) {
-      it(rillTime, () => {
+    for (const [statsparrotTime, label, complete, rangeGrain, byGrain] of Cases) {
+      it(statsparrotTime, () => {
         const parser = new nearley.Parser(compiledGrammar);
-        parser.feed(rillTime);
+        parser.feed(statsparrotTime);
         // assert that there is only match. this ensures unambiguous grammar.
         expect(parser.results).length(1);
 
-        const rt = parseRillTime(rillTime);
+        const rt = parseParrotTime(statsparrotTime);
         expect(rt).not.toBeUndefined();
         expect(rt.getLabel()).toEqual(label);
         expect(rt.isComplete).toEqual(complete);
         expect(rt.rangeGrain).toEqual(rangeGrain);
         expect(rt.byGrain).toEqual(byGrain);
 
-        const serialisedRillTime = rt.toString();
-        const newRt = parseRillTime(serialisedRillTime);
-        expect(newRt.toString()).toEqual(serialisedRillTime);
+        const serialisedParrotTime = rt.toString();
+        const newRt = parseParrotTime(serialisedParrotTime);
+        expect(newRt.toString()).toEqual(serialisedParrotTime);
       });
     }
   });
 
   describe("override ref", () => {
     const Cases: [
-      rillTime: string,
+      statsparrotTime: string,
       refOverride: string,
-      updatedRillTime: string,
+      updatedParrotTime: string,
     ][] = [
       ["7D AS OF watermark/Y", "watermark/Y+1Y", "7D AS OF watermark/Y+1Y"],
       ["7D AS OF watermark/Y+1Y", "watermark/Y", "7D AS OF watermark/Y"],
       ["7D AS OF watermark/Y", "now/Y", "7D AS OF now/Y"],
     ];
 
-    for (const [rillTime, refOverride, updatedRillTime] of Cases) {
-      it(`${rillTime} <> ${refOverride}`, () => {
-        const rt = parseRillTime(rillTime);
-        overrideRillTimeRef(rt, refOverride);
-        expect(rt.toString(), updatedRillTime);
+    for (const [statsparrotTime, refOverride, updatedParrotTime] of Cases) {
+      it(`${statsparrotTime} <> ${refOverride}`, () => {
+        const rt = parseParrotTime(statsparrotTime);
+        overrideParrotTimeRef(rt, refOverride);
+        expect(rt.toString(), updatedParrotTime);
       });
     }
   });
 
   describe("as of label", () => {
     const Cases: [
-      rillTime: string,
-      asOfLabel: RillTimeAsOfLabel | undefined,
+      statsparrotTime: string,
+      asOfLabel: ParrotTimeAsOfLabel | undefined,
     ][] = [
       ["7D", undefined],
       ["7D as of -2D", undefined],
       [
         "7D as of -2D as of watermark",
-        { label: RillTimeLabel.Watermark, snap: undefined, offset: 0 },
+        { label: ParrotTimeLabel.Watermark, snap: undefined, offset: 0 },
       ],
       [
         "7D as of -2D as of watermark/D",
-        { label: RillTimeLabel.Watermark, snap: "D", offset: 0 },
+        { label: ParrotTimeLabel.Watermark, snap: "D", offset: 0 },
       ],
       [
         "7D as of -2D as of watermark/D+1D",
-        { label: RillTimeLabel.Watermark, snap: "D", offset: 1 },
+        { label: ParrotTimeLabel.Watermark, snap: "D", offset: 1 },
       ],
       [
         "7D as of -2D as of watermark/D+1h",
-        { label: RillTimeLabel.Watermark, snap: "D", offset: 0 },
+        { label: ParrotTimeLabel.Watermark, snap: "D", offset: 0 },
       ],
       [
         "7D as of -2D as of watermark/h+1h",
-        { label: RillTimeLabel.Watermark, snap: "h", offset: 1 },
+        { label: ParrotTimeLabel.Watermark, snap: "h", offset: 1 },
       ],
     ];
 
-    for (const [rillTime, asOfLabel] of Cases) {
-      it(rillTime, () => {
-        const rt = parseRillTime(rillTime);
+    for (const [statsparrotTime, asOfLabel] of Cases) {
+      it(statsparrotTime, () => {
+        const rt = parseParrotTime(statsparrotTime);
         expect(rt.asOfLabel).toEqual(asOfLabel);
       });
     }

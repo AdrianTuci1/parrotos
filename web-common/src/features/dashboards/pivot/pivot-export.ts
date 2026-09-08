@@ -1,16 +1,16 @@
-import { getDimensionForTimeField } from "@rilldata/web-common/features/dashboards/aggregation-request/dimension-utils.ts";
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { mapSelectedTimeRangeToV1TimeRange } from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers";
-import { type TimeRangeString } from "@rilldata/web-common/lib/time/types";
+import { getDimensionForTimeField } from "@statsparrot/web-common/features/dashboards/aggregation-request/dimension-utils.ts";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { mapSelectedTimeRangeToV1TimeRange } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers";
+import { type TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import {
   type V1MetricsViewAggregationRequest,
   type V1MetricsViewAggregationSort,
   type V1Query,
   type V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 import type { StateManagers } from "../state-managers/state-managers";
 import { getPivotConfig } from "./pivot-data-config";

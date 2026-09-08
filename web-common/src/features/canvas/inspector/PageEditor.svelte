@@ -1,41 +1,41 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import TagInput from "@rilldata/web-common/components/forms/TagInput.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { getParsedDocument } from "@rilldata/web-common/features/canvas/inspector/selectors";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import ZoneDisplay from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components/ZoneDisplay.svelte";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import TagInput from "@statsparrot/web-common/components/forms/TagInput.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { getParsedDocument } from "@statsparrot/web-common/features/canvas/inspector/selectors";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import ZoneDisplay from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components/ZoneDisplay.svelte";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
   import {
     ResourceKind,
     useFilteredResources,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import MultiSelectInput from "@rilldata/web-common/features/visual-editing/MultiSelectInput.svelte";
-  import SidebarWrapper from "@rilldata/web-common/features/visual-editing/SidebarWrapper.svelte";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import MultiSelectInput from "@statsparrot/web-common/features/visual-editing/MultiSelectInput.svelte";
+  import SidebarWrapper from "@statsparrot/web-common/features/visual-editing/SidebarWrapper.svelte";
   import {
     getResourceTagSuggestions,
     normalizeTags,
     readRootYamlTags,
-  } from "@rilldata/web-common/features/visual-editing/tag-utils";
-  import ThemeInput from "@rilldata/web-common/features/visual-editing/ThemeInput.svelte";
+  } from "@statsparrot/web-common/features/visual-editing/tag-utils";
+  import ThemeInput from "@statsparrot/web-common/features/visual-editing/ThemeInput.svelte";
   import {
     DEFAULT_RANGES,
     isString,
     numberGuard,
     stringGuard,
-  } from "@rilldata/web-common/features/workspaces/visual-util";
+  } from "@statsparrot/web-common/features/workspaces/visual-util";
   import {
     DEFAULT_TIME_RANGES,
     DEFAULT_TIMEZONES,
-  } from "@rilldata/web-common/lib/time/config";
-  import { allTimeZones } from "@rilldata/web-common/lib/time/timezone";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/time/config";
+  import { allTimeZones } from "@statsparrot/web-common/lib/time/timezone";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createRuntimeServiceGetInstance,
     createRuntimeServiceListResources,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { YAMLMap, YAMLSeq } from "yaml";
   import { DEFAULT_DASHBOARD_WIDTH } from "../layout-util";
 
@@ -175,7 +175,7 @@
   {#if currentTab === "options"}
     <div class="page-param">
       <Input
-        hint="Shown in global header and when deployed to Rill Cloud"
+        hint="Shown in global header and when deployed to Parrot Cloud"
         capitalizeLabel={false}
         size="sm"
         labelGap={2}

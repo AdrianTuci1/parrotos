@@ -3,9 +3,9 @@ import { getMockFileContent } from "@/data/mockFileContents";
 import "@/styles/file-view.css";
 
 /**
- * Rill-style file content viewer for the `/files/{filePath}` route.
+ * Parrot-style file content viewer for the `/files/{filePath}` route.
  *
- * Rill opens a project file in a CodeMirror editor (SQL, YAML, Markdown) or, for
+ * Parrot opens a project file in a CodeMirror editor (SQL, YAML, Markdown) or, for
  * data files such as CSV, a preview. In mock mode there is no runtime editor, so
  * this renders the file's content from the mock project (see mockFileContents.js)
  * in a light editor chrome: a header with the breadcrumb path + a file-type badge,

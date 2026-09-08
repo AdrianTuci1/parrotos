@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Pivot from "@rilldata/web-common/components/icons/Pivot.svelte";
-  import { modifierHeld } from "@rilldata/web-common/lib/modifier-key";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Pivot from "@statsparrot/web-common/components/icons/Pivot.svelte";
+  import { modifierHeld } from "@statsparrot/web-common/lib/modifier-key";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { slide } from "svelte/transition";
   import { dragDataStore } from "./DragList.svelte";
   import type { PivotChipData } from "./types";

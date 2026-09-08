@@ -1,25 +1,25 @@
 import { goto } from "$app/navigation";
 import { page } from "$app/stores";
-import { DashboardStateDataLoader } from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateDataLoader";
-import { saveMostRecentPartialExploreState } from "@rilldata/web-common/features/dashboards/state-managers/loaders/most-recent-explore-state";
+import { DashboardStateDataLoader } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateDataLoader";
+import { saveMostRecentPartialExploreState } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/most-recent-explore-state";
 import {
   metricsExplorerStore,
   useExploreState,
-} from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { resolveTimeRanges } from "@rilldata/web-common/features/dashboards/time-controls/rill-time-ranges";
+} from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { resolveTimeRanges } from "@statsparrot/web-common/features/dashboards/time-controls/statsparrot-time-ranges";
 import {
   createTimeControlStoreFromName,
   type TimeControlStore,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { updateExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store";
-import { getCleanedUrlParamsForGoto } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
-import { createRillDefaultExploreUrlParams } from "@rilldata/web-common/features/dashboards/url-state/get-rill-default-explore-url-params";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { updateExploreSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store";
+import { getCleanedUrlParamsForGoto } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
+import { createParrotDefaultExploreUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/get-statsparrot-default-explore-url-params";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { AfterNavigate } from "@sveltejs/kit";
 import { getContext, setContext } from "svelte";
 import { derived, get, type Readable } from "svelte/store";
-import type { CompoundQueryResult } from "@rilldata/web-common/features/compound-query-result";
+import type { CompoundQueryResult } from "@statsparrot/web-common/features/compound-query-result";
 
 export const DASHBOARD_STATE_SYNC_KEY = Symbol("state-sync");
 
@@ -32,9 +32,9 @@ export const DASHBOARD_STATE_SYNC_KEY = Symbol("state-sync");
 export class DashboardStateSync {
   private readonly exploreStore: Readable<ExploreState | undefined>;
   private readonly timeControlStore: TimeControlStore;
-  // Cached url params for a rill opinionated dashboard defaults. Used to remove params from url.
+  // Cached url params for a statsparrot opinionated dashboard defaults. Used to remove params from url.
   // To avoid converting the default explore state to url evey time it is needed we maintain a cached version here.
-  private readonly rillDefaultExploreURLParams: CompoundQueryResult<URLSearchParams>;
+  private readonly statsparrotDefaultExploreURLParams: CompoundQueryResult<URLSearchParams>;
 
   private readonly unsubInit: (() => void) | undefined;
   private readonly unsubExploreState: (() => void) | undefined;
@@ -62,7 +62,7 @@ export class DashboardStateSync {
       exploreName,
     );
 
-    this.rillDefaultExploreURLParams = createRillDefaultExploreUrlParams(
+    this.statsparrotDefaultExploreURLParams = createParrotDefaultExploreUrlParams(
       dataLoader.validSpecQuery,
       dataLoader.fullTimeRangeQuery,
     );
@@ -99,11 +99,11 @@ export class DashboardStateSync {
     const exploreSpec = validSpecData?.explore ?? {};
     const metricsViewSpec = validSpecData?.metricsView ?? {};
     const pageState = get(page);
-    const { data: rillDefaultExploreURLParams } = get(
-      this.rillDefaultExploreURLParams,
+    const { data: statsparrotDefaultExploreURLParams } = get(
+      this.statsparrotDefaultExploreURLParams,
     );
     // Type-safety
-    if (!rillDefaultExploreURLParams) return pageState.url;
+    if (!statsparrotDefaultExploreURLParams) return pageState.url;
 
     const timeControlsState = get(this.timeControlStore);
 
@@ -113,7 +113,7 @@ export class DashboardStateSync {
       metricsViewSpec,
       exploreState,
       timeControlsState,
-      rillDefaultExploreURLParams,
+      statsparrotDefaultExploreURLParams,
       pageState.url,
     );
 
@@ -133,12 +133,12 @@ export class DashboardStateSync {
     const { data: validSpecData } = get(this.dataLoader.validSpecQuery);
     const metricsViewSpec = validSpecData?.metricsView ?? {};
     const exploreSpec = validSpecData?.explore ?? {};
-    const { data: rillDefaultExploreURLParams } = get(
-      this.rillDefaultExploreURLParams,
+    const { data: statsparrotDefaultExploreURLParams } = get(
+      this.statsparrotDefaultExploreURLParams,
     );
 
     // Ensure dashboard data is loaded before we proceed.
-    if (!rillDefaultExploreURLParams) return;
+    if (!statsparrotDefaultExploreURLParams) return;
 
     const pageState = get(page);
 
@@ -216,12 +216,12 @@ export class DashboardStateSync {
     const { data: validSpecData } = get(this.dataLoader.validSpecQuery);
     const metricsViewSpec = validSpecData?.metricsView ?? {};
     const exploreSpec = validSpecData?.explore ?? {};
-    const { data: rillDefaultExploreURLParams } = get(
-      this.rillDefaultExploreURLParams,
+    const { data: statsparrotDefaultExploreURLParams } = get(
+      this.statsparrotDefaultExploreURLParams,
     );
 
     // Type-safety
-    if (!rillDefaultExploreURLParams) return;
+    if (!statsparrotDefaultExploreURLParams) return;
 
     const partialExplore = this.dataLoader.getExploreStateFromURLParams(
       urlSearchParams,

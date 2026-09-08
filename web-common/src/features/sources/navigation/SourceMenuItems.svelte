@@ -1,28 +1,28 @@
 <script lang="ts">
-  import CanvasIcon from "@rilldata/web-common/components/icons/CanvasIcon.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import Import from "@rilldata/web-common/components/icons/Import.svelte";
-  import Model from "@rilldata/web-common/components/icons/Model.svelte";
-  import RefreshIcon from "@rilldata/web-common/components/icons/RefreshIcon.svelte";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry";
-  import { openResourceGraphQuickView } from "@rilldata/web-common/features/resource-graph/quick-view/quick-view-store";
+  import CanvasIcon from "@statsparrot/web-common/components/icons/CanvasIcon.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import Import from "@statsparrot/web-common/components/icons/Import.svelte";
+  import Model from "@statsparrot/web-common/components/icons/Model.svelte";
+  import RefreshIcon from "@statsparrot/web-common/components/icons/RefreshIcon.svelte";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { getScreenNameFromPage } from "@statsparrot/web-common/features/file-explorer/telemetry";
+  import { openResourceGraphQuickView } from "@statsparrot/web-common/features/resource-graph/quick-view/quick-view-store";
   import {
     useIsLocalFileConnector,
     useSourceFromYaml,
-  } from "@rilldata/web-common/features/sources/selectors";
-  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
-  import { overlay } from "@rilldata/web-common/layout/overlay-store";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  } from "@statsparrot/web-common/features/sources/selectors";
+  import NavigationMenuItem from "@statsparrot/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import { overlay } from "@statsparrot/web-common/layout/overlay-store";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes";
-  import type { V1Source } from "@rilldata/web-common/runtime-client";
-  import { V1ReconcileStatus } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes";
+  import type { V1Source } from "@statsparrot/web-common/runtime-client";
+  import { V1ReconcileStatus } from "@statsparrot/web-common/runtime-client";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { GitBranch, WandIcon } from "lucide-svelte";
   import MetricsViewIcon from "../../../components/icons/MetricsViewIcon.svelte";

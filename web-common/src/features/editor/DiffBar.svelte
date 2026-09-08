@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Alert from "@rilldata/web-common/components/icons/Alert.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Alert from "@statsparrot/web-common/components/icons/Alert.svelte";
 
   export let saving: boolean;
   export let errorMessage: string | undefined;

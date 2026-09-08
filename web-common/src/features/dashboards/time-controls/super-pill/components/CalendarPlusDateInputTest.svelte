@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import CalendarPlusDateInput from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components/CalendarPlusDateInput.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import CalendarPlusDateInput from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components/CalendarPlusDateInput.svelte";
   import type { DateTime, Duration, Interval, DateTimeUnit } from "luxon";
 
   /**

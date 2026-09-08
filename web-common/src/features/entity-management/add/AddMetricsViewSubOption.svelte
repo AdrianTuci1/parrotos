@@ -1,15 +1,15 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { getConnectorsWithMetricsViewSupport } from "@rilldata/web-common/features/entity-management/add/selectors.ts";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { getConnectorsWithMetricsViewSupport } from "@statsparrot/web-common/features/entity-management/add/selectors.ts";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
   import {
     connectorClassMapping,
     connectorIconMapping,
-  } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
-  import { createResourceAndNavigate } from "@rilldata/web-common/features/entity-management/add/new-files.ts";
-  import File from "@rilldata/web-common/components/icons/File.svelte";
+  } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
+  import { createResourceAndNavigate } from "@statsparrot/web-common/features/entity-management/add/new-files.ts";
+  import File from "@statsparrot/web-common/components/icons/File.svelte";
 
   export let onSelect: (connector: string) => void;
 

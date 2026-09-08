@@ -4,8 +4,8 @@
     createAdminServiceUpdateProjectVariables,
     getAdminServiceGetProjectVariablesQueryKey,
     type AdminServiceUpdateProjectVariablesBodyVariables,
-  } from "@rilldata/web-admin/client";
-  import { Button } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-admin/client";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     Dialog,
     DialogContent,
@@ -14,10 +14,10 @@
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@rilldata/web-common/components/dialog";
-  import Checkbox from "@rilldata/web-common/components/forms/Checkbox.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-common/components/dialog";
+  import Checkbox from "@statsparrot/web-common/components/forms/Checkbox.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { debounce } from "lodash";
   import { onMount } from "svelte";
@@ -26,7 +26,7 @@
   import { object, string } from "yup";
   import { EnvironmentType, type VariableNames } from "./types";
   import { getCurrentEnvironment, isDuplicateKey } from "./utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open = false;
   export let id: string;
@@ -72,7 +72,7 @@
         .optional()
         .matches(
           /^[a-zA-Z_][a-zA-Z0-9_.]*$/,
-          // See: https://github.com/rilldata/rill/pull/6121/files#diff-04140a6ac071a4bac716371f8b66a56c89c9d52cfbf2b05ea1e14ee8d4e301e7R12
+          // See: https://github.com/staticlabs/statsparrot/pull/6121/files#diff-04140a6ac071a4bac716371f8b66a56c89c9d52cfbf2b05ea1e14ee8d4e301e7R12
           "Key must start with a letter or underscore and can only contain letters, digits, underscores, and dots",
         ),
       value: string().optional(),
@@ -286,7 +286,7 @@
     <DialogDescription>
       {m.env_for_help_see()}
       <a
-        href="https://docs.rilldata.com/guide/administration/project-settings/variables-and-credentials"
+        href="https://docs.statsparrot.com/guide/administration/project-settings/variables-and-credentials"
         target="_blank">{m.env_documentation_link()}</a
       >
     </DialogDescription>

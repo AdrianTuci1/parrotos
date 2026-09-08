@@ -1,22 +1,22 @@
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
 import {
   ResourceKind,
   type UserFacingResourceKinds,
-} from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 import {
   runtimeServicePutFile,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry.ts";
-import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics.ts";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { getScreenNameFromPage } from "@statsparrot/web-common/features/file-explorer/telemetry.ts";
+import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics.ts";
 import {
   BehaviourEventAction,
   BehaviourEventMedium,
-} from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
-import { MetricsEventSpace } from "@rilldata/web-common/metrics/service/MetricsTypes.ts";
+} from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
+import { MetricsEventSpace } from "@statsparrot/web-common/metrics/service/MetricsTypes.ts";
 
 export async function createResourceAndNavigate(
   client: RuntimeClient,
@@ -167,12 +167,12 @@ export function generateBlobForNewResourceFile(
       return ""; // This is constructed in the `features/sources/modal` directory
     case ResourceKind.Model:
       return `-- Model SQL
--- Reference documentation: https://docs.rilldata.com/developers/build/models
+-- Reference documentation: https://docs.statsparrot.com/developers/build/models
 
 SELECT 'Hello, World!' AS Greeting`;
     case ResourceKind.MetricsView:
       return `# Metrics View YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/metrics-views
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/metrics-views
 
 version: 1
 type: metrics_view
@@ -193,7 +193,7 @@ explore:
           baseResource.metricsView?.state?.validSpec?.displayName;
 
         return `# Explore YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/explore-dashboards
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/explore-dashboards
 
 type: explore
 
@@ -205,7 +205,7 @@ measures: '*'
 `;
       }
       return `# Explore YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/explore-dashboards
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/explore-dashboards
 
 type: explore
 
@@ -217,7 +217,7 @@ measures: '*'
 `;
     case ResourceKind.API:
       return `# API YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/apis
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/apis
 # Test your API endpoint at http://localhost:9009/v1/instances/default/api/<filename>
 
 type: api
@@ -227,7 +227,7 @@ metrics_sql: |
 `;
     case ResourceKind.Canvas:
       return `# Explore YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/canvas-dashboards
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/canvas-dashboards
 
 type: canvas
 display_name: "Canvas Dashboard"
@@ -237,7 +237,7 @@ defaults:
 `;
     case ResourceKind.Theme:
       return `# Theme YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/themes
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/themes
 # This example shows a modern "Aurora" theme with indigo/purple gradients
 
 type: theme

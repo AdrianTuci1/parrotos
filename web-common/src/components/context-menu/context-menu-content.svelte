@@ -1,8 +1,8 @@
 <script lang="ts">
   import { ContextMenu as ContextMenuPrimitive } from "bits-ui";
 
-  import { getThemeBoundaryClass } from "@rilldata/web-common/features/themes/theme-boundary";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { getThemeBoundaryClass } from "@statsparrot/web-common/features/themes/theme-boundary";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
 
   type $$Props = ContextMenuPrimitive.ContentProps;
 

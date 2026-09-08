@@ -9,16 +9,16 @@ test.describe("MotherDuck welcome flow", () => {
   test("initializes MotherDuck from welcome screen and persists secrets before connector", async ({
     page,
   }) => {
-    const token = process.env.RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN;
-    const path = process.env.RILL_RUNTIME_MOTHERDUCK_TEST_PATH;
+    const token = process.env.STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN;
+    const path = process.env.STATSPARROT_RUNTIME_MOTHERDUCK_TEST_PATH;
     const schema =
-      process.env.RILL_RUNTIME_MOTHERDUCK_TEST_SCHEMA ??
-      "rilldata_integration_test";
+      process.env.STATSPARROT_RUNTIME_MOTHERDUCK_TEST_SCHEMA ??
+      "staticlabs_integration_test";
 
     if (!token || !path) {
       test.skip(
         true,
-        "RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN or RILL_RUNTIME_MOTHERDUCK_TEST_PATH not configured",
+        "STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN or STATSPARROT_RUNTIME_MOTHERDUCK_TEST_PATH not configured",
       );
     }
 

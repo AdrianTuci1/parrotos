@@ -1,4 +1,4 @@
-module github.com/rilldata/rill
+module github.com/staticlabs/statsparrot
 
 go 1.26.5
 

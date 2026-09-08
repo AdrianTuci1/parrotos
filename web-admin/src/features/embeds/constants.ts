@@ -1,1 +1,1 @@
-export const EmbedStorageNamespacePrefix = "__rill_embed";
+export const EmbedStorageNamespacePrefix = "__statsparrot_embed";

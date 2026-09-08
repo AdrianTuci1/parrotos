@@ -33,7 +33,7 @@ build, so you rarely need to run `build:i18n` manually during development.
 
 ```svelte
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@staticlabs/web-common/lib/i18n/gen/messages";
 </script>
 
 <button>{m.common_cancel()}</button><p>{m.welcome_greeting({ name })}</p>

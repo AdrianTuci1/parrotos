@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/rilldata/rill/admin/database"
+	"github.com/staticlabs/statsparrot/admin/database"
 	"go.uber.org/zap"
 )
 
@@ -65,8 +65,8 @@ type ResourceOptions struct {
 	Args map[string]any
 	// Annotations for the project the resource belongs to.
 	Annotations map[string]string
-	// RillVersion is the current version of Rill.
-	RillVersion string
+	// ParrotVersion is the current version of Parrot.
+	ParrotVersion string
 }
 
 // Resource represents a provisioned resource.

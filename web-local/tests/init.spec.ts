@@ -1,7 +1,7 @@
-import { EXAMPLES } from "@rilldata/web-common/features/welcome/constants";
+import { EXAMPLES } from "@statsparrot/web-common/features/welcome/constants";
 import { expect } from "playwright/test";
 import { test } from "./setup/base";
-import { splitFolderAndFileName } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
+import { splitFolderAndFileName } from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
 import { waitForReconciliation } from "./utils/wait-for-reconciliation";
 
 test.describe("Example project initialization", () => {

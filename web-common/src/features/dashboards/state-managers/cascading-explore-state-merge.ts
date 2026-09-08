@@ -1,4 +1,4 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 
 const ShallowMergeOneLevelDeepKeys = new Set<keyof ExploreState>([
   "selectedComparisonTimeRange",

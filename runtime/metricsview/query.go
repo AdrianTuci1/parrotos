@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/google/jsonschema-go/jsonschema"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/jsonschemautil"
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/jsonschemautil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 )
 
 type Query struct {

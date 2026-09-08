@@ -1,8 +1,8 @@
-import { ContextPickerUIState } from "@rilldata/web-common/features/chat/core/context/picker/ui-state.ts";
+import { ContextPickerUIState } from "@statsparrot/web-common/features/chat/core/context/picker/ui-state.ts";
 import { derived, type Readable } from "svelte/store";
-import { getPickerOptions } from "@rilldata/web-common/features/chat/core/context/picker/data";
-import type { PickerItem } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { getPickerOptions } from "@statsparrot/web-common/features/chat/core/context/picker/data";
+import type { PickerItem } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 /**
  * Creates a store that contains a list of options that match the search text.

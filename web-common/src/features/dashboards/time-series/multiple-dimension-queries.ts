@@ -1,43 +1,43 @@
 import {
   getURIRequestMeasure,
   URI_DIMENSION_SUFFIX,
-} from "@rilldata/web-common/features/dashboards/dashboard-utils";
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { selectedDimensionValues } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+} from "@statsparrot/web-common/features/dashboards/dashboard-utils";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { selectedDimensionValues } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
 import {
   createAndExpression,
   createInExpression,
   filterExpressions,
   sanitiseExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { createBatches } from "@rilldata/web-common/lib/arrayUtils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { createBatches } from "@statsparrot/web-common/lib/arrayUtils";
 import { type Readable, derived } from "svelte/store";
-import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
-import { getDimensionFilterWithSearch } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-utils";
+import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
+import { getDimensionFilterWithSearch } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-utils";
 import {
   SortDirection,
   SortType,
-} from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+} from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   type TimeSeriesDatum,
   createMetricsViewTimeSeries,
-} from "@rilldata/web-common/features/dashboards/time-series/timeseries-data-store";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+} from "@statsparrot/web-common/features/dashboards/time-series/timeseries-data-store";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
 import {
   type V1Expression,
   type V1MetricsViewAggregationMeasure,
   type V1MetricsViewAggregationResponse,
   V1TimeGrain,
   type V1TimeSeriesValue,
-} from "@rilldata/web-common/runtime-client";
-import { createQueryServiceMetricsViewAggregation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
+import { createQueryServiceMetricsViewAggregation } from "@statsparrot/web-common/runtime-client";
 import {
   type CreateQueryResult,
   keepPreviousData,
 } from "@tanstack/svelte-query";
-import { DashboardState_ActivePage } from "../../../proto/gen/rill/ui/v1/dashboard_pb";
+import { DashboardState_ActivePage } from "../../../proto/gen/statsparrot/ui/v1/dashboard_pb";
 import { dimensionSearchText } from "../stores/dashboard-stores";
 import {
   getFilterForComparedDimension,

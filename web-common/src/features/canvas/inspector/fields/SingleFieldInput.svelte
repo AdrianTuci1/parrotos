@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useMetricFieldData } from "../selectors";
 
   const client = useRuntimeClient();

@@ -10,7 +10,7 @@
 import {
   COMPARISON_COLORS,
   SELECTED_NOT_COMPARED_COLOR,
-} from "@rilldata/web-common/features/dashboards/config";
+} from "@statsparrot/web-common/features/dashboards/config";
 import {
   CancelIcon,
   CheckCircleIcon,

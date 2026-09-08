@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 )
 
 // enforceQueryLimits checks that the query adheres to any limits specified in the QueryLimits or on the metrics view spec.
@@ -34,7 +34,7 @@ func (e *Executor) enforceMaxTimeRange(qry *metricsview.Query, tr *metricsview.T
 	if qry.QueryLimits != nil && qry.QueryLimits.MaxTimeRangeDays > 0 {
 		d := time.Duration(qry.QueryLimits.MaxTimeRangeDays) * 24 * time.Hour
 		maxDur = d
-		capErr = fmt.Errorf("time range for query cannot exceed %d days, configured via the rill.ai.max_time_range_days env var", qry.QueryLimits.MaxTimeRangeDays)
+		capErr = fmt.Errorf("time range for query cannot exceed %d days, configured via the statsparrot.ai.max_time_range_days env var", qry.QueryLimits.MaxTimeRangeDays)
 	}
 
 	if e.metricsView != nil && e.metricsView.MaxQueryTimeRange != "" {

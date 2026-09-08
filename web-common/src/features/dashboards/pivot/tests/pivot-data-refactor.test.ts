@@ -3,16 +3,16 @@ import {
   createPivotDataCache,
   getPivotSkeletonForPage,
   syncPivotCacheToConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-data-assembly";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-data-assembly";
 import {
   type PivotBaseQueryPlan,
   applyOutermostRowLimit,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-query-plan";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-query-plan";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import type {
   PivotDataRow,
   PivotDataStoreConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 import { describe, expect, it } from "vitest";
 
 function config(
@@ -162,7 +162,7 @@ describe("pivot data assembly helpers", () => {
     expect(finalState.data).toEqual([
       { country: "US" },
       {
-        country: "__rill_type_SHOW_MORE_BUTTON",
+        country: "__statsparrot_type_SHOW_MORE_BUTTON",
         __currentLimit: 5,
       },
     ]);

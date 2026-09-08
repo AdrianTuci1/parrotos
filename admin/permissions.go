@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/rilldata/rill/admin/database"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/admin/database"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 )
 
 // OrganizationPermissionsForUser resolves organization permissions for a user.

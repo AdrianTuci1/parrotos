@@ -1,7 +1,7 @@
-import { V1BillingIssueType } from "@rilldata/web-admin/client";
-import type { V1BillingIssue } from "@rilldata/web-admin/client";
-import type { BillingIssueMessage } from "@rilldata/web-admin/features/billing/issues/useBillingIssueMessage";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { V1BillingIssueType } from "@statsparrot/web-admin/client";
+import type { V1BillingIssue } from "@statsparrot/web-admin/client";
+import type { BillingIssueMessage } from "@statsparrot/web-admin/features/billing/issues/useBillingIssueMessage";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { DateTime } from "luxon";
 
 export function getNeverSubscribedIssue(issues: V1BillingIssue[]) {

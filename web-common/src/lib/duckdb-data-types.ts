@@ -2,16 +2,16 @@
  * Provides mappings from duckdb's data types to conceptual types we use in the application:
  * CATEGORICALS, NUMERICS, and TIMESTAMPS.
  */
-import IntegerType from "@rilldata/web-common/components/icons/IntegerType.svelte";
-import FloatType from "@rilldata/web-common/components/icons/FloatType.svelte";
-import StringlikeType from "@rilldata/web-common/components/icons/StringlikeType.svelte";
-import TimestampType from "@rilldata/web-common/components/icons/TimestampType.svelte";
-import BooleanType from "@rilldata/web-common/components/icons/BooleanType.svelte";
-import StructType from "@rilldata/web-common/components/icons/StructType.svelte";
-import ListType from "@rilldata/web-common/components/icons/ListType.svelte";
+import IntegerType from "@statsparrot/web-common/components/icons/IntegerType.svelte";
+import FloatType from "@statsparrot/web-common/components/icons/FloatType.svelte";
+import StringlikeType from "@statsparrot/web-common/components/icons/StringlikeType.svelte";
+import TimestampType from "@statsparrot/web-common/components/icons/TimestampType.svelte";
+import BooleanType from "@statsparrot/web-common/components/icons/BooleanType.svelte";
+import StructType from "@statsparrot/web-common/components/icons/StructType.svelte";
+import ListType from "@statsparrot/web-common/components/icons/ListType.svelte";
 
 export const INTEGERS = new Set([
-  // Rill runtime types
+  // Parrot runtime types
   "CODE_INT8",
   "CODE_INT16",
   "CODE_INT32",
@@ -42,7 +42,7 @@ export const INTEGERS = new Set([
 ]);
 
 export const FLOATS = new Set([
-  // Rill runtime types
+  // Parrot runtime types
   "CODE_FLOAT32",
   "CODE_FLOAT64",
 
@@ -57,7 +57,7 @@ export const DATES = new Set(["CODE_DATE", "DATE"]);
 export const NUMERICS = new Set([...INTEGERS, ...FLOATS]);
 export const BOOLEANS = new Set(["CODE_BOOL", "BOOLEAN", "BOOL", "LOGICAL"]);
 export const TIMESTAMPS = new Set([
-  // Rill runtime types
+  // Parrot runtime types
   "CODE_TIMESTAMP",
   "CODE_TIME",
 
@@ -100,7 +100,7 @@ export function isNested(type: string) {
 }
 
 export const STRING_LIKES = new Set([
-  // Rill runtime types
+  // Parrot runtime types
   "CODE_STRING",
   "CODE_BYTES",
   "CODE_UUID",

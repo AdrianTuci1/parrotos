@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,7 +15,7 @@ func TestDeveloperShopify(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		AIConnector: "openai",
 		Files: map[string]string{
-			"rill.yaml": `
+			"statsparrot.yaml": `
 olap_connector: duckdb
 `,
 			"connectors/duckdb.yaml": `
@@ -81,7 +81,7 @@ func TestClickhousePlayground(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		AIConnector: "openai",
 		Files: map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 		},
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, 1, 0, 0)
@@ -114,7 +114,7 @@ func TestS3Model(t *testing.T) {
 		AIConnector:    "openai",
 		TestConnectors: []string{"s3"}, // Add environment variables for the test S3 connector
 		Files: map[string]string{
-			"rill.yaml": `
+			"statsparrot.yaml": `
 olap_connector: duckdb
 `,
 			"connectors/duckdb.yaml": `
@@ -132,7 +132,7 @@ managed: true
 	// Ask it to build a DuckDB model for CSV files in S3
 	var res *ai.RouterAgentResult
 	_, err := s.CallTool(t.Context(), ai.RoleUser, ai.RouterAgentName, &res, ai.RouterAgentArgs{
-		Prompt: "I have some CSV files in S3. Can you create a connector for S3 and a DuckDB model that loads the data at s3://integration-test.rilldata.com/glob_test/y=*/*.csv? I've already added environment variables for S3 access. Please proceed without asking clarifying questions.",
+		Prompt: "I have some CSV files in S3. Can you create a connector for S3 and a DuckDB model that loads the data at s3://integration-test.statsparrot.com/glob_test/y=*/*.csv? I've already added environment variables for S3 access. Please proceed without asking clarifying questions.",
 	})
 	require.NoError(t, err)
 	require.Equal(t, ai.DeveloperAgentName, res.Agent)
@@ -164,7 +164,7 @@ func TestS3Introspection(t *testing.T) {
 		AIConnector:    "openai",
 		TestConnectors: []string{"s3"}, // Add environment variables for the test S3 connector
 		Files: map[string]string{
-			"rill.yaml": `
+			"statsparrot.yaml": `
 olap_connector: duckdb
 `,
 			"connectors/duckdb.yaml": `
@@ -178,7 +178,7 @@ driver: s3
 aws_access_key_id: "{{ .env.connector.s3.aws_access_key_id }}"
 aws_secret_access_key: "{{ .env.connector.s3.aws_secret_access_key }}"
 region: us-east-1
-path_prefixes: [s3://integration-test.rilldata.com]
+path_prefixes: [s3://integration-test.statsparrot.com]
 `,
 		},
 	})
@@ -190,7 +190,7 @@ path_prefixes: [s3://integration-test.rilldata.com]
 	// Ask it to describe the S3 data
 	var res *ai.RouterAgentResult
 	_, err := s.CallTool(t.Context(), ai.RoleUser, ai.RouterAgentName, &res, ai.RouterAgentArgs{
-		Prompt: "I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?",
+		Prompt: "I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?",
 		Agent:  ai.DeveloperAgentName,
 	})
 	require.NoError(t, err)
@@ -206,7 +206,7 @@ func TestFixMetricsViewBug(t *testing.T) {
 		AIConnector:    "openai",
 		TestConnectors: []string{"s3"}, // Add environment variables for the test S3 connector
 		Files: map[string]string{
-			"rill.yaml": `olap_connector: duckdb`,
+			"statsparrot.yaml": `olap_connector: duckdb`,
 			`connectors/duckdb.yaml`: `
 type: connector
 driver: duckdb
@@ -259,7 +259,7 @@ func TestInvalidDefaultOLAP(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		AIConnector: "openai",
 		Files: map[string]string{
-			"rill.yaml": `olap_connector: duckdb_missing`,
+			"statsparrot.yaml": `olap_connector: duckdb_missing`,
 			"connectors/duckdb.yaml": `
 type: connector
 driver: duckdb

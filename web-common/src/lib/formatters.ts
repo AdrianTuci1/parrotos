@@ -1,4 +1,4 @@
-import { removeLocalTimezoneOffset } from "@rilldata/web-common/lib/time/timezone";
+import { removeLocalTimezoneOffset } from "@statsparrot/web-common/lib/time/timezone";
 import { format } from "d3-format";
 import { timeFormat } from "d3-time-format";
 import {

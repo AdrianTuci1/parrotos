@@ -9,9 +9,9 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 
@@ -23,7 +23,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "StarRocks",
 	Description: "Connect to StarRocks.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/olap/starrocks",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/olap/starrocks",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "dsn",

@@ -1,6 +1,6 @@
-import { extractBranchFromPath } from "@rilldata/web-admin/features/branches/branch-utils.ts";
-import { maybeRedirectToEditableDeployment } from "@rilldata/web-admin/features/branches/deployment-utils.ts";
-import { isEditPage } from "@rilldata/web-admin/features/navigation/nav-utils.ts";
+import { extractBranchFromPath } from "@statsparrot/web-admin/features/branches/branch-utils.ts";
+import { maybeRedirectToEditableDeployment } from "@statsparrot/web-admin/features/branches/deployment-utils.ts";
+import { isEditPage } from "@statsparrot/web-admin/features/navigation/nav-utils.ts";
 import { error } from "@sveltejs/kit";
 
 export const load = async ({

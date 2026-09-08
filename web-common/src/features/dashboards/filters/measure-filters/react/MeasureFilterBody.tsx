@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   AllMeasureFilterOperationOptions,
   AllMeasureFilterTypeOptions,
   MeasureFilterOperation,
   MeasureFilterType,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
 
 export interface MeasureFilterBodyProps {
   dimensionName: string;

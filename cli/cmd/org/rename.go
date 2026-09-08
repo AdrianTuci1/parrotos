@@ -1,8 +1,8 @@
 package org
 
 import (
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,7 +26,7 @@ func RenameCmd(ch *cmdutil.Helper) *cobra.Command {
 			resp, err := client.GetOrganization(ctx, &adminv1.GetOrganizationRequest{Org: name})
 			if err != nil {
 				if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
-					ch.PrintfError("org %q doesn't exist, run 'rill org list' to see available orgs", name)
+					ch.PrintfError("org %q doesn't exist, run 'statsparrot org list' to see available orgs", name)
 					return nil
 				}
 				return err
@@ -82,7 +82,7 @@ func RenameCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			// Update default org if name changed
 			if req.NewName != nil {
-				err = ch.DotRill.SetDefaultOrg(*req.NewName)
+				err = ch.DotStatsparrot.SetDefaultOrg(*req.NewName)
 				if err != nil {
 					return err
 				}

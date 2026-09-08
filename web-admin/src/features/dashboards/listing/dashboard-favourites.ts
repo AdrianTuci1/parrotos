@@ -1,14 +1,14 @@
-import { SvelteLocalStorage } from "@rilldata/web-common/lib/store-utils/svelte-local-storage.svelte.ts";
-import type { SortOption } from "@rilldata/web-common/components/table-toolbar";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { SvelteLocalStorage } from "@statsparrot/web-common/lib/store-utils/svelte-local-storage.svelte.ts";
+import type { SortOption } from "@statsparrot/web-common/components/table-toolbar";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function getDashboardFavouritesStore(org: string, project: string) {
-  const key = `rill:app:${org}:${project}:dashboard:favourites`;
+  const key = `statsparrot:app:${org}:${project}:dashboard:favourites`;
   return SvelteLocalStorage.createStringArrayStore(key);
 }
 
 export function getDashboardTagFavouritesStore(org: string, project: string) {
-  const key = `rill:app:${org}:${project}:tag:favourites`;
+  const key = `statsparrot:app:${org}:${project}:tag:favourites`;
   return SvelteLocalStorage.createStringArrayStore(key);
 }
 
@@ -65,7 +65,7 @@ export class RecentlyUsedDashboards {
     public project: string,
   ) {
     this.recentlyUsed = SvelteLocalStorage.getInstance(
-      `rill:app:${org}:${project}:dashboard:recentlyUsed`,
+      `statsparrot:app:${org}:${project}:dashboard:recentlyUsed`,
       (value: Record<string, number>) => JSON.stringify(value),
       (value) => (value ? JSON.parse(value) : {}),
       {} as Record<string, number>,

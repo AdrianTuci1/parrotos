@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -56,7 +56,7 @@ var (
 //
 // It is a no-op unless the following pre-requisites are in place:
 // 1. An external bucket is configured on the storage client.
-// 2. A backup ID is provided in the connection config (through the "id" config parameter, currently propagates from RILL_RUNTIME_METASTORE_ID).
+// 2. A backup ID is provided in the connection config (through the "id" config parameter, currently propagates from STATSPARROT_RUNTIME_METASTORE_ID).
 // 3. The SQLite database is file-based and doesn't exceed backupMaxSizeBytes in size.
 //
 // It is a best-effort backup used for analytics. There are currently no guarantees on backups and no restore functionality.
@@ -264,7 +264,7 @@ func (c *connection) rewriteSnapshotForAnalytics(ctx context.Context, snapshotPa
 			return fmt.Errorf("failed to query catalog resource: %w", err)
 		}
 
-		// Convert data from protobuf message rill.runtime.v1.Resource to JSON.
+		// Convert data from protobuf message statsparrot.runtime.v1.Resource to JSON.
 		pb := &runtimev1.Resource{}
 		err = proto.Unmarshal(r.Data, pb)
 		if err != nil {

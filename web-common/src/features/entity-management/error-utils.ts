@@ -7,7 +7,7 @@ import { resourceNameToId } from "./resource-utils";
  * Query factory that fetches all resources (only when there's an error)
  * and resolves the root cause error message via `select`.
  *
- * Only use in Rill Developer. Root cause errors expose dependency graph
+ * Only use in Parrot Developer. Root cause errors expose dependency graph
  * details that are useful for editors and admins but not appropriate for
  * Cloud viewers, who have no access to the project's resource graph.
  */

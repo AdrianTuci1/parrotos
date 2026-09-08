@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
   import {
     Popover,
     PopoverContent,
-  } from "@rilldata/web-common/components/popover";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/popover";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     GITHUB_STAR_URL,
     githubStarNudge,
@@ -19,7 +19,7 @@
   /** Grace period so the nudge does not appear mid route transition. */
   const AUTO_OPEN_DELAY_MS = 1500;
 
-  // This is a Rill Developer feature only: asking a Cloud viewer or a paying
+  // This is a Parrot Developer feature only: asking a Cloud viewer or a paying
   // customer to star the repo is off-brand. Today the footer is not mounted on
   // Cloud at all, but that is incidental, so gate it explicitly here rather than
   // relying on a `showFooterLinks={false}` in an unrelated layout.

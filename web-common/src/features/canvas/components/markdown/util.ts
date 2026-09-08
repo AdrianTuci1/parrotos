@@ -1,16 +1,16 @@
-import { defaultMarkdownAlignment } from "@rilldata/web-common/features/canvas/components/markdown";
-import type { ComponentAlignment } from "@rilldata/web-common/features/canvas/components/types";
-import type { MarkdownCanvasComponent } from "@rilldata/web-common/features/canvas/components/markdown";
-import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
+import { defaultMarkdownAlignment } from "@statsparrot/web-common/features/canvas/components/markdown";
+import type { ComponentAlignment } from "@statsparrot/web-common/features/canvas/components/types";
+import type { MarkdownCanvasComponent } from "@statsparrot/web-common/features/canvas/components/markdown";
+import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
 import type {
   MetricsViewSpecMeasure,
   V1Expression,
   V1MetricsView,
   V1TimeRange,
   QueryServiceResolveTemplatedStringBody,
-} from "@rilldata/web-common/runtime-client";
-import { getQueryServiceResolveTemplatedStringQueryOptions } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { getQueryServiceResolveTemplatedStringQueryOptions } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived } from "svelte/store";
 import type { ParsedFilters } from "../../stores/filter-state";
 import type { Readable } from "svelte/store";
@@ -54,7 +54,7 @@ export function formatResolvedContent(
 ): string {
   if (!text) return text;
 
-  const formatPattern = /__RILL__FORMAT__\(([^)]+)\)/g;
+  const formatPattern = /__STATSPARROT__FORMAT__\(([^)]+)\)/g;
 
   return text.replace(formatPattern, (fullMatch, tokenContent: string) => {
     try {

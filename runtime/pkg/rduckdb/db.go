@@ -21,7 +21,7 @@ import (
 	"github.com/XSAM/otelsql"
 	"github.com/duckdb/duckdb-go/v2"
 	"github.com/jmoiron/sqlx"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -34,7 +34,7 @@ import (
 var (
 	errNotFound       = errors.New("rduckdb: not found")
 	createSecretRegex = regexp.MustCompile(`(?i)\bcreate\b(?:\s+\w+)*\s+\bsecret\b`)
-	tracer            = otel.Tracer("github.com/rilldata/rill/runtime/pkg/rduckdb")
+	tracer            = otel.Tracer("github.com/staticlabs/statsparrot/runtime/pkg/rduckdb")
 )
 
 type DB interface {
@@ -761,7 +761,7 @@ func (d *db) Size() int64 {
 		}
 		// this is to avoid counting temp tables during source ingestion
 		// in certain cases we only want to compute the size of the serving db files
-		if !strings.HasPrefix(name, "__rill_tmp_") {
+		if !strings.HasPrefix(name, "__statsparrot_tmp_") {
 			paths = append(paths, d.localDBPath(meta.Name, meta.Version))
 		}
 		return nil
@@ -973,7 +973,7 @@ func (d *db) openDBAndAttach(ctx context.Context, uri, ignoreTable string, initQ
 		return nil, err
 	}
 
-	// 2023-12-11: Hail mary for solving this issue: https://github.com/duckdblabs/rilldata/issues/6.
+	// 2023-12-11: Hail mary for solving this issue: https://github.com/duckdblabs/staticlabs/issues/6.
 	// Forces DuckDB to create catalog entries for the information schema up front (they are normally created lazily).
 	// Can be removed if the issue persists.
 	_, err = db.ExecContext(context.Background(), `

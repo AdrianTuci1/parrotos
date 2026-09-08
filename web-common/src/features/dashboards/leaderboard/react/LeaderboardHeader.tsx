@@ -8,7 +8,7 @@
  * dropped (the arrows render statically); the scoped `<style>` blocks are folded
  * into `className`.
  */
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { SortType } from "../../proto-state/derived-types";
 import {
   DEFAULT_DIMENSION_COLUMN_WIDTH,

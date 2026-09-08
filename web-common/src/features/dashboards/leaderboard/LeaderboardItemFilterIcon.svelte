@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Cancel from "@rilldata/web-common/components/icons/Cancel.svelte";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import CheckCircle from "@rilldata/web-common/components/icons/CheckCircle.svelte";
-  import Spacer from "@rilldata/web-common/components/icons/Spacer.svelte";
+  import Cancel from "@statsparrot/web-common/components/icons/Cancel.svelte";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import CheckCircle from "@statsparrot/web-common/components/icons/CheckCircle.svelte";
+  import Spacer from "@statsparrot/web-common/components/icons/Spacer.svelte";
   import {
     COMPARISON_COLORS,
     SELECTED_NOT_COMPARED_COLOR,
-  } from "@rilldata/web-common/features/dashboards/config";
+  } from "@statsparrot/web-common/features/dashboards/config";
 
   export let selectionIndex: number;
   export let excluded = false;

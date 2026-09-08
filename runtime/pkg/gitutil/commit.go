@@ -140,7 +140,7 @@ func CommitAndPush(ctx context.Context, path string, config *Config, commitMsg s
 	}
 
 	if commitMsg == "" {
-		commitMsg = "Auto committed by Rill"
+		commitMsg = "Auto committed by Parrot"
 	}
 	_, err = CommitAll(ctx, path, config.Subpath, commitMsg, author)
 	if err != nil && !errors.Is(err, ErrEmptyCommit) {
@@ -180,7 +180,7 @@ func CommitAndForcePush(ctx context.Context, path string, config *Config, commit
 	}
 
 	if commitMsg == "" {
-		commitMsg = "Auto committed by Rill"
+		commitMsg = "Auto committed by Parrot"
 	}
 	_, err = CommitAll(ctx, path, "", commitMsg, author)
 	if err != nil && !errors.Is(err, ErrEmptyCommit) {

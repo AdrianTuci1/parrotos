@@ -1,7 +1,7 @@
 <script lang="ts">
   import { beforeNavigate } from "$app/navigation";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Search } from "@rilldata/web-common/components/search";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Search } from "@statsparrot/web-common/components/search";
   import type { Table } from "tanstack-table-8-svelte-5";
   import { getContext } from "svelte";
   import type { Readable } from "svelte/store";

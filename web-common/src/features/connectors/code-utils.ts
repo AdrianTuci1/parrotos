@@ -11,29 +11,29 @@ import {
   type V1ConnectorDriver,
 } from "../../runtime-client";
 import type { RuntimeClient } from "../../runtime-client/v2";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 import {
   getName,
   isNonStandardIdentifier,
-} from "@rilldata/web-common/features/entity-management/name-utils";
+} from "@statsparrot/web-common/features/entity-management/name-utils";
 import {
   getDriverNameForConnector,
   makeSufficientlyQualifiedTableName,
 } from "./connectors-utils";
 import { getDocsCategory } from "../sources/modal/connector-schemas";
-import type { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
+import type { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
 import {
   applyDuckLakeFormPipeline,
   injectDuckLakeAttach,
-} from "@rilldata/web-common/features/templates/schemas/ducklake-utils.ts";
-import { filterSchemaValuesForSubmit } from "@rilldata/web-common/features/templates/schema-utils.ts";
-import type { MultiStepFormSchema } from "@rilldata/web-common/features/templates/schemas/types.ts";
+} from "@statsparrot/web-common/features/templates/schemas/ducklake-utils.ts";
+import { filterSchemaValuesForSubmit } from "@statsparrot/web-common/features/templates/schema-utils.ts";
+import type { MultiStepFormSchema } from "@statsparrot/web-common/features/templates/schemas/types.ts";
 
 function yamlModelTemplate(driverName: string) {
   return `# Model YAML
-# Reference documentation: https://docs.rilldata.com/developers/build/connectors/data-source/${driverName}
+# Reference documentation: https://docs.statsparrot.com/developers/build/connectors/data-source/${driverName}
 
 type: model
 materialize: true
@@ -197,7 +197,7 @@ export function generateYAML(
       ? "olap"
       : undefined;
   const topOfFile = `# Connector YAML
-# Reference documentation: https://docs.rilldata.com/developers/build/connectors/${getDocsCategory(category)}/${driverName}
+# Reference documentation: https://docs.statsparrot.com/developers/build/connectors/${getDocsCategory(category)}/${driverName}
 
 type: connector
 
@@ -317,17 +317,17 @@ driver: ${driverName}`;
   return `${topOfFile}\n` + compiledKeyValues;
 }
 
-export async function updateRillYAMLWithOlapConnector(
+export async function updateParrotYAMLWithOlapConnector(
   client: RuntimeClient,
   queryClient: QueryClient,
   newConnector: string,
 ): Promise<string> {
-  // Get the existing rill.yaml file
+  // Get the existing statsparrot.yaml file
   const file = await queryClient.fetchQuery({
     queryKey: getRuntimeServiceGetFileQueryKey(client.instanceId, {
-      path: "rill.yaml",
+      path: "statsparrot.yaml",
     }),
-    queryFn: () => runtimeServiceGetFile(client, { path: "rill.yaml" }),
+    queryFn: () => runtimeServiceGetFile(client, { path: "statsparrot.yaml" }),
   });
   const blob = file.blob || "";
 
@@ -364,16 +364,16 @@ export function maybeUnsetOlapConnectorInYaml(
   return [true, blob.replace(olapConnectorRegex, "")];
 }
 
-export async function updateRillYAMLWithAiConnector(
+export async function updateParrotYAMLWithAiConnector(
   client: RuntimeClient,
   queryClient: QueryClient,
   newConnector: string,
 ): Promise<string> {
   const file = await queryClient.fetchQuery({
     queryKey: getRuntimeServiceGetFileQueryKey(client.instanceId, {
-      path: "rill.yaml",
+      path: "statsparrot.yaml",
     }),
-    queryFn: () => runtimeServiceGetFile(client, { path: "rill.yaml" }),
+    queryFn: () => runtimeServiceGetFile(client, { path: "statsparrot.yaml" }),
   });
   const blob = file.blob || "";
   return replaceAiConnectorInYAML(blob, newConnector);
@@ -524,7 +524,7 @@ export async function createSqlModelFromTable(
   );
 
   // Create model — OLAP models use the same connector for both source and output
-  const topComments = `-- Model SQL\n-- Reference documentation: https://docs.rilldata.com/developers/build/connectors/data-source/${driverName}`;
+  const topComments = `-- Model SQL\n-- Reference documentation: https://docs.statsparrot.com/developers/build/connectors/data-source/${driverName}`;
   const connectorLine = `-- @connector: ${connector}`;
   const outputConnectorLine = `-- @output.connector: ${connector}`;
   const selectStatement = isNonStandardIdentifier(

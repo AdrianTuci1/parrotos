@@ -1,6 +1,6 @@
 /**
  * Stand-in for SvelteKit's `$app/navigation` virtual module. The React host performs
- * client navigation through react-router, so these are no-ops that keep the Rill
+ * client navigation through react-router, so these are no-ops that keep the Parrot
  * code that imports them (cache invalidation) from throwing.
  */
 export async function goto() {}

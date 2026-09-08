@@ -10,9 +10,9 @@ import (
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
 )
 
 const QueryMetricsViewName = "query_metrics_view"
@@ -50,7 +50,7 @@ Request:
 
 Response:
 - Returns aggregated data matching your query parameters
-- Includes 'open_url' field with a shareable link to view results in the Rill UI
+- Includes 'open_url' field with a shareable link to view results in the Parrot UI
 - Always cite the source of quantitative claims by including 'open_url' as a markdown link
 - When presenting insights from multiple queries, cite each query's 'open_url' inline; when presenting multiple insights from the same query, cite once at the end
 

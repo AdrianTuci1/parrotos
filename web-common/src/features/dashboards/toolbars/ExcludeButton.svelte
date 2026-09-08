@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let excludeMode: boolean;
   export let onClick: () => void;

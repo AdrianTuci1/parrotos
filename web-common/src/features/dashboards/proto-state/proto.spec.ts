@@ -1,11 +1,11 @@
 import { protoBase64, Value } from "@bufbuild/protobuf";
-import { getDashboardStateFromUrl } from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
-import { getProtoFromDashboardState } from "@rilldata/web-common/features/dashboards/proto-state/toProto";
-import { getFullInitExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-store-defaults";
+import { getDashboardStateFromUrl } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
+import { getProtoFromDashboardState } from "@statsparrot/web-common/features/dashboards/proto-state/toProto";
+import { getFullInitExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-store-defaults";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   AD_BIDS_EXPLORE_INIT,
   AD_BIDS_EXPLORE_WITH_BOOL_DIMENSION,
@@ -15,14 +15,14 @@ import {
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_PUBLISHER_IS_NULL_DOMAIN,
   TestTimeConstants,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import { getInitExploreStateForTest } from "@rilldata/web-common/features/dashboards/stores/test-data/helpers";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import { getInitExploreStateForTest } from "@statsparrot/web-common/features/dashboards/stores/test-data/helpers";
 import {
   MetricsViewFilter,
   MetricsViewFilter_Cond,
-} from "@rilldata/web-common/proto/gen/rill/runtime/v1/queries_pb";
-import { DashboardState } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/queries_pb";
+import { DashboardState } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 
 describe("toProto/fromProto", () => {

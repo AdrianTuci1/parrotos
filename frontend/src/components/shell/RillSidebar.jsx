@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { getRuntimeServiceListFilesQueryOptions } from "@rilldata/web-common/runtime-client";
-import FileExplorer from "@rilldata/web-common/features/file-explorer/react/FileExplorer";
-import { transformFileList } from "@rilldata/web-common/features/file-explorer/react/transform-file-list";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import { getRuntimeServiceListFilesQueryOptions } from "@statsparrot/web-common/runtime-client";
+import FileExplorer from "@statsparrot/web-common/features/file-explorer/react/FileExplorer";
+import { transformFileList } from "@statsparrot/web-common/features/file-explorer/react/transform-file-list";
 import { ConversationSidebar } from "@/components/chat/ConversationSidebar";
 import { useAppStore } from "@/stores/useAppStore";
 import { projectNavItems } from "@/components/app-shared";
@@ -40,9 +40,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import "@/styles/rill-sidebar.css";
+import "@/styles/statsparrot-sidebar.css";
 
-// Rill's navigation width constants (see rill/web-common/src/layout/config.ts).
+// Parrot's navigation width constants (see statsparrot/web-common/src/layout/config.ts).
 const DEFAULT_NAV_WIDTH = 240;
 const MIN_NAV_WIDTH = 180;
 const MAX_NAV_WIDTH = 360;
@@ -74,7 +74,7 @@ const addMoreOptions = [
   { id: "theme", label: "Theme", icon: Palette },
 ];
 
-export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
+export function ParrotSidebar({ isMobileOpen = false, onCloseMobile }) {
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -109,7 +109,7 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
 
   const tree = fileTree || SAMPLE_TREE;
 
-  // Cmd/Ctrl+B collapses/expands the rail, mirroring Rill's global shortcut.
+  // Cmd/Ctrl+B collapses/expands the rail, mirroring Parrot's global shortcut.
   // Registered unconditionally (all hooks must run before any early return).
   useEffect(() => {
     const handleKeydown = (e) => {
@@ -137,7 +137,7 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
   const urlSection = location.pathname.match(/\/app\/[^/]+\/[^/]+\/(\w+)/)?.[1];
   const activeTab = urlSection || activeSection || "explore";
 
-  // Dragging the right-edge handle resizes the rail between Rill's min/max.
+  // Dragging the right-edge handle resizes the rail between Parrot's min/max.
   const startResize = (e) => {
     e.preventDefault();
     setResizing(true);
@@ -189,21 +189,21 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
     <>
       <aside
         className={cn(
-          "rill-sidebar",
+          "statsparrot-sidebar",
           collapsed && "collapsed",
           resizing && "resizing",
           isMobileOpen && "mobile-open",
         )}
-        style={{ ["--rill-nav-width"]: `${width}px` }}
+        style={{ ["--statsparrot-nav-width"]: `${width}px` }}
       >
-        <div className="rill-sidebar-inner" style={{ width: `${width}px` }}>
-          <div className="rill-sidebar-header">
-            <span className="rill-sidebar-project-name" title={projectName}>
+        <div className="statsparrot-sidebar-inner" style={{ width: `${width}px` }}>
+          <div className="statsparrot-sidebar-header">
+            <span className="statsparrot-sidebar-project-name" title={projectName}>
               {projectName}
             </span>
             <button
               type="button"
-              className="rill-sidebar-collapse-btn"
+              className="statsparrot-sidebar-collapse-btn"
               onClick={() => setCollapsed((c) => !c)}
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -212,20 +212,20 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
             </button>
           </div>
 
-          <div className="rill-sidebar-add">
+          <div className="statsparrot-sidebar-add">
             <DropdownMenu>
-              <DropdownMenuTrigger className="rill-add-trigger">
+              <DropdownMenuTrigger className="statsparrot-add-trigger">
                 <Plus size={14} />
                 <span>Add</span>
-                <ChevronDown size={12} className="rill-add-caret" />
+                <ChevronDown size={12} className="statsparrot-add-caret" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="rill-add-menu">
+              <DropdownMenuContent align="start" className="statsparrot-add-menu">
                 {addTopOptions.map((opt) => {
                   const Icon = opt.icon;
                   return (
                     <DropdownMenuItem
                       key={opt.id}
-                      className="rill-add-item"
+                      className="statsparrot-add-item"
                       onClick={opt.id === "metrics" ? handleAddMetrics : () => {}}
                     >
                       <Icon size={14} />
@@ -235,16 +235,16 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
                 })}
                 <DropdownMenuSeparator />
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="rill-add-item">
+                  <DropdownMenuSubTrigger className="statsparrot-add-item">
                     More
                   </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="rill-add-menu">
+                  <DropdownMenuSubContent className="statsparrot-add-menu">
                     {addMoreOptions.map((opt) => {
                       const Icon = opt.icon;
                       return (
                         <DropdownMenuItem
                           key={opt.id}
-                          className="rill-add-item"
+                          className="statsparrot-add-item"
                           onClick={() => {}}
                         >
                           <Icon size={14} />
@@ -258,7 +258,7 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
             </DropdownMenu>
           </div>
 
-          <div className="rill-sidebar-tree" onClick={handleTreeNavClick}>
+          <div className="statsparrot-sidebar-tree" onClick={handleTreeNavClick}>
             {activeTab === "ai" ? (
               <ConversationSidebar
                 embedded
@@ -283,16 +283,16 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
           </div>
 
           {/* Footer: compact section navigation so every existing reachable section stays reachable. */}
-          <div className="rill-sidebar-footer">
-            <div className="rill-sidebar-footer-label">Nav</div>
-            <nav className="rill-sidebar-footer-nav">
+          <div className="statsparrot-sidebar-footer">
+            <div className="statsparrot-sidebar-footer-label">Nav</div>
+            <nav className="statsparrot-sidebar-footer-nav">
               {projectNavItems.map((item) => {
                 const Icon = sectionIcons[item.icon];
                 return (
                   <button
                     key={item.id}
                     type="button"
-                    className={cn("rill-sidebar-nav-item", activeTab === item.id && "active")}
+                    className={cn("statsparrot-sidebar-nav-item", activeTab === item.id && "active")}
                     onClick={() => navToSection(item.id)}
                   >
                     {Icon && <Icon size={15} />}
@@ -306,7 +306,7 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
 
         {!collapsed && (
           <div
-            className="rill-sidebar-resizer"
+            className="statsparrot-sidebar-resizer"
             onMouseDown={startResize}
             onDoubleClick={() => setWidth(DEFAULT_NAV_WIDTH)}
             title="Drag to resize"
@@ -317,7 +317,7 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
       {collapsed && (
         <button
           type="button"
-          className="rill-sidebar-reopen"
+          className="statsparrot-sidebar-reopen"
           onClick={() => setCollapsed(false)}
           aria-label="Expand sidebar"
           title="Expand sidebar (⌘/Ctrl+B)"
@@ -329,4 +329,4 @@ export function RillSidebar({ isMobileOpen = false, onCloseMobile }) {
   );
 }
 
-export default RillSidebar;
+export default ParrotSidebar;

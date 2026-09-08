@@ -4,7 +4,7 @@
 @import "@fontsource-variable/geist";
 
 /* The ported Rill React components live in ../web-common (aliased as
-   @rilldata/web-common). Tailwind v4's auto content detection does not scan that
+   @statsparrot/web-common). Tailwind v4's auto content detection does not scan that
    sibling package, so their utility classes (text-fg-secondary, bg-surface-subtle,
    ...) were never emitted and the ported UI rendered with default browser styling.
    Scan it explicitly so the ported components pick up the theme tokens. */

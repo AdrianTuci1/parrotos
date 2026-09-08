@@ -1,7 +1,7 @@
 <script lang="ts">
-  import SlidingWords from "@rilldata/web-common/components/tooltip/SlidingWords.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import SlidingWords from "@statsparrot/web-common/components/tooltip/SlidingWords.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
 
   export let active = true;
   export let tooltipText = "";

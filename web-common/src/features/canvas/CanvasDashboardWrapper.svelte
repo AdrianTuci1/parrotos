@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { dynamicHeight } from "@rilldata/web-common/layout/layout-settings.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import CellInspector from "@rilldata/web-common/components/CellInspector.svelte";
-  import WarningIcon from "@rilldata/web-common/components/icons/WarningIcon.svelte";
+  import { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import CellInspector from "@statsparrot/web-common/components/CellInspector.svelte";
+  import WarningIcon from "@statsparrot/web-common/components/icons/WarningIcon.svelte";
   import CanvasFilters from "./filters/CanvasFilters.svelte";
   import { getCanvasStore } from "./state-managers/state-managers";
   import ThemeProvider from "../dashboards/ThemeProvider.svelte";

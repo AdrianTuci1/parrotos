@@ -10,8 +10,8 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/admin/provisioner"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -177,7 +177,7 @@ func TestClickHouseStaticHumanReadableNaming(t *testing.T) {
 			"organization_name": "Acme-Corp",
 			"project_name":      "My-Project",
 		},
-		RillVersion: "dev",
+		ParrotVersion: "dev",
 	}
 
 	out, err := p.Provision(context.Background(), in, opts)
@@ -189,7 +189,7 @@ func TestClickHouseStaticHumanReadableNaming(t *testing.T) {
 	opts2, err := clickhouse.ParseDSN(cfg.DSN)
 	require.NoError(t, err)
 	// Check that the database name follows the expected format
-	expectedUser := fmt.Sprintf("rill_%s", nonAlphanumericRegexp.ReplaceAllString(resourceID, ""))
+	expectedUser := fmt.Sprintf("statsparrot_%s", nonAlphanumericRegexp.ReplaceAllString(resourceID, ""))
 	expectedDBName := generateDatabaseName(resourceID, opts.Annotations)
 
 	require.Equal(t, expectedDBName, opts2.Auth.Database)
@@ -237,7 +237,7 @@ func TestClickHouseStaticFallbackNaming(t *testing.T) {
 	opts := &provisioner.ResourceOptions{
 		Args:        nil,
 		Annotations: map[string]string{}, // Empty annotations
-		RillVersion: "dev",
+		ParrotVersion: "dev",
 	}
 
 	out, err := p.Provision(context.Background(), in, opts)
@@ -249,7 +249,7 @@ func TestClickHouseStaticFallbackNaming(t *testing.T) {
 	opts2, err := clickhouse.ParseDSN(cfg.DSN)
 	require.NoError(t, err)
 	// Check that the database name follows the fallback format
-	expectedUser := fmt.Sprintf("rill_%s", nonAlphanumericRegexp.ReplaceAllString(resourceID, ""))
+	expectedUser := fmt.Sprintf("statsparrot_%s", nonAlphanumericRegexp.ReplaceAllString(resourceID, ""))
 	expectedDBName := generateDatabaseName(resourceID, opts.Annotations)
 
 	require.Equal(t, expectedDBName, opts2.Auth.Database)
@@ -282,38 +282,38 @@ func TestGenerateDatabaseName(t *testing.T) {
 		{
 			name:        "with org and project",
 			id:          "77cf2b72_65ab_4bbe_a10e_627bcff4915e",
-			annotations: map[string]string{"organization_name": "rilldata", "project_name": "dev-project-1"},
-			expected:    "rill_77cf2b7265ab4bbea10e627bcff4915e_rilldata_devproject1",
+			annotations: map[string]string{"organization_name": "staticlabs", "project_name": "dev-project-1"},
+			expected:    "statsparrot_77cf2b7265ab4bbea10e627bcff4915e_staticlabs_devproject1",
 		},
 		{
 			name:        "with org only",
 			id:          "12345",
 			annotations: map[string]string{"organization_name": "acme-corp"},
-			expected:    "rill_12345_acmecorp",
+			expected:    "statsparrot_12345_acmecorp",
 		},
 		{
 			name:        "with project only",
 			id:          "12345",
 			annotations: map[string]string{"project_name": "my-project"},
-			expected:    "rill_12345_myproject",
+			expected:    "statsparrot_12345_myproject",
 		},
 		{
 			name:        "no annotations",
 			id:          "12345",
 			annotations: map[string]string{},
-			expected:    "rill_12345",
+			expected:    "statsparrot_12345",
 		},
 		{
 			name:        "nil annotations",
 			id:          "12345",
 			annotations: nil,
-			expected:    "rill_12345",
+			expected:    "statsparrot_12345",
 		},
 		{
 			name:        "long name truncated preserves id",
 			id:          "very_long_resource_id_that_will_cause_truncation_12345678",
 			annotations: map[string]string{"organization_name": "very_long_organization_name", "project_name": "very_long_project_name"},
-			expected:    "rill_verylongresourceidthatwillcausetruncation12345678_verylong",
+			expected:    "statsparrot_verylongresourceidthatwillcausetruncation12345678_verylong",
 		},
 	}
 
@@ -394,7 +394,7 @@ func provisionClickHouse(t *testing.T, p provisioner.Provisioner) (*provisioner.
 	opts := &provisioner.ResourceOptions{
 		Args:        nil,
 		Annotations: map[string]string{"organization": "test", "project": "test"},
-		RillVersion: "dev",
+		ParrotVersion: "dev",
 	}
 	out, err := p.Provision(context.Background(), in, opts)
 	require.NoError(t, err)

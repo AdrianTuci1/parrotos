@@ -12,31 +12,31 @@ import {
   calculateColumnWidth,
   calculateMeasureWidth,
   distributeColumnWidthsToFillContainer,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-column-width-utils";
-import { Resizer } from "@rilldata/web-common/features/dashboards/pivot/react/Resizer";
-import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-column-width-utils";
+import { Resizer } from "@statsparrot/web-common/features/dashboards/pivot/react/Resizer";
+import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
 import {
   computeEffectiveDimIdx,
   flatCellState,
   flatRowState,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-cell-classes";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-cell-classes";
 import {
   dimKeyFromRow,
   type PivotClickSelectionState,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-click-selection";
-import type { PivotRowSelectionState } from "@rilldata/web-common/features/dashboards/pivot/pivot-row-selection";
-import type { CellFormatter } from "@rilldata/web-common/features/dashboards/pivot/pivot-conditional-formatting";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-click-selection";
+import type { PivotRowSelectionState } from "@statsparrot/web-common/features/dashboards/pivot/pivot-row-selection";
+import type { CellFormatter } from "@statsparrot/web-common/features/dashboards/pivot/pivot-conditional-formatting";
 import {
   ArrowDown,
   PivotAssembledContext,
   PivotHeaderLabel,
   renderIcon,
-} from "@rilldata/web-common/features/dashboards/pivot/react/CellComponents";
-import type { MeasureColumnProps } from "@rilldata/web-common/features/dashboards/pivot/react/pivot-column-definition";
+} from "@statsparrot/web-common/features/dashboards/pivot/react/CellComponents";
+import type { MeasureColumnProps } from "@statsparrot/web-common/features/dashboards/pivot/react/pivot-column-definition";
 import type {
   PivotDataRow,
   PivotDataStoreConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 
 const HEADER_HEIGHT = 30;
 

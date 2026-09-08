@@ -1,4 +1,4 @@
-import type { V1Organization } from "@rilldata/web-admin/client";
+import type { V1Organization } from "@statsparrot/web-admin/client";
 
 export function getThemedLogoUrl(
   theme: "light" | "dark",

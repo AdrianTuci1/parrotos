@@ -4,8 +4,8 @@
     type PivotCanvasComponent,
     type PivotSpec,
     type TableSpec,
-  } from "@rilldata/web-common/features/canvas/components/pivot";
-  import type { PivotMeasureFormatting } from "@rilldata/web-common/features/dashboards/pivot/types";
+  } from "@statsparrot/web-common/features/canvas/components/pivot";
+  import type { PivotMeasureFormatting } from "@statsparrot/web-common/features/dashboards/pivot/types";
   import type { AllKeys, FieldType } from "../types";
   import MultiFieldInput from "./MultiFieldInput.svelte";
 

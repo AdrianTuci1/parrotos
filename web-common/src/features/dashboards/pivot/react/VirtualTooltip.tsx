@@ -15,7 +15,7 @@ export interface VirtualTooltipProps {
 
 /**
  * Focused React equivalent of
- * @rilldata/web-common/components/virtualized-table/VirtualTooltip.svelte as
+ * @statsparrot/web-common/components/virtualized-table/VirtualTooltip.svelte as
  * used by PivotTable. Renders a floating tooltip positioned over the hovered
  * cell with any custom shortcuts. The shared tooltip primitives
  * (TooltipContent, FormattedDataType, Shortcut) are collapsed into a simple

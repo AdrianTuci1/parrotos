@@ -5,4 +5,4 @@ export {
   parseStringParam,
   parseEnumParam,
   type FilterParamDef,
-} from "@rilldata/web-common/lib/url-filter-sync";
+} from "@statsparrot/web-common/lib/url-filter-sync";

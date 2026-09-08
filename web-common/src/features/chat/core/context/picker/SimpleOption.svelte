@@ -2,13 +2,13 @@
   import {
     getIdForContext,
     type InlineContext,
-  } from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-  import type { KeyboardNavigationManager } from "@rilldata/web-common/features/chat/core/context/picker/keyboard-navigation.ts";
-  import { InlineContextConfig } from "@rilldata/web-common/features/chat/core/context/config.ts";
+  } from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+  import type { KeyboardNavigationManager } from "@statsparrot/web-common/features/chat/core/context/picker/keyboard-navigation.ts";
+  import { InlineContextConfig } from "@statsparrot/web-common/features/chat/core/context/config.ts";
   import { CheckIcon } from "lucide-svelte";
-  import type { PickerItem } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-  import { getInlineChatContextMetadata } from "@rilldata/web-common/features/chat/core/context/metadata.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import type { PickerItem } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+  import { getInlineChatContextMetadata } from "@statsparrot/web-common/features/chat/core/context/metadata.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let item: PickerItem;
   export let selectedChatContext: InlineContext | null;

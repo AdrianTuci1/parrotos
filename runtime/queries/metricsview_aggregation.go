@@ -10,12 +10,12 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/metricsview/executor"
-	"github.com/rilldata/rill/runtime/metricsview/metricssql"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/executor"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/metricssql"
 )
 
 type MetricsViewAggregation struct {
@@ -522,7 +522,7 @@ func (q *MetricsViewAggregation) generateExportHeaders(ctx context.Context, rt *
 	if dashboardDisplayName != "" {
 		parts = append(parts, dashboardDisplayName)
 	}
-	title := "Report by Rill Data"
+	title := "Report by Parrot Data"
 	if len(parts) > 0 {
 		title += " – " + strings.Join(parts, " / ")
 	}

@@ -1,5 +1,5 @@
-import { getPaymentIssues } from "@rilldata/web-admin/features/billing/issues/getMessageForPaymentIssues";
-import { fetchPaymentsPortalURL } from "@rilldata/web-admin/features/billing/plans/selectors";
+import { getPaymentIssues } from "@statsparrot/web-admin/features/billing/issues/getMessageForPaymentIssues";
+import { fetchPaymentsPortalURL } from "@statsparrot/web-admin/features/billing/plans/selectors";
 import { redirect } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 

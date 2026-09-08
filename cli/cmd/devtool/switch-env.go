@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rilldata/rill/cli/cmd/auth"
-	"github.com/rilldata/rill/cli/pkg/adminenv"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/cmd/auth"
+	"github.com/staticlabs/statsparrot/cli/pkg/adminenv"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 	"google.golang.org/grpc/codes"
@@ -20,12 +20,12 @@ func SwitchEnvCmd(ch *cmdutil.Helper) *cobra.Command {
 		Short: "Switch between admin environments",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			backupToken, err := ch.DotRill.GetBackupToken()
+			backupToken, err := ch.DotStatsparrot.GetBackupToken()
 			if err != nil {
 				return err
 			}
 			if backupToken != "" {
-				return fmt.Errorf("can't switch environment when assuming another user (run `rill sudo user unassume` and try again)")
+				return fmt.Errorf("can't switch environment when assuming another user (run `statsparrot sudo user unassume` and try again)")
 			}
 
 			fromEnv, err := adminenv.Infer(ch.AdminURL())
@@ -61,28 +61,28 @@ func SwitchEnvCmd(ch *cmdutil.Helper) *cobra.Command {
 }
 
 func switchEnv(ch *cmdutil.Helper, fromEnv, toEnv string) error {
-	token, err := ch.DotRill.GetAccessToken()
+	token, err := ch.DotStatsparrot.GetAccessToken()
 	if err != nil {
 		return err
 	}
 
-	err = ch.DotRill.SetEnvToken(fromEnv, token)
+	err = ch.DotStatsparrot.SetEnvToken(fromEnv, token)
 	if err != nil {
 		return err
 	}
 
-	toToken, err := ch.DotRill.GetEnvToken(toEnv)
+	toToken, err := ch.DotStatsparrot.GetEnvToken(toEnv)
 	if err != nil {
 		return err
 	}
 
-	err = ch.DotRill.SetAccessToken(toToken)
+	err = ch.DotStatsparrot.SetAccessToken(toToken)
 	if err != nil {
 		return err
 	}
 
 	toURL := adminenv.AdminURL(toEnv)
-	err = ch.DotRill.SetDefaultAdminURL(toURL)
+	err = ch.DotStatsparrot.SetDefaultAdminURL(toURL)
 	if err != nil {
 		return err
 	}
@@ -131,10 +131,10 @@ func switchEnvToDevTemporarily(ctx context.Context, ch *cmdutil.Helper) {
 		}
 	} else {
 		// Since dev environments are frequently reset, clear the token if it's invalid
-		_ = ch.DotRill.SetAccessToken("")
+		_ = ch.DotStatsparrot.SetAccessToken("")
 		_ = ch.ReloadAdminConfig()
 
-		_ = ch.DotRill.SetDefaultOrg("")
+		_ = ch.DotStatsparrot.SetDefaultOrg("")
 		ch.Org = ""
 	}
 
@@ -149,7 +149,7 @@ func switchEnvToDevTemporarily(ctx context.Context, ch *cmdutil.Helper) {
 
 	logInfo.Printf("Switched CLI back to %s environment\n", env)
 
-	err = ch.DotRill.SetDefaultOrg(prevOrg)
+	err = ch.DotStatsparrot.SetDefaultOrg(prevOrg)
 	if err != nil {
 		logErr.Printf("Failed to set default org back to %q: %v\n", prevOrg, err)
 		return

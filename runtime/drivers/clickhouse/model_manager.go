@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 const _defaultConcurrentInserts = 1
@@ -154,9 +154,9 @@ func (c *Connection) validateAndApplyDefaults(opts *drivers.ModelExecuteOptions,
 			return fmt.Errorf("you must provide an explicit `incremental_strategy` when using `engine_full` with a partitioned model")
 		}
 		// `use_structure_from_insertion_table_in_table_functions = 0` is a workaround for https://github.com/ClickHouse/ClickHouse/issues/83257
-		ip.SQL = fmt.Sprintf("SELECT %s AS __rill_partition, * FROM (%s\n) SETTINGS use_structure_from_insertion_table_in_table_functions = 0", safeSQLString(opts.PartitionKey), ip.SQL)
+		ip.SQL = fmt.Sprintf("SELECT %s AS __statsparrot_partition, * FROM (%s\n) SETTINGS use_structure_from_insertion_table_in_table_functions = 0", safeSQLString(opts.PartitionKey), ip.SQL)
 		op.IncrementalStrategy = drivers.IncrementalStrategyPartitionOverwrite
-		op.PartitionBy = "__rill_partition"
+		op.PartitionBy = "__statsparrot_partition"
 	}
 
 	// If we failed to apply a better incremental strategy, fall back to append.
@@ -344,7 +344,7 @@ func (c *Connection) forceRenameTable(ctx context.Context, fromName string, from
 
 	// Renaming a table to the same name with different casing is not supported. Workaround by renaming to a temporary name first.
 	if strings.EqualFold(fromName, toName) {
-		tmpName := fmt.Sprintf("__rill_tmp_rename_%s_%s", typ, toName)
+		tmpName := fmt.Sprintf("__statsparrot_tmp_rename_%s_%s", typ, toName)
 		err := c.renameEntity(ctx, fromName, tmpName)
 		if err != nil {
 			return err
@@ -360,7 +360,7 @@ func boolPtr(b bool) *bool {
 	return &b
 }
 
-const stagingTablePrefix = "__rill_tmp_model_"
+const stagingTablePrefix = "__statsparrot_tmp_model_"
 
 // stagingTableName returns a stable temporary table name for a destination table.
 // By using a stable temporary table name, we can ensure proper garbage collection without managing additional state.

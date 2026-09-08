@@ -2,8 +2,8 @@
   import {
     isValidColor,
     stringColorToHsl,
-  } from "@rilldata/web-common/components/color-picker/util";
-  import * as Popover from "@rilldata/web-common/components/popover";
+  } from "@statsparrot/web-common/components/color-picker/util";
+  import * as Popover from "@statsparrot/web-common/components/popover";
   import InputLabel from "../forms/InputLabel.svelte";
   import WarningIcon from "../icons/WarningIcon.svelte";
   import ColorSlider from "./ColorSlider.svelte";

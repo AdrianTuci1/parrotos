@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/rilldata/rill/admin/pkg/oauth"
+	"github.com/staticlabs/statsparrot/admin/pkg/oauth"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +21,7 @@ func (a *Authenticator) handleOAuthProtectedResourceMetadata(w http.ResponseWrit
 		BearerMethodsSupported: []string{
 			"header", // Authorization: Bearer <token>
 		},
-		ResourceDocumentation: "https://docs.rilldata.com",
+		ResourceDocumentation: "https://docs.statsparrot.com",
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -61,7 +61,7 @@ func (a *Authenticator) handleOAuthAuthorizationServerMetadata(w http.ResponseWr
 		CodeChallengeMethodsSupported: []string{
 			"S256", // SHA-256 based PKCE
 		},
-		ServiceDocumentation: "https://docs.rilldata.com",
+		ServiceDocumentation: "https://docs.statsparrot.com",
 	}
 
 	w.Header().Set("Content-Type", "application/json")

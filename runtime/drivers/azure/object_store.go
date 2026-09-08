@@ -10,10 +10,10 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/container"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/service"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/blob"
-	"github.com/rilldata/rill/runtime/pkg/globutil"
-	"github.com/rilldata/rill/runtime/pkg/pagination"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/blob"
+	"github.com/staticlabs/statsparrot/runtime/pkg/globutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pagination"
 	"gocloud.dev/blob/azureblob"
 )
 

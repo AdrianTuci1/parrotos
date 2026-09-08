@@ -7,7 +7,7 @@ If you have added the full Rill Example project, run `rill start` from this dire
 To run this example specifically:
 
 ```
-git clone https://github.com/rilldata/rill-examples.git
+git clone https://github.com/staticlabs/statsparrot-examples.git
 cd rill-examples/rill-openrtb-prog-ads
 rill start
 ```

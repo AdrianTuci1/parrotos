@@ -1,10 +1,10 @@
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 import {
   getRuntimeServiceGetResourceQueryOptions,
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createQueries } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 

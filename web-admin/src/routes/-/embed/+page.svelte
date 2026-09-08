@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import DashboardsTable from "@rilldata/web-admin/features/dashboards/listing/DashboardsTable.svelte";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import DashboardsTable from "@statsparrot/web-admin/features/dashboards/listing/DashboardsTable.svelte";
 </script>
 
 <ContentContainer>

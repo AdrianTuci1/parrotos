@@ -8,16 +8,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/publicemail"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/env"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/publicemail"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/env"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 	"golang.org/x/exp/maps"
@@ -163,7 +163,7 @@ func (s *Server) ListProjectsForFingerprint(ctx context.Context, req *adminv1.Li
 		attribute.String("args.directory_name", req.DirectoryName),
 		attribute.String("args.git_remote", req.GitRemote),
 		attribute.String("args.sub_path", req.SubPath),
-		attribute.String("args.rill_mgd_git_remote", req.RillMgdGitRemote),
+		attribute.String("args.statsparrot_mgd_git_remote", req.StatsparrotMgdGitRemote),
 	)
 
 	claims := auth.GetClaims(ctx)
@@ -172,18 +172,18 @@ func (s *Server) ListProjectsForFingerprint(ctx context.Context, req *adminv1.Li
 	}
 	userID := claims.OwnerID()
 
-	// check if rill mgd remote was transferred
+	// check if statsparrot mgd remote was transferred
 	// we do not support transfers from self hosted git repos so no need to check for that
-	rillMgdRemote := req.RillMgdGitRemote
-	transfer, err := s.admin.DB.FindGitRepoTransfer(ctx, rillMgdRemote)
+	statsparrotMgdRemote := req.StatsparrotMgdGitRemote
+	transfer, err := s.admin.DB.FindGitRepoTransfer(ctx, statsparrotMgdRemote)
 	if err != nil && !errors.Is(err, database.ErrNotFound) {
 		return nil, err
 	}
 	if transfer != nil {
-		rillMgdRemote = transfer.To
+		statsparrotMgdRemote = transfer.To
 	}
 
-	projects, err := s.admin.DB.FindProjectsForUserAndFingerprint(ctx, userID, req.DirectoryName, normalizeGitRemote(req.GitRemote), req.SubPath, rillMgdRemote)
+	projects, err := s.admin.DB.FindProjectsForUserAndFingerprint(ctx, userID, req.DirectoryName, normalizeGitRemote(req.GitRemote), req.SubPath, statsparrotMgdRemote)
 	if err != nil {
 		return nil, err
 	}
@@ -795,7 +795,7 @@ func (s *Server) UpdateProject(ctx context.Context, req *adminv1.UpdateProjectRe
 			return nil, err
 		}
 		if managedGitRepoID != nil {
-			return nil, status.Error(codes.InvalidArgument, "invalid git remote: cannot switch to a rill managed git repo")
+			return nil, status.Error(codes.InvalidArgument, "invalid git remote: cannot switch to a statsparrot managed git repo")
 		}
 
 		gitRemote = req.GitRemote
@@ -881,7 +881,7 @@ func (s *Server) UpdateProject(ctx context.Context, req *adminv1.UpdateProjectRe
 		return nil, err
 	}
 
-	// mark transfer from rill managed git repo if applicable
+	// mark transfer from statsparrot managed git repo if applicable
 	if transferRepo {
 		_, err = s.admin.DB.InsertGitRepoTransfer(ctx, oldRemote, *proj.GitRemote)
 		if err != nil {
@@ -1553,7 +1553,7 @@ func (s *Server) GetCloneCredentials(ctx context.Context, req *adminv1.GetCloneC
 	}
 
 	if proj.GitRemote == nil || proj.GithubInstallationID == nil {
-		return nil, status.Error(codes.FailedPrecondition, "project's repository is not managed by Rill, and it does not have a GitHub integration")
+		return nil, status.Error(codes.FailedPrecondition, "project's repository is not managed by Parrot, and it does not have a GitHub integration")
 	}
 
 	repoID, err := s.githubRepoIDForProject(ctx, proj)
@@ -1814,14 +1814,14 @@ func (s *Server) getAndCheckGithubInstallationID(ctx context.Context, gitRemote,
 	installationID, err = s.admin.GetGithubInstallation(ctx, gitRemote)
 	if err != nil {
 		if errors.Is(err, admin.ErrGithubInstallationNotFound) {
-			return 0, 0, status.Errorf(codes.PermissionDenied, "you have not granted Rill access to %q", gitRemote)
+			return 0, 0, status.Errorf(codes.PermissionDenied, "you have not granted Parrot access to %q", gitRemote)
 		}
 
 		return 0, 0, fmt.Errorf("failed to get Github installation: %w", err)
 	}
 
 	if installationID == 0 {
-		return 0, 0, status.Errorf(codes.PermissionDenied, "you have not granted Rill access to %q", gitRemote)
+		return 0, 0, status.Errorf(codes.PermissionDenied, "you have not granted Parrot access to %q", gitRemote)
 	}
 
 	// Check that user is a collaborator on the repo
@@ -1831,7 +1831,7 @@ func (s *Server) getAndCheckGithubInstallationID(ctx context.Context, gitRemote,
 	}
 
 	if user.GithubUsername == "" {
-		return 0, 0, status.Errorf(codes.PermissionDenied, "you have not granted Rill access to your Github account")
+		return 0, 0, status.Errorf(codes.PermissionDenied, "you have not granted Parrot access to your Github account")
 	}
 
 	repo, err := s.admin.LookupGithubRepoForUser(ctx, installationID, gitRemote, user.GithubUsername)
@@ -1923,7 +1923,7 @@ func (s *Server) CreateProjectWhitelistedDomain(ctx context.Context, req *adminv
 			return nil, err
 		}
 		if !strings.HasSuffix(user.Email, "@"+req.Domain) {
-			return nil, status.Error(codes.PermissionDenied, "Domain name doesn’t match verified email domain. Please contact Rill support.")
+			return nil, status.Error(codes.PermissionDenied, "Domain name doesn’t match verified email domain. Please contact Parrot support.")
 		}
 
 		if publicemail.IsPublic(req.Domain) {
@@ -2236,7 +2236,7 @@ func (s *Server) githubOptsForRemote(ctx context.Context, orgID, branch string, 
 		isMgdGitRepo = false
 	}
 	if isMgdGitRepo {
-		// rill managed git repo
+		// statsparrot managed git repo
 		if mgdGitRepo.OrgID == nil || orgID != *mgdGitRepo.OrgID {
 			return nil, nil, nil, "", status.Error(codes.PermissionDenied, "not allowed to access this managed git repo")
 		}

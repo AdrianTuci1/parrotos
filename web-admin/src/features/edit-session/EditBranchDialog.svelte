@@ -3,26 +3,26 @@
   import {
     createAdminServiceCreateDeployment,
     V1DeploymentStatus,
-  } from "@rilldata/web-admin/client";
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils";
+  } from "@statsparrot/web-admin/client";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils";
   import {
     injectBranchIntoPath,
     requestSkipBranchInjection,
-  } from "@rilldata/web-admin/features/branches/branch-utils";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import * as Select from "@rilldata/web-common/components/select";
+  } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import * as Select from "@statsparrot/web-common/components/select";
   import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-  } from "@rilldata/web-common/components/tabs";
+  } from "@statsparrot/web-common/components/tabs";
   import { Select as SelectPrimitive } from "bits-ui";
   import { GitBranchIcon, GitBranchPlusIcon } from "lucide-svelte";
   import { useDevDeployments, invalidateDeployments } from "./use-edit-session";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open = false;
   export let organization: string;

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import ConnectYourDataWidget from "@rilldata/web-common/features/add-data/ConnectYourDataWidget.svelte";
-  import TitleContent from "@rilldata/web-common/features/welcome/TitleContent.svelte";
-  import ProjectCards from "@rilldata/web-common/features/welcome/ProjectCards.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { projectWelcomeStatus } from "@rilldata/web-admin/features/welcome/project/welcome-status.ts";
-  import { checkpointProject } from "@rilldata/web-admin/features/projects/publish-project.ts";
-  import OnboardingGenerateSampleData from "@rilldata/web-common/features/add-data/OnboardingGenerateSampleData.svelte";
+  import ConnectYourDataWidget from "@statsparrot/web-common/features/add-data/ConnectYourDataWidget.svelte";
+  import TitleContent from "@statsparrot/web-common/features/welcome/TitleContent.svelte";
+  import ProjectCards from "@statsparrot/web-common/features/welcome/ProjectCards.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { projectWelcomeStatus } from "@statsparrot/web-admin/features/welcome/project/welcome-status.ts";
+  import { checkpointProject } from "@statsparrot/web-admin/features/projects/publish-project.ts";
+  import OnboardingGenerateSampleData from "@statsparrot/web-common/features/add-data/OnboardingGenerateSampleData.svelte";
 
   const runtimeClient = useRuntimeClient();
 

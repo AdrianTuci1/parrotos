@@ -1,18 +1,18 @@
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 import {
   createRuntimeServiceListResources,
   V1ReconcileStatus,
   type V1ListResourcesResponse,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { ConnectError } from "@connectrpc/connect";
 import type { CreateQueryResult, Query } from "@tanstack/svelte-query";
 import {
   isResourceReconciling,
   MAX_REFETCH_INTERVAL,
   smartRefetchIntervalFunc,
-} from "@rilldata/web-admin/lib/refetch-interval-store.ts";
+} from "@statsparrot/web-admin/lib/refetch-interval-store.ts";
 
 export function useDeployingDashboards(
   client: RuntimeClient,

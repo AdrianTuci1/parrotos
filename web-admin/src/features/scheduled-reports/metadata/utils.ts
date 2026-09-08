@@ -1,8 +1,8 @@
-import { ordinal } from "@rilldata/web-common/lib/ordinal";
+import { ordinal } from "@statsparrot/web-common/lib/ordinal";
 import cronstrue from "cronstrue";
 import { DateTime } from "luxon";
 import { V1ExportFormat } from "../../../client";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function exportFormatToPrettyString(format: V1ExportFormat): string {
   switch (format) {

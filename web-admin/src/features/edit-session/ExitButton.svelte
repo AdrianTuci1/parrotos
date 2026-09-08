@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { createAdminServiceListDeployments } from "@rilldata/web-admin/client";
-  import { requestSkipBranchInjection } from "@rilldata/web-admin/features/branches/branch-utils";
-  import { isProdDeployment } from "@rilldata/web-admin/features/branches/deployment-utils";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { createAdminServiceListDeployments } from "@statsparrot/web-admin/client";
+  import { requestSkipBranchInjection } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import { isProdDeployment } from "@statsparrot/web-admin/features/branches/deployment-utils";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import { LogOut } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

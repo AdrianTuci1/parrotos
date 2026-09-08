@@ -1,11 +1,11 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.js";
-import { getUrlForExplore } from "@rilldata/web-common/features/explore-mappers/generate-explore-link";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.js";
+import { getUrlForExplore } from "@statsparrot/web-common/features/explore-mappers/generate-explore-link";
 import {
   mapMetricsResolverQueryToDashboard,
   type MetricsResolverQueryMapperArgs,
-} from "@rilldata/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getQueryServiceMetricsViewTimeRangeQueryKey,
   getRuntimeServiceGetExploreQueryKey,
@@ -16,13 +16,13 @@ import {
   type V1ExploreSpec,
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { error, redirect } from "@sveltejs/kit";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
-import { createLinkError } from "@rilldata/web-common/features/explore-mappers/explore-validation.ts";
-import { ExploreLinkErrorType } from "@rilldata/web-common/features/explore-mappers/types.ts";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
+import { createLinkError } from "@statsparrot/web-common/features/explore-mappers/explore-validation.ts";
+import { ExploreLinkErrorType } from "@statsparrot/web-common/features/explore-mappers/types.ts";
 
 export async function openQuery({
   mapArgs,

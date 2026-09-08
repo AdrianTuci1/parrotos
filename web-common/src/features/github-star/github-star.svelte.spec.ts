@@ -1,4 +1,4 @@
-import { SvelteLocalStorage } from "@rilldata/web-common/lib/store-utils/svelte-local-storage.svelte.ts";
+import { SvelteLocalStorage } from "@statsparrot/web-common/lib/store-utils/svelte-local-storage.svelte.ts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GithubStarNudge } from "./github-star.svelte";
 
@@ -121,10 +121,10 @@ describe("GithubStarNudge", () => {
   });
 
   it("treats corrupt stored state as unarmed", () => {
-    localStorage.setItem("rill:github-star", "{not json");
+    localStorage.setItem("statsparrot:github-star", "{not json");
     expect(reload().visible).toBe(false);
 
-    localStorage.setItem("rill:github-star", JSON.stringify({ nonsense: 1 }));
+    localStorage.setItem("statsparrot:github-star", JSON.stringify({ nonsense: 1 }));
     expect(reload().visible).toBe(false);
   });
 

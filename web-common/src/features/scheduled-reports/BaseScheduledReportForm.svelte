@@ -1,38 +1,38 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import MultiInput from "@rilldata/web-common/components/forms/MultiInput.svelte";
-  import FormSection from "@rilldata/web-common/components/forms/FormSection.svelte";
-  import { getHasSlackConnection } from "@rilldata/web-common/features/alerts/delivery-tab/notifiers-utils";
-  import type { Filters } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-  import type { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
-  import FiltersForm from "@rilldata/web-common/features/scheduled-reports/FiltersForm.svelte";
-  import RowsAndColumnsForm from "@rilldata/web-common/features/scheduled-reports/fields/RowsAndColumnsForm.svelte";
-  import ScheduleForm from "@rilldata/web-common/features/scheduled-reports/ScheduleForm.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import MultiInput from "@statsparrot/web-common/components/forms/MultiInput.svelte";
+  import FormSection from "@statsparrot/web-common/components/forms/FormSection.svelte";
+  import { getHasSlackConnection } from "@statsparrot/web-common/features/alerts/delivery-tab/notifiers-utils";
+  import type { Filters } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+  import type { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
+  import FiltersForm from "@statsparrot/web-common/features/scheduled-reports/FiltersForm.svelte";
+  import RowsAndColumnsForm from "@statsparrot/web-common/features/scheduled-reports/fields/RowsAndColumnsForm.svelte";
+  import ScheduleForm from "@statsparrot/web-common/features/scheduled-reports/ScheduleForm.svelte";
   import {
     ReportRunAs,
     type ReportValues,
-  } from "@rilldata/web-common/features/scheduled-reports/utils";
-  import { V1ExportFormat } from "@rilldata/web-common/runtime-client";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
+  } from "@statsparrot/web-common/features/scheduled-reports/utils";
+  import { V1ExportFormat } from "@statsparrot/web-common/runtime-client";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
   import type { Readable } from "svelte/store";
   import type { SuperFormErrors } from "sveltekit-superforms/client";
   import Input from "../../components/forms/Input.svelte";
   import Select from "../../components/forms/Select.svelte";
   import Checkbox from "../../components/forms/Checkbox.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
   import {
     ResourceKind,
     useResource,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import CanvasFilters from "@rilldata/web-common/features/canvas/filters/CanvasFilters.svelte";
-  import { specHasTabGroups } from "@rilldata/web-common/features/canvas/stores/tab-group";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import CanvasFilters from "@statsparrot/web-common/features/canvas/filters/CanvasFilters.svelte";
+  import { specHasTabGroups } from "@statsparrot/web-common/features/canvas/stores/tab-group";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 
   export let formId: string;
   export let data: Readable<ReportValues>;
@@ -300,7 +300,7 @@
         <svelte:fragment slot="description">
           <span class="text-sm text-fg-secondary">
             {@html m.report_form_slack_not_configured({
-              link: `<a href="https://docs.rilldata.com/guides/alerts#configuring-slack-targets" target="_blank">${escapeHtml(m.report_form_docs())}</a>`,
+              link: `<a href="https://docs.statsparrot.com/guides/alerts#configuring-slack-targets" target="_blank">${escapeHtml(m.report_form_docs())}</a>`,
             })}
           </span>
         </svelte:fragment>

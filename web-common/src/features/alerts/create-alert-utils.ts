@@ -1,15 +1,15 @@
-import type { V1User } from "@rilldata/web-admin/client";
-import { getSnoozeOptions } from "@rilldata/web-common/features/alerts/delivery-tab/snooze.ts";
-import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils.ts";
-import { getEmptyMeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-import { Filters } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-import { ExploreMetricsViewMetadata } from "@rilldata/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
-import { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
-import { getInitialScheduleFormValues } from "@rilldata/web-common/features/scheduled-reports/time-utils.ts";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { V1User } from "@statsparrot/web-admin/client";
+import { getSnoozeOptions } from "@statsparrot/web-common/features/alerts/delivery-tab/snooze.ts";
+import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils.ts";
+import { getEmptyMeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+import { Filters } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+import { ExploreMetricsViewMetadata } from "@statsparrot/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
+import { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
+import { getInitialScheduleFormValues } from "@statsparrot/web-common/features/scheduled-reports/time-utils.ts";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 export function getNewAlertInitialFormValues(
   metricsViewName: string,

@@ -2,12 +2,12 @@ import type {
   PivotDataRow,
   PivotDataStore,
   PivotDataStoreConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 import { get, writable, type Readable } from "svelte/store";
 import { describe, expect, it, vi } from "vitest";
 import {

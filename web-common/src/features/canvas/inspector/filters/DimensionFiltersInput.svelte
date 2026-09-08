@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import DimensionFilter from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
-  import MeasureFilter from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import CanvasFilterButton from "@rilldata/web-common/features/dashboards/filters/CanvasFilterButton.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import DimensionFilter from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
+  import MeasureFilter from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import CanvasFilterButton from "@statsparrot/web-common/features/dashboards/filters/CanvasFilterButton.svelte";
   import type { FilterState } from "../../stores/filter-state";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import AdvancedFilter from "@rilldata/web-common/features/dashboards/filters/AdvancedFilter.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import AdvancedFilter from "@statsparrot/web-common/features/dashboards/filters/AdvancedFilter.svelte";
 
   export let id: string;
   export let canvasName: string;

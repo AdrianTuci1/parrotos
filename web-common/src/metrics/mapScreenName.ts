@@ -1,4 +1,4 @@
-import { MetricsEventScreenName } from "@rilldata/web-common/metrics/service/MetricsTypes";
+import { MetricsEventScreenName } from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import type { Page } from "@sveltejs/kit";
 
 /**

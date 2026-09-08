@@ -2,12 +2,12 @@
   import {
     createRuntimeServiceListResources,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { ResourceKind } from "../entity-management/resource-selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import WorkspaceCrumb from "./WorkspaceCrumb.svelte";
-  import ResourceGraphOverlay from "@rilldata/web-common/features/resource-graph/embedding/ResourceGraphOverlay.svelte";
-  import { ALLOWED_FOR_GRAPH } from "@rilldata/web-common/features/resource-graph/navigation/seed-parser";
+  import ResourceGraphOverlay from "@statsparrot/web-common/features/resource-graph/embedding/ResourceGraphOverlay.svelte";
+  import { ALLOWED_FOR_GRAPH } from "@statsparrot/web-common/features/resource-graph/navigation/seed-parser";
 
   export let resource: V1Resource | undefined;
   export let filePath: string;

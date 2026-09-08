@@ -1,4 +1,4 @@
-import type { RpcStatus } from "@rilldata/web-admin/client/gen/index.schemas";
+import type { RpcStatus } from "@statsparrot/web-admin/client/gen/index.schemas";
 import type { CreateBaseMutationResult, Query } from "@tanstack/svelte-query";
 import type { AxiosError } from "axios";
 import { derived, type Readable } from "svelte/store";

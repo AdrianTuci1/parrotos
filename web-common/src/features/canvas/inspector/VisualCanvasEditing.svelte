@@ -1,13 +1,13 @@
 <script lang="ts">
   import { replaceState } from "$app/navigation";
-  import ComponentsEditor from "@rilldata/web-common/features/canvas/inspector/ComponentsEditor.svelte";
-  import PageEditor from "@rilldata/web-common/features/canvas/inspector/PageEditor.svelte";
-  import TabGroupEditor from "@rilldata/web-common/features/canvas/inspector/TabGroupEditor.svelte";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { Inspector } from "@rilldata/web-common/layout/workspace";
+  import ComponentsEditor from "@statsparrot/web-common/features/canvas/inspector/ComponentsEditor.svelte";
+  import PageEditor from "@statsparrot/web-common/features/canvas/inspector/PageEditor.svelte";
+  import TabGroupEditor from "@statsparrot/web-common/features/canvas/inspector/TabGroupEditor.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { Inspector } from "@statsparrot/web-common/layout/workspace";
   import { parseDocument } from "yaml";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let fileArtifact: FileArtifact;
   export let autoSave: boolean;

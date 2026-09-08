@@ -1,16 +1,16 @@
 <script lang="ts">
   import { onNavigate } from "$app/navigation";
   import { page } from "$app/stores";
-  import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
+  import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
   import {
     TokenBannerID,
     TokenBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
-  import CanvasDashboardEmbed from "@rilldata/web-common/features/canvas/CanvasDashboardEmbed.svelte";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/components/banner/constants";
+  import CanvasDashboardEmbed from "@statsparrot/web-common/features/canvas/CanvasDashboardEmbed.svelte";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
 

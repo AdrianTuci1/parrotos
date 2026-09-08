@@ -1,14 +1,14 @@
-import { createIndexMap } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+import { createIndexMap } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import {
   createAndExpression,
   filterExpressions,
   matchExpressionByName,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import type {
   V1Expression,
   V1MetricsViewAggregationResponseDataItem,
   V1TimeSeriesValue,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   convertISOStringToJSDateWithSameTimeAsSelectedTimeZone,
   removeZoneOffset,

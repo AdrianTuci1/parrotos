@@ -1,13 +1,13 @@
 <script lang="ts">
-  import FormattedDataType from "@rilldata/web-common/components/data-types/FormattedDataType.svelte";
-  import PercentageChange from "@rilldata/web-common/components/data-types/PercentageChange.svelte";
-  import ExternalLink from "@rilldata/web-common/components/icons/ExternalLink.svelte";
-  import LeaderboardCell from "@rilldata/web-common/features/dashboards/leaderboard/LeaderboardCell.svelte";
-  import { clamp } from "@rilldata/web-common/lib/clamp";
-  import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-  import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
+  import FormattedDataType from "@statsparrot/web-common/components/data-types/FormattedDataType.svelte";
+  import PercentageChange from "@statsparrot/web-common/components/data-types/PercentageChange.svelte";
+  import ExternalLink from "@statsparrot/web-common/components/icons/ExternalLink.svelte";
+  import LeaderboardCell from "@statsparrot/web-common/features/dashboards/leaderboard/LeaderboardCell.svelte";
+  import { clamp } from "@statsparrot/web-common/lib/clamp";
+  import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+  import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
   import { slide } from "svelte/transition";
-  import { makeHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+  import { makeHref } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
   import { type LeaderboardItemData } from "./leaderboard-utils";
   import {
     COMPARISON_COLUMN_WIDTH,

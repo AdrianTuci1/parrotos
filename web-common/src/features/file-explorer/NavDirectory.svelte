@@ -1,9 +1,9 @@
 <script lang="ts">
-  import NavDirectoryEntry from "@rilldata/web-common/features/file-explorer/NavDirectoryEntry.svelte";
+  import NavDirectoryEntry from "@statsparrot/web-common/features/file-explorer/NavDirectoryEntry.svelte";
   import {
     navEntryDragDropStore,
     type NavDragData,
-  } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  } from "@statsparrot/web-common/features/file-explorer/nav-entry-drag-drop-store";
   import NavFile from "./NavFile.svelte";
   import { directoryState } from "./directory-store";
   import type { Directory } from "./transform-file-list";

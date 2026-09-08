@@ -1,26 +1,26 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import DOMPurify from "dompurify";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import { LIST_SLIDE_DURATION } from "@rilldata/web-common/layout/config";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@statsparrot/web-common/components/tooltip/StackingWord.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import { LIST_SLIDE_DURATION } from "@statsparrot/web-common/layout/config";
   import {
     copyToClipboard,
     isClipboardApiSupported,
-  } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
-  import { isNested } from "@rilldata/web-common/lib/duckdb-data-types";
+  } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
+  import { isNested } from "@statsparrot/web-common/lib/duckdb-data-types";
   import {
     formatBigNumberPercentage,
     formatDataType,
     formatInteger,
-  } from "@rilldata/web-common/lib/formatters";
-  import type { Location } from "@rilldata/web-common/lib/place-element";
-  import type { TopKEntry } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/formatters";
+  import type { Location } from "@statsparrot/web-common/lib/place-element";
+  import type { TopKEntry } from "@statsparrot/web-common/runtime-client";
   import { format } from "d3-format";
   import TopKListItem from "./TopKListItem.svelte";
 

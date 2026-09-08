@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getEnvFileStore } from "@rilldata/web-common/features/env-management/env-file-store.ts";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
+  import { getEnvFileStore } from "@statsparrot/web-common/features/env-management/env-file-store.ts";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
   import type { Snippet } from "svelte";
 
   // Gates its children on the first `.env` pull. Forms that allocate env var

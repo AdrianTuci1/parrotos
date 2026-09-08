@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func CreateCmd(ch *cmdutil.Helper) *cobra.Command {
 			}
 
 			if editable {
-				ch.PrintfWarn("Cloud editing is still in beta. Ensure `cloud_editing` feature flag is set in `rill.yaml`.\n")
+				ch.PrintfWarn("Cloud editing is still in beta. Ensure `cloud_editing` feature flag is set in `statsparrot.yaml`.\n")
 			}
 
 			ch.PrintfBold("Creating %q deployment for branch %q...\n", environment, branch)

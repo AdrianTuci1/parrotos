@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Filter from "@rilldata/web-common/components/icons/Filter.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Filter from "@statsparrot/web-common/components/icons/Filter.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let isEditForm: boolean;
 </script>

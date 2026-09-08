@@ -7,16 +7,16 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	oteltrace "go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/drivers/pinot")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/pinot")
 
 var _ drivers.OLAPStore = &connection{}
 

@@ -5,29 +5,29 @@ import {
   getAdminServiceListBookmarksQueryOptions,
   type V1Bookmark,
   type V1ListBookmarksResponse,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import {
   categorizeBookmarks,
   parseBookmarks,
-} from "@rilldata/web-admin/features/bookmarks/utils.ts";
+} from "@statsparrot/web-admin/features/bookmarks/utils.ts";
 import {
   getProjectIdQueryOptions,
   type OrgAndProjectNameStore,
-} from "@rilldata/web-admin/features/projects/selectors.ts";
+} from "@statsparrot/web-admin/features/projects/selectors.ts";
 import {
   type CompoundQueryResult,
   getCompoundQuery,
-} from "@rilldata/web-common/features/compound-query-result";
-import { getDashboardStateFromUrl } from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
-import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { convertURLSearchParamsToExploreState } from "@rilldata/web-common/features/dashboards/url-state/convertURLSearchParamsToExploreState.ts";
-import { getDefaultExplorePreset } from "@rilldata/web-common/features/dashboards/url-state/getDefaultExplorePreset.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import type { HTTPError } from "@rilldata/web-common/lib/errors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/compound-query-result";
+import { getDashboardStateFromUrl } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
+import { useMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { convertURLSearchParamsToExploreState } from "@statsparrot/web-common/features/dashboards/url-state/convertURLSearchParamsToExploreState.ts";
+import { getDefaultExplorePreset } from "@statsparrot/web-common/features/dashboards/url-state/getDefaultExplorePreset.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import type { HTTPError } from "@statsparrot/web-common/lib/errors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createQuery, type CreateQueryResult } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 

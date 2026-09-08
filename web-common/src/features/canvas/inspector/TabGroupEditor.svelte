@@ -1,9 +1,9 @@
 <script lang="ts">
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import SidebarWrapper from "@rilldata/web-common/features/visual-editing/SidebarWrapper.svelte";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import SidebarWrapper from "@statsparrot/web-common/features/visual-editing/SidebarWrapper.svelte";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
   import { Trash2 } from "lucide-svelte";
   import { parseDocument, type Document } from "yaml";
   import TabListItem from "./TabListItem.svelte";

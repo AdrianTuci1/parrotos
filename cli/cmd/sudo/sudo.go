@@ -1,18 +1,18 @@
 package sudo
 
 import (
-	"github.com/rilldata/rill/cli/cmd/sudo/annotations"
-	"github.com/rilldata/rill/cli/cmd/sudo/billing"
-	"github.com/rilldata/rill/cli/cmd/sudo/embed"
-	"github.com/rilldata/rill/cli/cmd/sudo/org"
-	"github.com/rilldata/rill/cli/cmd/sudo/project"
-	"github.com/rilldata/rill/cli/cmd/sudo/quota"
-	"github.com/rilldata/rill/cli/cmd/sudo/runtime"
-	"github.com/rilldata/rill/cli/cmd/sudo/superuser"
-	"github.com/rilldata/rill/cli/cmd/sudo/user"
-	"github.com/rilldata/rill/cli/cmd/sudo/virtualfiles"
-	"github.com/rilldata/rill/cli/cmd/sudo/whitelist"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/annotations"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/billing"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/embed"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/org"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/project"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/quota"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/runtime"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/superuser"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/user"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/virtualfiles"
+	"github.com/staticlabs/statsparrot/cli/cmd/sudo/whitelist"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
 

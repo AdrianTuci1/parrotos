@@ -1,30 +1,30 @@
-import { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-import { CANVAS_CHART_CONFIG } from "@rilldata/web-common/features/canvas/components/charts";
+import { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+import { CANVAS_CHART_CONFIG } from "@statsparrot/web-common/features/canvas/components/charts";
 import {
   CanvasChartTypeToTDDChartType,
   getLinkStateForTimeDimensionDetail,
-} from "@rilldata/web-common/features/canvas/components/charts/util";
+} from "@statsparrot/web-common/features/canvas/components/charts/util";
 import {
   getCommonOptions,
   createComponent,
   getFilterOptions,
-} from "@rilldata/web-common/features/canvas/components/util";
+} from "@statsparrot/web-common/features/canvas/components/util";
 import type {
   AllKeys,
   ComponentInputParam,
   InputParams,
-} from "@rilldata/web-common/features/canvas/inspector/types";
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-import { transformChartSpecToPivotState } from "@rilldata/web-common/features/components/charts/explore-transformer";
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+import { transformChartSpecToPivotState } from "@statsparrot/web-common/features/components/charts/explore-transformer";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   V1Expression,
   V1MetricsViewSpec,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get, writable, type Readable, type Writable } from "svelte/store";
 import type {
   ChartDataQuery,
@@ -46,7 +46,7 @@ import type {
 } from "../types";
 import Chart from "./CanvasChart.svelte";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 // Base interface for all chart configurations
 export type BaseChartConfig = ComponentFilterProperties &

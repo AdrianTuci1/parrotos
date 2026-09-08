@@ -12,13 +12,13 @@ project_files:
     sql: "select id, boolean_col, tinyint_col, smallint_col, int32_col, int64_col, number_col, float_col, double_col, decimal_col, string_col, text_col, date_col, time_col, timestamp_ntz_col, variant_col, array_col, object_col, binary_col, geography_col, geometry_col from INTEGRATION_TEST.PUBLIC.all_datatypes"
     stage:
       connector: s3
-      path: s3://integration-test.rilldata.com/snowflake/
+      path: s3://integration-test.statsparrot.com/snowflake/
     output:
       connector: clickhouse
   all_datatypes_duckdb.yaml:
     type: model
     connector: snowflake
-    # we are not doing * because time_col:TIME is not support https://github.com/rilldata/rill/blob/main/runtime/drivers/snowflake/warehouse.go#L192-L193
+    # we are not doing * because time_col:TIME is not support https://github.com/staticlabs/statsparrot/blob/main/runtime/drivers/snowflake/warehouse.go#L192-L193
     sql: "select id, boolean_col, tinyint_col, smallint_col, int32_col, int64_col, number_col, float_col, double_col, decimal_col, string_col, text_col, date_col, timestamp_ntz_col, timestamp_ltz_col, timestamp_tz_col, variant_col, array_col, object_col, binary_col, geography_col, geometry_col from INTEGRATION_TEST.PUBLIC.all_datatypes"
     output:
       connector: duckdb

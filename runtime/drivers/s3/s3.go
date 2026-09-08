@@ -14,17 +14,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/awsutil"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/awsutil"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 
 var spec = drivers.Spec{
 	DisplayName: "Amazon S3",
 	Description: "Connect to AWS S3 Storage.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/s3",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/s3",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "aws_access_key_id",
@@ -51,7 +51,7 @@ var spec = drivers.Spec{
 			Description: "AWS Region for the bucket.",
 			Placeholder: "us-east-1",
 			Required:    false,
-			Hint:        "Rill will use the default region in your local AWS config, unless set here.",
+			Hint:        "Parrot will use the default region in your local AWS config, unless set here.",
 		},
 		{
 			Key:         "endpoint",
@@ -72,7 +72,7 @@ var spec = drivers.Spec{
 			Key:         "aws_role_session_name",
 			Type:        drivers.StringPropertyType,
 			Secret:      true,
-			Description: "Optional session name to use when assuming an AWS role. Defaults to 'rill-session'.",
+			Description: "Optional session name to use when assuming an AWS role. Defaults to 'statsparrot-session'.",
 		},
 		{
 			Key:         "aws_external_id",
@@ -494,7 +494,7 @@ func assumeRole(ctx context.Context, confProp *ConfigProperties, logger *zap.Log
 	// Add session name if specified
 	sessionName := confProp.RoleSessionName
 	if sessionName == "" {
-		sessionName = "rill-session"
+		sessionName = "statsparrot-session"
 	}
 
 	region := confProp.Region

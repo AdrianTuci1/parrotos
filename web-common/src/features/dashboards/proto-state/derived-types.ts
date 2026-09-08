@@ -6,7 +6,7 @@
 import {
   DashboardState_LeaderboardSortDirection,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 
 export { DashboardState_LeaderboardSortDirection as SortDirection };
 export { DashboardState_LeaderboardSortType as SortType };

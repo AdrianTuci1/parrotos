@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
   import type { MenuOption } from "./lib.ts";
 
   const functionNames = ["SUM", "AVG", "COUNT", "MIN", "MAX"] as const;

@@ -3,9 +3,9 @@ import {
   allTimeZones,
   formatIANAs,
   getLocalIANA,
-} from "@rilldata/web-common/lib/time/timezone";
+} from "@statsparrot/web-common/lib/time/timezone";
 import type { DateTime } from "luxon";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { CheckIcon } from "./icons";
 import { ZoneDisplay } from "./ZoneDisplay";
 

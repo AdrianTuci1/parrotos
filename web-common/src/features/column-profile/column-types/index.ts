@@ -4,7 +4,7 @@ import {
   isNested,
   NUMERICS,
   TIMESTAMPS,
-} from "@rilldata/web-common/lib/duckdb-data-types";
+} from "@statsparrot/web-common/lib/duckdb-data-types";
 import NestedProfile from "./NestedProfile.svelte";
 import NumericProfile from "./NumericProfile.svelte";
 import TimestampProfile from "./TimestampProfile.svelte";

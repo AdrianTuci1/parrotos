@@ -1,7 +1,7 @@
-import type { RpcStatus, V1BillingIssue } from "@rilldata/web-admin/client";
-import { fetchOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors";
-import { getBillingIssuesUsingBearerToken } from "@rilldata/web-admin/features/public-urls/get-org-with-bearer-token.ts";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import type { RpcStatus, V1BillingIssue } from "@statsparrot/web-admin/client";
+import { fetchOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors";
+import { getBillingIssuesUsingBearerToken } from "@statsparrot/web-admin/features/public-urls/get-org-with-bearer-token.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { error } from "@sveltejs/kit";
 import { isAxiosError } from "axios";
 

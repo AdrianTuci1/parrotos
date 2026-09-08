@@ -2,11 +2,11 @@
   import {
     DialogContent,
     DialogTrigger,
-  } from "@rilldata/web-common/components/dialog";
-  import GuardedDialog from "@rilldata/web-common/components/dialog/GuardedDialog.svelte";
-  import AlertFormDataWrapper from "@rilldata/web-common/features/alerts/AlertFormDataWrapper.svelte";
-  import type { V1AlertSpec } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/dialog";
+  import GuardedDialog from "@statsparrot/web-common/components/dialog/GuardedDialog.svelte";
+  import AlertFormDataWrapper from "@statsparrot/web-common/features/alerts/AlertFormDataWrapper.svelte";
+  import type { V1AlertSpec } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import Button from "web-common/src/components/button/Button.svelte";
 
   export let alertSpec: V1AlertSpec;

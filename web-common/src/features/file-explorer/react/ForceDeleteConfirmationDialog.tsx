@@ -1,7 +1,7 @@
 // React translation of `features/file-explorer/ForceDeleteConfirmationDialog.svelte`.
 // Renders a compact confirm dialog when a non-empty directory is deleted. The
-// confirmation modal is a lightweight stand-in for the Rill dialog primitive.
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+// confirmation modal is a lightweight stand-in for the Parrot dialog primitive.
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export default function ForceDeleteConfirmationDialog({
   open,

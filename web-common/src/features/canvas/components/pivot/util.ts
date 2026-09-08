@@ -1,11 +1,11 @@
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-import { createPivotDataStore } from "@rilldata/web-common/features/dashboards/pivot/pivot-data-store";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+import { createPivotDataStore } from "@statsparrot/web-common/features/dashboards/pivot/pivot-data-store";
 import {
   canEnablePivotComparison,
   getPivotConfigKey,
   getTimeGrainFromDimension,
   isTimeDimension,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import {
   COMPARISON_DELTA,
   COMPARISON_PERCENT,
@@ -14,16 +14,16 @@ import {
   type PivotDataStoreConfig,
   type PivotState,
   type PivotTimeConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   V1Operation,
   type V1Expression,
   type V1MetricsViewSpec,
   type V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   derived,
   readable,

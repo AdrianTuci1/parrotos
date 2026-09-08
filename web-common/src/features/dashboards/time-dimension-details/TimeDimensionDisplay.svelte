@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Compare from "@rilldata/web-common/components/icons/Compare.svelte";
+  import Compare from "@statsparrot/web-common/components/icons/Compare.svelte";
   import {
     SortDirection,
     SortType,
-  } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-  import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import { debounce } from "@rilldata/web-common/lib/create-debouncer";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+  } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+  import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
   import { timeFormat } from "d3-time-format";
   import { onDestroy } from "svelte";
   import TDDHeader from "./TDDHeader.svelte";
@@ -19,9 +19,9 @@
   import {
     chartHoverStore,
     hoverIndex,
-  } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/hover-index";
+  } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/hover-index";
   import type { TDDComparison, TableData } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let exploreName: string;
   export let expandedMeasureName: string;

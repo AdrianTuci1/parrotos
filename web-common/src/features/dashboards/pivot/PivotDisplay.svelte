@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getPivotExportQuery } from "@rilldata/web-common/features/dashboards/pivot/pivot-export.ts";
-  import PivotError from "@rilldata/web-common/features/dashboards/pivot/PivotError.svelte";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import ExportMenu from "@rilldata/web-common/features/exports/ExportMenu.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { dynamicHeight } from "@rilldata/web-common/layout/layout-settings.ts";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getPivotExportQuery } from "@statsparrot/web-common/features/dashboards/pivot/pivot-export.ts";
+  import PivotError from "@statsparrot/web-common/features/dashboards/pivot/PivotError.svelte";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import ExportMenu from "@statsparrot/web-common/features/exports/ExportMenu.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings.ts";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
   import {
     DEFAULT_PIVOT_SIDEBAR_WIDTH,
     DEFAULT_PIVOT_SIDEBAR_WIDTH_NO_TAGS,
     MAX_PIVOT_SIDEBAR_WIDTH,
     MIN_PIVOT_SIDEBAR_WIDTH,
     pivotSidebarWidth,
-  } from "@rilldata/web-common/features/dashboards/workspace/dashboard-layout-store";
+  } from "@statsparrot/web-common/features/dashboards/workspace/dashboard-layout-store";
   import { derived } from "svelte/store";
   import { slide } from "svelte/transition";
   import { useTimeControlStore } from "web-common/src/features/dashboards/time-controls/time-control-store.ts";
@@ -54,8 +54,8 @@
 
   const { cloudDataViewer, readOnly } = featureFlags;
 
-  $: isRillDeveloper = $readOnly === false;
-  $: canShowDataViewer = Boolean($cloudDataViewer || isRillDeveloper);
+  $: isParrotDeveloper = $readOnly === false;
+  $: canShowDataViewer = Boolean($cloudDataViewer || isParrotDeveloper);
 
   const pivotExploreState = derived(dashboardStore, (dashboard) => {
     return dashboard?.pivot;

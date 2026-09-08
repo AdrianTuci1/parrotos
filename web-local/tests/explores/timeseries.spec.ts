@@ -8,12 +8,12 @@ import { gotoNavEntry } from "../utils/waitHelpers";
 import {
   interactWithTimeRangeMenu,
   setDashboardTimezone,
-} from "@rilldata/web-common/tests/utils/explore-interactions";
+} from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { DateTime } from "luxon";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-import { formatGrainBucket } from "@rilldata/web-common/lib/time/ranges/formatter";
-import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+import { formatGrainBucket } from "@statsparrot/web-common/lib/time/ranges/formatter";
+import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
 
 const HOVER_STEP_PX = 5;
 

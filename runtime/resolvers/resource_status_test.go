@@ -5,8 +5,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,21 +19,21 @@ func TestResourceStatus(t *testing.T) {
 	}{
 		{
 			name:  "no resources",
-			files: map[string]string{`rill.yaml`: ``},
+			files: map[string]string{`statsparrot.yaml`: ``},
 			expected: []map[string]any{
 				{"type": "ProjectParser", "name": "parser", "status": "Idle", "error": ""},
 			},
 		},
 		{
 			name:       "no resources with where_error",
-			files:      map[string]string{`rill.yaml`: ``},
+			files:      map[string]string{`statsparrot.yaml`: ``},
 			whereError: true,
 			expected:   []map[string]any{},
 		},
 		{
 			name: "multiple resources",
 			files: map[string]string{
-				"rill.yaml": ``,
+				"statsparrot.yaml": ``,
 				"m1.sql":    `SELECT 314`,
 				"m2.sql":    `SELECT 159`,
 			},
@@ -46,7 +46,7 @@ func TestResourceStatus(t *testing.T) {
 		{
 			name: "multiple resources with where_error",
 			files: map[string]string{
-				"rill.yaml": ``,
+				"statsparrot.yaml": ``,
 				"m1.sql":    `SELECT 314`,
 				"m2.sql":    `SELECT 159`,
 			},
@@ -56,7 +56,7 @@ func TestResourceStatus(t *testing.T) {
 		{
 			name: "resource in error state",
 			files: map[string]string{
-				"rill.yaml": ``,
+				"statsparrot.yaml": ``,
 				"m1.sql":    `SELECT 314`,
 				"m2.sql":    `SELECT error("booom!")`,
 			},
@@ -69,7 +69,7 @@ func TestResourceStatus(t *testing.T) {
 		{
 			name: "resource in error state with where_error",
 			files: map[string]string{
-				"rill.yaml": ``,
+				"statsparrot.yaml": ``,
 				"m1.sql":    `SELECT 314`,
 				"m2.sql":    `SELECT error("booom!")`,
 			},
@@ -81,7 +81,7 @@ func TestResourceStatus(t *testing.T) {
 		{
 			name: "parse errors",
 			files: map[string]string{
-				"rill.yaml": ``,
+				"statsparrot.yaml": ``,
 				"m1.yaml":   "type model\nsql SELECT 314", // Invalid YAML because it's missing colons
 			},
 			expected: []map[string]any{

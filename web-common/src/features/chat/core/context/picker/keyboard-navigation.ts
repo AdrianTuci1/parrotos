@@ -1,8 +1,8 @@
 import { get, writable } from "svelte/store";
-import type { ContextPickerUIState } from "@rilldata/web-common/features/chat/core/context/picker/ui-state.ts";
-import type { InlineContext } from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-import type { PickerItem } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-import { EventEmitter } from "@rilldata/web-common/lib/event-emitter.ts";
+import type { ContextPickerUIState } from "@statsparrot/web-common/features/chat/core/context/picker/ui-state.ts";
+import type { InlineContext } from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+import type { PickerItem } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+import { EventEmitter } from "@statsparrot/web-common/lib/event-emitter.ts";
 
 type KeyboardNavigationManagerEvents = {
   select: InlineContext;

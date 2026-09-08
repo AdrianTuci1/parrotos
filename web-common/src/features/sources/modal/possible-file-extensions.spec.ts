@@ -1,4 +1,4 @@
-import { fileHasValidExtension } from "@rilldata/web-common/features/sources/modal/possible-file-extensions";
+import { fileHasValidExtension } from "@statsparrot/web-common/features/sources/modal/possible-file-extensions";
 import { describe, expect, it } from "vitest";
 
 describe("fileHasValidExtension", () => {

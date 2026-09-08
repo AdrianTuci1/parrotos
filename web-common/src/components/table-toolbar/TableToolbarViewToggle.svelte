@@ -1,9 +1,9 @@
 <!-- Used by dashboard list/grid view toggle -->
 <script lang="ts">
-  import List from "@rilldata/web-common/components/icons/List.svelte";
+  import List from "@statsparrot/web-common/components/icons/List.svelte";
   import { LayoutGrid } from "lucide-svelte";
   import type { ViewMode } from "./types";
-  import type { RuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+  import type { RuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 
   let {
     viewModeStore,

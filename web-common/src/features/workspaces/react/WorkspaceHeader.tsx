@@ -4,10 +4,10 @@
 // `cta` props; the inspector & table visibility toggles are driven by the
 // framework-agnostic `workspaces` store (bridged via `useReadable`).
 import { useState, type ReactNode } from "react";
-import { navigationOpen } from "@rilldata/web-common/layout/react/store";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
-import { HideSidebarIcon } from "@rilldata/web-common/layout/react/icons";
-import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
+import { navigationOpen } from "@statsparrot/web-common/layout/react/store";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
+import { HideSidebarIcon } from "@statsparrot/web-common/layout/react/icons";
+import { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
 
 export default function WorkspaceHeader({
   resourceKind,

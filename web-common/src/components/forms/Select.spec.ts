@@ -1,4 +1,4 @@
-import { mockAnimationsForComponentTesting } from "@rilldata/web-common/lib/test/mock-animations";
+import { mockAnimationsForComponentTesting } from "@statsparrot/web-common/lib/test/mock-animations";
 import { render, screen } from "@testing-library/svelte";
 import { describe, expect, it, vi } from "vitest";
 import Select from "./Select.svelte";

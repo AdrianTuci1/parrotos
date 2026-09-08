@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )

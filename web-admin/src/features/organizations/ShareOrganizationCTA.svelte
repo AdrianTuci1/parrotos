@@ -1,9 +1,9 @@
 <script lang="ts">
-  import CLICommandDisplay from "@rilldata/web-common/components/commands/CLICommandDisplay.svelte";
+  import CLICommandDisplay from "@statsparrot/web-common/components/commands/CLICommandDisplay.svelte";
 
   export let organization: string;
 
-  $: addUserCommand = `rill user add --org ${organization} --role viewer`;
+  $: addUserCommand = `statsparrot user add --org ${organization} --role viewer`;
 </script>
 
 <div class="flex flex-col">
@@ -11,7 +11,7 @@
     >Share</span
   >
   <div>
-    Run this command in the Rill CLI to invite a teammate to view this
+    Run this command in the Parrot CLI to invite a teammate to view this
     organization.
   </div>
   <CLICommandDisplay command={addUserCommand} />

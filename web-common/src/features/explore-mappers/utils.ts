@@ -1,22 +1,22 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { createInExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { resolveTimeRanges } from "@rilldata/web-common/features/dashboards/time-controls/rill-time-ranges.ts";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { createInExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { resolveTimeRanges } from "@statsparrot/web-common/features/dashboards/time-controls/statsparrot-time-ranges.ts";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   mapV1TimeRangeToSelectedComparisonTimeRange,
   mapV1TimeRangeToSelectedTimeRange,
   PreviousCompleteRangeMap,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
 import {
   type ExploreLinkError,
   ExploreLinkErrorType,
-} from "@rilldata/web-common/features/explore-mappers/types";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/explore-mappers/types";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   getQueryServiceMetricsViewAggregationQueryKey,
   getQueryServiceMetricsViewTimeRangeQueryKey,
@@ -30,8 +30,8 @@ import {
   type V1MetricsViewTimeRangeResponse,
   type V1TimeRange,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 // We are manually sending in duration, offset and round to grain for previous complete ranges.
 // This is to map back that split

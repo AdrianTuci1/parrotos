@@ -1,18 +1,18 @@
 import type { KeyboardEvent, MouseEvent } from "react";
-import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
-import { TOOLTIP_STRING_LIMIT } from "@rilldata/web-common/layout/config";
+import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
+import { TOOLTIP_STRING_LIMIT } from "@statsparrot/web-common/layout/config";
 import {
   copyToClipboard,
   isClipboardApiSupported,
-} from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-import { STRING_LIKES } from "@rilldata/web-common/lib/duckdb-data-types";
-import { formatDataTypeAsDuckDbQueryString } from "@rilldata/web-common/lib/formatters";
+} from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+import { STRING_LIKES } from "@statsparrot/web-common/lib/duckdb-data-types";
+import { formatDataTypeAsDuckDbQueryString } from "@statsparrot/web-common/lib/formatters";
 import {
   FormattedDataType,
   Shortcut,
   StackingWord,
   Tooltip,
-} from "@rilldata/web-common/features/dashboards/leaderboard/react/primitives";
+} from "@statsparrot/web-common/features/dashboards/leaderboard/react/primitives";
 import type { VirtualItem } from "./useVirtualizer";
 import { BarAndLabel } from "./BarAndLabel";
 import { ExternalLink } from "./icons";

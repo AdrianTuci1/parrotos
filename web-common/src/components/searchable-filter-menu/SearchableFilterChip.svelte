@@ -1,10 +1,10 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
-  import type { SearchableFilterSelectableItem } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
-  import { Chip } from "@rilldata/web-common/components/chip";
+  import type { SearchableFilterSelectableItem } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+  import { Chip } from "@statsparrot/web-common/components/chip";
   import Tooltip from "../tooltip/Tooltip.svelte";
   import TooltipContent from "../tooltip/TooltipContent.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
   import SearchableMenuContent from "./SearchableMenuContent.svelte";
 
   export let selectableItems: SearchableFilterSelectableItem[];

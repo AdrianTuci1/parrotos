@@ -1,16 +1,16 @@
 <script lang="ts">
   import SyntaxElement from "./SyntaxElement.svelte";
-  import type { RillTime } from "../../../url-state/time-ranges/RillTime";
+  import type { ParrotTime } from "../../../url-state/time-ranges/ParrotTime";
 
-  export let rillTime: RillTime;
+  export let statsparrotTime: ParrotTime;
   export let timeString: string | undefined;
   export let onClick: (range: string) => void;
 
-  $: label = rillTime.getLabel();
+  $: label = statsparrotTime.getLabel();
   // If there is as of baked into the range then use it.
-  $: range = rillTime.asOfLabel
-    ? rillTime.toString()
-    : rillTime.interval.toString();
+  $: range = statsparrotTime.asOfLabel
+    ? statsparrotTime.toString()
+    : statsparrotTime.interval.toString();
 
   $: selected = !!timeString?.startsWith(range);
 </script>

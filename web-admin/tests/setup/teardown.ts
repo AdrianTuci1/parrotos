@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { RILL_DEVTOOL_BACKGROUND_PROCESS_PID_FILE } from "@rilldata/web-integration/tests/constants";
-import { isOrgDeleted } from "@rilldata/web-common/tests/utils/is-org-deleted";
-import { execAsync } from "@rilldata/web-common/tests/utils/spawn";
+import { STATSPARROT_DEVTOOL_BACKGROUND_PROCESS_PID_FILE } from "@statsparrot/web-integration/tests/constants";
+import { isOrgDeleted } from "@statsparrot/web-common/tests/utils/is-org-deleted";
+import { execAsync } from "@statsparrot/web-common/tests/utils/spawn";
 import fs from "fs";
 import { test as teardown } from "./base";
 
@@ -26,14 +26,14 @@ teardown.describe("global teardown", () => {
     // 3. Kill the whole process group
     // 4. Delete the process ID file
     const processID = fs.readFileSync(
-      RILL_DEVTOOL_BACKGROUND_PROCESS_PID_FILE,
+      STATSPARROT_DEVTOOL_BACKGROUND_PROCESS_PID_FILE,
       "utf8",
     );
     const { stdout: processGroupID } = await execAsync(
       `ps -o pgid= -p ${processID}`,
     );
     await execAsync(`kill -TERM -${processGroupID.trim()}`);
-    await execAsync(`rm ${RILL_DEVTOOL_BACKGROUND_PROCESS_PID_FILE}`);
+    await execAsync(`rm ${STATSPARROT_DEVTOOL_BACKGROUND_PROCESS_PID_FILE}`);
 
     // Stop the cloud services
     await execAsync(

@@ -1,10 +1,10 @@
 import {
   validateDimensions,
   validateMeasures,
-} from "@rilldata/web-common/features/canvas/components/validators";
-import { isTimeDimension } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+} from "@statsparrot/web-common/features/canvas/components/validators";
+import { isTimeDimension } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import type { PivotSpec, TableSpec } from "./";
-import type { V1MetricsViewSpec } from "@rilldata/web-common/runtime-client";
+import type { V1MetricsViewSpec } from "@statsparrot/web-common/runtime-client";
 
 export function validateTableSchema(
   metricsViewQuery: {

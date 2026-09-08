@@ -3,10 +3,10 @@
   import {
     resourceIconMapping,
     resourceShorthandMapping,
-  } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import { goto } from "$app/navigation";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
 
   export let id: string;
   export let type: string;

@@ -13,7 +13,7 @@ export interface MockUser {
 export function useMockUsers(client: RuntimeClient) {
   return createRuntimeServiceGetFile(
     client,
-    { path: `rill.yaml` },
+    { path: `statsparrot.yaml` },
     {
       query: {
         select: (data) => {

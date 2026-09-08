@@ -1,7 +1,7 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
   import {
     RefreshCcwIcon,
     LayoutGridIcon,
@@ -9,9 +9,9 @@
     CodeIcon,
     ScrollTextIcon,
   } from "lucide-svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { getAvailableModelActions } from "./model-actions";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let resource: V1Resource | undefined;
   export let isDropdownOpen: boolean;

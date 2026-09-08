@@ -1,5 +1,5 @@
-import type { DashboardMutables } from "@rilldata/web-common/features/dashboards/state-managers/actions/types";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+import type { DashboardMutables } from "@statsparrot/web-common/features/dashboards/state-managers/actions/types";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 
 export function clearAllFilters({ dashboard }: DashboardMutables) {
   const hasFilters =

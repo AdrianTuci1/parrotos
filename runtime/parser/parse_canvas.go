@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/metricsview/metricssql"
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
-	"github.com/rilldata/rill/runtime/pkg/urlutils"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/metricssql"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/urlutils"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 )
@@ -106,9 +106,9 @@ func (p *Parser) parseCanvas(node *Node) error {
 	if err != nil {
 		return err
 	}
-	// Fallback to top-level theme from rill.yaml if no local theme or default theme is set
-	if themeName == "" && themeSpec == nil && p.RillYAML != nil && p.RillYAML.Theme != "" {
-		themeName = p.RillYAML.Theme
+	// Fallback to top-level theme from statsparrot.yaml if no local theme or default theme is set
+	if themeName == "" && themeSpec == nil && p.ParrotYAML != nil && p.ParrotYAML.Theme != "" {
+		themeName = p.ParrotYAML.Theme
 	}
 	if themeName != "" && themeSpec == nil {
 		node.Refs = append(node.Refs, ResourceName{Kind: ResourceKindTheme, Name: themeName})
@@ -117,12 +117,12 @@ func (p *Parser) parseCanvas(node *Node) error {
 	// Build and validate time ranges
 	var timeRanges []*runtimev1.ExploreTimeRange
 	for _, tr := range tmp.TimeRanges {
-		if _, err := rilltime.Parse(tr.Range, rilltime.ParseOptions{}); err != nil {
+		if _, err := statspartime.Parse(tr.Range, statspartime.ParseOptions{}); err != nil {
 			return fmt.Errorf("invalid time range %q: %w", tr.Range, err)
 		}
 		res := &runtimev1.ExploreTimeRange{Range: tr.Range}
 		for _, ctr := range tr.ComparisonTimeRanges {
-			err = rilltime.ParseCompatibility(ctr.Range, ctr.Offset)
+			err = statspartime.ParseCompatibility(ctr.Range, ctr.Offset)
 			if err != nil {
 				return err
 			}
@@ -166,7 +166,7 @@ func (p *Parser) parseCanvas(node *Node) error {
 	var defaultPreset *runtimev1.CanvasPreset
 	if tmp.Defaults != nil {
 		if tmp.Defaults.TimeRange != "" {
-			if _, err := rilltime.Parse(tmp.Defaults.TimeRange, rilltime.ParseOptions{}); err != nil {
+			if _, err := statspartime.Parse(tmp.Defaults.TimeRange, statspartime.ParseOptions{}); err != nil {
 				return fmt.Errorf("invalid time range %q: %w", tmp.Defaults.TimeRange, err)
 			}
 		}

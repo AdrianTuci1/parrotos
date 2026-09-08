@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { resolveRootCauseErrorMessage } from "./error-utils";
 import { ResourceKind } from "./resource-selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 
 function makeResource(
   kind: ResourceKind,

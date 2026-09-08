@@ -1,14 +1,14 @@
 <script lang="ts">
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { generateSampleData } from "@rilldata/web-common/features/sample-data/generate-sample-data.ts";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { generateSampleData } from "@statsparrot/web-common/features/sample-data/generate-sample-data.ts";
   import { SparklesIcon } from "lucide-svelte";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
   import IconButton from "../../components/button/IconButton.svelte";
-  import SendIcon from "@rilldata/web-common/components/icons/SendIcon.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
+  import SendIcon from "@statsparrot/web-common/components/icons/SendIcon.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
 
   export let type: "home" | "modal";
   export let open = false;

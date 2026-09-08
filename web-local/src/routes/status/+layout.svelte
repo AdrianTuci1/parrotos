@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
 
   const navItems = [
     { label: "Overview", route: "/status" },

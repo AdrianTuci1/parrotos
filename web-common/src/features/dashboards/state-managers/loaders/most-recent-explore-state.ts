@@ -1,16 +1,16 @@
-import { validateAndCleanExploreState } from "@rilldata/web-common/features/dashboards/stores/validate-and-clean-explore-state";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { validateAndCleanExploreState } from "@statsparrot/web-common/features/dashboards/stores/validate-and-clean-explore-state";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   V1ExploreSpec,
   V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ExploreState } from "web-common/src/features/dashboards/stores/explore-state";
 
 function getKeyForLocalStore(
   exploreName: string,
   storageNamespacePrefix: string | undefined,
 ) {
-  return `rill:app:explore:${storageNamespacePrefix ?? ""}${exploreName}`.toLowerCase();
+  return `statsparrot:app:explore:${storageNamespacePrefix ?? ""}${exploreName}`.toLowerCase();
 }
 
 export function getMostRecentPartialExploreState(

@@ -2,7 +2,7 @@
   import {
     conditionalFormatSpecToMeasureFormatting,
     type PivotCanvasComponent,
-  } from "@rilldata/web-common/features/canvas/components/pivot";
+  } from "@statsparrot/web-common/features/canvas/components/pivot";
   import ComponentHeader from "../../ComponentHeader.svelte";
   import CanvasPivotRenderer from "./CanvasPivotRenderer.svelte";
   import { validateTableSchema } from "./selector";

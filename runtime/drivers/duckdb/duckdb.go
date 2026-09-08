@@ -12,15 +12,15 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/duckdb/extensions"
-	"github.com/rilldata/rill/runtime/drivers/file"
-	activity "github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/duckdbsql"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/priorityqueue"
-	"github.com/rilldata/rill/runtime/pkg/rduckdb"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/duckdb/extensions"
+	"github.com/staticlabs/statsparrot/runtime/drivers/file"
+	activity "github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/duckdbsql"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/priorityqueue"
+	"github.com/staticlabs/statsparrot/runtime/pkg/rduckdb"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 	"go.uber.org/zap"
@@ -38,7 +38,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "DuckDB",
 	Description: "DuckDB SQL connector.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/olap/duckdb",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/olap/duckdb",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "path",
@@ -91,7 +91,7 @@ var spec = drivers.Spec{
 var motherduckSpec = drivers.Spec{
 	DisplayName: "MotherDuck",
 	Description: "MotherDuck SQL connector.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/olap/motherduck",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/olap/motherduck",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "path",
@@ -223,7 +223,7 @@ func (d Driver) Open(connectorName, instanceID string, cfgMap map[string]any, st
 		}
 		// Check for another process currently accessing the DB
 		if strings.Contains(err.Error(), "Could not set lock on file") {
-			return nil, fmt.Errorf("failed to open database (is Rill already running?): %w", err)
+			return nil, fmt.Errorf("failed to open database (is Parrot already running?): %w", err)
 		}
 		return nil, err
 	}
@@ -414,7 +414,7 @@ func (c *connection) AsObjectStore() (drivers.ObjectStore, bool) {
 // AsModelExecutor implements drivers.Handle.
 func (c *connection) AsModelExecutor(instanceID string, opts *drivers.ModelExecutorOptions) (drivers.ModelExecutor, error) {
 	if opts.OutputHandle == c && c.config.Mode != modeReadWrite {
-		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Rill to create and overwrite tables in your database")
+		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Parrot to create and overwrite tables in your database")
 	}
 	if opts.InputHandle == c && opts.OutputHandle == c {
 		return &selfToSelfExecutor{c}, nil
@@ -458,7 +458,7 @@ func (c *connection) AsModelExecutor(instanceID string, opts *drivers.ModelExecu
 // AsModelManager implements drivers.Handle.
 func (c *connection) AsModelManager(instanceID string) (drivers.ModelManager, error) {
 	if c.config.Mode != modeReadWrite {
-		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Rill to create and overwrite tables in your database")
+		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Parrot to create and overwrite tables in your database")
 	}
 	return c, nil
 }

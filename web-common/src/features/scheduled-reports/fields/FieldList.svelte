@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem.ts";
-  import SearchableMenuContent from "@rilldata/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
-  import ChipDragList from "@rilldata/web-common/features/canvas/inspector/ChipDragList.svelte";
-  import type { FieldType } from "@rilldata/web-common/features/canvas/inspector/types.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import type { SearchableFilterSelectableGroup } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem.ts";
+  import SearchableMenuContent from "@statsparrot/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
+  import ChipDragList from "@statsparrot/web-common/features/canvas/inspector/ChipDragList.svelte";
+  import type { FieldType } from "@statsparrot/web-common/features/canvas/inspector/types.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { PlusIcon } from "lucide-svelte";
 
   export let fields: string[];

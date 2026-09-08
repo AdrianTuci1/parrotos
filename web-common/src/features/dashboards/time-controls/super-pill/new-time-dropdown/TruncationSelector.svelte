@@ -1,24 +1,24 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import { DateTime, Duration, type DateTimeUnit } from "luxon";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import {
     getOptionsFromSmallestToLargest,
     translateGrainName,
     translateV1TimeGrain,
     V1TimeGrainToDateTimeUnit,
-  } from "@rilldata/web-common/lib/time/new-grains";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
+  } from "@statsparrot/web-common/lib/time/new-grains";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
   import { Tooltip as TooltipPrimitive } from "bits-ui";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import TooltipDescription from "@rilldata/web-common/components/tooltip/TooltipDescription.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import TooltipDescription from "@statsparrot/web-common/components/tooltip/TooltipDescription.svelte";
   import { onDestroy, onMount } from "svelte";
   import SyntaxElement from "../components/SyntaxElement.svelte";
-  import { RillTimeLabel } from "../../../url-state/time-ranges/RillTime";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { ParrotTimeLabel } from "../../../url-state/time-ranges/ParrotTime";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let dateTimeAnchor: DateTime;
   export let grain: V1TimeGrain | undefined;
@@ -29,8 +29,8 @@
   export let watermark: DateTime | undefined;
   export let latest: DateTime | undefined;
   export let zone: string;
-  export let ref: RillTimeLabel | string | undefined;
-  export let onSelectAsOfOption: (ref: RillTimeLabel) => void;
+  export let ref: ParrotTimeLabel | string | undefined;
+  export let onSelectAsOfOption: (ref: ParrotTimeLabel) => void;
   export let onToggleAlignment: (forward: boolean) => void;
   export let onSelectEnding: (
     grain: V1TimeGrain | undefined,
@@ -87,19 +87,19 @@
 
   $: options = [
     {
-      id: RillTimeLabel.Watermark,
+      id: ParrotTimeLabel.Watermark,
       label: m.dashboard_complete_data(),
       timestamp: watermark,
       description: m.dashboard_complete_data_description(),
     },
     {
-      id: RillTimeLabel.Latest,
+      id: ParrotTimeLabel.Latest,
       label: m.dashboard_latest_data(),
       timestamp: latest,
       description: m.dashboard_latest_data_description(),
     },
     {
-      id: RillTimeLabel.Now,
+      id: ParrotTimeLabel.Now,
       label: m.dashboard_current_time(),
       timestamp: now,
       description: m.dashboard_current_time_description(),
@@ -120,16 +120,16 @@
   }
 
   function humanizeRef(
-    ref: RillTimeLabel | string | undefined,
+    ref: ParrotTimeLabel | string | undefined,
     grain: V1TimeGrain | undefined,
   ): string {
     switch (ref) {
-      case RillTimeLabel.Watermark:
+      case ParrotTimeLabel.Watermark:
         if (grain) return m.time_ref_complete();
         return m.time_ref_complete_data();
-      case RillTimeLabel.Latest:
+      case ParrotTimeLabel.Latest:
         return m.time_ref_latest();
-      case RillTimeLabel.Now:
+      case ParrotTimeLabel.Now:
         if (grain) return m.time_ref_current();
         return m.time_ref_now();
       default:
@@ -184,7 +184,7 @@
               {/if}
             </b>
             {#if grain}
-              {#if snapToEnd || ref === RillTimeLabel.Watermark}
+              {#if snapToEnd || ref === ParrotTimeLabel.Watermark}
                 {m.dashboard_end()}
               {:else}
                 {m.dashboard_start()}
@@ -219,7 +219,7 @@
         {m.dashboard_reference()}
       </h3>
       {#each options as { id, label, description, timestamp } (id)}
-        {#if id !== RillTimeLabel.Watermark || (id === RillTimeLabel.Watermark && !!timestamp)}
+        {#if id !== ParrotTimeLabel.Watermark || (id === ParrotTimeLabel.Watermark && !!timestamp)}
           <Tooltip.Root open={hoveredOption === id}>
             <TooltipPrimitive.Trigger>
               {#snippet child({ props: tooltipProps })}
@@ -257,7 +257,7 @@
                     <SyntaxElement dark range={id} />
                   </div>
 
-                  {#if id !== RillTimeLabel.Now}
+                  {#if id !== ParrotTimeLabel.Now}
                     <div>
                       {getColloquialOffset(timestamp)}
                     </div>
@@ -303,9 +303,9 @@
           <span>{m.dashboard_anchor_period_end()}</span>
 
           <Switch
-            disabled={ref === RillTimeLabel.Watermark}
+            disabled={ref === ParrotTimeLabel.Watermark}
             small
-            checked={snapToEnd || ref === RillTimeLabel.Watermark}
+            checked={snapToEnd || ref === ParrotTimeLabel.Watermark}
             onclick={() => {
               onToggleAlignment(!snapToEnd);
             }}

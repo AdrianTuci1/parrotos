@@ -3,8 +3,8 @@
   import { getCanvasStore } from "./state-managers/state-managers";
   import StaticCanvasRow from "./StaticCanvasRow.svelte";
   import CanvasTabGroupView from "./CanvasTabGroupView.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import Spinner from "../entity-management/Spinner.svelte";
   import { EntityStatus } from "../entity-management/types";
   import { page } from "$app/stores";

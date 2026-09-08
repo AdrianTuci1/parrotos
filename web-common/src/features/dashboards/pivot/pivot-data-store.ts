@@ -1,14 +1,14 @@
 import type { ConnectError } from "@connectrpc/connect";
-import { mergeFilters } from "@rilldata/web-common/features/dashboards/pivot/pivot-merge-filters";
-import { memoizeMetricsStore } from "@rilldata/web-common/features/dashboards/state-managers/memoize-metrics-store";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+import { mergeFilters } from "@statsparrot/web-common/features/dashboards/pivot/pivot-merge-filters";
+import { memoizeMetricsStore } from "@statsparrot/web-common/features/dashboards/state-managers/memoize-metrics-store";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import type {
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationResponse,
   V1MetricsViewAggregationSort,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 import { type Readable, derived, readable } from "svelte/store";
 import type { ColumnDef } from "tanstack-table-8-svelte-5";

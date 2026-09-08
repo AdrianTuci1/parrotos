@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { Writable } from "svelte/store";
   import ComponentError from "../components/ComponentError.svelte";
   import AddComponentDropdown from "./AddComponentDropdown.svelte";

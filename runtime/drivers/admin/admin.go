@@ -6,19 +6,19 @@ import (
 	"fmt"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/admin/client"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/admin/client"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/drivers/admin")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/admin")
 
 var spec = drivers.Spec{
-	DisplayName: "Rill Admin",
+	DisplayName: "Parrot Admin",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:      "admin_url",
@@ -59,7 +59,7 @@ func (d driver) Open(_, instanceID string, config map[string]any, st *storage.Cl
 		return nil, err
 	}
 
-	admin, err := client.New(cfg.AdminURL, cfg.AccessToken, "rill-runtime")
+	admin, err := client.New(cfg.AdminURL, cfg.AccessToken, "statsparrot-runtime")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open admin client: %w", err)
 	}

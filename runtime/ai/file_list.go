@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const ListFilesName = "list_files"
@@ -26,7 +26,7 @@ func (t *ListFiles) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        ListFilesName,
 		Title:       "List project files",
-		Description: "Lists all the files in the Rill project, as well as the resources they declare and the current status of those resources",
+		Description: "Lists all the files in the Parrot project, as well as the resources they declare and the current status of those resources",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(false),
 			IdempotentHint:  true,

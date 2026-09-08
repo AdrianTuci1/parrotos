@@ -1,15 +1,15 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createRuntimeServiceCreateTriggerMutation,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { RefreshCcwIcon, CodeIcon } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let resourceKind: string;
   export let resourceName: string;

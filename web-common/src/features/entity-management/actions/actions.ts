@@ -1,23 +1,23 @@
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
 import {
   extractFileName,
   getTopLevelFolder,
   splitFolderFileNameAndExtension,
-} from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
-import { fileIsMainEntity } from "@rilldata/web-common/features/entity-management/file-selectors.ts";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+} from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
+import { fileIsMainEntity } from "@statsparrot/web-common/features/entity-management/file-selectors.ts";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
 import {
   isControllerClosedError,
   isNotFoundError,
-} from "@rilldata/web-common/lib/errors.ts";
+} from "@statsparrot/web-common/lib/errors.ts";
 import {
   runtimeServiceDeleteFile,
   runtimeServiceGetFile,
   runtimeServicePutFile,
   runtimeServiceRenameFile,
   type RuntimeServicePutFileBody,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { get } from "svelte/store";
 import {
   FolderNameToResourceKind,

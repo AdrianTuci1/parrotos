@@ -1,7 +1,7 @@
-import { DEFAULT_TIME_RANGES } from "@rilldata/web-common/lib/time/config.ts";
-import { isGrainBigger } from "@rilldata/web-common/lib/time/grains";
-import { humaniseISODuration } from "@rilldata/web-common/lib/time/ranges/iso-ranges.ts";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import { DEFAULT_TIME_RANGES } from "@statsparrot/web-common/lib/time/config.ts";
+import { isGrainBigger } from "@statsparrot/web-common/lib/time/grains";
+import { humaniseISODuration } from "@statsparrot/web-common/lib/time/ranges/iso-ranges.ts";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import { DateTime, Duration } from "luxon";
 import type { DateObjectUnits } from "luxon";
 import {
@@ -14,14 +14,14 @@ import {
   translateGrainNamePlural,
   V1TimeGrainToDateTimeUnit,
   type TimeGrainAlias,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { TimeRangeMeta } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { TimeRangeMeta } from "@statsparrot/web-common/lib/time/types";
 
 const absTimeRegex =
   /(?<year>\d{4})(-(?<month>\d{2})(-(?<day>\d{2})(T(?<hour>\d{2})(:(?<minute>\d{2})(:(?<second>\d{2})Z)?)?)?)?)?/;
 
-export enum RillTimeLabel {
+export enum ParrotTimeLabel {
   Earliest = "earliest",
   Latest = "latest",
   Now = "now",
@@ -29,35 +29,35 @@ export enum RillTimeLabel {
   Ref = "ref",
 }
 
-export type RillTimeAsOfLabel = {
-  label: RillTimeLabel | string;
+export type ParrotTimeAsOfLabel = {
+  label: ParrotTimeLabel | string;
   snap: string | undefined;
   offset: number;
 };
 
-export class RillTime {
+export class ParrotTime {
   public isComplete: boolean = false;
   public timezone: string | undefined;
-  public anchorOverrides: RillPointInTime[] = [];
+  public anchorOverrides: ParrotPointInTime[] = [];
 
   public readonly rangeGrain: V1TimeGrain | undefined;
   public byGrain: V1TimeGrain | undefined;
   public readonly isShorthandSyntax: boolean;
-  public asOfLabel: RillTimeAsOfLabel | undefined = undefined;
+  public asOfLabel: ParrotTimeAsOfLabel | undefined = undefined;
 
   public isOldFormat = false;
 
-  public constructor(public readonly interval: RillTimeInterval) {
+  public constructor(public readonly interval: ParrotTimeInterval) {
     this.updateIsComplete();
 
     this.isShorthandSyntax =
-      interval instanceof RillShorthandInterval ||
-      interval instanceof RillPeriodToGrainInterval;
+      interval instanceof ParrotShorthandInterval ||
+      interval instanceof ParrotPeriodToGrainInterval;
     this.rangeGrain = this.interval.getGrain();
     this.isOldFormat =
-      interval instanceof RillLegacyIsoInterval ||
-      interval instanceof RillLegacyDaxInterval ||
-      interval instanceof RillAllTimeInterval;
+      interval instanceof ParrotLegacyIsoInterval ||
+      interval instanceof ParrotLegacyDaxInterval ||
+      interval instanceof ParrotAllTimeInterval;
   }
 
   public withGrain(grain: string) {
@@ -70,7 +70,7 @@ export class RillTime {
     return this;
   }
 
-  public withAnchorOverrides(anchorOverrides: RillPointInTime[]) {
+  public withAnchorOverrides(anchorOverrides: ParrotPointInTime[]) {
     this.anchorOverrides = anchorOverrides;
     this.asOfLabel = this.getAsOfLabel();
     this.updateIsComplete();
@@ -83,7 +83,7 @@ export class RillTime {
     return supported ? capitalizeFirstChar(label) : this.toString();
   }
 
-  public overrideRef(override: RillPointInTime) {
+  public overrideRef(override: ParrotPointInTime) {
     if (this.isOldFormat) return;
 
     const pointUsingRefIndex = this.anchorOverrides.findIndex((pt) =>
@@ -101,7 +101,7 @@ export class RillTime {
   }
 
   public isAbsoluteTime() {
-    return this.interval instanceof RillIsoInterval;
+    return this.interval instanceof ParrotIsoInterval;
   }
 
   public toString() {
@@ -137,7 +137,7 @@ export class RillTime {
     return offset;
   }
 
-  private getAsOfLabel(): RillTimeAsOfLabel | undefined {
+  private getAsOfLabel(): ParrotTimeAsOfLabel | undefined {
     const labelledAnchor = this.anchorOverrides.find((anchor) =>
       anchor.hasLabelledPart(),
     );
@@ -145,7 +145,7 @@ export class RillTime {
 
     const labelledPart = labelledAnchor.getLabelledPart();
     if (!labelledPart || labelledPart.snaps.length > 1) return undefined;
-    const labelledPoint = labelledPart.point as RillLabelledPointInTime;
+    const labelledPoint = labelledPart.point as ParrotLabelledPointInTime;
 
     const snap = labelledPart.snaps[0];
     const offsetForSnap =
@@ -161,30 +161,30 @@ export class RillTime {
   }
 }
 
-interface RillTimeInterval {
+interface ParrotTimeInterval {
   isComplete(
     offset: Duration,
-    asOfLabel: RillTimeAsOfLabel | undefined,
+    asOfLabel: ParrotTimeAsOfLabel | undefined,
   ): boolean;
   getLabel(offset: Duration): [label: string, supported: boolean];
   getGrain(): V1TimeGrain | undefined;
   toString(): string;
 }
 
-export class RillShorthandInterval implements RillTimeInterval {
-  private readonly expandedInterval: RillTimeStartEndInterval;
+export class ParrotShorthandInterval implements ParrotTimeInterval {
+  private readonly expandedInterval: ParrotTimeStartEndInterval;
 
-  public constructor(private readonly parts: RillGrain[]) {
-    this.expandedInterval = new RillTimeStartEndInterval(
-      new RillPointInTime([
-        new RillPointInTimeWithSnap(
-          new RillGrainPointInTime([new RillGrainPointInTimePart("-", parts)]),
+  public constructor(private readonly parts: ParrotGrain[]) {
+    this.expandedInterval = new ParrotTimeStartEndInterval(
+      new ParrotPointInTime([
+        new ParrotPointInTimeWithSnap(
+          new ParrotGrainPointInTime([new ParrotGrainPointInTimePart("-", parts)]),
           [],
         ),
       ]),
-      new RillPointInTime([
-        new RillPointInTimeWithSnap(
-          new RillLabelledPointInTime(RillTimeLabel.Ref),
+      new ParrotPointInTime([
+        new ParrotPointInTimeWithSnap(
+          new ParrotLabelledPointInTime(ParrotTimeLabel.Ref),
           [],
         ),
       ]),
@@ -193,7 +193,7 @@ export class RillShorthandInterval implements RillTimeInterval {
 
   public isComplete(
     offset: Duration,
-    asOfLabel: RillTimeAsOfLabel | undefined,
+    asOfLabel: ParrotTimeAsOfLabel | undefined,
   ) {
     return this.expandedInterval.isComplete(offset, asOfLabel);
   }
@@ -216,20 +216,20 @@ export class RillShorthandInterval implements RillTimeInterval {
   }
 }
 
-export class RillPeriodToGrainInterval implements RillTimeInterval {
-  private readonly expandedInterval: RillTimeStartEndInterval;
+export class ParrotPeriodToGrainInterval implements ParrotTimeInterval {
+  private readonly expandedInterval: ParrotTimeStartEndInterval;
 
   public constructor(private readonly grain: string) {
-    this.expandedInterval = new RillTimeStartEndInterval(
-      new RillPointInTime([
-        new RillPointInTimeWithSnap(
-          new RillLabelledPointInTime(RillTimeLabel.Ref),
+    this.expandedInterval = new ParrotTimeStartEndInterval(
+      new ParrotPointInTime([
+        new ParrotPointInTimeWithSnap(
+          new ParrotLabelledPointInTime(ParrotTimeLabel.Ref),
           [grain],
         ),
       ]),
-      new RillPointInTime([
-        new RillPointInTimeWithSnap(
-          new RillLabelledPointInTime(RillTimeLabel.Ref),
+      new ParrotPointInTime([
+        new ParrotPointInTimeWithSnap(
+          new ParrotLabelledPointInTime(ParrotTimeLabel.Ref),
           [],
         ),
       ]),
@@ -238,7 +238,7 @@ export class RillPeriodToGrainInterval implements RillTimeInterval {
 
   public isComplete(
     offset: Duration,
-    asOfLabel: RillTimeAsOfLabel | undefined,
+    asOfLabel: ParrotTimeAsOfLabel | undefined,
   ) {
     return this.expandedInterval.isComplete(offset, asOfLabel);
   }
@@ -260,8 +260,8 @@ export class RillPeriodToGrainInterval implements RillTimeInterval {
   }
 }
 
-export class RillTimeOrdinalInterval implements RillTimeInterval {
-  public constructor(private readonly parts: RillOrdinal[]) {}
+export class ParrotTimeOrdinalInterval implements ParrotTimeInterval {
+  public constructor(private readonly parts: ParrotOrdinal[]) {}
 
   public isComplete() {
     return false;
@@ -286,15 +286,15 @@ export class RillTimeOrdinalInterval implements RillTimeInterval {
   }
 }
 
-export class RillTimeStartEndInterval implements RillTimeInterval {
+export class ParrotTimeStartEndInterval implements ParrotTimeInterval {
   public constructor(
-    public readonly start: RillPointInTime,
-    public readonly end: RillPointInTime,
+    public readonly start: ParrotPointInTime,
+    public readonly end: ParrotPointInTime,
   ) {}
 
   public isComplete(
     offset: Duration,
-    asOfLabel: RillTimeAsOfLabel | undefined,
+    asOfLabel: ParrotTimeAsOfLabel | undefined,
   ) {
     const endOffset = this.end.offset.plus(offset).toObject();
     const grains = Object.keys(endOffset);
@@ -314,7 +314,7 @@ export class RillTimeStartEndInterval implements RillTimeInterval {
     let endOffset = this.end.offset.toObject();
     const parentOffset = offset.toObject();
 
-    if (this.start?.parts?.[0]?.point instanceof RillAbsoluteTime) {
+    if (this.start?.parts?.[0]?.point instanceof ParrotAbsoluteTime) {
       return [m.time_custom(), true];
     }
 
@@ -402,10 +402,10 @@ export class RillTimeStartEndInterval implements RillTimeInterval {
   }
 }
 
-export class RillIsoInterval implements RillTimeInterval {
+export class ParrotIsoInterval implements ParrotTimeInterval {
   public constructor(
-    private readonly start: RillAbsoluteTime,
-    private readonly end: RillAbsoluteTime | undefined,
+    private readonly start: ParrotAbsoluteTime,
+    private readonly end: ParrotAbsoluteTime | undefined,
   ) {}
 
   public isComplete() {
@@ -454,7 +454,7 @@ export class RillIsoInterval implements RillTimeInterval {
   }
 }
 
-export class RillAllTimeInterval implements RillTimeInterval {
+export class ParrotAllTimeInterval implements ParrotTimeInterval {
   public isComplete() {
     return false;
   }
@@ -472,10 +472,10 @@ export class RillAllTimeInterval implements RillTimeInterval {
   }
 }
 
-export class RillLegacyIsoInterval implements RillTimeInterval {
+export class ParrotLegacyIsoInterval implements ParrotTimeInterval {
   public constructor(
-    private readonly dateGrains: RillGrain[],
-    private readonly timeGrains: RillGrain[],
+    private readonly dateGrains: ParrotGrain[],
+    private readonly timeGrains: ParrotGrain[],
   ) {}
 
   public isComplete() {
@@ -526,7 +526,7 @@ export class RillLegacyIsoInterval implements RillTimeInterval {
   }
 }
 
-export class RillLegacyDaxInterval implements RillTimeInterval {
+export class ParrotLegacyDaxInterval implements ParrotTimeInterval {
   public constructor(public readonly name: string) {}
 
   public isComplete() {
@@ -552,10 +552,10 @@ export class RillLegacyDaxInterval implements RillTimeInterval {
   }
 }
 
-export class RillPointInTime {
+export class ParrotPointInTime {
   public readonly offset: Duration;
 
-  public constructor(public readonly parts: RillPointInTimeWithSnap[]) {
+  public constructor(public readonly parts: ParrotPointInTimeWithSnap[]) {
     let offset = Duration.fromObject({});
     parts.forEach((part) => {
       offset = offset.plus(part.offset);
@@ -572,11 +572,11 @@ export class RillPointInTime {
   }
 
   public hasLabelledPart() {
-    return this.parts.some((p) => p.point instanceof RillLabelledPointInTime);
+    return this.parts.some((p) => p.point instanceof ParrotLabelledPointInTime);
   }
 
   public getLabelledPart() {
-    return this.parts.find((p) => p.point instanceof RillLabelledPointInTime);
+    return this.parts.find((p) => p.point instanceof ParrotLabelledPointInTime);
   }
 
   public hasSnap() {
@@ -588,14 +588,14 @@ export class RillPointInTime {
   }
 }
 
-export class RillPointInTimeWithSnap {
+export class ParrotPointInTimeWithSnap {
   public readonly offset = Duration.fromObject({});
 
   public constructor(
-    public readonly point: RillPointInTimeVariant,
+    public readonly point: ParrotPointInTimeVariant,
     public snaps: string[],
   ) {
-    if (this.point instanceof RillGrainPointInTime) {
+    if (this.point instanceof ParrotGrainPointInTime) {
       this.offset = this.point.offset;
     }
   }
@@ -605,20 +605,20 @@ export class RillPointInTimeWithSnap {
   }
 }
 
-interface RillPointInTimeVariant {
+interface ParrotPointInTimeVariant {
   getGrain(): V1TimeGrain | undefined;
   toString(): string;
 }
 
-export type RillOrdinal = {
+export type ParrotOrdinal = {
   grain: string;
   num: number;
 };
 
-export class RillGrainPointInTime implements RillPointInTimeVariant {
+export class ParrotGrainPointInTime implements ParrotPointInTimeVariant {
   public readonly offset: Duration;
 
-  public constructor(public readonly parts: RillGrainPointInTimePart[]) {
+  public constructor(public readonly parts: ParrotGrainPointInTimePart[]) {
     let offset = Duration.fromObject({});
     parts.forEach((part) => {
       if (part.prefix === "+") {
@@ -650,12 +650,12 @@ export class RillGrainPointInTime implements RillPointInTimeVariant {
   }
 }
 
-export class RillGrainPointInTimePart {
+export class ParrotGrainPointInTimePart {
   public readonly offset: Duration;
 
   public constructor(
     public readonly prefix: string,
-    public readonly grains: RillGrain[],
+    public readonly grains: ParrotGrain[],
   ) {
     let offset = Duration.fromObject({});
     grains.forEach(({ grain, num }) => {
@@ -678,11 +678,11 @@ export class RillGrainPointInTimePart {
   }
 }
 
-export class RillLabelledPointInTime implements RillPointInTimeVariant {
-  public constructor(public readonly label: RillTimeLabel) {}
+export class ParrotLabelledPointInTime implements ParrotPointInTimeVariant {
+  public constructor(public readonly label: ParrotTimeLabel) {}
 
   public static postProcessor([label]: string[]) {
-    return new RillLabelledPointInTime(label.toLowerCase() as RillTimeLabel);
+    return new ParrotLabelledPointInTime(label.toLowerCase() as ParrotTimeLabel);
   }
 
   public getGrain(): V1TimeGrain | undefined {
@@ -694,7 +694,7 @@ export class RillLabelledPointInTime implements RillPointInTimeVariant {
   }
 }
 
-export class RillAbsoluteTime implements RillPointInTimeVariant {
+export class ParrotAbsoluteTime implements ParrotPointInTimeVariant {
   readonly dateObject: DateObjectUnits = {};
 
   public constructor(private readonly timeStr: string) {
@@ -718,7 +718,7 @@ export class RillAbsoluteTime implements RillPointInTimeVariant {
   }
 
   public static postProcessor(args: string[]) {
-    return new RillAbsoluteTime(args.flat().join(""));
+    return new ParrotAbsoluteTime(args.flat().join(""));
   }
 
   public getGrain(): V1TimeGrain | undefined {
@@ -752,7 +752,7 @@ export class RillAbsoluteTime implements RillPointInTimeVariant {
   }
 }
 
-type RillGrain = {
+type ParrotGrain = {
   grain: string;
   num?: number;
 };

@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/admin/billing"
-	"github.com/rilldata/rill/admin/billing/payment"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/billing/payment"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
 	"go.uber.org/zap"
 )
 

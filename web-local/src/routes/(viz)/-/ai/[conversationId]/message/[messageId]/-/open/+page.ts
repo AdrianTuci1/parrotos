@@ -2,8 +2,8 @@ import { getLocalRuntimeClient } from "../../../../../../../../../lib/runtime-cl
 import {
   getResolvedTimeRangesFromMessage,
   maybeGetMetricsResolverQueryFromMessage,
-} from "@rilldata/web-common/features/chat/core/citation-url-utils.ts";
-import { openQuery } from "@rilldata/web-common/features/explore-mappers/open-query.ts";
+} from "@statsparrot/web-common/features/chat/core/citation-url-utils.ts";
+import { openQuery } from "@statsparrot/web-common/features/explore-mappers/open-query.ts";
 
 export async function load({ parent }) {
   const { message, result } = await parent();

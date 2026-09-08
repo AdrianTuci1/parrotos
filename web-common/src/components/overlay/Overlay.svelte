@@ -1,6 +1,6 @@
 <script>
   import { fade } from "svelte/transition";
-  import { portal } from "@rilldata/web-common/lib/actions/portal";
+  import { portal } from "@statsparrot/web-common/lib/actions/portal";
 
   export let bg = "rgba(0,0,0,.8)";
 

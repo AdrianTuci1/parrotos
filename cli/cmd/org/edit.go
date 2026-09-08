@@ -3,8 +3,8 @@ package org
 import (
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -39,7 +39,7 @@ func EditCmd(ch *cmdutil.Helper) *cobra.Command {
 						return err
 					}
 				}
-				fmt.Printf("Org name %q doesn't exist, please run `rill org list` to list available orgs\n", orgName)
+				fmt.Printf("Org name %q doesn't exist, please run `statsparrot org list` to list available orgs\n", orgName)
 				return nil
 			}
 

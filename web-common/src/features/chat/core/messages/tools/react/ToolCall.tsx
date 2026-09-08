@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { V1Message, V1Tool } from "@rilldata/web-common/runtime-client";
+import type { V1Message, V1Tool } from "@statsparrot/web-common/runtime-client";
 import { MessageContentType } from "../../../types";
 import { getToolDisplayName } from "../tool-display-names";
 import { isHiddenTool } from "../tool-registry";

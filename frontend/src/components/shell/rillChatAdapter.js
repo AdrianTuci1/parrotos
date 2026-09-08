@@ -1,20 +1,20 @@
-import { createChartBlock } from "@rilldata/web-common/features/chat/core/messages/chart/chart-block";
+import { createChartBlock } from "@statsparrot/web-common/features/chat/core/messages/chart/chart-block";
 
 /**
- * Message-render adapter: product chat toolCalls -> Rill chart block model.
+ * Message-render adapter: product chat toolCalls -> Parrot chart block model.
  *
  * The product chat stream is shaped like:
  *   { id, role, content, toolCalls: [{ id, type, chartSpec, chartType, ... }] }
- * while the Rill React port (`@rilldata/web-common/features/chat`) expects
+ * while the Parrot React port (`@statsparrot/web-common/features/chat`) expects
  * `V1Message[]` with `contentData: { chart_type, spec }` plus a correlated
  * `resultMessage` (see `createChartBlock`). This module maps the store's tool
- * calls onto that Rill model so the ported `Messages` / `ChartBlock` renderers
+ * calls onto that Parrot model so the ported `Messages` / `ChartBlock` renderers
  * can be fed directly.
  */
 
 const CREATE_CHART_TOOL = "create_chart";
 
-/** Detect whether a product tool-call represents a Rill `create_chart` intent. */
+/** Detect whether a product tool-call represents a Parrot `create_chart` intent. */
 export function isChartToolCall(tool) {
   return Boolean(tool) && (tool.type === "chart" || tool.action === "create_chart");
 }
@@ -46,12 +46,12 @@ export function resolveChartToolCall(tool, { metricsView } = {}) {
 }
 
 /**
- * Build the Rill `V1Message` CALL/RESULT pair for a chart tool-call.
+ * Build the Parrot `V1Message` CALL/RESULT pair for a chart tool-call.
  * Returns `{ message, resultMessage }`, or `null` when the tool-call is not a
  * chart. Both messages are shaped so `Messages`/`ChartMessage`/`ChartBlock`
  * consume them via the framework-agnostic `createChartBlock` parser.
  */
-export function toRillChartMessagePair(tool, opts = {}) {
+export function toParrotChartMessagePair(tool, opts = {}) {
   if (!isChartToolCall(tool)) return null;
 
   const { chartType, chartSpec } = resolveChartToolCall(tool, opts);
@@ -86,24 +86,24 @@ export function toRillChartMessagePair(tool, opts = {}) {
 }
 
 /**
- * Build the parsed Rill `ChartBlock` model for a chart tool-call (or null).
+ * Build the parsed Parrot `ChartBlock` model for a chart tool-call (or null).
  * This is the direct bridge from the store's toolCalls to `ChartBlockModel`.
  */
 export function toChartBlock(tool, opts = {}) {
-  const pair = toRillChartMessagePair(tool, opts);
+  const pair = toParrotChartMessagePair(tool, opts);
   if (!pair) return null;
   return createChartBlock(pair.message, pair.resultMessage);
 }
 
 /**
- * Build a flat Rill `V1Message[]` (CALL + RESULT pairs) for every chart tool-call
+ * Build a flat Parrot `V1Message[]` (CALL + RESULT pairs) for every chart tool-call
  * in a product chat message, so `<Messages>` renders them as chart blocks.
  */
-export function toRillChartMessages(chatMessage, opts = {}) {
+export function toParrotChartMessages(chatMessage, opts = {}) {
   const toolCalls = chatMessage?.toolCalls || [];
   const messages = [];
   for (const tool of toolCalls) {
-    const pair = toRillChartMessagePair(tool, opts);
+    const pair = toParrotChartMessagePair(tool, opts);
     if (pair) messages.push(pair.message, pair.resultMessage);
   }
   return messages;

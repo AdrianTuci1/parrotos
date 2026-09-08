@@ -10,8 +10,8 @@ dns.setDefaultResultOrder("verbatim");
 export default defineConfig({
   resolve: {
     alias: {
-      "@rilldata/web-admin": "/src",
-      "@rilldata/web-common": "/../web-common/src",
+      "@statsparrot/web-admin": "/src",
+      "@statsparrot/web-common": "/../web-common/src",
     },
   },
   server: {
@@ -49,5 +49,5 @@ export default defineConfig({
     }),
   ],
   envDir: "../",
-  envPrefix: "RILL_UI_PUBLIC_",
+  envPrefix: "STATSPARROT_UI_PUBLIC_",
 });

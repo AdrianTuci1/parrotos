@@ -1,9 +1,9 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
-  import SearchableMenuContent from "@rilldata/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import type { SearchableFilterSelectableGroup } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+  import SearchableMenuContent from "@statsparrot/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useMetricFieldData } from "../selectors";
   import type { FieldType } from "../types";
 

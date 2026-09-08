@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/riverqueue/river"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -24,11 +24,11 @@ type deleteUnusedGithubReposWorker struct {
 	logger *zap.Logger
 }
 
-// deleteUnusedGithubRepos deletes unused Rill managed Github repositories from the database and Github.
-// An unused repository is one that is not associated with any Rill project since more than 7 days.
+// deleteUnusedGithubRepos deletes unused Parrot managed Github repositories from the database and Github.
+// An unused repository is one that is not associated with any Parrot project since more than 7 days.
 func (w *deleteUnusedGithubReposWorker) Work(ctx context.Context, job *river.Job[deleteUnusedGithubReposArgs]) error {
 	for {
-		// 1. Fetch repositories that are not associated with any Rill project
+		// 1. Fetch repositories that are not associated with any Parrot project
 		repos, err := w.admin.DB.FindUnusedManagedGitRepos(ctx, _unusedGithubRepoPageSize)
 		if err != nil {
 			return err

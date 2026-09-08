@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import WithTween from "@rilldata/web-common/components/data-graphic/functional-components/WithTween.svelte";
-  import PercentageChange from "@rilldata/web-common/components/data-types/PercentageChange.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import InlineErrorIndicator from "@rilldata/web-common/features/dashboards/errors/InlineErrorIndicator.svelte";
-  import { measureSupportsTotalsQuery } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-  import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
-  import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-  import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-  import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import WithTween from "@statsparrot/web-common/components/data-graphic/functional-components/WithTween.svelte";
+  import PercentageChange from "@statsparrot/web-common/components/data-types/PercentageChange.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import InlineErrorIndicator from "@statsparrot/web-common/features/dashboards/errors/InlineErrorIndicator.svelte";
+  import { measureSupportsTotalsQuery } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+  import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
+  import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+  import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+  import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
   import {
     createQueryServiceMetricsViewAggregation,
     type MetricsViewSpecMeasure,
     type V1Expression,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { keepPreviousData } from "@tanstack/svelte-query";
   import {
     crossfade,

@@ -2,20 +2,20 @@
   import {
     canManageOrgUser,
     invalidateAfterUserDelete,
-  } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
+  } from "@statsparrot/web-admin/features/organizations/user-management/utils.ts";
   import IconButton from "web-common/src/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import RemoveUserFromOrgConfirmDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/RemoveUserFromOrgConfirmDialog.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import RemoveUserFromOrgConfirmDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/RemoveUserFromOrgConfirmDialog.svelte";
   import {
     createAdminServiceRemoveOrganizationMemberUser,
     type V1OrganizationPermissions,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { page } from "$app/stores";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let email: string;
   export let role: string;

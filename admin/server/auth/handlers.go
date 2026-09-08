@@ -13,13 +13,13 @@ import (
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/urlutil"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/middleware"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/middleware"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
@@ -86,7 +86,7 @@ var (
 //  4. The auth provider redirects to <canonical domain>/auth/logout/callback
 //  5. It redirects to <frontend return URL>
 //
-// The "canonical domain" is the Rill-managed external URL of the current service (e.g. "admin.rilldata.com").
+// The "canonical domain" is the Parrot-managed external URL of the current service (e.g. "admin.statsparrot.com").
 // The "custom domain" is the custom domain of the current org with path suffix for the admin service (e.g. "myorg.com/api").
 // If the current org doesn't have a custom domain, the custom domain can be substituted for the canonical domain (without path suffix).
 //
@@ -342,7 +342,7 @@ func (a *Authenticator) authLoginCallback(w http.ResponseWriter, r *http.Request
 
 		// Issue a short-lived nonce token (2-minute TTL) for browser auth callback
 		ttl := 2 * time.Minute
-		authNonceToken, err := a.admin.IssueUserAuthToken(r.Context(), user.ID, database.AuthClientIDRillWeb, "Nonce Token", nil, &ttl, false)
+		authNonceToken, err := a.admin.IssueUserAuthToken(r.Context(), user.ID, database.AuthClientIDParrotWeb, "Nonce Token", nil, &ttl, false)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to issue API token: %s", err), http.StatusInternalServerError)
 			return
@@ -353,7 +353,7 @@ func (a *Authenticator) authLoginCallback(w http.ResponseWriter, r *http.Request
 	}
 
 	// Issue a new persistent auth token
-	authToken, err := a.admin.IssueUserAuthToken(r.Context(), user.ID, database.AuthClientIDRillWeb, "Browser session", nil, &browserSessionTTL, false)
+	authToken, err := a.admin.IssueUserAuthToken(r.Context(), user.ID, database.AuthClientIDParrotWeb, "Browser session", nil, &browserSessionTTL, false)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to issue API token: %s", err), http.StatusInternalServerError)
 		return
@@ -416,7 +416,7 @@ func (a *Authenticator) authLoginCustomDomainCallback(w http.ResponseWriter, r *
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	newAuthToken, err := a.admin.IssueUserAuthToken(r.Context(), validated.OwnerID(), database.AuthClientIDRillWeb, "Browser session", nil, &browserSessionTTL, false)
+	newAuthToken, err := a.admin.IssueUserAuthToken(r.Context(), validated.OwnerID(), database.AuthClientIDParrotWeb, "Browser session", nil, &browserSessionTTL, false)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to issue API token: %s", err), http.StatusInternalServerError)
 		return
@@ -523,7 +523,7 @@ func (a *Authenticator) authAssumeOpen(w http.ResponseWriter, r *http.Request) {
 
 	// Issue a new token for the representing user.
 	// We use tokenMdl.UserID here instead of claims.OwnerID() because OwnerID() could return the representing user's ID if the token is already an assumed token.
-	newAuthToken, err := a.admin.IssueUserAuthToken(r.Context(), tokenMdl.UserID, database.AuthClientIDRillSupport, fmt.Sprintf("Support for %s", representEmail), representingUserID, ttl, false)
+	newAuthToken, err := a.admin.IssueUserAuthToken(r.Context(), tokenMdl.UserID, database.AuthClientIDParrotSupport, fmt.Sprintf("Support for %s", representEmail), representingUserID, ttl, false)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to issue API token: %s", err), http.StatusInternalServerError)
 		return
@@ -744,7 +744,7 @@ func (a *Authenticator) validateRedirectURL(ctx context.Context, redirect string
 }
 
 func originalHost(r *http.Request) string {
-	if xfHost := r.Header.Get("Rill-Custom-Domain"); xfHost != "" {
+	if xfHost := r.Header.Get("Parrot-Custom-Domain"); xfHost != "" {
 		return xfHost
 	}
 	return r.Host

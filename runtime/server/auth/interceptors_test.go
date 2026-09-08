@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 	"github.com/stretchr/testify/require"
 )
 

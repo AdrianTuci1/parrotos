@@ -1,13 +1,13 @@
 <script lang="ts">
   import { yaml } from "@codemirror/lang-yaml";
   import type { EditorView } from "@codemirror/view";
-  import { setLineStatuses } from "@rilldata/web-common/components/editor/line-status";
-  import Editor from "@rilldata/web-common/features/editor/Editor.svelte";
-  import { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { mapParseErrorToLine } from "@rilldata/web-common/features/metrics-views/errors";
+  import { setLineStatuses } from "@statsparrot/web-common/components/editor/line-status";
+  import Editor from "@statsparrot/web-common/features/editor/Editor.svelte";
+  import { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { mapParseErrorToLine } from "@statsparrot/web-common/features/metrics-views/errors";
   import { removeCanvasStore } from "./state-managers/state-managers";
-  import type { V1ParseError } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import type { V1ParseError } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let canvasName: string;
   export let fileArtifact: FileArtifact;

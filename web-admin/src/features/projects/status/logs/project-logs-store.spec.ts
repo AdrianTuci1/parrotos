@@ -1,4 +1,4 @@
-import { V1LogLevel } from "@rilldata/web-common/runtime-client";
+import { V1LogLevel } from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 import { ProjectLogsStore } from "./project-logs-store";
 

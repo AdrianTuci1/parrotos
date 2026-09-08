@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter.ts";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter.ts";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import { Interval } from "luxon";
 
   export let interval: Interval | undefined;

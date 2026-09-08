@@ -5,17 +5,17 @@ import {
   type ChartFieldsMap,
   type ChartSortDirection,
   type FieldConfig,
-} from "@rilldata/web-common/features/components/charts/types";
-import { mergeFilters } from "@rilldata/web-common/features/dashboards/pivot/pivot-merge-filters";
-import { createInExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+} from "@statsparrot/web-common/features/components/charts/types";
+import { mergeFilters } from "@statsparrot/web-common/features/dashboards/pivot/pivot-merge-filters";
+import { createInExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import type {
   V1Expression,
   V1MetricsViewAggregationDimension,
   V1MetricsViewAggregationMeasure,
-} from "@rilldata/web-common/runtime-client";
-import { getQueryServiceMetricsViewAggregationQueryOptions } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { getQueryServiceMetricsViewAggregationQueryOptions } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createQuery, keepPreviousData } from "@tanstack/svelte-query";
 import {
   derived,

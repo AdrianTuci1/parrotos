@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
   import { Inspect } from "lucide-svelte";
   import { Button } from "../../../components/button";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let disabled = false;
   export let areAllTableRowsSelected: boolean;

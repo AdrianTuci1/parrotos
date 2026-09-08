@@ -10,13 +10,13 @@ import (
 	"net/url"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/openapiutil"
-	"github.com/rilldata/rill/runtime/server/auth"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/openapiutil"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.opentelemetry.io/otel/attribute"
 	"gopkg.in/yaml.v3"
 )
@@ -193,9 +193,9 @@ func (s *Server) generateOpenAPISpec(ctx context.Context, instanceID string, api
 	}
 	var title string
 	if organization != "" && project != "" {
-		title = fmt.Sprintf("Rill %s/%s project API", organization, project)
+		title = fmt.Sprintf("Parrot %s/%s project API", organization, project)
 	} else {
-		title = "Rill project API"
+		title = "Parrot project API"
 	}
 
 	spec := &openapi3.T{

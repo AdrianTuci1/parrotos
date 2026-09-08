@@ -2,14 +2,14 @@ import type {
   AddDataBehaviourEventFields,
   BehaviourEventAction,
   BehaviourEventMedium,
-} from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
-import type { GithubEventFields } from "@rilldata/web-common/metrics/service/GithubEventTypes";
-import type { MetricsService } from "@rilldata/web-common/metrics/service/MetricsService";
+} from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
+import type { GithubEventFields } from "@statsparrot/web-common/metrics/service/GithubEventTypes";
+import type { MetricsService } from "@statsparrot/web-common/metrics/service/MetricsService";
 import type {
   CommonUserFields,
   MetricsEventScreenName,
   MetricsEventSpace,
-} from "@rilldata/web-common/metrics/service/MetricsTypes";
+} from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import MD5 from "crypto-js/md5";
 import type {
   SourceConnectionType,

@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { CANONICAL_ADMIN_API_URL } from "@rilldata/web-admin/client/http-client";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
+  import { CANONICAL_ADMIN_API_URL } from "@statsparrot/web-admin/client/http-client";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
   import {
     Tabs,
     UnderlineTabsList,
     UnderlineTabsTrigger,
-  } from "@rilldata/web-common/components/tabs";
-  import Tag from "@rilldata/web-common/components/tag/Tag.svelte";
+  } from "@statsparrot/web-common/components/tabs";
+  import Tag from "@statsparrot/web-common/components/tag/Tag.svelte";
   import ManualSection from "./ManualSection.svelte";
   import OAuthSection from "./OAuthSection.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open = false;
   export let organization: string;

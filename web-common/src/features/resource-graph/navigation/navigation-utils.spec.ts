@@ -4,8 +4,8 @@ import {
   createGraphNavigationHandler,
   buildGraphUrl,
 } from "./navigation-utils";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 
 // Mock $app/navigation
 vi.mock("$app/navigation", () => ({
@@ -27,13 +27,13 @@ describe("navigation-utils", () => {
 
   describe("navigateToResourceGraph", () => {
     it("should navigate to graph page with single resource", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "orders");
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "orders");
 
       expect(gotoMock).toHaveBeenCalledWith("/graph?resource=model%3Aorders");
     });
 
     it("should navigate with multiple resources", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "orders", [
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "orders", [
         "source:users",
       ]);
 
@@ -43,7 +43,7 @@ describe("navigation-utils", () => {
     });
 
     it("should handle names with special characters", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "my-model_v2");
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "my-model_v2");
 
       expect(gotoMock).toHaveBeenCalledWith(
         "/graph?resource=model%3Amy-model_v2",
@@ -51,7 +51,7 @@ describe("navigation-utils", () => {
     });
 
     it("should handle names with spaces", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "my model");
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "my model");
 
       expect(gotoMock).toHaveBeenCalledWith("/graph?resource=model%3Amy+model");
     });
@@ -70,40 +70,40 @@ describe("navigation-utils", () => {
     });
 
     it("should navigate with kind only when name is empty but kind is recognized", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "");
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "");
 
       // model: with empty name - still creates URL
       expect(gotoMock).toHaveBeenCalledWith("/graph?resource=model%3A");
     });
 
     it("should handle empty additional resources array", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "orders", []);
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "orders", []);
 
       expect(gotoMock).toHaveBeenCalledWith("/graph?resource=model%3Aorders");
     });
 
     it("should handle undefined additional resources", () => {
-      navigateToResourceGraph("rill.runtime.v1.Model", "orders", undefined);
+      navigateToResourceGraph("statsparrot.runtime.v1.Model", "orders", undefined);
 
       expect(gotoMock).toHaveBeenCalledWith("/graph?resource=model%3Aorders");
     });
 
     it("should navigate for different resource kinds", () => {
-      navigateToResourceGraph("rill.runtime.v1.Source", "raw_data");
+      navigateToResourceGraph("statsparrot.runtime.v1.Source", "raw_data");
       expect(gotoMock).toHaveBeenCalledWith(
         "/graph?resource=source%3Araw_data",
       );
 
       gotoMock.mockClear();
 
-      navigateToResourceGraph("rill.runtime.v1.MetricsView", "revenue");
+      navigateToResourceGraph("statsparrot.runtime.v1.MetricsView", "revenue");
       expect(gotoMock).toHaveBeenCalledWith(
         "/graph?resource=metrics%3Arevenue",
       );
 
       gotoMock.mockClear();
 
-      navigateToResourceGraph("rill.runtime.v1.Explore", "dashboard");
+      navigateToResourceGraph("statsparrot.runtime.v1.Explore", "dashboard");
       expect(gotoMock).toHaveBeenCalledWith(
         "/graph?resource=dashboard%3Adashboard",
       );
@@ -113,7 +113,7 @@ describe("navigation-utils", () => {
   describe("buildGraphUrl", () => {
     it("should build URL with single resource", () => {
       const url = buildGraphUrl([
-        { kind: "rill.runtime.v1.Model", name: "orders" },
+        { kind: "statsparrot.runtime.v1.Model", name: "orders" },
       ]);
 
       expect(url).toBe("/graph?resource=model%3Aorders");
@@ -121,8 +121,8 @@ describe("navigation-utils", () => {
 
     it("should build URL with multiple resources", () => {
       const url = buildGraphUrl([
-        { kind: "rill.runtime.v1.Model", name: "orders" },
-        { kind: "rill.runtime.v1.Source", name: "users" },
+        { kind: "statsparrot.runtime.v1.Model", name: "orders" },
+        { kind: "statsparrot.runtime.v1.Source", name: "users" },
       ]);
 
       expect(url).toBe(
@@ -138,7 +138,7 @@ describe("navigation-utils", () => {
 
     it("should include resource with unknown kind as name only", () => {
       const url = buildGraphUrl([
-        { kind: "rill.runtime.v1.Model", name: "orders" },
+        { kind: "statsparrot.runtime.v1.Model", name: "orders" },
         { kind: "", name: "invalid" },
       ]);
 
@@ -147,8 +147,8 @@ describe("navigation-utils", () => {
 
     it("should include resource with empty name", () => {
       const url = buildGraphUrl([
-        { kind: "rill.runtime.v1.Model", name: "orders" },
-        { kind: "rill.runtime.v1.Model", name: "" },
+        { kind: "statsparrot.runtime.v1.Model", name: "orders" },
+        { kind: "statsparrot.runtime.v1.Model", name: "" },
       ]);
 
       expect(url).toBe("/graph?resource=model%3Aorders&resource=model%3A");
@@ -156,7 +156,7 @@ describe("navigation-utils", () => {
 
     it("should properly encode special characters", () => {
       const url = buildGraphUrl([
-        { kind: "rill.runtime.v1.Model", name: "my-model_v2" },
+        { kind: "statsparrot.runtime.v1.Model", name: "my-model_v2" },
       ]);
 
       expect(url).toBe("/graph?resource=model%3Amy-model_v2");
@@ -164,7 +164,7 @@ describe("navigation-utils", () => {
 
     it("should handle names with spaces", () => {
       const url = buildGraphUrl([
-        { kind: "rill.runtime.v1.Model", name: "my model" },
+        { kind: "statsparrot.runtime.v1.Model", name: "my model" },
       ]);
 
       expect(url).toBe("/graph?resource=model%3Amy+model");
@@ -197,7 +197,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => resource,
       );
 
@@ -217,7 +217,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => resource,
       );
 
@@ -232,7 +232,7 @@ describe("navigation-utils", () => {
     it("should warn when resource is undefined", () => {
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => undefined,
       );
 
@@ -249,7 +249,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => resource,
       );
 
@@ -268,7 +268,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => resource,
       );
 
@@ -283,7 +283,7 @@ describe("navigation-utils", () => {
     it("should handle errors thrown by getResource", () => {
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => {
           throw new Error("Resource fetch failed");
         },
@@ -301,7 +301,7 @@ describe("navigation-utils", () => {
     it("should use component name in error messages", () => {
       const handler = createGraphNavigationHandler(
         "ModelMenuItems",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => undefined,
       );
 
@@ -324,7 +324,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "SourceMenuItems",
-        "rill.runtime.v1.Source",
+        "statsparrot.runtime.v1.Source",
         () => sourceResource,
       );
 
@@ -347,7 +347,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => currentResource,
       );
 
@@ -382,7 +382,7 @@ describe("navigation-utils", () => {
 
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => resource,
       );
 
@@ -408,7 +408,7 @@ describe("navigation-utils", () => {
     it("should handle null resource gracefully", () => {
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => null as any,
       );
 
@@ -419,7 +419,7 @@ describe("navigation-utils", () => {
     it("should handle getResource returning non-object", () => {
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => "not a resource" as any,
       );
 
@@ -430,7 +430,7 @@ describe("navigation-utils", () => {
     it("should handle getResource throwing non-Error object", () => {
       const handler = createGraphNavigationHandler(
         "TestComponent",
-        "rill.runtime.v1.Model",
+        "statsparrot.runtime.v1.Model",
         () => {
           throw "string error";
         },

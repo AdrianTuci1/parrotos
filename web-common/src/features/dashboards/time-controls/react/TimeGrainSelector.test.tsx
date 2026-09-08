@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import TimeGrainSelector, {
   type TimeGrainSelectorProps,
 } from "./TimeGrainSelector";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 
 function makeProps(overrides: Partial<TimeGrainSelectorProps> = {}): TimeGrainSelectorProps {
   return {

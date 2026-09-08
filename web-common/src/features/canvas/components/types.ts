@@ -1,7 +1,7 @@
-import type { CartesianCanvasChartSpec } from "@rilldata/web-common/features/canvas/components/charts/variants/CartesianChart";
-import type { CircularCanvasChartSpec } from "@rilldata/web-common/features/canvas/components/charts/variants/CircularChart";
-import type { ScatterPlotCanvasChartSpec } from "@rilldata/web-common/features/canvas/components/charts/variants/ScatterPlotChart";
-import type { KPIGridSpec } from "@rilldata/web-common/features/canvas/components/kpi-grid";
+import type { CartesianCanvasChartSpec } from "@statsparrot/web-common/features/canvas/components/charts/variants/CartesianChart";
+import type { CircularCanvasChartSpec } from "@statsparrot/web-common/features/canvas/components/charts/variants/CircularChart";
+import type { ScatterPlotCanvasChartSpec } from "@statsparrot/web-common/features/canvas/components/charts/variants/ScatterPlotChart";
+import type { KPIGridSpec } from "@statsparrot/web-common/features/canvas/components/kpi-grid";
 import type { ChartType } from "../../components/charts/types";
 import type { ImageSpec } from "./image";
 import type { KPISpec } from "./kpi";

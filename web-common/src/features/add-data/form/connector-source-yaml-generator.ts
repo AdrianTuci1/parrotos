@@ -2,16 +2,16 @@ import {
   getSchemaFieldMetaList,
   getSchemaSecretKeys,
   getSchemaStringKeys,
-} from "@rilldata/web-common/features/templates/schema-utils.ts";
-import type { MultiStepFormSchema } from "@rilldata/web-common/features/templates/schemas/types.ts";
-import { generateYAML } from "@rilldata/web-common/features/connectors/code-utils.ts";
-import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/templates/schema-utils.ts";
+import type { MultiStepFormSchema } from "@statsparrot/web-common/features/templates/schemas/types.ts";
+import { generateYAML } from "@statsparrot/web-common/features/connectors/code-utils.ts";
+import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
 import {
   generateSourceYAML,
   prepareSourceFormData,
-} from "@rilldata/web-common/features/sources/sourceUtils.ts";
-import { getConnectorSchema } from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
-import type { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
+} from "@statsparrot/web-common/features/sources/sourceUtils.ts";
+import { getConnectorSchema } from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
+import type { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
 
 export function getConnectorYAML({
   connector,

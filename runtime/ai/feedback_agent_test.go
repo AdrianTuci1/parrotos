@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,11 +49,11 @@ func TestUserFeedbackAttribution(t *testing.T) {
 		wantAttribution string // Expected predicted_attribution value
 	}{
 		{
-			name:            "rill_attribution",
+			name:            "statsparrot_attribution",
 			userPrompt:      "What country has the highest revenue?",
 			aiResponse:      "Based on the data, the United States has the highest revenue at $1.2 billion.",
 			comment:         "This is completely wrong. The data clearly shows China has the highest revenue. You misread the data.",
-			wantAttribution: "rill",
+			wantAttribution: "statsparrot",
 		},
 		{
 			name:            "project_attribution",
@@ -115,11 +115,11 @@ func TestUserFeedbackAttribution(t *testing.T) {
 	}
 }
 
-func TestUserFeedbackAccessDeniedForNonRillUserAgent(t *testing.T) {
+func TestUserFeedbackAccessDeniedForNonParrotUserAgent(t *testing.T) {
 	// Setup empty project
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{})
 
-	// Create a session with UseAI permission but non-rill user agent
+	// Create a session with UseAI permission but non-statsparrot user agent
 	claims := &runtime.SecurityClaims{
 		UserID:      uuid.NewString(),
 		SkipChecks:  false,
@@ -129,7 +129,7 @@ func TestUserFeedbackAccessDeniedForNonRillUserAgent(t *testing.T) {
 	s, err := r.Session(t.Context(), &ai.SessionOptions{
 		InstanceID: instanceID,
 		Claims:     claims,
-		UserAgent:  "mcp-client", // Non-rill user agent
+		UserAgent:  "mcp-client", // Non-statsparrot user agent
 	})
 	require.NoError(t, err)
 	t.Cleanup(func() {

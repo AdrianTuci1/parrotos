@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
   import {
     createAdminServiceSetOrganizationMemberUserRole,
     type V1OrganizationMemberUser,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     invalidateOrgInvites,
     invalidateOrgMemberUsers,
-  } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
+  } from "@statsparrot/web-admin/features/organizations/user-management/utils.ts";
   import {
     getProjectRolesDescriptionMap,
     getProjectRolesOptions,
-  } from "@rilldata/web-admin/features/projects/user-management/constants.ts";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-admin/features/projects/user-management/constants.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
 
   export let open = false;

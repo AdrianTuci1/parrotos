@@ -1,5 +1,5 @@
 import { page } from "$app/stores";
-import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
+import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers";
 import { get } from "svelte/store";
 
 export function isCurrentActivePage(filePath: string, isDir: boolean) {

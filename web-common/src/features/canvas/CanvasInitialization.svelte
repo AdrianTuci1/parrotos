@@ -5,19 +5,19 @@
     type CanvasStore,
   } from "./state-managers/state-managers";
   import { page } from "$app/stores";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import {
     DashboardBannerID,
     DashboardBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
+  } from "@statsparrot/web-common/components/banner/constants";
   import { onNavigate } from "$app/navigation";
   import { writable } from "svelte/store";
   import {
     type V1MetricsView,
     type V1ResolveCanvasResponse,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { createQueryServiceResolveCanvas } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { createQueryServiceResolveCanvas } from "@statsparrot/web-common/runtime-client";
   import { onDestroy } from "svelte";
   const PollIntervalWhenDashboardFirstReconciling = 1000;
   const PollIntervalWhenDashboardErrored = 5000;
@@ -224,7 +224,7 @@
 </script>
 
 <svelte:head>
-  <title>{canvasTitle || `${canvasName} - Rill`}</title>
+  <title>{canvasTitle || `${canvasName} - Parrot`}</title>
 </svelte:head>
 
 <slot {ready} {reconcileErrorMessage} {isLoading} {isReconciling} />

@@ -1,4 +1,4 @@
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import type {
   V1ExploreSpec,
   V1GetExploreResponse,
@@ -6,7 +6,7 @@ import type {
   V1MetricsViewAggregationResponse,
   V1MetricsViewSpec,
   V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { afterAll, beforeAll, vi } from "vitest";
 import { asyncWait } from "../../lib/waitUtils";
 
@@ -120,9 +120,9 @@ export class DashboardFetchMocks {
   private async fetchMock(url: string, body: string | Uint8Array | undefined) {
     const u = new URL(url);
 
-    // ConnectRPC routes: POST to /rill.runtime.v1.{Service}/{Method}
+    // ConnectRPC routes: POST to /statsparrot.runtime.v1.{Service}/{Method}
     const connectMatch = u.pathname.match(
-      /^\/rill\.runtime\.v1\.(\w+)\/(\w+)$/,
+      /^\/statsparrot\.runtime\.v1\.(\w+)\/(\w+)$/,
     );
     if (connectMatch) {
       return this.handleConnectRequest(connectMatch[1], connectMatch[2], body);

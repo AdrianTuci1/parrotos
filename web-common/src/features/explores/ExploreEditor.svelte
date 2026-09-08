@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { EditorView } from "@codemirror/view";
-  import { setLineStatuses } from "@rilldata/web-common/components/editor/line-status";
-  import { clearMostRecentExploreState } from "@rilldata/web-common/features/dashboards/state-managers/loaders/most-recent-explore-state";
-  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import { clearExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store";
-  import Editor from "@rilldata/web-common/features/editor/Editor.svelte";
-  import { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { mapParseErrorToLine } from "@rilldata/web-common/features/metrics-views/errors";
+  import { setLineStatuses } from "@statsparrot/web-common/components/editor/line-status";
+  import { clearMostRecentExploreState } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/most-recent-explore-state";
+  import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import { clearExploreSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store";
+  import Editor from "@statsparrot/web-common/features/editor/Editor.svelte";
+  import { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { mapParseErrorToLine } from "@statsparrot/web-common/features/metrics-views/errors";
   import { yaml } from "@codemirror/lang-yaml";
-  import type { V1ParseError } from "@rilldata/web-common/runtime-client";
+  import type { V1ParseError } from "@statsparrot/web-common/runtime-client";
 
   export let exploreName: string;
   export let fileArtifact: FileArtifact;

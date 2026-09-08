@@ -1,10 +1,10 @@
 <script lang="ts">
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover";
+  } from "@statsparrot/web-common/components/popover";
   import { Palette } from "lucide-svelte";
   import MeasureFormattingControls from "./MeasureFormattingControls.svelte";
   import PivotChip from "./PivotChip.svelte";

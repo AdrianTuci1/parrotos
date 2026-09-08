@@ -1,16 +1,16 @@
 <script lang="ts">
-  import MetadataLabel from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import { mapExprToMeasureFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-  import MeasureFilterBody from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilterBody.svelte";
-  import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config";
+  import MetadataLabel from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import { mapExprToMeasureFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+  import MeasureFilterBody from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilterBody.svelte";
+  import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config";
   import type {
     V1Expression,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+  } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
   import { flip } from "svelte/animate";
   import { fly } from "svelte/transition";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let filters: V1Expression | undefined;
   export let comparisonTimeRange: V1TimeRange | undefined;

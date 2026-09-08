@@ -1,14 +1,14 @@
 import type { Page } from "@playwright/test";
-import { asyncWaitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
+import { asyncWaitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
 import axios from "axios";
 import { spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { test as base, expect } from "playwright/test";
 import treeKill from "tree-kill";
-import { getOpenPort } from "@rilldata/web-common/tests/utils/get-open-port.ts";
-import { makeTempDir } from "@rilldata/web-common/tests/utils/make-temp-dir.ts";
-import { spawnAndMatch } from "@rilldata/web-common/tests/utils/spawn.ts";
+import { getOpenPort } from "@statsparrot/web-common/tests/utils/get-open-port.ts";
+import { makeTempDir } from "@statsparrot/web-common/tests/utils/make-temp-dir.ts";
+import { spawnAndMatch } from "@statsparrot/web-common/tests/utils/spawn.ts";
 
 type MyFixtures = {
   cliHomeDir: string;

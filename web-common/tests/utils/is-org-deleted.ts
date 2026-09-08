@@ -1,4 +1,4 @@
-import { execAsync } from "@rilldata/web-common/tests/utils/spawn.ts";
+import { execAsync } from "@statsparrot/web-common/tests/utils/spawn.ts";
 
 export async function isOrgDeleted(
   orgName: string,

@@ -1,14 +1,14 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useResources } from "../selectors";
   import {
     countByKind,
     pluralizeKind,
-  } from "@rilldata/web-common/features/resources/overview-utils";
-  import OverviewCard from "@rilldata/web-common/features/projects/status/overview/OverviewCard.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/resources/overview-utils";
+  import OverviewCard from "@statsparrot/web-common/features/projects/status/overview/OverviewCard.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
   $: basePage = `/${$page.params.organization}/${$page.params.project}/-/status`;

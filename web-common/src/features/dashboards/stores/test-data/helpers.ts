@@ -1,9 +1,9 @@
 import { QueryClient } from "@tanstack/svelte-query";
-import { createStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { createStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   AD_BIDS_DEFAULT_TIME_RANGE,
   AD_BIDS_EXPLORE_INIT,
@@ -12,16 +12,16 @@ import {
   AD_BIDS_METRICS_INIT,
   AD_BIDS_MIRROR_NAME,
   AD_BIDS_NAME,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import { convertPresetToExploreState } from "@rilldata/web-common/features/dashboards/url-state/convertPresetToExploreState";
-import { getDefaultExplorePreset } from "@rilldata/web-common/features/dashboards/url-state/getDefaultExplorePreset";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import { convertPresetToExploreState } from "@statsparrot/web-common/features/dashboards/url-state/convertPresetToExploreState";
+import { getDefaultExplorePreset } from "@statsparrot/web-common/features/dashboards/url-state/getDefaultExplorePreset";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types";
 import {
   type V1ExploreSpec,
   type V1Expression,
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { deepClone } from "@vitest/utils/helpers";
 import { get } from "svelte/store";
 import { expect } from "vitest";

@@ -1,8 +1,8 @@
-import { buildTagIndex } from "@rilldata/web-common/components/menu/tag-utils";
+import { buildTagIndex } from "@statsparrot/web-common/components/menu/tag-utils";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 import {
   dimensionToChipData,

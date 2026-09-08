@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { type V1Resource } from "@rilldata/web-common/runtime-client";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { type V1Resource } from "@statsparrot/web-common/runtime-client";
   import { resourceIconMapping } from "../entity-management/resource-icon-mapping";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import { ResourceKindMap } from "../entity-management/add/new-files.ts";
   import CrumbTrigger from "./CrumbTrigger.svelte";
   import {
@@ -10,11 +10,11 @@
     type UserFacingResourceKinds,
   } from "../entity-management/resource-selectors";
   import { GitBranch } from "lucide-svelte";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
   import { getFileHref as getWorkspaceFileHref } from "../../layout/navigation/editor-routing";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
 
   const downstreamMapping = new Map([
     [ResourceKind.MetricsView, new Set([ResourceKind.Explore])],

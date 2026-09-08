@@ -1,4 +1,4 @@
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import MeasureFilterBody from "./MeasureFilterBody";
 import MeasureChip from "./Chip";
 

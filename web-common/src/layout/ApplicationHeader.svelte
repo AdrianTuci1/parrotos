@@ -1,38 +1,38 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import Breadcrumbs from "@rilldata/web-common/components/navigation/breadcrumbs/Breadcrumbs.svelte";
+  import Breadcrumbs from "@statsparrot/web-common/components/navigation/breadcrumbs/Breadcrumbs.svelte";
   import type {
     PathOption,
     PathOptions,
-  } from "@rilldata/web-common/components/navigation/breadcrumbs/types";
-  import LocalAvatarButton from "@rilldata/web-common/features/authentication/LocalAvatarButton.svelte";
-  import CanvasPreviewCTAs from "@rilldata/web-common/features/canvas/CanvasPreviewCTAs.svelte";
-  import ChatToggle from "@rilldata/web-common/features/chat/layouts/sidebar/ChatToggle.svelte";
+  } from "@statsparrot/web-common/components/navigation/breadcrumbs/types";
+  import LocalAvatarButton from "@statsparrot/web-common/features/authentication/LocalAvatarButton.svelte";
+  import CanvasPreviewCTAs from "@statsparrot/web-common/features/canvas/CanvasPreviewCTAs.svelte";
+  import ChatToggle from "@statsparrot/web-common/features/chat/layouts/sidebar/ChatToggle.svelte";
   import {
     developerChatActions,
     developerChatOpen,
-  } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store";
-  import { getBreadcrumbOptions } from "@rilldata/web-common/features/dashboards/dashboard-utils";
-  import DisabledViewAsButton from "@rilldata/web-common/features/dashboards/granular-access-policies/DisabledViewAsButton.svelte";
+  } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store";
+  import { getBreadcrumbOptions } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
+  import DisabledViewAsButton from "@statsparrot/web-common/features/dashboards/granular-access-policies/DisabledViewAsButton.svelte";
   import {
     useValidCanvases,
     useValidExplores,
-  } from "@rilldata/web-common/features/dashboards/selectors.js";
-  import DeployProjectCTA from "@rilldata/web-common/features/dashboards/workspace/DeployProjectCTA.svelte";
-  import ExplorePreviewCTAs from "@rilldata/web-common/features/explores/ExplorePreviewCTAs.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-  import { useProjectTitle } from "@rilldata/web-common/features/project/selectors";
-  import Header from "@rilldata/web-common/layout/header/Header.svelte";
-  import HeaderLogo from "@rilldata/web-common/layout/header/HeaderLogo.svelte";
-  import { isDeployPage } from "@rilldata/web-common/layout/navigation/route-utils";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/dashboards/selectors.js";
+  import DeployProjectCTA from "@statsparrot/web-common/features/dashboards/workspace/DeployProjectCTA.svelte";
+  import ExplorePreviewCTAs from "@statsparrot/web-common/features/explores/ExplorePreviewCTAs.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+  import { useProjectTitle } from "@statsparrot/web-common/features/project/selectors";
+  import Header from "@statsparrot/web-common/layout/header/Header.svelte";
+  import HeaderLogo from "@statsparrot/web-common/layout/header/HeaderLogo.svelte";
+  import { isDeployPage } from "@statsparrot/web-common/layout/navigation/route-utils";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { get, readable } from "svelte/store";
   import { parseDocument } from "yaml";
   import InputWithConfirm from "../components/forms/InputWithConfirm.svelte";
   import Tag from "../components/tag/Tag.svelte";
   import { fileArtifacts } from "../features/entity-management/file-artifacts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
 
   const { deploy, developerChat, stickyDashboardState } = featureFlags;
   const runtimeClient = useRuntimeClient();
@@ -63,7 +63,7 @@
   $: canvasQuery = useValidCanvases(runtimeClient);
   $: projectTitleQuery = useProjectTitle(runtimeClient);
 
-  $: projectTitle = $projectTitleQuery?.data ?? "Untitled Rill Project";
+  $: projectTitle = $projectTitleQuery?.data ?? "Untitled Parrot Project";
 
   $: explores = $exploresQuery?.data ?? [];
   $: canvases = $canvasQuery?.data ?? [];
@@ -92,7 +92,7 @@
   $: currentPath = [projectTitle, dashboardName?.toLowerCase()];
 
   async function submitTitleChange(editedTitle: string) {
-    const artifact = fileArtifacts.getFileArtifact("/rill.yaml");
+    const artifact = fileArtifacts.getFileArtifact("/statsparrot.yaml");
 
     let content = get(artifact.editorContent);
 

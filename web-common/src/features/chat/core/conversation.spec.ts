@@ -1,10 +1,10 @@
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getRuntimeServiceGetConversationQueryKey,
   type V1GetConversationResponse,
   type V1Message,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { get } from "svelte/store";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Conversation } from "./conversation";
@@ -14,10 +14,10 @@ import { NEW_CONVERSATION_ID } from "./utils";
 // MOCKS
 // =============================================================================
 
-vi.mock("@rilldata/web-common/runtime-client", async (importOriginal) => {
+vi.mock("@statsparrot/web-common/runtime-client", async (importOriginal) => {
   const original =
     await importOriginal<
-      typeof import("@rilldata/web-common/runtime-client")
+      typeof import("@statsparrot/web-common/runtime-client")
     >();
   return {
     ...original,
@@ -25,7 +25,7 @@ vi.mock("@rilldata/web-common/runtime-client", async (importOriginal) => {
   };
 });
 
-import { runtimeServiceForkConversation } from "@rilldata/web-common/runtime-client";
+import { runtimeServiceForkConversation } from "@statsparrot/web-common/runtime-client";
 
 // =============================================================================
 // TEST CONSTANTS

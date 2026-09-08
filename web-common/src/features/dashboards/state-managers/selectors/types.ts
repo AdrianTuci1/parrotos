@@ -2,7 +2,7 @@ import type {
   V1ExploreSpec,
   V1MetricsViewSpec,
   V1MetricsViewTimeRangeResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryClient, QueryObserverResult } from "@tanstack/svelte-query";
 import type { Readable } from "svelte/store";
 import type { ExploreState } from "web-common/src/features/dashboards/stores/explore-state";

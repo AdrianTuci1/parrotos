@@ -2,7 +2,7 @@
   import {
     getRepoNameFromGitRemote,
     getGitUrlFromRemote,
-  } from "@rilldata/web-common/features/project/deploy/github-utils";
+  } from "@statsparrot/web-common/features/project/deploy/github-utils";
 
   export let gitRemote: string;
 

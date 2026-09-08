@@ -9,17 +9,17 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv({ path: resolve(__dirname, "../.env"), override: false });
 
-const adminFrontendURL = process.env.RILL_ADMIN_FRONTEND_URL;
+const adminFrontendURL = process.env.STATSPARROT_ADMIN_FRONTEND_URL;
 const dev = adminFrontendURL?.includes("localhost");
 
-// Derive *.rilldata.com / *.rilldata.io / *.rilldata.in from the env URL so
+// Derive *.statsparrot.com / *.staticlabs.io / *.staticlabs.in from the env URL so
 // connect-src covers all subdomains in whichever environment is being built,
 // without statically listing all three TLDs.
-let rillWildcard = "https://*.rilldata.com"; // fallback for local dev
-const adminURL = process.env.RILL_UI_PUBLIC_RILL_ADMIN_URL;
+let rillWildcard = "https://*.statsparrot.com"; // fallback for local dev
+const adminURL = process.env.STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL;
 if (adminURL && !dev) {
-  const hostname = new URL(adminURL).hostname; // e.g. "admin.rilldata.com"
-  const baseDomain = hostname.split(".").slice(1).join("."); // e.g. "rilldata.com"
+  const hostname = new URL(adminURL).hostname; // e.g. "admin.statsparrot.com"
+  const baseDomain = hostname.split(".").slice(1).join("."); // e.g. "staticlabs.com"
   rillWildcard = `https://*.${baseDomain}`;
 }
 

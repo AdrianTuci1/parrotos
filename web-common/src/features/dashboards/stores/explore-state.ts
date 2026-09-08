@@ -1,20 +1,20 @@
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   LeaderboardContextColumn,
   type ContextColWidths,
-} from "@rilldata/web-common/features/dashboards/leaderboard-context-column";
-import type { PivotState } from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/leaderboard-context-column";
+import type { PivotState } from "@statsparrot/web-common/features/dashboards/pivot/types";
 import type {
   SortDirection,
   SortType,
-} from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import { type TDDState } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
+} from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import { type TDDState } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
 import type {
   DashboardTimeControls,
   ScrubRange,
-} from "@rilldata/web-common/lib/time/types";
-import type { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/types";
+import type { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 
 export interface DimensionThresholdFilter {
   name: string;

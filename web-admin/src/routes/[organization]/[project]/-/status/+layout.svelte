@@ -2,10 +2,10 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import LeftNav from "@rilldata/web-admin/components/nav/LeftNav.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import LeftNav from "@statsparrot/web-admin/components/nav/LeftNav.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   $: basePage = `/${$page.params.organization}/${$page.params.project}/-/status`;
   const { cloudEditing } = featureFlags;

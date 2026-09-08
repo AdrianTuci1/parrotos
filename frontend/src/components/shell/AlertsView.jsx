@@ -79,7 +79,7 @@ function formFromAlert(alert) {
   };
 }
 
-/** Auto-generate a display name from the first criteria (mirrors Rill's `generateAlertName`). */
+/** Auto-generate a display name from the first criteria (mirrors Parrot's `generateAlertName`). */
 function generateName(form) {
   const c = form.criteria?.[0];
   if (!c || !c.measure) return "";

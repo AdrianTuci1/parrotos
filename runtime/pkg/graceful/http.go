@@ -83,7 +83,7 @@ func ServeHTTP(ctx context.Context, handler http.Handler, opts ServeOptions) err
 			}
 			if err != nil {
 				if strings.Contains(err.Error(), "address already in use") {
-					err = fmt.Errorf("http port %d is in use by another process; either kill that process or pass `--port PORT` to run Rill on another port", port)
+					err = fmt.Errorf("http port %d is in use by another process; either kill that process or pass `--port PORT` to run Parrot on another port", port)
 				}
 				serveErrCh <- err
 				return

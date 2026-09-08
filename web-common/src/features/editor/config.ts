@@ -1,4 +1,4 @@
-export const FILES_WITHOUT_AUTOSAVE = ["/rill.yaml", "/.env"];
+export const FILES_WITHOUT_AUTOSAVE = ["/statsparrot.yaml", "/.env"];
 
 export const DIRECTORIES_WITHOUT_AUTOSAVE = ["/connectors", "/sources"];
 

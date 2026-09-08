@@ -1,22 +1,22 @@
-import type { ComponentInputParam } from "@rilldata/web-common/features/canvas/inspector/types";
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+import type { ComponentInputParam } from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
 import {
   CartesianChartProvider,
   type CartesianChartSpec as CartesianChartSpecBase,
-} from "@rilldata/web-common/features/components/charts/cartesian/CartesianChartProvider";
+} from "@statsparrot/web-common/features/components/charts/cartesian/CartesianChartProvider";
 import {
   ChartSortType,
   type ChartDataQuery,
   type ChartFieldsMap,
   type FieldConfig,
-} from "@rilldata/web-common/features/components/charts/types";
-import { isMultiFieldConfig } from "@rilldata/web-common/features/components/charts/util";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+} from "@statsparrot/web-common/features/components/charts/types";
+import { isMultiFieldConfig } from "@statsparrot/web-common/features/components/charts/util";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   MetricsViewSpecDimensionType,
   type V1MetricsViewSpec,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get, type Readable } from "svelte/store";
 import type {
   CanvasEntity,
@@ -24,7 +24,7 @@ import type {
 } from "../../../stores/canvas-entity";
 import { BaseChart, type BaseChartConfig } from "../BaseChart";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export type CartesianCanvasChartSpec = BaseChartConfig & CartesianChartSpecBase;
 
@@ -184,7 +184,7 @@ export class CartesianChartComponent extends BaseChart<CartesianCanvasChartSpec>
         if (typeof currentSpec.color === "string" || !currentSpec.color) {
           newSpec.color = {
             type: "value",
-            field: "rill_measures", // dummy field for multi-measure mode
+            field: "statsparrot_measures", // dummy field for multi-measure mode
             legendOrientation: "top",
           };
         }
@@ -196,7 +196,7 @@ export class CartesianChartComponent extends BaseChart<CartesianCanvasChartSpec>
 
         if (
           typeof currentSpec.color === "object" &&
-          currentSpec.color?.field === "rill_measures"
+          currentSpec.color?.field === "statsparrot_measures"
         ) {
           newSpec.color = "primary";
         }

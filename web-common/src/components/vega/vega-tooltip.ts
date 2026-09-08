@@ -1,15 +1,15 @@
 import type {
   Alignment,
   Location,
-} from "@rilldata/web-common/lib/place-element";
+} from "@statsparrot/web-common/lib/place-element";
 import {
   mouseLocationToBoundingRect,
   placeElement,
-} from "@rilldata/web-common/lib/place-element";
+} from "@statsparrot/web-common/lib/place-element";
 import type { View } from "svelte-vega";
 import type { VLTooltipFormatter } from "./types";
 
-const TOOLTIP_ID = "rill-vg-tooltip";
+const TOOLTIP_ID = "statsparrot-vg-tooltip";
 const VEGA_TOOLTIP_ID = "vg-tooltip-element";
 
 export class VegaLiteTooltipHandler {

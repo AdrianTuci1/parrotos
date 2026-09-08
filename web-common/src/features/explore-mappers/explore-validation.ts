@@ -1,6 +1,6 @@
-import { useGetExploresForMetricsView } from "@rilldata/web-common/features/dashboards/selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { useGetExploresForMetricsView } from "@statsparrot/web-common/features/dashboards/selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, type Readable } from "svelte/store";
 import type {
   DashboardSelectionCriteria,

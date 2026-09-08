@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatIANA } from "@rilldata/web-common/lib/time/timezone";
+  import { formatIANA } from "@statsparrot/web-common/lib/time/timezone";
   import { DateTime } from "luxon";
 
   export let iana: string;

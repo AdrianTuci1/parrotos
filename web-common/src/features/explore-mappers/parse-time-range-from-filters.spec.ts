@@ -2,20 +2,20 @@ import {
   createAndExpression,
   createBinaryExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
 import {
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_TIMESTAMP_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data.ts";
-import { parseTimeRangeFromFilters } from "@rilldata/web-common/features/explore-mappers/parse-time-range-from-filters.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data.ts";
+import { parseTimeRangeFromFilters } from "@statsparrot/web-common/features/explore-mappers/parse-time-range-from-filters.ts";
 import {
   type DashboardTimeControls,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types.ts";
+} from "@statsparrot/web-common/lib/time/types.ts";
 import {
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { describe, it, expect } from "vitest";
 
 describe("parseTimeRangeFromFilters", () => {

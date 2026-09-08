@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/duckdb/duckdb-go/v2"
-	"github.com/rilldata/rill/runtime/drivers/duckdb/extensions"
+	"github.com/staticlabs/statsparrot/runtime/drivers/duckdb/extensions"
 )
 
 // queryString runs a DuckDB query and returns the result as a scalar string

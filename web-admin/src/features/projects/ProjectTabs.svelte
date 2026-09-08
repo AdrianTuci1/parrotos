@@ -2,11 +2,11 @@
   import {
     position,
     width,
-  } from "@rilldata/web-admin//components/nav/Tab.svelte";
-  import Tab from "@rilldata/web-admin/components/nav/Tab.svelte";
-  import { removeBranchFromPath } from "@rilldata/web-admin/features/branches/branch-utils";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin//components/nav/Tab.svelte";
+  import Tab from "@statsparrot/web-admin/components/nav/Tab.svelte";
+  import { removeBranchFromPath } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { type V1ProjectPermissions } from "../../client";
 
   export let projectPermissions: V1ProjectPermissions;

@@ -2,25 +2,25 @@
   import {
     createAdminServiceConnectProjectToGithub,
     createAdminServiceUpdateProject,
-  } from "@rilldata/web-admin/client";
-  import { extractGithubConnectError } from "@rilldata/web-admin/features/projects/github/github-errors.ts";
-  import { GithubAccessManager } from "@rilldata/web-admin/features/projects/github/GithubAccessManager.ts";
-  import GithubOverwriteConfirmDialog from "@rilldata/web-admin/features/projects/github/GithubOverwriteConfirmDialog.svelte";
+  } from "@statsparrot/web-admin/client";
+  import { extractGithubConnectError } from "@statsparrot/web-admin/features/projects/github/github-errors.ts";
+  import { GithubAccessManager } from "@statsparrot/web-admin/features/projects/github/GithubAccessManager.ts";
+  import GithubOverwriteConfirmDialog from "@statsparrot/web-admin/features/projects/github/GithubOverwriteConfirmDialog.svelte";
   import {
     getGithubUserOrgs,
     getGithubUserRepos,
-  } from "@rilldata/web-admin/features/projects/github/selectors.ts";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
+  } from "@statsparrot/web-admin/features/projects/github/selectors.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
   import {
     Tabs,
     UnderlineTabsList,
     UnderlineTabsTrigger,
-  } from "@rilldata/web-common/components/tabs";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/tabs";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";

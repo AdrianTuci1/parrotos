@@ -1826,7 +1826,7 @@ export const useAppStore = create(
     });
   },
   addMessage: (chatId, message) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => chat.id === chatId ? { ...chat, messages: [...chat.messages, { id: `msg_${Date.now()}`, ...message, timestamp: new Date().toISOString() }] } : chat) })),
-  // Stash the Rill conversation ID (from the agent router) on the session so
+  // Stash the Parrot conversation ID (from the agent router) on the session so
   // subsequent messages in the same chat continue the same runtime conversation.
   setChatConversationId: (chatId, conversationId) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => chat.id === chatId ? { ...chat, conversationId } : chat) })),
   updateToolStatus: (chatId, messageId, toolIdx, status) => set((state) => ({ chatSessions: state.chatSessions.map((chat) => {

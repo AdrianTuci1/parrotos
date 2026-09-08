@@ -1,6 +1,6 @@
-import { reverseMap } from "@rilldata/web-common/lib/map-utils.ts";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import { reverseMap } from "@statsparrot/web-common/lib/map-utils.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import type { DateTime, DateTimeUnit, Interval } from "luxon";
 
 const MAX_BUCKETS = 1500;
@@ -41,7 +41,7 @@ export function getAllowedEndingGrains(
   syntax: string | undefined,
   smallestTimeGrain?: V1TimeGrain,
 ) {
-  if (!syntax || syntax.startsWith("P") || syntax.startsWith("rill")) {
+  if (!syntax || syntax.startsWith("P") || syntax.startsWith("statsparrot")) {
     return [];
   }
   const alias = getGrainAliasFromString(syntax);

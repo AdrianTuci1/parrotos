@@ -6,8 +6,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -24,7 +24,7 @@ func MigrateCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			// Init config
 			var conf Config
-			err := envconfig.Process("rill_admin", &conf)
+			err := envconfig.Process("statsparrot_admin", &conf)
 			if err != nil {
 				fmt.Printf("failed to load config: %s\n", err.Error())
 				os.Exit(1)

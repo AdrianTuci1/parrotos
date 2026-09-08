@@ -1,10 +1,10 @@
 /**
  * Mock "Edit with AI" intent interpreter.
  *
- * Rill's in-context card editing routes a natural-language prompt typed into the
+ * Parrot's in-context card editing routes a natural-language prompt typed into the
  * card's inspector to the **developer agent**, which rewrites the card's YAML and the
  * file watcher reconciles it back onto the spec (see `chart-ai-agent.ts` /
- * `AIGenerateButton.svelte` in web-common). Without a live Rill runtime + file system
+ * `AIGenerateButton.svelte` in web-common). Without a live Parrot runtime + file system
  * this host maps a small set of English intents to card-field patches so the flow is
  * demonstrable end-to-end. Swap `applyMockAgentEdit` for a call to the runtime
  * developer agent when a runtime is present.

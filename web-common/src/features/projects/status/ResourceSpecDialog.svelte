@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import { prettyResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import { prettyResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open = false;
   export let resourceName = "";

@@ -1,7 +1,7 @@
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export function getDimensionDisplayName(
   dimension: MetricsViewSpecDimension | undefined,

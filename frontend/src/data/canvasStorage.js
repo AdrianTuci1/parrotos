@@ -8,7 +8,7 @@ import {
 import {
   runtimeServiceGetFile,
   runtimeServicePutFile,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 const FILE_DIR = "dashboards";
 const filePath = (name) => `${FILE_DIR}/${name}.yaml`;
@@ -17,10 +17,10 @@ const filePath = (name) => `${FILE_DIR}/${name}.yaml`;
  * Canvas persistence transport.
  *
  * A transport reads/writes a canvas model by name. The default transport uses
- * localStorage, so the interactive builder works offline/in mock mode. When a Rill
+ * localStorage, so the interactive builder works offline/in mock mode. When a Parrot
  * runtime is reachable a runtime-backed transport is installed (see
  * buildRuntimeTransport) so canvases persist to `dashboards/<name>.yaml` on disk,
- * matching Rill's repo file layout. The rest of the app talks only to
+ * matching Parrot's repo file layout. The rest of the app talks only to
  * loadCanvas()/saveCanvas(), so switching backends is a one-line swap.
  */
 let transport = { read: loadLocal, write: saveLocal };
@@ -40,7 +40,7 @@ export function getCanvasTransport() {
 /**
  * Build a transport that round-trips the model through the runtime file API as YAML.
  * The runtime returns the file content as plain text (`blob`), so we parse/stringify
- * with the `yaml` package. Rill can then reconcile the canvas from `dashboards/<name>.yaml`
+ * with the `yaml` package. Parrot can then reconcile the canvas from `dashboards/<name>.yaml`
  * exactly as it does for a hand-authored canvas.
  */
 export function buildRuntimeTransport(client) {

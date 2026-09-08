@@ -4,14 +4,14 @@ import type {
   MetricsViewSpecMeasure,
   V1Expression,
   V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
-import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils";
-import { getRangeLabel } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
-import { getComparisonLabel } from "@rilldata/web-common/lib/time/comparisons";
-import { getDimensionFilters } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-import { getMeasureFilters } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measure-filters";
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+} from "@statsparrot/web-common/runtime-client";
+import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils";
+import { getRangeLabel } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
+import { getComparisonLabel } from "@statsparrot/web-common/lib/time/comparisons";
+import { getDimensionFilters } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+import { getMeasureFilters } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measure-filters";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
 
 const chipBase =
   "inline-flex items-center gap-x-1.5 h-7 px-2.5 rounded-full border border-border " +

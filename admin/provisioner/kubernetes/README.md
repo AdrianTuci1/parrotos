@@ -15,7 +15,7 @@ Example provisioner spec for the Kubernetes provisioner:
           "data_dir": "/mnt/data",                            // Directory to use for data storage like DB files etc.
           "host": "http://node-*.localhost",                  // The wildcard '*' will be replaced with the deployment's 'provision_id'
           "namespace": "cloud-runtime",                       // Namespace to use in the K8s cluster
-          "image": "rilldata/rill",                           // Rill Docker image
+          "image": "staticlabs/rill",                           // Rill Docker image
           "kubeconfig_path": "kubeconfig.yaml",               // K8s config file to authenticate against the cluster
           "template_paths":
             {
@@ -69,9 +69,9 @@ spec:
         command:
         - rill
         env:
-        - name: RILL_RUNTIME_GRPC_PORT
+        - name: STATSPARROT_RUNTIME_GRPC_PORT
           value: "8080"
-        - name: RILL_RUNTIME_HTTP_PORT
+        - name: STATSPARROT_RUNTIME_HTTP_PORT
           value: "8080"
 
         ########################################################################

@@ -1,15 +1,15 @@
 <script lang="ts">
-  import DataPreview from "@rilldata/web-common/features/alerts/data-tab/DataPreview.svelte";
-  import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import type { Filters } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-  import FiltersForm from "@rilldata/web-common/features/scheduled-reports/FiltersForm.svelte";
-  import type { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
-  import { MetricsViewSpecMeasureType } from "@rilldata/web-common/runtime-client";
+  import DataPreview from "@statsparrot/web-common/features/alerts/data-tab/DataPreview.svelte";
+  import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import type { Filters } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+  import FiltersForm from "@statsparrot/web-common/features/scheduled-reports/FiltersForm.svelte";
+  import type { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
+  import { MetricsViewSpecMeasureType } from "@statsparrot/web-common/runtime-client";
   import type { SuperForm } from "sveltekit-superforms/client";
   import FormSection from "../../../components/forms/FormSection.svelte";
   import Select from "../../../components/forms/Select.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useMetricsViewValidSpec } from "../../dashboards/selectors";
 
   export let superFormInstance: SuperForm<AlertFormValues>;

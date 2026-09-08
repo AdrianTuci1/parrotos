@@ -1,12 +1,12 @@
 import {
   MAX_ROW_EXPANSION_LIMIT,
   SHOW_MORE_BUTTON,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
 import type { ColumnDef } from "tanstack-table-8-svelte-5";
 import {
   getFiltersForCell,
   getPivotConfigKey,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import { mergeFilters } from "./pivot-merge-filters";
 import { reduceTableCellDataIntoRows } from "./pivot-table-transformations";
 import type { PivotDataRow, PivotDataStoreConfig, PivotFilter } from "./types";

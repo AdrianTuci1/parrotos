@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { TableToolbar } from "@rilldata/web-common/components/table-toolbar";
+  import { TableToolbar } from "@statsparrot/web-common/components/table-toolbar";
   import { ExternalLinkIcon } from "lucide-svelte";
-  import type { V1MagicAuthToken } from "@rilldata/web-admin/client";
+  import type { V1MagicAuthToken } from "@statsparrot/web-admin/client";
   import type { ColumnDef } from "tanstack-table-8-svelte-5";
   import { renderComponent } from "tanstack-table-8-svelte-5";
-  import BasicTable from "@rilldata/web-common/components/table/BasicTable.svelte";
-  import ResourceListEmptyState from "@rilldata/web-common/features/resources/ResourceListEmptyState.svelte";
+  import BasicTable from "@statsparrot/web-common/components/table/BasicTable.svelte";
+  import ResourceListEmptyState from "@statsparrot/web-common/features/resources/ResourceListEmptyState.svelte";
   import LabelCell from "./cells/LabelCell.svelte";
   import FiltersCell from "./cells/FiltersCell.svelte";
   import DateCell from "./cells/DateCell.svelte";
   import PublicURLsActionsRow from "./PublicURLsActionsRow.svelte";
-  import { InMemoryRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { InMemoryRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   interface PublicURLRow extends V1MagicAuthToken {
     dashboardTitle: string;

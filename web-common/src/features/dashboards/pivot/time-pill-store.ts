@@ -2,9 +2,9 @@ import {
   getAllowedTimeGrains,
   isAvailableTimeGrain,
   isGrainBigger,
-} from "@rilldata/web-common/lib/time/grains";
-import type { AvailableTimeGrain } from "@rilldata/web-common/lib/time/types";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/grains";
+import type { AvailableTimeGrain } from "@statsparrot/web-common/lib/time/types";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { derived, writable } from "svelte/store";
 import type { PivotChipData } from "./types";
 import { PivotChipType } from "./types";

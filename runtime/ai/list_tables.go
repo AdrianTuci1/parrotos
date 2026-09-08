@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const ListTablesName = "list_tables"

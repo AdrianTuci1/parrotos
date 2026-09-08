@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { removeLeadingSlash } from "../entity-management/entity-mappers";
   import { getFileHref } from "../../layout/navigation/editor-routing";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
   import {
     displayResourceKind,
     ResourceKind,

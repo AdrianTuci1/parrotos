@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useParserReconcileError } from "../selectors";
   import DeploymentSection from "./DeploymentSection.svelte";
   import ResourcesSection from "./ResourcesSection.svelte";

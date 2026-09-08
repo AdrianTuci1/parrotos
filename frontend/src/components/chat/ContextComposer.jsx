@@ -5,11 +5,11 @@ import { MOCK_METRICS_VIEWS } from "@/data/dataSource";
 import { cn } from "@/lib/utils";
 
 /**
- * Rill-style `@` inline-context composer.
+ * Parrot-style `@` inline-context composer.
  *
  * Typing `@` opens a picker of project context (measures / dimensions / canvases /
  * models). Selecting an item inserts it as a chip into the composer. On send the
- * prompt is composed from the serialized chips + free text (Rill embeds these as
+ * prompt is composed from the serialized chips + free text (Parrot embeds these as
  * `InlineContext` inline nodes in the Tiptap editor; here we serialize them as
  * `@[kind:name]` tokens, which the real agent can parse and the mock router treats
  * as plain prompt text).

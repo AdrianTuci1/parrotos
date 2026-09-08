@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { test } from "../setup/base";
 import { clickMenuButton } from "../utils/commonHelpers";
 import { ResourceWatcher } from "../utils/ResourceWatcher";

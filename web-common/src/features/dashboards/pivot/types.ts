@@ -1,12 +1,12 @@
-import { type TimeRangeString } from "@rilldata/web-common/lib/time/types";
+import { type TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
   V1Expression,
   V1MetricsViewAggregationResponseDataItem,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 import type {
   ColumnDef,

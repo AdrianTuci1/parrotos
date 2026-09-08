@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rilldata/rill/cli/pkg/dotrill"
+	"github.com/staticlabs/statsparrot/cli/pkg/dotstatsparrot"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -25,7 +25,7 @@ var _ trace.SpanExporter = (*FileExporter)(nil)
 
 // NewFileExporter initializes a file exporter with log rotation
 func NewFileExporter() (*FileExporter, error) {
-	filepath, err := dotrill.New("").ResolveFilename("otel_traces.log", true)
+	filepath, err := dotstatsparrot.New("").ResolveFilename("otel_traces.log", true)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func SearchTracesFile(ctx context.Context, traceID, resourceName string) ([]byte
 	}
 	defer db.Close()
 
-	fp, err := dotrill.New("").ResolveFilename("otel_traces*.log", true)
+	fp, err := dotstatsparrot.New("").ResolveFilename("otel_traces*.log", true)
 	if err != nil {
 		return nil, err
 	}

@@ -2,16 +2,16 @@
   We can't control the repo users install the github app on and they can end up installing the app on another repo.
   This page is for showing them the message that github app is installed on another repo than they need to reinstall app on right repo.  -->
 <script lang="ts">
-  import { redirectToGithubLogin } from "@rilldata/web-admin/client/redirect-utils";
-  import GithubRepoInline from "@rilldata/web-admin/features/projects/github/GithubRepoInline.svelte";
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import KeyboardKey from "@rilldata/web-common/components/calls-to-action/KeyboardKey.svelte";
-  import GithubFail from "@rilldata/web-common/components/icons/GithubFail.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { redirectToGithubLogin } from "@statsparrot/web-admin/client/redirect-utils";
+  import GithubRepoInline from "@statsparrot/web-admin/features/projects/github/GithubRepoInline.svelte";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import KeyboardKey from "@statsparrot/web-common/components/calls-to-action/KeyboardKey.svelte";
+  import GithubFail from "@statsparrot/web-common/components/icons/GithubFail.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const urlParams = new URLSearchParams(window.location.search);
   const remote = urlParams.get("remote");

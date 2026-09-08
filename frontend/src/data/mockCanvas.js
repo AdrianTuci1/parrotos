@@ -9,22 +9,22 @@ import { applyMockAgentEdit } from "@/data/mockAgent";
 /**
  * Mock canvas model + helpers.
  *
- * Rill canvases are YAML files (`dashboards/<name>.yaml`) whose `rows` tree holds
- * components (each an item with a width and a renderer spec). Without a live Rill
+ * Parrot canvases are YAML files (`dashboards/<name>.yaml`) whose `rows` tree holds
+ * components (each an item with a width and a renderer spec). Without a live Parrot
  * runtime / file system we keep an equivalent model in memory and persist it to
  * localStorage, so the interactive canvas builder is fully usable in mock mode.
  *
- * Model shape (kept close to Rill's YAML so a later swap to the real file layer is
- * mechanical). A row is either a plain row or a tab group, matching Rill's
+ * Model shape (kept close to Parrot's YAML so a later swap to the real file layer is
+ * mechanical). A row is either a plain row or a tab group, matching Parrot's
  * `V1CanvasRow` where `items` and `tabGroup` are mutually exclusive:
  *   { rows: [ row ] }
  *   row =
  *     { id, kind:'row', height, items: [{ id, type, width, spec, yamlPath }] }
  *   | { id, kind:'tabgroup', name, activeTab,
  *       tabs: [{ id, name, displayName, rows: [plain row] }] }
- * A tab's rows are always plain rows (never a nested tab group), exactly as in Rill.
+ * A tab's rows are always plain rows (never a nested tab group), exactly as in Parrot.
  * where `spec` holds the per-renderer properties (metrics_view, measures, x/y/color,
- * mark, title, description, etc.) matching the Rill `inputParams()` contract.
+ * mark, title, description, etc.) matching the Parrot `inputParams()` contract.
  */
 
 export const CANVAS_TYPES = [
@@ -47,7 +47,7 @@ export const MIN_ROW_HEIGHT = 120;
 
 const STORAGE_PREFIX = "sentry-canvas:";
 
-/** Stable id generator for components/rows (short, like Rill's `generateId`). */
+/** Stable id generator for components/rows (short, like Parrot's `generateId`). */
 function genId(prefix = "c") {
   return `${prefix}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
@@ -79,7 +79,7 @@ function titleFor(type) {
 
 /**
  * A default renderer spec for a freshly-added component of `type`, matching the
- * Rill `inputParams` keys so the editor / AI patch layer can target them directly.
+ * Parrot `inputParams` keys so the editor / AI patch layer can target them directly.
  */
 export function blankSpec(type, { metricsView = DEFAULT_METRICS_VIEW } = {}) {
   const base = {
@@ -130,7 +130,7 @@ export function blankSpec(type, { metricsView = DEFAULT_METRICS_VIEW } = {}) {
       };
     case "image":
       return {
-        url: "https://picsum.photos/seed/rillcanvas/800/300",
+        url: "https://picsum.photos/seed/statsparrotcanvas/800/300",
         alignment: "center",
       };
     default:
@@ -172,7 +172,7 @@ export function makeRow(type, height = 300) {
   return { id: genId("r"), kind: "row", height, items: [makeItem(type, 12)] };
 }
 
-/** Build a tab within a tab group; a tab's rows are plain rows only (Rill parity). */
+/** Build a tab within a tab group; a tab's rows are plain rows only (Parrot parity). */
 export function makeTab(index = 0) {
   const displayName = `Tab ${index + 1}`;
   return {
@@ -303,7 +303,7 @@ export function getKpiValue(measure = "total_revenue") {
   return getMockTotalRow()[measure];
 }
 
-/** Format a numeric value using a Rill-style formatPreset shorthand. */
+/** Format a numeric value using a Parrot-style formatPreset shorthand. */
 export function formatCanvasValue(value, formatPreset) {
   if (value == null) return "—";
   switch (formatPreset) {

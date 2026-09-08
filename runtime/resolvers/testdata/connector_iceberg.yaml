@@ -14,7 +14,7 @@ project_files:
     materialize: true
     sql: |
       SELECT *
-      FROM iceberg_scan('gs://integration-test.rilldata.com/iceberg/lineitem_iceberg',
+      FROM iceberg_scan('gs://integration-test.statsparrot.com/iceberg/lineitem_iceberg',
         allow_moved_paths = true)
 tests:
   - name: test_row_count_for_model_iceberg_to_duckdb_with_gcs_hmac

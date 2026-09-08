@@ -1,11 +1,11 @@
 <script lang="ts">
-  import ResourceList from "@rilldata/web-common/features/resources/ResourceList.svelte";
-  import ResourceListEmptyState from "@rilldata/web-common/features/resources/ResourceListEmptyState.svelte";
-  import AlertIcon from "@rilldata/web-common/components/icons/AlertIcon.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+  import ResourceList from "@statsparrot/web-common/features/resources/ResourceList.svelte";
+  import ResourceListEmptyState from "@statsparrot/web-common/features/resources/ResourceListEmptyState.svelte";
+  import AlertIcon from "@statsparrot/web-common/components/icons/AlertIcon.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
   import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
   import AlertsTableCompositeCell from "./AlertsTableCompositeCell.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: V1Resource[];
   export let organization: string;
@@ -74,11 +74,11 @@
     <span slot="action">
       {@html m.alerts_empty_action({
         alertsLink:
-          '<a href="https://docs.rilldata.com/guide/alerts" target="_blank" rel="noopener noreferrer">' +
+          '<a href="https://docs.statsparrot.com/guide/alerts" target="_blank" rel="noopener noreferrer">' +
           m.alerts_link_text() +
           "</a>",
         codeLink:
-          '<a href="https://docs.rilldata.com/reference/project-files/alerts" target="_blank" rel="noopener noreferrer">' +
+          '<a href="https://docs.statsparrot.com/reference/project-files/alerts" target="_blank" rel="noopener noreferrer">' +
           m.alerts_via_code() +
           "</a>",
       })}

@@ -1,20 +1,20 @@
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
 import {
   getDimensionDisplayName,
   getMeasureDisplayName,
-} from "@rilldata/web-common/features/dashboards/filters/getDisplayName.ts";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
-import { toggleDimensionFilterValue } from "@rilldata/web-common/features/dashboards/state-managers/actions/dimension-filters.ts";
+} from "@statsparrot/web-common/features/dashboards/filters/getDisplayName.ts";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
+import { toggleDimensionFilterValue } from "@statsparrot/web-common/features/dashboards/state-managers/actions/dimension-filters.ts";
 import {
   type DimensionFilterItem,
   getDimensionFilters,
-} from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters.ts";
-import { filterItemsSortFunction } from "@rilldata/web-common/features/dashboards/state-managers/selectors/filters.ts";
-import type { MeasureFilterItem } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measure-filters.ts";
+} from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters.ts";
+import { filterItemsSortFunction } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/filters.ts";
+import type { MeasureFilterItem } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measure-filters.ts";
 import type {
   DimensionThresholdFilter,
   ExploreState,
-} from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
 import {
   copyFilterExpression,
   createAndExpression,
@@ -22,13 +22,13 @@ import {
   createLikeExpression,
   matchExpressionByName,
   negateExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-import { dedupe } from "@rilldata/web-common/lib/arrayUtils.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+import { dedupe } from "@statsparrot/web-common/lib/arrayUtils.ts";
 import {
   type MetricsViewSpecMeasure,
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   derived,
   get,
@@ -36,7 +36,7 @@ import {
   type Readable,
   type Writable,
 } from "svelte/store";
-import type { ExploreMetricsViewMetadata } from "@rilldata/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
+import type { ExploreMetricsViewMetadata } from "@statsparrot/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
 
 export type FiltersState = Pick<
   ExploreState,

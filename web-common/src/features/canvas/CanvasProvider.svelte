@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CanvasLoadingState from "@rilldata/web-common/features/canvas/CanvasLoadingState.svelte";
+  import CanvasLoadingState from "@statsparrot/web-common/features/canvas/CanvasLoadingState.svelte";
   import CanvasInitialization from "./CanvasInitialization.svelte";
 
   export let canvasName: string;

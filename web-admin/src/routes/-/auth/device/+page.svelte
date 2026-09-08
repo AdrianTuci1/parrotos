@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { ADMIN_URL } from "@rilldata/web-admin/client/http-client";
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import RillLogoSquareNegative from "@rilldata/web-common/components/icons/RillLogoSquareNegative.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { ADMIN_URL } from "@statsparrot/web-admin/client/http-client";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import ParrotLogoSquareNegative from "@statsparrot/web-common/components/icons/ParrotLogoSquareNegative.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -78,9 +78,9 @@
 
 <CtaLayoutContainer>
   <CtaContentContainer>
-    <RillLogoSquareNegative size="84px" />
+    <ParrotLogoSquareNegative size="84px" />
     <h1 class="text-xl font-normal text-fg-primary">
-      {m.auth_authorize_rill_cli()}
+      {m.auth_authorize_statsparrot_cli()}
     </h1>
     <p class="text-base text-fg-secondary text-center">
       {m.auth_authenticating_as({ email: user.email })}<br

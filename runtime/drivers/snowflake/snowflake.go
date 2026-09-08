@@ -14,9 +14,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"github.com/snowflakedb/gosnowflake"
 	"go.uber.org/zap"
 	"golang.org/x/sync/semaphore"
@@ -33,14 +33,14 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "Snowflake",
 	Description: "Connect to Snowflake.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/snowflake",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/snowflake",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "dsn",
 			Type:        drivers.StringPropertyType,
 			DisplayName: "Snowflake Connection String",
 			Required:    false,
-			DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/snowflake",
+			DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/snowflake",
 			Placeholder: "<username>@<account_identifier>/<database>/<schema>?warehouse=<warehouse>&role=<role>&authenticator=SNOWFLAKE_JWT&privateKey=<privateKey_base64_url_encoded>",
 			Hint:        "Can be configured here or by setting the 'connector.snowflake.dsn' environment variable (using '.env' or '--env').",
 			Secret:      true,

@@ -4,17 +4,17 @@ import (
 	"context"
 	"testing"
 
-	"github.com/rilldata/rill/admin/pkg/pgtestcontainer"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/admin/pkg/pgtestcontainer"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
-	_ "github.com/rilldata/rill/runtime/drivers/file"
-	_ "github.com/rilldata/rill/runtime/drivers/postgres"
-	_ "github.com/rilldata/rill/runtime/drivers/sqlite"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/file"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/postgres"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/sqlite"
 )
 
 // TestAll runs sub-tests against all drivers.

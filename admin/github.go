@@ -15,9 +15,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/golang-lru/simplelru"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -360,7 +360,7 @@ func (s *Service) ProcessGithubEvent(ctx context.Context, rawEvent any) error {
 }
 
 func (s *Service) processGithubPush(ctx context.Context, event *github.PushEvent) error {
-	// Find Rill project matching the repo that was pushed to
+	// Find Parrot project matching the repo that was pushed to
 	repo := event.GetRepo()
 	projects, err := s.DB.FindProjectsByGitRemote(ctx, *repo.CloneURL)
 	if err != nil {

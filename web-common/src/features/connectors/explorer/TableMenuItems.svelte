@@ -1,15 +1,15 @@
 <script lang="ts">
-  import Model from "@rilldata/web-common/components/icons/Model.svelte";
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry";
-  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  import Model from "@statsparrot/web-common/components/icons/Model.svelte";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { getScreenNameFromPage } from "@statsparrot/web-common/features/file-explorer/telemetry";
+  import NavigationMenuItem from "@statsparrot/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import { generateMetricsFromTable } from "../../metrics-views/ai-generation/generateMetricsView";
   import {

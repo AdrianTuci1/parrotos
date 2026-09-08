@@ -11,9 +11,9 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/orbcorp/orb-go"
 	"github.com/orbcorp/orb-go/option"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/jobs"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/jobs"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 	"go.uber.org/zap"
 )
 

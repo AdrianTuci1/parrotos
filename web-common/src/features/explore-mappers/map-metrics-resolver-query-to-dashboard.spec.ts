@@ -1,9 +1,9 @@
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
 import {
   AD_BIDS_DOMAIN_DIMENSION,
   AD_BIDS_EXPLORE_WITH_3_MEASURES_DIMENSIONS_TIME_DIMENSION,
@@ -11,32 +11,32 @@ import {
   AD_BIDS_METRICS_3_MEASURES_DIMENSIONS_WITH_TIME,
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_TIMESTAMP_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data.ts";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data.ts";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types.ts";
 import {
   mapMetricsResolverQueryToDashboard,
   mapResolverExpressionToV1Expression,
-} from "@rilldata/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard.ts";
+} from "@statsparrot/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard.ts";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types.ts";
+} from "@statsparrot/web-common/lib/time/types.ts";
 import {
   DashboardState_ActivePage,
   DashboardState_LeaderboardSortDirection,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb.ts";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb.ts";
 import {
   type V1Expression,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type {
   Expression,
   Schema as MetricsResolverQuery,
-} from "@rilldata/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
+} from "@statsparrot/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
 import { describe, expect, it } from "vitest";
-import { getResolvedTimeRangesFromMessage } from "@rilldata/web-common/features/chat/core/citation-url-utils.ts";
+import { getResolvedTimeRangesFromMessage } from "@statsparrot/web-common/features/chat/core/citation-url-utils.ts";
 
 describe("mapMetricsResolverQueryToDashboard", () => {
   const TestCases: {
@@ -89,10 +89,10 @@ describe("mapMetricsResolverQueryToDashboard", () => {
 
     {
       title:
-        "rilltime expressions in time range and comparison time range are resolved from resolvedTimeRanges",
+        "statspartime expressions in time range and comparison time range are resolved from resolvedTimeRanges",
       query: {
-        time_range: { expression: "rill-PDC" },
-        comparison_time_range: { expression: "rill-PPC" },
+        time_range: { expression: "statsparrot-PDC" },
+        comparison_time_range: { expression: "statsparrot-PPC" },
         measures: [{ name: AD_BIDS_IMPRESSIONS_MEASURE }],
         dimensions: [{ name: AD_BIDS_PUBLISHER_DIMENSION }],
       },
@@ -289,7 +289,7 @@ describe("mapMetricsResolverQueryToDashboard", () => {
             },
           ],
           sorting: [
-            { desc: true, id: "timestamp_rill_TIME_GRAIN_DAY" },
+            { desc: true, id: "timestamp_statsparrot_TIME_GRAIN_DAY" },
             { desc: false, id: AD_BIDS_IMPRESSIONS_MEASURE },
           ],
           expanded: {},

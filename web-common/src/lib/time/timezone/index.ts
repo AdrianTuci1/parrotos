@@ -1,6 +1,6 @@
-import { timeZoneNameToAbbreviationMap } from "@rilldata/web-common/lib/time/timezone/abbreviationMap";
-import { getOffset } from "@rilldata/web-common/lib/time/transforms";
-import { TimeOffsetType } from "@rilldata/web-common/lib/time/types";
+import { timeZoneNameToAbbreviationMap } from "@statsparrot/web-common/lib/time/timezone/abbreviationMap";
+import { getOffset } from "@statsparrot/web-common/lib/time/transforms";
+import { TimeOffsetType } from "@statsparrot/web-common/lib/time/types";
 import { DateTime, IANAZone } from "luxon";
 
 export const allTimeZones = Intl.supportedValuesOf("timeZone");
@@ -51,7 +51,7 @@ export function setJSDateTimeValueToTimeValueInSelectedTimeZone(
 /**
  * Removes the local timezone offset from a date.
  *
- * Some dates in Rill are used a range rather than a point of time.
+ * Some dates in Parrot are used a range rather than a point of time.
  * The runtime aggregates data and uses the start of a period to denote a range.
  * For ex. 3 Nov 2024 with a daily grain would infer to [3 Nov 2024, 4 Nov 2024)
  */

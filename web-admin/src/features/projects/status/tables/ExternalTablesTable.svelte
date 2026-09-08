@@ -1,12 +1,12 @@
 <script lang="ts">
-  import VirtualizedTable from "@rilldata/web-common/components/table/VirtualizedTable.svelte";
+  import VirtualizedTable from "@statsparrot/web-common/components/table/VirtualizedTable.svelte";
   import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
-  import type { V1OlapTableInfo } from "@rilldata/web-common/runtime-client";
-  import { compareSizes } from "@rilldata/web-common/features/projects/status/tables/utils";
-  import ModelSizeCell from "@rilldata/web-common/features/projects/status/tables/ModelSizeCell.svelte";
-  import NameCell from "@rilldata/web-common/features/projects/status/NameCell.svelte";
-  import MaterializationCell from "@rilldata/web-common/features/projects/status/tables/MaterializationCell.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import type { V1OlapTableInfo } from "@statsparrot/web-common/runtime-client";
+  import { compareSizes } from "@statsparrot/web-common/features/projects/status/tables/utils";
+  import ModelSizeCell from "@statsparrot/web-common/features/projects/status/tables/ModelSizeCell.svelte";
+  import NameCell from "@statsparrot/web-common/features/projects/status/NameCell.svelte";
+  import MaterializationCell from "@statsparrot/web-common/features/projects/status/tables/MaterializationCell.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let tables: V1OlapTableInfo[] = [];
   export let isView: Map<string, boolean> = new Map();

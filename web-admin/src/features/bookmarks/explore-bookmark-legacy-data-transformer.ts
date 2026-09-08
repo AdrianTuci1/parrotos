@@ -1,14 +1,14 @@
-import { getDashboardStateFromUrl } from "@rilldata/web-common/features/dashboards/proto-state/fromProto.ts";
-import { getMetricsViewTimeRangeFromExploreQueryOptions } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
-import { getExploreValidSpecQueryOptions } from "@rilldata/web-common/features/explores/selectors.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { getDashboardStateFromUrl } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto.ts";
+import { getMetricsViewTimeRangeFromExploreQueryOptions } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
+import { getExploreValidSpecQueryOptions } from "@statsparrot/web-common/features/explores/selectors.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type {
   V1ExploreSpec,
   V1MetricsViewSpec,
   V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { createQuery } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 

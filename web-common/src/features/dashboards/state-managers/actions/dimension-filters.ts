@@ -1,17 +1,17 @@
 import { page } from "$app/stores";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
 import {
   createInExpression,
   createLikeExpression,
   getValuesInExpression,
   negateExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 import {
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 import { getWhereFilterExpressionIndex } from "../selectors/dimension-filters";
 import type { DashboardMutables } from "./types";

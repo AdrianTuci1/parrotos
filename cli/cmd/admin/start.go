@@ -14,21 +14,21 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/billing"
-	"github.com/rilldata/rill/admin/billing/payment"
-	"github.com/rilldata/rill/admin/jobs/river"
-	"github.com/rilldata/rill/admin/server"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/debugserver"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server/auth"
-	rillstorage "github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/billing/payment"
+	"github.com/staticlabs/statsparrot/admin/jobs/river"
+	"github.com/staticlabs/statsparrot/admin/server"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/debugserver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	statsparrotstorage "github.com/staticlabs/statsparrot/runtime/storage"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -36,19 +36,19 @@ import (
 	"google.golang.org/api/option"
 
 	// Register drivers
-	_ "github.com/rilldata/rill/admin/database/postgres"
-	_ "github.com/rilldata/rill/admin/provisioner/clickhousestatic"
-	_ "github.com/rilldata/rill/admin/provisioner/kubernetes"
-	_ "github.com/rilldata/rill/admin/provisioner/static"
-	_ "github.com/rilldata/rill/runtime/drivers/claude"
-	_ "github.com/rilldata/rill/runtime/drivers/gemini"
-	_ "github.com/rilldata/rill/runtime/drivers/mock/ai"
-	_ "github.com/rilldata/rill/runtime/drivers/openai"
+	_ "github.com/staticlabs/statsparrot/admin/database/postgres"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/clickhousestatic"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/kubernetes"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/static"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/claude"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gemini"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock/ai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/openai"
 )
 
 // Config describes admin server config derived from environment variables.
-// Env var keys must be prefixed with RILL_ADMIN_ and are converted from snake_case to CamelCase.
-// For example RILL_ADMIN_HTTP_PORT is mapped to Config.HTTPPort.
+// Env var keys must be prefixed with STATSPARROT_ADMIN_ and are converted from snake_case to CamelCase.
+// For example STATSPARROT_ADMIN_HTTP_PORT is mapped to Config.HTTPPort.
 type Config struct {
 	DatabaseDriver string `default:"postgres" split_words:"true"`
 	DatabaseURL    string `split_words:"true"`
@@ -126,7 +126,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			// Init config
 			var conf Config
-			err := envconfig.Process("rill_admin", &conf)
+			err := envconfig.Process("statsparrot_admin", &conf)
 			if err != nil {
 				fmt.Printf("failed to load config: %s\n", err.Error())
 				os.Exit(1)
@@ -248,17 +248,17 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 			switch aiDriver {
 			case "openai":
 				if conf.OpenAIAPIKey == "" {
-					logger.Fatal("RILL_ADMIN_OPENAI_API_KEY is required when AI driver is 'openai'")
+					logger.Fatal("STATSPARROT_ADMIN_OPENAI_API_KEY is required when AI driver is 'openai'")
 				}
 				aiConfig["api_key"] = conf.OpenAIAPIKey
 			case "claude":
 				if conf.ClaudeAPIKey == "" {
-					logger.Fatal("RILL_ADMIN_CLAUDE_API_KEY is required when AI driver is 'claude'")
+					logger.Fatal("STATSPARROT_ADMIN_CLAUDE_API_KEY is required when AI driver is 'claude'")
 				}
 				aiConfig["api_key"] = conf.ClaudeAPIKey
 			case "gemini":
 				if conf.GeminiAPIKey == "" {
-					logger.Fatal("RILL_ADMIN_GEMINI_API_KEY is required when AI driver is 'gemini'")
+					logger.Fatal("STATSPARROT_ADMIN_GEMINI_API_KEY is required when AI driver is 'gemini'")
 				}
 				aiConfig["api_key"] = conf.GeminiAPIKey
 			case "mock_ai":
@@ -272,7 +272,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 			default:
 				logger.Fatal("unknown AI driver", zap.String("driver", aiDriver))
 			}
-			aiHandle, err := drivers.Open(aiDriver, "", "", aiConfig, rillstorage.MustNew(os.TempDir(), nil), activity.NewNoopClient(), logger)
+			aiHandle, err := drivers.Open(aiDriver, "", "", aiConfig, statsparrotstorage.MustNew(os.TempDir(), nil), activity.NewNoopClient(), logger)
 			if err != nil {
 				logger.Fatal("error creating AI client", zap.Error(err))
 			}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
+  import type { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
   import "regular-table";
   import type { RegularTableElement } from "regular-table";
   import { onMount } from "svelte";

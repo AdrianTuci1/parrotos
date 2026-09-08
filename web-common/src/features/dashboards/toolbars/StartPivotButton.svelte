@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
+  import { Button } from "@statsparrot/web-common/components/button";
   import Pivot from "../../../components/icons/Pivot.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let onClick: () => void;
 </script>

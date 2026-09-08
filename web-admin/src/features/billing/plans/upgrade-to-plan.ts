@@ -1,17 +1,17 @@
-import { type CategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
+import { type CategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
 import {
   fetchPaymentsPortalURL,
   maybeFetchPublicPlanByName,
   getBillingUpgradeUrl,
-} from "@rilldata/web-admin/features/billing/plans/selectors.ts";
+} from "@statsparrot/web-admin/features/billing/plans/selectors.ts";
 import {
   adminServiceRenewBillingSubscription,
   adminServiceUpdateBillingSubscription,
-} from "@rilldata/web-admin/client";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { triggerWelcomeToRillDialog } from "@rilldata/web-admin/features/billing/plans/utils.ts";
-import { invalidateBillingInfo } from "@rilldata/web-admin/features/billing/invalidations.ts";
+} from "@statsparrot/web-admin/client";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { triggerWelcomeToParrotDialog } from "@statsparrot/web-admin/features/billing/plans/utils.ts";
+import { invalidateBillingInfo } from "@statsparrot/web-admin/features/billing/invalidations.ts";
 import { page } from "$app/stores";
 import { get } from "svelte/store";
 
@@ -49,11 +49,11 @@ export async function upgradeToPlan(
     await adminServiceUpdateBillingSubscription(org, {
       planName,
     });
-    triggerWelcomeToRillDialog(planName);
+    triggerWelcomeToParrotDialog(planName);
   }
   void invalidateBillingInfo(org);
   if (redirect) {
-    // redirect param could be on a different domain like the rill developer instance
+    // redirect param could be on a different domain like the statsparrot developer instance
     // so using goto won't work
     window.open(redirect, "_self");
   }

@@ -266,7 +266,7 @@ Before creating or editing a resource, you MUST try to load a skill for its reso
 
 For example, if you are going to modify a metrics view and have access to the `rill-metrics-view` skill, you must load it first.
 
-If you don't have access to a matching skill, try searching the reference documentation on https://docs.rilldata.com.
+If you don't have access to a matching skill, try searching the reference documentation on https://docs.statsparrot.com.
 
 {% end %}
 

@@ -1,8 +1,8 @@
-import { extractFileExtension } from "@rilldata/web-common/features/entity-management/file-path-utils";
+import { extractFileExtension } from "@statsparrot/web-common/features/entity-management/file-path-utils";
 import type {
   V1ConnectorDriver,
   V1Source,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { sanitizeEntityName } from "../entity-management/name-utils";
 import { getConnectorSchema } from "./modal/connector-schemas";
 import {
@@ -10,12 +10,12 @@ import {
   getSchemaSecretKeys,
   getSchemaStringKeys,
 } from "../templates/schema-utils";
-import type { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
+import type { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
 
 // Helper text that we put at the top of every Model YAML file
 function sourceModelFileTop(driverName: string) {
   return `# Model YAML
-# Reference documentation: https://docs.rilldata.com/developers/build/connectors/data-source/${driverName}
+# Reference documentation: https://docs.statsparrot.com/developers/build/connectors/data-source/${driverName}
 
 type: model
 materialize: true`;

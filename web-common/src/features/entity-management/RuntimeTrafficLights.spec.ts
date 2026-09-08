@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 // The tooltip provider requires its own context that's set up at the app
 // shell level. This test only cares about the watcher-context fallback, so
 // stub tooltip components with a minimal slot-passthrough implementation.
-vi.mock("@rilldata/web-common/components/tooltip-v2", async () => {
+vi.mock("@statsparrot/web-common/components/tooltip-v2", async () => {
   const Stub = (await import("./__fixtures__/SlotPassthrough.svelte")).default;
   return {
     Root: Stub,
@@ -13,7 +13,7 @@ vi.mock("@rilldata/web-common/components/tooltip-v2", async () => {
   };
 });
 vi.mock(
-  "@rilldata/web-common/components/tooltip/TooltipContent.svelte",
+  "@statsparrot/web-common/components/tooltip/TooltipContent.svelte",
   async () => ({
     default: (await import("./__fixtures__/SlotPassthrough.svelte")).default,
   }),

@@ -4,7 +4,7 @@ import {
   WIDGET_TYPES,
 } from './widget-spec';
 import { resolveWidgetData } from './DataResolver';
-import { useRuntimeClient } from '@rilldata/web-common/runtime-client/react';
+import { useRuntimeClient } from '@statsparrot/web-common/runtime-client/react';
 import { useAppStore } from '@/stores/useAppStore';
 import { MetricWidget } from './widgets/MetricWidget';
 import { SparklineWidget } from './widgets/SparklineWidget';

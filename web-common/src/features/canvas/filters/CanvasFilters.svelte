@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Calendar from "@rilldata/web-common/components/icons/Calendar.svelte";
-  import Filter from "@rilldata/web-common/components/icons/Filter.svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import AdvancedFilter from "@rilldata/web-common/features/dashboards/filters/AdvancedFilter.svelte";
-  import DimensionFilter from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
-  import MeasureFilter from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
-  import { getPanRangeForTimeRange } from "@rilldata/web-common/features/dashboards/state-managers/selectors/charts";
-  import SuperPill from "@rilldata/web-common/features/dashboards/time-controls/super-pill/SuperPill.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Calendar from "@statsparrot/web-common/components/icons/Calendar.svelte";
+  import Filter from "@statsparrot/web-common/components/icons/Filter.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import AdvancedFilter from "@statsparrot/web-common/features/dashboards/filters/AdvancedFilter.svelte";
+  import DimensionFilter from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
+  import MeasureFilter from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
+  import { getPanRangeForTimeRange } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/charts";
+  import SuperPill from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/SuperPill.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import CanvasFilterButton from "../../dashboards/filters/CanvasFilterButton.svelte";
   import Metadata from "../../dashboards/time-controls/super-pill/components/Metadata.svelte";
   import CanvasComparisonPill from "./CanvasComparisonPill.svelte";

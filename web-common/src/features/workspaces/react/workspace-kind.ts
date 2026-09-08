@@ -2,7 +2,7 @@
 // `features/workspaces/WorkspaceDispatcher.svelte`. Source & Model share the
 // ModelWorkspace; MetricsView, Explore and Canvas map to their own workspaces; a
 // null/undefined kind falls through to the code-editor branch.
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 
 export type WorkspaceKey = "model" | "metrics" | "explore" | "canvas" | null;
 

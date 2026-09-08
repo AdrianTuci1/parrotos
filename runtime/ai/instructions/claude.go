@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"gopkg.in/yaml.v3"
 )
 
-// InitClaudeCode generates Claude Code instruction files from Rill instruction files.
+// InitClaudeCode generates Claude Code instruction files from Parrot instruction files.
 // The entry point is written to .claude/CLAUDE.md.
 // All other instructions (including development.md) are written as skills to .claude/skills/<name>/SKILL.md.
 // MCP server config is written to /.mcp.json.
@@ -59,7 +59,7 @@ type skillFrontMatter struct {
 	Description string `yaml:"description"`
 }
 
-// convertToClaudeFile transforms a Rill instruction to Claude Code format.
+// convertToClaudeFile transforms a Parrot instruction to Claude Code format.
 // AGENTS.md becomes the main .claude/CLAUDE.md file.
 // Other files become skills at .claude/skills/<name>/SKILL.md.
 func convertToClaudeFile(path string, inst *Instruction) (outputPath, content string) {
@@ -69,7 +69,7 @@ func convertToClaudeFile(path string, inst *Instruction) (outputPath, content st
 	}
 
 	// Other files become skills
-	name := fmt.Sprintf("rill-%s", strings.ReplaceAll(inst.Name, "_", "-"))
+	name := fmt.Sprintf("statsparrot-%s", strings.ReplaceAll(inst.Name, "_", "-"))
 	outputPath = "/.claude/skills/" + name + "/SKILL.md"
 
 	// Serialize front matter to YAML
@@ -88,12 +88,12 @@ func convertToClaudeFile(path string, inst *Instruction) (outputPath, content st
 	return outputPath, sb.String()
 }
 
-// mcpServerName is the name used for the Rill MCP server in editor configs.
-const mcpServerName = "rill-developer"
+// mcpServerName is the name used for the Parrot MCP server in editor configs.
+const mcpServerName = "statsparrot-developer"
 
 // writeMCPConfig reads an existing MCP config file (if any), adds or updates
-// the "rill" server entry, and writes the result back. If force is false and
-// the "rill" entry already exists, it is left unchanged.
+// the "statsparrot" server entry, and writes the result back. If force is false and
+// the "statsparrot" entry already exists, it is left unchanged.
 func writeMCPConfig(ctx context.Context, repo drivers.RepoStore, force bool, path string, serverConfig map[string]any) error {
 	// Try to read and parse the existing config
 	var cfg struct {

@@ -10,7 +10,7 @@ The following command starts a development environment with hot reloading for th
 rill devtool start cloud
 ```
 
-Press ctrl+C to gracefully stop the development environment. While the development environment is running, any `rill` command you run will target your local development environment instead of the one on `rilldata.com`. (You can manually switch environments using `rill devtool switch-env`.)
+Press ctrl+C to gracefully stop the development environment. While the development environment is running, any `rill` command you run will target your local development environment instead of the one on `staticlabs.com`. (You can manually switch environments using `rill devtool switch-env`.)
 
 All application state is persisted in the (gitignored) `dev-cloud-state` directory. Pass `--reset` to the command above to clear state and start a clean environment.
 
@@ -28,4 +28,4 @@ npm run generate:client -w web-admin
 
 ## Building for production
 
-1. Set the `RILL_UI_PUBLIC_RILL_ADMIN_URL` environment variable to the URL of the control plane server (e.g. `https://admin.rilldata.com`)
+1. Set the `STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL` environment variable to the URL of the control plane server (e.g. `https://admin.statsparrot.com`)

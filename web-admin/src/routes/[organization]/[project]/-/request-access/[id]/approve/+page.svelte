@@ -4,16 +4,16 @@
   import {
     createAdminServiceApproveProjectAccess,
     createAdminServiceGetProjectAccessRequest,
-  } from "@rilldata/web-admin/client";
-  import AccessRequestContainer from "@rilldata/web-admin/features/access-request/AccessRequestContainer.svelte";
-  import { parseAccessRequestError } from "@rilldata/web-admin/features/access-request/utils";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import CheckCircle from "@rilldata/web-common/components/icons/CheckCircle.svelte";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  } from "@statsparrot/web-admin/client";
+  import AccessRequestContainer from "@statsparrot/web-admin/features/access-request/AccessRequestContainer.svelte";
+  import { parseAccessRequestError } from "@statsparrot/web-admin/features/access-request/utils";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import CheckCircle from "@statsparrot/web-common/components/icons/CheckCircle.svelte";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
   import type { AxiosError } from "axios";
 
   $: organization = $page.params.organization;

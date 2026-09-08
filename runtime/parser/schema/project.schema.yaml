@@ -13,7 +13,7 @@ description: |
 
   Projects can simply be rehydrated from Rill project files into an explorable data application as long as there is sufficient access and credentials to the source data - figuring out the dependencies, pulling down data, & validating your model queries and metrics view configurations. The result is a set of functioning exploratory dashboards.
 
-  You can see a few different example projects by visiting our [example GitHub repository](https://github.com/rilldata/rill-examples).
+  You can see a few different example projects by visiting our [example GitHub repository](https://github.com/staticlabs/statsparrot-examples).
 
   :::tip
 
@@ -1982,7 +1982,7 @@ definitions:
         partitions:
           glob:
             connector: gcs
-            path: gs://rilldata-public/github-analytics/Clickhouse/2025/*/commits_*.parquet
+            path: gs://staticlabs-public/github-analytics/Clickhouse/2025/*/commits_*.parquet
 
         sql: SELECT * FROM read_parquet('{{ .partition.uri }}')
 
@@ -1999,12 +1999,12 @@ definitions:
 
         partitions:
           glob:
-            path: gs://rilldata-public/github-analytics/Clickhouse/2025/*/*
+            path: gs://staticlabs-public/github-analytics/Clickhouse/2025/*/*
             partition: directory
           
         sql: |
           SELECT * 
-            FROM read_parquet('gs://rilldata-public/{{ .partition.path }}/commits_*.parquet') 
+            FROM read_parquet('gs://staticlabs-public/{{ .partition.path }}/commits_*.parquet') 
             WHERE '{{ .partition.path }}' IS NOT NULL
 
 
@@ -2089,7 +2089,7 @@ definitions:
             description: A SQL expression that tells us the max timestamp that the measures are considered valid for. Usually does not need to be overwritten
           data_time_range:
             type: string
-            description: 'Optional [rilltime](https://docs.rilldata.com/reference/time-syntax) expression describing the base table''s time coverage (e.g. `-5Y to now`). When set, Rill skips the `min`/`max` OLAP probe for the base table and uses the declared bounds for coverage checks. The start must be bounded; `inf` and `earliest` are rejected. To declare full history, use a concrete early bound such as `-100Y to now` or omit this field to probe the table.'
+            description: 'Optional [rilltime](https://docs.statsparrot.com/reference/time-syntax) expression describing the base table''s time coverage (e.g. `-5Y to now`). When set, Rill skips the `min`/`max` OLAP probe for the base table and uses the declared bounds for coverage checks. The start must be bounded; `inf` and `earliest` are rejected. To declare full history, use a concrete early bound such as `-100Y to now` or omit this field to probe the table.'
           smallest_time_grain:
             type: string
             description: 'Refers to the smallest time granularity the user is allowed to view. The valid values are: millisecond, second, minute, hour, day, week, month, quarter, year'
@@ -2322,7 +2322,7 @@ definitions:
                   description: Optional field selectors for measures to include in the rollup from the base metrics view. If not specified, all measures are included.
                 data_time_range:
                   type: string
-                  description: 'Optional [rilltime](https://docs.rilldata.com/reference/time-syntax) expression describing the rollup''s time coverage (e.g. `-1Y to now`, `-5Y to -1Y`). When set, Rill skips the `min`/`max` OLAP probe for this rollup and uses the declared bounds for coverage checks. The start must be bounded; `inf` and `earliest` are rejected. To declare full history, use a concrete early bound such as `-100Y to now` or omit this field to probe the table.'
+                  description: 'Optional [rilltime](https://docs.statsparrot.com/reference/time-syntax) expression describing the rollup''s time coverage (e.g. `-1Y to now`, `-5Y to -1Y`). When set, Rill skips the `min`/`max` OLAP probe for this rollup and uses the declared bounds for coverage checks. The start must be bounded; `inf` and `earliest` are rejected. To declare full history, use a concrete early bound such as `-100Y to now` or omit this field to probe the table.'
               required:
                 - model
                 - time_grain
@@ -2512,7 +2512,7 @@ definitions:
                 ```
             properties:
               time_range:
-                description: Refers to the default time range shown when a user initially loads the dashboard. The value must be either an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) (for example, PT12H for 12 hours, P1M for 1 month, or P26W for 26 weeks) or one of the [Rill ISO 8601 extensions](https://docs.rilldata.com/reference/rill-iso-extensions#extensions).
+                description: Refers to the default time range shown when a user initially loads the dashboard. The value must be either an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) (for example, PT12H for 12 hours, P1M for 1 month, or P26W for 26 weeks) or one of the [Rill ISO 8601 extensions](https://docs.statsparrot.com/reference/rill-iso-extensions#extensions).
                 type: string
               comparison_mode:
                 description: 'Controls how to compare current data with historical or categorical baselines. Options: `none` (no comparison), `time` (compares with past based on default_time_range), `dimension` (compares based on comparison_dimension values)'
@@ -2667,7 +2667,7 @@ definitions:
                 description: Provides the default measures to load on viewing the dashboard
                 $ref: '#/definitions/field_selector_properties'
               time_range:
-                description: Refers to the default time range shown when a user initially loads the dashboard. The value must be either an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) (for example, PT12H for 12 hours, P1M for 1 month, or P26W for 26 weeks) or one of the [Rill ISO 8601 extensions](https://docs.rilldata.com/reference/rill-iso-extensions#extensions).
+                description: Refers to the default time range shown when a user initially loads the dashboard. The value must be either an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) (for example, PT12H for 12 hours, P1M for 1 month, or P26W for 26 weeks) or one of the [Rill ISO 8601 extensions](https://docs.statsparrot.com/reference/rill-iso-extensions#extensions).
                 type: string
               comparison_mode:
                 description: 'Controls how to compare current data with historical or categorical baselines. Options: `none` (no comparison), `time` (compares with past based on default_time_range), `dimension` (compares based on comparison_dimension values)'
@@ -3842,7 +3842,7 @@ definitions:
             description: An [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration or one of the [Rill ISO 8601 extensions](/reference/time-syntax/rill-iso-extensions#extensions) extensions for the selection.
           comparison_offsets:
             type: array
-            description: List of time comparison options for this time range selection (optional). Must be one of the [Rill ISO 8601 extensions](https://docs.rilldata.com/reference/rill-iso-extensions#extensions).
+            description: List of time comparison options for this time range selection (optional). Must be one of the [Rill ISO 8601 extensions](https://docs.statsparrot.com/reference/rill-iso-extensions#extensions).
             items:
               oneOf:
                 - type: string

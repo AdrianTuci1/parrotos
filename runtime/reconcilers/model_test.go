@@ -3,13 +3,13 @@ package reconcilers_test
 import (
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestPatchModeManualTrigger(t *testing.T) {
@@ -17,7 +17,7 @@ func TestPatchModeManualTrigger(t *testing.T) {
 
 	// Create a model with patch mode
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/patch_model.yaml": `
 type: model
 incremental: true
@@ -61,7 +61,7 @@ func TestPatchModeOutputConnectorChangePreservesData(t *testing.T) {
 
 	// Declare a second output connector to migrate to.
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"connectors/alt.yaml": `
 type: connector
 driver: duckdb
@@ -120,7 +120,7 @@ func TestRenameDoesNotRebuild(t *testing.T) {
 	rt, instanceID := testruntime.NewInstance(t)
 
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/foo.yaml": `
 type: model
 incremental: true
@@ -154,7 +154,7 @@ func TestPartitionedIncrementalPostExecSeesIncrementalFlag(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{StageChanges: true})
 
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/multiply.yaml": `
 type: model
 incremental: true
@@ -189,7 +189,7 @@ func TestModelTests(t *testing.T) {
 
 	// Create the model with tests
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/test_model.yaml": `
 type: model
 sql: SELECT * FROM range(5)
@@ -312,7 +312,7 @@ func TestModelTestsWithFailures(t *testing.T) {
 
 	// Create a model that will fail some tests
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/failing_model.yaml": `
 type: model
 sql: SELECT range FROM range(10) WHERE range > 5  -- Only values 6,7,8,9
@@ -358,7 +358,7 @@ func TestModelTestAssertion(t *testing.T) {
 
 	// Test assertion SQL generation
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/assertion_model.yaml": `
 type: model
 sql: SELECT 1 as id, 'test' as name
@@ -402,7 +402,7 @@ func TestModelPartitionsSkippedClearsErrorState(t *testing.T) {
 	// while '1' and '2' succeed. The first partition to run is the one with the highest index (partitions are
 	// loaded idx DESC), so we order the values descending to ensure a successful, numeric partition runs first.
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/partitioned.yaml": `
 type: model
 incremental: true
@@ -439,7 +439,7 @@ func TestModelRefreshSkippedPartitions(t *testing.T) {
 	ctx := t.Context()
 
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/partitioned.yaml": `
 type: model
 incremental: true
@@ -498,7 +498,7 @@ func TestPartitionsClearedOnDelete(t *testing.T) {
 	ctx := t.Context()
 
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/partitioned.yaml": `
 type: model
 incremental: true
@@ -544,7 +544,7 @@ func TestExplicitPartitionRefreshDoesNotProcessNewPartitions(t *testing.T) {
 
 	// Create a model with dynamic partitions using RANDOM() to generate new partitions on each run
 	testruntime.PutFiles(t, rt, instanceID, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		"models/dynamic_partitions.yaml": `
 type: model
 incremental: true
@@ -618,7 +618,7 @@ func TestPartitionedIncrementalPostExecWithStaging(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			"models/multiply_staged.yaml": `
 type: model
 incremental: true
@@ -645,7 +645,7 @@ func TestIncrementalAppendPostExecWithStaging(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			"models/appendmodel.yaml": `
 type: model
 incremental: true
@@ -671,7 +671,7 @@ func TestViewPostExecWithStaging(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			"models/staged_view.yaml": `
 type: model
 materialize: false
@@ -689,7 +689,7 @@ func TestStagedPostExecPairsWithPreExec(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			"models/attach_model.yaml": `
 type: model
 materialize: true
@@ -717,7 +717,7 @@ sql: SELECT '{{ .partition.v }}' AS v {{ if eq .partition.v "extra" }}, 42 AS ex
 	t.Run("append_new_columns", func(t *testing.T) {
 		rt, instanceID := testruntime.NewInstance(t)
 		testruntime.PutFiles(t, rt, instanceID, map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			"models/partitioned.yaml": model + `output:
   on_schema_change: append_new_columns
 `,
@@ -736,7 +736,7 @@ sql: SELECT '{{ .partition.v }}' AS v {{ if eq .partition.v "extra" }}, 42 AS ex
 	t.Run("default fails the partition", func(t *testing.T) {
 		rt, instanceID := testruntime.NewInstance(t)
 		testruntime.PutFiles(t, rt, instanceID, map[string]string{
-			"rill.yaml":               ``,
+			"statsparrot.yaml":               ``,
 			"models/partitioned.yaml": model,
 		})
 		testruntime.ReconcileParserAndWait(t, rt, instanceID)

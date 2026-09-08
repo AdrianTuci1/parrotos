@@ -7,8 +7,8 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog/index.js";
-  import { Button } from "@rilldata/web-common/components/button/index.js";
+  } from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import { Button } from "@statsparrot/web-common/components/button/index.js";
 
   let {
     open = $bindable(false),

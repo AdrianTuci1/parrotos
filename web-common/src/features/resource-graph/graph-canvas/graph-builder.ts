@@ -4,15 +4,15 @@ import { Position } from "@xyflow/svelte";
 import {
   ResourceKind,
   coerceResourceKind,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   createResourceId,
   resourceNameToId,
-} from "@rilldata/web-common/features/entity-management/resource-utils";
+} from "@statsparrot/web-common/features/entity-management/resource-utils";
 import type {
   V1Resource,
   V1ResourceName,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ResourceNodeData } from "../shared/types";
 import { graphCache } from "../shared/cache/position-cache";
 import { NODE_CONFIG, DAGRE_CONFIG, EDGE_CONFIG } from "../shared/config";
@@ -498,8 +498,8 @@ function updateGroupingCaches(groups: ResourceGraphGrouping[]): void {
  * @example
  * // View graphs for specific metrics
  * const groups = partitionResourcesBySeeds(allResources, [
- *   "rill.runtime.v1.MetricsView:revenue",
- *   "rill.runtime.v1.Model:users"
+ *   "statsparrot.runtime.v1.MetricsView:revenue",
+ *   "statsparrot.runtime.v1.Model:users"
  * ]);
  *
  * @example

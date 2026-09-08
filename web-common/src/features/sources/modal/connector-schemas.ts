@@ -31,7 +31,7 @@ import { s3Schema } from "../../templates/schemas/s3";
 import { starrocksSchema } from "../../templates/schemas/starrocks";
 import { supabaseSchema } from "../../templates/schemas/supabase";
 import { SOURCES, OLAP_ENGINES, AI_CONNECTORS } from "./constants";
-import { connectorKeywordMapping } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
+import { connectorKeywordMapping } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
 
 export const multiStepFormSchemas: Record<string, MultiStepFormSchema> = {
   athena: athenaSchema,
@@ -190,7 +190,7 @@ export function toConnectorDriver(
   return {
     name: backendName,
     displayName: schema.title ?? schemaName,
-    docsUrl: `https://docs.rilldata.com/developers/build/connectors/${getDocsCategory(category)}/${backendName}`,
+    docsUrl: `https://docs.statsparrot.com/developers/build/connectors/${getDocsCategory(category)}/${backendName}`,
     implementsObjectStore: category === "objectStore",
     implementsOlap: category === "olap",
     implementsSqlStore: category === "sqlStore",

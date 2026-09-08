@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import { getTagFilterLabel } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import { getTagFilterLabel } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
 
   /** All tag values available to choose from. Dropdown renders nothing if empty. */
   export let tags: string[];

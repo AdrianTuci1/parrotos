@@ -14,9 +14,9 @@ import {
 import "@/styles/settings.css";
 
 /**
- * React ports of Rill's project settings sections (web-admin projects/settings).
+ * React ports of Parrot's project settings sections (web-admin projects/settings).
  *
- * Wired to the existing project settings surface (SettingsView). Mirrors Rill's
+ * Wired to the existing project settings surface (SettingsView). Mirrors Parrot's
  * GitHub connection, visibility, hibernate, environment-variables and public-URLs
  * sections. CRUD flows through the product's mock/dev data path so the surfaces
  * render and mutate in demo mode.

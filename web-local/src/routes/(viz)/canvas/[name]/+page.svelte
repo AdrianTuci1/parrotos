@@ -1,19 +1,19 @@
 <script lang="ts">
-  import CanvasDashboardEmbed from "@rilldata/web-common/features/canvas/CanvasDashboardEmbed.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import DashboardChat from "@rilldata/web-common/features/chat/DashboardChat.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { resetSelectedMockUserAfterNavigate } from "@rilldata/web-common/features/dashboards/granular-access-policies/resetSelectedMockUserAfterNavigate";
-  import { selectedMockUserStore } from "@rilldata/web-common/features/dashboards/granular-access-policies/stores";
-  import { useCanvas } from "@rilldata/web-common/features/canvas/selector";
+  import CanvasDashboardEmbed from "@statsparrot/web-common/features/canvas/CanvasDashboardEmbed.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import DashboardChat from "@statsparrot/web-common/features/chat/DashboardChat.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { resetSelectedMockUserAfterNavigate } from "@statsparrot/web-common/features/dashboards/granular-access-policies/resetSelectedMockUserAfterNavigate";
+  import { selectedMockUserStore } from "@statsparrot/web-common/features/dashboards/granular-access-policies/stores";
+  import { useCanvas } from "@statsparrot/web-common/features/canvas/selector";
   import {
     isNotFoundError,
     extractErrorStatusCode,
-  } from "@rilldata/web-common/lib/errors";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-common/lib/errors";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import type { PageData } from "./$types";
 
   const runtimeClient = useRuntimeClient();

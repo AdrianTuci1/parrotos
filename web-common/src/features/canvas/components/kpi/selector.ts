@@ -1,6 +1,6 @@
-import type { KPISpec } from "@rilldata/web-common/features/canvas/components/kpi";
-import { validateMeasures } from "@rilldata/web-common/features/canvas/components/validators";
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+import type { KPISpec } from "@statsparrot/web-common/features/canvas/components/kpi";
+import { validateMeasures } from "@statsparrot/web-common/features/canvas/components/validators";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
 import { derived, type Readable } from "svelte/store";
 
 export function validateKPISchema(

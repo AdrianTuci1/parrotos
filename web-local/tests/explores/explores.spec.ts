@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { test } from "../setup/base";
 import { updateCodeEditor, wrapRetryAssertion } from "../utils/commonHelpers";
 import {
@@ -332,7 +332,7 @@ explore:
 
     // Add timestamp column back
 
-    const addBackTimestampColumnDoc = `# Visit https://docs.rilldata.com/reference/project-files to learn more about Rill project files.
+    const addBackTimestampColumnDoc = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Rill project files.
 
 version: 1
 type: metrics_view
@@ -374,7 +374,7 @@ explore:
     await page.getByRole("button", { name: "switch to code editor" }).click();
 
     // Write an incomplete measure
-    const docWithIncompleteMeasure = `# Visit https://docs.rilldata.com/reference/project-files to learn more about Rill project files.
+    const docWithIncompleteMeasure = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Rill project files.
 
 version: 1
 type: metrics_view
@@ -401,7 +401,7 @@ explore:
     await expect(page.getByRole("button", { name: "Preview" })).toBeDisabled();
 
     // Complete the measure
-    const docWithCompleteMeasure = `# Visit https://docs.rilldata.com/reference/project-files to learn more about Rill project files.
+    const docWithCompleteMeasure = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Rill project files.
 
 version: 1
 type: metrics_view

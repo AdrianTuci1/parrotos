@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import DragList from "./DragList.svelte";
   import type {
     PivotChipData,
@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   // `title` is the stable, non-localized section identifier. It doubles as the
   // drag `zone` key (DragList compares zone === "Time"/"Measures"/"Dimensions"),

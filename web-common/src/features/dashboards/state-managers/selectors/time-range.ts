@@ -1,7 +1,7 @@
 import {
   timeComparisonOptionsSelector,
   timeRangeSelectionsSelector,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-range-store";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-range-store";
 import {
   TimeComparisonOption,
   TimeRangePreset,

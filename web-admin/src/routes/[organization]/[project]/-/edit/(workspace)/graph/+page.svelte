@@ -1,9 +1,9 @@
 <script lang="ts">
-  import GraphWorkspace from "@rilldata/web-common/features/resource-graph/GraphWorkspace.svelte";
+  import GraphWorkspace from "@statsparrot/web-common/features/resource-graph/GraphWorkspace.svelte";
 </script>
 
 <svelte:head>
-  <title>Rill | Project graph</title>
+  <title>Parrot | Project graph</title>
 </svelte:head>
 
 <GraphWorkspace />

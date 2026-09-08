@@ -3,15 +3,15 @@ package runtime
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_ResolveFeatureFlags(t *testing.T) {
 	featureFlagTemplates := map[string]string{
-		"dimension_search": `{{if eq (.user.domain) "rilldata.com"}}true{{end}}`,
-		"alerts":           `'{{.user.domain}}' = 'rilldata.com'`,
-		"reports":          `'{{.user.domain}}' in ['rilldata.com', 'gmail.com']`,
+		"dimension_search": `{{if eq (.user.domain) "staticlabs.com"}}true{{end}}`,
+		"alerts":           `'{{.user.domain}}' = 'staticlabs.com'`,
+		"reports":          `'{{.user.domain}}' in ['staticlabs.com', 'gmail.com']`,
 		"chat":             `{{not .user.embed}}`,
 		"dashboard_chat":   `{{.user.embed}}`,
 	}
@@ -22,16 +22,16 @@ func Test_ResolveFeatureFlags(t *testing.T) {
 		featureFlags map[string]bool
 	}{
 		{
-			name: "rilldata user",
+			name: "staticlabs user",
 			userAttrs: map[string]any{
-				"domain": "rilldata.com",
+				"domain": "staticlabs.com",
 			},
 			featureFlags: map[string]bool{
 				"exports":                         true,
 				"cloudDataViewer":                 false,
 				"dimensionSearch":                 true,
 				"twoTieredNavigation":             false,
-				"rillTime":                        true,
+				"statsparrotTime":                        true,
 				"hidePublicUrl":                   false,
 				"exportHeader":                    false,
 				"alerts":                          true,
@@ -59,7 +59,7 @@ func Test_ResolveFeatureFlags(t *testing.T) {
 				"cloudDataViewer":                 false,
 				"dimensionSearch":                 false,
 				"twoTieredNavigation":             false,
-				"rillTime":                        true,
+				"statsparrotTime":                        true,
 				"hidePublicUrl":                   false,
 				"exportHeader":                    false,
 				"alerts":                          false,
@@ -87,7 +87,7 @@ func Test_ResolveFeatureFlags(t *testing.T) {
 				"cloudDataViewer":                 false,
 				"dimensionSearch":                 false,
 				"twoTieredNavigation":             false,
-				"rillTime":                        true,
+				"statsparrotTime":                        true,
 				"hidePublicUrl":                   false,
 				"exportHeader":                    false,
 				"alerts":                          false,
@@ -115,7 +115,7 @@ func Test_ResolveFeatureFlags(t *testing.T) {
 				"cloudDataViewer":                 false,
 				"dimensionSearch":                 false,
 				"twoTieredNavigation":             false,
-				"rillTime":                        true,
+				"statsparrotTime":                        true,
 				"hidePublicUrl":                   true,
 				"exportHeader":                    false,
 				"alerts":                          false,

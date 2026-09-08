@@ -1,7 +1,7 @@
 import {
   getDivergingColorsAsHex,
   getSequentialColorsAsHex,
-} from "@rilldata/web-common/features/themes/palette-store";
+} from "@statsparrot/web-common/features/themes/palette-store";
 import chroma from "chroma-js";
 import type { PivotFormatRule, PivotMeasureFormatting } from "./types";
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import IconSwitcher from "@rilldata/web-common/components/forms/IconSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import IconSwitcher from "@statsparrot/web-common/components/forms/IconSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type {
     ComponentAlignment,
     HoritzontalAlignment,
     VeriticalAlignment,
-  } from "@rilldata/web-common/features/canvas/components/types";
+  } from "@statsparrot/web-common/features/canvas/components/types";
   import {
     AlignCenterHorizontal,
     AlignCenterVertical,

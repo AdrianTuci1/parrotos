@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	versionCheckURI = "https://api.github.com/repos/rilldata/rill/releases/latest"
+	versionCheckURI = "https://api.github.com/repos/staticlabs/statsparrot/releases/latest"
 	versionCheckTTL = 24 * time.Hour
 )
 
@@ -41,13 +41,13 @@ func (h *Helper) CheckVersion(ctx context.Context) error {
 	v2, err := version.NewVersion(latestVersion)
 	if err != nil {
 		// Set version as empty if any parse errors
-		_ = h.DotRill.SetVersion("")
+		_ = h.DotStatsparrot.SetVersion("")
 		return err
 	}
 
 	if v1.LessThan(v2) {
 		fmt.Printf("%s %s → %s\n\n",
-			color.YellowString("A new version of rill is available (run `rill upgrade`):"),
+			color.YellowString("A new version of statsparrot is available (run `statsparrot upgrade`):"),
 			color.CyanString(h.Version.Number),
 			color.CyanString(latestVersion))
 		return nil
@@ -56,14 +56,14 @@ func (h *Helper) CheckVersion(ctx context.Context) error {
 	return nil
 }
 
-// LatestVersion returns the latest available version of Rill (cached for up to 24 hours).
+// LatestVersion returns the latest available version of Parrot (cached for up to 24 hours).
 func (h *Helper) LatestVersion(ctx context.Context) (string, error) {
-	cachedVersion, err := h.DotRill.GetVersion()
+	cachedVersion, err := h.DotStatsparrot.GetVersion()
 	if err != nil {
 		return "", err
 	}
 
-	cachedVersionUpdatedAt, err := h.DotRill.GetVersionUpdatedAt()
+	cachedVersionUpdatedAt, err := h.DotStatsparrot.GetVersionUpdatedAt()
 	if err != nil {
 		return "", err
 	}
@@ -72,7 +72,7 @@ func (h *Helper) LatestVersion(ctx context.Context) (string, error) {
 		updatedAt, err := time.Parse(time.RFC3339, cachedVersionUpdatedAt)
 		if err != nil {
 			// Set versionTs as empty if any parse errors
-			_ = h.DotRill.SetVersionUpdatedAt("")
+			_ = h.DotStatsparrot.SetVersionUpdatedAt("")
 			return "", err
 		}
 
@@ -87,12 +87,12 @@ func (h *Helper) LatestVersion(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	err = h.DotRill.SetVersionUpdatedAt(time.Now().Format(time.RFC3339))
+	err = h.DotStatsparrot.SetVersionUpdatedAt(time.Now().Format(time.RFC3339))
 	if err != nil {
 		return "", err
 	}
 
-	err = h.DotRill.SetVersion(info.Version)
+	err = h.DotStatsparrot.SetVersion(info.Version)
 	if err != nil {
 		return "", err
 	}
@@ -107,7 +107,7 @@ type githubReleaseInfo struct {
 	PublishedAt time.Time `json:"published_at"`
 }
 
-// fetchLatestVersion fetches the latest version of Rill from Github releases.
+// fetchLatestVersion fetches the latest version of Parrot from Github releases.
 func fetchLatestVersion(ctx context.Context) (*githubReleaseInfo, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, versionCheckURI, http.NoBody)
 	if err != nil {

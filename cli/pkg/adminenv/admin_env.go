@@ -5,9 +5,9 @@ import (
 )
 
 var EnvURLs = map[string]string{
-	"prod":  "https://admin.rilldata.com",
-	"stage": "https://admin.rilldata.io",
-	"test":  "https://admin.rilldata.in",
+	"prod":  "https://admin.statsparrot.com",
+	"stage": "https://admin.staticlabs.io",
+	"test":  "https://admin.staticlabs.in",
 	"dev":   "http://localhost:8080",
 }
 

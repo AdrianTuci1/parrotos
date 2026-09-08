@@ -1,18 +1,18 @@
 import {
   type ChatConfig,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
-import { getExploreNameStore } from "@rilldata/web-common/features/dashboards/nav-utils.ts";
-import { useStableExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores.ts";
-import { isExpressionEmpty } from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-import { createStableTimeControlStoreFromName } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
+import { getExploreNameStore } from "@statsparrot/web-common/features/dashboards/nav-utils.ts";
+import { useStableExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores.ts";
+import { isExpressionEmpty } from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+import { createStableTimeControlStoreFromName } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
 import type {
   RuntimeServiceCompleteBody,
   V1AnalystAgentContext,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, type Readable } from "svelte/store";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function createDashboardChatConfig(client: RuntimeClient): ChatConfig {
   const activeExploreContextStore = getActiveExploreContext(client);

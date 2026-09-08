@@ -3,7 +3,7 @@
  *
  * Shared type constants that correspond to backend enums in runtime/ai/ai.go
  */
-import type { RuntimeServiceCompleteBody } from "@rilldata/web-common/runtime-client";
+import type { RuntimeServiceCompleteBody } from "@statsparrot/web-common/runtime-client";
 import type { Readable } from "svelte/store";
 
 // =============================================================================
@@ -65,8 +65,8 @@ export const ToolName = {
 // =============================================================================
 
 /**
- * The two AI surfaces in a Rill workspace. Used to scope sidebar-chat sessionStorage
- * (open state, conversation ID) so a Cloud Rill Developer (`/-/edit/...`) session
+ * The two AI surfaces in a Parrot workspace. Used to scope sidebar-chat sessionStorage
+ * (open state, conversation ID) so a Cloud Parrot Developer (`/-/edit/...`) session
  * does not leak into the production tab opened on Publish.
  */
 export type ChatSurface = "developer" | "dashboard";

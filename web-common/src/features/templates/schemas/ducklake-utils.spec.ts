@@ -10,7 +10,7 @@ import { ducklakeSchema } from "./ducklake";
 import {
   envMappedVarsAndValuesToObject,
   makeTestEnvEditSession,
-} from "@rilldata/web-common/features/env-management/test/test-env-store.ts";
+} from "@statsparrot/web-common/features/env-management/test/test-env-store.ts";
 
 describe("composeDuckLakeAttach", () => {
   it("returns empty string when catalog identifier is missing", async () => {

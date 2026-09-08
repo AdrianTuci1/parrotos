@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Avatar from "@rilldata/web-common/components/avatar/Avatar.svelte";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import { getRandomBgColor } from "@rilldata/web-common/features/themes/color-config";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import Avatar from "@statsparrot/web-common/components/avatar/Avatar.svelte";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import { getRandomBgColor } from "@statsparrot/web-common/features/themes/color-config";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import { page } from "$app/stores";
 
   export let name: string;

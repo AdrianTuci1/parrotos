@@ -4,12 +4,12 @@ ColumnHeaders – sticky column headers. Utilizes the columnVirtualizer (for now
 TableCells – the cell contents.
 -->
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import ColumnHeaders from "@rilldata/web-common/components/virtualized-table/sections/ColumnHeaders.svelte";
-  import TableCells from "@rilldata/web-common/components/virtualized-table/sections/TableCells.svelte";
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-  import { selectedDimensionValues } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import ColumnHeaders from "@statsparrot/web-common/components/virtualized-table/sections/ColumnHeaders.svelte";
+  import TableCells from "@statsparrot/web-common/components/virtualized-table/sections/TableCells.svelte";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+  import { selectedDimensionValues } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
   import { createVirtualizer } from "@tanstack/svelte-virtual";
   import { setContext } from "svelte";
   import { getStateManagers } from "../state-managers/state-managers";

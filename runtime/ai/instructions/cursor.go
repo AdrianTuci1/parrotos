@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"gopkg.in/yaml.v3"
 )
 
-// InitCursorRules generates Cursor rules files from Rill instruction files.
+// InitCursorRules generates Cursor rules files from Parrot instruction files.
 // The rules are written to .cursor/rules/ in the repository.
 // If force is false, it skips generation if .cursor/rules/ already exists.
 // If force is true, it overwrites any existing files.
@@ -55,7 +55,7 @@ type cursorFrontMatter struct {
 	AlwaysApply bool   `yaml:"alwaysApply"`
 }
 
-// convertToCursorRule transforms a Rill instruction to Cursor rule format.
+// convertToCursorRule transforms a Parrot instruction to Cursor rule format.
 func convertToCursorRule(path string, inst *Instruction) (outputPath, content string) {
 	// Determine output path: .md -> .mdc, under .cursor/rules/
 	outputPath = strings.TrimSuffix(path, ".md") + ".mdc"

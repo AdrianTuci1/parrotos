@@ -53,7 +53,7 @@ func Validate(v any) error {
 // validate caches parsed validation rules
 var validate *validator.Validate
 
-// slugRegexp is used to validate identifying names (e.g. "rill-data", not "Rill Data").
+// slugRegexp is used to validate identifying names (e.g. "statsparrot-data", not "Parrot Data").
 var slugRegexp = regexp.MustCompile("^[_a-zA-Z0-9][-_a-zA-Z0-9]*$")
 
 func init() {

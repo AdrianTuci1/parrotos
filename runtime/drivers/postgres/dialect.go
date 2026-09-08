@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 type dialect struct {

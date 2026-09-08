@@ -1,4 +1,4 @@
-import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
+import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
 
 export function getUserDomain() {
   return createAdminServiceGetCurrentUser({
@@ -24,7 +24,7 @@ export function userDomainIsPublic() {
 
 export function emailIsPublic(email: string) {
   const domain = getDomain(email);
-  return RillPublicEmailDomains.includes(domain);
+  return ParrotPublicEmailDomains.includes(domain);
 }
 
 function getDomain(email: string) {

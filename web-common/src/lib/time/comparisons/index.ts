@@ -1,11 +1,11 @@
-import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config";
-import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter.ts";
-import { humaniseISODuration } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config";
+import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter.ts";
+import { humaniseISODuration } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import {
   V1TimeGrain,
   type V1TimeRange,
-} from "@rilldata/web-common/runtime-client/gen/index.schemas";
+} from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import { DateTime, Duration, Interval } from "luxon";
 import { getTimeWidth } from "../transforms";
 import {
@@ -14,7 +14,7 @@ import {
   TimeOffsetType,
   TimeRangePreset,
 } from "../types";
-import { isNewRillTimeFormat } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser.ts";
+import { isNewParrotTimeFormat } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser.ts";
 
 export function getComparisonTransform(
   start: Date,
@@ -322,18 +322,18 @@ export function getComparisonInterval(
   comparisonRange: string | undefined,
   activeTimeZone: string,
 ): Interval<true> | undefined {
-  if (!interval || !comparisonRange || isNewRillTimeFormat(comparisonRange))
+  if (!interval || !comparisonRange || isNewParrotTimeFormat(comparisonRange))
     return undefined;
 
   let comparisonInterval: Interval | undefined = undefined;
 
   const COMPARISON_DURATIONS = {
-    "rill-PP": interval.toDuration(),
-    "rill-PD": { days: 1 },
-    "rill-PW": { weeks: 1 },
-    "rill-PM": { months: 1 },
-    "rill-PQ": { quarter: 1 },
-    "rill-PY": { years: 1 },
+    "statsparrot-PP": interval.toDuration(),
+    "statsparrot-PD": { days: 1 },
+    "statsparrot-PW": { weeks: 1 },
+    "statsparrot-PM": { months: 1 },
+    "statsparrot-PQ": { quarter: 1 },
+    "statsparrot-PY": { years: 1 },
   };
 
   const duration =

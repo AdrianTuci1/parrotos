@@ -15,7 +15,7 @@
   import Button from "../../../components/button/Button.svelte";
   import type { ConnectorExplorerStore } from "./connector-explorer-store";
   import { onMount } from "svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let connector: V1AnalyzedConnector;
   export let database: string;

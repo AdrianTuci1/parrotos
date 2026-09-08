@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/duration"
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/duration"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
 	"google.golang.org/protobuf/types/known/structpb"
 	"gopkg.in/yaml.v3"
 
@@ -289,7 +289,7 @@ func (p *Parser) parseMetricsView(node *Node) error {
 	}
 
 	if tmp.DefaultTimeRange != "" {
-		_, err := rilltime.Parse(tmp.DefaultTimeRange, rilltime.ParseOptions{})
+		_, err := statspartime.Parse(tmp.DefaultTimeRange, statspartime.ParseOptions{})
 		if err != nil {
 			return fmt.Errorf(`invalid "default_time_range": %w`, err)
 		}
@@ -639,7 +639,7 @@ func (p *Parser) parseMetricsView(node *Node) error {
 	}
 
 	if tmp.MaxQueryTimeRange != "" {
-		if strings.HasPrefix(tmp.MaxQueryTimeRange, "rill-") {
+		if strings.HasPrefix(tmp.MaxQueryTimeRange, "statsparrot-") {
 			return fmt.Errorf(`invalid "max_query_time_range" %q: only fixed ISO 8601 day-or-larger durations are allowed`, tmp.MaxQueryTimeRange)
 		}
 		d, err := duration.ParseISO8601(tmp.MaxQueryTimeRange)
@@ -670,13 +670,13 @@ func (p *Parser) parseMetricsView(node *Node) error {
 
 	if tmp.AvailableTimeRanges != nil {
 		for _, r := range tmp.AvailableTimeRanges {
-			_, err := rilltime.Parse(r.Range, rilltime.ParseOptions{})
+			_, err := statspartime.Parse(r.Range, statspartime.ParseOptions{})
 			if err != nil {
 				return fmt.Errorf("invalid range in available_time_ranges: %w", err)
 			}
 
 			for _, o := range r.ComparisonTimeRanges {
-				err = rilltime.ParseCompatibility(o.Range, o.Offset)
+				err = statspartime.ParseCompatibility(o.Range, o.Offset)
 				if err != nil {
 					return err
 				}
@@ -1156,13 +1156,13 @@ func inferRefsFromSecurityRules(rules []*runtimev1.SecurityRule) ([]ResourceName
 // for "no time data present" (see valOrNullTime in the server and the metrics_time_range resolver),
 // so a declared range must have a concrete start; otherwise omit data_time_range to probe the table.
 func validateDataTimeRange(expr string) error {
-	rt, err := rilltime.Parse(expr, rilltime.ParseOptions{})
+	rt, err := statspartime.Parse(expr, statspartime.ParseOptions{})
 	if err != nil {
 		return err
 	}
 	// Evaluate against the same synthetic anchors used when resolving declared ranges.
 	now := time.Now()
-	start, _, _ := rt.Eval(rilltime.EvalOptions{Now: now, MinTime: time.Time{}, MaxTime: now, Watermark: now})
+	start, _, _ := rt.Eval(statspartime.EvalOptions{Now: now, MinTime: time.Time{}, MaxTime: now, Watermark: now})
 	if start.IsZero() {
 		return errors.New("must have a bounded start; \"inf\" and \"earliest\" resolve to an unbounded lower bound which the system treats as no data (use a concrete range like \"-90d to now\", or omit data_time_range to detect bounds from the table)")
 	}

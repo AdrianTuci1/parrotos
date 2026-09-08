@@ -1,19 +1,19 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import ExploreEditDropdown from "@rilldata/web-common/features/explores/ExploreEditDropdown.svelte";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { createRuntimeServiceGitStatus } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import ExploreEditDropdown from "@statsparrot/web-common/features/explores/ExploreEditDropdown.svelte";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { createRuntimeServiceGitStatus } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { GitBranch } from "lucide-svelte";
   import CommitPopover from "./CommitPopover.svelte";
   import CloudRemoteChangeManager from "./CloudRemoteChangeManager.svelte";
   import ExitButton from "./ExitButton.svelte";
   import MergePopover from "./MergePopover.svelte";
   import PublishPopover from "./PublishPopover.svelte";
-  import CanvasEditButton from "@rilldata/web-common/features/canvas/CanvasEditButton.svelte";
+  import CanvasEditButton from "@statsparrot/web-common/features/canvas/CanvasEditButton.svelte";
 
   export let organization: string;
   export let project: string;

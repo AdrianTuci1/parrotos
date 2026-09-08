@@ -1,14 +1,14 @@
-import type { FileIO } from "@rilldata/web-common/features/entity-management/file-io.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import type { FileIO } from "@statsparrot/web-common/features/entity-management/file-io.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import type { QueryFunction } from "@tanstack/svelte-query";
 import {
   adminServiceGetPersonalFile,
   adminServiceEditPersonalFile,
   getAdminServiceGetPersonalFileQueryKey,
-} from "@rilldata/web-admin/client";
-import { splitFolderFileNameAndExtension } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
-import { inferResourceKind } from "@rilldata/web-common/features/entity-management/infer-resource-kind.ts";
-import { EventEmitter } from "@rilldata/web-common/lib/event-emitter.ts";
+} from "@statsparrot/web-admin/client";
+import { splitFolderFileNameAndExtension } from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
+import { inferResourceKind } from "@statsparrot/web-common/features/entity-management/infer-resource-kind.ts";
+import { EventEmitter } from "@statsparrot/web-common/lib/event-emitter.ts";
 
 type VirtualFileEvents = {
   write: { name: string; kind: string };

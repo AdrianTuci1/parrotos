@@ -5,11 +5,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -18,8 +18,8 @@ func TestColumnTopKAgainstClickHouse(t *testing.T) {
 	testmode.Expensive(t)
 	// Create a test ClickHouse cluster
 	dsn := testclickhouse.Start(t)
-	t.Setenv("RILL_RUNTIME_TEST_OLAP_DRIVER", "clickhouse")
-	t.Setenv("RILL_RUNTIME_TEST_OLAP_DSN", dsn)
+	t.Setenv("STATSPARROT_RUNTIME_TEST_OLAP_DRIVER", "clickhouse")
+	t.Setenv("STATSPARROT_RUNTIME_TEST_OLAP_DSN", dsn)
 	t.Run("TestColumnTopK", func(t *testing.T) { TestColumnTopK(t) })
 	t.Run("TestColumnTopKList", func(t *testing.T) { TestColumnTopKList(t) })
 	t.Run("TestColumnTopKStruct", func(t *testing.T) { TestColumnTopKStruct(t) })
@@ -110,7 +110,7 @@ func TestColumnTopKList(t *testing.T) {
 func TestColumnTopKStruct(t *testing.T) {
 	var rt *runtime.Runtime
 	var instanceID string
-	if os.Getenv("RILL_RUNTIME_TEST_OLAP_DRIVER") == "clickhouse" {
+	if os.Getenv("STATSPARROT_RUNTIME_TEST_OLAP_DRIVER") == "clickhouse" {
 		rt, instanceID = testruntime.NewInstanceWithModel(t, "test", `SELECT CAST((['x', 'y'], [10, null]), 'Map(String,Nullable(UInt8))') AS col, 1 AS val`)
 	} else {
 		rt, instanceID = testruntime.NewInstanceWithModel(t, "test", `SELECT {'x': 10, 'y': null} AS col, 1 AS val`)

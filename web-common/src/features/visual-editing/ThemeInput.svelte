@@ -1,10 +1,10 @@
 <script lang="ts">
-  import ColorInput from "@rilldata/web-common/components/color-picker/ColorInput.svelte";
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import type { V1ThemeSpec } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ColorInput from "@statsparrot/web-common/components/color-picker/ColorInput.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import type { V1ThemeSpec } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     defaultPrimaryColors,
     defaultSecondaryColors,

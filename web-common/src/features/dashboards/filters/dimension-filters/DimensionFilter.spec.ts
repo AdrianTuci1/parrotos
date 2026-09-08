@@ -1,27 +1,27 @@
 import {
   addFilter,
   useDashboardFetchMocksForComponentTests,
-} from "@rilldata/web-common/features/dashboards/filters/test/filter-test-utils";
-import DimensionFilter from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
-import { renderFilterComponent } from "@rilldata/web-common/features/dashboards/filters/test/render-filter-component";
+} from "@statsparrot/web-common/features/dashboards/filters/test/filter-test-utils";
+import DimensionFilter from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
+import { renderFilterComponent } from "@statsparrot/web-common/features/dashboards/filters/test/render-filter-component";
 import {
   createAndExpression,
   createInExpression,
   createLikeExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   AD_BIDS_EXPLORE_INIT,
   AD_BIDS_EXPLORE_NAME,
   AD_BIDS_METRICS_INIT,
   AD_BIDS_METRICS_NAME,
   AD_BIDS_PUBLISHER_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import { mockAnimationsForComponentTesting } from "@rilldata/web-common/lib/test/mock-animations";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import { mockAnimationsForComponentTesting } from "@statsparrot/web-common/lib/test/mock-animations";
 import {
   RUNTIME_CONTEXT_KEY,
   RuntimeClient,
-} from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/v2";
 import {
   act,
   fireEvent,

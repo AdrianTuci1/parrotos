@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { AdminServiceIssueMagicAuthTokenBody } from "@rilldata/web-admin/client";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import type { UIFilters } from "@rilldata/web-common/features/canvas/stores/filter-manager";
-  import CanvasFilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/CanvasFilterChipsReadOnly.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import type { AdminServiceIssueMagicAuthTokenBody } from "@statsparrot/web-admin/client";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import type { UIFilters } from "@statsparrot/web-common/features/canvas/stores/filter-manager";
+  import CanvasFilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/CanvasFilterChipsReadOnly.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { derived } from "svelte/store";
   import {
     getCanvasFilters,
     getSanitizedCanvasStateUrl,
     hasCanvasFilters,
   } from "./canvas-form-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
 

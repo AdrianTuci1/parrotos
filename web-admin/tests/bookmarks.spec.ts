@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
-import { assertUrlParams } from "@rilldata/web-common/tests/utils/assert-url-params";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { assertUrlParams } from "@statsparrot/web-common/tests/utils/assert-url-params";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { test } from "./setup/base";
 
 test.describe("Bookmarks", () => {

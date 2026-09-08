@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import BarAndLabel from "@rilldata/web-common/components/BarAndLabel.svelte";
+  import BarAndLabel from "@statsparrot/web-common/components/BarAndLabel.svelte";
 
   export let value: number; // should be between 0 and 1.
   export let color = "bg-primary-200";

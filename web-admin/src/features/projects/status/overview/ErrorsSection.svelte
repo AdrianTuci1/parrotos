@@ -3,14 +3,14 @@
   import {
     ResourceKind,
     SingletonProjectParserName,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { createRuntimeServiceGetResource } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { createRuntimeServiceGetResource } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useResources } from "../selectors";
-  import AlertCircleOutline from "@rilldata/web-common/components/icons/AlertCircleOutline.svelte";
+  import AlertCircleOutline from "@statsparrot/web-common/components/icons/AlertCircleOutline.svelte";
   import { groupErrorsByKind, pluralizeKind } from "./overview-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
   $: basePage = `/${$page.params.organization}/${$page.params.project}/-/status`;

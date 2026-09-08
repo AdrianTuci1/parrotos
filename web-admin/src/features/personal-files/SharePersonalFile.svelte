@@ -1,13 +1,13 @@
 <script lang="ts">
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
   import Button from "web-common/src/components/button/Button.svelte";
-  import { createAdminServiceGetPersonalFile } from "@rilldata/web-admin/client";
+  import { createAdminServiceGetPersonalFile } from "@statsparrot/web-admin/client";
   import { parseDocument, YAMLMap } from "yaml";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-  import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+  import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

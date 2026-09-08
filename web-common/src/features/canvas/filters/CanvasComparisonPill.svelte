@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { getComparisonOptionsForCanvas } from "@rilldata/web-common/features/canvas/filters/util";
-  import { Comparison } from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { getComparisonOptionsForCanvas } from "@statsparrot/web-common/features/canvas/filters/util";
+  import { Comparison } from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components";
   import {
     TimeComparisonOption,
     TimeRangePreset,
     type TimeRange,
-  } from "@rilldata/web-common/lib/time/types";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/time/types";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import { DateTime, Interval } from "luxon";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let minDate: DateTime<true> | undefined;
   export let maxDate: DateTime<true> | undefined;

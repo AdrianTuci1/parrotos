@@ -1,12 +1,12 @@
 <script lang="ts">
   import ResourceGraphOverlay from "../embedding/ResourceGraphOverlay.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import {
     closeResourceGraphQuickView,
     resourceGraphQuickViewState,
   } from "./quick-view-store";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { createRuntimeServiceListResources } from "@statsparrot/web-common/runtime-client";
 
   const runtimeClient = useRuntimeClient();
 

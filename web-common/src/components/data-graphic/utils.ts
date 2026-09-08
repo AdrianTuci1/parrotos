@@ -1,4 +1,4 @@
-import type { NumericHistogramBinsBin } from "@rilldata/web-common/runtime-client";
+import type { NumericHistogramBinsBin } from "@statsparrot/web-common/runtime-client";
 import { area, curveLinear, line } from "d3-shape";
 import type { Area, CurveFactory, Line } from "d3-shape";
 

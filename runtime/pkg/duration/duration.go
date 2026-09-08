@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 )
 
 type Duration interface {
@@ -32,11 +32,11 @@ var (
 	}
 	daxOffsetNotations = map[string]StandardDuration{
 		"PP": {},
-		"PD": {Day: 1, rillExtension: "PD"},
-		"PW": {Week: 1, rillExtension: "PW"},
-		"PM": {Month: 1, rillExtension: "PM"},
-		"PQ": {Month: 3, rillExtension: "PQ"},
-		"PY": {Year: 1, rillExtension: "PY"},
+		"PD": {Day: 1, statsparrotExtension: "PD"},
+		"PW": {Week: 1, statsparrotExtension: "PW"},
+		"PM": {Month: 1, statsparrotExtension: "PM"},
+		"PQ": {Month: 3, statsparrotExtension: "PQ"},
+		"PY": {Year: 1, statsparrotExtension: "PY"},
 	}
 	daxOffsetRangeNotations = map[string]TruncToDateDuration{
 		// TODO: add mapping with offset to support these in places where only backend is involved like reports/alerts
@@ -48,28 +48,28 @@ var (
 	}
 )
 
-// ParseISO8601 parses an ISO8601 duration as well as some Rill-specific extensions.
+// ParseISO8601 parses an ISO8601 duration as well as some Parrot-specific extensions.
 // (Section 3.7 of the standard supposedly allows extensions that do not interfere with the standard.)
 // Current extensions are,
 // 1. "inf" for representing an unbounded duration of time
-// 2. X-To-Date and Previous-X duration supports with a prefix of "rill-" to DAX notations. Pulled from https://www.daxpatterns.com/standard-time-related-calculations/
+// 2. X-To-Date and Previous-X duration supports with a prefix of "statsparrot-" to DAX notations. Pulled from https://www.daxpatterns.com/standard-time-related-calculations/
 func ParseISO8601(from string) (Duration, error) {
 	// Try parsing for "inf"
 	if infPattern.MatchString(from) {
 		return InfDuration{}, nil
 	}
 
-	if strings.Contains(from, "rill-") {
-		// We are using "rill-" as a prefix to DAX notation so that it doesn't interfere with ISO8601 standard.
+	if strings.Contains(from, "statsparrot-") {
+		// We are using "statsparrot-" as a prefix to DAX notation so that it doesn't interfere with ISO8601 standard.
 		// Pulled from https://www.daxpatterns.com/standard-time-related-calculations/
-		rillDur := strings.Replace(from, "rill-", "", 1)
-		if a, ok := daxToDateNotations[rillDur]; ok {
+		statsparrotDur := strings.Replace(from, "statsparrot-", "", 1)
+		if a, ok := daxToDateNotations[statsparrotDur]; ok {
 			return TruncToDateDuration{anchor: a}, nil
 		}
-		if o, ok := daxOffsetNotations[rillDur]; ok {
+		if o, ok := daxOffsetNotations[statsparrotDur]; ok {
 			return o, nil
 		}
-		if o, ok := daxOffsetRangeNotations[rillDur]; ok {
+		if o, ok := daxOffsetRangeNotations[statsparrotDur]; ok {
 			return o, nil
 		}
 	}
@@ -116,7 +116,7 @@ func ParseISO8601(from string) (Duration, error) {
 
 // ValidateISO8601 is a wrapper around ParseISO8601 with additional validation:
 // a) that the duration does not have seconds granularity,
-// b) if onlyStandard is true, that the duration does not use any of the Rill-specific extensions (such as year-to-date).
+// b) if onlyStandard is true, that the duration does not use any of the Parrot-specific extensions (such as year-to-date).
 // c) if onlySingular is true, that the duration does not consist of more than one component (e.g. P2Y is valid, P2Y3M is not).
 func ValidateISO8601(isoDuration string, onlyStandard, onlyOneComponent bool) error {
 	d, err := ParseISO8601(isoDuration)
@@ -167,7 +167,7 @@ func ValidateISO8601(isoDuration string, onlyStandard, onlyOneComponent bool) er
 	return nil
 }
 
-// StandardDuration represents an ISO8601 duration with Rill-specific extensions.
+// StandardDuration represents an ISO8601 duration with Parrot-specific extensions.
 // See ParseISO8601 for details.
 type StandardDuration struct {
 	Year   int
@@ -178,7 +178,7 @@ type StandardDuration struct {
 	Minute int
 	Second int
 
-	rillExtension string
+	statsparrotExtension string
 }
 
 // Add adds the duration to a timestamp
@@ -276,10 +276,10 @@ func (d StandardDuration) Truncate(t time.Time, firstDayOfWeek, firstMonthOfYear
 }
 
 func (d StandardDuration) EndTime(t time.Time) time.Time {
-	if d.rillExtension == "" {
+	if d.statsparrotExtension == "" {
 		return t
 	}
-	switch d.rillExtension {
+	switch d.statsparrotExtension {
 	case "PD":
 		return d.Sub(t).AddDate(0, 0, 1)
 	case "PW":

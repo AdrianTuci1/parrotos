@@ -1,10 +1,10 @@
 /**
  * Mock Alerts adapter.
  *
- * Rill's Alerts feature is a project-level resource: an alert watches a measure
+ * Parrot's Alerts feature is a project-level resource: an alert watches a measure
  * on a metrics view, evaluates a set of criteria thresholds, and delivers a
  * notification (email / Slack) on a schedule or on data refresh. Without a live
- * Rill runtime the Alerts view renders from this in-memory adapter so the
+ * Parrot runtime the Alerts view renders from this in-memory adapter so the
  * listing + create/edit form are demonstrable end-to-end.
  *
  * The alert measures / dimensions mirror the mock metrics-view schema the
@@ -15,7 +15,7 @@
  * keeping it trivially loadable in unit tests.
  */
 
-/** Alert evaluation status, mirroring Rill's alert state. */
+/** Alert evaluation status, mirroring Parrot's alert state. */
 export const ALERT_STATUS = {
   OK: "ok",
   FIRING: "firing",
@@ -23,7 +23,7 @@ export const ALERT_STATUS = {
 };
 
 /**
- * Criteria operations (proto operation names, matching Rill's
+ * Criteria operations (proto operation names, matching Parrot's
  * `criteria-tab/operations.ts`). The label is used for the operator menu.
  */
 export const ALERT_OPERATION_OPTIONS = [
@@ -37,7 +37,7 @@ export const ALERT_OPERATION_OPTIONS = [
 
 /**
  * Criteria types (compare a raw value, an absolute or percent change, or a
- * percent-of-total), mirroring Rill's `measure-filter-options.ts`.
+ * percent-of-total), mirroring Parrot's `measure-filter-options.ts`.
  */
 export const ALERT_TYPE_OPTIONS = [
   { value: "Value", label: "Value" },
@@ -55,7 +55,7 @@ export const ALERT_CRITERIA_OPERATION_OPTIONS = [
 /**
  * Measures available to an alert. Mirrors the mock `orders_metrics` view's
  * measures (see `./mockAdapter`); the derived time-comparison measure is excluded
- * as in Rill.
+ * as in Parrot.
  */
 export const MOCK_ALERT_MEASURES = [
   { name: "total_revenue", displayName: "Total Revenue", expression: "sum(revenue)" },
@@ -63,7 +63,7 @@ export const MOCK_ALERT_MEASURES = [
   { name: "aov", displayName: "Avg Order Value", expression: "sum(revenue) / count(*)" },
 ];
 
-/** Dimensions available to split an alert by (time excluded, as in Rill). */
+/** Dimensions available to split an alert by (time excluded, as in Parrot). */
 export const MOCK_ALERT_DIMENSIONS = [
   { name: "channel", displayName: "Channel" },
   { name: "country", displayName: "Country" },

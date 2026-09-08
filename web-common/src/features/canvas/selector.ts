@@ -2,15 +2,15 @@ import type { ConnectError } from "@connectrpc/connect";
 import {
   ResourceKind,
   useFilteredResources,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   createQueryServiceResolveCanvas,
   type V1CanvasSpec,
   type V1MetricsView,
   type V1ResolveCanvasResponse,
   type V1ResolveCanvasResponseResolvedComponents,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type {
   CreateQueryOptions,
   CreateQueryResult,

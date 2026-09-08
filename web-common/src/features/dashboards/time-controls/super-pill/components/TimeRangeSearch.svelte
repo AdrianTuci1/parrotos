@@ -1,10 +1,10 @@
 <script lang="ts">
   import SyntaxElement from "./SyntaxElement.svelte";
-  import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
+  import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
   import { Clock } from "lucide-svelte";
-  import { parseRillTime } from "../../../url-state/time-ranges/parser";
+  import { parseParrotTime } from "../../../url-state/time-ranges/parser";
   import { ALL_TIME_RANGE_ALIAS } from "../../new-time-controls";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let context: string;
   export let width: number;
@@ -47,7 +47,7 @@
       }
 
       try {
-        parseRillTime(searchValue);
+        parseParrotTime(searchValue);
 
         unableToParse = false;
 

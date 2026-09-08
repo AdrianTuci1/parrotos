@@ -1,18 +1,18 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   getMultiFieldError,
   getSingleFieldError,
-} from "@rilldata/web-common/features/dashboards/url-state/error-message-helpers";
+} from "@statsparrot/web-common/features/dashboards/url-state/error-message-helpers";
 import {
   getMapFromArray,
   getMissingValues,
-} from "@rilldata/web-common/lib/arrayUtils";
+} from "@statsparrot/web-common/lib/arrayUtils";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
   type V1ExploreSpec,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 /**
  * Validates various fields in explore state.
