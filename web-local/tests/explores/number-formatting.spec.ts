@@ -13,7 +13,7 @@ test.describe("smoke tests for number formatting", () => {
     await gotoNavEntry(page, "/metrics/AdBids_metrics.yaml");
 
     // This is a metrics spec with all available formatting options
-    const formatterFlowDashboard = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Rill project files.
+    const formatterFlowDashboard = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Parrot project files.
 kind: metrics_view
 title: "AdBids_dashboard"
 table: "AdBids"

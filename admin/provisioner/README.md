@@ -3,7 +3,7 @@
 This directory contains provisioners capapble of spinning up resources of a particular type. It has a generic design that supports multiple provisioner implementations and multiple resource types.
 
 There is currently one supported resource type:
-- `runtime`: an instance on a Rill runtime (see `runtime/` at the root of our monorepo)
+- `runtime`: an instance on a Parrot runtime (see `runtime/` at the root of our monorepo)
 
 There are currently two supported provisioner implementations:
 - `static`: creates runtime instances using a pool of statically configured runtimes
@@ -40,7 +40,7 @@ The provisioners are configured using the environment variable `STATSPARROT_ADMI
           "data_dir": "/mnt/data",                            // Directory to use for data storage like DB files etc.
           "host": "http://node-*.localhost",                  // The wildcard '*' will be replaced with the deployment's 'provision_id'
           "namespace": "cloud-runtime",                       // Namespace to use in the K8s cluster
-          "image": "staticlabs/rill",                           // Rill Docker image
+          "image": "staticlabs/statsparrot",                           // Parrot Docker image
           "kubeconfig_path": "kubeconfig.yaml",               // K8s config file to authenticate against the cluster
           "template_paths":
             {

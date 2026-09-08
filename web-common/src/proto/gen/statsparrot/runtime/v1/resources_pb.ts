@@ -1458,7 +1458,7 @@ export class MetricsViewSpec extends Message<MetricsViewSpec> {
   watermarkExpression = "";
 
   /**
-   * Optional rilltime expression describing the time range covered by the base table.
+   * Optional statspartime expression describing the time range covered by the base table.
    * When set, the base table's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
    *
    * @generated from field: string data_time_range = 37;
@@ -1522,7 +1522,7 @@ export class MetricsViewSpec extends Message<MetricsViewSpec> {
   firstMonthOfYear = 0;
 
   /**
-   * Cache controls for the metrics view. By default, enabled for Rill managed models and disabled for streaming (externally managed) data sources.
+   * Cache controls for the metrics view. By default, enabled for Parrot managed models and disabled for streaming (externally managed) data sources.
    *
    * @generated from field: optional bool cache_enabled = 25;
    */
@@ -2218,7 +2218,7 @@ export class MetricsViewSpec_Rollup extends Message<MetricsViewSpec_Rollup> {
   model = "";
 
   /**
-   * Optional rilltime expression describing the time range covered by the rollup.
+   * Optional statspartime expression describing the time range covered by the rollup.
    * When set, the rollup's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
    *
    * @generated from field: string data_time_range = 11;
@@ -2842,7 +2842,7 @@ export class ExploreSpec extends Message<ExploreSpec> {
   securityRules: SecurityRule[] = [];
 
   /**
-   * Banner text that can be displayed in Rill Cloud.
+   * Banner text that can be displayed in Parrot Cloud.
    *
    * @generated from field: string banner = 18;
    */
@@ -4996,7 +4996,7 @@ export class CanvasSpec extends Message<CanvasSpec> {
   displayName = "";
 
   /**
-   * Banner text that can be displayed in Rill Cloud.
+   * Banner text that can be displayed in Parrot Cloud.
    *
    * @generated from field: string banner = 17;
    */
@@ -5549,7 +5549,7 @@ export class DefaultMetricsSQLFilter extends Message<DefaultMetricsSQLFilter> {
 }
 
 /**
- * API defines a custom operation for querying data stored in Rill.
+ * API defines a custom operation for querying data stored in Parrot.
  *
  * @generated from message statsparrot.runtime.v1.API
  */

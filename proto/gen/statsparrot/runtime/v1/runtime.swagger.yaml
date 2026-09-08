@@ -441,7 +441,7 @@ paths:
         - RuntimeService
   /v1/instances/{instanceId}/ai/complete/stream:
     post:
-      summary: CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Rill.
+      summary: CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Parrot.
       operationId: RuntimeService_CompleteStreaming
       responses:
         "200":
@@ -1745,8 +1745,8 @@ paths:
                 type: boolean
                 description: |-
                   If true, fall back to the unvalidated spec when no valid spec is available.
-                  Only for use by the visual editor in Rill Developer. Must never be sent by
-                  Rill Cloud, read-only previews, shared token access, or embedded viewers.
+                  Only for use by the visual editor in Parrot Developer. Must never be sent by
+                  Parrot Cloud, read-only previews, shared token access, or embedded viewers.
       tags:
         - QueryService
   /v1/instances/{instanceId}/queries/column-cardinality/tables/{tableName}:
@@ -1974,7 +1974,7 @@ paths:
               executionTime:
                 type: string
                 format: date-time
-                description: Optional Execution to attach to the underlying query. Used to resolve rill-time expressions.
+                description: Optional Execution to attach to the underlying query. Used to resolve statsparrot-time expressions.
       tags:
         - QueryService
   /v1/instances/{instanceId}/queries/filter-expression/resolve:
@@ -2536,7 +2536,7 @@ paths:
                 type: array
                 items:
                   type: string
-                description: Optional time range expressions to resolve (uses the rilltime expression syntax).
+                description: Optional time range expressions to resolve (uses the statspartime expression syntax).
               priority:
                 type: integer
                 format: int32
@@ -3988,7 +3988,7 @@ definitions:
       dataTimeRange:
         type: string
         description: |-
-          Optional rilltime expression describing the time range covered by the rollup.
+          Optional statspartime expression describing the time range covered by the rollup.
           When set, the rollup's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
       timeGrain:
         $ref: '#/definitions/v1TimeGrain'
@@ -4161,7 +4161,7 @@ definitions:
         $ref: '#/definitions/v1APISpec'
       state:
         $ref: '#/definitions/v1APIState'
-    description: API defines a custom operation for querying data stored in Rill.
+    description: API defines a custom operation for querying data stored in Parrot.
   v1APISpec:
     type: object
     properties:
@@ -4516,7 +4516,7 @@ definitions:
         description: Display name for the canvas.
       banner:
         type: string
-        description: Banner text that can be displayed in Rill Cloud.
+        description: Banner text that can be displayed in Parrot Cloud.
       maxWidth:
         type: integer
         format: int64
@@ -5484,7 +5484,7 @@ definitions:
           These are not currently parsed from YAML, but will be derived from the parent metrics view.
       banner:
         type: string
-        description: Banner text that can be displayed in Rill Cloud.
+        description: Banner text that can be displayed in Parrot Cloud.
       lockTimeZone:
         type: boolean
         title: When set to true, dashboard will be locked to the first time zone in the time_zones key (or UTC)
@@ -5792,7 +5792,7 @@ definitions:
         description: Subpath from the git repo.
       managedGit:
         type: boolean
-        description: If the repo is managed by Rill.
+        description: If the repo is managed by Parrot.
       localChanges:
         type: boolean
         description: local_changes returns true if there are any staged, unstaged, or untracked changes in the local git repo.
@@ -6710,7 +6710,7 @@ definitions:
       dataTimeRange:
         type: string
         description: |-
-          Optional rilltime expression describing the time range covered by the base table.
+          Optional statspartime expression describing the time range covered by the base table.
           When set, the base table's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
       dimensions:
         type: array
@@ -6752,7 +6752,7 @@ definitions:
         description: Month number to use as the base for time aggregations by year. Defaults to 1 (January).
       cacheEnabled:
         type: boolean
-        description: Cache controls for the metrics view. By default, enabled for Rill managed models and disabled for streaming (externally managed) data sources.
+        description: Cache controls for the metrics view. By default, enabled for Parrot managed models and disabled for streaming (externally managed) data sources.
       cacheKeySql:
         type: string
         description: Defaults to use watermark if cache is enabled.
@@ -6867,7 +6867,7 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/v1ResolvedTimeRange'
-        description: The resolved time ranges for the requested rilltime expressions.
+        description: The resolved time ranges for the requested statspartime expressions.
       timeRanges:
         type: array
         items:
@@ -7357,7 +7357,7 @@ definitions:
         type: object
         additionalProperties:
           type: string
-        title: unsupported_columns are columns having datatypes which are not supported by Rill
+        title: unsupported_columns are columns having datatypes which are not supported by Parrot
       view:
         type: boolean
       physicalSizeBytes:
@@ -7500,7 +7500,7 @@ definitions:
         description: True if the connector is the project's default OLAP.
       managed:
         type: boolean
-        description: 'True if the connector is managed by Rill (i.e. has `managed: true` in the connector definition).'
+        description: 'True if the connector is managed by Parrot (i.e. has `managed: true` in the connector definition).'
       sizeBytes:
         type: string
         format: int64
@@ -8317,7 +8317,7 @@ definitions:
       expression:
         type: string
         description: |-
-          Optional. Rill format time range. Should only be used for alerts and reports.
+          Optional. Parrot format time range. Should only be used for alerts and reports.
           For dashboard call ResolveTimeRanges.
       timeDimension:
         type: string

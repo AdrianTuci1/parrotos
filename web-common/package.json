@@ -11,7 +11,7 @@
     "coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "build-filter-grammar": "nearleyc src/features/dashboards/url-state/filters/expression.ne -o src/features/dashboards/url-state/filters/expression.js",
-    "build-rill-time-grammar": "nearleyc src/features/dashboards/url-state/time-ranges/rill-time.ne -o src/features/dashboards/url-state/time-ranges/rill-time.js"
+    "build-statsparrot-time-grammar": "nearleyc src/features/dashboards/url-state/time-ranges/statsparrot-time.ne -o src/features/dashboards/url-state/time-ranges/statsparrot-time.js"
   },
   "devDependencies": {
     "@bufbuild/protobuf": "^1.0.0",

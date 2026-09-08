@@ -321,7 +321,7 @@ export class ExportRequest extends Message<ExportRequest> {
   originUrl = "";
 
   /**
-   * Optional Execution to attach to the underlying query. Used to resolve rill-time expressions.
+   * Optional Execution to attach to the underlying query. Used to resolve statsparrot-time expressions.
    *
    * @generated from field: google.protobuf.Timestamp execution_time = 9;
    */
@@ -910,7 +910,7 @@ export class ProjectStorageEntry extends Message<ProjectStorageEntry> {
   isDefaultOlap = false;
 
   /**
-   * True if the connector is managed by Rill (i.e. has `managed: true` in the connector definition).
+   * True if the connector is managed by Parrot (i.e. has `managed: true` in the connector definition).
    *
    * @generated from field: bool managed = 4;
    */
@@ -2280,7 +2280,7 @@ export class TimeRange extends Message<TimeRange> {
   timeZone = "";
 
   /**
-   * Optional. Rill format time range. Should only be used for alerts and reports.
+   * Optional. Parrot format time range. Should only be used for alerts and reports.
    * For dashboard call ResolveTimeRanges.
    *
    * @generated from field: string expression = 7;
@@ -3793,7 +3793,7 @@ export class MetricsViewTimeRangesRequest extends Message<MetricsViewTimeRangesR
   metricsViewName = "";
 
   /**
-   * Optional time range expressions to resolve (uses the rilltime expression syntax).
+   * Optional time range expressions to resolve (uses the statspartime expression syntax).
    *
    * @generated from field: repeated string expressions = 3;
    */
@@ -3881,7 +3881,7 @@ export class MetricsViewTimeRangesResponse extends Message<MetricsViewTimeRanges
   fullTimeRange?: TimeRangeSummary;
 
   /**
-   * The resolved time ranges for the requested rilltime expressions.
+   * The resolved time ranges for the requested statspartime expressions.
    *
    * @generated from field: repeated statsparrot.runtime.v1.ResolvedTimeRange resolved_time_ranges = 3;
    */
@@ -4355,8 +4355,8 @@ export class ResolveCanvasRequest extends Message<ResolveCanvasRequest> {
 
   /**
    * If true, fall back to the unvalidated spec when no valid spec is available.
-   * Only for use by the visual editor in Rill Developer. Must never be sent by
-   * Rill Cloud, read-only previews, shared token access, or embedded viewers.
+   * Only for use by the visual editor in Parrot Developer. Must never be sent by
+   * Parrot Cloud, read-only previews, shared token access, or embedded viewers.
    *
    * @generated from field: bool unsafe = 4;
    */

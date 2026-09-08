@@ -1,4 +1,4 @@
-import { STATSPARROT_EMBED_HTML_FILE } from "@statsparrot/web-integration/tests/constants.ts";
+import { RILL_EMBED_HTML_FILE } from "@statsparrot/web-integration/tests/constants.ts";
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 import fs from "fs";
@@ -54,7 +54,7 @@ export async function generateEmbed({
     <title>Iframe Example</title>
 </head>
 <body>
-    <iframe id="rill-frame" src="${iframeSrc}" height="600px" width="100%"></iframe>
+    <iframe id="statsparrot-frame" src="${iframeSrc}" height="600px" width="100%"></iframe>
     <script>
         window.addEventListener('message', (event) => {
             console.log(event.data);
@@ -63,7 +63,7 @@ export async function generateEmbed({
 </body>
 </html>`;
 
-    const outputPath = path.join(process.cwd(), STATSPARROT_EMBED_HTML_FILE);
+    const outputPath = path.join(process.cwd(), RILL_EMBED_HTML_FILE);
 
     fs.writeFileSync(outputPath, htmlContent, "utf8");
   } catch (error: unknown) {

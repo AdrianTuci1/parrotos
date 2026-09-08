@@ -352,7 +352,7 @@ export class GitStatusResponse extends Message<GitStatusResponse> {
   subpath = "";
 
   /**
-   * If the repo is managed by Rill.
+   * If the repo is managed by Parrot.
    *
    * @generated from field: bool managed_git = 3;
    */

@@ -372,10 +372,10 @@ type AdminServiceClient interface {
 	CreateGithubPullRequest(ctx context.Context, in *CreateGithubPullRequestRequest, opts ...grpc.CallOption) (*CreateGithubPullRequestResponse, error)
 	// GetGithubPullRequest returns the status of the PR for the specified branch, if it exists.
 	GetGithubPullRequest(ctx context.Context, in *GetGithubPullRequestRequest, opts ...grpc.CallOption) (*GetGithubPullRequestResponse, error)
-	// Connects a rill managed project to github.
+	// Connects a statsparrot managed project to github.
 	// Replaces the contents of the remote repo with the contents of the project.
 	ConnectProjectToGithub(ctx context.Context, in *ConnectProjectToGithubRequest, opts ...grpc.CallOption) (*ConnectProjectToGithubResponse, error)
-	// CreateManagedGitRepo creates a new rill managed git repo for the organization.
+	// CreateManagedGitRepo creates a new statsparrot managed git repo for the organization.
 	CreateManagedGitRepo(ctx context.Context, in *CreateManagedGitRepoRequest, opts ...grpc.CallOption) (*CreateManagedGitRepoResponse, error)
 	// GetCloneCredentials returns credentials and other details for a project's Git repository or archive path if git repo is not configured.
 	GetCloneCredentials(ctx context.Context, in *GetCloneCredentialsRequest, opts ...grpc.CallOption) (*GetCloneCredentialsResponse, error)
@@ -2421,10 +2421,10 @@ type AdminServiceServer interface {
 	CreateGithubPullRequest(context.Context, *CreateGithubPullRequestRequest) (*CreateGithubPullRequestResponse, error)
 	// GetGithubPullRequest returns the status of the PR for the specified branch, if it exists.
 	GetGithubPullRequest(context.Context, *GetGithubPullRequestRequest) (*GetGithubPullRequestResponse, error)
-	// Connects a rill managed project to github.
+	// Connects a statsparrot managed project to github.
 	// Replaces the contents of the remote repo with the contents of the project.
 	ConnectProjectToGithub(context.Context, *ConnectProjectToGithubRequest) (*ConnectProjectToGithubResponse, error)
-	// CreateManagedGitRepo creates a new rill managed git repo for the organization.
+	// CreateManagedGitRepo creates a new statsparrot managed git repo for the organization.
 	CreateManagedGitRepo(context.Context, *CreateManagedGitRepoRequest) (*CreateManagedGitRepoResponse, error)
 	// GetCloneCredentials returns credentials and other details for a project's Git repository or archive path if git repo is not configured.
 	GetCloneCredentials(context.Context, *GetCloneCredentialsRequest) (*GetCloneCredentialsResponse, error)

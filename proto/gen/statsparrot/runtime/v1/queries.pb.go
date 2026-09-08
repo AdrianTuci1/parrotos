@@ -408,7 +408,7 @@ type ExportRequest struct {
 	// Optional UI URL that the export originates from.
 	// Only used if include_header is true.
 	OriginUrl string `protobuf:"bytes,8,opt,name=origin_url,json=originUrl,proto3" json:"origin_url,omitempty"`
-	// Optional Execution to attach to the underlying query. Used to resolve rill-time expressions.
+	// Optional Execution to attach to the underlying query. Used to resolve statsparrot-time expressions.
 	ExecutionTime *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=execution_time,json=executionTime,proto3" json:"execution_time,omitempty"`
 }
 
@@ -1277,7 +1277,7 @@ type ProjectStorageEntry struct {
 	Driver string `protobuf:"bytes,2,opt,name=driver,proto3" json:"driver,omitempty"`
 	// True if the connector is the project's default OLAP.
 	IsDefaultOlap bool `protobuf:"varint,3,opt,name=is_default_olap,json=isDefaultOlap,proto3" json:"is_default_olap,omitempty"`
-	// True if the connector is managed by Rill (i.e. has `managed: true` in the connector definition).
+	// True if the connector is managed by Parrot (i.e. has `managed: true` in the connector definition).
 	Managed bool `protobuf:"varint,4,opt,name=managed,proto3" json:"managed,omitempty"`
 	// Storage usage in bytes.
 	// If it is -1, it means the value is unknown.
@@ -2963,7 +2963,7 @@ type TimeRange struct {
 	RoundToGrain TimeGrain `protobuf:"varint,5,opt,name=round_to_grain,json=roundToGrain,proto3,enum=statsparrot.runtime.v1.TimeGrain" json:"round_to_grain,omitempty"`
 	// Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
 	TimeZone string `protobuf:"bytes,6,opt,name=time_zone,json=timeZone,proto3" json:"time_zone,omitempty"`
-	// Optional. Rill format time range. Should only be used for alerts and reports.
+	// Optional. Parrot format time range. Should only be used for alerts and reports.
 	// For dashboard call ResolveTimeRanges.
 	Expression    string `protobuf:"bytes,7,opt,name=expression,proto3" json:"expression,omitempty"`
 	TimeDimension string `protobuf:"bytes,8,opt,name=time_dimension,json=timeDimension,proto3" json:"time_dimension,omitempty"` // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
@@ -4703,7 +4703,7 @@ type MetricsViewTimeRangesRequest struct {
 
 	InstanceId      string `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
 	MetricsViewName string `protobuf:"bytes,2,opt,name=metrics_view_name,json=metricsViewName,proto3" json:"metrics_view_name,omitempty"`
-	// Optional time range expressions to resolve (uses the rilltime expression syntax).
+	// Optional time range expressions to resolve (uses the statspartime expression syntax).
 	Expressions []string `protobuf:"bytes,3,rep,name=expressions,proto3" json:"expressions,omitempty"`
 	// Optional query priority.
 	Priority int32 `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
@@ -4812,7 +4812,7 @@ type MetricsViewTimeRangesResponse struct {
 
 	// The full time range summary for the requested time dimension.
 	FullTimeRange *TimeRangeSummary `protobuf:"bytes,1,opt,name=full_time_range,json=fullTimeRange,proto3" json:"full_time_range,omitempty"`
-	// The resolved time ranges for the requested rilltime expressions.
+	// The resolved time ranges for the requested statspartime expressions.
 	ResolvedTimeRanges []*ResolvedTimeRange `protobuf:"bytes,3,rep,name=resolved_time_ranges,json=resolvedTimeRanges,proto3" json:"resolved_time_ranges,omitempty"`
 	// The same values as resolved_time_ranges for backwards compatibility.
 	// Deprecated: use resolved_time_ranges instead.
@@ -5279,8 +5279,8 @@ type ResolveCanvasRequest struct {
 	// Optional args for resolving templating in the component properties
 	Args *structpb.Struct `protobuf:"bytes,3,opt,name=args,proto3" json:"args,omitempty"`
 	// If true, fall back to the unvalidated spec when no valid spec is available.
-	// Only for use by the visual editor in Rill Developer. Must never be sent by
-	// Rill Cloud, read-only previews, shared token access, or embedded viewers.
+	// Only for use by the visual editor in Parrot Developer. Must never be sent by
+	// Parrot Cloud, read-only previews, shared token access, or embedded viewers.
 	Unsafe bool `protobuf:"varint,4,opt,name=unsafe,proto3" json:"unsafe,omitempty"`
 }
 

@@ -1,5 +1,5 @@
 project_files:
-  rill.yaml:
+  statsparrot.yaml:
     olap_connector: duckdb
   # Model that creates 10 distinct partitions with 10 rows each.
   # We'll expect the output to have 100 rows.

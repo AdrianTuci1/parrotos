@@ -9,7 +9,7 @@ defaults:
 rows:
   - items:
       - image:
-          url: https://cdn.prod.website-files.com/659ddac460dbacbdc813b204/660b0f85094eb576187342cf_rill_logo_sq_gradient.svg
+          url: https://cdn.prod.website-files.com/659ddac460dbacbdc813b204/660b0f85094eb576187342cf_statsparrot_logo_sq_gradient.svg
         width: 12
     height: 80px
   - items:

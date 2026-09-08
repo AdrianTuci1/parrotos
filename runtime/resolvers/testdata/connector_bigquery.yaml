@@ -105,7 +105,7 @@ tests:
   - name: test_partitions_count_for_model_bigquery_to_duckdb_for_partition_overwrite
     resolver: sql
     properties:
-      sql: "SELECT COUNT(*) AS count, COUNT(DISTINCT __rill_partition) AS partitions, MIN(number) AS min_num, MAX(number) AS max_num FROM model_bigquery_to_duckdb_for_partition_overwrite"
+      sql: "SELECT COUNT(*) AS count, COUNT(DISTINCT __statsparrot_partition) AS partitions, MIN(number) AS min_num, MAX(number) AS max_num FROM model_bigquery_to_duckdb_for_partition_overwrite"
     result_csv: |
       count,partitions,min_num,max_num
       20,2,1,10

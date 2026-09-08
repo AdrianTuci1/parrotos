@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  title: Rill Admin API
-  description: Rill Admin API enables programmatic management of Rill Cloud resources, including organizations, projects, and user access. It provides endpoints for creating, updating, and deleting these resources, as well as managing authentication and permissions.
+  title: Parrot Admin API
+  description: Parrot Admin API enables programmatic management of Parrot Cloud resources, including organizations, projects, and user access. It provides endpoints for creating, updating, and deleting these resources, as well as managing authentication and permissions.
   version: version not set
 consumes:
   - application/json
@@ -128,7 +128,7 @@ paths:
                 description: Optional TTL for the returned access token in seconds.
               userId:
                 type: string
-                description: If set, will use the attributes of the Rill user with this ID.
+                description: If set, will use the attributes of the Parrot user with this ID.
               userEmail:
                 type: string
                 description: If set, will generate attributes corresponding to a user with this email.
@@ -139,7 +139,7 @@ paths:
                 type: string
                 description: |-
                   Optional ID for an external end user of the deployment. If set, the access token enables per-user state, such as AI chat history.
-                  Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+                  Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
               superuserForceAccess:
                 type: boolean
                 description: If true, superusers can access the deployment even without org/project membership.
@@ -684,7 +684,7 @@ paths:
                 type: boolean
   /v1/orgs/{org}/create-managed-git-repo:
     put:
-      summary: CreateManagedGitRepo creates a new rill managed git repo for the organization.
+      summary: CreateManagedGitRepo creates a new statsparrot managed git repo for the organization.
       operationId: AdminService_CreateManagedGitRepo
       responses:
         "200":
@@ -1451,7 +1451,7 @@ paths:
   /v1/orgs/{org}/projects/{project}/connect-to-github:
     post:
       summary: |-
-        Connects a rill managed project to github.
+        Connects a statsparrot managed project to github.
         Replaces the contents of the remote repo with the contents of the project.
       operationId: AdminService_ConnectProjectToGithub
       responses:
@@ -1521,7 +1521,7 @@ paths:
                 description: Optional TTL for the returned access token in seconds.
               userId:
                 type: string
-                description: If set, will use the attributes of the Rill user with this ID.
+                description: If set, will use the attributes of the Parrot user with this ID.
               userEmail:
                 type: string
                 description: If set, will generate attributes corresponding to a user with this email.
@@ -1532,7 +1532,7 @@ paths:
                 type: string
                 description: |-
                   Optional ID for an external end user of the deployment. If set, the access token enables per-user state, such as AI chat history.
-                  Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+                  Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
               superuserForceAccess:
                 type: boolean
                 description: If true, superusers can access the deployment even without org/project membership.
@@ -1735,7 +1735,7 @@ paths:
                 description: TTL for the iframe's access token. If not set, defaults to 24 hours.
               userId:
                 type: string
-                description: If set, will use the attributes of the Rill user with this ID.
+                description: If set, will use the attributes of the Parrot user with this ID.
               userEmail:
                 type: string
                 description: If set, will generate attributes corresponding to a user with this email.
@@ -1746,7 +1746,7 @@ paths:
                 type: string
                 description: |-
                   Optional ID for the external end user of the iframe. If set, the access token enables per-user state, such as AI chat history.
-                  Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+                  Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
               type:
                 type: string
                 description: Type of resource to embed. If not set, defaults to "statsparrot.runtime.v1.Explore".
@@ -4374,7 +4374,7 @@ paths:
     post:
       summary: |-
         RecordEvents sends a batch of telemetry events.
-        The events must conform to the schema described in rill/runtime/pkg/activity/README.md.
+        The events must conform to the schema described in statsparrot/runtime/pkg/activity/README.md.
       operationId: TelemetryService_RecordEvents
       responses:
         "200":
@@ -4820,7 +4820,7 @@ definitions:
         type: string
       userAttrs:
         type: object
-        title: user attributes of intended recipient, will be empty for creator mode and for non Rill users
+        title: user attributes of intended recipient, will be empty for creator mode and for non Parrot users
   ListGithubUserReposResponseRepo:
     type: object
     properties:
@@ -5763,7 +5763,7 @@ definitions:
         description: Primary branch of the project.
       managedGitRepo:
         type: boolean
-        description: Whether the git repo is managed by Rill.
+        description: Whether the git repo is managed by Parrot.
       archiveDownloadUrl:
         type: string
         description: Signed URL for downloading a tarball of project files. If this is set, the git_* fields will be empty (and vice versa).
@@ -6400,7 +6400,7 @@ definitions:
         type: string
       managedGitId:
         type: string
-        description: managed_git_id is set if the project is connected to a rill-managed git repo.
+        description: managed_git_id is set if the project is connected to a statsparrot-managed git repo.
       subpath:
         type: string
       primaryBranch:
@@ -7348,5 +7348,5 @@ definitions:
       role:
         type: string
 externalDocs:
-  description: Rill API Documentation
-  url: https://docs.statsparrot.com
+  description: Parrot API Documentation
+  url: https://docs.staticlabs.com

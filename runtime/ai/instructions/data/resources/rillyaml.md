@@ -1,18 +1,18 @@
 ---
-description: Detailed instructions and examples for developing the rill.yaml file
+description: Detailed instructions and examples for developing the statsparrot.yaml file
 ---
 
-# Instructions for developing `rill.yaml`
+# Instructions for developing `statsparrot.yaml`
 
 ## Introduction
 
-`rill.yaml` is a required configuration file located at the root of every Rill project. It defines project-wide settings, similar to `package.json` in Node.js or `dbt_project.yml` in dbt.
+`statsparrot.yaml` is a required configuration file located at the root of every Parrot project. It defines project-wide settings, similar to `package.json` in Node.js or `dbt_project.yml` in dbt.
 
 ## Core Concepts
 
 ### Project metadata
 
-There are no required properties in `rill.yaml`, but it is common to configure:
+There are no required properties in `statsparrot.yaml`, but it is common to configure:
 
 - `display_name`: Human-readable name shown in the UI
 - `description`: Brief description of the project's purpose
@@ -22,11 +22,11 @@ There are no required properties in `rill.yaml`, but it is common to configure:
 
 The `olap_connector` property sets the default OLAP database for the project. Models output to this connector by default, and metrics views query from it unless explicitly overridden.
 
-Common values are `duckdb` or `clickhouse`. If not specified, Rill initializes a managed DuckDB database and uses it as the default OLAP connector. 
+Common values are `duckdb` or `clickhouse`. If not specified, Parrot initializes a managed DuckDB database and uses it as the default OLAP connector. 
 
 ### Default AI connector
 
-The `ai_connector` property selects the connector powering AI features (developer agent, AI charts, chat). Point it to an AI connector defined in the project, such as `openai`, `claude`, or `gemini`. Defaults to Rill's built-in AI service.
+The `ai_connector` property selects the connector powering AI features (developer agent, AI charts, chat). Point it to an AI connector defined in the project, such as `openai`, `claude`, or `gemini`. Defaults to Parrot's built-in AI service.
 
 ### Mock users for security testing
 
@@ -66,7 +66,7 @@ The `dev` and `prod` properties allow environment-specific configuration overrid
 
 ## Minimal Example
 
-A minimal `rill.yaml` for a new project:
+A minimal `statsparrot.yaml` for a new project:
 
 ```yaml
 display_name: My Analytics Project
@@ -74,7 +74,7 @@ display_name: My Analytics Project
 
 ## Complete Example
 
-A comprehensive `rill.yaml` demonstrating common configurations:
+A comprehensive `statsparrot.yaml` demonstrating common configurations:
 
 ```yaml
 display_name: Sales Analytics
@@ -125,15 +125,15 @@ explores:
     - P3M
     - P12M
 
-# Exclude non-Rill files from parsing
+# Exclude non-Parrot files from parsing
 ignore_paths:
   - /docs
 ```
 
 ## Reference documentation
 
-Here is a full JSON schema for the `rill.yaml` syntax:
+Here is a full JSON schema for the `statsparrot.yaml` syntax:
 
 ```
-{% json_schema_for_resource "rill.yaml" %}
+{% json_schema_for_resource "statsparrot.yaml" %}
 ```

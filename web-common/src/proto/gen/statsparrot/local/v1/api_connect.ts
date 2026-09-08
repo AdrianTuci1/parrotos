@@ -24,7 +24,7 @@ export const LocalService = {
       kind: MethodKind.Unary,
     },
     /**
-     * GetMetadata returns information about the local Rill instance.
+     * GetMetadata returns information about the local Parrot instance.
      *
      * @generated from rpc statsparrot.local.v1.LocalService.GetMetadata
      */
@@ -35,7 +35,7 @@ export const LocalService = {
       kind: MethodKind.Unary,
     },
     /**
-     * GetVersion returns details about the current and latest available Rill versions.
+     * GetVersion returns details about the current and latest available Parrot versions.
      *
      * @generated from rpc statsparrot.local.v1.LocalService.GetVersion
      */
@@ -127,7 +127,7 @@ export const LocalService = {
       kind: MethodKind.Unary,
     },
     /**
-     * DeployProject deploys the local project to the Rill cloud.
+     * DeployProject deploys the local project to the Parrot cloud.
      *
      * @generated from rpc statsparrot.local.v1.LocalService.DeployProject
      */
@@ -160,7 +160,7 @@ export const LocalService = {
       kind: MethodKind.Unary,
     },
     /**
-     * GetCurrentProject returns the rill cloud project connected to the local project
+     * GetCurrentProject returns the statsparrot cloud project connected to the local project
      * Deprecated: Use ListMatchingProjects instead.
      *
      * @generated from rpc statsparrot.local.v1.LocalService.GetCurrentProject

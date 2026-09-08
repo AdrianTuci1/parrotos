@@ -203,7 +203,7 @@ test.describe("Bookmarks", () => {
         // make sure the url has the correct params
         await assertUrlParams(
           adminPage,
-          `tr=6h+as+of+latest%2Fh%2B1h&compare_tr=rill-PP&grain=hour&f=app_site_name IN ('FuboTV','My+Little+Universe')&expand_dim=app_site_domain`,
+          `tr=6h+as+of+latest%2Fh%2B1h&compare_tr=statsparrot-PP&grain=hour&f=app_site_name IN ('FuboTV','My+Little+Universe')&expand_dim=app_site_domain`,
         );
 
         // Open bookmark dropdown and verify the "filled" state for the bookmark
@@ -293,7 +293,7 @@ test.describe("Bookmarks", () => {
       }) => {
         // Add random params. Home bookmark shouldnt apply
         await adminPage.goto(
-          "/e2e/openrtb/explore/auction_explore_bookmarks?compare_tr=rill-PW&expand_dim=app_site_name",
+          "/e2e/openrtb/explore/auction_explore_bookmarks?compare_tr=statsparrot-PW&expand_dim=app_site_name",
         );
         // Default time range is present
         await expect(adminPage.getByText("Last 24 Hours")).toBeVisible();
@@ -439,7 +439,7 @@ test.describe("Bookmarks", () => {
         // make sure the url has the correct params
         await assertUrlParams(
           adminPage,
-          `tr=6h+as+of+latest%2Fh%2B1h&compare_tr=rill-PP&f.bids_metrics=advertiser_name IN ('Instacart','Leafly')`,
+          `tr=6h+as+of+latest%2Fh%2B1h&compare_tr=statsparrot-PP&f.bids_metrics=advertiser_name IN ('Instacart','Leafly')`,
         );
         // Assert filters applied
         await expect(
@@ -508,7 +508,7 @@ test.describe("Bookmarks", () => {
         await expect(adminPage.getByText("Last 24 hours")).toBeVisible();
         await expect(adminPage.getByText("No filters selected")).toBeVisible();
         // make sure the url has the correct params
-        await assertUrlParams(adminPage, `tr=PT24H&compare_tr=rill-PP`);
+        await assertUrlParams(adminPage, `tr=PT24H&compare_tr=statsparrot-PP`);
         // Assert filters applied
         await expect(
           adminPage.getByLabel("overall_spend KPI data"),
@@ -560,7 +560,7 @@ test.describe("Bookmarks", () => {
         // make sure the url has the correct params
         await assertUrlParams(
           adminPage,
-          `tr=7D+as+of+latest%2Fh%2B1h&compare_tr=rill-PP&f.bids_metrics=adomain IN ('hyundaiusa.com','instacart.com')`,
+          `tr=7D+as+of+latest%2Fh%2B1h&compare_tr=statsparrot-PP&f.bids_metrics=adomain IN ('hyundaiusa.com','instacart.com')`,
         );
       });
 
@@ -569,7 +569,7 @@ test.describe("Bookmarks", () => {
       }) => {
         // Add random params. Home bookmark shouldnt apply
         await adminPage.goto(
-          "/e2e/openrtb/canvas/bids_canvas_bookmarks?compare_tr=rill-PW",
+          "/e2e/openrtb/canvas/bids_canvas_bookmarks?compare_tr=statsparrot-PW",
         );
         // Default time range is present
         await expect(adminPage.getByText("Last 24 Hours")).toBeVisible();
@@ -605,7 +605,7 @@ test.describe("Bookmarks", () => {
         // make sure the url has the correct params
         await assertUrlParams(
           adminPage,
-          `tr=7D+as+of+latest%2Fh%2B1h&compare_tr=rill-PP&f.bids_metrics=adomain+IN+%28%27hyundaiusa.com%27%2C%27instacart.com%27%29`,
+          `tr=7D+as+of+latest%2Fh%2B1h&compare_tr=statsparrot-PP&f.bids_metrics=adomain+IN+%28%27hyundaiusa.com%27%2C%27instacart.com%27%29`,
         );
       });
 

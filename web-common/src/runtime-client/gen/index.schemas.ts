@@ -229,7 +229,7 @@ export interface Runtimev1Type {
 }
 
 /**
- * API defines a custom operation for querying data stored in Rill.
+ * API defines a custom operation for querying data stored in Parrot.
  */
 export interface V1API {
   spec?: V1APISpec;
@@ -374,7 +374,7 @@ export interface V1AnalyzedConnector {
 export interface V1AnalyzedVariable {
   /** Name of the variable. */
   name?: string;
-  /** Default value set for the variable in rill.yaml, if any. */
+  /** Default value set for the variable in statsparrot.yaml, if any. */
   defaultValue?: string;
   /** List of resources that appear to use the connector. */
   usedBy?: V1ResourceName[];
@@ -471,7 +471,7 @@ export interface V1CanvasRow {
 export interface V1CanvasSpec {
   /** Display name for the canvas. */
   displayName?: string;
-  /** Banner text that can be displayed in Rill Cloud. */
+  /** Banner text that can be displayed in Parrot Cloud. */
   banner?: string;
   /** Max width in pixels of the canvas. */
   maxWidth?: number;
@@ -993,7 +993,7 @@ The values should be valid IANA location identifiers. */
   /** Security for the explore dashboard.
 These are not currently parsed from YAML, but will be derived from the parent metrics view. */
   securityRules?: V1SecurityRule[];
-  /** Banner text that can be displayed in Rill Cloud. */
+  /** Banner text that can be displayed in Parrot Cloud. */
   banner?: string;
   lockTimeZone?: boolean;
   allowCustomTimeRange?: boolean;
@@ -1212,7 +1212,7 @@ export interface V1GitStatusResponse {
   githubUrl?: string;
   /** The subpath of the git repo. */
   subpath?: string;
-  /** If the repo is managed by Rill. */
+  /** If the repo is managed by Parrot. */
   managedGit?: boolean;
   /** local_changes returns true if there are any staged, unstaged, or untracked changes in the local git repo. */
   localChanges?: boolean;
@@ -1791,7 +1791,7 @@ export interface V1MetricsViewTimeRangeResponse {
 
 export interface V1MetricsViewTimeRangesResponse {
   fullTimeRange?: V1TimeRangeSummary;
-  /** The resolved time ranges for the requested rilltime expressions. */
+  /** The resolved time ranges for the requested statsparrot expressions. */
   resolvedTimeRanges?: V1ResolvedTimeRange[];
   /** The same values as resolved_time_ranges for backwards compatibility.
 Deprecated: use resolved_time_ranges instead. */
@@ -2626,7 +2626,7 @@ export interface V1TimeRange {
   isoOffset?: string;
   roundToGrain?: V1TimeGrain;
   timeZone?: string;
-  /** Optional. Rill format time range. Should only be used for alerts and reports.
+  /** Optional. Parrot format time range. Should only be used for alerts and reports.
 For dashboard call ResolveTimeRanges. */
   expression?: string;
   timeDimension?: string;
@@ -3081,7 +3081,7 @@ export type QueryServiceExportBody = {
   /** Optional UI URL that the export originates from.
 Only used if include_header is true. */
   originUrl?: string;
-  /** Optional Execution to attach to the underlying query. Used to resolve rill-time expressions. */
+  /** Optional Execution to attach to the underlying query. Used to resolve statsparrot-time expressions. */
   executionTime?: string;
 };
 
@@ -3195,7 +3195,7 @@ export type QueryServiceMetricsViewTimeRangeBody = {
 };
 
 export type QueryServiceMetricsViewTimeRangesBody = {
-  /** Optional time range expressions to resolve (uses the rilltime expression syntax). */
+  /** Optional time range expressions to resolve (uses the statsparrot expression syntax). */
   expressions?: string[];
   /** Optional query priority. */
   priority?: number;

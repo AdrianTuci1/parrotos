@@ -1,7 +1,7 @@
 import type { MetricsEvent } from "./MetricsTypes";
 
-const ParrotIntakeUser = import.meta.env.STATSPARROT_UI_PUBLIC_INTAKE_USER;
-const ParrotIntakePassword = import.meta.env.STATSPARROT_UI_PUBLIC_INTAKE_PASSWORD;
+const ParrotIntakeUser = import.meta.env.RILL_UI_PUBLIC_INTAKE_USER;
+const ParrotIntakePassword = import.meta.env.RILL_UI_PUBLIC_INTAKE_PASSWORD;
 
 export interface TelemetryClient {
   fireEvent(event: MetricsEvent): Promise<void>;

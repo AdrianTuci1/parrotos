@@ -1,16 +1,16 @@
 # web-admin
 
-This folder contains the control plane frontend for the managed, multi-user Rill (available on `ui.rillcloud.com`). It's implemented with TypeScript and [SvelteKit](https://kit.svelte.dev).
+This folder contains the control plane frontend for the managed, multi-user Parrot (available on `ui.rillcloud.com`). It's implemented with TypeScript and [SvelteKit](https://kit.svelte.dev).
 
 ## Running in development
 
 The following command starts a development environment with hot reloading for the frontend code (restarts are required for backend changes):
 
 ```bash
-rill devtool start cloud
+statsparrot devtool start cloud
 ```
 
-Press ctrl+C to gracefully stop the development environment. While the development environment is running, any `rill` command you run will target your local development environment instead of the one on `staticlabs.com`. (You can manually switch environments using `rill devtool switch-env`.)
+Press ctrl+C to gracefully stop the development environment. While the development environment is running, any `statsparrot` command you run will target your local development environment instead of the one on `statsparrot.com`. (You can manually switch environments using `statsparrot devtool switch-env`.)
 
 All application state is persisted in the (gitignored) `dev-cloud-state` directory. Pass `--reset` to the command above to clear state and start a clean environment.
 

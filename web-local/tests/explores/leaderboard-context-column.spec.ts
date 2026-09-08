@@ -13,7 +13,7 @@ test.describe("leaderboard context column", () => {
     await gotoNavEntry(page, "/metrics/AdBids_metrics.yaml");
 
     // reset metrics, and add a metric with `valid_percent_of_total: true`
-    const metricsWithValidPercentOfTotal = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Rill project files.
+    const metricsWithValidPercentOfTotal = `# Visit https://docs.statsparrot.com/reference/project-files to learn more about Parrot project files.
 
   version: 1
   type: metrics_view

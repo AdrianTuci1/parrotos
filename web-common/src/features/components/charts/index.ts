@@ -6,7 +6,7 @@ export { default as ChartContainer } from "./ChartContainer.svelte";
 export { default as ParrotChart } from "./react/ParrotChart";
 export { default as ReactChart } from "./react/Chart";
 export { default as ReactChartContainer } from "./react/ChartContainer";
-export { default as useReadable } from "./react/useReadable";
+export { useReadable } from "./react/useReadable";
 
 // Providers
 export { CartesianChartProvider } from "./cartesian/CartesianChartProvider";

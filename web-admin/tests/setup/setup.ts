@@ -7,8 +7,8 @@ import {
   spawnAndMatch,
 } from "@statsparrot/web-common/tests/utils/spawn";
 import {
-  STATSPARROT_DEVTOOL_BACKGROUND_PROCESS_PID_FILE,
-  STATSPARROT_EMBED_SERVICE_TOKEN_FILE,
+  RILL_DEVTOOL_BACKGROUND_PROCESS_PID_FILE,
+  RILL_EMBED_SERVICE_TOKEN_FILE,
 } from "@statsparrot/web-integration/tests/constants";
 import { spawn } from "child_process";
 import dotenv from "dotenv";
@@ -19,10 +19,10 @@ import { fileURLToPath } from "url";
 import { test as setup } from "./base";
 import {
   ADMIN_STORAGE_STATE,
-  STATSPARROT_ORG_NAME,
-  STATSPARROT_PROJECT_DISPLAY_NAME,
-  STATSPARROT_PROJECT_NAME,
-  STATSPARROT_SERVICE_NAME,
+  RILL_ORG_NAME,
+  RILL_PROJECT_DISPLAY_NAME,
+  RILL_PROJECT_NAME,
+  RILL_SERVICE_NAME,
 } from "./constants";
 
 setup.describe("global setup", () => {
@@ -32,14 +32,14 @@ setup.describe("global setup", () => {
   });
 
   setup("should start services", async () => {
-    // Get the repository root directory, the only place from which `rill devtool` is allowed to be run
+    // Get the repository root directory, the only place from which `statsparrot devtool` is allowed to be run
     const currentDir = path.dirname(fileURLToPath(import.meta.url));
     const repoRoot = path.resolve(currentDir, "../../../");
 
     // Start the cloud dependencies via Docker
     // This will block until the services are ready
     await spawnAndMatch(
-      "rill",
+      "statsparrot",
       ["devtool", "start", "other", "--reset", "--only", "deps"],
       /All services ready/,
       {
@@ -53,11 +53,11 @@ setup.describe("global setup", () => {
     dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
     // Check that the required environment variables are set
-    // The above `rill devtool` command pulls the `.env` file with these values.
+    // The above `statsparrot devtool` command pulls the `.env` file with these values.
     // Fail quickly if any of these are missing.
     if (
-      !process.env.STATSPARROT_DEVTOOL_E2E_ADMIN_ACCOUNT_EMAIL ||
-      !process.env.STATSPARROT_DEVTOOL_E2E_ADMIN_ACCOUNT_PASSWORD
+      !process.env.RILL_DEVTOOL_E2E_ADMIN_ACCOUNT_EMAIL ||
+      !process.env.RILL_DEVTOOL_E2E_ADMIN_ACCOUNT_PASSWORD
     ) {
       throw new Error(
         "Missing required environment variables for authentication",
@@ -73,7 +73,7 @@ setup.describe("global setup", () => {
     // A detached process ensures they are not cleaned up when this setup project completes.
     // However, we need to be sure to clean-up the processes manually in the teardown project.
     const child = spawn(
-      "rill",
+      "statsparrot",
       ["devtool", "start", "other", "--only", "admin,runtime"],
       {
         detached: true,
@@ -86,7 +86,7 @@ setup.describe("global setup", () => {
     // Write the pid to a file, so I can kill it later
     if (child.pid) {
       writeFileEnsuringDir(
-        STATSPARROT_DEVTOOL_BACKGROUND_PROCESS_PID_FILE,
+        RILL_DEVTOOL_BACKGROUND_PROCESS_PID_FILE,
         child.pid.toString(),
       );
     } else {
@@ -113,8 +113,8 @@ setup.describe("global setup", () => {
   setup("should log in with the admin account", async ({ page }) => {
     // Again, check that the required environment variables are set. This is for type-safety.
     if (
-      !process.env.STATSPARROT_DEVTOOL_E2E_ADMIN_ACCOUNT_EMAIL ||
-      !process.env.STATSPARROT_DEVTOOL_E2E_ADMIN_ACCOUNT_PASSWORD
+      !process.env.RILL_DEVTOOL_E2E_ADMIN_ACCOUNT_EMAIL ||
+      !process.env.RILL_DEVTOOL_E2E_ADMIN_ACCOUNT_PASSWORD
     ) {
       throw new Error(
         "Missing required environment variables for authentication",
@@ -128,7 +128,7 @@ setup.describe("global setup", () => {
     const emailInput = page.locator('input[name="username"]');
     await emailInput.waitFor({ state: "visible" });
     await emailInput.click();
-    await emailInput.fill(process.env.STATSPARROT_DEVTOOL_E2E_ADMIN_ACCOUNT_EMAIL);
+    await emailInput.fill(process.env.RILL_DEVTOOL_E2E_ADMIN_ACCOUNT_EMAIL);
 
     // Click the continue button
     await page
@@ -142,7 +142,7 @@ setup.describe("global setup", () => {
     await passwordInput.waitFor({ state: "visible" });
     await passwordInput.click();
     await passwordInput.fill(
-      process.env.STATSPARROT_DEVTOOL_E2E_ADMIN_ACCOUNT_PASSWORD,
+      process.env.RILL_DEVTOOL_E2E_ADMIN_ACCOUNT_PASSWORD,
     );
 
     // Click the continue button
@@ -154,7 +154,7 @@ setup.describe("global setup", () => {
 
     await page.waitForURL(/\/(-\/welcome\/theme)?/);
 
-    // Save the admin's Rill auth cookies to file.
+    // Save the admin's Parrot auth cookies to file.
     // Subsequent tests can seed their browser with this state, instead of needing to go through the log-in flow again.
     await page.context().storageState({ path: ADMIN_STORAGE_STATE });
   });
@@ -163,37 +163,37 @@ setup.describe("global setup", () => {
     // Create an organization named "e2e"
     await cliLogin(adminPage);
     const { stdout: orgCreateStdout } = await execAsync(
-      `rill org create ${STATSPARROT_ORG_NAME}`,
+      `statsparrot org create ${RILL_ORG_NAME}`,
     );
     expect(orgCreateStdout).toContain("Created org");
 
     // create service and write access token to file
     const { stdout: orgCreateService } = await execAsync(
-      `rill service create ${STATSPARROT_SERVICE_NAME} --org-role admin`,
+      `statsparrot service create ${RILL_SERVICE_NAME} --org-role admin`,
     );
     expect(orgCreateService).toContain("Created service");
 
     const serviceToken = orgCreateService.match(/Access token:\s+(\S+)/);
-    const writePath = path.join(process.cwd(), STATSPARROT_EMBED_SERVICE_TOKEN_FILE);
+    const writePath = path.join(process.cwd(), RILL_EMBED_SERVICE_TOKEN_FILE);
     writeFileEnsuringDir(writePath, serviceToken![1]);
 
     // Go to the organization's page
-    await adminPage.goto(`/${STATSPARROT_ORG_NAME}`);
+    await adminPage.goto(`/${RILL_ORG_NAME}`);
     await expect(
-      adminPage.getByRole("heading", { name: STATSPARROT_ORG_NAME }),
+      adminPage.getByRole("heading", { name: RILL_ORG_NAME }),
     ).toBeVisible();
   });
 
   setup("should deploy the OpenRTB project", async ({ adminPage }) => {
     // Deploy the OpenRTB project
     const { match } = await spawnAndMatch(
-      "rill",
+      "statsparrot",
       [
         "deploy",
         "--path",
         "../web-common/tests/projects/openrtb",
         "--project",
-        STATSPARROT_PROJECT_NAME,
+        RILL_PROJECT_NAME,
         "--archive",
         "--interactive=false",
       ],
@@ -205,14 +205,14 @@ setup.describe("global setup", () => {
 
     await adminPage.goto(url);
     await expect(
-      adminPage.getByRole("link", { name: STATSPARROT_ORG_NAME }),
+      adminPage.getByRole("link", { name: RILL_ORG_NAME }),
     ).toBeVisible(); // Organization breadcrumb
     await expect(
-      adminPage.getByRole("link", { name: STATSPARROT_PROJECT_NAME }),
+      adminPage.getByRole("link", { name: RILL_PROJECT_NAME }),
     ).toBeVisible(); // Project breadcrumb
 
     // Expect to land on the project home page
-    await adminPage.waitForURL(`/${STATSPARROT_ORG_NAME}/${STATSPARROT_PROJECT_NAME}`);
+    await adminPage.waitForURL(`/${RILL_ORG_NAME}/${RILL_PROJECT_NAME}`);
     // Poll with page reloads until the deployment is ready and the project title appears.
     // Each reload triggers a fresh GetProject API call via the SvelteKit load function.
     // TODO: add a refetch to the project API
@@ -224,7 +224,7 @@ setup.describe("global setup", () => {
         },
         { intervals: Array(4).fill(30_000), timeout: 120_000 },
       )
-      .toContain(`Welcome to ${STATSPARROT_PROJECT_DISPLAY_NAME}`);
+      .toContain(`Welcome to ${RILL_PROJECT_DISPLAY_NAME}`);
 
     // Navigate to the dashboards page to validate the deployment
     await adminPage.getByRole("link", { name: "Dashboards" }).click();
@@ -267,13 +267,13 @@ setup.describe("global setup", () => {
   setup("should deploy the AdBids project", async ({ adminPage }) => {
     // increase project quota for the organization
     const { stdout: quotaUpdateStdout } = await execAsync(
-      `rill sudo quota set --org ${STATSPARROT_ORG_NAME} --projects 10`,
+      `statsparrot sudo quota set --org ${RILL_ORG_NAME} --projects 10`,
     );
     expect(quotaUpdateStdout).toContain(`Projects: 10`);
 
     // Deploy the AdBids project
     const { match } = await spawnAndMatch(
-      "rill",
+      "statsparrot",
       [
         "deploy",
         "--path",
@@ -290,14 +290,14 @@ setup.describe("global setup", () => {
     const url = match[0];
     await adminPage.goto(url);
     await expect(
-      adminPage.getByRole("link", { name: STATSPARROT_ORG_NAME }),
+      adminPage.getByRole("link", { name: RILL_ORG_NAME }),
     ).toBeVisible(); // Organization breadcrumb
     await expect(
       adminPage.getByRole("link", { name: "AdBids", exact: true }),
     ).toBeVisible(); // Project breadcrumb
 
     // Expect to land on the project home page
-    await adminPage.waitForURL(`/${STATSPARROT_ORG_NAME}/AdBids`);
+    await adminPage.waitForURL(`/${RILL_ORG_NAME}/AdBids`);
     // Temporary fix to wait for the project to be ready.
     // TODO: add a refetch to the project API
     await expect
@@ -308,7 +308,7 @@ setup.describe("global setup", () => {
         },
         { intervals: Array(4).fill(30_000), timeout: 120_000 },
       )
-      .toContain(`Welcome to Untitled Rill Project`);
+      .toContain(`Welcome to Untitled Parrot Project`);
 
     // Navigate to the dashboards page to validate the deployment
     await adminPage.getByRole("link", { name: "Dashboards" }).click();

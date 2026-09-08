@@ -37,7 +37,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: dd7552a5-45e7-4f67-9067-c2e2485c507f
   parent_id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -57,7 +57,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
 - id: 43deeb90-f9cd-4795-b323-5e5d178c9f9d
   parent_id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0

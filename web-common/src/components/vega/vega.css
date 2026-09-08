@@ -4,7 +4,7 @@
 }
 
 #vg-tooltip-element,
-#rill-vg-tooltip {
+#statsparrot-vg-tooltip {
   @apply absolute p-3 rounded-lg pointer-events-none;
   @apply ui-copy-number;
   border: 0 !important;

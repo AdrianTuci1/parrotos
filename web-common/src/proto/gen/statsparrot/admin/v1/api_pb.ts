@@ -1137,7 +1137,7 @@ export class GetDeploymentRequest extends Message<GetDeploymentRequest> {
    */
   for: {
     /**
-     * If set, will use the attributes of the Rill user with this ID.
+     * If set, will use the attributes of the Parrot user with this ID.
      *
      * @generated from field: string user_id = 3;
      */
@@ -1163,7 +1163,7 @@ export class GetDeploymentRequest extends Message<GetDeploymentRequest> {
 
   /**
    * Optional ID for an external end user of the deployment. If set, the access token enables per-user state, such as AI chat history.
-   * Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+   * Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
    *
    * @generated from field: string external_user_id = 9;
    */
@@ -2576,7 +2576,7 @@ export class GetDeploymentCredentialsRequest extends Message<GetDeploymentCreden
    */
   for: {
     /**
-     * If set, will use the attributes of the Rill user with this ID.
+     * If set, will use the attributes of the Parrot user with this ID.
      *
      * @generated from field: string user_id = 4;
      */
@@ -2602,7 +2602,7 @@ export class GetDeploymentCredentialsRequest extends Message<GetDeploymentCreden
 
   /**
    * Optional ID for an external end user of the deployment. If set, the access token enables per-user state, such as AI chat history.
-   * Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+   * Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
    *
    * @generated from field: string external_user_id = 9;
    */
@@ -2747,7 +2747,7 @@ export class GetIFrameRequest extends Message<GetIFrameRequest> {
    */
   for: {
     /**
-     * If set, will use the attributes of the Rill user with this ID.
+     * If set, will use the attributes of the Parrot user with this ID.
      *
      * @generated from field: string user_id = 9;
      */
@@ -2773,7 +2773,7 @@ export class GetIFrameRequest extends Message<GetIFrameRequest> {
 
   /**
    * Optional ID for the external end user of the iframe. If set, the access token enables per-user state, such as AI chat history.
-   * Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+   * Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
    *
    * @generated from field: string external_user_id = 16;
    */
@@ -12853,7 +12853,7 @@ export class GetRepoMetaResponse extends Message<GetRepoMetaResponse> {
   primaryBranch = "";
 
   /**
-   * Whether the git repo is managed by Rill.
+   * Whether the git repo is managed by Parrot.
    *
    * @generated from field: bool managed_git_repo = 10;
    */
@@ -13395,7 +13395,7 @@ export class GetReportMetaResponse_DeliveryMeta extends Message<GetReportMetaRes
   userId = "";
 
   /**
-   * user attributes of intended recipient, will be empty for creator mode and for non Rill users
+   * user attributes of intended recipient, will be empty for creator mode and for non Parrot users
    *
    * @generated from field: google.protobuf.Struct user_attrs = 6;
    */
@@ -16951,7 +16951,7 @@ export class Project extends Message<Project> {
   gitRemote = "";
 
   /**
-   * managed_git_id is set if the project is connected to a rill-managed git repo.
+   * managed_git_id is set if the project is connected to a statsparrot-managed git repo.
    *
    * @generated from field: string managed_git_id = 24;
    */

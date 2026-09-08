@@ -323,7 +323,7 @@ message ExportRequest {
   // Optional UI URL that the export originates from.
   // Only used if include_header is true.
   string origin_url = 8;
-  // Optional Execution to attach to the underlying query. Used to resolve rill-time expressions.
+  // Optional Execution to attach to the underlying query. Used to resolve statsparrot-time expressions.
   google.protobuf.Timestamp execution_time = 9;
 }
 
@@ -422,7 +422,7 @@ message ProjectStorageEntry {
   string driver = 2;
   // True if the connector is the project's default OLAP.
   bool is_default_olap = 3;
-  // True if the connector is managed by Rill (i.e. has `managed: true` in the connector definition).
+  // True if the connector is managed by Parrot (i.e. has `managed: true` in the connector definition).
   bool managed = 4;
   // Storage usage in bytes.
   // If it is -1, it means the value is unknown.
@@ -667,7 +667,7 @@ message TimeRange {
   TimeGrain round_to_grain = 5;
   // Optional. IANA format, ie Europe/Copenhagen. Defaults to UTC
   string time_zone = 6;
-  // Optional. Rill format time range. Should only be used for alerts and reports.
+  // Optional. Parrot format time range. Should only be used for alerts and reports.
   // For dashboard call ResolveTimeRanges.
   string expression = 7;
   string time_dimension = 8; // Optional. If not specified, falls back to the primary time dimension in the metrics view spec
@@ -931,7 +931,7 @@ message MetricsViewSearchResponse {
 message MetricsViewTimeRangesRequest {
   string instance_id = 1;
   string metrics_view_name = 2 [(validate.rules).string.min_len = 1];
-  // Optional time range expressions to resolve (uses the rilltime expression syntax).
+  // Optional time range expressions to resolve (uses the statspartime expression syntax).
   repeated string expressions = 3;
   // Optional query priority.
   int32 priority = 4;
@@ -948,7 +948,7 @@ message MetricsViewTimeRangesRequest {
 message MetricsViewTimeRangesResponse {
   // The full time range summary for the requested time dimension.
   TimeRangeSummary full_time_range = 1;
-  // The resolved time ranges for the requested rilltime expressions.
+  // The resolved time ranges for the requested statspartime expressions.
   repeated ResolvedTimeRange resolved_time_ranges = 3;
   // The same values as resolved_time_ranges for backwards compatibility.
   // Deprecated: use resolved_time_ranges instead.
@@ -1036,8 +1036,8 @@ message ResolveCanvasRequest {
   // Optional args for resolving templating in the component properties
   google.protobuf.Struct args = 3;
   // If true, fall back to the unvalidated spec when no valid spec is available.
-  // Only for use by the visual editor in Rill Developer. Must never be sent by
-  // Rill Cloud, read-only previews, shared token access, or embedded viewers.
+  // Only for use by the visual editor in Parrot Developer. Must never be sent by
+  // Parrot Cloud, read-only previews, shared token access, or embedded viewers.
   bool unsafe = 4;
 }
 

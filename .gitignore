@@ -17,7 +17,7 @@ terraform-sa-key.json
 gcp-sa-key.json
 vps-key*
 
-# Local Rill runtime dev scratch
-.rill-demo/
-rill-linux-arm64
-rill-runtime.Dockerfile
+# Local statsparrot runtime dev scratch
+.statsparrot-demo/
+statsparrot-linux-arm64
+statsparrot-runtime.Dockerfile

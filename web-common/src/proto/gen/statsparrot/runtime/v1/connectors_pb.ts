@@ -544,7 +544,7 @@ export class OLAPGetTableResponse extends Message<OLAPGetTableResponse> {
   schema?: StructType;
 
   /**
-   * unsupported_columns are columns having datatypes which are not supported by Rill
+   * unsupported_columns are columns having datatypes which are not supported by Parrot
    *
    * @generated from field: map<string, string> unsupported_columns = 3;
    */

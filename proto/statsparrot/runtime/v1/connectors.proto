@@ -125,7 +125,7 @@ message OLAPGetTableRequest {
 
 message OLAPGetTableResponse {
   StructType schema = 1;
-  // unsupported_columns are columns having datatypes which are not supported by Rill
+  // unsupported_columns are columns having datatypes which are not supported by Parrot
   map<string, string> unsupported_columns = 3;
   bool view = 2;
   // physical_size_bytes is the physical size of the table. Set to -1 if the size cannot be determined.

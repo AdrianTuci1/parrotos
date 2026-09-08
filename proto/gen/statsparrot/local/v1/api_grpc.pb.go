@@ -46,9 +46,9 @@ const (
 type LocalServiceClient interface {
 	// Ping returns the current time.
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
-	// GetMetadata returns information about the local Rill instance.
+	// GetMetadata returns information about the local Parrot instance.
 	GetMetadata(ctx context.Context, in *GetMetadataRequest, opts ...grpc.CallOption) (*GetMetadataResponse, error)
-	// GetVersion returns details about the current and latest available Rill versions.
+	// GetVersion returns details about the current and latest available Parrot versions.
 	GetVersion(ctx context.Context, in *GetVersionRequest, opts ...grpc.CallOption) (*GetVersionResponse, error)
 	// GitStatus returns the curren status of the local git repo. This is equivalent to doing a `git fetch` followed by running `git status`.
 	GitStatus(ctx context.Context, in *GitStatusRequest, opts ...grpc.CallOption) (*GitStatusResponse, error)
@@ -68,13 +68,13 @@ type LocalServiceClient interface {
 	GitPush(ctx context.Context, in *GitPushRequest, opts ...grpc.CallOption) (*GitPushResponse, error)
 	// PushToGithub create a Git repo from local project and pushed to users git account.
 	PushToGithub(ctx context.Context, in *PushToGithubRequest, opts ...grpc.CallOption) (*PushToGithubResponse, error)
-	// DeployProject deploys the local project to the Rill cloud.
+	// DeployProject deploys the local project to the Parrot cloud.
 	DeployProject(ctx context.Context, in *DeployProjectRequest, opts ...grpc.CallOption) (*DeployProjectResponse, error)
 	// RedeployProject updates a deployed project.
 	RedeployProject(ctx context.Context, in *RedeployProjectRequest, opts ...grpc.CallOption) (*RedeployProjectResponse, error)
 	// GetCurrentUser returns the locally logged in user
 	GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*GetCurrentUserResponse, error)
-	// GetCurrentProject returns the rill cloud project connected to the local project
+	// GetCurrentProject returns the statsparrot cloud project connected to the local project
 	// Deprecated: Use ListMatchingProjects instead.
 	GetCurrentProject(ctx context.Context, in *GetCurrentProjectRequest, opts ...grpc.CallOption) (*GetCurrentProjectResponse, error)
 	// ListOrganizationsAndBillingMetadata returns metadata about the current user's orgs.
@@ -293,9 +293,9 @@ func (c *localServiceClient) GetProject(ctx context.Context, in *GetProjectReque
 type LocalServiceServer interface {
 	// Ping returns the current time.
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
-	// GetMetadata returns information about the local Rill instance.
+	// GetMetadata returns information about the local Parrot instance.
 	GetMetadata(context.Context, *GetMetadataRequest) (*GetMetadataResponse, error)
-	// GetVersion returns details about the current and latest available Rill versions.
+	// GetVersion returns details about the current and latest available Parrot versions.
 	GetVersion(context.Context, *GetVersionRequest) (*GetVersionResponse, error)
 	// GitStatus returns the curren status of the local git repo. This is equivalent to doing a `git fetch` followed by running `git status`.
 	GitStatus(context.Context, *GitStatusRequest) (*GitStatusResponse, error)
@@ -315,13 +315,13 @@ type LocalServiceServer interface {
 	GitPush(context.Context, *GitPushRequest) (*GitPushResponse, error)
 	// PushToGithub create a Git repo from local project and pushed to users git account.
 	PushToGithub(context.Context, *PushToGithubRequest) (*PushToGithubResponse, error)
-	// DeployProject deploys the local project to the Rill cloud.
+	// DeployProject deploys the local project to the Parrot cloud.
 	DeployProject(context.Context, *DeployProjectRequest) (*DeployProjectResponse, error)
 	// RedeployProject updates a deployed project.
 	RedeployProject(context.Context, *RedeployProjectRequest) (*RedeployProjectResponse, error)
 	// GetCurrentUser returns the locally logged in user
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*GetCurrentUserResponse, error)
-	// GetCurrentProject returns the rill cloud project connected to the local project
+	// GetCurrentProject returns the statsparrot cloud project connected to the local project
 	// Deprecated: Use ListMatchingProjects instead.
 	GetCurrentProject(context.Context, *GetCurrentProjectRequest) (*GetCurrentProjectResponse, error)
 	// ListOrganizationsAndBillingMetadata returns metadata about the current user's orgs.

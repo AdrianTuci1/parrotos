@@ -1,25 +1,25 @@
 ---
-description: Overview of how to develop a Rill project
+description: Overview of how to develop a Parrot project
 ---
 
-# Instructions for developing a Rill project
+# Instructions for developing a Parrot project
 
-This document is intended for data engineering agents specialized in developing projects in the Rill business intelligence platform.
+This document is intended for data engineering agents specialized in developing projects in the Parrot business intelligence platform.
 
-## Introduction to Rill
+## Introduction to Parrot
 
-Rill is a business intelligence platform built around the following principles:
+Parrot is a business intelligence platform built around the following principles:
 - Code-first: configure projects using versioned and reproducible source code in the form of YAML and SQL files.
 - Full stack: go from raw data sources to user-friendly dashboards powered by clean data with a single tool.
-- Declarative: describe your business logic and Rill automatically runs the infrastructure, migrations and services necessary to make it real.
+- Declarative: describe your business logic and Parrot automatically runs the infrastructure, migrations and services necessary to make it real.
 - OLAP databases: you can easily provision a fast analytical database and load data into it to build dashboards that stay interactive at scale.
 
 ## Project structure
 
-A Rill project consists of resources that are defined using YAML and SQL files in the project's file directory.
-Rill supports different resource types, such as connectors, models, metrics views, explore dashboards, and more.
+A Parrot project consists of resources that are defined using YAML and SQL files in the project's file directory.
+Parrot supports different resource types, such as connectors, models, metrics views, explore dashboards, and more.
 
-Here is an example listing of files for a small Rill project:
+Here is an example listing of files for a small Parrot project:
 ```
 .env
 connectors/duckdb.yaml
@@ -28,11 +28,11 @@ models/events_raw.yaml
 models/events.sql
 metrics/events.yaml
 dashboards/events.yaml
-rill.yaml
+statsparrot.yaml
 ```
 
 Let's start with the project-wide files at the root of the directory:
-- `rill.yaml` is a required file that contains project-wide configuration. It can be compared to `package.json` in Node.js or `dbt_project.yml` in dbt.
+- `statsparrot.yaml` is a required file that contains project-wide configuration. It can be compared to `package.json` in Node.js or `dbt_project.yml` in dbt.
 - `.env` is an optional file containing environment variables, usually secrets such as database credentials.
 
 The other YAML and SQL files define individual resources in the project. They follow a few rules:
@@ -48,7 +48,7 @@ The other YAML and SQL files define individual resources in the project. They fo
 
 ## Project execution
 
-Rill automatically watches project files and processes changes. There are two key phases:
+Parrot automatically watches project files and processes changes. There are two key phases:
 - **Parsing**: Files are converted into resources and organized into a DAG. Malformed files produce *parse errors*.
 - **Reconciliation**: Resources are executed to achieve their desired state. Failures produce *reconcile errors*.
 
@@ -56,25 +56,25 @@ Some resources are cheap to reconcile (validation, non-materialized models), oth
 
 Resources can also have scheduled reconciliation via cron expressions (e.g. daily model refresh).
 
-## Rill's environments
+## Parrot's environments
 
-Rill has a local CLI (`rill`) for development and a cloud service for production. After developing or changing a project locally, developers deploy to Rill Cloud either by pushing to GitHub (continuous deploys) or manually deploying with the CLI.
+Parrot has a local CLI (`statsparrot`) for development and a cloud service for production. After developing or changing a project locally, developers deploy to Parrot Cloud either by pushing to GitHub (continuous deploys) or manually deploying with the CLI.
 
 ## OLAP databases
 
-Rill places high emphasis on "operational intelligence", meaning low-latency, high-performance, drill-down dashboards with support for alerts and scheduled reports.
-Rill supports these features using OLAP databases and has drivers that are heavily optimized to leverage database-specific features to get high performance.
+Parrot places high emphasis on "operational intelligence", meaning low-latency, high-performance, drill-down dashboards with support for alerts and scheduled reports.
+Parrot supports these features using OLAP databases and has drivers that are heavily optimized to leverage database-specific features to get high performance.
 
-OLAP databases are configured as any other connector in Rill.
-People can either connect an external OLAP database with existing tables, or can ask Rill to provision an empty OLAP database for them, which they can load data into using Rill's `model` resource type.
+OLAP databases are configured as any other connector in Parrot.
+People can either connect an external OLAP database with existing tables, or can ask Parrot to provision an empty OLAP database for them, which they can load data into using Parrot's `model` resource type.
 
 OLAP connectors are currently the only connectors that can directly power the metrics views resources that in turn power dashboards. So data must be in an OLAP database to power a dashboard.
 
-Since OLAP databases have a special role in Rill, every project must have a _default_ OLAP connector that you configure using the `olap_connector:` property in `rill.yaml`. This default OLAP connector is automatically used for a variety of things in Rill unless explicitly overridden (see details under the resource type descriptions). If no OLAP connector is configured, Rill by default initializes a managed `duckdb` OLAP database and uses it as the default OLAP connector.
+Since OLAP databases have a special role in Parrot, every project must have a _default_ OLAP connector that you configure using the `olap_connector:` property in `statsparrot.yaml`. This default OLAP connector is automatically used for a variety of things in Parrot unless explicitly overridden (see details under the resource type descriptions). If no OLAP connector is configured, Parrot by default initializes a managed `duckdb` OLAP database and uses it as the default OLAP connector.
 
 ## Resource types
 
-The sections below contain descriptions of the different resource types that Rill supports and when to use them.
+The sections below contain descriptions of the different resource types that Parrot supports and when to use them.
 The descriptions are high-level; you can find detailed descriptions and examples in the separate resource-specific instruction files.
 
 ### Connectors
@@ -94,9 +94,9 @@ There are a variety of built-in connector _drivers_, which each implements one o
 Here are some useful things to know when developing connectors:
 - Actual secrets like database passwords should go in `.env` and be referenced from the connector's YAML file
 - Connectors are usually called the same as their driver, unless there are multiple connectors that use the same driver.
-- OLAP connectors with the property `managed: true` will automatically be provisioned by Rill, so you don't need to handle the infrastructure or credentials directly. This is only supported for the `duckdb` and `clickhouse` drivers. The user will be subject to usage-based billing for the CPU, memory and disk usage of the provisioned database.
-- User-configured OLAP connectors with externally managed tables should have `mode: read` to protect from unintended writes from Rill models.
-- The primary OLAP connector used in a project should be configured in `rill.yaml` using the `olap_connector:` property.
+- OLAP connectors with the property `managed: true` will automatically be provisioned by Parrot, so you don't need to handle the infrastructure or credentials directly. This is only supported for the `duckdb` and `clickhouse` drivers. The user will be subject to usage-based billing for the CPU, memory and disk usage of the provisioned database.
+- User-configured OLAP connectors with externally managed tables should have `mode: read` to protect from unintended writes from Parrot models.
+- The primary OLAP connector used in a project should be configured in `statsparrot.yaml` using the `olap_connector:` property.
 
 ### Models
 
@@ -104,8 +104,8 @@ Models are resources that specify ETL or transformation logic that outputs a tab
 They are usually expensive resources that are found near the root of the DAG, referencing only connectors and other models.
 
 Models usually (and by default) output data as a table with the same name as the model in the project's default OLAP connector.
-They usually center around a `SELECT` SQL statement that Rill will run as a `CREATE TABLE <name> AS <SELECT statement>`.
-This means models in Rill are similar to models in dbt, but they support some additional advanced features, namely:
+They usually center around a `SELECT` SQL statement that Parrot will run as a `CREATE TABLE <name> AS <SELECT statement>`.
+This means models in Parrot are similar to models in dbt, but they support some additional advanced features, namely:
 - Different input and output connectors (making it easy to e.g. run a query in BigQuery and output it to the default OLAP connector)
 - Stateful incremental ingestion with support for explicit partitions (e.g. for loading Hive partitioned files from S3)
 - Scheduled refresh using a cron expression in the model itself
@@ -129,16 +129,16 @@ They are lightweight resources found downstream of connectors and models in the 
 They power many user-facing features, such as dashboards, alerts, and scheduled reports.
 
 Metrics views consist of:
-- **Model:** a table in an OLAP database; can either be a pre-existing table in an external OLAP database or a table produced by a model in the Rill project
+- **Model:** a table in an OLAP database; can either be a pre-existing table in an external OLAP database or a table produced by a model in the Parrot project
 - **Dimensions:** SQL expressions that can be grouped by (e.g. time, string or geospatial types)
 - **Measures:** SQL expressions that define aggregations (usually numeric types)
 - **Security policies:** access rules and row filters that reference attributes of the querying user
 
 ### Explores
 
-Explore resources define an "explore dashboard", an opinionated dashboard type that comes baked into Rill.
+Explore resources define an "explore dashboard", an opinionated dashboard type that comes baked into Parrot.
 These dashboards are specifically designed as an explorative, drill-down, slice-and-dice interface for a single metrics view.
-They are Rill's default dashboard type, and usually configured for every metrics view in a project.
+They are Parrot's default dashboard type, and usually configured for every metrics view in a project.
 They are lightweight resources that are always found downstream of a metrics view in the DAG.
 
 Explore resources can either be configured as stand-alone files or as part of a metrics view definition (see metrics view instructions for details).
@@ -155,19 +155,19 @@ Each canvas component fetches data individually, almost always from a metrics vi
 
 ### Themes
 
-Themes are resources that define a custom color palette for a Rill project.
-They are referenced from `rill.yaml` or directly from an explore or canvas dashboards.
+Themes are resources that define a custom color palette for a Parrot project.
+They are referenced from `statsparrot.yaml` or directly from an explore or canvas dashboards.
 
 ### Custom APIs
 
-Custom APIs are resources that define a query that serves data from the Rill project on a custom endpoint.
-They are advanced resources that enable easy programmatic integration with a Rill project.
+Custom APIs are resources that define a query that serves data from the Parrot project on a custom endpoint.
+They are advanced resources that enable easy programmatic integration with a Parrot project.
 They are lightweight resources that are usually found downstream of metrics views in the DAG (but sometimes directly downstream of a connector or model).
 
 Custom APIs are mounted as `GET` and `POST` REST APIs on `<project URL>/api/<resource name>`.
 The queries can use templating to inject request parameters or user attributes.
 
-Rill supports a number of different "data resolver" types, which execute queries and return data.
+Parrot supports a number of different "data resolver" types, which execute queries and return data.
 The most common ones are:
 - `metrics_sql`: queries a metrics view using a generic SQL syntax (recommended)
 - `metrics`: queries a metrics view using a structured query object
@@ -175,11 +175,11 @@ The most common ones are:
 
 ### Alerts
 
-Alerts are resources that enable sending alerts when certain criteria matches data in the Rill project.
+Alerts are resources that enable sending alerts when certain criteria matches data in the Parrot project.
 They consists of a refresh schedule, a query to execute, and notification settings.
 Since they repeatedly run a query, they are slightly expensive resources.
 They are usually found downstream of a metrics view in the DAG.
-Most projects don't define alerts directly as files; instead, users can define alerts using a UI in Rill Cloud.
+Most projects don't define alerts directly as files; instead, users can define alerts using a UI in Parrot Cloud.
 
 ### Reports
 
@@ -187,11 +187,11 @@ Reports are resources that enable sending scheduled reports of data in the proje
 They consists of a delivery schedule, a query to execute, and delivery settings.
 Since they repeatedly run a query, they are slightly expensive resources.
 They are usually found downstream of a metrics view in the DAG.
-Most projects don't define reports directly as files; instead, users can define reports using a UI in Rill Cloud.
+Most projects don't define reports directly as files; instead, users can define reports using a UI in Parrot Cloud.
 
-### `rill.yaml`
+### `statsparrot.yaml`
 
-`rill.yaml` is a required file for project-wide config found at the root directory of a Rill project.
+`statsparrot.yaml` is a required file for project-wide config found at the root directory of a Parrot project.
 It is mainly used for:
 - Setting shared properties for all resources of a given type (e.g. giving all dashboards the same theme)
 - Setting default values for non-sensitive environment variables
@@ -200,13 +200,13 @@ It is mainly used for:
 
 ### `.env`
 
-`.env` is an optional file containing environment variables, which Rill loads when running the project.
+`.env` is an optional file containing environment variables, which Parrot loads when running the project.
 Other resources can reference these environment variables using a templating syntax.
-By convention, environment variables in Rill use snake-case, lowercase names (this differs from shell environment variables).
+By convention, environment variables in Parrot use snake-case, lowercase names (this differs from shell environment variables).
 
 ## Development process
 
-This section describes the recommended workflow for developing resources in a Rill project.
+This section describes the recommended workflow for developing resources in a Parrot project.
 
 ### Understanding the task
 
@@ -256,15 +256,15 @@ The following tools are typically available for project development:
 
 ### What to do when tools are not available
 
-You may be running in an external editor that does not have Rill's development MCP server on `localhost:9009` connected. If that is the case, you will need to approach your work differently because you can't run tool calls like `list_tables`, `query_sql` or `project_status`. Instead:
-1. Use the `rill validate` CLI command to validate the project and get the status of different resources.
-2. Be more bold in making changes, and rely on `rill validate` or user feedback to inform you of issues.
+You may be running in an external editor that does not have Parrot's development MCP server on `localhost:9009` connected. If that is the case, you will need to approach your work differently because you can't run tool calls like `list_tables`, `query_sql` or `project_status`. Instead:
+1. Use the `statsparrot validate` CLI command to validate the project and get the status of different resources.
+2. Be more bold in making changes, and rely on `statsparrot validate` or user feedback to inform you of issues.
 
 ### Loading documentation
 
 Before creating or editing a resource, you MUST try to load a skill for its resource type. The skill is important because it documents the available properties and best practices. Do NOT guess at properties or rely on memory.
 
-For example, if you are going to modify a metrics view and have access to the `rill-metrics-view` skill, you must load it first.
+For example, if you are going to modify a metrics view and have access to the `statsparrot-metrics-view` skill, you must load it first.
 
 If you don't have access to a matching skill, try searching the reference documentation on https://docs.statsparrot.com.
 
@@ -273,10 +273,10 @@ If you don't have access to a matching skill, try searching the reference docume
 ### Common pitfalls
 
 Avoid these mistakes when developing a project:
-- **Inspecting Rill's internal state with external tools**: Never attempt to inspect Rill's internal state in the project's `tmp` directory (or elsewhere) using external tools. In particular, do not point the `duckdb` CLI (or any other external database client) at the files Rill manages there; Rill uses a custom setup that makes this approach fail. Only ever inspect Rill's internal state through the `rill` CLI or the APIs/MCP tools that Rill exposes (e.g. `query_sql`, `show_table`, `project_status`).
+- **Inspecting Parrot's internal state with external tools**: Never attempt to inspect Parrot's internal state in the project's `tmp` directory (or elsewhere) using external tools. In particular, do not point the `duckdb` CLI (or any other external database client) at the files Parrot manages there; Parrot uses a custom setup that makes this approach fail. Only ever inspect Parrot's internal state through the `statsparrot` CLI or the APIs/MCP tools that Parrot exposes (e.g. `query_sql`, `show_table`, `project_status`).
 - **Duplicating ETL logic**: Ingest data once, then derive from it within the project. Do not create multiple models that pull the same data from an external source.
 - **Models as SQL files:** Always create new models as `.yaml` files, not `.sql` files (which are harder to extend later).
-- **Not creating connector files:** When Rill has native support for a connector (like S3 or BigQuery), always create a dedicated connector resource file for it.
+- **Not creating connector files:** When Parrot has native support for a connector (like S3 or BigQuery), always create a dedicated connector resource file for it.
 - **Forgetting to materialize**: Always materialize models that reference external data or perform expensive operations. This also includes models that load external data using a native SQL function, like `read_parquet(...)` or `s3(...)`. Non-materialized models become views, which re-execute on every query.
 - **Referencing non-existant environment variables:** Only reference environment variables that are present in `.env` (returned in `env` from `project_status`). If you need the user to add another environment variable, navigate to the `.env` file and stop with a message asking the user to manually add the required environment variable(s).
 - **Processing too much data in development**: Use dev partitions to limit data to a small subset (e.g., one day) during development. This speeds up iteration and avoids unnecessary costs.
@@ -286,7 +286,7 @@ Avoid these mistakes when developing a project:
 - **Adding undocumented properties:** Never add properties to a YAML file that are not documented for that resource type. For example, do not add a `description` property to a resource type that does not support it. Only use properties that are explicitly described in the documentation or resource schema.
 - **Removing supported properties:** Before removing or "converting" a property because you believe it is unsupported, verify against the resource schema. When in doubt, assume an existing property is intentional and leave it as is unless it's the source of error.
 - **Modifying user-provided values:** Never alter literal values the user has written, such as string constants, URLs names, or SQL expressions. Such values are often intentional and changing them silently can break behavior. If you genuinely believe a value is wrong, mention it in your final response instead of editing it.
-- **Inferring properties from names:** Do not add or change a property based on a naming heuristic. For example, do not set or change a dimension's `type: time` just because its column is named `time`; Rill infers dimension and column types from the underlying data. Only set such a property when the documentation calls for it or the user explicitly asks.
+- **Inferring properties from names:** Do not add or change a property based on a naming heuristic. For example, do not set or change a dimension's `type: time` just because its column is named `time`; Parrot infers dimension and column types from the underlying data. Only set such a property when the documentation calls for it or the user explicitly asks.
 - **Over-fixing when resolving errors:** When your task is to fix a specific error, make the minimal change needed to resolve exactly that error. Do not reformat, rewrite, or "improve" other parts of the file that are not causing the error.
 {% if not .external %}
 - **Doing too much introspection/profiling:** Reading files, introspecting connectors, profiling models/tables can be time consuming and easily load too much context. Stay disciplined and don't do too much open-ended exploration or unnecessarily look into other levels of the DAG, especially if your task is a small/surgical edit.

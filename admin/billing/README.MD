@@ -55,36 +55,36 @@ Cloud .env has the test-mode values for first three and devtool starts stripe cl
 If required, one can use ngrok cli to start a forwarder like this `ngrok http --domain=<ngrok-provided-ip> 8080`. Visit https://app.withorb.com/webhooks to add an endpoint with URL `https://<ngrok-provided-ip>/billing/webhook` and configure the signing secret as `RILL_ADMIN_ORB_WEBHOOK_SECRET`. 
 
 ## Usage
-On new org creation there is no subscription created but few billing issues will be raised which can be viewed using `rill billing list-issues`.
+On new org creation there is no subscription created but few billing issues will be raised which can be viewed using `statsparrot billing list-issues`.
 
 ### Trial plan
 On first project deployment, org will automatically moved to trial plan having 30 days and after grace period of 9 more days, all projects will be hibernated until upgraded to a paid plan. Trial plan will have limited quotas for projects, slots etc.
 
 #### Num Trial quota
-By default, each user across lifetime is restricted to 2 trials. This is **not** checked for superusers and if needed can be increased for any user using `rill sudo quota set --user <email> --trial-orgs <num>`
+By default, each user across lifetime is restricted to 2 trials. This is **not** checked for superusers and if needed can be increased for any user using `statsparrot sudo quota set --user <email> --trial-orgs <num>`
 
 ### Avoiding trial and restrictive quotas
-Immediately after org creation or at any time in the future, superusers can use `rill sudo org set-internal-plan <org-name>` to set the org to internal plan which will have unlimited quotas and no trial.
+Immediately after org creation or at any time in the future, superusers can use `statsparrot sudo org set-internal-plan <org-name>` to set the org to internal plan which will have unlimited quotas and no trial.
 
-If creating org through cli you can just use `rill org create <org-name> && rill sudo org set-internal-plan <org-name>`.
+If creating org through cli you can just use `statsparrot org create <org-name> && statsparrot sudo org set-internal-plan <org-name>`.
 
 ### Continuing with Trial plan and upgrade
 To continue with trial plan, user can upgrade to Teams plan after entering payment details and address in billing portal. In test-mode, use any of the various test cards listed [here](https://docs.stripe.com/testing#cards)
 
-After fixing the issues, user can upgrade to Teams plan using cli as well `rill billing subscription edit --plan Teams`.
+After fixing the issues, user can upgrade to Teams plan using cli as well `statsparrot billing subscription edit --plan Teams`.
 
 ### Subscription cancel and renewal
-User can cancel the subscription using `rill billing subscription cancel` and renew it using `rill billing subscription renew --plan <plan-name>`.
+User can cancel the subscription using `statsparrot billing subscription cancel` and renew it using `statsparrot billing subscription renew --plan <plan-name>`.
 
 ### Org deletion
-On org deletion by `rill org delete` all the billing related data will be cleared and org will be removed from Orb and Stripe.
+On org deletion by `statsparrot org delete` all the billing related data will be cleared and org will be removed from Orb and Stripe.
 
 ### Subscription related commands
 ```bash
-rill billing subscription list
-rill billing subscription edit --plan <plan-name>
-rill billing subscription cancel
-rill billing subscription renew --plan <plan-name>
+statsparrot billing subscription list
+statsparrot billing subscription edit --plan <plan-name>
+statsparrot billing subscription cancel
+statsparrot billing subscription renew --plan <plan-name>
 ```
 `renew` can only be used if subscription is cancelled. `edit` can only be used to change plan and not renewal.
 
@@ -94,21 +94,21 @@ Generally following are not allowed
 - moving to a paid plan without entering payment details and address or when there is an overdue payment
 - moving to an Orb plan which does not have `public: true` set in metadata. Only Starter and Teams are public plans
 
-but can be overridden using `rill billing subscription edit --plan <plan-name> --force` when editing plan or `rill billing subscription renew --plan <plan-name> --force` when renewing.
+but can be overridden using `statsparrot billing subscription edit --plan <plan-name> --force` when editing plan or `statsparrot billing subscription renew --plan <plan-name> --force` when renewing.
 
 ### Granting trial credits
-If needed, additional credits can be granted to a credit-trial org using `rill sudo billing grant-trial-credits --org <org> --amount-usd <amount>`.
+If needed, additional credits can be granted to a credit-trial org using `statsparrot sudo billing grant-trial-credits --org <org> --amount-usd <amount>`.
 
 ### Deleting billing issues
-If needed, billing issues can be deleted using `rill sudo billing delete-issue --org <org>`.
+If needed, billing issues can be deleted using `statsparrot sudo billing delete-issue --org <org>`.
 
 ## Local dev and testing
-`rill devtool start cloud` starts the admin service with Orb and Stripe integration (except for Orb webhooks, see above for manual setup).
+`statsparrot devtool start cloud` starts the admin service with Orb and Stripe integration (except for Orb webhooks, see above for manual setup).
 All billing related background jobs like checking for trial end, hibernation on subscription cancellation, etc. rely on end or grace end times set in respective billing issues.
 
-These times can be artificially advanced using `rill devtool subscription advance-time` to test out various billing scenarios.
+These times can be artificially advanced using `statsparrot devtool subscription advance-time` to test out various billing scenarios.
 
-The command will use the default org and yesterday as due date. Pass `--org` or use `rill org switch` to change the org. Pass `--time` to advance due dates to a specific time.
+The command will use the default org and yesterday as due date. Pass `--org` or use `statsparrot org switch` to change the org. Pass `--time` to advance due dates to a specific time.
 1. On a fresh trial plan running the above will advance time to trial's end date. To test "Ending soon" pass a time that is in the future but within 7 days.
 2. Once the trial has ended, running the command again will advance time to end the grace period.
 3. When on a cancelled team plan, running the command will advance time to end the plan end date (this is the billing cycle end date). Note that there will not be a grace period.

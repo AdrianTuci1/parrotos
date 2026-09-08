@@ -16,14 +16,14 @@ time_ranges:
   - P14D
   - P4W
   - P12M
-  - rill-TD
-  - rill-WTD
-  - rill-MTD
-  - rill-QTD
-  - rill-YTD
-  - rill-PDC
-  - rill-PWC
-  - rill-PMC
-  - rill-PQC
-  - rill-PYC
+  - statsparrot-TD
+  - statsparrot-WTD
+  - statsparrot-MTD
+  - statsparrot-QTD
+  - statsparrot-YTD
+  - statsparrot-PDC
+  - statsparrot-PWC
+  - statsparrot-PMC
+  - statsparrot-PQC
+  - statsparrot-PYC
   - inf

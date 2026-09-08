@@ -32,10 +32,10 @@ test.describe("Example project initialization", () => {
         page.getByText("Connect your data", { exact: true }),
       ).toBeVisible();
 
-      await page.getByRole("link", { name: "rill.yaml" }).click();
+      await page.getByRole("link", { name: "statsparrot.yaml" }).click();
 
       await expect(
-        page.getByRole("heading", { name: "rill.yaml" }),
+        page.getByRole("heading", { name: "statsparrot.yaml" }),
       ).toBeVisible();
     });
   });

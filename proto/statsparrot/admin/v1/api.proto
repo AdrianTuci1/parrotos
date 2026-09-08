@@ -1,7 +1,7 @@
 syntax = "proto3";
 package statsparrot.admin.v1;
 
-option go_package = "github.com/staticlabs/statsparrot/proto/gen/rill/admin/v1;adminv1";
+option go_package = "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1;adminv1";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
@@ -13,12 +13,12 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
-    title: "Rill Admin API";
-    description: "Rill Admin API enables programmatic management of Rill Cloud resources, including organizations, projects, and user access. It provides endpoints for creating, updating, and deleting these resources, as well as managing authentication and permissions."
+    title: "Parrot Admin API";
+    description: "Parrot Admin API enables programmatic management of Parrot Cloud resources, including organizations, projects, and user access. It provides endpoints for creating, updating, and deleting these resources, as well as managing authentication and permissions."
   };
   external_docs: {
-    description: "Rill API Documentation";
-    url: "https://docs.statsparrot.com";
+    description: "Parrot API Documentation";
+    url: "https://docs.staticlabs.com";
   };
 };
 
@@ -803,7 +803,7 @@ service AdminService {
     option (google.api.http) = {get: "/v1/orgs/{org}/projects/{project}/github/pr/{branch}"};
   }
 
-  // Connects a rill managed project to github.
+  // Connects a statsparrot managed project to github.
   // Replaces the contents of the remote repo with the contents of the project.
   rpc ConnectProjectToGithub(ConnectProjectToGithubRequest) returns (ConnectProjectToGithubResponse) {
     option (google.api.http) = {
@@ -812,7 +812,7 @@ service AdminService {
     };
   }
 
-  // CreateManagedGitRepo creates a new rill managed git repo for the organization.
+  // CreateManagedGitRepo creates a new statsparrot managed git repo for the organization.
   rpc CreateManagedGitRepo(CreateManagedGitRepoRequest) returns (CreateManagedGitRepoResponse) {
     option (google.api.http) = {
       put: "/v1/orgs/{org}/create-managed-git-repo",
@@ -1503,7 +1503,7 @@ message GetDeploymentRequest {
   uint32 access_token_ttl_seconds = 2;
   // User attributes to use for security policy evaluation.
   oneof for {
-    // If set, will use the attributes of the Rill user with this ID.
+    // If set, will use the attributes of the Parrot user with this ID.
     string user_id = 3 [(validate.rules).string.min_len = 1];
     // If set, will generate attributes corresponding to a user with this email.
     string user_email = 4 [(validate.rules).string.email = true];
@@ -1511,7 +1511,7 @@ message GetDeploymentRequest {
     google.protobuf.Struct attributes = 5;
   }
   // Optional ID for an external end user of the deployment. If set, the access token enables per-user state, such as AI chat history.
-  // Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+  // Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
   string external_user_id = 9;
   // If true, superusers can access the deployment even without org/project membership.
   bool superuser_force_access = 10;
@@ -1712,7 +1712,7 @@ message GetDeploymentCredentialsRequest {
   uint32 ttl_seconds = 7;
   // User attributes to use for security policy evaluation.
   oneof for {
-    // If set, will use the attributes of the Rill user with this ID.
+    // If set, will use the attributes of the Parrot user with this ID.
     string user_id = 4;
     // If set, will generate attributes corresponding to a user with this email.
     string user_email = 6 [(validate.rules).string.email = true];
@@ -1720,7 +1720,7 @@ message GetDeploymentCredentialsRequest {
     google.protobuf.Struct attributes = 5;
   }
   // Optional ID for an external end user of the deployment. If set, the access token enables per-user state, such as AI chat history.
-  // Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+  // Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
   string external_user_id = 9;
   // If true, superusers can access the deployment even without org/project membership.
   bool superuser_force_access = 10;
@@ -1745,7 +1745,7 @@ message GetIFrameRequest {
   uint32 ttl_seconds = 6;
   // User attributes to use for security policy evaluation.
   oneof for {
-    // If set, will use the attributes of the Rill user with this ID.
+    // If set, will use the attributes of the Parrot user with this ID.
     string user_id = 9;
     // If set, will generate attributes corresponding to a user with this email.
     string user_email = 10 [(validate.rules).string.email = true];
@@ -1753,7 +1753,7 @@ message GetIFrameRequest {
     google.protobuf.Struct attributes = 11;
   }
   // Optional ID for the external end user of the iframe. If set, the access token enables per-user state, such as AI chat history.
-  // Cannot be combined with `user_id`. If `user_email` matches a Rill Cloud user, their attributes are used, but this ID takes precedence for per-user state.
+  // Cannot be combined with `user_id`. If `user_email` matches a Parrot Cloud user, their attributes are used, but this ID takes precedence for per-user state.
   string external_user_id = 16;
   // Type of resource to embed. If not set, defaults to "statsparrot.runtime.v1.Explore".
   string type = 14;
@@ -2982,7 +2982,7 @@ message GetRepoMetaResponse {
   bool editable = 11;
   // Primary branch of the project.
   string primary_branch = 12;
-  // Whether the git repo is managed by Rill.
+  // Whether the git repo is managed by Parrot.
   bool managed_git_repo = 10; 
   // Signed URL for downloading a tarball of project files. If this is set, the git_* fields will be empty (and vice versa).
   string archive_download_url = 4;
@@ -3066,7 +3066,7 @@ message GetReportMetaResponse {
     string edit_url = 3;
     string unsubscribe_url = 4;
     string user_id = 5;
-    google.protobuf.Struct user_attrs = 6; // user attributes of intended recipient, will be empty for creator mode and for non Rill users
+    google.protobuf.Struct user_attrs = 6; // user attributes of intended recipient, will be empty for creator mode and for non Parrot users
   }
   map<string, DeliveryMeta> delivery_meta = 2;
   reserved 1;
@@ -3496,7 +3496,7 @@ message Project {
   string directory_name = 26;
   string provisioner = 7;
   string git_remote = 8;
-  // managed_git_id is set if the project is connected to a rill-managed git repo.
+  // managed_git_id is set if the project is connected to a statsparrot-managed git repo.
   string managed_git_id = 24;
   string subpath = 17;
   string primary_branch = 9;

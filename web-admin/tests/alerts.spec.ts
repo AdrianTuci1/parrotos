@@ -6,7 +6,7 @@ import {
   waitForEmail,
 } from "@statsparrot/web-common/tests/utils/email-utils.ts";
 
-// These tests are highly dependent on comparisons. So we need to fix that with rill time. Will be in a separate PR
+// These tests are highly dependent on comparisons. So we need to fix that with statsparrot time. Will be in a separate PR
 test.describe.serial("Alerts", () => {
   test.describe.serial("Alerts with filters", () => {
     test("Should create alert with filters", async ({ adminPage }) => {

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Rill-style project navigation sidebar
+   Parrot-style project navigation sidebar
    ========================================================================== */
 
 /* Make the project body a positioning context so the rail (and the floating
@@ -8,7 +8,7 @@
   position: relative;
 }
 
-.rill-sidebar {
+.statsparrot-sidebar {
   position: relative;
   display: flex;
   flex: none;
@@ -18,22 +18,22 @@
   overflow: hidden;
   background-color: var(--color-surface-base, #0b0d0e);
   border-right: 1px solid #25282c;
-  width: var(--rill-nav-width, 240px);
+  width: var(--statsparrot-nav-width, 240px);
   transition: width 0.3s ease-in-out;
   user-select: none;
   z-index: 0;
 }
 
-.rill-sidebar.resizing {
+.statsparrot-sidebar.resizing {
   transition: none;
 }
 
 /* Manual collapse to zero width (desktop). */
-.rill-sidebar.collapsed {
+.statsparrot-sidebar.collapsed {
   width: 0 !important;
 }
 
-.rill-sidebar-inner {
+.statsparrot-sidebar-inner {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -42,7 +42,7 @@
 }
 
 /* ── Header: project name + rail-collapse toggle ─────────────────────────── */
-.rill-sidebar-header {
+.statsparrot-sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,7 +54,7 @@
   flex: none;
 }
 
-.rill-sidebar-project-name {
+.statsparrot-sidebar-project-name {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -65,7 +65,7 @@
   letter-spacing: -0.01em;
 }
 
-.rill-sidebar-collapse-btn {
+.statsparrot-sidebar-collapse-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,18 +80,18 @@
   transition: background-color 0.15s, color 0.15s;
 }
 
-.rill-sidebar-collapse-btn:hover {
+.statsparrot-sidebar-collapse-btn:hover {
   background-color: var(--color-surface-active, #1a1d1e);
   color: var(--color-fg-primary, #e3e3e3);
 }
 
 /* ── Add Asset ───────────────────────────────────────────────────────────── */
-.rill-sidebar-add {
+.statsparrot-sidebar-add {
   flex: none;
   padding: 8px 12px 6px;
 }
 
-.rill-add-trigger {
+.statsparrot-add-trigger {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -108,21 +108,21 @@
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.rill-add-trigger:hover {
+.statsparrot-add-trigger:hover {
   background-color: var(--color-surface-active, #1a1d1e);
   border-color: #32363b;
   color: var(--color-fg-primary, #e3e3e3);
 }
 
-.rill-add-trigger .rill-add-caret {
+.statsparrot-add-trigger .statsparrot-add-caret {
   margin-left: auto;
 }
 
-.rill-add-menu {
+.statsparrot-add-menu {
   min-width: 220px;
 }
 
-.rill-add-item {
+.statsparrot-add-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -130,7 +130,7 @@
 }
 
 /* ── File tree ───────────────────────────────────────────────────────────── */
-.rill-sidebar-tree {
+.statsparrot-sidebar-tree {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
@@ -139,24 +139,24 @@
 }
 
 /* The ported FileExplorer's top-level tree list scrolls within the rail. */
-.rill-sidebar-tree > ul {
+.statsparrot-sidebar-tree > ul {
   flex: 1 1 auto;
   min-height: 0;
 }
 
 /* Keep the FileExplorer's pinned project header at a fixed height. */
-.rill-sidebar-tree > .project-header {
+.statsparrot-sidebar-tree > .project-header {
   flex: none;
 }
 
 /* ── Footer: section navigation ──────────────────────────────────────────── */
-.rill-sidebar-footer {
+.statsparrot-sidebar-footer {
   flex: none;
   border-top: 1px solid #25282c;
   padding: 8px 8px 10px;
 }
 
-.rill-sidebar-footer-label {
+.statsparrot-sidebar-footer-label {
   padding: 0 6px 4px;
   font-size: 10px;
   font-weight: 600;
@@ -165,13 +165,13 @@
   color: var(--color-fg-muted, #8e918f);
 }
 
-.rill-sidebar-footer-nav {
+.statsparrot-sidebar-footer-nav {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.rill-sidebar-nav-item {
+.statsparrot-sidebar-nav-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -188,24 +188,24 @@
   transition: background-color 0.15s, color 0.15s;
 }
 
-.rill-sidebar-nav-item svg {
+.statsparrot-sidebar-nav-item svg {
   flex: none;
   color: inherit;
 }
 
-.rill-sidebar-nav-item:hover {
+.statsparrot-sidebar-nav-item:hover {
   background-color: var(--color-surface-active, #1a1d1e);
   color: var(--color-fg-primary, #e3e3e3);
 }
 
-.rill-sidebar-nav-item.active {
+.statsparrot-sidebar-nav-item.active {
   background-color: #1c1c1e;
   color: #f3f4f6;
   font-weight: 500;
 }
 
 /* ── Resizable rail handle ───────────────────────────────────────────────── */
-.rill-sidebar-resizer {
+.statsparrot-sidebar-resizer {
   position: absolute;
   top: 0;
   right: 0;
@@ -215,12 +215,12 @@
   z-index: 10;
 }
 
-.rill-sidebar-resizer:hover {
+.statsparrot-sidebar-resizer:hover {
   background-color: rgba(168, 199, 250, 0.25);
 }
 
 /* Floating "reopen" button shown when the rail is collapsed to zero. */
-.rill-sidebar-reopen {
+.statsparrot-sidebar-reopen {
   position: absolute;
   top: 10px;
   left: 8px;
@@ -238,14 +238,14 @@
   transition: background-color 0.15s, color 0.15s;
 }
 
-.rill-sidebar-reopen:hover {
+.statsparrot-sidebar-reopen:hover {
   background-color: var(--color-surface-active, #1a1d1e);
   color: var(--color-fg-primary, #e3e3e3);
 }
 
 /* ── Mobile: hide the rail unless the topbar hamburger opens it ──────────── */
 @media (max-width: 768px) {
-  .rill-sidebar {
+  .statsparrot-sidebar {
     position: absolute;
     top: 0;
     left: 0;
@@ -255,16 +255,16 @@
     box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
   }
 
-  .rill-sidebar.mobile-open {
-    width: var(--rill-nav-width, 240px) !important;
+  .statsparrot-sidebar.mobile-open {
+    width: var(--statsparrot-nav-width, 240px) !important;
   }
 
   /* A manually-collapsed rail stays hidden even when the hamburger is open. */
-  .rill-sidebar.collapsed.mobile-open {
+  .statsparrot-sidebar.collapsed.mobile-open {
     width: 0 !important;
   }
 
-  .rill-sidebar-reopen {
+  .statsparrot-sidebar-reopen {
     display: none;
   }
 }

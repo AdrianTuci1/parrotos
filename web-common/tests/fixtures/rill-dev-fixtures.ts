@@ -47,11 +47,11 @@ export const rillDev = base.extend<MyFixtures>({
     const TEST_PROJECT_DIRECTORY =
       projectDir ?? makeTempDir(`projects-${TEST_PORT}`);
 
-    // Switch env to "dev" so that this points to the locally started rill cloud.
+    // Switch env to "dev" so that this points to the locally started statsparrot cloud.
     // For tests that involve a local cloud this will point to it.
     // Otherwise, when running in a dev's machine, it will avoid pointing to prod cloud and bombard prod.
     await spawnAndMatch(
-      "../rill",
+      "../statsparrot",
       "devtool switch-env dev".split(" "),
       /Set default env to "dev"/,
       {
@@ -82,7 +82,7 @@ export const rillDev = base.extend<MyFixtures>({
 
     const cmd = `start --no-open --port ${TEST_PORT} --port-grpc ${TEST_GRPC_PORT} ${TEST_PROJECT_DIRECTORY}`;
 
-    const childProcess = spawn("../rill", cmd.split(" "), {
+    const childProcess = spawn("../statsparrot", cmd.split(" "), {
       stdio: "inherit",
       shell: true,
       env: {

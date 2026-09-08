@@ -491,7 +491,7 @@ type GitStatusResponse struct {
 	GithubUrl string `protobuf:"bytes,2,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
 	// Subpath relative to the git repo root. This is where the project is started.
 	Subpath string `protobuf:"bytes,7,opt,name=subpath,proto3" json:"subpath,omitempty"`
-	// If the repo is managed by Rill.
+	// If the repo is managed by Parrot.
 	ManagedGit bool `protobuf:"varint,3,opt,name=managed_git,json=managedGit,proto3" json:"managed_git,omitempty"`
 	// local_changes returns true if there are any staged, unstaged, or untracked changes in the local git repo.
 	LocalChanges bool `protobuf:"varint,4,opt,name=local_changes,json=localChanges,proto3" json:"local_changes,omitempty"`

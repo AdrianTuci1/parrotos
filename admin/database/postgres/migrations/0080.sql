@@ -6,7 +6,7 @@ ALTER TABLE notification_tokens ADD COLUMN resource_kind TEXT DEFAULT '' NOT NUL
 ALTER TABLE notification_tokens ADD COLUMN resource_name TEXT DEFAULT '' NOT NULL;
 
 -- Migrate existing data: copy report_name to resource_name
-UPDATE notification_tokens SET resource_kind = 'rill.runtime.v1.Report', resource_name = report_name;
+UPDATE notification_tokens SET resource_kind = 'statsparrot.runtime.v1.Report', resource_name = report_name;
 
 -- Drop the old report_name column
 ALTER TABLE notification_tokens DROP COLUMN report_name;

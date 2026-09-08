@@ -700,7 +700,7 @@ type OLAPGetTableResponse struct {
 	unknownFields protoimpl.UnknownFields
 
 	Schema *StructType `protobuf:"bytes,1,opt,name=schema,proto3" json:"schema,omitempty"`
-	// unsupported_columns are columns having datatypes which are not supported by Rill
+	// unsupported_columns are columns having datatypes which are not supported by Parrot
 	UnsupportedColumns map[string]string `protobuf:"bytes,3,rep,name=unsupported_columns,json=unsupportedColumns,proto3" json:"unsupported_columns,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	View               bool              `protobuf:"varint,2,opt,name=view,proto3" json:"view,omitempty"`
 	// physical_size_bytes is the physical size of the table. Set to -1 if the size cannot be determined.

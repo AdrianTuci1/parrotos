@@ -1,4 +1,4 @@
-/* Rill-style mock Explore / dashboard body (no live runtime).
+/* Parrot-style mock Explore / dashboard body (no live runtime).
    Left time-series pane + resizer + right sub-view pane (Leaderboard / Dimension table). */
 
 .mock-explore-split {
@@ -53,7 +53,7 @@
   overflow: hidden;
 }
 
-/* Rill-style mock time-controls row (SuperPill stand-in) for the Explore filter bar. */
+/* Parrot-style mock time-controls row (SuperPill stand-in) for the Explore filter bar. */
 .mock-time-controls {
   display: flex;
   flex-wrap: wrap;

@@ -1,6 +1,6 @@
 # `proto/`
 
-This directory contains the protocol buffer definitions for all Rill components. Instead of placing `.proto` files in their respective sub-projects, we follow the convention of having a single `proto` folder to make cross-component imports and codegen easier.
+This directory contains the protocol buffer definitions for all Parrot components. Instead of placing `.proto` files in their respective sub-projects, we follow the convention of having a single `proto` folder to make cross-component imports and codegen easier.
 
 We use [Buf](https://buf.build) to lint and generate protocol buffers. The layout and style of our `.proto` files follow their [style guide](https://docs.buf.build/best-practices/style-guide).
 
@@ -38,6 +38,6 @@ We use the gRPC gateway OpenAPI plugin to generate OpenAPI specs for the `admin`
 
 To get clean OpenAPI specs, we use the `allow_merge=true` plugin option. Unfortunately, this means we need to separately generate the `admin` and `runtime` OpenAPI specs – hence the `buf.gen.openapi-SERVICE.yaml` files (using multiple `buf.gen.yaml` files is recommended by Buf when you need more granular builds). The `Makefile` invokes them using:
 ```
-cd proto && buf generate --template buf.gen.openapi-admin.yaml --path rill/admin
-cd proto && buf generate --template buf.gen.openapi-runtime.yaml --path rill/runtime
+cd proto && buf generate --template buf.gen.openapi-admin.yaml --path statsparrot/admin
+cd proto && buf generate --template buf.gen.openapi-runtime.yaml --path statsparrot/runtime
 ```

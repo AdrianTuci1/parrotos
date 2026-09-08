@@ -1,14 +1,14 @@
 syntax = "proto3";
 package statsparrot.admin.v1;
 
-option go_package = "github.com/staticlabs/statsparrot/proto/gen/rill/admin/v1;adminv1";
+option go_package = "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1;adminv1";
 
 import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 
 service TelemetryService {
   // RecordEvents sends a batch of telemetry events.
-  // The events must conform to the schema described in rill/runtime/pkg/activity/README.md.
+  // The events must conform to the schema described in statsparrot/runtime/pkg/activity/README.md.
   rpc RecordEvents(RecordEventsRequest) returns (RecordEventsResponse) {
     option (google.api.http) = {
       post: "/v1/telemetry/events",

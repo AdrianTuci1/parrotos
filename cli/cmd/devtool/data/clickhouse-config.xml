@@ -3,7 +3,7 @@
         <level>information</level>
         <console>true</console>
     </logger>
-    <display_name>rill devtool clickhouse</display_name>
+    <display_name>statsparrot devtool clickhouse</display_name>
     <tcp_port>9000</tcp_port>
     <http_port>8123</http_port>
     <timezone>UTC</timezone>

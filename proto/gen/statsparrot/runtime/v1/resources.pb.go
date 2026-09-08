@@ -1999,7 +1999,7 @@ type MetricsViewSpec struct {
 	SmallestTimeGrain TimeGrain `protobuf:"varint,8,opt,name=smallest_time_grain,json=smallestTimeGrain,proto3,enum=statsparrot.runtime.v1.TimeGrain" json:"smallest_time_grain,omitempty"`
 	// Expression to evaluate a watermark for the metrics view. If not set, the watermark defaults to max(time_dimension).
 	WatermarkExpression string `protobuf:"bytes,20,opt,name=watermark_expression,json=watermarkExpression,proto3" json:"watermark_expression,omitempty"`
-	// Optional rilltime expression describing the time range covered by the base table.
+	// Optional statspartime expression describing the time range covered by the base table.
 	// When set, the base table's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
 	DataTimeRange string `protobuf:"bytes,37,opt,name=data_time_range,json=dataTimeRange,proto3" json:"data_time_range,omitempty"`
 	// Dimensions in the metrics view
@@ -2018,7 +2018,7 @@ type MetricsViewSpec struct {
 	FirstDayOfWeek uint32 `protobuf:"varint,12,opt,name=first_day_of_week,json=firstDayOfWeek,proto3" json:"first_day_of_week,omitempty"`
 	// Month number to use as the base for time aggregations by year. Defaults to 1 (January).
 	FirstMonthOfYear uint32 `protobuf:"varint,13,opt,name=first_month_of_year,json=firstMonthOfYear,proto3" json:"first_month_of_year,omitempty"`
-	// Cache controls for the metrics view. By default, enabled for Rill managed models and disabled for streaming (externally managed) data sources.
+	// Cache controls for the metrics view. By default, enabled for Parrot managed models and disabled for streaming (externally managed) data sources.
 	CacheEnabled *bool `protobuf:"varint,25,opt,name=cache_enabled,json=cacheEnabled,proto3,oneof" json:"cache_enabled,omitempty"`
 	// Defaults to use watermark if cache is enabled.
 	CacheKeySql string `protobuf:"bytes,26,opt,name=cache_key_sql,json=cacheKeySql,proto3" json:"cache_key_sql,omitempty"`
@@ -2852,7 +2852,7 @@ type ExploreSpec struct {
 	// Security for the explore dashboard.
 	// These are not currently parsed from YAML, but will be derived from the parent metrics view.
 	SecurityRules []*SecurityRule `protobuf:"bytes,12,rep,name=security_rules,json=securityRules,proto3" json:"security_rules,omitempty"`
-	// Banner text that can be displayed in Rill Cloud.
+	// Banner text that can be displayed in Parrot Cloud.
 	Banner string `protobuf:"bytes,18,opt,name=banner,proto3" json:"banner,omitempty"`
 	// When set to true, dashboard will be locked to the first time zone in the time_zones key (or UTC)
 	LockTimeZone bool `protobuf:"varint,19,opt,name=lock_time_zone,json=lockTimeZone,proto3" json:"lock_time_zone,omitempty"`
@@ -5687,7 +5687,7 @@ type CanvasSpec struct {
 
 	// Display name for the canvas.
 	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	// Banner text that can be displayed in Rill Cloud.
+	// Banner text that can be displayed in Parrot Cloud.
 	Banner string `protobuf:"bytes,17,opt,name=banner,proto3" json:"banner,omitempty"`
 	// Max width in pixels of the canvas.
 	MaxWidth uint32 `protobuf:"varint,2,opt,name=max_width,json=maxWidth,proto3" json:"max_width,omitempty"`
@@ -6347,7 +6347,7 @@ func (x *DefaultMetricsSQLFilter) GetExpression() *Expression {
 	return nil
 }
 
-// API defines a custom operation for querying data stored in Rill.
+// API defines a custom operation for querying data stored in Parrot.
 type API struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -7711,7 +7711,7 @@ type MetricsViewSpec_Rollup struct {
 	DatabaseSchema string `protobuf:"bytes,2,opt,name=database_schema,json=databaseSchema,proto3" json:"database_schema,omitempty"`
 	Table          string `protobuf:"bytes,3,opt,name=table,proto3" json:"table,omitempty"`
 	Model          string `protobuf:"bytes,4,opt,name=model,proto3" json:"model,omitempty"`
-	// Optional rilltime expression describing the time range covered by the rollup.
+	// Optional statspartime expression describing the time range covered by the rollup.
 	// When set, the rollup's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
 	DataTimeRange string `protobuf:"bytes,11,opt,name=data_time_range,json=dataTimeRange,proto3" json:"data_time_range,omitempty"`
 	// Time grain of the rollup.

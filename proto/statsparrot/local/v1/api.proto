@@ -9,10 +9,10 @@ service LocalService {
   // Ping returns the current time.
   rpc Ping(PingRequest) returns (PingResponse) {}
 
-  // GetMetadata returns information about the local Rill instance.
+  // GetMetadata returns information about the local Parrot instance.
   rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {}
 
-  // GetVersion returns details about the current and latest available Rill versions.
+  // GetVersion returns details about the current and latest available Parrot versions.
   rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {}
 
   // GitStatus returns the curren status of the local git repo. This is equivalent to doing a `git fetch` followed by running `git status`.
@@ -40,7 +40,7 @@ service LocalService {
   // PushToGithub create a Git repo from local project and pushed to users git account.
   rpc PushToGithub(PushToGithubRequest) returns (PushToGithubResponse) {}
 
-  // DeployProject deploys the local project to the Rill cloud.
+  // DeployProject deploys the local project to the Parrot cloud.
   rpc DeployProject(DeployProjectRequest) returns (DeployProjectResponse) {}
 
   // RedeployProject updates a deployed project.
@@ -49,7 +49,7 @@ service LocalService {
   // GetCurrentUser returns the locally logged in user
   rpc GetCurrentUser(GetCurrentUserRequest) returns (GetCurrentUserResponse) {}
 
-  // GetCurrentProject returns the rill cloud project connected to the local project
+  // GetCurrentProject returns the statsparrot cloud project connected to the local project
   // Deprecated: Use ListMatchingProjects instead.
   rpc GetCurrentProject(GetCurrentProjectRequest) returns (GetCurrentProjectResponse) {}
 
@@ -111,7 +111,7 @@ message GitStatusResponse {
   string github_url = 2;
   // Subpath relative to the git repo root. This is where the project is started.
   string subpath = 7;
-  // If the repo is managed by Rill.
+  // If the repo is managed by Parrot.
   bool managed_git = 3;
   // local_changes returns true if there are any staged, unstaged, or untracked changes in the local git repo.
   bool local_changes = 4;

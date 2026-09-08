@@ -8,7 +8,7 @@ import type { Page } from "playwright";
 // Inline the kind string to avoid importing resource-selectors.ts,
 // which imports @tanstack/svelte-query — a package that contains .svelte
 // files that Node can't handle in the Playwright test runner.
-const ProjectParserKind = "rill.runtime.v1.ProjectParser";
+const ProjectParserKind = "statsparrot.runtime.v1.ProjectParser";
 
 /**
  * Waits for all resources in the instance to finish reconciling,

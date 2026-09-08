@@ -1,13 +1,13 @@
 compiler: rillv1
 
-display_name: Untitled Rill Project
+display_name: Untitled Parrot Project
 
 # The project's default OLAP connector.
 # Learn more: https://docs.statsparrot.com/reference/olap-engines
 olap_connector: duckdb 
 
 # These are example mock users to test your security policies.
-# Learn more: https://docs.statsparrot.com/developers/build/rill-project-file#test-access-policies-in-rill-developer
+# Learn more: https://docs.statsparrot.com/developers/build/statsparrot-project-file#test-access-policies-in-statsparrot-developer
 mock_users:
 - email: john@yourcompany.com
 - email: jane@partnercompany.com

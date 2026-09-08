@@ -1,12 +1,12 @@
 ---
-description: Detailed instructions and examples for developing explore dashboard resources in Rill
+description: Detailed instructions and examples for developing explore dashboard resources in Parrot
 ---
 
-# Instructions for developing an explore dashboard in Rill
+# Instructions for developing an explore dashboard in Parrot
 
 ## Introduction
 
-Explore dashboards are resources that configure an interactive, drill-down dashboard for a metrics view. They are Rill's default dashboard type, designed for explorative slice-and-dice analysis of a single metrics view.
+Explore dashboards are resources that configure an interactive, drill-down dashboard for a metrics view. They are Parrot's default dashboard type, designed for explorative slice-and-dice analysis of a single metrics view.
 
 Explore dashboards are lightweight resources that sit downstream of a metrics view in the project DAG. Their reconcile logic is fast (validation only), so they can be created and modified freely without performance concerns.
 
@@ -94,8 +94,8 @@ time_ranges:
   - P30D
   - P90D
   - P12M
-  - rill-MTD
-  - rill-YTD
+  - statsparrot-MTD
+  - statsparrot-YTD
 
 # Optional: default dashboard state on first load
 defaults:

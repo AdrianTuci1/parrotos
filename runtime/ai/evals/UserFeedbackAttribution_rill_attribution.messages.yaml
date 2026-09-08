@@ -37,4 +37,4 @@
   type: result
   tool: feedback_agent
   content_type: json
-  content: '{"response":"Thanks for your feedback. I made an error in my response. I''ll work on improving.","predicted_attribution":"rill","attribution_reasoning":"I gave an incorrect result (United States) despite the user indicating the data clearly shows China as highest revenue, which suggests I misread or misinterpreted the underlying data rather than the question being unclear or the project lacking required fields."}'
+  content: '{"response":"Thanks for your feedback. I made an error in my response. I''ll work on improving.","predicted_attribution":"statsparrot","attribution_reasoning":"I gave an incorrect result (United States) despite the user indicating the data clearly shows China as highest revenue, which suggests I misread or misinterpreted the underlying data rather than the question being unclear or the project lacking required fields."}'

@@ -310,7 +310,7 @@ message MetricsViewSpec {
     string database_schema = 2;
     string table = 3;
     string model = 4;
-    // Optional rilltime expression describing the time range covered by the rollup.
+    // Optional statspartime expression describing the time range covered by the rollup.
     // When set, the rollup's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
     string data_time_range = 11;
     // Time grain of the rollup.
@@ -349,7 +349,7 @@ message MetricsViewSpec {
   TimeGrain smallest_time_grain = 8;
   // Expression to evaluate a watermark for the metrics view. If not set, the watermark defaults to max(time_dimension).
   string watermark_expression = 20;
-  // Optional rilltime expression describing the time range covered by the base table.
+  // Optional statspartime expression describing the time range covered by the base table.
   // When set, the base table's coverage is resolved from this expression instead of probing the OLAP for min/max timestamps.
   string data_time_range = 37;
   // Dimensions in the metrics view
@@ -368,7 +368,7 @@ message MetricsViewSpec {
   uint32 first_day_of_week = 12;
   // Month number to use as the base for time aggregations by year. Defaults to 1 (January).
   uint32 first_month_of_year = 13;
-  // Cache controls for the metrics view. By default, enabled for Rill managed models and disabled for streaming (externally managed) data sources.
+  // Cache controls for the metrics view. By default, enabled for Parrot managed models and disabled for streaming (externally managed) data sources.
   optional bool cache_enabled = 25;
   // Defaults to use watermark if cache is enabled.
   string cache_key_sql = 26;
@@ -493,7 +493,7 @@ message ExploreSpec {
   // Security for the explore dashboard.
   // These are not currently parsed from YAML, but will be derived from the parent metrics view.
   repeated SecurityRule security_rules = 12;
-  // Banner text that can be displayed in Rill Cloud.
+  // Banner text that can be displayed in Parrot Cloud.
   string banner = 18; 
   // When set to true, dashboard will be locked to the first time zone in the time_zones key (or UTC)
   bool lock_time_zone = 19;
@@ -856,7 +856,7 @@ message Canvas {
 message CanvasSpec {
   // Display name for the canvas.
   string display_name = 1;
-  // Banner text that can be displayed in Rill Cloud.
+  // Banner text that can be displayed in Parrot Cloud.
   string banner = 17; 
   // Max width in pixels of the canvas.
   uint32 max_width = 2;
@@ -966,7 +966,7 @@ message DefaultMetricsSQLFilter {
   Expression expression = 1;
 }
 
-// API defines a custom operation for querying data stored in Rill.
+// API defines a custom operation for querying data stored in Parrot.
 message API {
   APISpec spec = 1;
   APIState state = 2;

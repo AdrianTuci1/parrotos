@@ -9,16 +9,16 @@ test.describe("MotherDuck welcome flow", () => {
   test("initializes MotherDuck from welcome screen and persists secrets before connector", async ({
     page,
   }) => {
-    const token = process.env.STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN;
-    const path = process.env.STATSPARROT_RUNTIME_MOTHERDUCK_TEST_PATH;
+    const token = process.env.RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN;
+    const path = process.env.RILL_RUNTIME_MOTHERDUCK_TEST_PATH;
     const schema =
-      process.env.STATSPARROT_RUNTIME_MOTHERDUCK_TEST_SCHEMA ??
+      process.env.RILL_RUNTIME_MOTHERDUCK_TEST_SCHEMA ??
       "staticlabs_integration_test";
 
     if (!token || !path) {
       test.skip(
         true,
-        "STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN or STATSPARROT_RUNTIME_MOTHERDUCK_TEST_PATH not configured",
+        "RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN or RILL_RUNTIME_MOTHERDUCK_TEST_PATH not configured",
       );
     }
 
@@ -80,11 +80,11 @@ test.describe("MotherDuck welcome flow", () => {
     const envEditor = page.getByLabel("codemirror editor").getByRole("textbox");
     await expect(envEditor).toContainText(`MOTHERDUCK_TOKEN=${token}`);
 
-    // rill.yaml should promote MotherDuck as the OLAP connector
-    await page.getByRole("link", { name: "rill.yaml" }).click();
-    const rillYamlEditor = page
+    // statsparrot.yaml should promote MotherDuck as the OLAP connector
+    await page.getByRole("link", { name: "statsparrot.yaml" }).click();
+    const statsparrotYamlEditor = page
       .getByLabel("codemirror editor")
       .getByRole("textbox");
-    await expect(rillYamlEditor).toContainText("olap_connector: motherduck");
+    await expect(statsparrotYamlEditor).toContainText("olap_connector: motherduck");
   });
 });

@@ -15,6 +15,6 @@ test.describe("Homepage", () => {
     anonPage,
   }) => {
     await anonPage.goto("/");
-    await expect(anonPage.getByText("Log in to Rill")).toBeVisible();
+    await expect(anonPage.getByText("Log in to Parrot")).toBeVisible();
   });
 });

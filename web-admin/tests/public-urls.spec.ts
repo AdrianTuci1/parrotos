@@ -50,7 +50,7 @@ test.describe.serial("Public URLs", () => {
     if (!url) {
       throw new Error("Could not find the public URL on the button");
     }
-    expect(url).toContain("e2e/openrtb/-/share/rill_mgc_");
+    expect(url).toContain("e2e/openrtb/-/share/statsparrot_mgc_");
 
     // Save the URL for the subsequent tests
     publicUrl = url;

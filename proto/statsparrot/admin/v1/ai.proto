@@ -1,7 +1,7 @@
 syntax = "proto3";
 package statsparrot.admin.v1;
 
-option go_package = "github.com/staticlabs/statsparrot/proto/gen/rill/admin/v1;adminv1";
+option go_package = "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1;adminv1";
 
 import "google/api/annotations.proto";
 import "statsparrot/ai/v1/ai.proto";

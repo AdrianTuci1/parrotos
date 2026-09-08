@@ -4,11 +4,11 @@ all: cli
 .PHONE: cli-only
 cli-only:
 	go run scripts/embed_duckdb_ext/main.go
-	go build -o rill cli/main.go
+	go build -o statsparrot cli/main.go
 
 .PHONY: cli
 cli: cli.prepare
-	go build -o rill cli/main.go 
+	go build -o statsparrot cli/main.go 
 
 .PHONY: cli.prepare
 cli.prepare: runtime.examples.embed
@@ -31,15 +31,15 @@ coverage.go:
 
 .PHONY: docs.generate
 docs.generate: runtime.examples.embed
-	# Temporarily replaces ~/.rill/config.yaml to avoid including user-defined defaults in generated docs.
+	# Temporarily replaces ~/.statsparrot/config.yaml to avoid including user-defined defaults in generated docs.
 	#
 	# Sets main.Version to a fixed tag to simulate a production build, where certain commands are hidden.
 	# Not using scripts/versiontag.sh since the actual version should not be emitted to the generated files as it would go stale on the next release.
 	rm -rf docs/docs/reference/cli/*.md docs/docs/reference/project-files/*.md
-	if [ -f ~/.rill/config.yaml ]; then mv ~/.rill/config.yaml ~/.rill/config.yaml.tmp; fi;
-	RILL_DOCS_GENERATE=true go run -ldflags="-X main.Version=1.0.0" ./cli docs generate-cli docs/docs/reference/cli/
-	RILL_DOCS_GENERATE=true go run -ldflags="-X main.Version=1.0.0" ./cli docs generate-project docs/docs/reference/project-files/
-	if [ -f ~/.rill/config.yaml.tmp ]; then mv ~/.rill/config.yaml.tmp ~/.rill/config.yaml; fi;
+	if [ -f ~/.statsparrot/config.yaml ]; then mv ~/.statsparrot/config.yaml ~/.statsparrot/config.yaml.tmp; fi;
+	STATSPARROT_DOCS_GENERATE=true go run -ldflags="-X main.Version=1.0.0" ./cli docs generate-cli docs/docs/reference/cli/
+	STATSPARROT_DOCS_GENERATE=true go run -ldflags="-X main.Version=1.0.0" ./cli docs generate-project docs/docs/reference/project-files/
+	if [ -f ~/.statsparrot/config.yaml.tmp ]; then mv ~/.statsparrot/config.yaml.tmp ~/.statsparrot/config.yaml; fi;
 
 .PHONY: proto.generate
 proto.generate:
@@ -65,7 +65,7 @@ runtime.examples.embed:
 	rm -rf runtime/pkg/examples/embed/dist || true; \
 	mkdir -p runtime/pkg/examples/embed/dist; \
 	# Create a temp dir (GNU mktemp first, then BSD/macOS fallback)
-	TMP_CLONE_DIR=$$(mktemp -d 2>/dev/null || mktemp -d -t rill-examples); \
+	TMP_CLONE_DIR=$$(mktemp -d 2>/dev/null || mktemp -d -t statsparrot-examples); \
 	trap 'rm -rf "$$TMP_CLONE_DIR"' EXIT; \
 	git clone --quiet --depth=1 https://github.com/staticlabs/statsparrot-examples.git "$$TMP_CLONE_DIR"; \
 	for d in $(KEEP_EXAMPLES); do \

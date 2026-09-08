@@ -116,12 +116,12 @@ tests:
       - time: "2024-01-05T00:00:00Z"
         duration: "day"
         description: "1st event"
-        __rill_time_grain: 5
+        __statsparrot_time_grain: 5
         for_measures: ['mes_for_grain_annotation']
       - time: "2024-03-27T00:00:00Z"
         duration: "hour"
         description: "3rd event"
-        __rill_time_grain: 4
+        __statsparrot_time_grain: 4
         for_measures: ['mes_for_grain_annotation']
   - name: query_all_annotations
     resolver: metrics_annotations
@@ -145,10 +145,10 @@ tests:
       - time: "2024-01-05T00:00:00Z"
         description: "1st event"
         duration: "day"
-        __rill_time_grain: 5
+        __statsparrot_time_grain: 5
         for_measures: ['mes_for_grain_annotation']
       - time: "2024-02-16T00:00:00Z"
         description: "2nd event"
         duration: "month"
-        __rill_time_grain: 7
+        __statsparrot_time_grain: 7
         for_measures: ['mes_for_grain_annotation']

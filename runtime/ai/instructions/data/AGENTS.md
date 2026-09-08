@@ -1,7 +1,7 @@
 ---
-description: Entry point for Rill project development instructions
+description: Entry point for Parrot project development instructions
 ---
 
-# Rill Project
+# Parrot Project
 
-This is a [Rill](https://docs.statsparrot.com) project. Before making any changes to the project, you MUST load the `rill-development` skill to understand the project structure, resource types, and development workflow.
+This is a [Parrot](https://docs.statsparrot.com) project. Before making any changes to the project, you MUST load the `statsparrot-development` skill to understand the project structure, resource types, and development workflow.

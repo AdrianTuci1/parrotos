@@ -27,7 +27,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TelemetryServiceClient interface {
 	// RecordEvents sends a batch of telemetry events.
-	// The events must conform to the schema described in rill/runtime/pkg/activity/README.md.
+	// The events must conform to the schema described in statsparrot/runtime/pkg/activity/README.md.
 	RecordEvents(ctx context.Context, in *RecordEventsRequest, opts ...grpc.CallOption) (*RecordEventsResponse, error)
 }
 
@@ -54,7 +54,7 @@ func (c *telemetryServiceClient) RecordEvents(ctx context.Context, in *RecordEve
 // for forward compatibility.
 type TelemetryServiceServer interface {
 	// RecordEvents sends a batch of telemetry events.
-	// The events must conform to the schema described in rill/runtime/pkg/activity/README.md.
+	// The events must conform to the schema described in statsparrot/runtime/pkg/activity/README.md.
 	RecordEvents(context.Context, *RecordEventsRequest) (*RecordEventsResponse, error)
 	mustEmbedUnimplementedTelemetryServiceServer()
 }

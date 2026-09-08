@@ -37,7 +37,7 @@ test.describe("time controls settings from explore preset", () => {
 
     // Set a time range that is one of the period to date preset
     await watcher.updateAndWaitForExplore(
-      getDashboardYaml(`time_range: "rill-WTD"
+      getDashboardYaml(`time_range: "statsparrot-WTD"
   comparison_mode: time
 `),
     );
@@ -148,11 +148,11 @@ test.describe("time controls settings from explore preset", () => {
 - PT6H
 - range: P5D
   comparison_offsets:
-    - rill-PP
-    - rill-PW
+    - statsparrot-PP
+    - statsparrot-PW
 - P4W
-- rill-WTD
-- rill-MTD`,
+- statsparrot-WTD
+- statsparrot-MTD`,
       ),
     );
     // Preview

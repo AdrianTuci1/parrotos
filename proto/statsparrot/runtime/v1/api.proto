@@ -10,7 +10,7 @@ import "statsparrot/runtime/v1/resources.proto";
 import "statsparrot/runtime/v1/expression.proto";
 import "validate/validate.proto";
 
-// RuntimeService is a data infrastructure proxy and orchestrator based on Rill SQL.
+// RuntimeService is a data infrastructure proxy and orchestrator based on Parrot SQL.
 // It has a concept of instances, which are fully isolated data projects, enabling optional multi-tenancy.
 service RuntimeService {
   // Ping returns information about the runtime
@@ -282,7 +282,7 @@ service RuntimeService {
     };
   }
 
-  // CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Rill.
+  // CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Parrot.
   rpc CompleteStreaming(CompleteStreamingRequest) returns (stream CompleteStreamingResponse) {
     option (google.api.http) = {
       post: "/v1/instances/{instance_id}/ai/complete/stream",
@@ -1334,7 +1334,7 @@ message GitStatusResponse {
   string github_url = 2;
   // Subpath from the git repo.
   string subpath = 7;
-  // If the repo is managed by Rill.
+  // If the repo is managed by Parrot.
   bool managed_git = 3;
   // local_changes returns true if there are any staged, unstaged, or untracked changes in the local git repo.
   bool local_changes = 4;

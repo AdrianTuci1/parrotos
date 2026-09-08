@@ -43,7 +43,7 @@ export async function uploadFile(
     path.join(TestDataPath, file),
   ]);
   const fileRespWaitPromise = page.waitForResponse(
-    "**/rill.runtime.v1.RuntimeService/PutFile",
+    "**/statsparrot.runtime.v1.RuntimeService/PutFile",
   );
 
   // TODO: infer duplicate

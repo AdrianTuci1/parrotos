@@ -15,7 +15,7 @@ Example provisioner spec for the Kubernetes provisioner:
           "data_dir": "/mnt/data",                            // Directory to use for data storage like DB files etc.
           "host": "http://node-*.localhost",                  // The wildcard '*' will be replaced with the deployment's 'provision_id'
           "namespace": "cloud-runtime",                       // Namespace to use in the K8s cluster
-          "image": "staticlabs/rill",                           // Rill Docker image
+          "image": "staticlabs/statsparrot",                           // Parrot Docker image
           "kubeconfig_path": "kubeconfig.yaml",               // K8s config file to authenticate against the cluster
           "template_paths":
             {
@@ -38,7 +38,7 @@ Be aware that the runtimes provisioned in Kubernetes will need to be able to com
 
 The Kubernetes resource templates provides a high level of flexibility, but they will need to be adapted to the specific Kubernetes environment. The simplified examples below will provide a good starting point.
 
-Note: For internal Rill users refer to our private infra repos containing environment specific configurations and templates.
+Note: For internal Parrot users refer to our private infra repos containing environment specific configurations and templates.
 
 ### deployment.yaml
 ```
@@ -67,7 +67,7 @@ spec:
         - runtime
         - start
         command:
-        - rill
+        - statsparrot
         env:
         - name: STATSPARROT_RUNTIME_GRPC_PORT
           value: "8080"

@@ -8,7 +8,7 @@ import {
 export async function cliLogin(page: Page) {
   // Run the login command and capture the verification URL
   const { process, match }: SpawnAndMatchResult = await spawnAndMatch(
-    "rill",
+    "statsparrot",
     ["login", "--interactive=false"],
     /Open this URL in your browser to confirm the login: (.*)\n/,
   );
@@ -31,5 +31,5 @@ export async function cliLogin(page: Page) {
 }
 
 export async function cliLogout() {
-  await execAsync("rill logout");
+  await execAsync("statsparrot logout");
 }

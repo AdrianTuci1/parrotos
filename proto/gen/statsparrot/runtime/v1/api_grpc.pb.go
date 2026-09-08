@@ -81,7 +81,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// RuntimeService is a data infrastructure proxy and orchestrator based on Rill SQL.
+// RuntimeService is a data infrastructure proxy and orchestrator based on Parrot SQL.
 // It has a concept of instances, which are fully isolated data projects, enabling optional multi-tenancy.
 type RuntimeServiceClient interface {
 	// Ping returns information about the runtime
@@ -172,7 +172,7 @@ type RuntimeServiceClient interface {
 	ListTools(ctx context.Context, in *ListToolsRequest, opts ...grpc.CallOption) (*ListToolsResponse, error)
 	// Complete runs a language model completion (LLM chat) using the configured AI connector.
 	Complete(ctx context.Context, in *CompleteRequest, opts ...grpc.CallOption) (*CompleteResponse, error)
-	// CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Rill.
+	// CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Parrot.
 	CompleteStreaming(ctx context.Context, in *CompleteStreamingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[CompleteStreamingResponse], error)
 	// GetAIMessage returns a message in a conversaion.
 	GetAIMessage(ctx context.Context, in *GetAIMessageRequest, opts ...grpc.CallOption) (*GetAIMessageResponse, error)
@@ -818,7 +818,7 @@ func (c *runtimeServiceClient) PushEnv(ctx context.Context, in *PushEnvRequest, 
 // All implementations must embed UnimplementedRuntimeServiceServer
 // for forward compatibility.
 //
-// RuntimeService is a data infrastructure proxy and orchestrator based on Rill SQL.
+// RuntimeService is a data infrastructure proxy and orchestrator based on Parrot SQL.
 // It has a concept of instances, which are fully isolated data projects, enabling optional multi-tenancy.
 type RuntimeServiceServer interface {
 	// Ping returns information about the runtime
@@ -909,7 +909,7 @@ type RuntimeServiceServer interface {
 	ListTools(context.Context, *ListToolsRequest) (*ListToolsResponse, error)
 	// Complete runs a language model completion (LLM chat) using the configured AI connector.
 	Complete(context.Context, *CompleteRequest) (*CompleteResponse, error)
-	// CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Rill.
+	// CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Parrot.
 	CompleteStreaming(*CompleteStreamingRequest, grpc.ServerStreamingServer[CompleteStreamingResponse]) error
 	// GetAIMessage returns a message in a conversaion.
 	GetAIMessage(context.Context, *GetAIMessageRequest) (*GetAIMessageResponse, error)

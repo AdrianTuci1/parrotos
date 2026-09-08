@@ -7,7 +7,7 @@ import { AnalyzeConnectorsRequest, AnalyzeConnectorsResponse, AnalyzeVariablesRe
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
- * RuntimeService is a data infrastructure proxy and orchestrator based on Rill SQL.
+ * RuntimeService is a data infrastructure proxy and orchestrator based on Parrot SQL.
  * It has a concept of instances, which are fully isolated data projects, enabling optional multi-tenancy.
  *
  * @generated from service statsparrot.runtime.v1.RuntimeService
@@ -464,7 +464,7 @@ export const RuntimeService = {
       kind: MethodKind.Unary,
     },
     /**
-     * CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Rill.
+     * CompleteStreaming runs an AI-powered chat completion, optionally invoking agents or tool calls available in Parrot.
      *
      * @generated from rpc statsparrot.runtime.v1.RuntimeService.CompleteStreaming
      */
