@@ -29,15 +29,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import "@/styles/settings.css";
 import { CreateModal } from "@/components/shell/CreateModal";
+import { projectSettingsItems } from "@/components/shell/SettingsView";
 
 const settingsLinks = [
   { to: "/settings/profile", icon: User, label: "Profile" },
-  { to: "/settings/workspaces", icon: Building2, label: "Workspaces" },
+  { to: "/settings/workspaces", icon: Building2, label: "Organizations" },
   { to: "/settings/notifications", icon: Bell, label: "Notifications" },
 ];
 
-const workspaceSettingsItems = [
-  { id: "management", label: "Workspace Management", icon: Users },
+const organizationSettingsItems = [
+  { id: "management", label: "General", icon: Users },
   { id: "limits", label: "Limits", icon: Gauge },
   { id: "api-tokens", label: "API Tokens", icon: Key },
   { id: "billing", label: "Usage & Billing", icon: Receipt },
@@ -75,6 +76,7 @@ export function SettingsLayout({ children }) {
   const {
     organizations,
     currentOrganization,
+    currentWorkspace,
     selectOrganization,
     createOrganization,
     fetchOrganizations,
@@ -158,8 +160,8 @@ export function SettingsLayout({ children }) {
         ))}
       </nav>
 
-      <div className="settings-workspace-section">
-        <span className="settings-workspace-heading">Workspace</span>
+      <div className="settings-workspace-section settings-org-section">
+        <span className="settings-workspace-heading">Organization</span>
         <DropdownMenu>
           <DropdownMenuTrigger
             className={cn("settings-workspace-trigger", !currentOrganization && "disabled")}
@@ -167,7 +169,7 @@ export function SettingsLayout({ children }) {
           >
             <ScopeCircle id={currentOrganization?.id} className="project-avatar" />
             <span className="settings-workspace-name">
-              {currentOrganization?.name || "Workspace"}
+              {currentOrganization?.name || "Organization"}
             </span>
             <ChevronDown size={14} />
           </DropdownMenuTrigger>
@@ -178,7 +180,7 @@ export function SettingsLayout({ children }) {
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="settings-workspace-menu-label">
-                Workspaces
+                Organizations
               </DropdownMenuLabel>
               {organizations.map((org) => (
                 <DropdownMenuItem
@@ -200,20 +202,20 @@ export function SettingsLayout({ children }) {
               onClick={() => setCreateOrgOpen(true)}
             >
               <Plus size={14} />
-              <span>Create workspace</span>
+              <span>Create organization</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="settings-workspace-menu-item"
               onClick={() => { navigate("/settings/workspaces"); if (isMobile) setMobileOpen(false); }}
             >
               <SettingsIcon size={14} />
-              <span>Manage workspaces</span>
+              <span>Manage organizations</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         <nav className="settings-workspace-menu-list">
-          {workspaceSettingsItems.map((item) => (
+          {organizationSettingsItems.map((item) => (
             <button
               key={item.id}
               type="button"
@@ -232,6 +234,30 @@ export function SettingsLayout({ children }) {
           ))}
         </nav>
       </div>
+
+      {currentWorkspace && (
+        <div className="settings-workspace-section settings-project-section">
+          <span className="settings-workspace-heading">Project settings</span>
+          <span className="settings-nav-project-name" title={currentWorkspace.name}>
+            {currentWorkspace.name}
+          </span>
+          <nav className="settings-workspace-menu-list">
+            {projectSettingsItems.map((item) => (
+              <NavLink
+                key={item.id}
+                to={`/settings/project/${item.id}`}
+                className={({ isActive }) =>
+                  cn("settings-workspace-menu-link", isActive && "active")
+                }
+                onClick={() => isMobile && setMobileOpen(false)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+      )}
     </>
   );
 
@@ -287,11 +313,11 @@ export function SettingsLayout({ children }) {
       <CreateModal
         open={createOrgOpen}
         onClose={() => setCreateOrgOpen(false)}
-        title="Create Workspace"
-        description="Create a new workspace for your organization."
-        label="Workspace name"
-        placeholder="Workspace name"
-        submitLabel="Create Workspace"
+        title="Create Organization"
+        description="Create a new organization to organize your projects."
+        label="Organization name"
+        placeholder="Organization name"
+        submitLabel="Create Organization"
         onSubmit={createNewOrg}
       />
     </div>

@@ -1,0 +1,23 @@
+# Copy to terraform.tfvars and fill in. This file is gitignored.
+#
+# Secrets belong in the environment, not here:
+#   export CLOUDFLARE_API_TOKEN=...
+# Alternatively set AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY the same way, or rely on a
+# configured AWS profile.
+
+aws_region    = "eu-central-1"
+project_name  = "statsparrot"
+bundle_id     = "nano_3_0" # 512 MB. Confirm with: aws lightsail get-bundles --region eu-central-1
+blueprint_id  = "ubuntu_24_04"
+
+domain    = "example.com"
+subdomain = "bi"
+
+cloudflare_zone_id = "0000000000000000000000000000000"
+
+# Keep off until the app answers, then turn on and set the zone's SSL/TLS mode to
+# "Full (strict)".
+cloudflare_proxied = false
+
+# Narrow this to your own address: curl -s https://api.ipify.org
+ssh_allowed_cidrs = ["0.0.0.0/0"]

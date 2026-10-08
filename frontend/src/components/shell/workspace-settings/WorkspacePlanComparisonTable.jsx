@@ -20,7 +20,7 @@ const planSections = [
   {
     title: "Features",
     rows: [
-      { feature: "Connectors", starter: "10", team: "50", enterprise: "Custom" },
+      { feature: "Reverse-ETL", starter: "10", team: "50", enterprise: "Custom" },
       { feature: "Queries / month", starter: "1,000", team: "50,000", enterprise: "Custom" },
       { feature: "Data ingestion", starter: "5/s + 150 burst", team: "25/s + 1K burst", enterprise: "Custom" },
       { feature: "Service accounts", starter: "1", team: "5", enterprise: "Unlimited" },

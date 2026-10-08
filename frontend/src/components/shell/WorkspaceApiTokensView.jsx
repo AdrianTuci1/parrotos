@@ -81,7 +81,7 @@ export function WorkspaceApiTokensView() {
         actions={headerActions}
       />
       <p className="workspace-page-desc" style={{ marginTop: -8, marginBottom: 16 }}>
-        Manage workspace API tokens used for data ingestion, queries, and integrations.
+        Manage workspace API tokens used for data ingestion, queries, and delivery.
       </p>
 
       {newToken && (

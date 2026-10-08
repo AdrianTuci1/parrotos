@@ -305,11 +305,11 @@ export function WarehouseDashboardView({ onAlertsChange }) {
                           <div className="flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: "#38BDF8" }} />
                             <span className="text-xs font-medium" style={{ color: "#E3E3E3" }}>
-                              Heavy unscanned query stress on shopify_orders
+                              Heavy unscanned query stress on orders
                             </span>
                           </div>
                           <div className="text-[10px] mt-1" style={{ color: "#8E918F", lineHeight: "1.3" }}>
-                            Slot exhaustion timeouts. Partition shopify_orders to drop query stress by 32%.
+                            Slot exhaustion timeouts. Partition orders to drop query stress by 32%.
                           </div>
                         </div>
                         <button 
@@ -343,7 +343,7 @@ export function WarehouseDashboardView({ onAlertsChange }) {
                 {/* Query 1 */}
                 <div className="flex items-center gap-3 justify-between" style={{ padding: "8px 10px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: "6px" }}>
                   <span style={{ fontFamily: "monospace", fontSize: "11px", color: "#E3E3E3", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "60%" }}>
-                    SELECT id, total_price_usd FROM shopify_orders WHERE created_at &gt;= '2026-01-01'
+                    SELECT id, total_price_usd FROM orders WHERE created_at &gt;= '2026-01-01'
                   </span>
                   <div className="flex items-center gap-3">
                     <span style={{ fontSize: "10px", color: "#8E918F" }}>1.2 TB scanned</span>
@@ -366,7 +366,7 @@ export function WarehouseDashboardView({ onAlertsChange }) {
                 {/* Query 2 */}
                 <div className="flex items-center gap-3 justify-between" style={{ padding: "8px 10px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: "6px" }}>
                   <span style={{ fontFamily: "monospace", fontSize: "11px", color: "#E3E3E3", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "60%" }}>
-                    INSERT INTO ga4_streaming_buffer SELECT * FROM web_session_stream
+                    INSERT INTO web_events_buffer SELECT * FROM web_session_stream
                   </span>
                   <div className="flex items-center gap-3">
                     <span style={{ fontSize: "10px", color: "#8E918F" }}>Continuous streaming</span>

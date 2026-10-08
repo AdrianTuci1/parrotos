@@ -57,14 +57,6 @@ export function WorkspaceLimitsView() {
     if (!limits) return [];
     return [
       {
-        key: "connectors",
-        name: "Connector limit",
-        desc: "Workspace-wide limit on the number of connected data sources.",
-        limit: limits.connectors?.limit ?? 10,
-        current: limits.connectors?.current ?? 0,
-        peak: limits.connectors?.peak ?? 0,
-      },
-      {
         key: "projects",
         name: "Project limit",
         desc: "Workspace-wide limit on the number of project workspaces.",

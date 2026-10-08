@@ -1,0 +1,317 @@
+<script lang="ts">
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { DateTime, Duration, type DateTimeUnit } from "luxon";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import {
+    getOptionsFromSmallestToLargest,
+    translateGrainName,
+    translateV1TimeGrain,
+    V1TimeGrainToDateTimeUnit,
+  } from "@statsparrot/web-common/lib/time/new-grains";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { Tooltip as TooltipPrimitive } from "bits-ui";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import TooltipDescription from "@statsparrot/web-common/components/tooltip/TooltipDescription.svelte";
+  import { onDestroy, onMount } from "svelte";
+  import SyntaxElement from "../components/SyntaxElement.svelte";
+  import { ParrotTimeLabel } from "../../../url-state/time-ranges/ParrotTime";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+
+  export let dateTimeAnchor: DateTime;
+  export let grain: V1TimeGrain | undefined;
+  export let rangeGrain: V1TimeGrain | undefined;
+  export let smallestTimeGrain: V1TimeGrain | undefined;
+  export let snapToEnd: boolean;
+  export let isPeriodToDate: boolean;
+  export let watermark: DateTime | undefined;
+  export let latest: DateTime | undefined;
+  export let zone: string;
+  export let ref: ParrotTimeLabel | string | undefined;
+  export let onSelectAsOfOption: (ref: ParrotTimeLabel) => void;
+  export let onToggleAlignment: (forward: boolean) => void;
+  export let onSelectEnding: (
+    grain: V1TimeGrain | undefined,
+    complete?: boolean,
+  ) => void;
+
+  let open = false;
+  let hoveredOption: string | null = null;
+  let hoverTimer: ReturnType<typeof setTimeout> | undefined;
+  let now = DateTime.now().setZone(zone);
+
+  function startHoverTimer(id: string) {
+    clearHoverTimer();
+    hoverTimer = setTimeout(() => {
+      hoveredOption = id;
+    }, 800);
+  }
+
+  function clearHoverTimer() {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      hoverTimer = undefined;
+    }
+    hoveredOption = null;
+  }
+  let interval: ReturnType<typeof setInterval> | undefined = undefined;
+
+  onMount(() => {
+    interval = setInterval(() => {
+      now = DateTime.now().setZone(zone);
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    if (interval) {
+      clearInterval(interval);
+    }
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+    }
+  });
+
+  $: dateTimeUnit = grain ? V1TimeGrainToDateTimeUnit[grain] : undefined;
+
+  $: grainOptions = getOptionsFromSmallestToLargest(
+    rangeGrain,
+    smallestTimeGrain,
+    isPeriodToDate,
+  );
+
+  $: humanizedRef = humanizeRef(ref, grain);
+
+  $: derivedAnchor = deriveAnchor(dateTimeAnchor, dateTimeUnit, snapToEnd);
+
+  $: options = [
+    {
+      id: ParrotTimeLabel.Watermark,
+      label: m.dashboard_complete_data(),
+      timestamp: watermark,
+      description: m.dashboard_complete_data_description(),
+    },
+    {
+      id: ParrotTimeLabel.Latest,
+      label: m.dashboard_latest_data(),
+      timestamp: latest,
+      description: m.dashboard_latest_data_description(),
+    },
+    {
+      id: ParrotTimeLabel.Now,
+      label: m.dashboard_current_time(),
+      timestamp: now,
+      description: m.dashboard_current_time_description(),
+    },
+  ];
+
+  function deriveAnchor(
+    dateTimeAnchor: DateTime,
+    snap: DateTimeUnit | undefined,
+    inclusive: boolean,
+  ) {
+    if (!snap) {
+      return dateTimeAnchor;
+    }
+    return dateTimeAnchor.startOf(snap).plus({
+      [snap]: inclusive ? 1 : 0,
+    });
+  }
+
+  function humanizeRef(
+    ref: ParrotTimeLabel | string | undefined,
+    grain: V1TimeGrain | undefined,
+  ): string {
+    switch (ref) {
+      case ParrotTimeLabel.Watermark:
+        if (grain) return m.time_ref_complete();
+        return m.time_ref_complete_data();
+      case ParrotTimeLabel.Latest:
+        return m.time_ref_latest();
+      case ParrotTimeLabel.Now:
+        if (grain) return m.time_ref_current();
+        return m.time_ref_now();
+      default:
+        try {
+          const dt = DateTime.fromISO(ref as string).setZone(zone);
+          return dt.toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS);
+        } catch {
+          return ref as string;
+        }
+    }
+  }
+
+  function getColloquialOffset(date: DateTime): string {
+    const inFuture = date > DateTime.now();
+    const durationStr = Duration.fromObject(
+      Object.fromEntries(
+        Object.entries(
+          DateTime.now().setZone(date.zone).diff(date).rescale().toObject(),
+        )
+          .filter(([, value]) => value !== 0)
+          .slice(0, 2),
+      ),
+    ).toHuman({
+      listStyle: "narrow",
+      maximumFractionDigits: 0,
+      signDisplay: "never",
+    });
+    return inFuture
+      ? m.time_from_now({ duration: durationStr })
+      : m.time_ago({ duration: durationStr });
+  }
+</script>
+
+<DropdownMenu.Root bind:open>
+  <Tooltip.Root delayDuration={800}>
+    <TooltipPrimitive.Trigger>
+      {#snippet child({ props: tooltipProps })}
+        <DropdownMenu.Trigger
+          {...tooltipProps}
+          id="truncation-selector-trigger"
+          type="button"
+          class="flex gap-x-1 items-center flex-none truncate"
+          aria-label={m.dashboard_select_ref_time_grain()}
+          data-state={open ? "open" : "closed"}
+        >
+          <p>
+            {m.dashboard_as_of_ref()}
+            <b>
+              {humanizedRef}
+              {#if dateTimeUnit}
+                {translateGrainName(dateTimeUnit)}
+              {/if}
+            </b>
+            {#if grain}
+              {#if snapToEnd || ref === ParrotTimeLabel.Watermark}
+                {m.dashboard_end()}
+              {:else}
+                {m.dashboard_start()}
+              {/if}
+            {/if}
+          </p>
+
+          <span class="flex-none transition-transform" class:-rotate-180={open}>
+            <CaretDownIcon />
+          </span>
+        </DropdownMenu.Trigger>
+      {/snippet}
+    </TooltipPrimitive.Trigger>
+
+    <Tooltip.Content side="bottom" sideOffset={8} class="z-50">
+      <TooltipContent>
+        <TooltipTitle>
+          <svelte:fragment slot="name">
+            {derivedAnchor.toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}
+          </svelte:fragment>
+        </TooltipTitle>
+        <TooltipDescription>
+          {getColloquialOffset(derivedAnchor)}
+        </TooltipDescription>
+      </TooltipContent>
+    </Tooltip.Content>
+  </Tooltip.Root>
+
+  <DropdownMenu.Content align="start" class="w-52 flex flex-col p-0">
+    <DropdownMenu.Group class="p-1">
+      <h3 class="mt-1 px-2 uppercase text-fg-secondary font-semibold">
+        {m.dashboard_reference()}
+      </h3>
+      {#each options as { id, label, description, timestamp } (id)}
+        {#if id !== ParrotTimeLabel.Watermark || (id === ParrotTimeLabel.Watermark && !!timestamp)}
+          <Tooltip.Root open={hoveredOption === id}>
+            <TooltipPrimitive.Trigger>
+              {#snippet child({ props: tooltipProps })}
+                <DropdownMenu.CheckboxItem
+                  {...tooltipProps}
+                  checkRight
+                  closeOnSelect
+                  checked={ref === id}
+                  preloadData={false}
+                  onSelect={() => {
+                    onSelectAsOfOption(id);
+                  }}
+                  onpointerenter={() => startHoverTimer(id)}
+                  onpointerleave={clearHoverTimer}
+                >
+                  {label}
+                </DropdownMenu.CheckboxItem>
+              {/snippet}
+            </TooltipPrimitive.Trigger>
+
+            {#if timestamp}
+              <Tooltip.Content
+                side="right"
+                sideOffset={40}
+                class="w-65 z-50"
+                id="{label}-tooltip-content"
+              >
+                <TooltipContent class="w-60">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold truncate text-fg-inverse">
+                      {timestamp.toLocaleString(
+                        DateTime.DATETIME_MED_WITH_SECONDS,
+                      )}
+                    </span>
+                    <SyntaxElement dark range={id} />
+                  </div>
+
+                  {#if id !== ParrotTimeLabel.Now}
+                    <div>
+                      {getColloquialOffset(timestamp)}
+                    </div>
+                  {/if}
+                  <TooltipDescription>
+                    {description}
+                  </TooltipDescription>
+                </TooltipContent>
+              </Tooltip.Content>
+            {/if}
+          </Tooltip.Root>
+        {/if}
+      {/each}
+    </DropdownMenu.Group>
+    <DropdownMenu.Separator class="my-0" />
+
+    <DropdownMenu.Group class="p-1">
+      <h3 class="mt-1 px-2 uppercase text-fg-secondary font-semibold">
+        {m.dashboard_grain()}
+      </h3>
+
+      {#each grainOptions as option, i (i)}
+        <DropdownMenu.CheckboxItem
+          checkRight
+          closeOnSelect
+          checked={option === grain}
+          onSelect={() => {
+            onSelectEnding(option);
+          }}
+        >
+          {translateV1TimeGrain(option)}
+        </DropdownMenu.CheckboxItem>
+      {:else}
+        <div class="px-2 py-1 text-fg-secondary flex justify-center italic">
+          {m.dashboard_no_valid_grains()}
+        </div>
+      {/each}
+    </DropdownMenu.Group>
+
+    {#if dateTimeUnit}
+      <div class="bg-popover-footer border-t rounded-b-sm">
+        <div class="flex justify-between items-center p-2">
+          <span>{m.dashboard_anchor_period_end()}</span>
+
+          <Switch
+            disabled={ref === ParrotTimeLabel.Watermark}
+            small
+            checked={snapToEnd || ref === ParrotTimeLabel.Watermark}
+            onclick={() => {
+              onToggleAlignment(!snapToEnd);
+            }}
+          />
+        </div>
+      </div>
+    {/if}
+  </DropdownMenu.Content>
+</DropdownMenu.Root>

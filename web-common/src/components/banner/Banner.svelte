@@ -1,0 +1,124 @@
+<script lang="ts">
+  import DOMPurify from "dompurify";
+  import type { BannerMessage } from "../../lib/event-bus/events";
+  import AlertCircleIcon from "../icons/AlertCircleOutline.svelte";
+  import CheckCircleOutline from "../icons/CheckCircleOutline.svelte";
+  import LoadingCircleOutline from "../icons/LoadingCircleOutline.svelte";
+  import MoonCircleOutline from "../icons/MoonCircleOutline.svelte";
+  import { XIcon } from "lucide-svelte";
+
+  export let banner: BannerMessage;
+  export let dismiss: () => void;
+
+  const IconMap = {
+    alert: AlertCircleIcon,
+    check: CheckCircleOutline,
+    sleep: MoonCircleOutline,
+    loading: LoadingCircleOutline,
+  };
+
+  let loading = false;
+  async function clickHandler() {
+    if (!banner?.cta?.onClick) return;
+    loading = true;
+    await banner.cta.onClick();
+    loading = false;
+  }
+</script>
+
+<header class="{banner.type} app-banner">
+  <div class="banner-content relative">
+    {#if banner.iconType in IconMap}
+      <svelte:component this={IconMap[banner.iconType]} size="14px" />
+    {/if}
+    {#if banner.includesHtml}
+      <p class="banner-message">{@html DOMPurify.sanitize(banner.message)}</p>
+    {:else}
+      <p class="banner-message">{banner.message}</p>
+    {/if}
+    {#if banner.cta}
+      {#if banner.cta.type === "link"}
+        <a
+          href={banner.cta.url}
+          target={banner.cta.target}
+          onclick={clickHandler}
+          class="banner-cta"
+        >
+          {banner.cta.text}
+        </a>
+      {:else if banner.cta.type === "button"}
+        <button onclick={clickHandler} class="banner-cta" disabled={loading}>
+          {banner.cta.text}
+        </button>
+      {/if}
+    {/if}
+    {#if banner.dismissible}
+      <button class="absolute right-2" onclick={dismiss}>
+        <XIcon size={14} />
+      </button>
+    {/if}
+  </div>
+</header>
+
+<style lang="postcss">
+  .app-banner {
+    @apply h-7 bg-secondary-100 border-b;
+  }
+
+  .banner-content {
+    @apply px-2 py-1.5;
+    @apply flex justify-center items-center gap-x-2;
+  }
+
+  .app-banner :global(svg) {
+    @apply text-secondary-900;
+  }
+
+  .banner-message {
+    @apply text-xs text-secondary-900 font-medium;
+  }
+
+  .banner-message :global(a) {
+    @apply text-primary-600;
+  }
+
+  .banner-cta {
+    @apply text-primary-600 cursor-pointer font-medium;
+  }
+
+  .banner-message :global(a:hover) {
+    @apply text-primary-700;
+  }
+
+  .success.app-banner {
+    @apply bg-primary-100;
+  }
+  .success .banner-message,
+  .success :global(svg) {
+    @apply text-primary-800;
+  }
+
+  .info.app-banner {
+    @apply bg-gray-100;
+  }
+  .info .banner-message,
+  .info :global(svg) {
+    @apply text-fg-primary;
+  }
+
+  .warning.app-banner {
+    @apply bg-yellow-100;
+  }
+  .warning .banner-message,
+  .warning :global(svg) {
+    @apply text-yellow-700;
+  }
+
+  .error.app-banner {
+    @apply bg-red-100;
+  }
+  .error .banner-message,
+  .error :global(svg) {
+    @apply text-red-700;
+  }
+</style>

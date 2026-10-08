@@ -2,7 +2,6 @@ import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { AnalyticsView } from '@/components/shell/AnalyticsView';
 import { NodesView } from '@/components/shell/NodesView';
-import { IntegrationsView } from '@/components/shell/IntegrationsView';
 import { ChatView } from '@/components/shell/ChatView';
 import { SettingsView } from '@/components/shell/SettingsView';
 import { GraphView } from '@/components/shell/GraphView';
@@ -18,7 +17,6 @@ import { useAppStore } from '@/stores/useAppStore';
 const views = {
   analytics: AnalyticsView,
   graph: GraphView,
-  integrations: IntegrationsView,
   settings: SettingsView,
   chat: ChatView,
   'organization-home': OrganizationHomeView,

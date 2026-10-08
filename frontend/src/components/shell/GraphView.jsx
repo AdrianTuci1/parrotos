@@ -7,22 +7,22 @@ import { useAppStore } from "@/stores/useAppStore";
 // --- Combined Topology Data for All Domains ---
 const combinedMindMapData = {
   connector: [
-    // Servers & Web Connectors
-    { id: "srv-db-1", name: "PostgreSQL Production DB", type: "db" },
-    { id: "srv-ga4-1", name: "Google Analytics Stream", type: "ga4" },
-    { id: "web-lighthouse", name: "Lighthouse Performance Audit", type: "stream" },
-    { id: "web-vercel", name: "Vercel Deployments Log", type: "stream" },
+    // Servers & Web Sources
+    { id: "srv-db-1", name: "Production Database", type: "db" },
+    { id: "srv-ga4-1", name: "Web Analytics Stream", type: "events" },
+    { id: "web-lighthouse", name: "Performance Audit", type: "stream" },
+    { id: "web-vercel", name: "Deployments Log", type: "stream" },
     
-    // Financial & Sales Connectors
-    { id: "fin-stripe", name: "Stripe Billing API", type: "stripe" },
-    { id: "fin-bank", name: "Silicon Valley Bank ACH", type: "db" },
-    { id: "fin-quickbooks", name: "QuickBooks Ledger", type: "api" },
-    { id: "sal-salesforce", name: "Salesforce Sales CRM", type: "crm" },
-    { id: "sal-shopify", name: "Shopify Storefront API", type: "shopify" },
+    // Financial & Sales Sources
+    { id: "fin-stripe", name: "Billing Events", type: "events" },
+    { id: "fin-bank", name: "Corporate Bank Feed", type: "db" },
+    { id: "fin-quickbooks", name: "Accounting Ledger", type: "api" },
+    { id: "sal-salesforce", name: "Sales Pipeline", type: "crm" },
+    { id: "sal-shopify", name: "Storefront Orders", type: "events" },
     
-    // Marketing Connectors
-    { id: "mkt-google", name: "Google Ads Campaigns", type: "api" },
-    { id: "mkt-facebook", name: "Meta Business Ads Manager", type: "api" }
+    // Marketing Sources
+    { id: "mkt-google", name: "Ads Campaigns", type: "api" },
+    { id: "mkt-facebook", name: "Social Ads Campaigns", type: "api" }
   ],
   adjustedData: [
     // Servers & Web Categories

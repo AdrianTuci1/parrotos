@@ -1,8 +1,14 @@
-import { useRef, useEffect, useState } from "react";
-import { BarChart3, Plug, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
+import { useRef, useEffect, useState, useMemo } from "react";
+import { BarChart3, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
+import { readable } from "svelte/store";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import ChartContainer from "@statsparrot/web-common/features/components/charts/react/ChartContainer";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
+import { ParrotChartStream } from "@/components/shell/ParrotChartStream";
+import { isChartToolCall } from "@/components/shell/statsparrotChatAdapter";
 import { cn } from "@/lib/utils";
-import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connectorAuthFields";
+
+const DEFAULT_FIELDS = { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter key...' }], help: '' };
 
 // ═══════════════════════════════════════════════
 // CHAT PANEL — scrollable messages + inline composers
@@ -14,7 +20,7 @@ import { CONNECTOR_AUTH_FIELDS, DEFAULT_FIELDS } from "@/components/shell/connec
  * When an inline composer is pending (waiting for user input),
  * the parent should hide the main ChatComposer.
  */
-export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
+export function ChatPanel({ messages, streaming, streamContent, approvalStates, pendingAction, onApprove, onReject, messagesEndRef, metricsView }) {
   const containerRef = useRef(null);
 
   // When pending action appears, scroll chat to bottom
@@ -37,8 +43,9 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                   {isUser ? message.content : <FormattedText text={message.content} />}
                 </div>
               )}
+              {!isUser && <ParrotChartStream message={message} metricsView={metricsView} />}
               {(() => {
-                const calls = message.toolCalls || [];
+                const calls = (message.toolCalls || []).filter((tc) => !isChartToolCall(tc));
                 const result = [];
                 let smallGroup = [];
                 const isSmall = (tc) => tc.type === "widget" && tc.size !== "4x1" && tc.size !== "4x2";
@@ -56,7 +63,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                           approvalState={approvalStates[`${message.id}-${idx}`] || tool.status || "pending"}
                           onApprove={onApprove}
                           onReject={onReject}
-                          connectorAuthFields={connectorAuthFields}
                         />
                       ))}
                     </div>
@@ -78,7 +84,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                         approvalState={approvalStates[`${message.id}-${idx}`] || tool.status || "pending"}
                         onApprove={onApprove}
                         onReject={onReject}
-                        connectorAuthFields={connectorAuthFields}
                       />
                     );
                   }
@@ -86,13 +91,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                 flushGroup();
                 return result;
               })()}
-              {message.toolCalls?.find(t => t.type === "suggestion") && (
-                <ConnectorSuggestions
-                  tool={message.toolCalls.find(t => t.type === "suggestion")}
-                  msgId={message.id}
-                  onApprove={onApprove}
-                />
-              )}
             </div>
           </div>
         );
@@ -116,7 +114,6 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
             action={pendingAction}
             onApprove={onApprove}
             onReject={onReject}
-            connectorAuthFields={connectorAuthFields}
           />
         </div>
       )}
@@ -128,7 +125,7 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
 // TOOL RESULT DISPATCHER
 // ═══════════════════════════════════════════════
 
-function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
+function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) {
   const key = `${msgId}-${tcIdx}`;
 
   if (tool.type === "widget") {
@@ -163,7 +160,6 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, co
         status={approvalState}
         onApprove={onApprove}
         onReject={onReject}
-        connectorAuthFields={connectorAuthFields}
       />
     );
   }
@@ -172,7 +168,68 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, co
     return <QueryResultTable tool={tool} />;
   }
 
+  // Chart tool-call: charts are normally rendered by ParrotChartStream (the ported
+  // ChartBlock path) ahead of this dispatcher, which filters chart tool calls out.
+  // This branch is an overflow fallback for chart-shaped calls that slip through,
+  // rendering a real Vega-Lite chart from the runtime via ChartContainer.
+  if (tool.type === "chart" || tool.action === "create_chart") {
+    if (!tool.chartSpec) return null;
+    return <ChatChart tool={tool} />;
+  }
+
   return null;
+}
+
+// ═══════════════════════════════════════════════
+// CHAT CHART — real chart rendered from the runtime
+// ═══════════════════════════════════════════════
+
+function ChatChart({ tool }) {
+  const runtimeClient = useRuntimeClient();
+  const chartType = tool.chartType || tool.config?.chart_type || "bar_chart";
+
+  // The create_chart spec is parsed JSON shaped like a CartesianChartSpec.
+  const chartSpec = useMemo(() => tool.chartSpec ?? {}, [tool.chartSpec]);
+  const spec = useMemo(() => readable(chartSpec), [chartSpec]);
+  const tafs = useMemo(() => readable(buildChatTafs(chartSpec)), [chartSpec]);
+
+  return (
+    <div className="chat-embedded-widget">
+      <div className="chat-embedded-widget-header">
+        <BarChart3 size={14} />
+        <span>{tool.title || tool.question || "Chart"}</span>
+      </div>
+      <div className="h-72">
+        <ChartContainer
+          runtimeClient={runtimeClient}
+          chartType={chartType}
+          spec={spec}
+          timeAndFilterStore={tafs}
+          themeMode="light"
+        />
+      </div>
+    </div>
+  );
+}
+
+function buildChatTafs(chartSpec) {
+  const timeRange = chartSpec?.time_range
+    ? {
+        start: chartSpec.time_range.start,
+        end: chartSpec.time_range.end,
+        timeZone: chartSpec.time_range.time_zone || "UTC",
+      }
+    : undefined;
+  return {
+    timeRange,
+    comparisonTimeRange: undefined,
+    showTimeComparison: false,
+    where: { cond: { op: "OPERATION_AND", exprs: [] } },
+    timeGrain: chartSpec?.time_grain || "TIME_GRAIN_DAY",
+    timeRangeState: undefined,
+    comparisonTimeRangeState: undefined,
+    hasTimeSeries: !!timeRange?.start && !!timeRange?.end,
+  };
 }
 
 // ═══════════════════════════════════════════════
@@ -181,11 +238,11 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject, co
 
 
 
-function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
+function PendingActionBar({ action, onApprove, onReject }) {
   const tc = action.toolCall;
   const isKeyInput = tc.action === "open_integration_modal";
   const connector = tc.connector || "integration";
-  const auth = isKeyInput ? (connectorAuthFields[connector] || DEFAULT_FIELDS) : null;
+  const auth = isKeyInput ? DEFAULT_FIELDS : null;
   const fields = auth?.fields || [];
   const [fieldValues, setFieldValues] = useState(() =>
     Object.fromEntries(fields.map((f) => [f.key, ""]))
@@ -266,10 +323,10 @@ function PendingActionBar({ action, onApprove, onReject, connectorAuthFields = C
  * variant="key-input"  → form fields (API keys, domain, etc.) + Approve/Cancel
  * variant="choice"     → list of clickable option buttons
  */
-function InlineActionComposer({ variant, connector, approvalKey, status, onApprove, onReject, choices, title, subtitle, connectorAuthFields = CONNECTOR_AUTH_FIELDS }) {
-  // --- KEY-INPUT variant (connector auth form) ---
+function InlineActionComposer({ variant, connector, approvalKey, status, onApprove, onReject, choices, title, subtitle }) {
+  // --- KEY-INPUT variant (credential form) ---
   if (variant === "key-input") {
-    const auth = connectorAuthFields[connector] || { ...DEFAULT_FIELDS, method: `${connector} API` };
+    const auth = DEFAULT_FIELDS;
 
     if (status === "approved") {
       return (
@@ -414,33 +471,6 @@ function InlineActionComposer({ variant, connector, approvalKey, status, onAppro
   return null;
 }
 
-// ═══════════════════════════════════════════════
-// CONNECTOR SUGGESTIONS
-// ═══════════════════════════════════════════════
-
-function ConnectorSuggestions({ tool, msgId, onApprove }) {
-  if (!tool) return null;
-  return (
-    <div className="chat-suggestions">
-      {tool.reason && <p className="chat-suggestion-reason">{tool.reason}</p>}
-      <div className="chat-suggestion-list">
-        {(tool.connectors || []).map((name) => (
-          <button
-            key={name}
-            className="chat-suggestion-btn"
-            onClick={() => {
-              const fakeKey = `${msgId}-suggest-${name}`;
-              onApprove(fakeKey);
-            }}
-          >
-            <Plug size={14} />
-            Connect {name}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ═══════════════════════════════════════════════
 // FORMATTED TEXT

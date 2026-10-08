@@ -6,7 +6,7 @@ export function UsageDetailsTab({ usage, invoices }) {
   const rows = usage.items?.length
     ? usage.items
     : [
-        { name: "Connectors", value: usageBreakdown * 0.6, color: "#86efac" },
+        { name: "Reverse-ETL", value: usageBreakdown * 0.6, color: "#86efac" },
         { name: "Queries", value: usageBreakdown * 0.4, color: "#f87171" },
       ];
 

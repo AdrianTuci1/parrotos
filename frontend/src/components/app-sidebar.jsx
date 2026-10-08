@@ -14,7 +14,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import {
   Plus, LayoutDashboard, BarChart3, Briefcase, Plug, Settings,
   Rocket, GitBranch, MessageSquare, Undo2, Users, CreditCard, Power,
-  Database, ArrowRightFromLine, House,
+  Database, ArrowRightFromLine, House, File, FileText, Sparkles, Bell,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -28,7 +28,8 @@ const sectionIcons = {
   "git-branch": GitBranch, "layout-dashboard": LayoutDashboard,
   house: House,
   "message-square": MessageSquare, plug: Plug, rocket: Rocket,
-  settings: Settings, users: Users, database: Database,
+  settings: Settings, users: Users, database: Database, files: File,
+  "file-text": FileText, sparkles: Sparkles, bell: Bell,
   "arrow-right-from-line": ArrowRightFromLine,
 };
 
@@ -85,7 +86,7 @@ export function AppSidebar() {
     const org = organizations.find((o) => o.id === proj?.organizationId);
     const oSlug = org?.slug || org?.id;
     const pSlug = proj?.slug || workspaceId;
-    navigate(`/app/${oSlug}/${pSlug}/analytics`);
+    navigate(`/app/${oSlug}/${pSlug}/explore`);
   };
 
   const navToOrgHome = () => {
@@ -102,7 +103,7 @@ export function AppSidebar() {
         navigate(`/app/${oSlug}/stats`);
       } else {
         const pSlug = state.currentWorkspace?.slug || state.currentWorkspace?.id;
-        navigate(`/app/${oSlug}/${pSlug}/analytics`);
+        navigate(`/app/${oSlug}/${pSlug}/explore`);
       }
     }, 0);
   };

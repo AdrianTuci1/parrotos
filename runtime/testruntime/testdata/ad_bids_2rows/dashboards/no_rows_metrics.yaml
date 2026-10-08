@@ -1,0 +1,32 @@
+model: no_rows
+display_name: Ad bids (no rows)
+description:
+
+timeseries: timestamp
+smallest_time_grain: 
+
+dimensions:
+  - display_name: Publisher
+    property: publisher
+    description: ""
+  - display_name: Domain
+    property: domain
+    description: ""
+
+measures:
+  - display_name: "Number of bids"
+    expression: count(*)
+    description: ""
+    format_preset: humanize
+  - display_name: "Total volume"
+    expression: sum(volume)
+    description: ""
+    format_preset: humanize
+  - display_name: "Total impressions"
+    expression: sum(impressions)
+    description: ""
+    format_preset: humanize
+  - display_name: "Max volume"
+    expression: max(volume)
+    description: ""
+    format_preset: humanize

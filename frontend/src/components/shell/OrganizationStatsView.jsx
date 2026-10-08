@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Building2, BarChart3, Database, ShieldCheck } from 'lucide-react';
+import { Building2, Database, ShieldCheck } from 'lucide-react';
 import { ViewFrame } from '@/components/shell/ViewFrame';
 import { useAppStore } from '@/stores/useAppStore';
 import '@/styles/organization-home.css';
@@ -68,17 +68,12 @@ export function OrganizationStatsView() {
   const events = metrics?.events || { total: 0, formatted: '0' };
   const storage = metrics?.storage || { total: 0, formatted: '0 GB' };
   const compute = metrics?.compute || { value: '0 GB', detail: 'BigQuery + orchestration', trend: '-8.1%' };
-  const connectedSources = metrics?.connectedSources || { value: '0', detail: 'No connectors', trend: '+12%' };
-  const topConnector = metrics?.topConnector || { value: 'None', detail: 'No connectors', trend: '+5%' };
-  const connectorUsage = metrics?.connectorUsage || [];
   const projectList = metrics?.projectList || [];
   const recentActivity = metrics?.recentActivity || [{ title: 'No recent activity', meta: 'Activity will appear here' }];
   const activeProjectsTrend = projects.total > 0 ? '+2 this month' : 'No data';
   const monthlyEventsTrend = events.total > 0 ? '+12.4%' : 'No data';
   const warehouseTrend = storage.total > 0 ? '+8.1%' : 'No data';
   const computeTrend = parseFloat(compute.value) > 0 ? compute.trend : 'No data';
-  const connectedSourcesTrend = Number(connectedSources.value) > 0 ? connectedSources.trend : 'No data';
-  const topConnectorTrend = topConnector.value && topConnector.value !== 'None' ? topConnector.trend : 'No data';
 
   return (
     <ViewFrame className="organization-home-frame" maxWidthClassName="max-w-7xl">
@@ -158,38 +153,6 @@ export function OrganizationStatsView() {
             </div>
           </section>
 
-          <section className="organization-panel organization-panel-span">
-            <div className="organization-panel-header">
-              <div className="organization-panel-title-row">
-                <BarChart3 size={18} />
-                <span>Activity</span>
-              </div>
-            </div>
-            <div className="organization-panel-split">
-              {loading ? (
-                <>
-                  <LoadingTile />
-                  <LoadingTile />
-                </>
-              ) : (
-                <>
-                  <MetricTile
-                    label="Connected sources"
-                    value={connectedSources.value}
-                    detail={connectedSources.detail}
-                    trend={connectedSourcesTrend}
-                  />
-                  <MetricTile
-                    label="Top connector"
-                    value={topConnector.value}
-                    detail={topConnector.detail}
-                    trend={topConnectorTrend}
-                  />
-                </>
-              )}
-            </div>
-          </section>
-
           <section className="organization-card">
             <div className="organization-card-header">
               <div className="organization-panel-title-row">
@@ -215,37 +178,6 @@ export function OrganizationStatsView() {
                     <div className="organization-project-meta">
                       <span>{w.monthlyEvents}</span>
                       <span>{w.dataConsumption}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-
-          <section className="organization-card">
-            <div className="organization-card-header">
-              <div className="organization-panel-title-row">
-                <BarChart3 size={18} />
-                <span>Connector adoption</span>
-              </div>
-            </div>
-            <div className="organization-connector-list">
-              {loading && connectorUsage.length === 0 ? (
-                <div className="organization-connector-row" style={{ opacity: 0.5 }}>
-                  <span>Loading connectors...</span>
-                </div>
-              ) : (
-                connectorUsage.map((c) => (
-                  <div key={c.name} className="organization-connector-row">
-                    <div className="organization-connector-copy">
-                      <span className="organization-connector-name">{c.name}</span>
-                      <span className="organization-connector-meta">{c.count} projects</span>
-                    </div>
-                    <div className="organization-connector-bar-track">
-                      <div
-                        className="organization-connector-bar-fill"
-                        style={{ width: `${c.share}%` }}
-                      />
                     </div>
                   </div>
                 ))

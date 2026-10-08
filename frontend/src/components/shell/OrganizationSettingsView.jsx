@@ -13,12 +13,26 @@ import {
   Shield,
   Lock,
   Eye,
+  Receipt,
+  Gauge,
 } from "lucide-react";
+import {
+  OrgBrandingSection,
+  OrgDomainAllowListSection,
+  OrgBillingSection,
+  OrgUsageSection,
+  OrgGroupsSection,
+  OrgGuestsSection,
+} from "@/components/shell/OrgSettingsSections";
 import "@/styles/settings.css";
 
 const orgSettingsItems = [
   { id: "general", label: "General", icon: <Building2 size={16} /> },
+  { id: "billing", label: "Billing", icon: <Receipt size={16} /> },
+  { id: "usage", label: "Usage", icon: <Gauge size={16} /> },
   { id: "members", label: "Members", icon: <Users size={16} /> },
+  { id: "groups", label: "Groups", icon: <Users size={16} /> },
+  { id: "guests", label: "Guests", icon: <Users size={16} /> },
   { id: "security", label: "Security", icon: <ShieldCheck size={16} /> },
   { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
 ];
@@ -497,9 +511,15 @@ export function OrganizationSettingsView() {
           <>
             <SectionHeader title="Settings" description="Configure account-level defaults and governance." />
             <GeneralSection />
+            <OrgBrandingSection />
+            <OrgDomainAllowListSection />
           </>
         )}
+        {activeTab === "billing" && <OrgBillingSection />}
+        {activeTab === "usage" && <OrgUsageSection />}
         {activeTab === "members" && <MembersSection />}
+        {activeTab === "groups" && <OrgGroupsSection />}
+        {activeTab === "guests" && <OrgGuestsSection />}
         {activeTab === "security" && <SecuritySection />}
         {activeTab === "danger" && <DangerSection />}
       </div>

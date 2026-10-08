@@ -24,11 +24,11 @@ const linePoints = [
 ];
 
 const entityRows = [
-  { name: "PixelTooth EU", score: "91", segment: "High intent", source: "GA4 + Stripe", activity: "12 min ago", status: "Ready" },
-  { name: "Northstar Labs", score: "87", segment: "Expansion", source: "HubSpot", activity: "27 min ago", status: "Needs email" },
-  { name: "Arc Run Club", score: "84", segment: "At risk", source: "PostHog", activity: "39 min ago", status: "Ready" },
-  { name: "Altwave Studio", score: "82", segment: "High intent", source: "GA4", activity: "54 min ago", status: "Mapped" },
-  { name: "Kiteframe Ops", score: "79", segment: "At risk", source: "GA4 + Shopify", activity: "1h ago", status: "Ready" },
+  { name: "PixelTooth EU", score: "91", segment: "High intent", source: "Web + Billing", activity: "12 min ago", status: "Ready" },
+  { name: "Northstar Labs", score: "87", segment: "Expansion", source: "CRM", activity: "27 min ago", status: "Needs email" },
+  { name: "Arc Run Club", score: "84", segment: "At risk", source: "Product Analytics", activity: "39 min ago", status: "Ready" },
+  { name: "Altwave Studio", score: "82", segment: "High intent", source: "Web Analytics", activity: "54 min ago", status: "Mapped" },
+  { name: "Kiteframe Ops", score: "79", segment: "At risk", source: "Web + Orders", activity: "1h ago", status: "Ready" },
 ];
 
 function buildLinePath(values, width, height, padding) {
@@ -96,7 +96,7 @@ export function MlModelsMockView() {
             <div className="ml-mock-card-body">
               <div className="ml-mock-hero-topline">
                 <Brain size={18} />
-                <span>High-intent cohort built from GA4, Stripe, and HubSpot signals</span>
+                <span>High-intent cohort built from usage, billing, and CRM signals</span>
               </div>
               <div className="ml-mock-hero-metric">12,430 profiles</div>
               <div className="ml-mock-hero-meta">

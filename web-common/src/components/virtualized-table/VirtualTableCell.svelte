@@ -1,0 +1,49 @@
+<script lang="ts">
+  import FormattedDataType from "../../components/data-types/FormattedDataType.svelte";
+  import { cellInspectorStore } from "../../features/dashboards/stores/cell-inspector-store";
+
+  export let value: unknown;
+  export let type: string | undefined;
+  export let selected: boolean;
+  export let sorted: boolean;
+  export let formattedValue: unknown;
+
+  $: finalValue = (formattedValue ?? value) as
+    | string
+    | boolean
+    | number
+    | null
+    | undefined;
+
+  function handleMouseOver() {
+    cellInspectorStore.updateValue(value, formattedValue);
+  }
+
+  function handleFocus() {
+    cellInspectorStore.updateValue(value, formattedValue);
+  }
+</script>
+
+<div
+  role="cell"
+  class:sorted
+  class:selected
+  class:!justify-start={type === "VARCHAR" || type === "CODE_STRING"}
+  class="px-6 size-full flex items-center"
+  onmouseover={handleMouseOver}
+  onfocus={handleFocus}
+  tabindex="0"
+>
+  <p
+    class="w-full truncate text-right"
+    class:!text-left={type === "VARCHAR" || type === "CODE_STRING"}
+  >
+    <FormattedDataType
+      color="!text-fg-secondary"
+      truncate
+      {type}
+      value={finalValue}
+      isNull={value === null}
+    />
+  </p>
+</div>

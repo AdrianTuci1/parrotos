@@ -1,0 +1,32 @@
+model: ad_bids_garbled
+display_name: Ad bids
+description:
+
+timeseries: timestamp name with spaces
+smallest_time_grain: 
+
+dimensions:
+  - display_name: Publisher
+    property: publisher
+    description: ""
+  - display_name: Domain
+    property: domain
+    description: ""
+  - display_name: Id
+    property: id
+
+measures:
+  - display_name: "Number of bids"
+    expression: count(*)
+    description: ""
+    format_preset: humanize
+  - display_name: "Total volume"
+    expression: sum(volume)
+    description: ""
+    format_preset: humanize
+  - display_name: "Total impressions"
+    expression: sum(impressions)
+    format_preset: humanize
+  - display_name: "Total clicks"
+    expression: sum(clicks)
+    format_preset: humanize

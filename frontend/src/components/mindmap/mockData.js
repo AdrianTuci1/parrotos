@@ -1,8 +1,8 @@
 export const mockData = {
     connector: [
-        { id: 'src-1', name: 'PostgreSQL DB', type: 'db' },
-        { id: 'src-2', name: 'Stripe Events', type: 'stripe' },
-        { id: 'src-3', name: 'Google Analytics', type: 'ga4' }
+        { id: 'src-1', name: 'Production DB', type: 'db' },
+        { id: 'src-2', name: 'Billing Events', type: 'events' },
+        { id: 'src-3', name: 'Web Analytics', type: 'events' }
     ],
     actionType: [
         // Optional action types if needed

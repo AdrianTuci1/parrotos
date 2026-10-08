@@ -1,0 +1,6 @@
+compiler: statsparrotv1
+
+display_name: "Untitled Parrot Project"
+
+features:
+  chat: false

@@ -1,0 +1,101 @@
+package cmdutil
+
+import (
+	"fmt"
+	"slices"
+	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
+)
+
+func SelectPrompt(msg string, options []string, def string) (string, error) {
+	prompt := &survey.Select{
+		Message: msg,
+		Options: options,
+	}
+
+	if slices.Contains(options, def) {
+		prompt.Default = def
+	}
+
+	result := ""
+	if err := survey.AskOne(prompt, &result); err != nil {
+		return "", fmt.Errorf("prompt failed: %w", err)
+	}
+	return result, nil
+}
+
+// SelectPromptWithDescriptions is like SelectPrompt but shows a description next to each option.
+// The descriptions slice must be the same length as options.
+func SelectPromptWithDescriptions(msg string, options, descriptions []string, def string) (string, error) {
+	if len(options) != len(descriptions) {
+		return "", fmt.Errorf("options and descriptions must be the same length")
+	}
+
+	prompt := &survey.Select{
+		Message: msg,
+		Options: options,
+		Description: func(value string, index int) string {
+			return descriptions[index]
+		},
+	}
+
+	if slices.Contains(options, def) {
+		prompt.Default = def
+	}
+
+	result := ""
+	if err := survey.AskOne(prompt, &result); err != nil {
+		return "", fmt.Errorf("prompt failed: %w", err)
+	}
+	return result, nil
+}
+
+// ConfirmPrompt asks the user to confirm an action.
+// It returns nil if the user confirms and an error if the user declines (or the prompt fails).
+func ConfirmPrompt(msg string, def bool) error {
+	prompt := &survey.Confirm{
+		Message: msg,
+		Default: def,
+	}
+
+	result := def
+	if err := survey.AskOne(prompt, &result); err != nil {
+		return fmt.Errorf("prompt failed: %w", err)
+	}
+	if !result {
+		return fmt.Errorf("aborted")
+	}
+	return nil
+}
+
+// YesNoPrompt asks the user a yes/no question and returns the result.
+// Use this when both answers lead to valid (non-abort) code paths.
+func YesNoPrompt(msg string, def bool) (bool, error) {
+	prompt := &survey.Confirm{
+		Message: msg,
+		Default: def,
+	}
+
+	result := def
+	if err := survey.AskOne(prompt, &result); err != nil {
+		return false, fmt.Errorf("prompt failed: %w", err)
+	}
+	return result, nil
+}
+
+func InputPrompt(msg, def string) (string, error) {
+	prompt := &survey.Input{
+		Message: msg,
+		Default: def,
+	}
+	result := def
+	if err := survey.AskOne(prompt, &result); err != nil {
+		return "", fmt.Errorf("prompt failed: %w", err)
+	}
+	result = strings.TrimSpace(result)
+	if result == "" {
+		return "", fmt.Errorf("input cannot be empty")
+	}
+	return result, nil
+}
