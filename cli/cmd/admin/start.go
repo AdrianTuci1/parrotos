@@ -1,0 +1,510 @@
+package admin
+
+import (
+	"context"
+	"encoding/hex"
+	"fmt"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+	"time"
+
+	"cloud.google.com/go/storage"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/redis/go-redis/v9"
+	"github.com/spf13/cobra"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/assetstore"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/billing/payment"
+	"github.com/staticlabs/statsparrot/admin/jobs/river"
+	"github.com/staticlabs/statsparrot/admin/server"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/debugserver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	statsparrotstorage "github.com/staticlabs/statsparrot/runtime/storage"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"golang.org/x/sync/errgroup"
+	"google.golang.org/api/option"
+
+	// Register drivers
+	_ "github.com/staticlabs/statsparrot/admin/database/postgres"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/clickhousestatic"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/kubernetes"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/static"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/claude"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gemini"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock/ai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/openai"
+)
+
+// Config describes admin server config derived from environment variables.
+// Env var keys must be prefixed with STATSPARROT_ADMIN_ and are converted from snake_case to CamelCase.
+// For example STATSPARROT_ADMIN_HTTP_PORT is mapped to Config.HTTPPort.
+type Config struct {
+	DatabaseDriver string `default:"postgres" split_words:"true"`
+	DatabaseURL    string `split_words:"true"`
+	// json encoded array of database.EncryptionKey
+	DatabaseEncryptionKeyring string                 `split_words:"true"`
+	RiverDatabaseURL          string                 `split_words:"true"`
+	RedisURL                  string                 `default:"" split_words:"true"`
+	ProvisionerSetJSON        string                 `split_words:"true"`
+	DefaultProvisioner        string                 `split_words:"true"`
+	Jobs                      []string               `split_words:"true"`
+	LogLevel                  zapcore.Level          `default:"info" split_words:"true"`
+	MetricsExporter           observability.Exporter `default:"prometheus" split_words:"true"`
+	TracesExporter            observability.Exporter `default:"" split_words:"true"`
+	HTTPPort                  int                    `default:"8080" split_words:"true"`
+	GRPCPort                  int                    `default:"8080" split_words:"true"`
+	DebugPort                 int                    `split_words:"true"`
+	ServeUI                   bool                   `default:"false" split_words:"true"`
+	UIFrameAncestors          string                 `split_words:"true"`
+	RuntimeProxyTarget        string                 `split_words:"true"`
+	RuntimeProxyPrefix        string                 `split_words:"true"`
+	RuntimePublicURL          string                 `split_words:"true"`
+	ExternalURL               string                 `default:"http://localhost:8080" split_words:"true"`
+	ExternalGRPCURL           string                 `envconfig:"external_grpc_url"`
+	FrontendURL               string                 `default:"http://localhost:3000" split_words:"true"`
+	AllowedOrigins            []string               `default:"*" split_words:"true"`
+	SessionKeyPairs           []string               `split_words:"true"`
+	SigningJWKS               string                 `split_words:"true"`
+	SigningKeyID              string                 `split_words:"true"`
+	AuthDomain                string                 `split_words:"true"`
+	AuthClientID              string                 `split_words:"true"`
+	AuthClientSecret          string                 `split_words:"true"`
+	GithubAppID               int64                  `split_words:"true"`
+	GithubAppName             string                 `split_words:"true"`
+	GithubAppPrivateKey       string                 `split_words:"true"`
+	GithubAppWebhookSecret    string                 `split_words:"true"`
+	GithubClientID            string                 `split_words:"true"`
+	GithubClientSecret        string                 `split_words:"true"`
+	GithubManagedAccount      string                 `split_words:"true"`
+	// AssetsDriver selects the object storage for organization assets: "gcs" or "s3".
+	// "s3" works with AWS S3, Cloudflare R2 and MinIO.
+	AssetsDriver string `envconfig:"assets_driver" default:"gcs"`
+	AssetsBucket string `split_words:"true"`
+	// AssetsBucketGoogleCredentialsJSON is only required to be set for local development.
+	// For production use cases the service account will be directly attached to pods which is the recommended way of setting credentials.
+	AssetsBucketGoogleCredentialsJSON string `split_words:"true"`
+	AssetsS3Region                    string `envconfig:"assets_s3_region"`
+	AssetsS3Endpoint                  string `envconfig:"assets_s3_endpoint"`
+	AssetsS3AccessKeyID               string `envconfig:"assets_s3_access_key_id"`
+	AssetsS3SecretAccessKey           string `envconfig:"assets_s3_secret_access_key"`
+	AssetsS3ForcePathStyle            bool   `envconfig:"assets_s3_force_path_style"`
+	EmailSMTPHost                     string `split_words:"true"`
+	EmailSMTPPort                     int    `split_words:"true"`
+	EmailSMTPUsername                 string `split_words:"true"`
+	EmailSMTPPassword                 string `split_words:"true"`
+	EmailSenderEmail                  string `split_words:"true"`
+	EmailSenderName                   string `split_words:"true"`
+	EmailBCC                          string `split_words:"true"`
+	AIDriver                          string `default:"" split_words:"true"`
+	OpenAIAPIKey                      string `envconfig:"openai_api_key"`
+	ClaudeAPIKey                      string `envconfig:"claude_api_key"`
+	GeminiAPIKey                      string `envconfig:"gemini_api_key"`
+	ActivitySinkType                  string `default:"" split_words:"true"`
+	ActivitySinkKafkaBrokers          string `default:"" split_words:"true"`
+	ActivityUISinkKafkaTopic          string `default:"" split_words:"true"`
+	MetricsProject                    string `default:"" split_words:"true"`
+	AutoscalerCron                    string `default:"CRON_TZ=America/Los_Angeles 0 0 * * 1" split_words:"true"`
+	ScaleDownConstraint               int    `default:"0" split_words:"true"`
+	// StoppedDeploymentRetention is how long a stopped (hibernated) deployment is kept around before its persistent state is fully deleted.
+	StoppedDeploymentRetention time.Duration `default:"168h" split_words:"true"`
+	OrbAPIKey                  string        `split_words:"true"`
+	OrbWebhookSecret           string        `split_words:"true"`
+	OrbIntegratedTaxProvider   string        `default:"anrok" split_words:"true"`
+	StripeAPIKey               string        `split_words:"true"`
+	StripeWebhookSecret        string        `split_words:"true"`
+	PylonIdentitySecret        string        `split_words:"true"`
+	AllowMockBilling           bool          `default:"false" split_words:"true"` // set to allow sending mock usage for billing, should be false in prod env
+}
+
+// StartCmd starts an admin server. It only allows configuration using environment variables.
+func StartCmd(ch *cmdutil.Helper) *cobra.Command {
+	startCmd := &cobra.Command{
+		Use:   "start [jobs|server|worker]",
+		Short: "Start admin service",
+		Args:  cobra.MaximumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			// Load .env (note: fails silently if .env has errors)
+			_ = godotenv.Load()
+
+			// Init config
+			var conf Config
+			err := envconfig.Process("statsparrot_admin", &conf)
+			if err != nil {
+				fmt.Printf("failed to load config: %s\n", err.Error())
+				os.Exit(1)
+			}
+
+			// Init logger
+			cfg := zap.NewProductionConfig()
+			cfg.Level.SetLevel(conf.LogLevel)
+			cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+			logger, err := cfg.Build()
+			if err != nil {
+				fmt.Printf("error: failed to create logger: %s\n", err.Error())
+				os.Exit(1)
+			}
+
+			// Let ExternalGRPCURL default to ExternalURL, unless ExternalURL is itself the default.
+			if conf.ExternalGRPCURL == "" {
+				conf.ExternalGRPCURL = conf.ExternalURL
+			}
+
+			// Validate frontend and external URLs
+			_, err = url.Parse(conf.FrontendURL)
+			if err != nil {
+				logger.Fatal("invalid frontend URL", zap.Error(err))
+			}
+			_, err = url.Parse(conf.ExternalURL)
+			if err != nil {
+				logger.Fatal("invalid external URL", zap.Error(err))
+			}
+			_, err = url.Parse(conf.ExternalGRPCURL)
+			if err != nil {
+				logger.Fatal("invalid external grpc URL", zap.Error(err))
+			}
+
+			// Init observability
+			shutdown, err := observability.Start(cmd.Context(), logger, &observability.Options{
+				MetricsExporter: conf.MetricsExporter,
+				TracesExporter:  conf.TracesExporter,
+				ServiceName:     "admin-server",
+				ServiceVersion:  ch.Version.String(),
+			})
+			if err != nil {
+				logger.Fatal("error starting observability", zap.Error(err))
+			}
+			defer func() {
+				// Allow 10 seconds to gracefully shutdown observability
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				defer cancel()
+				err := shutdown(ctx)
+				if err != nil {
+					logger.Error("observability shutdown failed", zap.Error(err))
+				}
+			}()
+
+			// Init activity client
+			var activityClient *activity.Client
+			switch conf.ActivitySinkType {
+			case "", "noop":
+				activityClient = activity.NewNoopClient()
+			case "kafka":
+				// NOTE: ActivityUISinkKafkaTopic specifically denotes a topic for UI events.
+				// This is acceptable since the UI is presently the only source that records events on the admin server's telemetry.
+				// However, if other events are emitted from the admin server in the future, we should refactor to emit all events of any kind to a single topic.
+				// (And handle multiplexing of different event types downstream.)
+				sink, err := activity.NewKafkaSink(conf.ActivitySinkKafkaBrokers, conf.ActivityUISinkKafkaTopic, logger)
+				if err != nil {
+					logger.Fatal("error creating kafka sink", zap.Error(err))
+				}
+				activityClient = activity.NewClient(sink, logger)
+			default:
+				logger.Fatal("unknown activity sink type", zap.String("type", conf.ActivitySinkType))
+			}
+			defer activityClient.Close(context.Background())
+
+			// Add service info to activity client
+			activityClient = activityClient.WithServiceName("admin-server")
+			if ch.Version.Number != "" || ch.Version.Commit != "" {
+				activityClient = activityClient.WithServiceVersion(ch.Version.Number, ch.Version.Commit)
+			}
+			if ch.Version.IsDev() {
+				activityClient = activityClient.WithIsDev()
+			}
+
+			// Init runtime JWT issuer
+			issuer, err := auth.NewIssuer(conf.ExternalURL, conf.SigningKeyID, []byte(conf.SigningJWKS))
+			if err != nil {
+				logger.Fatal("error creating runtime jwt issuer", zap.Error(err))
+			}
+
+			// Init email client
+			var sender email.Sender
+			if conf.EmailSMTPHost != "" {
+				sender, err = email.NewSMTPSender(&email.SMTPOptions{
+					SMTPHost:     conf.EmailSMTPHost,
+					SMTPPort:     conf.EmailSMTPPort,
+					SMTPUsername: conf.EmailSMTPUsername,
+					SMTPPassword: conf.EmailSMTPPassword,
+					FromEmail:    conf.EmailSenderEmail,
+					FromName:     conf.EmailSenderName,
+					BCC:          conf.EmailBCC,
+				})
+			} else {
+				sender, err = email.NewConsoleSender(logger, conf.EmailSenderEmail, conf.EmailSenderName)
+			}
+			if err != nil {
+				logger.Fatal("error creating email sender", zap.Error(err))
+			}
+			emailClient := email.New(sender)
+
+			// Init github client
+			gh, err := admin.NewGithub(cmd.Context(), conf.GithubAppID, conf.GithubAppPrivateKey, conf.GithubManagedAccount, logger)
+			if err != nil {
+				logger.Fatal("error creating github client", zap.Error(err))
+			}
+
+			// Init AI service
+			aiDriver := conf.AIDriver
+			aiConfig := map[string]any{}
+			switch aiDriver {
+			case "openai":
+				if conf.OpenAIAPIKey == "" {
+					logger.Fatal("STATSPARROT_ADMIN_OPENAI_API_KEY is required when AI driver is 'openai'")
+				}
+				aiConfig["api_key"] = conf.OpenAIAPIKey
+			case "claude":
+				if conf.ClaudeAPIKey == "" {
+					logger.Fatal("STATSPARROT_ADMIN_CLAUDE_API_KEY is required when AI driver is 'claude'")
+				}
+				aiConfig["api_key"] = conf.ClaudeAPIKey
+			case "gemini":
+				if conf.GeminiAPIKey == "" {
+					logger.Fatal("STATSPARROT_ADMIN_GEMINI_API_KEY is required when AI driver is 'gemini'")
+				}
+				aiConfig["api_key"] = conf.GeminiAPIKey
+			case "mock_ai":
+				// Nothing more to do
+			case "":
+				aiDriver = "mock_ai"
+				if conf.OpenAIAPIKey != "" { // Backwards compatibility
+					aiDriver = "openai"
+					aiConfig["api_key"] = conf.OpenAIAPIKey
+				}
+			default:
+				logger.Fatal("unknown AI driver", zap.String("driver", aiDriver))
+			}
+			aiHandle, err := drivers.Open(aiDriver, "", "", aiConfig, statsparrotstorage.MustNew(os.TempDir(), nil), activity.NewNoopClient(), logger)
+			if err != nil {
+				logger.Fatal("error creating AI client", zap.Error(err))
+			}
+			defer aiHandle.Close()
+			aiService, ok := aiHandle.AsAI("")
+			if !ok {
+				logger.Fatal("AI driver does not implement AI interface", zap.String("driver", aiHandle.Driver()))
+			}
+
+			// Init the asset store. Every uploaded archive and organization image goes here.
+			if conf.AssetsBucket == "" {
+				logger.Fatal("STATSPARROT_ADMIN_ASSETS_BUCKET is not set")
+			}
+			var assets assetstore.Store
+			switch conf.AssetsDriver {
+			case "gcs":
+				var clientOpts []option.ClientOption
+				if conf.AssetsBucketGoogleCredentialsJSON != "" {
+					clientOpts = append(clientOpts, option.WithCredentialsJSON([]byte(conf.AssetsBucketGoogleCredentialsJSON)))
+				}
+				storageClient, err := storage.NewClient(cmd.Context(), clientOpts...)
+				if err != nil {
+					logger.Fatal(
+						"failed to create the assets bucket client: set STATSPARROT_ADMIN_ASSETS_BUCKET_GOOGLE_CREDENTIALS_JSON to a Google service account key that can write to STATSPARROT_ADMIN_ASSETS_BUCKET, or run on a host that provides application default credentials",
+						zap.Error(err),
+					)
+				}
+				assets = assetstore.NewGCS(storageClient.Bucket(conf.AssetsBucket))
+			case "s3":
+				assets, err = assetstore.NewS3(cmd.Context(), assetstore.S3Config{
+					Bucket:          conf.AssetsBucket,
+					Region:          conf.AssetsS3Region,
+					Endpoint:        conf.AssetsS3Endpoint,
+					AccessKeyID:     conf.AssetsS3AccessKeyID,
+					SecretAccessKey: conf.AssetsS3SecretAccessKey,
+					ForcePathStyle:  conf.AssetsS3ForcePathStyle,
+				})
+				if err != nil {
+					logger.Fatal("failed to create the assets bucket client", zap.String("driver", "s3"), zap.Error(err))
+				}
+			default:
+				logger.Fatal("unknown assets driver", zap.String("driver", conf.AssetsDriver), zap.String("supported", "gcs, s3"))
+			}
+
+			// Parse metrics project name
+			var metricsProjectOrg, metricsProjectName string
+			if conf.MetricsProject != "" {
+				parts := strings.Split(conf.MetricsProject, "/")
+				if len(parts) != 2 {
+					logger.Fatal("invalid metrics project slug", zap.String("name", conf.MetricsProject))
+				}
+				metricsProjectOrg = parts[0]
+				metricsProjectName = parts[1]
+			}
+
+			var biller billing.Biller
+			if conf.OrbAPIKey != "" {
+				biller = billing.NewOrb(logger, conf.OrbAPIKey, conf.OrbWebhookSecret, strings.ToLower(conf.OrbIntegratedTaxProvider))
+			} else {
+				biller = billing.NewNoop()
+			}
+
+			var p payment.Provider
+			if conf.StripeAPIKey != "" {
+				p = payment.NewStripe(logger, conf.StripeAPIKey, conf.StripeWebhookSecret)
+			} else {
+				p = payment.NewNoop()
+			}
+
+			// Init admin service
+			admOpts := &admin.Options{
+				DatabaseDriver:             conf.DatabaseDriver,
+				DatabaseDSN:                conf.DatabaseURL,
+				DatabaseEncryptionKeyring:  conf.DatabaseEncryptionKeyring,
+				ExternalURL:                conf.ExternalGRPCURL, // NOTE: using gRPC url
+				FrontendURL:                conf.FrontendURL,
+				ProvisionerSetJSON:         conf.ProvisionerSetJSON,
+				DefaultProvisioner:         conf.DefaultProvisioner,
+				Version:                    ch.Version,
+				MetricsProjectOrg:          metricsProjectOrg,
+				MetricsProjectName:         metricsProjectName,
+				AutoscalerCron:             conf.AutoscalerCron,
+				ScaleDownConstraint:        conf.ScaleDownConstraint,
+				AllowMockBilling:           conf.AllowMockBilling,
+				StoppedDeploymentRetention: conf.StoppedDeploymentRetention,
+			}
+			adm, err := admin.New(cmd.Context(), admOpts, logger, issuer, emailClient, gh, aiService, assets, biller, p)
+			if err != nil {
+				logger.Fatal("error creating service", zap.Error(err))
+			}
+			defer adm.Close()
+
+			// Init river jobs client
+			jobs, err := river.New(cmd.Context(), conf.RiverDatabaseURL, adm)
+			if err != nil {
+				logger.Fatal("error creating river jobs client", zap.Error(err))
+			}
+			defer jobs.Close(cmd.Context())
+
+			// Set initialized jobs client on admin so jobs can be triggered from admin
+			adm.Jobs = jobs
+
+			// Parse session keys as hex strings
+			keyPairs := make([][]byte, len(conf.SessionKeyPairs))
+			for idx, keyHex := range conf.SessionKeyPairs {
+				key, err := hex.DecodeString(keyHex)
+				if err != nil {
+					logger.Fatal("failed to parse session key from hex string to bytes")
+				}
+				keyPairs[idx] = key
+			}
+
+			// Parse Pylon identity secret
+			var pylonIdentitySecret []byte
+			if conf.PylonIdentitySecret != "" {
+				pylonIdentitySecret, err = hex.DecodeString(conf.PylonIdentitySecret)
+				if err != nil {
+					logger.Fatal("failed to parse pylon identity secret from hex string to bytes")
+				}
+			}
+
+			// Make errgroup for running the processes
+			ctx := graceful.WithCancelOnTerminate(context.Background())
+			group, cctx := errgroup.WithContext(ctx)
+
+			// Determine services to run. If no service name was provided, run them all.
+			// We just have three currently, so keeping this basic.
+			runServer := len(args) == 0 || args[0] == "server"
+			runWorker := len(args) == 0 || args[0] == "worker"
+			runJobs := len(args) == 0 || args[0] == "jobs"
+
+			// Init and run server
+			if runServer {
+				var limiter ratelimit.Limiter
+				if conf.RedisURL == "" {
+					limiter = ratelimit.NewNoop()
+				} else {
+					opts, err := redis.ParseURL(conf.RedisURL)
+					if err != nil {
+						logger.Fatal("failed to parse redis url", zap.Error(err))
+					}
+					limiter = ratelimit.NewRedis(redis.NewClient(opts))
+				}
+
+				srv, err := server.New(logger, adm, issuer, limiter, activityClient, &server.Options{
+					HTTPPort:               conf.HTTPPort,
+					GRPCPort:               conf.GRPCPort,
+					AllowedOrigins:         conf.AllowedOrigins,
+					SessionKeyPairs:        keyPairs,
+					ServePrometheus:        conf.MetricsExporter == observability.PrometheusExporter,
+					ServeUI:                conf.ServeUI,
+					UIFrameAncestors:       conf.UIFrameAncestors,
+					RuntimeProxyTarget:     conf.RuntimeProxyTarget,
+					RuntimeProxyPrefix:     conf.RuntimeProxyPrefix,
+					RuntimePublicURL:       conf.RuntimePublicURL,
+					AuthDomain:             conf.AuthDomain,
+					AuthClientID:           conf.AuthClientID,
+					AuthClientSecret:       conf.AuthClientSecret,
+					GithubAppName:          conf.GithubAppName,
+					GithubAppWebhookSecret: conf.GithubAppWebhookSecret,
+					GithubClientID:         conf.GithubClientID,
+					GithubClientSecret:     conf.GithubClientSecret,
+					GithubManagedAccount:   conf.GithubManagedAccount,
+					AssetsBucket:           conf.AssetsBucket,
+					PylonIdentitySecret:    pylonIdentitySecret,
+				})
+				if err != nil {
+					logger.Fatal("error creating server", zap.Error(err))
+				}
+				group.Go(func() error { return srv.ServeHTTP(cctx) })
+				if conf.DebugPort != 0 {
+					group.Go(func() error { return debugserver.ServeHTTP(cctx, conf.DebugPort) })
+				}
+			}
+
+			// Init and run worker
+			if runWorker || runJobs {
+				if runWorker {
+					group.Go(func() error { return jobs.Work(cctx) })
+					if !runServer {
+						// If we're not running the server, lets start a http server with /ping endpoint for health checks
+						mux := http.NewServeMux()
+						mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+							w.WriteHeader(http.StatusOK)
+							_, err := w.Write([]byte("pong"))
+							if err != nil {
+								panic(err)
+							}
+						})
+						group.Go(func() error {
+							return graceful.ServeHTTP(cctx, mux, graceful.ServeOptions{Port: conf.HTTPPort})
+						})
+					}
+				}
+
+				if runJobs {
+					for _, job := range conf.Jobs {
+						job := job
+						group.Go(func() error {
+							_, err := jobs.EnqueueByKind(cmd.Context(), job)
+							if err != nil {
+								return err
+							}
+							return nil
+						})
+					}
+				}
+			}
+
+			// Run tasks
+			err = group.Wait()
+			if err != nil {
+				logger.Error("crashed", zap.Error(err))
+				return
+			}
+
+			logger.Info("shutdown gracefully")
+		},
+	}
+	return startCmd
+}

@@ -1,0 +1,212 @@
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getExploreStateFromYAMLConfig } from "@statsparrot/web-common/features/dashboards/stores/get-explore-state-from-yaml-config.ts";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state.ts";
+import { getDashboardFromAggregationRequest } from "@statsparrot/web-common/features/explore-mappers/get-dashboard-from-aggregation-request.ts";
+import { getDashboardFromComparisonRequest } from "@statsparrot/web-common/features/explore-mappers/get-dashboard-from-comparison-request.ts";
+import type {
+  QueryRequests,
+  TransformerArgs,
+  TransformerProperties,
+} from "@statsparrot/web-common/features/explore-mappers/types";
+import { convertRequestKeysToCamelCase } from "@statsparrot/web-common/features/explore-mappers/utils";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import {
+  createQueryServiceMetricsViewTimeRange,
+  type V1MetricsViewAggregationRequest,
+  type V1MetricsViewComparisonRequest,
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { derived, readable, type Readable } from "svelte/store";
+
+export type MapQueryRequest = {
+  exploreName: string;
+  queryName?: string;
+  queryArgsJson?: string;
+  executionTime?: string;
+};
+
+export type MapQueryStateOptions = {
+  exploreProtoState?: string;
+  ignoreFilters?: boolean;
+  forceOpenPivot?: boolean;
+};
+
+export type MapQueryResponse = {
+  isFetching: boolean;
+  isLoading: boolean;
+  error: Error | null;
+  data?: { exploreState: ExploreState; exploreName: string };
+};
+
+/**
+ * Builds the dashboard url from query name and args.
+ * Used to show the relevant dashboard for a report/alert.
+ */
+export function mapQueryToDashboard(
+  client: RuntimeClient,
+  { exploreName, queryName, queryArgsJson, executionTime }: MapQueryRequest,
+  {
+    exploreProtoState,
+    ignoreFilters = false,
+    forceOpenPivot = false,
+  }: MapQueryStateOptions,
+): Readable<MapQueryResponse> {
+  if (!queryName || !queryArgsJson)
+    return readable({
+      isFetching: false,
+      isLoading: false,
+      error: new Error("Required parameters are missing."),
+    });
+
+  const queryRequestProperties: QueryRequests = convertRequestKeysToCamelCase(
+    JSON.parse(queryArgsJson),
+  );
+
+  let metricsViewName: string = "";
+
+  let getDashboardState: (
+    args: TransformerArgs<TransformerProperties>,
+  ) => Promise<ExploreState>;
+
+  // get metrics view name and the query mapper function based on the query name.
+  switch (queryName) {
+    case "MetricsViewAggregation":
+      metricsViewName =
+        (queryRequestProperties as V1MetricsViewAggregationRequest)
+          .metricsView ?? "";
+      getDashboardState = getDashboardFromAggregationRequest;
+      break;
+
+    case "MetricsViewComparison":
+      metricsViewName =
+        (queryRequestProperties as V1MetricsViewComparisonRequest)
+          .metricsViewName ?? "";
+      getDashboardState = getDashboardFromComparisonRequest;
+      break;
+
+    // TODO
+    // case "MetricsViewToplist":
+    // case "MetricsViewRows":
+    // case "MetricsViewTimeSeries":
+  }
+
+  if (!metricsViewName) {
+    // error state
+    return readable({
+      isFetching: false,
+      isLoading: false,
+      error: new Error(
+        "Failed to find metrics view name. Please check the format of the report.",
+      ),
+    });
+  }
+  // backwards compatibility for older alerts created on metrics explore directly
+  if (!exploreName) exploreName = metricsViewName;
+
+  return derived(
+    [
+      useExploreValidSpec(client, exploreName, undefined, queryClient),
+      // TODO: handle non-timestamp dashboards
+      createQueryServiceMetricsViewTimeRange(
+        client,
+        { metricsViewName },
+        undefined,
+        queryClient,
+      ),
+    ],
+    ([validSpecResp, timeRangeSummary], set) => {
+      if (validSpecResp.isLoading || timeRangeSummary.isLoading) {
+        set({
+          isFetching: true,
+          isLoading: true,
+          error: null,
+        });
+        return;
+      }
+
+      if (validSpecResp.error || timeRangeSummary.error) {
+        set({
+          isFetching: false,
+          isLoading: false,
+          error: new Error(
+            validSpecResp.error?.message ?? timeRangeSummary.error?.message,
+          ),
+        });
+        return;
+      }
+
+      // Type guard
+      if (
+        !validSpecResp.data ||
+        !validSpecResp.data.explore ||
+        !validSpecResp.data.metricsView
+      ) {
+        set({
+          isFetching: false,
+          isLoading: false,
+          error: new Error("Failed to fetch explore."),
+        });
+        return;
+      }
+
+      // Type guard
+      if (!timeRangeSummary.data?.timeRangeSummary) {
+        set({
+          isFetching: false,
+          isLoading: false,
+          error: new Error("Failed to fetch time range summary."),
+        });
+        return;
+      }
+
+      const { metricsView, explore } = validSpecResp.data;
+
+      const statsparrotDefaultExploreState = getParrotDefaultExploreState(
+        validSpecResp.data.metricsView,
+        validSpecResp.data.explore,
+        timeRangeSummary.data?.timeRangeSummary,
+      );
+      const exploreStateFromYAMLConfig = getExploreStateFromYAMLConfig(
+        validSpecResp.data.explore,
+        timeRangeSummary.data?.timeRangeSummary,
+        metricsView.smallestTimeGrain,
+      );
+      const defaultExploreState = {
+        ...statsparrotDefaultExploreState,
+        ...exploreStateFromYAMLConfig,
+      };
+      getDashboardState({
+        queryClient,
+        client,
+        dashboard: defaultExploreState,
+        req: queryRequestProperties,
+        metricsView,
+        explore,
+        timeRangeSummary: timeRangeSummary.data.timeRangeSummary,
+        executionTime,
+        exploreProtoState,
+        ignoreFilters,
+        forceOpenPivot,
+      })
+        .then((newExploreState) => {
+          set({
+            isFetching: false,
+            isLoading: false,
+            error: null,
+            data: {
+              exploreState: newExploreState,
+              exploreName,
+            },
+          });
+        })
+        .catch((err) => {
+          set({
+            isFetching: false,
+            isLoading: false,
+            error: err.message,
+          });
+        });
+    },
+  );
+}

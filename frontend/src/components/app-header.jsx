@@ -595,7 +595,7 @@ export function AppHeader() {
                     <input
                       type="text"
                       className="overlay-input"
-                      placeholder="e.g. Stripe sync is failing"
+                      placeholder="e.g. an API sync is failing"
                       value={ticketForm.subject}
                       onChange={(e) => setTicketForm({ ...ticketForm, subject: e.target.value })}
                       required

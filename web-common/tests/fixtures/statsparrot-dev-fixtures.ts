@@ -1,0 +1,160 @@
+import type { Page } from "@playwright/test";
+import { asyncWaitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
+import axios from "axios";
+import { spawn } from "node:child_process";
+import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { test as base, expect } from "playwright/test";
+import treeKill from "tree-kill";
+import { getOpenPort } from "@statsparrot/web-common/tests/utils/get-open-port.ts";
+import { makeTempDir } from "@statsparrot/web-common/tests/utils/make-temp-dir.ts";
+import { spawnAndMatch } from "@statsparrot/web-common/tests/utils/spawn.ts";
+
+type MyFixtures = {
+  cliHomeDir: string;
+  project: string | undefined;
+  projectDir: string | undefined;
+  statsparrotDevPage: Page;
+  statsparrotDevBrowserState: string | undefined;
+};
+
+export const statsparrotDev = base.extend<MyFixtures>({
+  // Add a default home if cliHome is not provided so that tests always have a different home than the user's home.
+  // This will make sure that login status won't conflicts with dev's login status when run locally.
+  cliHomeDir: [makeTempDir("home"), { option: true }],
+  project: [undefined, { option: true }],
+  // We default to using a randomly created temporary directory for project.
+  // This can be used to get a consistent
+  projectDir: [undefined, { option: true }],
+  // If set, used to create the context used to create the statsparrotDevPage.
+  // A fresh context is used if not provided.
+  statsparrotDevBrowserState: [undefined, { option: true }],
+
+  statsparrotDevPage: async (
+    {
+      browser,
+      project,
+      projectDir,
+      cliHomeDir,
+      statsparrotDevBrowserState,
+      timezoneId,
+      locale,
+    },
+    use,
+  ) => {
+    const TEST_PORT = await getOpenPort();
+    const TEST_GRPC_PORT = await getOpenPort();
+    const TEST_PROJECT_DIRECTORY =
+      projectDir ?? makeTempDir(`projects-${TEST_PORT}`);
+
+    // Switch env to "dev" so that this points to the locally started statsparrot cloud.
+    // For tests that involve a local cloud this will point to it.
+    // Otherwise, when running in a dev's machine, it will avoid pointing to prod cloud and bombard prod.
+    await spawnAndMatch(
+      "../statsparrot",
+      "devtool switch-env dev".split(" "),
+      /Set default env to "dev"/,
+      {
+        additionalEnv: {
+          // Override home so that the instance is isolated for the provided cliHome.
+          HOME: cliHomeDir,
+        },
+      },
+    );
+
+    rmSync(TEST_PROJECT_DIRECTORY, { force: true, recursive: true });
+
+    if (!existsSync(TEST_PROJECT_DIRECTORY)) {
+      mkdirSync(TEST_PROJECT_DIRECTORY, { recursive: true });
+    }
+
+    if (project) {
+      const sourceProjectDir = join(
+        import.meta.dirname,
+        "../projects",
+        project,
+      );
+      cpSync(sourceProjectDir, TEST_PROJECT_DIRECTORY, {
+        recursive: true,
+        force: true,
+      });
+    }
+
+    const cmd = `start --no-open --port ${TEST_PORT} --port-grpc ${TEST_GRPC_PORT} ${TEST_PROJECT_DIRECTORY}`;
+
+    const childProcess = spawn("../statsparrot", cmd.split(" "), {
+      stdio: "inherit",
+      shell: true,
+      env: {
+        ...process.env,
+        // Override home so that the instance is isolated for the provided cliHome.
+        // Login status will be siloed for tests using the same cliHome.
+        HOME: cliHomeDir,
+      },
+    });
+
+    childProcess.on("error", console.log);
+
+    // Ping runtime until it's ready
+    await asyncWaitUntil(async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:${TEST_PORT}/v1/ping`,
+        );
+        return response.status === 200;
+      } catch {
+        return false;
+      }
+    });
+
+    const context = await browser.newContext({
+      storageState: statsparrotDevBrowserState ?? { cookies: [], origins: [] },
+      ...(timezoneId ? { timezoneId } : {}),
+      ...(locale ? { locale } : {}),
+    });
+    const page = await context.newPage();
+
+    await page.goto(`http://localhost:${TEST_PORT}`);
+
+    // Give the runtime time to reconcile initial resources. Tests that
+    // navigate directly to explore URLs (via page.goto) need the explore
+    // to exist before navigation.
+    await page.waitForTimeout(1500);
+
+    await use(page);
+
+    // Close browser context to release any connections/resources first
+    await context.close();
+
+    const processExit = new Promise((resolve) => {
+      childProcess.on("exit", resolve);
+    });
+
+    if (childProcess.pid) treeKill(childProcess.pid);
+
+    await processExit;
+
+    // Remove the test project directory after the dev process has fully exited.
+    // Use expect.poll with exponential intervals to handle transient FS errors.
+    await expect
+      .poll(
+        () => {
+          try {
+            rmSync(TEST_PROJECT_DIRECTORY, { force: true, recursive: true });
+            return true;
+          } catch (err) {
+            const code = (err as NodeJS.ErrnoException)?.code;
+            const isTransient =
+              code === "ENOTEMPTY" || code === "EBUSY" || code === "EPERM";
+            if (isTransient) return false;
+            throw err;
+          }
+        },
+        {
+          intervals: [200, 400, 800, 1600, 3200],
+          timeout: 7000,
+        },
+      )
+      .toBe(true);
+  },
+});

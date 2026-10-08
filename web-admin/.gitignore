@@ -1,0 +1,5 @@
+/.svelte-kit
+build
+tests/setup/projects/**/.statsparrotcloud
+tests/setup/projects/**/tmp
+tests/embed.html

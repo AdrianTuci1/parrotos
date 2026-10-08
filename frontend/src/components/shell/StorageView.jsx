@@ -79,110 +79,11 @@ export function StorageView() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Generate mock volumes based on project slug & its connectors
+  // Generate mock volumes based on project slug
   const initialVolumes = useMemo(() => {
-    const connectors = currentWorkspace?.connectors || [];
     const projSlug = projectSlug || currentWorkspace?.slug || "default";
 
     const volumes = [];
-
-    // Map each connector to a volume
-    connectors.forEach((conn) => {
-      const slugified = conn.toLowerCase().replace(/\s+/g, "-");
-      if (conn === "Stripe") {
-        volumes.push({
-          id: `stripe-cache-${projSlug}`,
-          name: `stripe-cache-${projSlug}`,
-          type: "Volume v1",
-          created: "about 2 months ago",
-          lastModified: "about 4 minutes ago",
-          size: "12.6 GiB",
-          filesCount: 3736,
-          files: {
-            "": [
-              { name: "prefetch_buffer", type: "Folder", lastModified: "about 2 months ago", size: "--" },
-              { name: "stripe_config_prod.json", type: "File", lastModified: "about 2 months ago", size: "14.2 KiB" },
-              { name: "sync_manifest.txt", type: "File", lastModified: "about 2 months ago", size: "2.1 KiB" },
-            ],
-            "prefetch_buffer": [
-              { name: "shard-000000.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.5 MiB" },
-              { name: "shard-000001.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.6 MiB" },
-              { name: "shard-000002.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.2 MiB" },
-              { name: "shard-000003.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.4 MiB" },
-              { name: "shard-000004.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.5 MiB" },
-              { name: "shard-000005.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.4 MiB" },
-              { name: "shard-000006.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.5 MiB" },
-              { name: "shard-000007.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.5 MiB" },
-              { name: "shard-000008.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.5 MiB" },
-              { name: "shard-000009.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.7 MiB" },
-              { name: "shard-000010.jsonl.gz", type: "File", lastModified: "about 2 months ago", size: "3.5 MiB" },
-            ],
-          },
-        });
-      } else if (conn === "PostHog") {
-        volumes.push({
-          id: `posthog-events-${projSlug}`,
-          name: `posthog-events-${projSlug}`,
-          type: "Volume v1",
-          created: "about 1 month ago",
-          lastModified: "about 12 minutes ago",
-          size: "9.0 GiB",
-          filesCount: 1280,
-          files: {
-            "": [
-              { name: "session_recordings", type: "Folder", lastModified: "about 1 month ago", size: "--" },
-              { name: "event_export_config.yaml", type: "File", lastModified: "about 1 month ago", size: "8.4 KiB" },
-            ],
-            "session_recordings": [
-              { name: "rec_2026-06-12_21.webm", type: "File", lastModified: "14 hours ago", size: "4.8 MiB" },
-              { name: "rec_2026-06-12_22.webm", type: "File", lastModified: "13 hours ago", size: "5.2 MiB" },
-              { name: "rec_2026-06-12_23.webm", type: "File", lastModified: "12 hours ago", size: "3.1 MiB" },
-            ],
-          },
-        });
-      } else if (conn === "Shopify") {
-        volumes.push({
-          id: `shopify-orders-store-${projSlug}`,
-          name: `shopify-orders-store-${projSlug}`,
-          type: "Volume v1",
-          created: "about 2 months ago",
-          lastModified: "about 18 minutes ago",
-          size: "602.3 MiB",
-          filesCount: 42,
-          files: {
-            "": [
-              { name: "orders_raw", type: "Folder", lastModified: "about 2 months ago", size: "--" },
-              { name: "sync_schema.json", type: "File", lastModified: "about 2 months ago", size: "5.1 KiB" },
-            ],
-            "orders_raw": [
-              { name: "orders_2026_q1.json", type: "File", lastModified: "about 2 months ago", size: "204.5 MiB" },
-              { name: "orders_2026_q2.json", type: "File", lastModified: "about 18 minutes ago", size: "392.7 MiB" },
-            ],
-          },
-        });
-      } else {
-        // Generic connector volume
-        const normalized = conn.toLowerCase().replace(/\s+/g, "-");
-        volumes.push({
-          id: `${normalized}-db-${projSlug}`,
-          name: `${normalized}-db-${projSlug}`,
-          type: "Volume v1",
-          created: "about 3 weeks ago",
-          lastModified: "about 1 hour ago",
-          size: "41.1 MiB",
-          filesCount: 8,
-          files: {
-            "": [
-              { name: "db_cache", type: "Folder", lastModified: "about 3 weeks ago", size: "--" },
-              { name: "connection_health.log", type: "File", lastModified: "about 1 hour ago", size: "1.2 MiB" },
-            ],
-            "db_cache": [
-              { name: "cached_payloads.bin", type: "File", lastModified: "about 3 weeks ago", size: "39.9 MiB" },
-            ],
-          },
-        });
-      }
-    });
 
     // Always include a system/checkpoints volume
     volumes.push({

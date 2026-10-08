@@ -22,7 +22,7 @@ export function OrganizationProjectsView() {
   return (
     <ViewFrame
       title="Projects"
-      description="Review every client project, its current usage profile, and the connector footprint behind it."
+      description="Review every client project, its current usage profile, and the data footprint behind it."
       maxWidthClassName="full-width"
       actions={
         <button
@@ -48,9 +48,6 @@ export function OrganizationProjectsView() {
                 <div className="min-w-0">
                   <h3 className="text-sm font-medium text-text-primary">{workspace.name}</h3>
                   <p className="mt-1 text-sm text-text-muted">{workspace.domain}</p>
-                  <p className="mt-2 text-xs text-text-muted">
-                    Connectors: {workspace.connectors.join(', ')}
-                  </p>
                 </div>
               </div>
 

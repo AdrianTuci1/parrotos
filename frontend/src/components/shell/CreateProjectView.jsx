@@ -98,7 +98,7 @@ export function CreateProjectView() {
         modules: defaultModules,
       });
       const projectSlug = project.slug || project.id;
-      navigate(`/app/${organizationSlug}/${projectSlug}/analytics`);
+      navigate(`/app/${organizationSlug}/${projectSlug}/explore`);
     } catch (error) {
       setSubmitError(error.message || "Project creation failed.");
     }
@@ -181,7 +181,7 @@ export function CreateProjectView() {
                   className="create-project-input"
                 />
                 <div className="create-project-field-hint">
-                  Route preview: <span>{`/app/${organizationSlug || "organization"}/${slugify(slug) || "project"}/analytics`}</span>
+                  Route preview: <span>{`/app/${organizationSlug || "organization"}/${slugify(slug) || "project"}/explore`}</span>
                 </div>
               </div>
             </div>
@@ -197,7 +197,7 @@ export function CreateProjectView() {
                 <Textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Customer telemetry, commercial KPIs, and connector operations for this workspace."
+                  placeholder="Customer telemetry, commercial KPIs, and data operations for this workspace."
                   className="create-project-textarea"
                 />
               </div>
@@ -231,7 +231,7 @@ export function CreateProjectView() {
                 <span className="settings-row-desc">All standard project views are enabled by default.</span>
               </div>
               <div className="create-project-summary-text">
-                Analytics, integrations, graph, and chat are available after setup.
+                Analytics, graph, and chat are available after setup.
               </div>
             </div>
 

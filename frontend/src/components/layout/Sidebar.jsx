@@ -1,8 +1,11 @@
 import {
   BarChart3,
+  Bell,
   Briefcase,
   ChevronDown,
   CreditCard,
+  Database,
+  File,
   GitBranch,
   House,
   LayoutDashboard,
@@ -13,6 +16,7 @@ import {
   Plug,
   Rocket,
   Settings,
+  Sparkles,
   Undo2,
   Users,
 } from 'lucide-react';
@@ -32,6 +36,10 @@ const sectionIcons = {
   rocket: Rocket,
   settings: Settings,
   users: Users,
+  database: Database,
+  files: File,
+  sparkles: Sparkles,
+  bell: Bell,
 };
 
 export function Sidebar() {

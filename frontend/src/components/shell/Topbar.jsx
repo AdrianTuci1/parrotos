@@ -75,7 +75,7 @@ export function Topbar({ mobileMenuOpen, setMobileMenuOpen }) {
     selectWorkspace(projectId);
     const orgSlug = org?.slug || org?.id || proj.organizationId;
     const pSlug = proj.slug || proj.id;
-    navigate(`/app/${orgSlug}/${pSlug}/analytics`);
+    navigate(`/app/${orgSlug}/${pSlug}/explore`);
   };
 
   const createNewOrg = async (name) => {
@@ -91,7 +91,7 @@ export function Topbar({ mobileMenuOpen, setMobileMenuOpen }) {
     const state = useAppStore.getState();
     const orgSlug = state.currentOrganization?.slug || state.currentOrganization?.id;
     const pSlug = state.currentWorkspace?.slug || state.currentWorkspace?.id;
-    navigate(`/app/${orgSlug}/${pSlug}/analytics`);
+    navigate(`/app/${orgSlug}/${pSlug}/explore`);
   };
 
   const openSettings = () => navigate("/settings");

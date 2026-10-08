@@ -11,7 +11,9 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@statsparrot/web-common/*": ["../web-common/src/*"],
+      "@statsparrot/web-admin/*": ["../web-admin/src/*"]
     }
   },
   "include": ["src/**/*"]

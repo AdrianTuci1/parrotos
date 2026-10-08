@@ -10,18 +10,27 @@ import {
   X,
   Users,
   Bell,
-  Shield,
   Database,
   Globe,
-  Pencil,
+  GitBranch,
 } from "lucide-react";
+import {
+  ProjectGithubSection,
+  ProjectVisibilitySection,
+  ProjectHibernateSection,
+  ProjectEnvironmentVariablesSection,
+  ProjectPublicURLsSection,
+} from "@/components/shell/ProjectSettingsSections";
 import "@/styles/settings.css";
 
-const projectSettingsItems = [
+export const projectSettingsItems = [
   { id: "general", label: "General", icon: <Globe size={16} /> },
+  { id: "github", label: "GitHub", icon: <GitBranch size={16} /> },
+  { id: "environment-variables", label: "Environment Variables", icon: <Database size={16} /> },
+  { id: "public-urls", label: "Public URLs", icon: <LinkIcon size={16} /> },
   { id: "team", label: "Team", icon: <Users size={16} /> },
   { id: "notifications", label: "Notifications", icon: <Bell size={16} /> },
-  { id: "integrations", label: "Integrations & Hooks", icon: <LinkIcon size={16} /> },
+  { id: "integrations", label: "Webhooks", icon: <LinkIcon size={16} /> },
   { id: "danger", label: "Danger Zone", icon: <Trash2 size={16} /> },
 ];
 
@@ -151,10 +160,10 @@ export function PlaceholderSection({ title, description }) {
   );
 }
 
-function IntegrationsSection() {
+export function IntegrationsSection() {
   return (
     <div className="settings-page">
-      <SectionHeader title="Integrations & Hooks" description="Incoming webhooks and outgoing connectors." />
+      <SectionHeader title="Webhooks" description="Incoming ingestion and outbound data delivery." />
 
       <div className="settings-card">
         <div className="settings-card-header">
@@ -179,7 +188,7 @@ function IntegrationsSection() {
         <div className="settings-card-header">
           <div className="settings-card-header-text">
             <h3 className="settings-card-title">Connected Sources</h3>
-            <p className="settings-card-subtitle">Live integrations feeding this project.</p>
+            <p className="settings-card-subtitle">Live webhooks feeding this project.</p>
           </div>
         </div>
         <div className="settings-card-body">
@@ -263,15 +272,25 @@ export function SettingsView() {
       <div className="settings-main">
         {activeTab === "general" && (
           <>
-            <SectionHeader title="Settings" description="Manage project configuration, team access, and integrations." />
+            <SectionHeader title="Settings" description="Manage project configuration, team access, and webhooks." />
             <GeneralSection />
             <PublicLinkRow />
           </>
         )}
+        {activeTab === "github" && <ProjectGithubSection />}
+        {activeTab === "environment-variables" && <ProjectEnvironmentVariablesSection />}
+        {activeTab === "public-urls" && <ProjectPublicURLsSection />}
         {activeTab === "team" && <PlaceholderSection title="Team" description="Invite and manage project members." />}
         {activeTab === "notifications" && <PlaceholderSection title="Notifications" description="Configure alerts and routing." />}
         {activeTab === "integrations" && <IntegrationsSection />}
-        {activeTab === "danger" && <DangerSection />}
+        {activeTab === "danger" && (
+          <>
+            <SectionHeader title="Danger Zone" description="Irreversible actions for this project." />
+            <ProjectVisibilitySection />
+            <ProjectHibernateSection />
+            <DangerSection />
+          </>
+        )}
       </div>
     </div>
   );

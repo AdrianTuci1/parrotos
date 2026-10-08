@@ -32,11 +32,10 @@ export function isProjectEmpty(workspace) {
     return true;
   }
 
-  const connectorCount = Array.isArray(workspace.connectors) ? workspace.connectors.length : 0;
   const eventCount = parseEventCount(workspace.monthlyEvents);
   const sessionCount = Number(workspace.stats?.sessionsCount || 0);
 
-  return connectorCount === 0 && eventCount === 0 && sessionCount === 0;
+  return eventCount === 0 && sessionCount === 0;
 }
 
 export function ProjectEmptyState({ mode = "analytics" }) {
@@ -65,13 +64,13 @@ export function ProjectEmptyState({ mode = "analytics" }) {
         </span>
         <h2 className="project-empty-title">
           {isGraph
-            ? "The graph will populate after connectors start sending data."
+            ? "The graph will populate after models start producing data."
             : "This project does not have live data yet."}
         </h2>
         <p className="project-empty-description">
           {isGraph
-            ? "Add at least one connector and let the first sync complete to unlock entities, lineage, and relationships in the graph."
-            : "Use chat and connector setup to bring the first live datasets into analytics."}
+            ? "Add at least one model and let the first sync complete to unlock entities, lineage, and relationships in the graph."
+            : "Use chat to bring the first live datasets into analytics."}
         </p>
 
         <div className="project-empty-actions">
@@ -81,14 +80,6 @@ export function ProjectEmptyState({ mode = "analytics" }) {
             onClick={handleNewChat}
           >
             Chat with our AI Assistant to help you with the onboarding process.
-          </button>
-
-          <button
-            type="button"
-            className="project-empty-action-row"
-            onClick={() => goTo("sources")}
-          >
-            Add connectors so you can see live data.
           </button>
         </div>
       </div>

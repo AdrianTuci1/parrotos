@@ -4,12 +4,13 @@ import { useAppStore } from "@/stores/useAppStore";
 import "@/styles/topbar.css";
 
 const projectTabs = [
+  { id: "explore", label: "Explore" },
+  { id: "dashboard", label: "Dashboards" },
   { id: "analytics", label: "Analytics" },
-  { id: "sources", label: "Sources" },
-  { id: "destinations", label: "Destinations" },
-  { id: "storage", label: "Storage" },
-  { id: "graph", label: "Graph" },
-  { id: "chat", label: "Chat" },
+  { id: "canvas", label: "Canvas" },
+  { id: "files", label: "Files" },
+  { id: "ai", label: "AI" },
+  { id: "settings", label: "Settings" },
 ];
 
 export function ProjectSubNavbar({ open, setOpen }) {
@@ -29,7 +30,9 @@ export function ProjectSubNavbar({ open, setOpen }) {
 
   const goTo = (tabId) => {
     setOpen(false);
-    navigate(`/app/${orgSlug}/${pSlug}/${tabId}`);
+    // Unified settings live at the global /settings page (topbar), also reached
+    // from the sub-nav so both entry points open the same surface.
+    navigate(tabId === "settings" ? "/settings" : `/app/${orgSlug}/${pSlug}/${tabId}`);
   };
 
   return (

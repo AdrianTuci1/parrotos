@@ -1,0 +1,47 @@
+import { defineConfig, devices } from "@playwright/test";
+
+/**
+ * See https://playwright.dev/docs/test-configuration.
+ */
+export default defineConfig({
+  testDir: "./tests",
+  /* Don't run tests in files in parallel in CI*/
+  fullyParallel: !process.env.CI,
+  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  forbidOnly: !!process.env.CI,
+  /* Retry on CI so genuine infra noise is absorbed and surfaced as "flaky" rather than failing the run. */
+  retries: process.env.CI ? 2 : 0,
+  /* Opt out of parallel testing in CI */
+  workers: process.env.CI ? 1 : 8,
+  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  reporter: process.env.CI
+    ? [["github"], ["blob"], ["html", { open: "never" }]]
+    : [["html"]],
+  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  use: {
+    /* Base URL to use in actions like `await page.goto('/')`. */
+    baseURL: "http://localhost:8083",
+    /* Collect trace when tests fail. See https://playwright.dev/docs/trace-viewer */
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
+    launchOptions: {
+      slowMo: parseInt(process.env.PLAYWRIGHT_SLOW_MO || "0"),
+    },
+    viewport: { width: 1280, height: 720 },
+  },
+  /* Configure projects for major browsers */
+  projects: [
+    {
+      name: "e2e-chrome",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "e2e-safari",
+      use: { ...devices["Desktop Safari"] },
+    },
+    {
+      name: "e2e-firefox",
+      use: { ...devices["Desktop Firefox"] },
+    },
+  ],
+});
