@@ -1,0 +1,54 @@
+# Deploys the hosted Parrot app on Render, from the same image the Docker and Lightsail paths use.
+#
+# In the Render dashboard: New -> Blueprint, point it at this repository, then fill in the values
+# marked "sync: false" below. Render builds deploy/hosted/Dockerfile and serves the app on the
+# hostname it assigns; set STATSPARROT_DOMAIN and STATSPARROT_SERVE_PUBLIC_URL to that hostname, or
+# to the custom domain you add in front of it.
+#
+# The database is not part of this file: give STATSPARROT_ADMIN_DATABASE_URL a managed Postgres
+# (Render's own, Neon, or anything else). The disk below is what holds per-project runtime data, and
+# it needs a paid instance type, because Render does not offer disks on the free plan.
+
+services:
+  - type: web
+    name: statsparrot
+    runtime: docker
+    dockerfilePath: ./deploy/hosted/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /v1/ping
+    autoDeploy: false
+    disk:
+      name: statsparrot-data
+      mountPath: /var/lib/statsparrot
+      sizeGB: 10
+    envVars:
+      # Where the app is reachable. Both have to name the same host.
+      - key: STATSPARROT_SERVE_PUBLIC_URL
+        sync: false
+      - key: STATSPARROT_DOMAIN
+        sync: false
+
+      # Managed Postgres. The admin server migrates it on boot.
+      - key: STATSPARROT_ADMIN_DATABASE_URL
+        sync: false
+      - key: STATSPARROT_ADMIN_RIVER_DATABASE_URL
+        sync: false
+
+      # Render generates these two, which is what "openssl rand -hex 32" would do by hand.
+      - key: STATSPARROT_ADMIN_SESSION_KEY_PAIRS
+        generateValue: true
+      - key: STATSPARROT_RUNTIME_SESSION_KEY_PAIRS
+        generateValue: true
+
+      # The OIDC provider. Register https://<host>/auth/login/callback as a redirect URI.
+      - key: STATSPARROT_ADMIN_AUTH_DOMAIN
+        sync: false
+      - key: STATSPARROT_ADMIN_AUTH_CLIENT_ID
+        sync: false
+      - key: STATSPARROT_ADMIN_AUTH_CLIENT_SECRET
+        sync: false
+
+      # Keep this equal to the disk's mountPath; it is where the runtime writes project data.
+      - key: STATSPARROT_SERVE_RUNTIME_DATA_DIR
+        value: /var/lib/statsparrot

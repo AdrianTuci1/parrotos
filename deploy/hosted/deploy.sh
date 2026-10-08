@@ -9,8 +9,8 @@
 #   ./deploy/hosted/deploy.sh --host bi.example.com --ssh-key deploy/terraform/lightsail/lightsail.pem
 #
 # It reads STATSPARROT_SERVE_PUBLIC_URL and STATSPARROT_DOMAIN from deploy/hosted/.env, which has to
-# exist and be filled in. The public URL is also what the web app is compiled against, so the app
-# and the server always agree on the origin.
+# exist and be filled in. The public URL is what the script uses to verify the deployment
+# afterwards.
 
 set -euo pipefail
 
@@ -139,11 +139,9 @@ image="$image_name:$tag"
 
 if [ "$skip_build" -eq 0 ]; then
   log "Building $image for $platform"
-  log "  STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL=$public_url"
   docker buildx build \
     --platform "$platform" \
     --load \
-    --build-arg "STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL=$public_url" \
     -t "$image" \
     -f "$dockerfile" \
     "$repo_root"
