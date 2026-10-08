@@ -1,6 +1,8 @@
 > **Archived.** This describes the earlier Statsparrot stack: a Node.js backend, a React
-> frontend and Google Cloud services (`backend/`, `frontend/`, `services/`, `terraform/`). It is
-> kept for reference. The product as it stands today, and how to deploy it, is in
+> frontend and Google Cloud services. That stack has been removed from the repository
+> (`backend/`, `frontend/`, `services/`, `terraform/`, `docs/DEPLOY_DESTROY_GUIDE.md` and the
+> workflows that deployed it); this document is kept for reference, and the paths below no
+> longer resolve. The product as it stands today, and how to deploy it, is in
 > [`../README.md`](../README.md).
 
 # Sentry Data Platform

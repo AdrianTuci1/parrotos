@@ -1,5 +1,6 @@
 import React from "react";
 import { CustomLink } from "../components/CustomLink.jsx";
+import { APP_URL } from "../config.js";
 import "./HeroSection.css";
 
 export function HeroSection() {
@@ -14,7 +15,7 @@ export function HeroSection() {
         </p>
 
         <div className="hero-actions-container">
-          <a className="btn-download" href="https://app.statsparrot.com/signup">
+          <a className="btn-download" href={APP_URL}>
             <span>Try for free</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "6px" }}>
               <path d="M5 12h14M12 5l7 7-7 7" />

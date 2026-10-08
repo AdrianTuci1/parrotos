@@ -19,14 +19,5 @@ statsparrot-hosted
 .git
 .github
 
-# The other products and the infrastructure definitions in this repository are not part of
-# the hosted build.
-backend
-frontend
+# The marketing site is not part of the hosted build.
 landing
-services
-connector
-e2e
-terraform
-k8s
-vps
