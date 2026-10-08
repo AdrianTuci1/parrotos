@@ -26,10 +26,15 @@ cd deploy/terraform/lightsail
 cp terraform.tfvars.example terraform.tfvars   # set domain and cloudflare_zone_id
 export CLOUDFLARE_API_TOKEN=...                # keep the token out of the tfvars file
 
-terraform init
+terraform init -backend=false                  # keeps the state in this directory
 terraform plan
 terraform apply
 ```
+
+The backend is declared but not configured, so `-backend=false` is what a run on your machine
+wants. A run without a disk, such as a GitHub runner, sets `TF_STATE_BUCKET` (and `TF_STATE_KEY`,
+`TF_STATE_REGION`, `TF_STATE_ENDPOINT` for R2 or another S3-compatible store) and lets the state
+live there instead: `deploy/launch.sh` passes those settings to `terraform init`.
 
 Then:
 

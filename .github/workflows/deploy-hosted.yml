@@ -1,0 +1,162 @@
+name: 🚀 Deploy Hosted
+
+# Runs the same launcher a machine with Terraform and Docker would run, on a runner that has both,
+# so a deployment can be created and shipped without installing anything locally. It runs only when
+# started by hand.
+#
+# What it needs, and where each value comes from:
+#
+#   secret STATSPARROT_HOSTED_ENV         the whole deploy/hosted/.env file (see .env.example)
+#   secret STATSPARROT_SSH_PRIVATE_KEY    private key for the instance; its key pair must already
+#                                         exist in Lightsail, named by the SSH_KEY_PAIR_NAME variable
+#   var    SSH_KEY_PAIR_NAME              Lightsail key pair name for that private key
+#   secret AWS_ACCESS_KEY_ID              Lightsail credentials
+#   secret AWS_SECRET_ACCESS_KEY
+#   var    AWS_REGION                     defaults to eu-central-1
+#   secret CLOUDFLARE_API_TOKEN           Zone -> DNS -> Edit, for the A record
+#   secret CLOUDFLARE_ZONE_ID             zone that holds the record
+#
+# Provisioning also needs somewhere to keep Terraform state, because the instance's addresses live
+# in it and a runner keeps nothing between runs:
+#
+#   secret TF_STATE_BUCKET                bucket for the state file
+#   vars   TF_STATE_KEY, TF_STATE_REGION, TF_STATE_ENDPOINT, TF_STATE_ACCESS_KEY, TF_STATE_SECRET_KEY
+#                                         optional; TF_STATE_ENDPOINT and the credentials are for an
+#                                         S3-compatible store such as R2, which has its own keys
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: What to do
+        required: true
+        default: deploy-only
+        type: choice
+        options:
+          - deploy-only
+          - provision-and-deploy
+      host:
+        description: Hostname or IP of an existing instance. Required for deploy-only.
+        required: false
+        type: string
+      domain:
+        description: Registrable domain, for example example.com. Required for provision-and-deploy.
+        required: false
+        type: string
+      subdomain:
+        description: Host label the app answers on. Empty puts it on the apex.
+        required: false
+        default: bi
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: 🚀 ${{ inputs.mode }}
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION || 'eu-central-1' }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+      TF_STATE_KEY: ${{ vars.TF_STATE_KEY }}
+      TF_STATE_REGION: ${{ vars.TF_STATE_REGION }}
+      TF_STATE_ENDPOINT: ${{ vars.TF_STATE_ENDPOINT }}
+      TF_STATE_ACCESS_KEY: ${{ vars.TF_STATE_ACCESS_KEY }}
+      TF_STATE_SECRET_KEY: ${{ vars.TF_STATE_SECRET_KEY }}
+      STATSPARROT_HOSTED_ENV: ${{ secrets.STATSPARROT_HOSTED_ENV }}
+      STATSPARROT_SSH_PRIVATE_KEY: ${{ secrets.STATSPARROT_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      # Installed from HashiCorp's release archive rather than through an action, so there is one
+      # fewer thing that can disappear from the marketplace.
+      - name: ⚙️ Install Terraform
+        env:
+          TF_VERSION: ${{ vars.TF_VERSION || '1.9.8' }}
+        run: |
+          set -euo pipefail
+          curl -fsSLo /tmp/terraform.zip \
+            "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+          sudo unzip -o -q /tmp/terraform.zip -d /usr/local/bin
+          terraform version
+
+      - name: 🔎 Check the configuration this run needs
+        run: |
+          set -euo pipefail
+          missing=()
+
+          if [ -z "${STATSPARROT_HOSTED_ENV}" ]; then
+            missing+=("secret STATSPARROT_HOSTED_ENV (the deploy/hosted/.env file)")
+          fi
+          if [ -z "${STATSPARROT_SSH_PRIVATE_KEY}" ]; then
+            missing+=("secret STATSPARROT_SSH_PRIVATE_KEY")
+          fi
+
+          case "${{ inputs.mode }}" in
+            deploy-only)
+              if [ -z "${{ inputs.host }}" ]; then
+                missing+=("input host (deploy-only deploys to an instance that already exists)")
+              fi
+              ;;
+            provision-and-deploy)
+              if [ -z "${{ inputs.domain }}" ]; then
+                missing+=("input domain")
+              fi
+              if [ -z "${TF_STATE_BUCKET}" ]; then
+                missing+=("secret TF_STATE_BUCKET (provisioning without it loses the state between runs and would create a second instance)")
+              fi
+              if [ -z "${CLOUDFLARE_ZONE_ID}" ]; then
+                missing+=("secret CLOUDFLARE_ZONE_ID")
+              fi
+              # Without it Terraform generates its own key pair, whose private half is not the key
+              # this run holds, and the deploy would fail at the first SSH.
+              if [ -z "${{ vars.SSH_KEY_PAIR_NAME }}" ]; then
+                missing+=("variable SSH_KEY_PAIR_NAME (the Lightsail key pair whose private key is in STATSPARROT_SSH_PRIVATE_KEY)")
+              fi
+              ;;
+          esac
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'error: this run is missing:\n' >&2
+            printf '  %s\n' "${missing[@]}" >&2
+            printf 'Add them in Settings -> Secrets and variables -> Actions, then run this workflow again.\n' >&2
+            exit 1
+          fi
+
+      - name: 📝 Write the environment file and the SSH key
+        run: |
+          set -euo pipefail
+          printf '%s\n' "${STATSPARROT_HOSTED_ENV}" > deploy/hosted/.env
+          chmod 600 deploy/hosted/.env
+
+          key="$RUNNER_TEMP/instance_key"
+          printf '%s\n' "${STATSPARROT_SSH_PRIVATE_KEY}" > "$key"
+          chmod 600 "$key"
+          echo "SSH_KEY_FILE=$key" >> "$GITHUB_ENV"
+
+          printf 'ssh_key_pair_name = "%s"\n' "${{ vars.SSH_KEY_PAIR_NAME }}" > "$RUNNER_TEMP/ci.tfvars"
+          echo "TFVARS_FILE=$RUNNER_TEMP/ci.tfvars" >> "$GITHUB_ENV"
+
+      - name: 🚀 Launch
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.mode }}" = "deploy-only" ]; then
+            ./deploy/launch.sh \
+              --host "${{ inputs.host }}" \
+              --ssh-key "$SSH_KEY_FILE"
+          else
+            ./deploy/launch.sh \
+              --domain "${{ inputs.domain }}" \
+              --subdomain "${{ inputs.subdomain }}" \
+              --ssh-key "$SSH_KEY_FILE" \
+              --tfvars "$TFVARS_FILE"
+          fi

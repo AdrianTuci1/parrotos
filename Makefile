@@ -10,6 +10,22 @@ cli-only:
 cli: cli.prepare
 	go build -o statsparrot cli/main.go 
 
+# The local development binary with only this machine's DuckDB extensions. "make cli" fetches the
+# extensions for every platform; this one fetches the platform this machine runs, which is the
+# whole difference.
+.PHONY: local-bin
+local-bin: local-bin.prepare
+	go build -trimpath -ldflags "-s -w" -o statsparrot cli/main.go
+
+.PHONY: local-bin.prepare
+local-bin.prepare:
+	npm install
+	npm run build
+	rm -rf cli/pkg/web/embed/dist || true
+	mkdir -p cli/pkg/web/embed/dist
+	cp -r web-local/build/* cli/pkg/web/embed/dist
+	STATSPARROT_DUCKDB_PLATFORMS="$$(go env GOOS | sed -e 's/darwin/osx/')_$$(go env GOARCH)" go run scripts/embed_duckdb_ext/main.go
+
 .PHONY: cli.prepare
 cli.prepare: runtime.examples.embed
 	npm install
@@ -41,6 +57,34 @@ admin-ui: admin-ui.build
 admin-ui.build:
 	npm install
 	npm run build -w web-admin
+
+# ─── Launching the hosted stack ──────────────────────────────────────────────
+# Everything these targets do is in deploy/launch.sh and deploy/hosted/deploy.sh, so the same
+# commands run here, in the "Deploy Hosted" workflow, and by hand.
+#
+# Set SUBDOMAIN= (empty) to put the app on the apex of DOMAIN.
+SUBDOMAIN ?= bi
+
+# One command: create the instance with Terraform, write its addresses into deploy/hosted/.env, and
+# ship the stack. With HOST= it skips Terraform and deploys to an instance that already exists.
+#   make launch DOMAIN=example.com
+#   make launch HOST=203.0.113.10 SSH_KEY=~/.ssh/lightsail.pem
+.PHONY: launch
+launch:
+	./deploy/launch.sh $(if $(HOST),--host "$(HOST)") $(if $(DOMAIN),--domain "$(DOMAIN)") --subdomain "$(SUBDOMAIN)" $(if $(SSH_KEY),--ssh-key "$(SSH_KEY)")
+
+# Ship to an instance that already exists, without touching Terraform.
+.PHONY: deploy
+deploy:
+	@test -n "$(HOST)" || { echo 'usage: make deploy HOST=host-or-ip [SSH_KEY=path]' >&2; exit 2; }
+	./deploy/hosted/deploy.sh --host "$(HOST)" $(if $(SSH_KEY),--ssh-key "$(SSH_KEY)")
+
+# Create the instance only, and leave Terraform printing what to do next.
+.PHONY: provision
+provision:
+	@test -n "$(DOMAIN)" || { echo 'usage: make provision DOMAIN=example.com [SUBDOMAIN=bi]' >&2; exit 2; }
+	terraform -chdir=deploy/terraform/lightsail init -input=false
+	terraform -chdir=deploy/terraform/lightsail apply -var "domain=$(DOMAIN)" -var "subdomain=$(SUBDOMAIN)"
 
 .PHONY: coverage.go
 coverage.go:

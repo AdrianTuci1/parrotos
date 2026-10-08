@@ -4,6 +4,20 @@ One container running `statsparrot serve`. On a single origin it serves the admi
 (`/v1/*`, `/auth/*`), the complete web app (organizations, projects, roles, dashboards), and every
 project's runtime under `/runtime/*`.
 
+## Three ways to run it
+
+| | How | Needs |
+|---|---|---|
+| One command on your machine | `make launch DOMAIN=example.com`, or `make launch HOST=1.2.3.4` for an instance that exists | Terraform, Docker, SSH and the values in `.env` |
+| From GitHub, with nothing installed | **Actions → 🚀 Deploy Hosted**, started by hand | The secrets and variables listed at the top of `.github/workflows/deploy-hosted.yml` |
+| On a PaaS | `render.yaml` or `railway.json`, both building the same `Dockerfile` | A managed Postgres and a volume at `/var/lib/statsparrot` |
+
+All three end up running the same image, and the steps below are what they do.
+
+The image is built without a hostname in it, so the web app calls whatever origin serves it. That is
+what makes one image reusable across these paths, and it means `STATSPARROT_SERVE_PUBLIC_URL` is
+needed for the TLS certificate and the OIDC redirect rather than for the build.
+
 ## What you need
 
 | Requirement | Notes |
@@ -21,8 +35,12 @@ project's runtime under `/runtime/*`.
 cd deploy/terraform/lightsail
 cp terraform.tfvars.example terraform.tfvars   # set domain and cloudflare_zone_id
 export CLOUDFLARE_API_TOKEN=...
-terraform init && terraform apply
+terraform init -backend=false && terraform apply
 ```
+
+`-backend=false` keeps the state in that directory, which is what a local run wants. A run on a
+machine that does not keep files, such as a GitHub runner, passes `TF_STATE_BUCKET` instead and
+stores it in that bucket: the state holds the instance's generated private key.
 
 Creates the Lightsail instance, its static IP, the firewall, the swap file and the Cloudflare `A`
 record. `terraform output next_steps` prints what to do next. To use a host you already have,
@@ -115,6 +133,14 @@ For `--role=admin`, also set `STATSPARROT_SERVE_RUNTIME_TARGET` to the runtime's
 supply `STATSPARROT_ADMIN_PROVISIONER_SET_JSON`, because the generated one points at the loopback
 address. The admin server is then stateless and can be scaled out; the runtime keeps the volume.
 
+**Put Cloudflare in front.** Set `cloudflare_proxied = true` in the Terraform variables, or turn the
+record's proxy on in the dashboard, to cache the web app's assets at the edge. The server already
+sends the headers that make this safe: everything under `_app/immutable/` is content-hashed and
+served `max-age=31536000, immutable`, and every other response is `no-store`, so an HTML page never
+goes stale. Turn the proxy on with the zone's SSL/TLS mode set to **Full (strict)**; on Flexible the
+origin redirects in a loop. Nothing else is cacheable: `/v1/*`, `/runtime/*` and `/auth/*` are
+per-user or streaming, and `no-store` keeps them out of the cache.
+
 ## Troubleshooting
 
 | Symptom | Cause |
@@ -124,5 +150,6 @@ address. The admin server is then stateless and can be scaled out; the runtime k
 | `failed to create the assets bucket client` | The credentials for the asset bucket are missing or wrong. |
 | `Get "https:///.well-known/openid-configuration"` | `STATSPARROT_ADMIN_AUTH_DOMAIN` is empty. |
 | `JWKS fetch failed, retrying in 5s` at startup | Normal for the first few seconds, while the admin server migrates. It stops on its own. |
-| The web app loads but every request fails | `STATSPARROT_SERVE_PUBLIC_URL` differs from the origin in the browser's address bar. |
+| The web app loads but every request fails | The app calls the origin in the browser's address bar, so a failure here is a proxy or DNS problem between the browser and the container. Check `/v1/ping` from outside. |
+| Sign-in redirects to the wrong host | `STATSPARROT_SERVE_PUBLIC_URL` does not match the host users actually open, and the OIDC redirect URI follows that value. |
 | The container restarts | The cause is in the log line just before it: `serve` stops everything when one of its processes exits. |

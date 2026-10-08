@@ -18,6 +18,3 @@ statsparrot-hosted
 # Repository metadata.
 .git
 .github
-
-# The marketing site is not part of the hosted build.
-landing
