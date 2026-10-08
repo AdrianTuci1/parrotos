@@ -2,9 +2,9 @@ import {
   sanitizeFieldName,
   sanitizeTitleForVegaTooltip,
   sanitizeValueForVega,
-} from "@rilldata/web-common/components/vega/util";
-import { createBrushParam } from "@rilldata/web-common/features/components/charts/brush-builder";
-import type { CartesianChartSpec } from "@rilldata/web-common/features/components/charts/cartesian/CartesianChartProvider";
+} from "@statsparrot/web-common/components/vega/util";
+import { createBrushParam } from "@statsparrot/web-common/features/components/charts/brush-builder";
+import type { CartesianChartSpec } from "@statsparrot/web-common/features/components/charts/cartesian/CartesianChartProvider";
 import type {
   ChartDataResult,
   ChartDomainValues,
@@ -13,7 +13,7 @@ import type {
   ChartSpec,
   FieldConfig,
   TooltipValue,
-} from "@rilldata/web-common/features/components/charts/types";
+} from "@statsparrot/web-common/features/components/charts/types";
 import {
   getColorForValues,
   isDomainStringArray,
@@ -22,16 +22,16 @@ import {
   resolveColor,
   resolveCSSVariable,
   sanitizeSortFieldForVega,
-} from "@rilldata/web-common/features/components/charts/util";
-import { ComparisonDeltaPreviousSuffix } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+} from "@statsparrot/web-common/features/components/charts/util";
+import { ComparisonDeltaPreviousSuffix } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   BarHighlightColorDark,
   BarHighlightColorLight,
-} from "@rilldata/web-common/features/dashboards/time-series/chart-colors";
+} from "@statsparrot/web-common/features/dashboards/time-series/chart-colors";
 import {
   getDivergingColorsAsHex,
   getSequentialColorsAsHex,
-} from "@rilldata/web-common/features/themes/palette-store";
+} from "@statsparrot/web-common/features/themes/palette-store";
 import type { Color } from "chroma-js";
 import merge from "deepmerge";
 import type { VisualizationSpec } from "svelte-vega";

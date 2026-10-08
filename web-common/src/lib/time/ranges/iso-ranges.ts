@@ -1,10 +1,10 @@
-import { PeriodAndUnits } from "@rilldata/web-common/lib/time/config";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { convertTimeRangePreset } from "@rilldata/web-common/lib/time/ranges/index";
+import { PeriodAndUnits } from "@statsparrot/web-common/lib/time/config";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { convertTimeRangePreset } from "@statsparrot/web-common/lib/time/ranges/index";
 import {
   subtractFromPeriod,
   transformDate,
-} from "@rilldata/web-common/lib/time/transforms";
+} from "@statsparrot/web-common/lib/time/transforms";
 import {
   RangePresetType,
   ReferencePoint,
@@ -15,7 +15,7 @@ import {
   type TimeRangeMeta,
   TimeRangePreset,
   TimeTruncationType,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import { Duration, type DurationUnit } from "luxon";
 
 /**

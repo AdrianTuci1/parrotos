@@ -1,4 +1,4 @@
-import { ordinal } from "@rilldata/web-common/lib/ordinal";
+import { ordinal } from "@statsparrot/web-common/lib/ordinal";
 import { describe, it, expect } from "vitest";
 
 describe("ordinal", () => {

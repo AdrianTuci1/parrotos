@@ -1,7 +1,7 @@
 import {
   MetricsViewSpecDimensionType,
   MetricsViewSpecMeasureType,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 /**
  * Mock metrics-view adapter.
@@ -12,13 +12,13 @@ import {
  *     leaf components (`MeasureBigNumber`, `Leaderboard`, `DimensionTable`, etc.)
  *     consume to resolve measures/dimensions, and
  *   - mock aggregation row generators so the dashboard and chat areas can render
- *     sample charts when no live Rill runtime is reachable.
+ *     sample charts when no live Parrot runtime is reachable.
  *
  * Import this from the dashboard (widget) and chat (chart) areas. Prefer the
  * live runtime path (see `./dataSource.js`) when a runtime_url is configured.
  */
 
-/** Default metrics view used across the product (matches Rill's sample project). */
+/** Default metrics view used across the product (matches Parrot's sample project). */
 export const DEFAULT_METRICS_VIEW = "orders_metrics";
 
 const ORDERS_METRICS_VIEW = {
@@ -83,7 +83,7 @@ export function getMockMetricsViewResource(metricsViewName = DEFAULT_METRICS_VIE
 
 // ─── Mock aggregation rows ────────────────────────────────────────────────────
 
-/** Sample rows keyed by dimension; parallel to Rill's sample orders project. */
+/** Sample rows keyed by dimension; parallel to Parrot's sample orders project. */
 const MOCK_ROWS = {
   channel: [
     { channel: "Online", total_revenue: 68240, order_count: 1180, aov: 57.83 },

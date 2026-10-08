@@ -1,46 +1,46 @@
-import { stripMeasureSuffix } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { PIVOT_ROW_LIMIT_OPTIONS } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
+import { stripMeasureSuffix } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { PIVOT_ROW_LIMIT_OPTIONS } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
 import {
   fromPivotFormattingParam,
   toPivotFormattingParam,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-formatting-param";
-import { base64ToProto } from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-formatting-param";
+import { base64ToProto } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
 import {
   createAndExpression,
   filterIdentifiers,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { decompressUrlParams } from "@rilldata/web-common/features/dashboards/url-state/compression";
-import { convertLegacyStateToExplorePreset } from "@rilldata/web-common/features/dashboards/url-state/convertLegacyStateToExplorePreset";
-import { CustomTimeRangeRegex } from "@rilldata/web-common/features/dashboards/url-state/convertPresetToExploreState";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { decompressUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/compression";
+import { convertLegacyStateToExplorePreset } from "@statsparrot/web-common/features/dashboards/url-state/convertLegacyStateToExplorePreset";
+import { CustomTimeRangeRegex } from "@statsparrot/web-common/features/dashboards/url-state/convertPresetToExploreState";
 import {
   getMultiFieldError,
   getSingleFieldError,
-} from "@rilldata/web-common/features/dashboards/url-state/error-message-helpers";
+} from "@statsparrot/web-common/features/dashboards/url-state/error-message-helpers";
 import {
   convertFilterParamToExpression,
   stripParserError,
-} from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
+} from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
 import {
   FromURLParamsSortTypeMap,
   FromURLParamTimeDimensionMap,
   FromURLParamViewMap,
-} from "@rilldata/web-common/features/dashboards/url-state/mappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/mappers";
 import {
-  parseRillTime,
-  validateRillTime,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
+  parseParrotTime,
+  validateParrotTime,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
 import {
   getMapFromArray,
   getMissingValues,
-} from "@rilldata/web-common/lib/arrayUtils";
-import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config";
+} from "@statsparrot/web-common/lib/arrayUtils";
+import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config";
 import {
   DateTimeUnitToV1TimeGrain,
   V1TimeGrainToDateTimeUnit,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { getAggregationGrain } from "@rilldata/web-common/lib/time/rill-time-grains";
-import { DashboardState } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { getAggregationGrain } from "@statsparrot/web-common/lib/time/statsparrot-time-grains";
+import { DashboardState } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
@@ -51,7 +51,7 @@ import {
   type V1Expression,
   type V1MetricsViewSpec,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export function convertURLToExplorePreset(
   searchParams: URLSearchParams,
@@ -344,8 +344,8 @@ export function fromTimeRangesParams(
   if (searchParams.has(ExploreStateURLParams.TimeRange)) {
     const tr = searchParams.get(ExploreStateURLParams.TimeRange) as string;
 
-    const rillTimeError = validateRillTime(tr);
-    if (rillTimeError) {
+    const statsparrotTimeError = validateParrotTime(tr);
+    if (statsparrotTimeError) {
       errors.push(getSingleFieldError("time range", tr));
     } else {
       preset.timeRange = tr;
@@ -385,7 +385,7 @@ export function fromTimeRangesParams(
     }
   } else {
     try {
-      const parsed = parseRillTime(preset.timeRange ?? "");
+      const parsed = parseParrotTime(preset.timeRange ?? "");
       const grain = getAggregationGrain(parsed);
 
       if (grain && grain in V1TimeGrainToDateTimeUnit) {

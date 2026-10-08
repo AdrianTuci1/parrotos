@@ -4,19 +4,19 @@
     createAdminServiceListWhitelistedDomains,
     createAdminServiceRemoveWhitelistedDomain,
     getAdminServiceListWhitelistedDomainsQueryKey,
-  } from "@rilldata/web-admin/client";
-  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  } from "@statsparrot/web-admin/client";
+  import SettingsContainer from "@statsparrot/web-admin/features/organizations/settings/SettingsContainer.svelte";
   import {
     getUserDomain,
     userDomainIsPublic,
-  } from "@rilldata/web-admin/features/projects/user-management/selectors";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import DelayedCircleOutlineSpinner from "@rilldata/web-common/components/spinner/DelayedCircleOutlineSpinner.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  } from "@statsparrot/web-admin/features/projects/user-management/selectors";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import DelayedCircleOutlineSpinner from "@statsparrot/web-common/components/spinner/DelayedCircleOutlineSpinner.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
 
   let { organization }: { organization: string } = $props();
 
@@ -65,7 +65,7 @@
           })}
           <a
             target="_blank"
-            href="https://docs.rilldata.com/reference/cli/user/whitelist"
+            href="https://docs.statsparrot.com/reference/cli/user/whitelist"
           >
             {m.settings_learn_more()}
           </a>
@@ -85,7 +85,7 @@
         {m.settings_domain_not_allowed_public()}
         <a
           target="_blank"
-          href="https://docs.rilldata.com/reference/cli/user/whitelist"
+          href="https://docs.statsparrot.com/reference/cli/user/whitelist"
         >
           {m.settings_learn_more()}
         </a>

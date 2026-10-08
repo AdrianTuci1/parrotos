@@ -1,10 +1,10 @@
-import type { CartesianChartSpec } from "@rilldata/web-common/features/components/charts/cartesian/CartesianChartProvider";
+import type { CartesianChartSpec } from "@statsparrot/web-common/features/components/charts/cartesian/CartesianChartProvider";
 import type {
   ChartSpec,
   ChartType,
   ColorMapping,
-} from "@rilldata/web-common/features/components/charts/types";
-import type { DimensionSeriesData } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/types";
+} from "@statsparrot/web-common/features/components/charts/types";
+import type { DimensionSeriesData } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/types";
 import { TDDChart } from "../types";
 
 /**

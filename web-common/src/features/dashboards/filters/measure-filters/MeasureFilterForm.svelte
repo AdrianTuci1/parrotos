@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as Popover from "@rilldata/web-common/components/popover/";
-  import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-  import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { getDimensionDisplayName } from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as Popover from "@statsparrot/web-common/components/popover/";
+  import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+  import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { getDimensionDisplayName } from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
   import {
     MeasureFilterOperation,
     MeasureFilterOperationOptions,
     MeasureFilterType,
-  } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+  } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { string, object, mixed } from "yup";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
   import PinButton from "../PinButton.svelte";
   import RequiredButton from "../RequiredButton.svelte";
 

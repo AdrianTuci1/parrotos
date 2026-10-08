@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import { Copy } from "lucide-svelte";
 
   export let command: string;

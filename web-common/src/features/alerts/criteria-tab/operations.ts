@@ -1,5 +1,5 @@
-import { MeasureFilterOperation } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+import { MeasureFilterOperation } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 
 // TODO: should match measure filter. merge them once we add support for comparison based filters
 export const CriteriaOperationOptions = [

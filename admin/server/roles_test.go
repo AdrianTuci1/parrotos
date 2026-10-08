@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/testadmin"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/stretchr/testify/require"
 )
 

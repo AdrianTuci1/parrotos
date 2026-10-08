@@ -3,30 +3,30 @@
   import {
     DashboardBannerID,
     DashboardBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { Dashboard } from "@rilldata/web-common/features/dashboards";
-  import DashboardBuilding from "@rilldata/web-common/features/dashboards/DashboardBuilding.svelte";
-  import { resetSelectedMockUserAfterNavigate } from "@rilldata/web-common/features/dashboards/granular-access-policies/resetSelectedMockUserAfterNavigate";
-  import { selectedMockUserStore } from "@rilldata/web-common/features/dashboards/granular-access-policies/stores";
-  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
-  import StateManagersProvider from "@rilldata/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
-  import { useProjectParser } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/components/banner/constants";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { Dashboard } from "@statsparrot/web-common/features/dashboards";
+  import DashboardBuilding from "@statsparrot/web-common/features/dashboards/DashboardBuilding.svelte";
+  import { resetSelectedMockUserAfterNavigate } from "@statsparrot/web-common/features/dashboards/granular-access-policies/resetSelectedMockUserAfterNavigate";
+  import { selectedMockUserStore } from "@statsparrot/web-common/features/dashboards/granular-access-policies/stores";
+  import DashboardStateManager from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  import StateManagersProvider from "@statsparrot/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
+  import { useProjectParser } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     useExploreWithPolling,
     isExploreReconcilingForFirstTime,
     isExploreErrored,
-  } from "@rilldata/web-common/features/explores/selectors";
+  } from "@statsparrot/web-common/features/explores/selectors";
   import {
     extractErrorStatusCode,
     isNotFoundError,
-  } from "@rilldata/web-common/lib/errors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/errors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { PageData } from "./$types";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
 
   const runtimeClient = useRuntimeClient();
 
@@ -93,7 +93,7 @@
 </script>
 
 <svelte:head>
-  <title>Rill Developer | {exploreName}</title>
+  <title>Parrot Developer | {exploreName}</title>
 </svelte:head>
 
 {#if $exploreResource.isPending && !$exploreResource.data}

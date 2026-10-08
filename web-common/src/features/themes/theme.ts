@@ -1,7 +1,7 @@
 import type {
   V1ThemeColors,
   V1ThemeSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { type Color } from "chroma-js";
 import { generateColorPalette } from "./palette-generator";
 import { TailwindColorSpacing } from "./color-config";
@@ -47,13 +47,13 @@ export class Theme {
   }
 
   /**
-   * Semantic tokens that app.css derives from Rill's own primary/secondary palettes.
+   * Semantic tokens that app.css derives from Parrot's own primary/secondary palettes.
    *
    * Those declarations live on :root, and a custom property's var() references are
    * substituted at the element that declares it. So they always resolve against the
-   * default Rill palette, and a dashboard theme -- which is scoped to the
+   * default Parrot palette, and a dashboard theme -- which is scoped to the
    * .dashboard-theme-boundary element further down the tree -- can never influence them.
-   * The result is Rill's indigo leaking into hover, selection, focus rings, and dimension
+   * The result is Parrot's indigo leaking into hover, selection, focus rings, and dimension
    * and measure chips on a rethemed dashboard.
    *
    * Re-declaring them on the boundary from the theme's own palettes fixes that. The shades
@@ -205,10 +205,10 @@ export class Theme {
         : primaryPalette;
       for (const [i, color] of finalColorPalette.entries()) {
         finalColors[`color-theme-${TailwindColorSpacing[i]}`] = color;
-        // Alias Rill's own palette to the theme's inside the boundary, so the ~300
+        // Alias Parrot's own palette to the theme's inside the boundary, so the ~300
         // `bg-primary-500`-style utilities scattered through dashboard components follow
         // the theme too. Only shadowed within the boundary: the rest of the app -- nav,
-        // file explorer, admin chrome -- keeps Rill's brand colors.
+        // file explorer, admin chrome -- keeps Parrot's brand colors.
         finalColors[`color-primary-${TailwindColorSpacing[i]}`] = color;
       }
       finalColors.primary = primaryReference;
@@ -245,7 +245,7 @@ export class Theme {
    * Fills in the semantic tokens listed in PALETTE_DERIVED_TOKENS from the theme's
    * palettes. Tokens the theme sets explicitly are left untouched, as are tokens whose
    * source palette the theme doesn't define: a theme with only a primary color keeps
-   * Rill's defaults for the secondary-derived tokens.
+   * Parrot's defaults for the secondary-derived tokens.
    */
   private applyPaletteDerivedTokens(
     finalColors: Colors,

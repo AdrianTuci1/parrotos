@@ -6,11 +6,11 @@ import (
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 // ParrotAgentName is the name of the tool that grafts the Statsparrot "Parrot"
-// chat agent onto the Rill runtime AI tool layer.
+// chat agent onto the Parrot runtime AI tool layer.
 const ParrotAgentName = "parrot_agent"
 
 type ParrotAgent struct {
@@ -20,7 +20,7 @@ type ParrotAgent struct {
 var _ Tool[*ParrotAgentArgs, *ParrotAgentResult] = (*ParrotAgent)(nil)
 
 // ParrotAgentArgs mirrors the tools exposed by the Parrot (Sentry chat) agent in
-// services/chat/index.js and routes them onto the Rill runtime AI tool layer
+// services/chat/index.js and routes them onto the Parrot runtime AI tool layer
 // (list_metrics_views / query_metrics_view / create_chart).
 //
 //	Action is the Parrot tool name being invoked.
@@ -45,7 +45,7 @@ func (t *ParrotAgent) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        ParrotAgentName,
 		Title:       "Parrot Agent",
-		Description: "Graft of the Statsparrot Parrot chat agent onto the Rill runtime AI tool layer. Routes Parrot intents to list_metrics_views, query_metrics_view, create_chart and navigate so charts can render in chat.",
+		Description: "Graft of the Statsparrot Parrot chat agent onto the Parrot runtime AI tool layer. Routes Parrot intents to list_metrics_views, query_metrics_view, create_chart and navigate so charts can render in chat.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(false),
 			IdempotentHint:  true,
@@ -113,7 +113,7 @@ func (t *ParrotAgent) Handler(ctx context.Context, args *ParrotAgentArgs) (*Parr
 		return &ParrotAgentResult{Action: args.Action, Message: "Navigating"}, nil
 
 	case "trigger_harness", "check_harness", "update_bindings":
-		// These intents are not Rill runtime operations; they are surfaced to the
+		// These intents are not Parrot runtime operations; they are surfaced to the
 		// Parrot UI layer. Return an informational result so the agent can continue.
 		return &ParrotAgentResult{
 			Action:  args.Action,

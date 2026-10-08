@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/browser"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/browser"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -100,7 +100,7 @@ func OpenCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	openCmd.Flags().StringVar(&branch, "branch", "", "Branch to embed (defaults to the primary branch)")
 	openCmd.Flags().Uint32Var(&ttlSeconds, "ttl-seconds", 0, "TTL for the access token in seconds")
-	openCmd.Flags().StringVar(&userID, "user-id", "", "Rill user ID to assume")
+	openCmd.Flags().StringVar(&userID, "user-id", "", "Parrot user ID to assume")
 	openCmd.Flags().StringVar(&userEmail, "user-email", "", "User email to assume")
 	openCmd.Flags().StringVar(&userAttributes, "user-attributes", "", "User attributes as JSON (e.g. '{\"domain\":\"example.com\"}')")
 	openCmd.Flags().StringVar(&externalUserID, "external-user-id", "", "External user ID for per-user state")

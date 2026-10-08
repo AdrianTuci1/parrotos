@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { makeTestEnvEditSession } from "@rilldata/web-common/features/env-management/test/test-env-store.ts";
-import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
-import { getConnectorYAML } from "@rilldata/web-common/features/add-data/form/connector-source-yaml-generator.ts";
-import { clickhouseSchema } from "@rilldata/web-common/features/templates/schemas/clickhouse.ts";
-import { ducklakeSchema } from "@rilldata/web-common/features/templates/schemas/ducklake.ts";
-import { httpsSchema } from "@rilldata/web-common/features/templates/schemas/https.ts";
-import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
+import { makeTestEnvEditSession } from "@statsparrot/web-common/features/env-management/test/test-env-store.ts";
+import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
+import { getConnectorYAML } from "@statsparrot/web-common/features/add-data/form/connector-source-yaml-generator.ts";
+import { clickhouseSchema } from "@statsparrot/web-common/features/templates/schemas/clickhouse.ts";
+import { ducklakeSchema } from "@statsparrot/web-common/features/templates/schemas/ducklake.ts";
+import { httpsSchema } from "@statsparrot/web-common/features/templates/schemas/https.ts";
+import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
 
 describe("getConnectorYAML", () => {
   describe("clickhouse", () => {

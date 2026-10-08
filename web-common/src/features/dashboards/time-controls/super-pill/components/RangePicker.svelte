@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import { DateTime, Interval } from "luxon";
   import type {
     ISODurationString,
@@ -12,8 +12,8 @@
   import CalendarPlusDateInput from "./CalendarPlusDateInput.svelte";
   import RangeDisplay from "./RangeDisplay.svelte";
   import TimeRangeMenu from "./TimeRangeMenu.svelte";
-  import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 
   export let ranges: RangeBuckets;
   export let selected: NamedRange | ISODurationString;

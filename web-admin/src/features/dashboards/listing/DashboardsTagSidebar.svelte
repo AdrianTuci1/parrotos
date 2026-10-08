@@ -1,15 +1,15 @@
 <script lang="ts">
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import DashboardsTagRow from "./DashboardsTagRow.svelte";
   import { UrlParamsState } from "web-common/src/lib/store-utils/url-params-state.svelte.ts";
-  import { getAllTagsForResources } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
+  import { getAllTagsForResources } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
   import {
     getDashboardTagFavouritesStore,
     sortByFavourites,
   } from "./dashboard-favourites.ts";
   import { page } from "$app/state";
   import { flip } from "svelte/animate";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     resources,

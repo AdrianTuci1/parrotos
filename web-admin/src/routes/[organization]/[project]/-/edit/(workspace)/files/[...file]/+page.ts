@@ -1,6 +1,6 @@
-import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.js";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.js";
-import { consumeViewSearchParam } from "@rilldata/web-common/layout/workspace/workspace-stores";
+import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.js";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.js";
+import { consumeViewSearchParam } from "@statsparrot/web-common/layout/workspace/workspace-stores";
 import { error, redirect } from "@sveltejs/kit";
 
 export const load = async ({ params: { file }, parent, url }) => {

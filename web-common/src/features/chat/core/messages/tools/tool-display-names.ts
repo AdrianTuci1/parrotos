@@ -3,7 +3,7 @@
  * Display names are fetched from the ListTools API and stored in tool.meta.
  */
 
-import type { V1Tool } from "@rilldata/web-common/runtime-client";
+import type { V1Tool } from "@statsparrot/web-common/runtime-client";
 
 // Meta keys for tool invocation display names (matches backend conventions)
 const META_KEY_INVOKING = "openai/toolInvocation/invoking";

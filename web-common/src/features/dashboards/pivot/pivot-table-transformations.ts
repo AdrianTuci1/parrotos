@@ -1,6 +1,6 @@
-import { LOADING_CELL } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { NUM_ROWS_PER_PAGE } from "@rilldata/web-common/features/dashboards/pivot/pivot-infinite-scroll";
-import type { V1MetricsViewAggregationResponseDataItem } from "@rilldata/web-common/runtime-client";
+import { LOADING_CELL } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { NUM_ROWS_PER_PAGE } from "@statsparrot/web-common/features/dashboards/pivot/pivot-infinite-scroll";
+import type { V1MetricsViewAggregationResponseDataItem } from "@statsparrot/web-common/runtime-client";
 import { createIndexMap, getAccessorForCell } from "./pivot-utils";
 import type { PivotDataRow, PivotDataStoreConfig } from "./types";
 import { PivotChipType } from "./types";
@@ -160,7 +160,7 @@ function getFirstDimensionForFlat(config: PivotDataStoreConfig): string | null {
       if (column.type === PivotChipType.Time) {
         const timeDimension = config.time?.timeDimension;
         if (timeDimension) {
-          const timeDimensionName = `${timeDimension}_rill_${column.id}`;
+          const timeDimensionName = `${timeDimension}_statsparrot_${column.id}`;
           // Check if this time dimension is in our row dimensions
           if (rowDimensionNames.includes(timeDimensionName)) {
             return timeDimensionName;

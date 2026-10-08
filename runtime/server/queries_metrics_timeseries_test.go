@@ -6,12 +6,12 @@ import (
 	"strings"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/expressionpb"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/server/auth"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/expressionpb"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"github.com/xuri/excelize/v2"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -70,7 +70,7 @@ func TestServer_MetricsViewTimeSeries_PushDown_UTC(t *testing.T) {
 	require.Equal(t, 3.0, tr.Data[2].Records.Fields["measure_2"].GetNumberValue())
 
 	server, instanceId = getMetricsTestServerWithDefaultInstanceConfigs(t, "ad_bids", map[string]string{
-		"rill.metrics.timeseries_null_filling_implementation": "pushdown",
+		"statsparrot.metrics.timeseries_null_filling_implementation": "pushdown",
 	})
 	tr, err = server.MetricsViewTimeSeries(testCtx(), &runtimev1.MetricsViewTimeSeriesRequest{
 		InstanceId:      instanceId,
@@ -128,7 +128,7 @@ func TestServer_MetricsViewTimeSeries_PushDown_PST(t *testing.T) {
 	require.Equal(t, 0.0, tr.Data[2].Records.Fields["measure_2"].GetNumberValue())
 
 	server, instanceId = getMetricsTestServerWithDefaultInstanceConfigs(t, "ad_bids", map[string]string{
-		"rill.metrics.timeseries_null_filling_implementation": "pushdown",
+		"statsparrot.metrics.timeseries_null_filling_implementation": "pushdown",
 	})
 	tr, err = server.MetricsViewTimeSeries(testCtx(), &runtimev1.MetricsViewTimeSeriesRequest{
 		InstanceId:      instanceId,
@@ -187,7 +187,7 @@ func TestServer_MetricsViewTimeSeries_PushDown_IST(t *testing.T) {
 	require.Equal(t, 3.0, tr.Data[2].Records.Fields["measure_2"].GetNumberValue())
 
 	server, instanceId = getMetricsTestServerWithDefaultInstanceConfigs(t, "ad_bids", map[string]string{
-		"rill.metrics.timeseries_null_filling_implementation": "pushdown",
+		"statsparrot.metrics.timeseries_null_filling_implementation": "pushdown",
 	})
 	tr, err = server.MetricsViewTimeSeries(testCtx(), &runtimev1.MetricsViewTimeSeriesRequest{
 		InstanceId:      instanceId,
@@ -283,7 +283,7 @@ func TestServer_Timeseries(t *testing.T) {
 
 	// repeat the test with pushdown null filling
 	server, instanceID = getMetricsTestServerWithDefaultInstanceConfigs(t, "timeseries", map[string]string{
-		"rill.metrics.timeseries_null_filling_implementation": "pushdown",
+		"statsparrot.metrics.timeseries_null_filling_implementation": "pushdown",
 	})
 
 	response, err = server.MetricsViewTimeSeries(testCtx(), &runtimev1.MetricsViewTimeSeriesRequest{

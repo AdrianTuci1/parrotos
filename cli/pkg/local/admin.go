@@ -5,15 +5,15 @@ import (
 	"errors"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 
-// localAdminService implements drivers.AdminService by using user's admin token stored locally and calling Rill's admin API.
+// localAdminService implements drivers.AdminService by using user's admin token stored locally and calling Parrot's admin API.
 type localAdminService struct {
 	ch          *cmdutil.Helper
 	root        string

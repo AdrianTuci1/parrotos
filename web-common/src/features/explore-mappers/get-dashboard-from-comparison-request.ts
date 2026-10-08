@@ -1,12 +1,12 @@
-import { getSortType } from "@rilldata/web-common/features/dashboards/leaderboard/leaderboard-utils";
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { TransformerArgs } from "@rilldata/web-common/features/explore-mappers/types";
-import { fillTimeRange } from "@rilldata/web-common/features/explore-mappers/utils";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { getSortType } from "@statsparrot/web-common/features/dashboards/leaderboard/leaderboard-utils";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { TransformerArgs } from "@statsparrot/web-common/features/explore-mappers/types";
+import { fillTimeRange } from "@statsparrot/web-common/features/explore-mappers/utils";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   V1MetricsViewComparisonMeasureType,
   type V1MetricsViewComparisonRequest,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export async function getDashboardFromComparisonRequest({
   client,

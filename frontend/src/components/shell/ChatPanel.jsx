@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState, useMemo } from "react";
 import { BarChart3, Check, X, Loader2, ShieldCheck, CornerDownLeft } from "lucide-react";
 import { readable } from "svelte/store";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import ChartContainer from "@statsparrot/web-common/features/components/charts/react/ChartContainer";
 import { WidgetRenderer } from "@/components/widgets/WidgetRenderer";
-import { RillChartStream } from "@/components/shell/RillChartStream";
-import { isChartToolCall } from "@/components/shell/rillChatAdapter";
+import { ParrotChartStream } from "@/components/shell/ParrotChartStream";
+import { isChartToolCall } from "@/components/shell/statsparrotChatAdapter";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_FIELDS = { method: 'API Key', fields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter key...' }], help: '' };
@@ -43,7 +43,7 @@ export function ChatPanel({ messages, streaming, streamContent, approvalStates, 
                   {isUser ? message.content : <FormattedText text={message.content} />}
                 </div>
               )}
-              {!isUser && <RillChartStream message={message} metricsView={metricsView} />}
+              {!isUser && <ParrotChartStream message={message} metricsView={metricsView} />}
               {(() => {
                 const calls = (message.toolCalls || []).filter((tc) => !isChartToolCall(tc));
                 const result = [];
@@ -168,7 +168,7 @@ function ToolResult({ tool, msgId, tcIdx, approvalState, onApprove, onReject }) 
     return <QueryResultTable tool={tool} />;
   }
 
-  // Chart tool-call: charts are normally rendered by RillChartStream (the ported
+  // Chart tool-call: charts are normally rendered by ParrotChartStream (the ported
   // ChartBlock path) ahead of this dispatcher, which filters chart tool calls out.
   // This branch is an overflow fallback for chart-shaped calls that slip through,
   // rendering a real Vega-Lite chart from the runtime via ChartContainer.

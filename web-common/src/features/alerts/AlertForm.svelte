@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  import type { V1AlertSpec } from "@rilldata/web-common/runtime-client";
+  import type { V1AlertSpec } from "@statsparrot/web-common/runtime-client";
 
   export type CreateAlertProps = {
     mode: "create";
@@ -17,48 +17,48 @@
   import {
     createAdminServiceCreateAlert,
     createAdminServiceEditAlert,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     getAlertDashboardName,
     unwrapQueryData,
     useAlertDashboardState,
-  } from "@rilldata/web-admin/features/alerts/selectors.ts";
-  import { DialogTitle } from "@rilldata/web-common/components/dialog";
-  import * as DialogTabs from "@rilldata/web-common/components/dialog/tabs";
+  } from "@statsparrot/web-admin/features/alerts/selectors.ts";
+  import { DialogTitle } from "@statsparrot/web-common/components/dialog";
+  import * as DialogTabs from "@statsparrot/web-common/components/dialog/tabs";
   import {
     getNewAlertInitialFiltersFormValues,
     getNewAlertInitialFormValues,
-  } from "@rilldata/web-common/features/alerts/create-alert-utils.ts";
-  import AlertDialogCriteriaTab from "@rilldata/web-common/features/alerts/criteria-tab/AlertDialogCriteriaTab.svelte";
-  import AlertDialogDataTab from "@rilldata/web-common/features/alerts/data-tab/AlertDialogDataTab.svelte";
-  import AlertDialogDeliveryTab from "@rilldata/web-common/features/alerts/delivery-tab/AlertDialogDeliveryTab.svelte";
+  } from "@statsparrot/web-common/features/alerts/create-alert-utils.ts";
+  import AlertDialogCriteriaTab from "@statsparrot/web-common/features/alerts/criteria-tab/AlertDialogCriteriaTab.svelte";
+  import AlertDialogDataTab from "@statsparrot/web-common/features/alerts/data-tab/AlertDialogDataTab.svelte";
+  import AlertDialogDeliveryTab from "@statsparrot/web-common/features/alerts/delivery-tab/AlertDialogDeliveryTab.svelte";
   import {
     alertFormValidationSchema,
     type AlertFormValues,
     checkIsTabValid,
     FieldsByTab,
     getAlertQueryArgsFromFormValues,
-  } from "@rilldata/web-common/features/alerts/form-utils.ts";
+  } from "@statsparrot/web-common/features/alerts/form-utils.ts";
   import {
     generateAlertName,
     isSomeFieldTainted,
-  } from "@rilldata/web-common/features/alerts/utils.ts";
-  import { getProtoFromDashboardState } from "@rilldata/web-common/features/dashboards/proto-state/toProto.ts";
-  import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-  import { useExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores.ts";
-  import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
-  import { convertFormValuesToCronExpression } from "@rilldata/web-common/features/scheduled-reports/time-utils.ts";
-  import { getFiltersAndTimeControlsFromAggregationRequest } from "@rilldata/web-common/features/scheduled-reports/utils.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  } from "@statsparrot/web-common/features/alerts/utils.ts";
+  import { getProtoFromDashboardState } from "@statsparrot/web-common/features/dashboards/proto-state/toProto.ts";
+  import { useMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+  import { useExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores.ts";
+  import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
+  import { convertFormValuesToCronExpression } from "@statsparrot/web-common/features/scheduled-reports/time-utils.ts";
+  import { getFiltersAndTimeControlsFromAggregationRequest } from "@statsparrot/web-common/features/scheduled-reports/utils.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
   import {
     getRuntimeServiceGetResourceQueryKey,
     getRuntimeServiceListResourcesQueryKey,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { X } from "lucide-svelte";
   import { defaults, superForm } from "sveltekit-superforms";
   import Button from "web-common/src/components/button/Button.svelte";

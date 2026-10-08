@@ -3,7 +3,7 @@
 // The flag is set once at the surface's entry point and read by code that needs to
 // vary behavior per editEnvironment (e.g. `.env` is readonly on cloud but editable locally).
 
-import { updateLocalFileSchemaForCloud } from "@rilldata/web-common/features/templates/schemas/local_file.ts";
+import { updateLocalFileSchemaForCloud } from "@statsparrot/web-common/features/templates/schemas/local_file.ts";
 
 export type RuntimeEditEnvironment = "local" | "cloud";
 

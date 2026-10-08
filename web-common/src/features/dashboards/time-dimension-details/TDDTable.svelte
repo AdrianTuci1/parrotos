@@ -2,13 +2,13 @@
   import {
     COMPARISON_COLORS,
     SELECTED_NOT_COMPARED_COLOR,
-  } from "@rilldata/web-common/features/dashboards/config";
-  import Pivot from "@rilldata/web-common/features/dashboards/pivot/RegularTable.svelte";
+  } from "@statsparrot/web-common/features/dashboards/config";
+  import Pivot from "@statsparrot/web-common/features/dashboards/pivot/RegularTable.svelte";
   import type {
     PivotPos,
     PivotRenderCallback,
-  } from "@rilldata/web-common/features/dashboards/pivot/types";
-  import { SortType } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
+  } from "@statsparrot/web-common/features/dashboards/pivot/types";
+  import { SortType } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
   import {
     ExcludeIcon,
     ExternalLinkIcon,
@@ -19,12 +19,12 @@
     PinSetIcon,
     PinUnsetIcon,
     SelectedCheckmark,
-  } from "@rilldata/web-common/features/dashboards/time-dimension-details/TDDIcons";
-  import { makeHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
-  import { getClassForCell } from "@rilldata/web-common/features/dashboards/time-dimension-details/util";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/features/dashboards/time-dimension-details/TDDIcons";
+  import { makeHref } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
+  import { getClassForCell } from "@statsparrot/web-common/features/dashboards/time-dimension-details/util";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
   import { lastKnownPosition } from "./time-dimension-data-store";
   import type { TDDComparison, TableData, TablePosition } from "./types";
 

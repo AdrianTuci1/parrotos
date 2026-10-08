@@ -126,7 +126,7 @@ func (c *config) readSettings() map[string]string {
 func (c *config) writeSettings() map[string]string {
 	writeSettings := make(map[string]string)
 	// useful for motherduck but safe to pass at initial connect
-	writeSettings["custom_user_agent"] = "rill"
+	writeSettings["custom_user_agent"] = "statsparrot"
 	return writeSettings
 }
 

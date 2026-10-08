@@ -5,10 +5,10 @@ import {
   getAdminServiceListOrganizationBillingIssuesQueryKey,
   getAdminServiceListProjectsForOrganizationQueryKey,
   type V1BillingIssueType,
-} from "@rilldata/web-admin/client";
-import { hasBlockerIssues } from "@rilldata/web-admin/features/billing/selectors";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import { asyncWait } from "@rilldata/web-common/lib/waitUtils";
+} from "@statsparrot/web-admin/client";
+import { hasBlockerIssues } from "@statsparrot/web-admin/features/billing/selectors";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import { asyncWait } from "@statsparrot/web-common/lib/waitUtils";
 
 export function invalidateBillingInfo(
   org: string,

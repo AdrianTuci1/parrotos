@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import { listProjectsForOrgQueryOptions } from "@rilldata/web-admin/features/projects/list-projects-query-options";
+  import { listProjectsForOrgQueryOptions } from "@statsparrot/web-admin/features/projects/list-projects-query-options";
   import { createQuery } from "@tanstack/svelte-query";
-  import CreateProjectForm from "@rilldata/web-admin/features/projects/CreateProjectForm.svelte";
-  import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import RillLogoSquareNegative from "@rilldata/web-common/components/icons/RillLogoSquareNegative.svelte";
+  import CreateProjectForm from "@statsparrot/web-admin/features/projects/CreateProjectForm.svelte";
+  import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import ParrotLogoSquareNegative from "@statsparrot/web-common/components/icons/ParrotLogoSquareNegative.svelte";
   import {
     type DeployError,
     isQuotaDeployError,
-  } from "@rilldata/web-common/features/project/deploy/deploy-errors.ts";
-  import { Button } from "@rilldata/web-common/components/button";
-  import CTAHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import ChoosePlanDialog from "@rilldata/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
-  import type { TeamPlanDialogTypes } from "@rilldata/web-admin/features/billing/plans/types.ts";
-  import { projectWelcomeStatus } from "@rilldata/web-admin/features/welcome/project/welcome-status.ts";
-  import { CreateProjectBranchName } from "@rilldata/web-admin/features/projects/publish-project.ts";
+  } from "@statsparrot/web-common/features/project/deploy/deploy-errors.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import CTAHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import ChoosePlanDialog from "@statsparrot/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
+  import type { TeamPlanDialogTypes } from "@statsparrot/web-admin/features/billing/plans/types.ts";
+  import { projectWelcomeStatus } from "@statsparrot/web-admin/features/welcome/project/welcome-status.ts";
+  import { CreateProjectBranchName } from "@statsparrot/web-admin/features/projects/publish-project.ts";
 
   let organization = $derived(page.params.organization);
 
@@ -63,7 +63,7 @@
         >{m.common_back()}</Button
       >
     {:else}
-      <RillLogoSquareNegative size="36px" />
+      <ParrotLogoSquareNegative size="36px" />
       <div class="text-2xl font-extrabold text-fg-accent text-center">
         {hasProjects ? m.project_create_first() : m.project_create_new()}
       </div>

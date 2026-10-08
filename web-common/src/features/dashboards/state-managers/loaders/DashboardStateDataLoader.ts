@@ -2,31 +2,31 @@ import { page } from "$app/stores";
 import {
   type CompoundQueryResult,
   getCompoundQuery,
-} from "@rilldata/web-common/features/compound-query-result";
-import { cascadingExploreStateMerge } from "@rilldata/web-common/features/dashboards/state-managers/cascading-explore-state-merge";
-import { getPartialExploreStateFromSessionStorage } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store";
-import { getMostRecentPartialExploreState } from "@rilldata/web-common/features/dashboards/state-managers/loaders/most-recent-explore-state";
-import { getExploreStateFromYAMLConfig } from "@rilldata/web-common/features/dashboards/stores/get-explore-state-from-yaml-config";
-import { getRillDefaultExploreState } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { normalizeWeekday } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
-import { cleanEmbedUrlParams } from "@rilldata/web-common/features/dashboards/url-state/clean-url-params";
-import { convertURLSearchParamsToExploreState } from "@rilldata/web-common/features/dashboards/url-state/convertURLSearchParamsToExploreState";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
+} from "@statsparrot/web-common/features/compound-query-result";
+import { cascadingExploreStateMerge } from "@statsparrot/web-common/features/dashboards/state-managers/cascading-explore-state-merge";
+import { getPartialExploreStateFromSessionStorage } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store";
+import { getMostRecentPartialExploreState } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/most-recent-explore-state";
+import { getExploreStateFromYAMLConfig } from "@statsparrot/web-common/features/dashboards/stores/get-explore-state-from-yaml-config";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { normalizeWeekday } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
+import { cleanEmbedUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/clean-url-params";
+import { convertURLSearchParamsToExploreState } from "@statsparrot/web-common/features/dashboards/url-state/convertURLSearchParamsToExploreState";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
 import {
   getQueryServiceMetricsViewTimeRangeQueryOptions,
   type V1ExploreSpec,
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { AfterNavigate } from "@sveltejs/kit";
 import { createQuery, type QueryClient } from "@tanstack/svelte-query";
 import { Settings } from "luxon";
-import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-import { selectedMockUserStore } from "@rilldata/web-common/features/dashboards/granular-access-policies/stores";
+import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+import { selectedMockUserStore } from "@statsparrot/web-common/features/dashboards/granular-access-policies/stores";
 import { derived, get } from "svelte/store";
-import { correctExploreState } from "@rilldata/web-common/features/dashboards/stores/correct-explore-state.ts";
+import { correctExploreState } from "@statsparrot/web-common/features/dashboards/stores/correct-explore-state.ts";
 
 /**
  * Loads data from explore and metrics view specs, along with all time range query.
@@ -39,7 +39,7 @@ export class DashboardStateDataLoader {
   public readonly fullTimeRangeQuery: CompoundQueryResult<V1MetricsViewTimeRangeResponse>;
 
   // Default explore state show when there is no data in session/local storage or a home bookmark.
-  public readonly rillDefaultExploreState: CompoundQueryResult<ExploreState>;
+  public readonly statsparrotDefaultExploreState: CompoundQueryResult<ExploreState>;
   // Explore state from yaml config
   public readonly exploreStateFromYAMLConfig: CompoundQueryResult<
     Partial<ExploreState>
@@ -49,10 +49,10 @@ export class DashboardStateDataLoader {
    * The explore state used to populate the store with initial explore.
    * This is a cascading merge of various states in order,
    * 1. Session storage if url params doesn't have params other than `view` and `measure` for TDD
-   * 2. Params directly from the url. If sessions storage is not present then the rill defaults are merged into this for empty params.
+   * 2. Params directly from the url. If sessions storage is not present then the statsparrot defaults are merged into this for empty params.
    * 3. Bookmark or token state if provided.
    * 4. Dashboard config from yaml.
-   * 5. Rill opinionated defaults.
+   * 5. Parrot opinionated defaults.
    */
   public readonly initExploreState: CompoundQueryResult<
     ExploreState | undefined
@@ -74,7 +74,7 @@ export class DashboardStateDataLoader {
       this.validSpecQuery,
     );
 
-    this.rillDefaultExploreState = getCompoundQuery(
+    this.statsparrotDefaultExploreState = getCompoundQuery(
       [this.validSpecQuery, this.fullTimeRangeQuery],
       ([validSpecResp, metricsViewTimeRangeResp]) => {
         const metricsViewSpec = validSpecResp?.metricsView;
@@ -90,7 +90,7 @@ export class DashboardStateDataLoader {
           return undefined;
         }
 
-        return getRillDefaultExploreState(
+        return getParrotDefaultExploreState(
           metricsViewSpec,
           exploreSpec,
           metricsViewTimeRangeResp?.timeRangeSummary,
@@ -125,13 +125,13 @@ export class DashboardStateDataLoader {
     this.initExploreState = getCompoundQuery(
       [
         this.validSpecQuery,
-        this.rillDefaultExploreState,
+        this.statsparrotDefaultExploreState,
         this.exploreStateFromYAMLConfig,
         ...(bookmarkOrTokenExploreState ? [bookmarkOrTokenExploreState] : []),
       ],
       ([
         validSpecResp,
-        rillDefaultExploreState,
+        statsparrotDefaultExploreState,
         exploreStateFromYAMLConfig,
         bookmarkOrTokenExploreState,
       ]) => {
@@ -140,7 +140,7 @@ export class DashboardStateDataLoader {
         if (
           !metricsViewSpec ||
           !exploreSpec ||
-          !rillDefaultExploreState ||
+          !statsparrotDefaultExploreState ||
           !exploreStateFromYAMLConfig
         ) {
           return undefined;
@@ -152,7 +152,7 @@ export class DashboardStateDataLoader {
           urlSearchParams: get(page).url.searchParams,
           bookmarkOrTokenExploreState,
           exploreStateFromYAMLConfig,
-          rillDefaultExploreState,
+          statsparrotDefaultExploreState,
           backButtonUsed: false,
           skipSessionStorage: this.disableInitSessionDashboardState,
         });
@@ -171,12 +171,12 @@ export class DashboardStateDataLoader {
       return undefined;
     const metricsViewSpec = validSpecResp.data.metricsView;
     const exploreSpec = validSpecResp.data.explore;
-    const { data: rillDefaultExploreState } = get(this.rillDefaultExploreState);
+    const { data: statsparrotDefaultExploreState } = get(this.statsparrotDefaultExploreState);
     const { data: exploreStateFromYAMLConfig } = get(
       this.exploreStateFromYAMLConfig,
     );
 
-    if (!rillDefaultExploreState || !exploreStateFromYAMLConfig) {
+    if (!statsparrotDefaultExploreState || !exploreStateFromYAMLConfig) {
       return undefined;
     }
 
@@ -191,7 +191,7 @@ export class DashboardStateDataLoader {
         ? get(this.bookmarkOrTokenExploreState).data
         : null,
       exploreStateFromYAMLConfig,
-      rillDefaultExploreState,
+      statsparrotDefaultExploreState,
       backButtonUsed,
       // This should not be disabled when disableInitSessionDashboardState is set.
       // While going between views, we still need session storage to save the state.
@@ -300,7 +300,7 @@ export class DashboardStateDataLoader {
     urlSearchParams,
     bookmarkOrTokenExploreState,
     exploreStateFromYAMLConfig,
-    rillDefaultExploreState,
+    statsparrotDefaultExploreState,
     backButtonUsed,
     skipSessionStorage,
   }: {
@@ -309,7 +309,7 @@ export class DashboardStateDataLoader {
     urlSearchParams: URLSearchParams;
     bookmarkOrTokenExploreState: Partial<ExploreState> | null | undefined;
     exploreStateFromYAMLConfig: Partial<ExploreState>;
-    rillDefaultExploreState: ExploreState;
+    statsparrotDefaultExploreState: ExploreState;
     backButtonUsed: boolean;
     skipSessionStorage: boolean;
   }) {
@@ -342,7 +342,7 @@ export class DashboardStateDataLoader {
     );
 
     const shouldSkipOtherSources =
-      // If the url has some params that do not map to session storage then we need to only use state from url back-filled with rill defaults.
+      // If the url has some params that do not map to session storage then we need to only use state from url back-filled with statsparrot defaults.
       (urlSearchParams.size > 0 && !exploreStateFromSessionStorage) ||
       // The exception to this is when back button is pressed and the user landed on empty url.
       backButtonUsed;
@@ -363,8 +363,8 @@ export class DashboardStateDataLoader {
       shouldSkipOtherSources ? null : bookmarkOrTokenExploreState,
       // Next priority is the defaults from yaml config.
       shouldSkipOtherSources ? null : exploreStateFromYAMLConfig,
-      // Finally the fallback of rill default explore which will have the complete set of config.
-      rillDefaultExploreState,
+      // Finally the fallback of statsparrot default explore which will have the complete set of config.
+      statsparrotDefaultExploreState,
     ];
 
     const nonEmptyExploreStateOrder = exploreStateOrder.filter(

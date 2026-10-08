@@ -10,7 +10,7 @@
  * The cache is persisted to localStorage and automatically synced with in-memory Maps.
  */
 
-import { localStorageStore } from "@rilldata/web-common/lib/store-utils/local-storage";
+import { localStorageStore } from "@statsparrot/web-common/lib/store-utils/local-storage";
 import {
   CACHE_NAMESPACE,
   CACHE_KEY_PATTERN,

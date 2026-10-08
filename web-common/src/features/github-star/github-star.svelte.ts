@@ -1,9 +1,9 @@
-import { SvelteLocalStorage } from "@rilldata/web-common/lib/store-utils/svelte-local-storage.svelte.ts";
-import type { RuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+import { SvelteLocalStorage } from "@statsparrot/web-common/lib/store-utils/svelte-local-storage.svelte.ts";
+import type { RuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 
-export const GITHUB_STAR_URL = "https://github.com/rilldata/rill";
+export const GITHUB_STAR_URL = "https://github.com/staticlabs/statsparrot";
 
-const STORAGE_KEY = "rill:github-star";
+const STORAGE_KEY = "statsparrot:github-star";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -18,7 +18,7 @@ export interface GithubStarState {
 const INITIAL_STATE: GithubStarState = { status: "unarmed" };
 
 /**
- * Tracks whether to nudge the user to star Rill on GitHub.
+ * Tracks whether to nudge the user to star Parrot on GitHub.
  * The nudge is armed by a dashboard render.
  * A soft dismissal mutes it for one day; only starring or opting out retires it.
  */

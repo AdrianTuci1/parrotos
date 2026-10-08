@@ -1,14 +1,14 @@
 <script lang="ts">
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import SingleFieldInput from "@rilldata/web-common/features/canvas/inspector/fields/SingleFieldInput.svelte";
-  import type { ComponentInputParam } from "@rilldata/web-common/features/canvas/inspector/types";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import { type FieldConfig } from "@rilldata/web-common/features/components/charts/types";
-  import { isFieldConfig } from "@rilldata/web-common/features/components/charts/util";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
-  import { resolveThemeColors } from "@rilldata/web-common/features/themes/theme-utils";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import SingleFieldInput from "@statsparrot/web-common/features/canvas/inspector/fields/SingleFieldInput.svelte";
+  import type { ComponentInputParam } from "@statsparrot/web-common/features/canvas/inspector/types";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import { type FieldConfig } from "@statsparrot/web-common/features/components/charts/types";
+  import { isFieldConfig } from "@statsparrot/web-common/features/components/charts/util";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
+  import { resolveThemeColors } from "@statsparrot/web-common/features/themes/theme-utils";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import ColorPaletteSelector from "./field-config/ColorPaletteSelector.svelte";
   import FieldConfigPopover from "./field-config/FieldConfigPopover.svelte";
   import SingleColorSelector from "./field-config/SingleColorSelector.svelte";

@@ -1,4 +1,4 @@
-import { WelcomeStatus } from "@rilldata/web-common/features/welcome/status.ts";
+import { WelcomeStatus } from "@statsparrot/web-common/features/welcome/status.ts";
 import { redirect } from "@sveltejs/kit";
 import { get } from "svelte/store";
 

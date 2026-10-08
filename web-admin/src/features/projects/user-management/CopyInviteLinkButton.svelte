@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import Link from "@rilldata/web-common/components/icons/Link.svelte";
-  import { isClipboardApiSupported } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import Link from "@statsparrot/web-common/components/icons/Link.svelte";
+  import { isClipboardApiSupported } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
 
   export let copyLink: string;
 

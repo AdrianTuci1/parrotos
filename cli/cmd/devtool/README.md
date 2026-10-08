@@ -4,47 +4,47 @@
 
 Start a cloud development environment (automatically refreshes `.env` and switches the CLI to `dev`):
 ```bash
-rill devtool start cloud
+statsparrot devtool start cloud
 ```
 
-Authenticate and deploy the `github.com/rilldata/rill-examples/rill-openrtb-prog-ads` project in your dev environment:
+Authenticate and deploy the `github.com/staticlabs/statsparrot-examples/statsparrot-openrtb-prog-ads` project in your dev environment:
 ```bash
-rill devtool seed cloud
+statsparrot devtool seed cloud
 ```
 
 Start a clean cloud development environment:
 ```bash
-rill devtool start cloud --reset
+statsparrot devtool start cloud --reset
 ```
 
 Start a cloud development environment without the runtime:
 ```bash
-rill devtool start cloud --except runtime
+statsparrot devtool start cloud --except runtime
 ```
 
 Start a cloud development environment with only the admin server and external dependencies (Postgres, etc.):
 ```bash
-rill devtool start cloud --only admin,deps
+statsparrot devtool start cloud --only admin,deps
 ```
 
 Start a local development environment:
 ```bash
-rill devtool start local
+statsparrot devtool start local
 ```
 
 Manually switch between cloud environments:
 ```bash
-rill devtool switch-env stage
+statsparrot devtool switch-env stage
 ```
 
 Capture your current `.env` file and distribute it to other users of the devtool:
 ```bash
-rill devtool dotenv upload cloud 
+statsparrot devtool dotenv upload cloud 
 ```
 
 To advance time in a billing subscription:
 ```bash
-rill devtool subscription advance-time
+statsparrot devtool subscription advance-time
 ```
 Check [admin/billing/README.md](../../../admin/billing/README.MD) for more information.
 
@@ -77,6 +77,6 @@ The devtool is simply a convenience wrapper that:
 
 1. Starts the services that make up our "local" and "cloud" experiences in the correct order/configuration for a development environment
 2. Uses Docker compose to start cloud dependencies
-3. Uses the `gs://rill-devtool` GCS bucket to share `.env` files for local development
-4. Manipulates the `~/.rill` configuration files to re-direct CLI commands to dev/staging backends
+3. Uses the `gs://statsparrot-devtool` GCS bucket to share `.env` files for local development
+4. Manipulates the `~/.statsparrot` configuration files to re-direct CLI commands to dev/staging backends
 5. Advances time in billing subscriptions to test thresholds.

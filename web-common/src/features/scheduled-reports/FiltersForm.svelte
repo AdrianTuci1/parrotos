@@ -1,31 +1,31 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Calendar from "@rilldata/web-common/components/icons/Calendar.svelte";
-  import Filter from "@rilldata/web-common/components/icons/Filter.svelte";
-  import CanvasComparisonPill from "@rilldata/web-common/features/canvas/filters/CanvasComparisonPill.svelte";
-  import AdvancedFilter from "@rilldata/web-common/features/dashboards/filters/AdvancedFilter.svelte";
-  import DimensionFilter from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
-  import FilterButton from "@rilldata/web-common/features/dashboards/filters/FilterButton.svelte";
-  import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
-  import MeasureFilter from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
-  import { isExpressionUnsupported } from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-  import { deriveInterval } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls.ts";
-  import SuperPill from "@rilldata/web-common/features/dashboards/time-controls/super-pill/SuperPill.svelte";
-  import type { Filters } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-  import type { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { DEFAULT_TIME_RANGES } from "@rilldata/web-common/lib/time/config.ts";
-  import { getDefaultTimeGrain } from "@rilldata/web-common/lib/time/grains";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Calendar from "@statsparrot/web-common/components/icons/Calendar.svelte";
+  import Filter from "@statsparrot/web-common/components/icons/Filter.svelte";
+  import CanvasComparisonPill from "@statsparrot/web-common/features/canvas/filters/CanvasComparisonPill.svelte";
+  import AdvancedFilter from "@statsparrot/web-common/features/dashboards/filters/AdvancedFilter.svelte";
+  import DimensionFilter from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilter.svelte";
+  import FilterButton from "@statsparrot/web-common/features/dashboards/filters/FilterButton.svelte";
+  import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
+  import MeasureFilter from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
+  import { isExpressionUnsupported } from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+  import { deriveInterval } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls.ts";
+  import SuperPill from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/SuperPill.svelte";
+  import type { Filters } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+  import type { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { DEFAULT_TIME_RANGES } from "@statsparrot/web-common/lib/time/config.ts";
+  import { getDefaultTimeGrain } from "@statsparrot/web-common/lib/time/grains";
   import {
     type DashboardTimeControls,
     TimeComparisonOption,
     type TimeRange,
     TimeRangePreset,
-  } from "@rilldata/web-common/lib/time/types.ts";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-  import { invalidationForMetricsViewData } from "@rilldata/web-common/runtime-client/invalidation.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/time/types.ts";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import { invalidationForMetricsViewData } from "@statsparrot/web-common/runtime-client/invalidation.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { DateTime, Interval } from "luxon";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";

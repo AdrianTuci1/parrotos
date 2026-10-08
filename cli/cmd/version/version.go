@@ -8,7 +8,7 @@ import (
 func VersionCmd() *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:   "version",
-		Short: "Show Rill version",
+		Short: "Show Parrot version",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			root := cmd.Root()
 			root.SetArgs([]string{"--version"})

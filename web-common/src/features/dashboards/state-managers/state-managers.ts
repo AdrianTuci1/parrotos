@@ -1,13 +1,13 @@
-import { type ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getDefaultExplorePreset } from "@rilldata/web-common/features/dashboards/url-state/getDefaultExplorePreset";
-import { type ExploreValidSpecResponse } from "@rilldata/web-common/features/explores/selectors";
+import { type ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getDefaultExplorePreset } from "@statsparrot/web-common/features/dashboards/url-state/getDefaultExplorePreset";
+import { type ExploreValidSpecResponse } from "@statsparrot/web-common/features/explores/selectors";
 import {
   type V1ExplorePreset,
   type V1MetricsViewTimeRangeResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-import { createQueryServiceMetricsViewTimeRange } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+import { createQueryServiceMetricsViewTimeRange } from "@statsparrot/web-common/runtime-client";
 import type { QueryClient, QueryObserverResult } from "@tanstack/svelte-query";
 import { getContext } from "svelte";
 import {

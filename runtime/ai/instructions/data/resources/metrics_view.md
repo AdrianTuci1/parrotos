@@ -1,8 +1,8 @@
 ---
-description: Detailed instructions and examples for developing metrics view resources in Rill
+description: Detailed instructions and examples for developing metrics view resources in Parrot
 ---
 
-# Instructions for developing a metrics view in Rill
+# Instructions for developing a metrics view in Parrot
 
 ## Introduction
 
@@ -44,7 +44,7 @@ The `timeseries:` property identifies the timestamp column used for time-based f
 timeseries: event_time
 ```
 
-If the timeseries column is not listed in `dimensions:`, Rill automatically adds it as a time dimension. You can optionally configure additional time-related settings:
+If the timeseries column is not listed in `dimensions:`, Parrot automatically adds it as a time dimension. You can optionally configure additional time-related settings:
 
 ```yaml
 timeseries: event_time
@@ -57,7 +57,7 @@ It is _strongly_ recommended that you add a primary timeseries to every metrics 
 
 ### Dimensions
 
-Dimensions are attributes you can group by or filter on. They are typically categorical (strings, enums) or temporal (dates, timestamps). Rill infers the dimension type from the underlying SQL data type:
+Dimensions are attributes you can group by or filter on. They are typically categorical (strings, enums) or temporal (dates, timestamps). Parrot infers the dimension type from the underlying SQL data type:
 
 - **Categorical**: String, enum, boolean columns
 - **Time**: Timestamp, date, datetime columns
@@ -84,7 +84,7 @@ dimensions:
 
 **Naming**: Each dimension needs a `name` (stable identifier used in APIs and references), which defaults to `column:` if provided. The `display_name:` is optional, and defaults to a humanized version of `name` if not specified.
 
-**Type**: Rill can infer the dimension type (categorical, time, geo) from the underlying SQL data type. Do not set `type:` explicitly unless you have a specific reason to override the inferred type.
+**Type**: Parrot can infer the dimension type (categorical, time, geo) from the underlying SQL data type. Do not set `type:` explicitly unless you have a specific reason to override the inferred type.
 
 **Clickable URLs**: The optional `uri:` property marks a dimension as a clickable link for single-click navigation. It accepts either a boolean (when the dimension's own value is already a URL) or a SQL expression that produces the URL. It is a distinct property from `column:` and `expression:` and can be combined with `column:`:
 
@@ -165,7 +165,7 @@ format_d3: ",.0f"   # 1,235 (rounded, with thousands separator)
 
 ### Inline explore
 
-New metrics views should set `version: 1` and include an `explore:` block, which makes Rill emit an explore dashboard for the metrics view (named after the metrics view unless `name:` is set):
+New metrics views should set `version: 1` and include an `explore:` block, which makes Parrot emit an explore dashboard for the metrics view (named after the metrics view unless `name:` is set):
 
 ```yaml
 version: 1
@@ -303,7 +303,7 @@ Common user attributes:
 - `{{ .user.email }}`: User's email address
 - `{{ .user.domain }}`: Email domain (e.g., "acme.com")
 - `{{ .user.admin }}`: Boolean admin flag
-- Custom attributes configured in Rill Cloud
+- Custom attributes configured in Parrot Cloud
 
 The row filter should use the SQL syntax of the metrics view's model, and can reference other tables in the model's connector.
 
@@ -377,7 +377,7 @@ cache:
   key_sql: SELECT MAX(updated_at) FROM orders
 ```
 
-You should not add a `cache:` config when the metrics view references a model inside the project since Rill does automatic cache management in that case.
+You should not add a `cache:` config when the metrics view references a model inside the project since Parrot does automatic cache management in that case.
 
 ### Tags on dimensions and measures
 
@@ -396,7 +396,7 @@ measures:
 
 ### Rollups
 
-Rollups back a metrics view with pre-aggregated tables. When a query's grain, dimensions, measures, time range, and filters match a rollup, Rill reads the smaller table instead of the base table for faster results. Requires a `timeseries:`.
+Rollups back a metrics view with pre-aggregated tables. When a query's grain, dimensions, measures, time range, and filters match a rollup, Parrot reads the smaller table instead of the base table for faster results. Requires a `timeseries:`.
 
 ```yaml
 rollups:

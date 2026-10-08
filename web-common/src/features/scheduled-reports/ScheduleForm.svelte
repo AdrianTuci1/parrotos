@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import TimePicker from "@rilldata/web-common/components/forms/TimePicker.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import TimePicker from "@statsparrot/web-common/components/forms/TimePicker.svelte";
   import {
     getInitialScheduleFormValues,
     makeTimeZoneOptions,
     ReportFrequency,
-  } from "@rilldata/web-common/features/scheduled-reports/time-utils.ts";
+  } from "@statsparrot/web-common/features/scheduled-reports/time-utils.ts";
   import type { Readable } from "svelte/store";
 
   export let data: Readable<ReturnType<typeof getInitialScheduleFormValues>>;

@@ -2,7 +2,7 @@
   import { beforeNavigate } from "$app/navigation";
   import { onMount } from "svelte";
   import Resizer from "../../../../layout/Resizer.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { getConversationManager } from "../../core/conversation-manager";
   import ChatInput from "../../core/input/ChatInput.svelte";
   import Messages from "../../core/messages/Messages.svelte";
@@ -16,7 +16,7 @@
   import type {
     ChatConfig,
     ChatSurface,
-  } from "@rilldata/web-common/features/chat/core/types.ts";
+  } from "@statsparrot/web-common/features/chat/core/types.ts";
 
   export let config: ChatConfig;
   export let actions: ChatActions;

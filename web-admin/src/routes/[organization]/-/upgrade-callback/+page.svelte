@@ -4,31 +4,31 @@
   import {
     createAdminServiceRenewBillingSubscription,
     createAdminServiceUpdateBillingSubscription,
-  } from "@rilldata/web-admin/client";
-  import { invalidateBillingInfo } from "@rilldata/web-admin/features/billing/invalidations";
+  } from "@statsparrot/web-admin/client";
+  import { invalidateBillingInfo } from "@statsparrot/web-admin/features/billing/invalidations";
   import {
     getPaymentIssueErrorText,
     needsPaymentSetup,
-  } from "@rilldata/web-admin/features/billing/issues/getMessageForPaymentIssues";
+  } from "@statsparrot/web-admin/features/billing/issues/getMessageForPaymentIssues";
   import {
     fetchPaymentsPortalURL,
     maybeFetchPublicPlanByName,
     getBillingUpgradeUrl,
-  } from "@rilldata/web-admin/features/billing/plans/selectors";
+  } from "@statsparrot/web-admin/features/billing/plans/selectors";
   import {
     SELF_SERVE_PLANS,
     SELF_SERVE_PLANS_BY_NAME,
-  } from "@rilldata/web-admin/features/billing/plans/plan-details";
-  import { triggerWelcomeToRillDialog } from "@rilldata/web-admin/features/billing/plans/utils";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaNeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-admin/features/billing/plans/plan-details";
+  import { triggerWelcomeToParrotDialog } from "@statsparrot/web-admin/features/billing/plans/utils";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: PageData;
   $: ({ cancelled, paymentIssues } = data);
@@ -90,7 +90,7 @@
         // if redirect is set then this page won't be active.
         // so this will lead to pop-in of the modal before navigating away
         if (!redirect) {
-          triggerWelcomeToRillDialog(planName);
+          triggerWelcomeToParrotDialog(planName);
         }
       }
       void invalidateBillingInfo(organization);
@@ -98,7 +98,7 @@
       // TODO
     }
     if (redirect) {
-      // redirect param could be on a different domain like the rill developer instance
+      // redirect param could be on a different domain like the statsparrot developer instance
       // so using goto won't work
       window.open(redirect, "_self");
     } else {

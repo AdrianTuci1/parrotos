@@ -5,15 +5,15 @@ import (
 	"slices"
 	"strings"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/slack"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/slack"
 	"go.uber.org/zap"
 	"golang.org/x/exp/maps"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// Connector contains metadata about a connector used in a Rill project
+// Connector contains metadata about a connector used in a Parrot project
 type Connector struct {
 	Name            string
 	Driver          string
@@ -24,7 +24,7 @@ type Connector struct {
 	Err             error
 }
 
-// AnalyzeConnectors extracts connector metadata from a Rill project
+// AnalyzeConnectors extracts connector metadata from a Parrot project
 func (p *Parser) AnalyzeConnectors(ctx context.Context) []*Connector {
 	a := &connectorAnalyzer{
 		parser: p,
@@ -51,15 +51,15 @@ type connectorAnalyzer struct {
 
 // analyze is the entrypoint for connector analysis. After running it, you can access the result.
 func (a *connectorAnalyzer) analyze(ctx context.Context) {
-	if a.parser.RillYAML != nil {
-		// Track any connectors explicitly configured in rill.yaml
-		for _, c := range a.parser.RillYAML.Connectors {
+	if a.parser.ParrotYAML != nil {
+		// Track any connectors explicitly configured in statsparrot.yaml
+		for _, c := range a.parser.ParrotYAML.Connectors {
 			a.trackConnector(c.Name, nil, false)
 		}
 
-		// Track the OLAP connector specified in rill.yaml
-		if a.parser.RillYAML.OLAPConnector != "" {
-			a.trackConnector(a.parser.RillYAML.OLAPConnector, nil, false)
+		// Track the OLAP connector specified in statsparrot.yaml
+		if a.parser.ParrotYAML.OLAPConnector != "" {
+			a.trackConnector(a.parser.ParrotYAML.OLAPConnector, nil, false)
 		}
 	}
 
@@ -178,10 +178,10 @@ func (a *connectorAnalyzer) analyzeResourceNotifiers(r *Resource, notifiers []*r
 func (a *connectorAnalyzer) trackConnector(connector string, r *Resource, anonAccess bool) {
 	res, ok := a.result[connector]
 	if !ok {
-		// Search rill.yaml for default config properties for this connector
+		// Search statsparrot.yaml for default config properties for this connector
 		var defaultConfig map[string]any
-		if a.parser.RillYAML != nil {
-			for _, c := range a.parser.RillYAML.Connectors {
+		if a.parser.ParrotYAML != nil {
+			for _, c := range a.parser.ParrotYAML.Connectors {
 				if c.Name == connector {
 					defaultConfig = c.Defaults
 					break

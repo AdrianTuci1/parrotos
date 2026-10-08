@@ -3,11 +3,11 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import { page } from "$app/stores";
-  import LeftNav from "@rilldata/web-admin/components/nav/LeftNav.svelte";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
+  import LeftNav from "@statsparrot/web-admin/components/nav/LeftNav.svelte";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
   import type { PageData } from "./$types";
-  import { PaidPlanTypes } from "@rilldata/web-admin/features/billing/plans/utils.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { PaidPlanTypes } from "@statsparrot/web-admin/features/billing/plans/utils.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { children, data }: { children: Snippet; data: PageData } = $props();
 

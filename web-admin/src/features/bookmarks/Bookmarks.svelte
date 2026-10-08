@@ -1,28 +1,28 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     createAdminServiceCreateBookmark,
     createAdminServiceRemoveBookmark,
     createAdminServiceUpdateBookmark,
     getAdminServiceListBookmarksQueryKey,
     type V1Bookmark,
-  } from "@rilldata/web-admin/client";
-  import BookmarksMenuItem from "@rilldata/web-admin/features/bookmarks/BookmarksMenuItem.svelte";
-  import BookmarksFormDialog from "@rilldata/web-admin/features/bookmarks/BookmarksFormDialog.svelte";
-  import { isHomeBookmark } from "@rilldata/web-admin/features/bookmarks/selectors.ts";
+  } from "@statsparrot/web-admin/client";
+  import BookmarksMenuItem from "@statsparrot/web-admin/features/bookmarks/BookmarksMenuItem.svelte";
+  import BookmarksFormDialog from "@statsparrot/web-admin/features/bookmarks/BookmarksFormDialog.svelte";
+  import { isHomeBookmark } from "@statsparrot/web-admin/features/bookmarks/selectors.ts";
   import {
     type BookmarkEntry,
     type Bookmarks,
     getBookmarkData,
     searchBookmarks,
-  } from "@rilldata/web-admin/features/bookmarks/utils.ts";
-  import HomeBookmarkButton from "@rilldata/web-admin/features/bookmarks/HomeBookmarkButton.svelte";
+  } from "@statsparrot/web-admin/features/bookmarks/utils.ts";
+  import HomeBookmarkButton from "@statsparrot/web-admin/features/bookmarks/HomeBookmarkButton.svelte";
   import {
     getProjectIdQueryOptions,
     getProjectPermissions,
-  } from "@rilldata/web-admin/features/projects/selectors.ts";
-  import { Button } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-admin/features/projects/selectors.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,10 +31,10 @@
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-  } from "@rilldata/web-common/components/dropdown-menu";
-  import { Search } from "@rilldata/web-common/components/search";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-common/components/dropdown-menu";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { createQuery, useQueryClient } from "@tanstack/svelte-query";
   import { BookmarkIcon, BookmarkPlusIcon } from "lucide-svelte";
   import { writable } from "svelte/store";

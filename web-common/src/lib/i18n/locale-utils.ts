@@ -1,5 +1,5 @@
 import { Settings } from "luxon";
-import { baseLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+import { baseLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 
 const RTL_LOCALES = new Set<string>([]);
 

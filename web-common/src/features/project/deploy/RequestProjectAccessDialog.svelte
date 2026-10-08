@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as Alert from "@rilldata/web-common/components/alert-dialog/index.js";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { getRequestProjectAccessUrl } from "@rilldata/web-common/features/project/selectors.ts";
-  import type { Project } from "@rilldata/web-common/proto/gen/rill/admin/v1/api_pb.ts";
+  import * as Alert from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { getRequestProjectAccessUrl } from "@statsparrot/web-common/features/project/selectors.ts";
+  import type { Project } from "@statsparrot/web-common/proto/gen/statsparrot/admin/v1/api_pb.ts";
 
   export let open: boolean;
   export let project: Project;
@@ -22,7 +22,7 @@
         Request admin access for project: {project.name}
       </Alert.Title>
       <Alert.Description>
-        You don’t have permissions to update this project in Rill Cloud. To gain
+        You don’t have permissions to update this project in Parrot Cloud. To gain
         access, please request to be added as an Admin.
       </Alert.Description>
     </Alert.Header>

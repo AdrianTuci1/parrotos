@@ -1,6 +1,6 @@
 <script lang="ts">
-  import SourceImportedModal from "@rilldata/web-common/features/sources/modal/SourceImportedModal.svelte";
-  import { sourceIngestionTracker } from "@rilldata/web-common/features/sources/sources-store";
+  import SourceImportedModal from "@statsparrot/web-common/features/sources/modal/SourceImportedModal.svelte";
+  import { sourceIngestionTracker } from "@statsparrot/web-common/features/sources/sources-store";
 
   const ingestedPath = sourceIngestionTracker.ingestedPath;
 </script>

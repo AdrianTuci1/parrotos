@@ -8,17 +8,17 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestClickhouseModels(t *testing.T) {
@@ -76,7 +76,7 @@ func testMaterializeType(t *testing.T, dsn string) {
 		{"unknown-type-materialize-true", &truth, "unknown", "", true},
 	}
 
-	files := map[string]string{"rill.yaml": "olap_connector: clickhouse\n"}
+	files := map[string]string{"statsparrot.yaml": "olap_connector: clickhouse\n"}
 	for _, c := range cases {
 		data := "type: model\nsql: SELECT 1 AS id\n"
 		if c.materialize != nil {
@@ -112,7 +112,7 @@ func testMaterializeType(t *testing.T, dsn string) {
 
 func testPartitionOverwrite(t *testing.T, dsn string) {
 	files := map[string]string{
-		"rill.yaml": "olap_connector: clickhouse",
+		"statsparrot.yaml": "olap_connector: clickhouse",
 		// Model that creates 10 distinct partitions with 10 rows each.
 		// We'll expect the output to have 100 rows.
 		"partition_overwrite1.yaml": `
@@ -175,10 +175,10 @@ sql: SELECT number as num FROM numbers(10)
 		Result:     []map[string]any{{"count": 10, "min": 0, "max": 9}},
 	})
 
-	// partition_overwrite3 should have 100 rows and a __rill_partition column
+	// partition_overwrite3 should have 100 rows and a __statsparrot_partition column
 	testruntime.RequireResolve(t, rt, id, &testruntime.RequireResolveOptions{
 		Resolver:   "sql",
-		Properties: map[string]any{"sql": `SELECT COUNT(*) AS count, COUNT(DISTINCT __rill_partition) AS partitions, MIN(num) AS min_num, MAX(num) AS max_num FROM partition_overwrite3`},
+		Properties: map[string]any{"sql": `SELECT COUNT(*) AS count, COUNT(DISTINCT __statsparrot_partition) AS partitions, MIN(num) AS min_num, MAX(num) AS max_num FROM partition_overwrite3`},
 		Result:     []map[string]any{{"count": 100, "partitions": 10, "min_num": 0, "max_num": 9}},
 	})
 }
@@ -187,7 +187,7 @@ func testStagedPostExecRunsAgainstFinalTable(t *testing.T, dsn string) {
 	rt, id := newInstance(t, dsn, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"staged_ch.yaml": `
 type: model
 materialize: true
@@ -224,7 +224,7 @@ output:
 	rt, id := newInstance(t, dsn, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml":               "olap_connector: clickhouse",
+			"statsparrot.yaml":               "olap_connector: clickhouse",
 			"campaign_name_dict.yaml": model(`SELECT toUInt64(1) AS id, 'a' AS name`)["campaign_name_dict.yaml"],
 		},
 	})
@@ -248,7 +248,7 @@ func testDictionaryModelRename(t *testing.T, dsn string) {
 	rt, id := newInstance(t, dsn, testruntime.InstanceOptions{
 		StageChanges: true,
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"dict_a.yaml": `
 type: model
 materialize: true
@@ -310,7 +310,7 @@ func requireDictionary(t *testing.T, rt *runtime.Runtime, id string, want []map[
 		Resolver: "sql",
 		Properties: map[string]any{"sql": `
 			SELECT
-				countIf(startsWith(name, '__rill_tmp_model_')) AS staged,
+				countIf(startsWith(name, '__statsparrot_tmp_model_')) AS staged,
 				countIf(position(name, '_dict_temp_') > 0) AS sources
 			FROM system.tables
 			WHERE database = currentDatabase()`},

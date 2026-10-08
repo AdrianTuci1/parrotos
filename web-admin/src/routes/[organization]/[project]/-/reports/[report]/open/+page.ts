@@ -1,5 +1,5 @@
-import { getExploreName } from "@rilldata/web-common/features/explore-mappers/utils";
-import { stripInternalReportParams } from "@rilldata/web-common/features/scheduled-reports/utils";
+import { getExploreName } from "@statsparrot/web-common/features/explore-mappers/utils";
+import { stripInternalReportParams } from "@statsparrot/web-common/features/scheduled-reports/utils";
 import { redirect } from "@sveltejs/kit";
 
 export async function load({ parent, url, params }) {

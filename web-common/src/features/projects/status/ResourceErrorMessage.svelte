@@ -1,14 +1,14 @@
 <script lang="ts">
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import CopyIcon from "@rilldata/web-common/components/icons/CopyIcon.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { V1ReconcileStatus } from "@rilldata/web-common/runtime-client";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import CopyIcon from "@statsparrot/web-common/components/icons/CopyIcon.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { V1ReconcileStatus } from "@statsparrot/web-common/runtime-client";
   import { AlertTriangleIcon } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let message: string;
   export let status: V1ReconcileStatus;

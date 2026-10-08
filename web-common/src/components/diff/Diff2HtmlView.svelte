@@ -1,5 +1,5 @@
 <!--
-  Renders a git patch as HTML using diff2html, with Rill's diff styling.
+  Renders a git patch as HTML using diff2html, with Parrot's diff styling.
   Handles a single-file patch (chat) or a combined multi-file patch (review dialog).
 -->
 <script lang="ts">

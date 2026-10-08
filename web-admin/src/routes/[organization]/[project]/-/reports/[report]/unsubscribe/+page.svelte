@@ -3,14 +3,14 @@
   import {
     type AdminServiceUnsubscribeAlertBodyBody,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
-  import { createAdminServiceUnsubscribeReportUsingToken } from "@rilldata/web-admin/features/scheduled-reports/unsubscribe-report-using-token";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
+  } from "@statsparrot/web-admin/client";
+  import { createAdminServiceUnsubscribeReportUsingToken } from "@statsparrot/web-admin/features/scheduled-reports/unsubscribe-report-using-token";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
   import type { AxiosError } from "axios";
   import { onMount } from "svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

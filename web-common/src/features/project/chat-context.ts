@@ -1,8 +1,8 @@
 import {
   type ChatConfig,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { readable } from "svelte/store";
 
 export const projectChat = {

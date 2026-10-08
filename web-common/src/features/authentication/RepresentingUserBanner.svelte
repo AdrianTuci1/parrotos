@@ -1,6 +1,6 @@
 <script lang="ts">
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
-  import { createLocalServiceGetCurrentUser } from "@rilldata/web-common/runtime-client/local-service";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
+  import { createLocalServiceGetCurrentUser } from "@statsparrot/web-common/runtime-client/local-service";
 
   const user = createLocalServiceGetCurrentUser();
 </script>

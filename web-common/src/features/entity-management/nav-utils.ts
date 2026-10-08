@@ -1,8 +1,8 @@
 import { page } from "$app/stores";
 import { derived, type Readable } from "svelte/store";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-import type { V1ResourceName } from "@rilldata/web-common/runtime-client";
-import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+import type { V1ResourceName } from "@statsparrot/web-common/runtime-client";
+import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
 
 // TODO: merge with appScreen?
 export function getActiveResourceStore(): Readable<V1ResourceName | undefined> {

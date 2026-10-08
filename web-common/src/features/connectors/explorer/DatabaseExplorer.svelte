@@ -7,7 +7,7 @@
   import DatabaseEntry from "./DatabaseEntry.svelte";
   import { useListDatabaseSchemas } from "../selectors";
   import type { ConnectorExplorerStore } from "./connector-explorer-store";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let connector: V1AnalyzedConnector;
   export let store: ConnectorExplorerStore;

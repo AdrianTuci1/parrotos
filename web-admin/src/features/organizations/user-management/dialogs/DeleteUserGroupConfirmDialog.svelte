@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import { createAdminServiceDeleteUsergroup } from "@rilldata/web-admin/client";
-  import { invalidateOrgUsergroups } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
+  import { createAdminServiceDeleteUsergroup } from "@statsparrot/web-admin/client";
+  import { invalidateOrgUsergroups } from "@statsparrot/web-admin/features/organizations/user-management/utils.ts";
   import {
     AlertDialog,
     AlertDialogContent,
@@ -11,9 +11,9 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-common/components/alert-dialog";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
 
   export let open = false;

@@ -1,38 +1,38 @@
 <script lang="ts">
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
   import { page } from "$app/stores";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createRuntimeServiceCreateTriggerMutation,
     createRuntimeServiceGetInstance,
     getRuntimeServiceListResourcesQueryKey,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { writable } from "svelte/store";
-  import ModelsTable from "@rilldata/web-common/features/projects/status/tables/ModelsTable.svelte";
-  import ExternalTablesTable from "@rilldata/web-common/features/projects/status/tables/ExternalTablesTable.svelte";
+  import ModelsTable from "@statsparrot/web-common/features/projects/status/tables/ModelsTable.svelte";
+  import ExternalTablesTable from "@statsparrot/web-common/features/projects/status/tables/ExternalTablesTable.svelte";
   import { useInfiniteTablesList, useModelResources } from "./selectors";
-  import { debounce } from "@rilldata/web-common/lib/create-debouncer";
+  import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
   import {
     filterTemporaryTables,
     applyTableFilters,
     splitTablesByModel,
-  } from "@rilldata/web-common/features/projects/status/tables/utils";
-  import ResourceSpecDialog from "@rilldata/web-common/features/projects/status/ResourceSpecDialog.svelte";
-  import ModelPartitionsDialog from "@rilldata/web-common/features/projects/status/tables/ModelPartitionsDialog.svelte";
-  import RefreshErroredPartitionsDialog from "@rilldata/web-common/features/projects/status/tables/RefreshErroredPartitionsDialog.svelte";
-  import RefreshResourceConfirmDialog from "@rilldata/web-common/features/projects/status/RefreshResourceConfirmDialog.svelte";
+  } from "@statsparrot/web-common/features/projects/status/tables/utils";
+  import ResourceSpecDialog from "@statsparrot/web-common/features/projects/status/ResourceSpecDialog.svelte";
+  import ModelPartitionsDialog from "@statsparrot/web-common/features/projects/status/tables/ModelPartitionsDialog.svelte";
+  import RefreshErroredPartitionsDialog from "@statsparrot/web-common/features/projects/status/tables/RefreshErroredPartitionsDialog.svelte";
+  import RefreshResourceConfirmDialog from "@statsparrot/web-common/features/projects/status/RefreshResourceConfirmDialog.svelte";
   import {
     createUrlFilterSync,
     parseEnumParam,
     parseStringParam,
-  } from "@rilldata/web-common/lib/url-filter-sync";
+  } from "@statsparrot/web-common/lib/url-filter-sync";
   import { onMount } from "svelte";
 
   const runtimeClient = useRuntimeClient();
@@ -310,9 +310,9 @@
               No models
             </span>
             <span class="text-fg-muted text-sm">
-              Models are created in Rill Developer.
+              Models are created in Parrot Developer.
               <a
-                href="https://docs.rilldata.com/build/models/"
+                href="https://docs.statsparrot.com/build/models/"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary-500 hover:text-primary-600"
@@ -355,7 +355,7 @@
             </span>
             <span class="text-fg-muted text-sm">
               <a
-                href="https://docs.rilldata.com/developers/build/connectors/olap"
+                href="https://docs.statsparrot.com/developers/build/connectors/olap"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary-500 hover:text-primary-600"

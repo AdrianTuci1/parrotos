@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { CompoundQueryResult } from "@rilldata/web-common/features/compound-query-result";
-  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
-  import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+  import type { CompoundQueryResult } from "@statsparrot/web-common/features/compound-query-result";
+  import DashboardStateManager from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 
   /**
    * Test component that adds some text to assert dashboard load.

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { createRuntimeServiceGitDiff } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { createRuntimeServiceGitDiff } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { ChevronDown, ChevronRight, Eye, RotateCcw } from "lucide-svelte";
   import FileChangeBadge from "./FileChangeBadge.svelte";
   import RevertConfirmDialog from "./RevertConfirmDialog.svelte";

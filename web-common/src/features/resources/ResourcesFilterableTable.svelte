@@ -1,38 +1,38 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import VirtualizedTable from "@rilldata/web-common/components/table/VirtualizedTable.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import ResourceTypeBadge from "@rilldata/web-common/features/entity-management/ResourceTypeBadge.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import VirtualizedTable from "@statsparrot/web-common/components/table/VirtualizedTable.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import ResourceTypeBadge from "@statsparrot/web-common/features/entity-management/ResourceTypeBadge.svelte";
   import {
     ResourceKind,
     prettyResourceKind,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import RefreshAllSourcesAndModelsConfirmDialog from "@rilldata/web-common/features/resources/RefreshAllSourcesAndModelsConfirmDialog.svelte";
-  import TagFilterDropdown from "@rilldata/web-common/features/resources/TagFilterDropdown.svelte";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import RefreshAllSourcesAndModelsConfirmDialog from "@statsparrot/web-common/features/resources/RefreshAllSourcesAndModelsConfirmDialog.svelte";
+  import TagFilterDropdown from "@statsparrot/web-common/features/resources/TagFilterDropdown.svelte";
   import {
     filterableTypes,
     filterResources,
     getStatusPriority,
     refreshableTypes,
     statusFilters,
-  } from "@rilldata/web-common/features/resources/resource-filter-utils";
-  import ActionsCell from "@rilldata/web-common/features/projects/status/ActionsCell.svelte";
-  import NameCell from "@rilldata/web-common/features/projects/status/NameCell.svelte";
-  import RefreshCell from "@rilldata/web-common/features/projects/status/RefreshCell.svelte";
-  import ResourceErrorMessage from "@rilldata/web-common/features/projects/status/ResourceErrorMessage.svelte";
-  import ResourceSpecDialog from "@rilldata/web-common/features/projects/status/ResourceSpecDialog.svelte";
+  } from "@statsparrot/web-common/features/resources/resource-filter-utils";
+  import ActionsCell from "@statsparrot/web-common/features/projects/status/ActionsCell.svelte";
+  import NameCell from "@statsparrot/web-common/features/projects/status/NameCell.svelte";
+  import RefreshCell from "@statsparrot/web-common/features/projects/status/RefreshCell.svelte";
+  import ResourceErrorMessage from "@statsparrot/web-common/features/projects/status/ResourceErrorMessage.svelte";
+  import ResourceSpecDialog from "@statsparrot/web-common/features/projects/status/ResourceSpecDialog.svelte";
   import {
     V1ReconcileStatus,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import type { ColumnDef } from "tanstack-table-8-svelte-5";
   import { renderComponent } from "tanstack-table-8-svelte-5";
-  import { getAllTagsForResources } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { getAllTagsForResources } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   /** All resources (unfiltered). Filtering is handled internally. */
   export let resources: V1Resource[];

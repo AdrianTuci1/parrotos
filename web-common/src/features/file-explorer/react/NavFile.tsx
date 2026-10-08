@@ -4,7 +4,7 @@
 // deferred to the runtime-bound phase; the row renders the faithful link markup
 // with a `icon` prop and a hover "more" stand-in.
 import type { ReactNode } from "react";
-import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+import { getPaddingFromPath } from "@statsparrot/web-common/features/file-explorer/nav-tree-spacing";
 import type { NavDragData } from "./types";
 import { getFileHref } from "./editor-routing";
 import { FileIcon, MoreHorizontalIcon } from "./icons";

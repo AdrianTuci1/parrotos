@@ -3,8 +3,8 @@
 </script>
 
 <script lang="ts">
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import { sanitizeSlug } from "@rilldata/web-common/lib/string-utils";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import { sanitizeSlug } from "@statsparrot/web-common/lib/string-utils";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
@@ -100,12 +100,12 @@
     width="500px"
     {size}
     onInput={() => (orgNameChangedDirectly = true)}
-    textInputPrefix="https://ui.rilldata.com/"
+    textInputPrefix="https://ui.statsparrot.com/"
   >
     <!-- TODO: once we have the path to docs we can add this back -->
     <!--    <div class="text-xs text-left" slot="description">-->
     <!--      Must comply with <a-->
-    <!--        href="https://docs.rilldata.com/reference/cli/org/create#TODO"-->
+    <!--        href="https://docs.statsparrot.com/reference/cli/org/create#TODO"-->
     <!--        target="_blank">our naming rules.</a-->
     <!--      >-->
     <!--    </div>-->

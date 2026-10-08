@@ -9,7 +9,7 @@ import { isCloudRuntimeEditEnvironment } from "../edit-environment.ts";
 //   `.env` on cloud is the canonical case.
 //
 // - pinned: content is editable, but the path is locked. The file can't be
-//   renamed or deleted, and other files can't be renamed onto it. `rill.yaml`
+//   renamed or deleted, and other files can't be renamed onto it. `statsparrot.yaml`
 //   is the canonical case.
 //
 // The two are surfaced as separate predicates so that call sites express what
@@ -19,7 +19,7 @@ import { isCloudRuntimeEditEnvironment } from "../edit-environment.ts";
 // required for `.env`, `.git`, etc.
 const compile = (pattern: string) => picomatch(pattern, { dot: true });
 
-const ALWAYS_PINNED = ["/rill.yaml"].map(compile);
+const ALWAYS_PINNED = ["/statsparrot.yaml"].map(compile);
 
 const ENV_FILES = ["**/.env", "**/.*.env"].map(compile);
 const CLOUD_READONLY = ENV_FILES;

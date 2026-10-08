@@ -1,16 +1,16 @@
 import {
   mapExprToMeasureFilter,
   mapMeasureFilterToExpr,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   createAndExpression,
   createSubQueryExpression,
   filterExpressions,
   isExpressionUnsupported,
   removeWrapperAndOrExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 
 export function mergeDimensionAndMeasureFilters(
   whereFilter: V1Expression | undefined,

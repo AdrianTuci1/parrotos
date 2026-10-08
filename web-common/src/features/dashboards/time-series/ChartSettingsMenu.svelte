@@ -1,15 +1,15 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import MoreHorizontal from "@rilldata/web-common/components/icons/MoreHorizontal.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import MoreHorizontal from "@statsparrot/web-common/components/icons/MoreHorizontal.svelte";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover";
-  import ChartTypeSelector from "@rilldata/web-common/features/dashboards/time-dimension-details/charts/ChartTypeSelector.svelte";
-  import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/popover";
+  import ChartTypeSelector from "@statsparrot/web-common/features/dashboards/time-dimension-details/charts/ChartTypeSelector.svelte";
+  import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let connectNulls: boolean;
   export let dynamicYAxisScale: boolean;

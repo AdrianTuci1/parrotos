@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     createAdminServiceListProjectMemberUsergroups,
     createAdminServiceRemoveProjectMemberUsergroup,
     createAdminServiceAddProjectMemberUsergroup,
     createAdminServiceListOrganizationMemberUsergroups,
-  } from "@rilldata/web-admin/client";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  } from "@statsparrot/web-admin/client";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { getAdminServiceListProjectMemberUsergroupsQueryKey } from "@rilldata/web-admin/client";
-  import { getRandomBgColor } from "@rilldata/web-common/features/themes/color-config";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import Lock from "@rilldata/web-common/components/icons/Lock.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { getAdminServiceListProjectMemberUsergroupsQueryKey } from "@statsparrot/web-admin/client";
+  import { getRandomBgColor } from "@statsparrot/web-common/features/themes/color-config";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import Lock from "@statsparrot/web-common/components/icons/Lock.svelte";
 
   export let organization: string;
   export let project: string;

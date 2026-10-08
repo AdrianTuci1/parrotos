@@ -1,14 +1,14 @@
 <script lang="ts">
-  import PlanContainer from "@rilldata/web-admin/features/billing/plans/PlanContainer.svelte";
+  import PlanContainer from "@statsparrot/web-admin/features/billing/plans/PlanContainer.svelte";
   import {
     resolvePlanHighlights,
     SELF_SERVE_PLANS,
     getTranslatedPlanDisplayName,
     getTranslatedPlanTagline,
     getTranslatedPlanPriceUnit,
-  } from "@rilldata/web-admin/features/billing/plans/plan-details.ts";
-  import DetailedUsageLink from "@rilldata/web-admin/features/billing/plans/modules/DetailedUsageLink.svelte";
-  import type { V1BillingPlan } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/features/billing/plans/plan-details.ts";
+  import DetailedUsageLink from "@statsparrot/web-admin/features/billing/plans/modules/DetailedUsageLink.svelte";
+  import type { V1BillingPlan } from "@statsparrot/web-admin/client";
 
   let {
     plan,

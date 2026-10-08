@@ -1,15 +1,15 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { writable } from "svelte/store";
 
   export let disabled = false;

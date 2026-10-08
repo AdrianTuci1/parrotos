@@ -3,9 +3,9 @@ package admin
 import (
 	"context"
 
-	"github.com/rilldata/rill/admin/database"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/admin/database"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

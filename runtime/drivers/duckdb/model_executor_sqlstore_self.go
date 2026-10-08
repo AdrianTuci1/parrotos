@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	rillmysql "github.com/rilldata/rill/runtime/drivers/mysql"
-	"github.com/rilldata/rill/runtime/drivers/postgres"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	statsparrotmysql "github.com/staticlabs/statsparrot/runtime/drivers/mysql"
+	"github.com/staticlabs/statsparrot/runtime/drivers/postgres"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
 )
 
 type sqlStoreToSelfInputProps struct {
@@ -94,7 +94,7 @@ func (e *sqlStoreToSelfExecutor) modelInputProperties(modelName, inputConnector 
 		dsn := inputProps.resolveDSN()
 		if dsn == "" {
 			// may be configured via a connector
-			var config *rillmysql.ConfigProperties
+			var config *statsparrotmysql.ConfigProperties
 			if err := mapstructure.WeakDecode(inputHandle.Config(), &config); err != nil {
 				return nil, err
 			}

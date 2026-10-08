@@ -3,11 +3,11 @@ package server_test
 import (
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -17,7 +17,7 @@ import (
 func TestResolveTemplatedString(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"model.sql": `
 SELECT 'US' AS country, 100 AS revenue
 UNION ALL

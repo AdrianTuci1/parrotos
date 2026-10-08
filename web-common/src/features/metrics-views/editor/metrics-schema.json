@@ -13,7 +13,7 @@
     },
     "model": {
       "type": "string",
-      "description": "The model name powering the dashboard; used for Rill models. Required if 'table' is not provided."
+      "description": "The model name powering the dashboard; used for Parrot models. Required if 'table' is not provided."
     },
     "table": {
       "type": "string",
@@ -427,14 +427,14 @@
             "oneOf": [
               {
                 "type": "string",
-                "description": "A valid ISO 8601 duration or Rill extension for the selection."
+                "description": "A valid ISO 8601 duration or Parrot extension for the selection."
               },
               {
                 "type": "object",
                 "properties": {
                   "range": {
                     "type": "string",
-                    "description": "A valid ISO 8601 duration or Rill extension for the selection."
+                    "description": "A valid ISO 8601 duration or Parrot extension for the selection."
                   },
                   "comparison_offsets": {
                     "type": "array",

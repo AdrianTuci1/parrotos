@@ -1,28 +1,28 @@
-import { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
+import { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
 import {
   type CanvasComponentType,
   type ComponentCommonProperties,
   type ComponentFilterProperties,
-} from "@rilldata/web-common/features/canvas/components/types";
-import { getCommonOptions } from "@rilldata/web-common/features/canvas/components/util";
-import type { InputParams } from "@rilldata/web-common/features/canvas/inspector/types";
+} from "@statsparrot/web-common/features/canvas/components/types";
+import { getCommonOptions } from "@statsparrot/web-common/features/canvas/components/util";
+import type { InputParams } from "@statsparrot/web-common/features/canvas/inspector/types";
 import type {
   CanvasEntity,
   ComponentPath,
-} from "@rilldata/web-common/features/canvas/stores/canvas-entity";
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+} from "@statsparrot/web-common/features/canvas/stores/canvas-entity";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
 import {
   PivotChipType,
   type PivotChipData,
   type PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import { get, writable, type Writable } from "svelte/store";
 import CanvasCustomChart from "./CanvasCustomChart.svelte";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export interface CustomChart
   extends ComponentCommonProperties,

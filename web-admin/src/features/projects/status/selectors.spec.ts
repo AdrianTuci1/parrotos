@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import { filterResourcesForDisplay, buildModelResourcesMap } from "./selectors";
 
 function makeResource(

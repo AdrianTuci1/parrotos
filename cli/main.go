@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/rilldata/rill/cli/cmd"
-	"github.com/rilldata/rill/cli/pkg/version"
+	"github.com/staticlabs/statsparrot/cli/cmd"
+	"github.com/staticlabs/statsparrot/cli/pkg/version"
 )
 
 // Version details are set using -ldflags (...)

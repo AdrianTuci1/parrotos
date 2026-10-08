@@ -9,9 +9,9 @@ import (
 	"github.com/XSAM/otelsql"
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 
 	// Load sqlite driver
@@ -84,7 +84,7 @@ func (d driver) Spec() drivers.Spec {
 	return drivers.Spec{
 		DisplayName: "SQLite",
 		Description: "Import data from SQLite into DuckDB.",
-		DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/sqlite",
+		DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/sqlite",
 		// Important: Any edits to the below properties must be accompanied by changes to the client-side form validation schemas.
 		SourceProperties: []*drivers.PropertySpec{
 			{

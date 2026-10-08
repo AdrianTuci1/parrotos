@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -12,7 +12,7 @@ import (
 func TestAPI(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `SELECT 1`,
 		// api a1
@@ -129,7 +129,7 @@ security:
 func TestAPIWithOpenAPI(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `SELECT 'a' AS foo, 'b' AS bar, 1 AS baz`,
 		// api a1

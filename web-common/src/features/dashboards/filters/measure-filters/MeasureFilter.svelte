@@ -1,17 +1,17 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import * as Popover from "@rilldata/web-common/components/popover/";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-  import MeasureFilterBody from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilterBody.svelte";
-  import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import * as Popover from "@statsparrot/web-common/components/popover/";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+  import MeasureFilterBody from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilterBody.svelte";
+  import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
   import MeasureFilterForm from "./MeasureFilterForm.svelte";
-  import type { FilterManager } from "@rilldata/web-common/features/canvas/stores/filter-manager";
+  import type { FilterManager } from "@statsparrot/web-common/features/canvas/stores/filter-manager";
   import type { MeasureFilterItem } from "../../state-managers/selectors/measure-filters";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let filterData: MeasureFilterItem;
   export let openOnMount = false;

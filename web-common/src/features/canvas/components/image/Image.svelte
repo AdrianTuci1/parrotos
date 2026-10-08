@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import ComponentHeader from "../../ComponentHeader.svelte";
   import type { ImageComponent } from "./";
   import { getImagePosition } from "./util";

@@ -4,13 +4,13 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/server/auth"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -21,7 +21,7 @@ func TestConnectorServiceAuth(t *testing.T) {
 	srv, err := server.NewServer(context.Background(), &server.Options{}, rt, zap.NewNop(), ratelimit.NewNoop(), activity.NewNoopClient())
 	require.NoError(t, err)
 
-	// Claims matching a Rill Cloud project viewer; must not grant access to connector introspection.
+	// Claims matching a Parrot Cloud project viewer; must not grant access to connector introspection.
 	viewerCtx := auth.WithClaims(context.Background(), &runtime.SecurityClaims{
 		Permissions: []runtime.Permission{runtime.ReadAPI, runtime.ReadMetrics, runtime.ReadObjects, runtime.UseAI},
 	})

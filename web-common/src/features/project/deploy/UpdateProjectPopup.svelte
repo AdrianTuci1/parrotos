@@ -1,15 +1,15 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import ProjectSelector from "@rilldata/web-common/features/project/deploy/ProjectSelector.svelte";
-  import ProjectSelectorItem from "@rilldata/web-common/features/project/deploy/ProjectSelectorItem.svelte";
-  import RequestProjectAccessDialog from "@rilldata/web-common/features/project/deploy/RequestProjectAccessDialog.svelte";
-  import { getUpdateProjectRoute } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import { getManageProjectAccess } from "@rilldata/web-common/features/project/selectors.ts";
-  import type { Project } from "@rilldata/web-common/proto/gen/rill/admin/v1/api_pb";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import ProjectSelector from "@statsparrot/web-common/features/project/deploy/ProjectSelector.svelte";
+  import ProjectSelectorItem from "@statsparrot/web-common/features/project/deploy/ProjectSelectorItem.svelte";
+  import RequestProjectAccessDialog from "@statsparrot/web-common/features/project/deploy/RequestProjectAccessDialog.svelte";
+  import { getUpdateProjectRoute } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import { getManageProjectAccess } from "@statsparrot/web-common/features/project/selectors.ts";
+  import type { Project } from "@statsparrot/web-common/proto/gen/statsparrot/admin/v1/api_pb";
   import { Rocket } from "lucide-svelte";
-  import { getActiveResourceStore } from "@rilldata/web-common/features/entity-management/nav-utils.ts";
+  import { getActiveResourceStore } from "@statsparrot/web-common/features/entity-management/nav-utils.ts";
 
   export let open = false;
   export let matchingProjects: Project[];
@@ -49,7 +49,7 @@
   <Popover.Content align="start" class="w-[420px] flex flex-col gap-y-2">
     <div class="text-base font-medium">Update</div>
     <div class="text-sm text-fg-secondary">
-      Push local changes to Rill Cloud?
+      Push local changes to Parrot Cloud?
     </div>
 
     {#if matchingProjects.length === 1 && selectedProject}

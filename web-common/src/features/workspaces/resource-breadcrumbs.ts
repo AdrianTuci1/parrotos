@@ -1,7 +1,7 @@
 import type {
   V1Resource,
   V1ResourceName,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { ResourceKind } from "../entity-management/resource-selectors";
 import { resourceNameToId } from "../entity-management/resource-utils";
 

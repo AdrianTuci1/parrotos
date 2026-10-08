@@ -4,17 +4,17 @@
    * The goal is to provide user a quick & easy onboarding for the basic TimestampDetail
    * actions of zooming and panning. This component is a bit extra.
    */
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@statsparrot/web-common/components/tooltip/StackingWord.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
   import {
     formatBigNumberPercentage,
     formatInteger,
-  } from "@rilldata/web-common/lib/formatters";
+  } from "@statsparrot/web-common/lib/formatters";
   import { isClipboardApiSupported } from "../../../../lib/actions/copy-to-clipboard";
   import TimestampSpark from "./TimestampSpark.svelte";
-  import type { TimestampDataPoint } from "@rilldata/web-common/features/column-profile/queries";
+  import type { TimestampDataPoint } from "@statsparrot/web-common/features/column-profile/queries";
 
   export let data: TimestampDataPoint[];
   // FIXME: document meaning of these special looking numbers

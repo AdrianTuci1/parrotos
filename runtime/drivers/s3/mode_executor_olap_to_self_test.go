@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -23,7 +23,7 @@ func TestOLAPToObjectStoreS3(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"clickhouse", "s3"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"connectors/s3.yaml": `
 type: connector
 driver: s3
@@ -36,7 +36,7 @@ type: model
 sql: SELECT number FROM numbers(16)
 output:
   connector: s3
-  path: s3://integration-test.rilldata.com/export_test
+  path: s3://integration-test.statsparrot.com/export_test
 `,
 		},
 	})
@@ -52,7 +52,7 @@ func TestOLAPToObjectStoreS3NoRegion(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"clickhouse", "s3"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"connectors/s3.yaml": `
 type: connector
 driver: s3
@@ -64,7 +64,7 @@ type: model
 sql: SELECT number FROM numbers(16)
 output:
   connector: s3
-  path: s3://integration-test.rilldata.com/export_test
+  path: s3://integration-test.statsparrot.com/export_test
 `,
 		},
 	})
@@ -80,7 +80,7 @@ func TestOLAPToObjectStoreS3FixedPath(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"clickhouse", "s3"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"connectors/s3.yaml": `
 type: connector
 driver: s3
@@ -93,7 +93,7 @@ type: model
 sql: SELECT number FROM numbers(16)
 output:
   connector: s3
-  path: s3://integration-test.rilldata.com/export_test/fixed.parquet
+  path: s3://integration-test.statsparrot.com/export_test/fixed.parquet
 `,
 		},
 	})
@@ -109,7 +109,7 @@ func TestOLAPToObjectStoreGCS(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"clickhouse", "gcs_s3_compat"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"connectors/s3.yaml": `
 type: connector
 driver: s3
@@ -123,7 +123,7 @@ type: model
 sql: SELECT number FROM numbers(16)
 output:
   connector: s3
-  path: s3://integration-test.rilldata.com/export_test
+  path: s3://integration-test.statsparrot.com/export_test
 `,
 		},
 	})

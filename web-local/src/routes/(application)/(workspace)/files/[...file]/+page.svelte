@@ -1,5 +1,5 @@
 <script lang="ts">
-  import WorkspaceDispatcher from "@rilldata/web-common/features/workspaces/WorkspaceDispatcher.svelte";
+  import WorkspaceDispatcher from "@statsparrot/web-common/features/workspaces/WorkspaceDispatcher.svelte";
   import type { PageData } from "./$types";
 
   export let data: PageData;

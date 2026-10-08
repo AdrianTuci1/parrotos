@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { type BannerEvent } from "@rilldata/web-common/lib/event-bus/events";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { type BannerEvent } from "@statsparrot/web-common/lib/event-bus/events";
   import { onMount } from "svelte";
   import Banner from "./Banner.svelte";
   import {
     dismissBanner,
     isBannerDismissed,
-  } from "@rilldata/web-common/components/banner/banner-dismiss.ts";
+  } from "@statsparrot/web-common/components/banner/banner-dismiss.ts";
 
   let banners: BannerEvent[] = [];
 

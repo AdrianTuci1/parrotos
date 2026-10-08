@@ -2,7 +2,7 @@ import { writable, get } from "svelte/store";
 import type { V1User } from "../../client";
 import { browser } from "$app/environment";
 
-const STORAGE_KEY_PREFIX = "rill:viewAsUser:";
+const STORAGE_KEY_PREFIX = "statsparrot:viewAsUser:";
 
 function getStorageKey(org: string, project: string): string {
   return `${STORAGE_KEY_PREFIX}${org}/${project}`;

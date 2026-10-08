@@ -11,15 +11,15 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime/pkg/jsonschemautil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/jsonschemautil"
 	"go.uber.org/zap"
 )
 
 // MCPInstructions are the instructions advertised by the MCP server.
 // It is exported so the unified MCP server in the admin service can extend it instead of restating it.
 const MCPInstructions = `
-# Rill MCP Server
-This server exposes APIs for querying **metrics views**, which represent Rill's metrics layer.
+# Parrot MCP Server
+This server exposes APIs for querying **metrics views**, which represent Parrot's metrics layer.
 
 ## Workflow Overview
 1. **List metrics views:** Use "list_metrics_views" to discover available metrics views in the project.
@@ -35,7 +35,7 @@ If you have edit access, the server also exposes tools for inspecting and editin
 - **List files:** Use "list_files" to browse the files in the project.
 - **Search files:** Use "search_files" to find files by name or content.
 - **Read a file:** Use "read_file" to read the contents of a file.
-- **Write a file:** Use "write_file" to create, update or delete a file. If the file declares a Rill resource, it returns the resource's status and any errors encountered after reconciliation.
+- **Write a file:** Use "write_file" to create, update or delete a file. If the file declares a Parrot resource, it returns the resource's status and any errors encountered after reconciliation.
 `
 
 // MCPToolSpecs returns the specs of all registered tools, keyed by name.
@@ -58,8 +58,8 @@ func (s *Session) MCPServer(ctx context.Context) *mcp.Server {
 	// Create the MCP server
 	srv := mcp.NewServer(
 		&mcp.Implementation{
-			Name:    "rill",
-			Title:   "Rill MCP Server",
+			Name:    "statsparrot",
+			Title:   "Parrot MCP Server",
 			Version: s.runner.Runtime.Version().String(),
 		},
 		&mcp.ServerOptions{

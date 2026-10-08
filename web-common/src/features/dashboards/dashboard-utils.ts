@@ -1,18 +1,18 @@
-import type { PathOption } from "@rilldata/web-common/components/navigation/breadcrumbs/types";
+import type { PathOption } from "@statsparrot/web-common/components/navigation/breadcrumbs/types";
 import {
   ComparisonDeltaAbsoluteSuffix,
   ComparisonDeltaPreviousSuffix,
   ComparisonDeltaRelativeSuffix,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { DashboardState_LeaderboardSortType } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { DashboardState_LeaderboardSortType } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   MetricsViewSpecDimension,
   QueryServiceMetricsViewAggregationBody,
   V1Expression,
   V1MetricsViewAggregationMeasure,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { SortType } from "./proto-state/derived-types";
 import type { TimeControlState } from "./time-controls/time-control-store";
 
@@ -138,7 +138,7 @@ export function getComparisonRequestMeasures(
   ];
 }
 
-export const URI_DIMENSION_SUFFIX = "__rill_uri";
+export const URI_DIMENSION_SUFFIX = "__statsparrot_uri";
 
 export function getURIRequestMeasure(
   dimensionName: string,

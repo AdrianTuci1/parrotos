@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { ColorMapping } from "@rilldata/web-common/features/components/charts/types";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { ColorMapping } from "@statsparrot/web-common/features/components/charts/types";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { EmbedOptions } from "vega-embed";
 import type { Config } from "vega-lite";
 import type { ExpressionFunction } from "../types";

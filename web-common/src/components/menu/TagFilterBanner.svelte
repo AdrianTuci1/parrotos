@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import CancelCircle from "../icons/CancelCircle.svelte";
 
   type Props = {

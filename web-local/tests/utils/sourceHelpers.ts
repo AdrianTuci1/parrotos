@@ -2,8 +2,8 @@ import { expect } from "@playwright/test";
 import {
   extractFileName,
   splitFolderAndFileName,
-} from "@rilldata/web-common/features/entity-management/file-path-utils";
-import { asyncWait } from "@rilldata/web-common/lib/waitUtils";
+} from "@statsparrot/web-common/features/entity-management/file-path-utils";
+import { asyncWait } from "@statsparrot/web-common/lib/waitUtils";
 import path from "node:path";
 import type { Page } from "playwright";
 import { fileURLToPath } from "url";
@@ -43,7 +43,7 @@ export async function uploadFile(
     path.join(TestDataPath, file),
   ]);
   const fileRespWaitPromise = page.waitForResponse(
-    "**/rill.runtime.v1.RuntimeService/PutFile",
+    "**/statsparrot.runtime.v1.RuntimeService/PutFile",
   );
 
   // TODO: infer duplicate

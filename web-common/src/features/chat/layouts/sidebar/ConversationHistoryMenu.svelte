@@ -1,6 +1,6 @@
 <script lang="ts">
   import { HistoryIcon } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import IconButton from "../../../../components/button/IconButton.svelte";
   import * as DropdownMenu from "../../../../components/dropdown-menu";
   import type { V1Conversation } from "../../../../runtime-client";

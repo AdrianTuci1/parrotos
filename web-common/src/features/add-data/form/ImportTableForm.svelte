@@ -2,37 +2,37 @@
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
-  import Tabs from "@rilldata/web-common/components/forms/Tabs.svelte";
-  import { TabsContent } from "@rilldata/web-common/components/tabs";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import TableSchema from "@rilldata/web-common/features/connectors/explorer/TableSchema.svelte";
+  import Tabs from "@statsparrot/web-common/components/forms/Tabs.svelte";
+  import { TabsContent } from "@statsparrot/web-common/components/tabs";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import TableSchema from "@statsparrot/web-common/features/connectors/explorer/TableSchema.svelte";
   import {
     getAnalyzedConnectorByName,
     getAnalyzedConnectors,
-  } from "@rilldata/web-common/features/connectors/selectors.ts";
+  } from "@statsparrot/web-common/features/connectors/selectors.ts";
 
-  import { Button } from "@rilldata/web-common/components/button";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     type AddDataConfig,
     type ExploreConnectorStep,
     type ImportStepConfig,
     ImportDataStep,
     type ImportFromConfig,
-  } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { getLabelsForSource } from "@rilldata/web-common/features/add-data/form/form-labels.ts";
-  import ResizableSidebar from "@rilldata/web-common/layout/ResizableSidebar.svelte";
-  import { generateImportToConfig } from "@rilldata/web-common/features/add-data/manager/steps/import.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { getLabelsForSource } from "@statsparrot/web-common/features/add-data/form/form-labels.ts";
+  import ResizableSidebar from "@statsparrot/web-common/layout/ResizableSidebar.svelte";
+  import { generateImportToConfig } from "@statsparrot/web-common/features/add-data/manager/steps/import.ts";
   import {
     getConnectorDriverForSchema,
     getImportStepsForConnector,
-  } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-  import DatabaseExplorer from "@rilldata/web-common/features/connectors/explorer/DatabaseExplorer.svelte";
-  import { ConnectorExplorerStore } from "@rilldata/web-common/features/connectors/explorer/connector-explorer-store.ts";
-  import { getEnvFileStore } from "@rilldata/web-common/features/env-management/env-file-store.ts";
-  import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-  import { getConnectorSchema } from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+  import DatabaseExplorer from "@statsparrot/web-common/features/connectors/explorer/DatabaseExplorer.svelte";
+  import { ConnectorExplorerStore } from "@statsparrot/web-common/features/connectors/explorer/connector-explorer-store.ts";
+  import { getEnvFileStore } from "@statsparrot/web-common/features/env-management/env-file-store.ts";
+  import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+  import { getConnectorSchema } from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
 
   export let config: AddDataConfig;
   export let step: ExploreConnectorStep;

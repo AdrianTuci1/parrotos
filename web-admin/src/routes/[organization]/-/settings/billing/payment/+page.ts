@@ -1,6 +1,6 @@
-import type { RpcStatus } from "@rilldata/web-admin/client";
-import { fetchPaymentsPortalURL } from "@rilldata/web-admin/features/billing/plans/selectors";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import type { RpcStatus } from "@statsparrot/web-admin/client";
+import { fetchPaymentsPortalURL } from "@statsparrot/web-admin/features/billing/plans/selectors";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { error, redirect } from "@sveltejs/kit";
 import { isAxiosError } from "axios";
 import type { PageLoad } from "./$types";

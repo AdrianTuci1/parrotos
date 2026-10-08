@@ -23,10 +23,10 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Readable } from "svelte/store";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
-import { DelayedSpinner } from "@rilldata/web-common/features/dashboards/leaderboard/react/primitives";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
+import { DelayedSpinner } from "@statsparrot/web-common/features/dashboards/leaderboard/react/primitives";
 import type { DimensionTableRow } from "../dimension-table-types";
 import {
   estimateColumnCharacterWidths,

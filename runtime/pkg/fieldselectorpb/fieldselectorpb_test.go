@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 )
 
 func TestResolve(t *testing.T) {

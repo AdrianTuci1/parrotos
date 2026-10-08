@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Overlay from "@rilldata/web-common/components/overlay/Overlay.svelte";
+  import Overlay from "@statsparrot/web-common/components/overlay/Overlay.svelte";
   import { X, GitBranch } from "lucide-svelte";
   import ResourceGraph from "./ResourceGraph.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { ALLOWED_FOR_GRAPH } from "../navigation/seed-parser";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
   import { tick } from "svelte";
 
   export let open = false;

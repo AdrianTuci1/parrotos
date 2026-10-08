@@ -1,4 +1,4 @@
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   type CreateQueryOptions,
   type QueryClient,
@@ -9,7 +9,7 @@ import {
   type V1GetExploreResponse,
   type V1MetricsViewSpec,
   getRuntimeServiceGetExploreQueryOptions,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
 import { derived, type Readable } from "svelte/store";
 

@@ -6,12 +6,12 @@ import {
   createAdminServiceListProjectsForOrganization,
   getAdminServiceListDeploymentsQueryOptions,
   type V1Project,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import {
   extractBranchFromPath,
   injectBranchIntoPath,
-} from "@rilldata/web-admin/features/branches/branch-utils.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-admin/features/branches/branch-utils.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import { redirect } from "@sveltejs/kit";
 import { derived, type Readable } from "svelte/store";
 import { createQueries } from "@tanstack/svelte-query";

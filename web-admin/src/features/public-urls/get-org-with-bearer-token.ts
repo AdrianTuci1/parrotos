@@ -1,8 +1,8 @@
 import {
   type V1GetOrganizationResponse,
   type V1ListOrganizationBillingIssuesResponse,
-} from "@rilldata/web-admin/client";
-import httpClient from "@rilldata/web-admin/client/http-client";
+} from "@statsparrot/web-admin/client";
+import httpClient from "@statsparrot/web-admin/client/http-client";
 
 export const getOrgWithBearerToken = (
   organizationName: string,

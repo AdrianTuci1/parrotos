@@ -1,14 +1,14 @@
 import { page } from "$app/stores";
-import type { MetricsService } from "@rilldata/web-common/metrics/service/MetricsService";
+import type { MetricsService } from "@statsparrot/web-common/metrics/service/MetricsService";
 import type {
   CommonUserFields,
   MetricsEventScreenName,
   MetricsEventSpace,
-} from "@rilldata/web-common/metrics/service/MetricsTypes";
+} from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import {
   extractErrorMessage,
   extractErrorStatusCode,
-} from "@rilldata/web-common/lib/errors";
+} from "@statsparrot/web-common/lib/errors";
 import type { Query } from "@tanstack/query-core";
 import { get } from "svelte/store";
 import type {
@@ -16,8 +16,8 @@ import type {
   SourceErrorCodes,
   SourceFileType,
 } from "./service/SourceEventTypes";
-import { categorizeSourceError } from "@rilldata/web-common/features/sources/errors/errors.ts";
-import type { AddDataBehaviourEventFields } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+import { categorizeSourceError } from "@statsparrot/web-common/features/sources/errors/errors.ts";
+import type { AddDataBehaviourEventFields } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 
 export class ErrorEventHandler {
   public constructor(

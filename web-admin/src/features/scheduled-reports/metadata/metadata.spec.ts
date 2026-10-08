@@ -1,9 +1,9 @@
-import { formatRefreshSchedule } from "@rilldata/web-admin/features/scheduled-reports/metadata/utils";
+import { formatRefreshSchedule } from "@statsparrot/web-admin/features/scheduled-reports/metadata/utils";
 import {
   convertFormValuesToCronExpression,
   getFrequencyFromCronExpression,
   ReportFrequency,
-} from "@rilldata/web-common/features/scheduled-reports/time-utils";
+} from "@statsparrot/web-common/features/scheduled-reports/time-utils";
 import { describe, expect, it } from "vitest";
 
 describe("Reports metadata", () => {

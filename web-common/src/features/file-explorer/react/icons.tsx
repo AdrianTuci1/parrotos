@@ -5,7 +5,7 @@
 // icons/LoadingSpinner.svelte) as inline SVGs so the React port has no
 // `lucide-react` dependency.
 
-export { CaretDownIcon } from "@rilldata/web-common/features/dashboards/time-controls/super-pill/new-time-dropdown/react/icons";
+export { CaretDownIcon } from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/new-time-dropdown/react/icons";
 
 export function FolderIcon({
   size = "14px",

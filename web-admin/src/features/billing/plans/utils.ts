@@ -1,8 +1,8 @@
-import { formatMemorySize } from "@rilldata/web-common/lib/number-formatting/memory-size";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { formatMemorySize } from "@statsparrot/web-common/lib/number-formatting/memory-size";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { DateTime } from "luxon";
 import { writable } from "svelte/store";
-import { V1BillingPlanType } from "@rilldata/web-admin/client";
+import { V1BillingPlanType } from "@statsparrot/web-admin/client";
 
 export function formatUsageVsQuota(
   usageInBytes: number,
@@ -87,12 +87,12 @@ export function getSubscriptionResumedText(endDate: string) {
 
 // Since this could be triggered in a route that could be navigated from,
 // we add a global and show it in org route's layout
-export const showWelcomeToRillDialog = writable(false);
-export const showWelcomeToRillDialogForPlan = writable("");
+export const showWelcomeToParrotDialog = writable(false);
+export const showWelcomeToParrotDialogForPlan = writable("");
 
-export function triggerWelcomeToRillDialog(planName: string) {
-  showWelcomeToRillDialog.set(true);
-  showWelcomeToRillDialogForPlan.set(planName);
+export function triggerWelcomeToParrotDialog(planName: string) {
+  showWelcomeToParrotDialog.set(true);
+  showWelcomeToParrotDialogForPlan.set(planName);
 }
 
 export function formatCredit(credits: number): string {

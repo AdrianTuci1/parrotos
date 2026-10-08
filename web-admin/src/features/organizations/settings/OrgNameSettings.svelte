@@ -6,19 +6,19 @@
     getAdminServiceGetOrganizationQueryKey,
     getAdminServiceListOrganizationsQueryKey,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
-  import { parseUpdateOrgError } from "@rilldata/web-admin/features/organizations/settings/errors";
-  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import { sanitizeOrgName } from "@rilldata/web-common/features/organization/sanitizeOrgName";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-admin/client";
+  import { parseUpdateOrgError } from "@statsparrot/web-admin/features/organizations/settings/errors";
+  import SettingsContainer from "@statsparrot/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import { sanitizeOrgName } from "@statsparrot/web-common/features/organization/sanitizeOrgName";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import type { AxiosError } from "axios";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization }: { organization: string } = $props();
 

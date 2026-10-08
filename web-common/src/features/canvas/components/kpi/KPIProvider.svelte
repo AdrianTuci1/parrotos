@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { measureSupportsTotalsQuery } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-  import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { measureSupportsTotalsQuery } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+  import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createQueryServiceMetricsViewAggregation,
     createQueryServiceMetricsViewTimeSeries,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { DateTime, Interval } from "luxon";
   import type { Readable } from "svelte/store";
   import type { KPISpec } from ".";

@@ -174,7 +174,7 @@ func (c *Client) RecordBehavioralLegacy(name string, extraAttrs ...attribute.Key
 		data["payload"] = payload
 	}
 
-	data["app_name"] = "rill-developer"
+	data["app_name"] = "statsparrot-developer"
 	data["mode"] = "edit"
 	data["action"] = name
 	data["medium"] = "cli"

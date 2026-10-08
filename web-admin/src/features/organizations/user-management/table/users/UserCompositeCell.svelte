@@ -1,9 +1,9 @@
 <script lang="ts">
-  import AvatarListItem from "@rilldata/web-common/components/avatar/AvatarListItem.svelte";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import AvatarListItem from "@statsparrot/web-common/components/avatar/AvatarListItem.svelte";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let name: string;
   export let email: string;

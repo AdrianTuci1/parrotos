@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/pingcap/tidb/pkg/parser/ast"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 )
 
 func (q *query) parseTimeRangeStart(ctx context.Context, node *ast.FuncCallExpr, timeDimNode *ast.ColumnNameExpr) (*metricsview.Expression, error) {
-	rillTime, err := parseTimeRangeArgs(node.Args, q.metricsViewSpec)
+	statsparrotTime, err := parseTimeRangeArgs(node.Args, q.metricsViewSpec)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (q *query) parseTimeRangeStart(ctx context.Context, node *ast.FuncCallExpr,
 		return nil, err
 	}
 
-	watermark, _, _ := rillTime.Eval(rilltime.EvalOptions{
+	watermark, _, _ := statsparrotTime.Eval(statspartime.EvalOptions{
 		Now:        time.Now(),
 		MinTime:    ts.Min,
 		MaxTime:    ts.Max,
@@ -48,7 +48,7 @@ func (q *query) parseTimeRangeStart(ctx context.Context, node *ast.FuncCallExpr,
 }
 
 func (q *query) parseTimeRangeEnd(ctx context.Context, node *ast.FuncCallExpr, timeDimNode *ast.ColumnNameExpr) (*metricsview.Expression, error) {
-	rillTime, err := parseTimeRangeArgs(node.Args, q.metricsViewSpec)
+	statsparrotTime, err := parseTimeRangeArgs(node.Args, q.metricsViewSpec)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (q *query) parseTimeRangeEnd(ctx context.Context, node *ast.FuncCallExpr, t
 		return nil, err
 	}
 
-	_, watermark, _ := rillTime.Eval(rilltime.EvalOptions{
+	_, watermark, _ := statsparrotTime.Eval(statspartime.EvalOptions{
 		Now:        time.Now(),
 		MinTime:    ts.Min,
 		MaxTime:    ts.Max,
@@ -81,7 +81,7 @@ func (q *query) parseTimeRangeEnd(ctx context.Context, node *ast.FuncCallExpr, t
 	}, nil
 }
 
-func parseTimeRangeArgs(args []ast.ExprNode, mv *runtimev1.MetricsViewSpec) (*rilltime.Expression, error) {
+func parseTimeRangeArgs(args []ast.ExprNode, mv *runtimev1.MetricsViewSpec) (*statspartime.Expression, error) {
 	if len(args) != 1 {
 		return nil, fmt.Errorf("metrics sql: time_range_start/time_range_end expects exactly one arg")
 	}
@@ -96,7 +96,7 @@ func parseTimeRangeArgs(args []ast.ExprNode, mv *runtimev1.MetricsViewSpec) (*ri
 		return nil, fmt.Errorf("metrics sql: expected string for duration, got %T", duVal)
 	}
 
-	rt, err := rilltime.Parse(strings.TrimSuffix(strings.TrimPrefix(du, "'"), "'"), rilltime.ParseOptions{
+	rt, err := statspartime.Parse(strings.TrimSuffix(strings.TrimPrefix(du, "'"), "'"), statspartime.ParseOptions{
 		SmallestGrain: timeutil.TimeGrainFromAPI(mv.SmallestTimeGrain),
 	})
 	if err != nil {

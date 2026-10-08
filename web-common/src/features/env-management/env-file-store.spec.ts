@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { EnvStore } from "@rilldata/web-common/features/env-management/env-store.ts";
+import type { EnvStore } from "@statsparrot/web-common/features/env-management/env-store.ts";
 
 // fileArtifacts.getFileArtifact("/.env") drives the getter. Each test sets
 // `mockEnvContent`, then triggers `envStore.pull()` to exercise the parser.
@@ -7,7 +7,7 @@ let mockEnvContent: string | undefined = undefined;
 const fetchContent = vi.fn(async () => mockEnvContent);
 
 vi.mock(
-  "@rilldata/web-common/features/entity-management/file-artifacts",
+  "@statsparrot/web-common/features/entity-management/file-artifacts",
   () => ({
     fileArtifacts: {
       getFileArtifact: vi.fn(() => ({ fetchContent })),
@@ -16,13 +16,13 @@ vi.mock(
 );
 
 vi.mock(
-  "@rilldata/web-common/features/entity-management/edit-environment.ts",
+  "@statsparrot/web-common/features/entity-management/edit-environment.ts",
   () => ({
     isCloudRuntimeEditEnvironment: vi.fn(() => false),
   }),
 );
 
-vi.mock("@rilldata/web-common/runtime-client", () => ({
+vi.mock("@statsparrot/web-common/runtime-client", () => ({
   runtimeServicePutFile: vi.fn(async () => ({})),
   runtimeServicePushEnv: vi.fn(async () => ({})),
 }));
@@ -41,10 +41,10 @@ vi.mock("svelte", () => ({
 import {
   runtimeServicePushEnv,
   runtimeServicePutFile,
-} from "@rilldata/web-common/runtime-client";
-import { isCloudRuntimeEditEnvironment } from "@rilldata/web-common/features/entity-management/edit-environment.ts";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
+} from "@statsparrot/web-common/runtime-client";
+import { isCloudRuntimeEditEnvironment } from "@statsparrot/web-common/features/entity-management/edit-environment.ts";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
 import { createEnvFileStore, getEnvFileStore } from "./env-file-store";
 
 const runtimeClient = { instanceId: "inst-1" } as never;

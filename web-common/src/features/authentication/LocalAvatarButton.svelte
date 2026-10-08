@@ -1,20 +1,20 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import Avatar from "@rilldata/web-common/components/avatar/Avatar.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import NoUser from "@rilldata/web-common/components/icons/NoUser.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { initPylonChat } from "@rilldata/web-common/features/help/initPylonChat";
+  import Avatar from "@statsparrot/web-common/components/avatar/Avatar.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import NoUser from "@statsparrot/web-common/components/icons/NoUser.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { initPylonChat } from "@statsparrot/web-common/features/help/initPylonChat";
   import {
     createLocalServiceGetCurrentUser,
     createLocalServiceGetMetadata,
-  } from "@rilldata/web-common/runtime-client/local-service";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import ThemeToggle from "@rilldata/web-common/features/themes/ThemeToggle.svelte";
+  } from "@statsparrot/web-common/runtime-client/local-service";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import ThemeToggle from "@statsparrot/web-common/features/themes/ThemeToggle.svelte";
 
   $: user = createLocalServiceGetCurrentUser({
     query: {
-      // refetch in case user does a login/logout from outside of rill developer UI
+      // refetch in case user does a login/logout from outside of statsparrot developer UI
       refetchOnWindowFocus: true,
     },
   });
@@ -74,7 +74,7 @@
       <DropdownMenu.Separator />
 
       <DropdownMenu.Item
-        href="https://docs.rilldata.com"
+        href="https://docs.statsparrot.com"
         target="_blank"
         rel="noreferrer noopener"
       >
@@ -92,7 +92,7 @@
 
       {#if loggedIn}
         <DropdownMenu.Item onclick={handlePylon}>
-          Contact Rill support
+          Contact Parrot support
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
         <DropdownMenu.Item href={logoutUrl} rel="external">

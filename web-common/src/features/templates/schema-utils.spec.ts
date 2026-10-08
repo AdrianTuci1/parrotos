@@ -371,9 +371,9 @@ describe("schema-utils", () => {
   describe("buildEnumOptions", () => {
     const fieldWithLabels: JSONSchemaField = {
       type: "string",
-      enum: ["cloud", "self-managed", "rill-managed"],
-      "x-enum-labels": ["Cloud", "Self Managed", "Rill Managed"],
-      "x-enum-descriptions": ["Cloud desc", "Self desc", "Rill desc"],
+      enum: ["cloud", "self-managed", "statsparrot-managed"],
+      "x-enum-labels": ["Cloud", "Self Managed", "Parrot Managed"],
+      "x-enum-descriptions": ["Cloud desc", "Self desc", "Parrot desc"],
       "x-enum-icons": ["cloud-icon", "server-icon", "sparkles-icon"],
     };
 

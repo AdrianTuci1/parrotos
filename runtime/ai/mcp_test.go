@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -64,8 +64,8 @@ func TestSessionCreateIfNotExists(t *testing.T) {
 }
 
 // TestDeveloperToolsMCPAccess verifies that the leaf developer tools are exposed to external
-// MCP clients (non-rill user agents) for callers with EditRepo, while the developer agents remain
-// restricted to first-party Rill clients.
+// MCP clients (non-statsparrot user agents) for callers with EditRepo, while the developer agents remain
+// restricted to first-party Parrot clients.
 func TestDeveloperToolsMCPAccess(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{})
 
@@ -79,7 +79,7 @@ func TestDeveloperToolsMCPAccess(t *testing.T) {
 		s, err := r.Session(t.Context(), &ai.SessionOptions{
 			InstanceID: instanceID,
 			Claims:     claims,
-			UserAgent:  "mcp-client", // Non-rill user agent, i.e. an external MCP client
+			UserAgent:  "mcp-client", // Non-statsparrot user agent, i.e. an external MCP client
 		})
 		require.NoError(t, err)
 		t.Cleanup(func() {

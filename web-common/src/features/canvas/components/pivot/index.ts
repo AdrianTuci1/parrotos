@@ -1,22 +1,22 @@
-import { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
+import { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
 import {
   getCommonOptions,
   getFilterOptions,
-} from "@rilldata/web-common/features/canvas/components/util";
-import type { InputParams } from "@rilldata/web-common/features/canvas/inspector/types";
-import { PIVOT_ROW_LIMIT_OPTIONS } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
+} from "@statsparrot/web-common/features/canvas/components/util";
+import type { InputParams } from "@statsparrot/web-common/features/canvas/inspector/types";
+import { PIVOT_ROW_LIMIT_OPTIONS } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
 import type {
   PivotDataStoreConfig,
   PivotFormatRule,
   PivotMeasureFormatting,
   PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type V1MetricsViewSpec,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { Readable } from "svelte/store";
 import { derived, get, writable, type Writable } from "svelte/store";
 import type { CanvasEntity, ComponentPath } from "../../stores/canvas-entity";
@@ -120,7 +120,7 @@ export interface TableSpec
 
 export { default as Pivot } from "./CanvasPivotDisplay.svelte";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export class PivotCanvasComponent extends BaseCanvasComponent<
   PivotSpec | TableSpec

@@ -5,7 +5,7 @@ import { useAppStore } from '@/stores/useAppStore';
  * Canonical admin service URL. The Go admin service reads admin Postgres; it is
  * not the Node/Express backend that used to back `/api/v1`.
  */
-const ADMIN_URL = import.meta.env.VITE_RILL_ADMIN_URL || 'http://localhost:8080';
+const ADMIN_URL = import.meta.env.VITE_STATSPARROT_ADMIN_URL || 'http://localhost:8080';
 
 /**
  * Resolve the runtime Connect target for a tenancy pair.

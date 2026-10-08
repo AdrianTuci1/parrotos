@@ -1,10 +1,10 @@
-import { getFiltersFromText } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { getFiltersFromText } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   mergeDimensionAndMeasureFilters,
   splitWhereFilter,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { toggleDimensionFilterValue } from "@rilldata/web-common/features/dashboards/state-managers/actions/dimension-filters.ts";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { toggleDimensionFilterValue } from "@statsparrot/web-common/features/dashboards/state-managers/actions/dimension-filters.ts";
 import {
   createAndExpression,
   createInExpression,
@@ -14,15 +14,15 @@ import {
   isExpressionUnsupported,
   negateExpression,
   sanitiseExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import type {
   MetricsViewSpecDimension,
   V1Expression,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   type MetricsViewSpecMeasure,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get, writable, type Writable } from "svelte/store";
 import type { DimensionFilterItem } from "../../dashboards/state-managers/selectors/dimension-filters";
 import { DimensionFilterMode } from "../../dashboards/filters/dimension-filters/constants";
@@ -31,7 +31,7 @@ import type { DimensionThresholdFilter } from "../../dashboards/stores/explore-s
 import { convertExpressionToFilterParam } from "../../dashboards/url-state/filters/converters";
 import { FilterManager, type UIFilters } from "./filter-manager";
 import { getDimensionDisplayName } from "../../dashboards/filters/getDisplayName";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 
 export type ParsedFilters = ReturnType<typeof initFilterBase>;
 

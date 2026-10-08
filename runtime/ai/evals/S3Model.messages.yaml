@@ -7,7 +7,7 @@
   type: call
   tool: router_agent
   content_type: json
-  content: '{"prompt":"I have some CSV files in S3. Can you create a connector for S3 and a DuckDB model that loads the data at s3://integration-test.rilldata.com/glob_test/y=*/*.csv? I''ve already added environment variables for S3 access. Please proceed without asking clarifying questions."}'
+  content: '{"prompt":"I have some CSV files in S3. Can you create a connector for S3 and a DuckDB model that loads the data at s3://integration-test.statsparrot.com/glob_test/y=*/*.csv? I''ve already added environment variables for S3 access. Please proceed without asking clarifying questions."}'
 - id: a07e730a-43f6-4871-a378-540489ac2af6
   parent_id: 7c55f446-118e-4509-9199-537e4b100938
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -37,7 +37,7 @@
   type: call
   tool: developer_agent
   content_type: json
-  content: '{"prompt":"I have some CSV files in S3. Can you create a connector for S3 and a DuckDB model that loads the data at s3://integration-test.rilldata.com/glob_test/y=*/*.csv? I''ve already added environment variables for S3 access. Please proceed without asking clarifying questions."}'
+  content: '{"prompt":"I have some CSV files in S3. Can you create a connector for S3 and a DuckDB model that loads the data at s3://integration-test.statsparrot.com/glob_test/y=*/*.csv? I''ve already added environment variables for S3 access. Please proceed without asking clarifying questions."}'
 - id: 3c169dbb-9938-4df4-b1f2-2924cf1ac34b
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -57,7 +57,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: 4c95fa60-8a0a-4a63-adc5-be6727d852ee
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -77,7 +77,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
 - id: 0596544b-c1ba-4153-acc0-18e1fb0c2848
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -87,7 +87,7 @@
   type: call
   tool: develop_file
   content_type: json
-  content: '{"path":"connectors/s3.yaml","prompt":"Create a new S3 connector resource.\n\nRequirements:\n- File path: connectors/s3.yaml\n- Use Rill connector YAML format with `type: connector`.\n- Configure driver for S3.\n- Reference existing environment variables (confirmed present in project_status env):\n  - connector.s3.aws_access_key_id\n  - connector.s3.aws_secret_access_key\n- Also set a reasonable default AWS region using an env var if available; but do NOT reference env vars that don''t exist. Since only the two above are present, hardcode region to \"us-east-1\".\n- Keep it minimal and valid.\n","type":"connector"}'
+  content: '{"path":"connectors/s3.yaml","prompt":"Create a new S3 connector resource.\n\nRequirements:\n- File path: connectors/s3.yaml\n- Use Parrot connector YAML format with `type: connector`.\n- Configure driver for S3.\n- Reference existing environment variables (confirmed present in project_status env):\n  - connector.s3.aws_access_key_id\n  - connector.s3.aws_secret_access_key\n- Also set a reasonable default AWS region using an env var if available; but do NOT reference env vars that don''t exist. Since only the two above are present, hardcode region to \"us-east-1\".\n- Keep it minimal and valid.\n","type":"connector"}'
 - id: f771efa6-3287-40bd-94a3-982993d72954
   parent_id: 0596544b-c1ba-4153-acc0-18e1fb0c2848
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -107,7 +107,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: ca4c989b-fe3f-48a1-8204-509f8ead06b5
   parent_id: 0596544b-c1ba-4153-acc0-18e1fb0c2848
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -127,7 +127,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_secret_access_key","connector.openai.api_key","connector.s3.aws_access_key_id"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_secret_access_key","connector.openai.api_key","connector.s3.aws_access_key_id"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
 - id: 1a0758fc-757e-4b8c-a9fd-45acf8dc2ec8
   parent_id: 0596544b-c1ba-4153-acc0-18e1fb0c2848
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -167,7 +167,7 @@
   type: result
   tool: write_file
   content_type: json
-  content: '{"diff":"--- /connectors/s3.yaml\n+++ /connectors/s3.yaml\n@@ -1 +1,6 @@\n+type: connector\n+driver: s3\n+aws_access_key_id: \"{{ .env.connector.s3.aws_access_key_id }}\"\n+aws_secret_access_key: \"{{ .env.connector.s3.aws_secret_access_key }}\"\n+region: us-east-1\n \n","is_new_file":true,"resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
+  content: '{"diff":"--- /connectors/s3.yaml\n+++ /connectors/s3.yaml\n@@ -1 +1,6 @@\n+type: connector\n+driver: s3\n+aws_access_key_id: \"{{ .env.connector.s3.aws_access_key_id }}\"\n+aws_secret_access_key: \"{{ .env.connector.s3.aws_secret_access_key }}\"\n+region: us-east-1\n \n","is_new_file":true,"resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
 - id: ea8ae119-4143-407f-a69b-583bdd8393d8
   parent_id: 0596544b-c1ba-4153-acc0-18e1fb0c2848
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -187,7 +187,7 @@
   type: call
   tool: develop_file
   content_type: json
-  content: '{"path":"models/glob_test_csv.yaml","prompt":"Create a DuckDB model that loads CSV files from S3 path s3://integration-test.rilldata.com/glob_test/y=*/*.csv.\n\nRequirements:\n- File path: models/glob_test_csv.yaml\n- Use `type: model`.\n- Use the default OLAP connector (duckdb) as output; no need to set output explicitly unless required.\n- Read from S3 using DuckDB''s `read_csv_auto` with the S3 URL and glob.\n- Ensure the model is materialized (table) so it doesn''t re-read S3 on every query.\n- Set `connector: duckdb` only if needed; otherwise omit.\n- Include a small dev-time safeguard by limiting rows? Do NOT add LIMIT because it would truncate data. Instead, keep it straightforward.\n- Make sure it will work with the S3 connector credentials: in DuckDB, S3 access typically requires setting s3_* settings. In Rill, the S3 connector can be used as an input connector for models. Configure the model to use the `s3` connector as input and `duckdb` as output.\n- Use `sql:` that selects all columns from the CSVs.\n","type":"model"}'
+  content: '{"path":"models/glob_test_csv.yaml","prompt":"Create a DuckDB model that loads CSV files from S3 path s3://integration-test.statsparrot.com/glob_test/y=*/*.csv.\n\nRequirements:\n- File path: models/glob_test_csv.yaml\n- Use `type: model`.\n- Use the default OLAP connector (duckdb) as output; no need to set output explicitly unless required.\n- Read from S3 using DuckDB''s `read_csv_auto` with the S3 URL and glob.\n- Ensure the model is materialized (table) so it doesn''t re-read S3 on every query.\n- Set `connector: duckdb` only if needed; otherwise omit.\n- Include a small dev-time safeguard by limiting rows? Do NOT add LIMIT because it would truncate data. Instead, keep it straightforward.\n- Make sure it will work with the S3 connector credentials: in DuckDB, S3 access typically requires setting s3_* settings. In Parrot, the S3 connector can be used as an input connector for models. Configure the model to use the `s3` connector as input and `duckdb` as output.\n- Use `sql:` that selects all columns from the CSVs.\n","type":"model"}'
 - id: c51f03eb-7d3d-4026-ba01-47feec98b9ec
   parent_id: 0f400e94-3a9d-4c30-802c-8d01f2bc05f6
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -207,7 +207,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: 81ae7634-30b3-43c8-8ad2-e0fb12715a83
   parent_id: 0f400e94-3a9d-4c30-802c-8d01f2bc05f6
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -227,7 +227,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
 - id: b0645a89-61d4-4f84-b224-58675f27a3f9
   parent_id: 0f400e94-3a9d-4c30-802c-8d01f2bc05f6
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -257,7 +257,7 @@
   type: call
   tool: write_file
   content_type: json
-  content: '{"contents":"type: model\nmaterialize: true\n\n# Use DuckDB as the execution engine and rely on the project''s S3 connector\n# credentials being mounted as DuckDB secrets.\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n","path":"models/glob_test_csv.yaml"}'
+  content: '{"contents":"type: model\nmaterialize: true\n\n# Use DuckDB as the execution engine and rely on the project''s S3 connector\n# credentials being mounted as DuckDB secrets.\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n","path":"models/glob_test_csv.yaml"}'
 - id: babf9998-97e2-4c70-a3ed-c9e7826e7b0b
   parent_id: bc70b8f5-ffec-4c18-9a75-f8086ce7147c
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -267,7 +267,7 @@
   type: result
   tool: write_file
   content_type: json
-  content: '{"diff":"--- /models/glob_test_csv.yaml\n+++ /models/glob_test_csv.yaml\n@@ -1 +1,11 @@\n+type: model\n+materialize: true\n \n+# Use DuckDB as the execution engine and rely on the project''s S3 connector\n+# credentials being mounted as DuckDB secrets.\n+create_secrets_from_connectors: s3\n+\n+sql: |\n+  SELECT *\n+  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n+\n","is_new_file":true,"resources":[{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
+  content: '{"diff":"--- /models/glob_test_csv.yaml\n+++ /models/glob_test_csv.yaml\n@@ -1 +1,11 @@\n+type: model\n+materialize: true\n \n+# Use DuckDB as the execution engine and rely on the project''s S3 connector\n+# credentials being mounted as DuckDB secrets.\n+create_secrets_from_connectors: s3\n+\n+sql: |\n+  SELECT *\n+  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n+\n","is_new_file":true,"resources":[{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
 - id: 6cdddf9a-7dd5-4b5d-99ab-2ba82a302132
   parent_id: 0f400e94-3a9d-4c30-802c-8d01f2bc05f6
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -277,7 +277,7 @@
   type: result
   tool: develop_file
   content_type: json
-  content: '{"response":"Created `models/glob_test_csv.yaml` as a materialized DuckDB model that reads all CSVs from:\n\n`s3://integration-test.rilldata.com/glob_test/y=*/*.csv`\n\nIt uses DuckDB’s `read_csv_auto` and mounts credentials from the project’s `s3` connector via `create_secrets_from_connectors: s3`, ensuring S3 access works without embedding secrets in SQL."}'
+  content: '{"response":"Created `models/glob_test_csv.yaml` as a materialized DuckDB model that reads all CSVs from:\n\n`s3://integration-test.statsparrot.com/glob_test/y=*/*.csv`\n\nIt uses DuckDB’s `read_csv_auto` and mounts credentials from the project’s `s3` connector via `create_secrets_from_connectors: s3`, ensuring S3 access works without embedding secrets in SQL."}'
 - id: 5fa78125-1fef-4767-b0e5-6d01b9782f0f
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -297,7 +297,7 @@
   type: result
   tool: read_file
   content_type: json
-  content: '{"Contents":"type: model\nmaterialize: true\n\n# Use DuckDB as the execution engine and rely on the project''s S3 connector\n# credentials being mounted as DuckDB secrets.\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n"}'
+  content: '{"Contents":"type: model\nmaterialize: true\n\n# Use DuckDB as the execution engine and rely on the project''s S3 connector\n# credentials being mounted as DuckDB secrets.\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n"}'
 - id: 03b850e5-4523-4d2b-aedc-b4bac896f61d
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -317,7 +317,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.openai.api_key","connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"rill.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.openai.api_key","connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
 - id: 7e577b58-1aeb-4cf4-b9ea-01d78f040a27
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -387,7 +387,7 @@
   type: call
   tool: search_files
   content_type: json
-  content: '{"glob_pattern":"rill.yaml","pattern":"olap_connector"}'
+  content: '{"glob_pattern":"statsparrot.yaml","pattern":"olap_connector"}'
 - id: e5c841c8-7a71-43a6-98f4-d637c91a31cc
   parent_id: df246136-34cf-4ef0-9902-d7a4c5b1476b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -397,7 +397,7 @@
   type: result
   tool: search_files
   content_type: json
-  content: '{"matches":[{"path":"/rill.yaml","lines":[2],"snippets":["  1: \n\u003e 2: olap_connector: duckdb\n  3: "]}]}'
+  content: '{"matches":[{"path":"/statsparrot.yaml","lines":[2],"snippets":["  1: \n\u003e 2: olap_connector: duckdb\n  3: "]}]}'
 - id: c66cc115-bc3b-4fc9-b36a-48b9672bf00d
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -407,7 +407,7 @@
   type: call
   tool: read_file
   content_type: json
-  content: '{"path":"rill.yaml"}'
+  content: '{"path":"statsparrot.yaml"}'
 - id: c24e5947-6013-407f-8a96-fe14cb80854a
   parent_id: c66cc115-bc3b-4fc9-b36a-48b9672bf00d
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -447,7 +447,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/models/glob_test_csv.yaml","resources":[{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/models/glob_test_csv.yaml","resources":[{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: 8082abdf-36a5-4a7e-96f2-dd997d438e29
   parent_id: a0f8e0a1-4cb4-45b6-96cc-145224c6aa56
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -467,7 +467,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"rill.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
 - id: 2585f79a-544a-4912-b426-ab4736e1d9b4
   parent_id: a0f8e0a1-4cb4-45b6-96cc-145224c6aa56
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -507,7 +507,7 @@
   type: result
   tool: write_file
   content_type: json
-  content: '{"resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
+  content: '{"resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
 - id: 1d7686eb-f3dc-4458-bdf8-77cdfcc2d756
   parent_id: a0f8e0a1-4cb4-45b6-96cc-145224c6aa56
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -527,7 +527,7 @@
   type: call
   tool: develop_file
   content_type: json
-  content: '{"path":"models/glob_test_csv.yaml","prompt":"Create a DuckDB model that loads CSVs from S3 path pattern: s3://integration-test.rilldata.com/glob_test/y=*/*.csv\n\nPath: models/glob_test_csv.yaml\n\nRequirements:\n- type: model\n- materialize: true (so we don''t re-read S3 on every query)\n- Use DuckDB''s read_csv_auto to load the files.\n- Ensure DuckDB can access S3 credentials by creating secrets from the S3 connector (use create_secrets_from_connectors: s3).\n- SQL should be a simple SELECT * FROM read_csv_auto(''...'')\n","type":"model"}'
+  content: '{"path":"models/glob_test_csv.yaml","prompt":"Create a DuckDB model that loads CSVs from S3 path pattern: s3://integration-test.statsparrot.com/glob_test/y=*/*.csv\n\nPath: models/glob_test_csv.yaml\n\nRequirements:\n- type: model\n- materialize: true (so we don''t re-read S3 on every query)\n- Use DuckDB''s read_csv_auto to load the files.\n- Ensure DuckDB can access S3 credentials by creating secrets from the S3 connector (use create_secrets_from_connectors: s3).\n- SQL should be a simple SELECT * FROM read_csv_auto(''...'')\n","type":"model"}'
 - id: b5b6ac63-f055-468d-980c-20ac95b2eb2c
   parent_id: e0997b8c-837d-4e75-8634-67bfd69cad87
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -547,7 +547,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/models/glob_test_csv.yaml","resources":[{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/models/glob_test_csv.yaml","resources":[{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: 9802902c-5818-4ce0-8b5e-c0594fd1a8a5
   parent_id: e0997b8c-837d-4e75-8634-67bfd69cad87
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -567,7 +567,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"rill.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
 - id: 9d03f565-333e-4057-a3d3-bbe47b61ad69
   parent_id: e0997b8c-837d-4e75-8634-67bfd69cad87
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -587,7 +587,7 @@
   type: result
   tool: read_file
   content_type: json
-  content: '{"Contents":"type: model\nmaterialize: true\n\n# Use DuckDB as the execution engine and rely on the project''s S3 connector\n# credentials being mounted as DuckDB secrets.\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n"}'
+  content: '{"Contents":"type: model\nmaterialize: true\n\n# Use DuckDB as the execution engine and rely on the project''s S3 connector\n# credentials being mounted as DuckDB secrets.\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n"}'
 - id: 2be04a10-f8d3-42f5-be5f-9227d8c44861
   parent_id: e0997b8c-837d-4e75-8634-67bfd69cad87
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -597,7 +597,7 @@
   type: call
   tool: write_file
   content_type: json
-  content: '{"contents":"type: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n","path":"models/glob_test_csv.yaml"}'
+  content: '{"contents":"type: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n","path":"models/glob_test_csv.yaml"}'
 - id: 4a7964af-e6e4-491a-b95e-aa85bc321bae
   parent_id: 2be04a10-f8d3-42f5-be5f-9227d8c44861
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -607,7 +607,7 @@
   type: result
   tool: write_file
   content_type: json
-  content: '{"diff":"--- /models/glob_test_csv.yaml\n+++ /models/glob_test_csv.yaml\n@@ -1,8 +1,7 @@\n type: model\n materialize: true\n \n-# Use DuckDB as the execution engine and rely on the project''s S3 connector\n-# credentials being mounted as DuckDB secrets.\n+# Ensure DuckDB can access S3 using credentials from the `s3` connector\n create_secrets_from_connectors: s3\n \n sql: |\n","resources":[{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
+  content: '{"diff":"--- /models/glob_test_csv.yaml\n+++ /models/glob_test_csv.yaml\n@@ -1,8 +1,7 @@\n type: model\n materialize: true\n \n-# Use DuckDB as the execution engine and rely on the project''s S3 connector\n-# credentials being mounted as DuckDB secrets.\n+# Ensure DuckDB can access S3 using credentials from the `s3` connector\n create_secrets_from_connectors: s3\n \n sql: |\n","resources":[{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]}'
 - id: 2b59cb62-2f5c-4a55-b2df-8bef152cc4d9
   parent_id: e0997b8c-837d-4e75-8634-67bfd69cad87
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -617,7 +617,7 @@
   type: result
   tool: develop_file
   content_type: json
-  content: '{"response":"Created `/models/glob_test_csv.yaml` as a materialized DuckDB model that reads CSVs from:\n\n`s3://integration-test.rilldata.com/glob_test/y=*/*.csv`\n\nIt uses `create_secrets_from_connectors: s3` and a simple:\n\n```sql\nSELECT * FROM read_csv_auto(''...'')\n```\n\nThe model reconciled successfully (no parse/reconcile errors)."}'
+  content: '{"response":"Created `/models/glob_test_csv.yaml` as a materialized DuckDB model that reads CSVs from:\n\n`s3://integration-test.statsparrot.com/glob_test/y=*/*.csv`\n\nIt uses `create_secrets_from_connectors: s3` and a simple:\n\n```sql\nSELECT * FROM read_csv_auto(''...'')\n```\n\nThe model reconciled successfully (no parse/reconcile errors)."}'
 - id: aea63b2a-4ebc-465c-b7f3-0f3ebb18ecc7
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -637,7 +637,7 @@
   type: result
   tool: read_file
   content_type: json
-  content: '{"Contents":"type: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n"}'
+  content: '{"Contents":"type: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n"}'
 - id: 8b4f9651-ba5c-4def-bc04-d136c85b0ceb
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -657,7 +657,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"rill.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Model","name":"glob_test_csv","path":"/models/glob_test_csv.yaml","refs":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb"}],"status":"OK"}],"parse_errors":[]}'
 - id: 39874205-5e44-403c-8ea1-d7ecc7b4ab9b
   parent_id: dedc6f88-e899-4935-975f-ad8a290c0d8b
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -727,7 +727,7 @@
   type: result
   tool: developer_agent
   content_type: json
-  content: '{"response":"Created the S3 connector and a DuckDB model that materializes the CSVs from your S3 glob.\n\n## 1) S3 connector\n**File:** `connectors/s3.yaml`\n```yaml\ntype: connector\ndriver: s3\naws_access_key_id: \"{{ .env.connector.s3.aws_access_key_id }}\"\naws_secret_access_key: \"{{ .env.connector.s3.aws_secret_access_key }}\"\nregion: us-east-1\n```\n\n## 2) DuckDB model loading the CSVs\n**File:** `models/glob_test_csv.yaml`\n```yaml\ntype: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n```\n\n## Status / quick validation\n- Connector `s3`: OK\n- Model `glob_test_csv`: OK\n- Loaded row count: **12**\n- Rows by `y`: **2010=3, 2023=3, 2024=6**\n\nMain file to look at: `models/glob_test_csv.yaml`."}'
+  content: '{"response":"Created the S3 connector and a DuckDB model that materializes the CSVs from your S3 glob.\n\n## 1) S3 connector\n**File:** `connectors/s3.yaml`\n```yaml\ntype: connector\ndriver: s3\naws_access_key_id: \"{{ .env.connector.s3.aws_access_key_id }}\"\naws_secret_access_key: \"{{ .env.connector.s3.aws_secret_access_key }}\"\nregion: us-east-1\n```\n\n## 2) DuckDB model loading the CSVs\n**File:** `models/glob_test_csv.yaml`\n```yaml\ntype: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n```\n\n## Status / quick validation\n- Connector `s3`: OK\n- Model `glob_test_csv`: OK\n- Loaded row count: **12**\n- Rows by `y`: **2010=3, 2023=3, 2024=6**\n\nMain file to look at: `models/glob_test_csv.yaml`."}'
 - id: c50dc370-1b6b-4f2c-a799-4d822f3f264a
   parent_id: 7c55f446-118e-4509-9199-537e4b100938
   session_id: be5d8ea4-7e4f-4d8c-8bf8-0674253037f1
@@ -737,4 +737,4 @@
   type: result
   tool: router_agent
   content_type: json
-  content: '{"response":"Created the S3 connector and a DuckDB model that materializes the CSVs from your S3 glob.\n\n## 1) S3 connector\n**File:** `connectors/s3.yaml`\n```yaml\ntype: connector\ndriver: s3\naws_access_key_id: \"{{ .env.connector.s3.aws_access_key_id }}\"\naws_secret_access_key: \"{{ .env.connector.s3.aws_secret_access_key }}\"\nregion: us-east-1\n```\n\n## 2) DuckDB model loading the CSVs\n**File:** `models/glob_test_csv.yaml`\n```yaml\ntype: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.rilldata.com/glob_test/y=*/*.csv'')\n```\n\n## Status / quick validation\n- Connector `s3`: OK\n- Model `glob_test_csv`: OK\n- Loaded row count: **12**\n- Rows by `y`: **2010=3, 2023=3, 2024=6**\n\nMain file to look at: `models/glob_test_csv.yaml`.","agent":"developer_agent"}'
+  content: '{"response":"Created the S3 connector and a DuckDB model that materializes the CSVs from your S3 glob.\n\n## 1) S3 connector\n**File:** `connectors/s3.yaml`\n```yaml\ntype: connector\ndriver: s3\naws_access_key_id: \"{{ .env.connector.s3.aws_access_key_id }}\"\naws_secret_access_key: \"{{ .env.connector.s3.aws_secret_access_key }}\"\nregion: us-east-1\n```\n\n## 2) DuckDB model loading the CSVs\n**File:** `models/glob_test_csv.yaml`\n```yaml\ntype: model\nmaterialize: true\n\n# Ensure DuckDB can access S3 using credentials from the `s3` connector\ncreate_secrets_from_connectors: s3\n\nsql: |\n  SELECT *\n  FROM read_csv_auto(''s3://integration-test.statsparrot.com/glob_test/y=*/*.csv'')\n```\n\n## Status / quick validation\n- Connector `s3`: OK\n- Model `glob_test_csv`: OK\n- Loaded row count: **12**\n- Rows by `y`: **2010=3, 2023=3, 2024=6**\n\nMain file to look at: `models/glob_test_csv.yaml`.","agent":"developer_agent"}'

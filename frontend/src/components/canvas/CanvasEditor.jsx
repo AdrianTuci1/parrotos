@@ -7,9 +7,9 @@ import { TabGroupEditor } from "@/components/canvas/TabGroupEditor";
 import "@/styles/canvas-editor.css";
 
 /**
- * Rill-style canvas editor surface. Hosts the builder toolbar, the card grid, and the
+ * Parrot-style canvas editor surface. Hosts the builder toolbar, the card grid, and the
  * per-card / per-tab-group inspector. The same select / edit / add / remove / reorder /
- * resize / AI-edit interactions Rill surfaces in its Canvas workspace, persisted to
+ * resize / AI-edit interactions Parrot surfaces in its Canvas workspace, persisted to
  * localStorage in mock mode.
  */
 export function CanvasEditor({ canvasName }) {

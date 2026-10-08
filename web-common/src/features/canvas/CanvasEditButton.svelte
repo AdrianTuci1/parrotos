@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
-  import { Button } from "@rilldata/web-common/components/button/index.ts";
-  import { useCanvas } from "@rilldata/web-common/features/canvas/selector.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
+  import { Button } from "@statsparrot/web-common/components/button/index.ts";
+  import { useCanvas } from "@statsparrot/web-common/features/canvas/selector.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   let { canvasName }: { canvasName: string } = $props();
 

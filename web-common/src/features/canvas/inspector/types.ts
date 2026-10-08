@@ -1,8 +1,8 @@
-import type { ComponentAlignment } from "@rilldata/web-common/features/canvas/components/types";
+import type { ComponentAlignment } from "@statsparrot/web-common/features/canvas/components/types";
 import type {
   ChartLegend,
   ChartSortDirectionOptions,
-} from "@rilldata/web-common/features/components/charts/types";
+} from "@statsparrot/web-common/features/components/charts/types";
 
 type SemanticInputTypes =
   | "metrics"
@@ -14,7 +14,7 @@ type SemanticInputTypes =
 type NativeInputTypes = "text" | "number" | "boolean" | "textarea" | "select";
 type ChartInputTypes = "positional" | "mark" | "tooltip" | "config";
 type CustomInputTypes =
-  | "rill_time"
+  | "statsparrot_time"
   | "sparkline"
   | "comparison_options"
   | "vega_spec"

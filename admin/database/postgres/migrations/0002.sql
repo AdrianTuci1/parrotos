@@ -38,8 +38,8 @@ CREATE TABLE auth_clients (
 -- Hard-coded first-party auth clients
 INSERT INTO auth_clients (id, display_name)
 VALUES
-	('12345678-0000-0000-0000-000000000001', 'Rill Web'),
-	('12345678-0000-0000-0000-000000000002', 'Rill CLI');
+	('12345678-0000-0000-0000-000000000001', 'Parrot Web'),
+	('12345678-0000-0000-0000-000000000002', 'Parrot CLI');
 
 CREATE TABLE user_auth_tokens (
 	id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,

@@ -1,33 +1,33 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import { defaultFormLabels } from "@rilldata/web-common/features/add-data/form/form-labels.ts";
-  import SubmissionError from "@rilldata/web-common/components/forms/SubmissionError.svelte";
-  import type { createConnectorForm } from "@rilldata/web-common/features/sources/modal/FormValidation.ts";
-  import YamlPreview from "@rilldata/web-common/features/sources/modal/YamlPreview.svelte";
-  import { ICONS } from "@rilldata/web-common/features/sources/modal/icons.ts";
-  import JSONSchemaFormRenderer from "@rilldata/web-common/features/templates/JSONSchemaFormRenderer.svelte";
-  import type { MultiStepFormSchema } from "@rilldata/web-common/features/templates/schemas/types.ts";
-  import { processFileContent } from "@rilldata/web-common/features/templates/file-encoding.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { defaultFormLabels } from "@statsparrot/web-common/features/add-data/form/form-labels.ts";
+  import SubmissionError from "@statsparrot/web-common/components/forms/SubmissionError.svelte";
+  import type { createConnectorForm } from "@statsparrot/web-common/features/sources/modal/FormValidation.ts";
+  import YamlPreview from "@statsparrot/web-common/features/sources/modal/YamlPreview.svelte";
+  import { ICONS } from "@statsparrot/web-common/features/sources/modal/icons.ts";
+  import JSONSchemaFormRenderer from "@statsparrot/web-common/features/templates/JSONSchemaFormRenderer.svelte";
+  import type { MultiStepFormSchema } from "@statsparrot/web-common/features/templates/schemas/types.ts";
+  import { processFileContent } from "@statsparrot/web-common/features/templates/file-encoding.ts";
   import {
     inferModelNameFromSQL,
     inferSourceName,
-  } from "@rilldata/web-common/features/sources/sourceUtils.ts";
-  import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
-  import { getSubmitError } from "@rilldata/web-common/features/add-data/form/errors.ts";
+  } from "@statsparrot/web-common/features/sources/sourceUtils.ts";
+  import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
+  import { getSubmitError } from "@statsparrot/web-common/features/add-data/form/errors.ts";
   import {
     getRequiredFieldsForValues,
     isVisibleForValues,
-  } from "@rilldata/web-common/features/templates/schema-utils.ts";
-  import { isEmpty } from "@rilldata/web-common/features/sources/modal/utils.ts";
-  import NeedHelpText from "@rilldata/web-common/features/sources/modal/NeedHelpText.svelte";
-  import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  } from "@statsparrot/web-common/features/templates/schema-utils.ts";
+  import { isEmpty } from "@statsparrot/web-common/features/sources/modal/utils.ts";
+  import NeedHelpText from "@statsparrot/web-common/features/sources/modal/NeedHelpText.svelte";
+  import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
   import {
     type AddDataState,
     AddDataStep,
-  } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { getFormClass } from "@rilldata/web-common/features/add-data/class-utils.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { getFormClass } from "@statsparrot/web-common/features/add-data/class-utils.ts";
 
   export let connectorDriver: V1ConnectorDriver;
   export let schema: MultiStepFormSchema | null;

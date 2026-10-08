@@ -5,16 +5,16 @@ import (
 	"testing"
 	"time"
 
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/server/auth"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -121,15 +121,15 @@ measures:
 	require.Len(t, list1.Conversations, 2)
 
 	// Check user agent pattern filtering works correctly.
-	// Filter for "rill" conversations only (prefix match).
+	// Filter for "statsparrot" conversations only (prefix match).
 	list4, err := srv.ListConversations(fooCtx, &runtimev1.ListConversationsRequest{
 		InstanceId:       instanceID,
-		UserAgentPattern: "rill/%",
+		UserAgentPattern: "statsparrot/%",
 	})
 	require.NoError(t, err)
 	require.Len(t, list4.Conversations, 2)
 
-	// Filter for "mcp" conversations (should be none since all conversations are rill).
+	// Filter for "mcp" conversations (should be none since all conversations are statsparrot).
 	list5, err := srv.ListConversations(fooCtx, &runtimev1.ListConversationsRequest{
 		InstanceId:       instanceID,
 		UserAgentPattern: "mcp%",
@@ -300,7 +300,7 @@ measures:
 	require.Len(t, list3.Conversations, 0)
 
 	// Check that an anonymous user with SkipChecks can list and get conversations.
-	// (This matches Rill Developer behavior where auth is disabled.)
+	// (This matches Parrot Developer behavior where auth is disabled.)
 	ctx = auth.WithClaims(t.Context(), &runtime.SecurityClaims{
 		UserID:      "",
 		Permissions: runtime.AllPermissions,

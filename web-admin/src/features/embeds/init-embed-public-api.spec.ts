@@ -1,16 +1,16 @@
 // @vitest-environment jsdom
-import { DashboardFetchMocks } from "@rilldata/web-common/features/dashboards/dashboard-fetch-mocks";
+import { DashboardFetchMocks } from "@statsparrot/web-common/features/dashboards/dashboard-fetch-mocks";
 import {
   AD_BIDS_EXPLORE_INIT,
   AD_BIDS_EXPLORE_NAME,
   AD_BIDS_METRICS_INIT,
   AD_BIDS_METRICS_NAME,
   AD_BIDS_PRESET_WITHOUT_TIMESTAMP,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import { getKeyForSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
-import { ExploreUrlWebView } from "@rilldata/web-common/features/dashboards/url-state/mappers.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import { getKeyForSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
+import { ExploreUrlWebView } from "@statsparrot/web-common/features/dashboards/url-state/mappers.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import initEmbedPublicAPI from "./init-embed-public-api";
 import { EmbedStorageNamespacePrefix } from "./constants.ts";
@@ -40,13 +40,13 @@ vi.mock("$app/stores", () => ({
 
 // theme-control reads window.matchMedia at import time and neither theme module is
 // relevant to setState/stateChange, so stub them to keep the harness isolated.
-vi.mock("@rilldata/web-common/features/themes/theme-control", () => ({
+vi.mock("@statsparrot/web-common/features/themes/theme-control", () => ({
   themeControl: {
     set: { light: vi.fn(), dark: vi.fn(), system: vi.fn() },
     preference: { subscribe: () => () => {} },
   },
 }));
-vi.mock("@rilldata/web-common/features/embeds/embed-theme", () => ({
+vi.mock("@statsparrot/web-common/features/embeds/embed-theme", () => ({
   getEmbedThemeStoreInstance: () => ({
     subscribe: () => () => {},
     set: vi.fn(),
@@ -174,7 +174,7 @@ describe("initEmbedPublicAPI", () => {
         appliedState: "measures=impressions&dims=publisher",
         errors: [],
       });
-      // Params matching rill defaults (sort etc.) are stripped, leaving the canonical url.
+      // Params matching statsparrot defaults (sort etc.) are stripped, leaving the canonical url.
       expect(harness.lastGoto()?.url.search).toBe(
         "?measures=impressions&dims=publisher",
       );

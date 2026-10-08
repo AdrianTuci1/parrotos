@@ -1,15 +1,15 @@
 import { useMemo, useRef, useState, type FormEvent } from "react";
-import { parseRillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
-import { ALL_TIME_RANGE_ALIAS } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
-import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { parseParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
+import { ALL_TIME_RANGE_ALIAS } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
+import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { ClockIcon } from "./icons";
 import { SyntaxElement } from "./SyntaxElement";
 
 /**
  * React translation of `super-pill/components/TimeRangeSearch.svelte`. Text input that
- * parses a Rill time string, remembers recent searches in `localStorage`, and renders
+ * parses a Parrot time string, remembers recent searches in `localStorage`, and renders
  * recent searches as syntax chips. Uses `useReadable()` to bridge the Svelte
  * `localStorageStore`.
  */
@@ -60,7 +60,7 @@ export function TimeRangeSearch({
     }
 
     try {
-      parseRillTime(searchValue);
+      parseParrotTime(searchValue);
       setUnableToParse(false);
 
       recentSearches.update((searches) => {

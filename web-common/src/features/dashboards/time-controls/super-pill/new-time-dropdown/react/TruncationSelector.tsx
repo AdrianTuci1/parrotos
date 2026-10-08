@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DateTime, Duration, type DateTimeUnit } from "luxon";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import {
   getOptionsFromSmallestToLargest,
   translateGrainName,
   translateV1TimeGrain,
   V1TimeGrainToDateTimeUnit,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { RillTimeLabel } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/RillTime";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { ParrotTimeLabel } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/ParrotTime";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { CaretDownIcon } from "./icons";
 
 /**
@@ -27,24 +27,24 @@ export interface TruncationSelectorProps {
   watermark: DateTime | undefined;
   latest: DateTime | undefined;
   zone: string;
-  asOfRef: RillTimeLabel | string | undefined;
-  onSelectAsOfOption: (ref: RillTimeLabel) => void;
+  asOfRef: ParrotTimeLabel | string | undefined;
+  onSelectAsOfOption: (ref: ParrotTimeLabel) => void;
   onToggleAlignment: (forward: boolean) => void;
   onSelectEnding: (grain: V1TimeGrain | undefined, complete?: boolean) => void;
 }
 
 function humanizeRef(
-  ref: RillTimeLabel | string | undefined,
+  ref: ParrotTimeLabel | string | undefined,
   grain: V1TimeGrain | undefined,
   zone: string,
 ): string {
   switch (ref) {
-    case RillTimeLabel.Watermark:
+    case ParrotTimeLabel.Watermark:
       if (grain) return m.time_ref_complete();
       return m.time_ref_complete_data();
-    case RillTimeLabel.Latest:
+    case ParrotTimeLabel.Latest:
       return m.time_ref_latest();
-    case RillTimeLabel.Now:
+    case ParrotTimeLabel.Now:
       if (grain) return m.time_ref_current();
       return m.time_ref_now();
     default:
@@ -147,19 +147,19 @@ export function TruncationSelector({
 
   const options = [
     {
-      id: RillTimeLabel.Watermark,
+      id: ParrotTimeLabel.Watermark,
       label: m.dashboard_complete_data(),
       timestamp: watermark,
       description: m.dashboard_complete_data_description(),
     },
     {
-      id: RillTimeLabel.Latest,
+      id: ParrotTimeLabel.Latest,
       label: m.dashboard_latest_data(),
       timestamp: latest,
       description: m.dashboard_latest_data_description(),
     },
     {
-      id: RillTimeLabel.Now,
+      id: ParrotTimeLabel.Now,
       label: m.dashboard_current_time(),
       timestamp: now,
       description: m.dashboard_current_time_description(),
@@ -180,7 +180,7 @@ export function TruncationSelector({
             {humanizedRef}
             {dateTimeUnit ? translateGrainName(dateTimeUnit) : null}
           </b>
-          {grain ? (snapToEnd || asOfRef === RillTimeLabel.Watermark ? m.dashboard_end() : m.dashboard_start()) : null}
+          {grain ? (snapToEnd || asOfRef === ParrotTimeLabel.Watermark ? m.dashboard_end() : m.dashboard_start()) : null}
         </p>
 
         <span className={`flex-none transition-transform ${open ? "-rotate-180" : ""}`}>
@@ -195,7 +195,7 @@ export function TruncationSelector({
               {m.dashboard_reference()}
             </h3>
             {options.map(({ id, label, description, timestamp }) => {
-              if (id !== RillTimeLabel.Watermark || (id === RillTimeLabel.Watermark && !!timestamp)) {
+              if (id !== ParrotTimeLabel.Watermark || (id === ParrotTimeLabel.Watermark && !!timestamp)) {
                 return (
                   <button
                     key={id}
@@ -262,16 +262,16 @@ export function TruncationSelector({
                 <span>{m.dashboard_anchor_period_end()}</span>
                 <button
                   type="button"
-                  disabled={asOfRef === RillTimeLabel.Watermark}
+                  disabled={asOfRef === ParrotTimeLabel.Watermark}
                   role="switch"
-                  aria-checked={snapToEnd || asOfRef === RillTimeLabel.Watermark}
+                  aria-checked={snapToEnd || asOfRef === ParrotTimeLabel.Watermark}
                   className={`relative inline-flex h-5 w-9 items-center rounded-full ${
-                    snapToEnd || asOfRef === RillTimeLabel.Watermark ? "bg-primary-600" : "bg-gray-300"
+                    snapToEnd || asOfRef === ParrotTimeLabel.Watermark ? "bg-primary-600" : "bg-gray-300"
                   } disabled:opacity-50`}
                   onClick={() => onToggleAlignment(!snapToEnd)}
                 >
                   <span className={`inline-block h-4 w-4 rounded-full bg-white transition ${
-                    snapToEnd || asOfRef === RillTimeLabel.Watermark ? "translate-x-4" : "translate-x-1"
+                    snapToEnd || asOfRef === ParrotTimeLabel.Watermark ? "translate-x-4" : "translate-x-1"
                   }`} />
                 </button>
               </div>

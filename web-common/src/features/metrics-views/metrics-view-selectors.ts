@@ -5,8 +5,8 @@ import {
   type MetricsViewSpecMeasure,
   type V1MetricsView,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, get, type Readable } from "svelte/store";
 import {
   ResourceKind,

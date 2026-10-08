@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-  } from "@rilldata/web-common/components/dropdown-menu";
+  } from "@statsparrot/web-common/components/dropdown-menu";
 
   export let dimension: string;
   export let values: any[];

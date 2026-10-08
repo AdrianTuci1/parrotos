@@ -2,20 +2,20 @@
   import {
     createAdminServiceGetBillingSubscription,
     createAdminServiceListOrganizationBillingIssues,
-  } from "@rilldata/web-admin/client";
-  import { mergedQueryStatus } from "@rilldata/web-admin/client/utils";
-  import BillingContactSetting from "@rilldata/web-admin/features/billing/contact/BillingContactSetting.svelte";
-  import Payment from "@rilldata/web-admin/features/billing/Payment.svelte";
-  import Plan from "@rilldata/web-admin/features/billing/plans/Plan.svelte";
+  } from "@statsparrot/web-admin/client";
+  import { mergedQueryStatus } from "@statsparrot/web-admin/client/utils";
+  import BillingContactSetting from "@statsparrot/web-admin/features/billing/contact/BillingContactSetting.svelte";
+  import Payment from "@statsparrot/web-admin/features/billing/Payment.svelte";
+  import Plan from "@statsparrot/web-admin/features/billing/plans/Plan.svelte";
   import {
     isEnterprisePlan,
     PaidPlanTypes,
-  } from "@rilldata/web-admin/features/billing/plans/utils";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
+  } from "@statsparrot/web-admin/features/billing/plans/utils";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
   import type { PageData } from "./$types";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
-  import PlanActions from "@rilldata/web-admin/features/billing/plans/PlanActions.svelte";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
+  import PlanActions from "@statsparrot/web-admin/features/billing/plans/PlanActions.svelte";
 
   let { data }: { data: PageData } = $props();
 

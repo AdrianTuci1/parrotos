@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"github.com/stretchr/testify/require"
 )
 
@@ -182,7 +182,7 @@ func TestResolveRepoPath(t *testing.T) {
 	valid := map[string]string{
 		"/models/foo.sql":      filepath.Join(root, "models", "foo.sql"),
 		"models/foo.sql":       filepath.Join(root, "models", "foo.sql"),
-		"/models/../rill.yaml": filepath.Join(root, "rill.yaml"),
+		"/models/../statsparrot.yaml": filepath.Join(root, "statsparrot.yaml"),
 		"/":                    root,
 		"":                     root,
 	}

@@ -1,7 +1,7 @@
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { CanvasEntity } from "../stores/canvas-entity";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import type { CanvasResponse } from "../selector";
 
 export type CanvasStore = {

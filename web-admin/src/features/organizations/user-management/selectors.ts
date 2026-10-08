@@ -5,8 +5,8 @@ import {
   getAdminServiceListOrganizationMemberUsergroupsQueryOptions,
   getAdminServiceListUsergroupsForOrganizationAndUserQueryOptions,
   createAdminServiceListOrganizationMemberUsergroupsInfinite,
-} from "@rilldata/web-admin/client";
-import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+} from "@statsparrot/web-admin/client";
+import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
 import { createQuery } from "@tanstack/svelte-query";
 import { type Readable, derived } from "svelte/store";
 

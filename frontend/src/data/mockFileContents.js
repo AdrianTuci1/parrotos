@@ -1,10 +1,10 @@
 // Mock project file contents, keyed by the same paths used in the sample file tree
-// (see ./mockFileTree.js). The product has no live Rill runtime in mock mode, so the
+// (see ./mockFileTree.js). The product has no live Parrot runtime in mock mode, so the
 // `/files/{path}` route renders these instead of a CodeMirror-backed editor. Contents
-// mirror Rill's sample `orders` project so the file viewer looks realistic.
+// mirror Parrot's sample `orders` project so the file viewer looks realistic.
 
 export const MOCK_FILE_CONTENTS = {
-  "/rill.yaml": `version: 1
+  "/statsparrot.yaml": `version: 1
 
 # Project metadata for the demo orders project.
 title: "orders"

@@ -14,12 +14,12 @@
   import { page } from "$app/state";
   import { onDestroy, untrack } from "svelte";
   import type { Snippet } from "svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     branchPathPrefix,
     extractBranchFromPath,
     handleBranchNavigation,
-  } from "@rilldata/web-admin/features/branches/branch-utils";
+  } from "@statsparrot/web-admin/features/branches/branch-utils";
   import {
     V1DeploymentStatus,
     type V1Organization,
@@ -27,7 +27,7 @@
     createAdminServiceGetDeploymentCredentials,
     createAdminServiceGetProject,
     getAdminServiceListDeploymentsQueryKey,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     getResourceFromPage,
     getScreenNameFromPage,
@@ -38,30 +38,30 @@
     isPublicReportPage,
     isPublicURLPage,
     isProjectWelcomePage,
-  } from "@rilldata/web-admin/features/navigation/nav-utils";
-  import BranchDeploymentStopped from "@rilldata/web-admin/features/branches/BranchDeploymentStopped.svelte";
-  import ProjectBuilding from "@rilldata/web-admin/features/projects/ProjectBuilding.svelte";
+  } from "@statsparrot/web-admin/features/navigation/nav-utils";
+  import BranchDeploymentStopped from "@statsparrot/web-admin/features/branches/BranchDeploymentStopped.svelte";
+  import ProjectBuilding from "@statsparrot/web-admin/features/projects/ProjectBuilding.svelte";
   import ProjectHeader from "../../../features/projects/header/ProjectHeader.svelte";
-  import ProjectTabs from "@rilldata/web-admin/features/projects/ProjectTabs.svelte";
-  import { baseGetProjectQueryOptions } from "@rilldata/web-admin/features/projects/project-query-options";
-  import { resolveRuntimeConnection } from "@rilldata/web-admin/features/projects/project-runtime";
-  import RedeployProjectCta from "@rilldata/web-admin/features/projects/RedeployProjectCTA.svelte";
-  import SlimProjectHeader from "@rilldata/web-admin/features/projects/SlimProjectHeader.svelte";
-  import { createAdminServiceGetProjectWithBearerToken } from "@rilldata/web-admin/features/public-urls/get-project-with-bearer-token";
-  import { cloudVersion } from "@rilldata/web-admin/features/telemetry/initCloudMetrics";
-  import { getThemedLogoUrl } from "@rilldata/web-admin/features/themes/organization-logo";
-  import { viewAsUserStore } from "@rilldata/web-admin/features/view-as-user/viewAsUserStore";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
+  import ProjectTabs from "@statsparrot/web-admin/features/projects/ProjectTabs.svelte";
+  import { baseGetProjectQueryOptions } from "@statsparrot/web-admin/features/projects/project-query-options";
+  import { resolveRuntimeConnection } from "@statsparrot/web-admin/features/projects/project-runtime";
+  import RedeployProjectCta from "@statsparrot/web-admin/features/projects/RedeployProjectCTA.svelte";
+  import SlimProjectHeader from "@statsparrot/web-admin/features/projects/SlimProjectHeader.svelte";
+  import { createAdminServiceGetProjectWithBearerToken } from "@statsparrot/web-admin/features/public-urls/get-project-with-bearer-token";
+  import { cloudVersion } from "@statsparrot/web-admin/features/telemetry/initCloudMetrics";
+  import { getThemedLogoUrl } from "@statsparrot/web-admin/features/themes/organization-logo";
+  import { viewAsUserStore } from "@statsparrot/web-admin/features/view-as-user/viewAsUserStore";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
   import {
     behaviourEvent,
     metricsService,
-  } from "@rilldata/web-common/metrics/initMetrics";
-  import RuntimeProvider from "@rilldata/web-common/runtime-client/v2/RuntimeProvider.svelte";
-  import type { HTTPError } from "@rilldata/web-common/lib/errors";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { getRuntimeServiceListResourcesQueryKey } from "@rilldata/web-common/runtime-client";
-  import { Throttler } from "@rilldata/web-common/lib/throttler";
+  } from "@statsparrot/web-common/metrics/initMetrics";
+  import RuntimeProvider from "@statsparrot/web-common/runtime-client/v2/RuntimeProvider.svelte";
+  import type { HTTPError } from "@statsparrot/web-common/lib/errors";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { getRuntimeServiceListResourcesQueryKey } from "@statsparrot/web-common/runtime-client";
+  import { Throttler } from "@statsparrot/web-common/lib/throttler";
 
   const PAGE_VIEW_THROTTLE_TIMEOUT = 250;
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import HideSidebar from "@rilldata/web-common/components/icons/HideSidebar.svelte";
-  import SurfaceView from "@rilldata/web-common/components/icons/SurfaceView.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import HideSidebar from "@statsparrot/web-common/components/icons/HideSidebar.svelte";
+  import SurfaceView from "@statsparrot/web-common/components/icons/SurfaceView.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let navWidth: number;
   export let navOpen: boolean;

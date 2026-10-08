@@ -1,9 +1,9 @@
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { PivotDataStoreConfig } from "@rilldata/web-common/features/dashboards/pivot/types";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { PivotDataStoreConfig } from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 import {
   extractDimensionFiltersFromExpression,

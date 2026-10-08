@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
   import {
     createRuntimeServiceListResources,
     getRuntimeServiceGetResourceQueryKey,
     getRuntimeServiceListResourcesQueryKey,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { onMount } from "svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
   import { page } from "$app/state";
   import type { PageData } from "./$types";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-  import CanvasPersonalFile from "@rilldata/web-admin/features/personal-files/canvas/CanvasPersonalFile.svelte";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+  import CanvasPersonalFile from "@statsparrot/web-admin/features/personal-files/canvas/CanvasPersonalFile.svelte";
 
   let { data }: { data: PageData } = $props();
   let { personalFile, fileIo } = $derived(data);

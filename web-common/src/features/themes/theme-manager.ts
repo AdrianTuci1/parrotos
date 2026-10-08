@@ -10,7 +10,7 @@
 import type {
   V1ThemeSpec,
   V1ThemeColors,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { type Color } from "chroma-js";
 import { TailwindColorSpacing } from "./color-config";
 import { sanitizeThemeVariables } from "./css-sanitizer";
@@ -22,7 +22,7 @@ import {
 import { primary, secondary } from "./colors";
 import { getChroma } from "./theme-utils";
 
-const CUSTOM_THEME_STYLE_ID = "rill-custom-theme";
+const CUSTOM_THEME_STYLE_ID = "statsparrot-custom-theme";
 
 class ThemeManager {
   private cssVarCache = new Map<string, string>();
@@ -362,6 +362,6 @@ export const themeManager = new ThemeManager();
 
 if (typeof window !== "undefined") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-  (window as any).__clearRillCSSCache = () =>
+  (window as any).__clearParrotCSSCache = () =>
     themeManager.clearCSSVariableCache();
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -17,7 +17,7 @@ func MockUsageCmd(ch *cmdutil.Helper) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "mock-usage <org-name>",
 		Short:   "Report a mock usage event for an organization",
-		Example: "rill sudo billing mock-usage my-org --event slot_seconds_spend --value 3600",
+		Example: "statsparrot sudo billing mock-usage my-org --event slot_seconds_spend --value 3600",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()

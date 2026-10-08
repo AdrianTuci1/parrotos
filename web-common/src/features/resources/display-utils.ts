@@ -1,4 +1,4 @@
-import type { V1Connector } from "@rilldata/web-common/runtime-client";
+import type { V1Connector } from "@statsparrot/web-common/runtime-client";
 
 /**
  * Formats a connector name for display with proper capitalization.
@@ -23,7 +23,7 @@ export function formatConnectorName(connector: string | undefined): string {
 
 /**
  * Returns the display label for the OLAP engine, including MotherDuck and
- * DuckLake detection and a management suffix (Rill-managed) where applicable.
+ * DuckLake detection and a management suffix (Parrot-managed) where applicable.
  *
  * MotherDuck is detected by the connector's path starting with "md:" or a
  * token being configured. DuckLake is detected by `config.attach` referencing
@@ -67,7 +67,7 @@ export function getOlapEngineLabel(connector: V1Connector | undefined): string {
       : type || name;
   const label = formatConnectorName(resolvedType);
 
-  if (connector.provision) return `${label} (Rill-managed)`;
+  if (connector.provision) return `${label} (Parrot-managed)`;
   return label;
 }
 

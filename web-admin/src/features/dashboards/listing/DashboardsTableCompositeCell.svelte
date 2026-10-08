@@ -1,13 +1,13 @@
 <script lang="ts">
-  import Tag from "@rilldata/web-common/components/tag/Tag.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import ResourceTypeBadge from "@rilldata/web-common/features/entity-management/ResourceTypeBadge.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { timeAgo } from "@rilldata/web-common/lib/time/relative-time";
+  import Tag from "@statsparrot/web-common/components/tag/Tag.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import ResourceTypeBadge from "@statsparrot/web-common/features/entity-management/ResourceTypeBadge.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { timeAgo } from "@statsparrot/web-common/lib/time/relative-time";
   import { Star } from "lucide-svelte";
   import { ArrayRuneStore } from "web-common/src/lib/store-utils/types.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { RecentlyUsedDashboards } from "./dashboard-favourites.ts";
 
   export let name: string;

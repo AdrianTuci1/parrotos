@@ -1,9 +1,9 @@
 package billing
 
 import (
-	"github.com/rilldata/rill/cli/cmd/billing/plan"
-	"github.com/rilldata/rill/cli/cmd/billing/subscription"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/cmd/billing/plan"
+	"github.com/staticlabs/statsparrot/cli/cmd/billing/subscription"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
 

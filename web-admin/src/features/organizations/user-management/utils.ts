@@ -7,8 +7,8 @@ import {
   getAdminServiceListOrganizationMemberUsersQueryKey,
   getAdminServiceListUsergroupMemberUsersQueryKey,
   type V1OrganizationPermissions,
-} from "@rilldata/web-admin/client";
-import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+} from "@statsparrot/web-admin/client";
+import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
 import type { QueryClient } from "@tanstack/query-core";
 
 // A single row of the custom attributes editor, as bound to KeyValueInput.

@@ -2,8 +2,8 @@ import {
   createAdminServiceGetGithubUserStatus,
   getAdminServiceListGithubUserReposQueryOptions,
   V1GithubPermission,
-} from "@rilldata/web-admin/client";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+} from "@statsparrot/web-admin/client";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import { createQuery } from "@tanstack/svelte-query";
 import { derived } from "svelte/store";
 

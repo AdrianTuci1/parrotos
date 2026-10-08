@@ -1,4 +1,4 @@
-import { createEventBinding } from "@rilldata/web-common/lib/event-emitter.ts";
+import { createEventBinding } from "@statsparrot/web-common/lib/event-emitter.ts";
 import { get, writable } from "svelte/store";
 import { SSEFetchClient, type SSEMessage } from "./sse-fetch-client";
 

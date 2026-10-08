@@ -147,7 +147,7 @@ function MultiInput({ values, onChange, placeholder, addLabel }) {
   );
 }
 
-/** A chip list with an "Add" dropdown, mirroring Rill's field list for rows/columns. */
+/** A chip list with an "Add" dropdown, mirroring Parrot's field list for rows/columns. */
 function FieldPicker({ label, fields, onChange, options, placeholder, id }) {
   const selected = new Set(fields);
   const available = options.filter((o) => !selected.has(o.value));

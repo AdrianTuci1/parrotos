@@ -1,23 +1,23 @@
-import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { prettyFormatResolvedV1TimeRange } from "@rilldata/web-common/lib/time/ranges/formatter.ts";
+import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { prettyFormatResolvedV1TimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter.ts";
 import {
   getDimensionDisplayName,
   getMeasureDisplayName,
-} from "@rilldata/web-common/features/dashboards/filters/getDisplayName.ts";
-import Measure from "@rilldata/web-common/features/chat/core/context/icons/Measure.svelte";
-import Dimension from "@rilldata/web-common/features/chat/core/context/icons/Dimension.svelte";
-import { fieldTypeToSymbol } from "@rilldata/web-common/lib/duckdb-data-types.ts";
+} from "@statsparrot/web-common/features/dashboards/filters/getDisplayName.ts";
+import Measure from "@statsparrot/web-common/features/chat/core/context/icons/Measure.svelte";
+import Dimension from "@statsparrot/web-common/features/chat/core/context/icons/Dimension.svelte";
+import { fieldTypeToSymbol } from "@statsparrot/web-common/lib/duckdb-data-types.ts";
 import {
   type InlineContext,
   InlineContextType,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-import type { InlineContextMetadata } from "@rilldata/web-common/features/chat/core/context/metadata.ts";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+import type { InlineContextMetadata } from "@statsparrot/web-common/features/chat/core/context/metadata.ts";
 import {
   getIconForComponent,
   getLabelForComponent,
-} from "@rilldata/web-common/features/canvas/components/util.ts";
-import type { ChartSpec } from "@rilldata/web-common/features/components/charts/types.ts";
+} from "@statsparrot/web-common/features/canvas/components/util.ts";
+import type { ChartSpec } from "@statsparrot/web-common/features/components/charts/types.ts";
 
 type ContextConfigPerType = {
   editable: boolean;

@@ -1,18 +1,18 @@
 <script lang="ts">
-  import VirtualizedTable from "@rilldata/web-common/components/table/VirtualizedTable.svelte";
+  import VirtualizedTable from "@statsparrot/web-common/components/table/VirtualizedTable.svelte";
   import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
   import type {
     V1OlapTableInfo,
     V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { V1ReconcileStatus } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
+  import { V1ReconcileStatus } from "@statsparrot/web-common/runtime-client";
   import { compareSizes } from "./utils";
   import ModelSizeCell from "./ModelSizeCell.svelte";
-  import NameCell from "@rilldata/web-common/features/projects/status/NameCell.svelte";
+  import NameCell from "@statsparrot/web-common/features/projects/status/NameCell.svelte";
   import MaterializationCell from "./MaterializationCell.svelte";
   import ModelActionsCell from "./ModelActionsCell.svelte";
-  import ResourceErrorMessage from "@rilldata/web-common/features/projects/status/ResourceErrorMessage.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ResourceErrorMessage from "@statsparrot/web-common/features/projects/status/ResourceErrorMessage.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let tables: V1OlapTableInfo[] = [];
   export let isView: Map<string, boolean> = new Map();

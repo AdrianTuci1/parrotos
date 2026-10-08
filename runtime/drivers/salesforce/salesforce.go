@@ -7,9 +7,9 @@ import (
 	"maps"
 
 	force "github.com/ForceCLI/force/lib"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 
@@ -27,7 +27,7 @@ func (silentLogger) Info(args ...any) {
 var spec = drivers.Spec{
 	DisplayName: "Salesforce",
 	Description: "Connect to Salesforce.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/salesforce",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/salesforce",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:    "username",
@@ -133,7 +133,7 @@ var spec = drivers.Spec{
 			Description: "The name of the source",
 			Placeholder: "my_new_source",
 			Required:    true,
-			Hint:        "A name for your data source in Rill. Used to identify this connection in your project.",
+			Hint:        "A name for your data source in Parrot. Used to identify this connection in your project.",
 		},
 	},
 	ImplementsWarehouse: true,

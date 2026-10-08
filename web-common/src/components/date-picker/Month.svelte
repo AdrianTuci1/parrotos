@@ -1,7 +1,7 @@
 <script lang="ts">
   import { DateTime, Interval, type WeekdayNumbers } from "luxon";
   import { ChevronLeft } from "lucide-svelte";
-  import ChevronRight from "@rilldata/web-common/components/icons/ChevronRight.svelte";
+  import ChevronRight from "@statsparrot/web-common/components/icons/ChevronRight.svelte";
   import Day from "./Day.svelte";
 
   const weekCount = 6; // show 6 weeks to avoid layout shift

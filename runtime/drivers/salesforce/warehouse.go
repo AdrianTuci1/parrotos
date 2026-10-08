@@ -7,12 +7,12 @@ import (
 	"os"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/drivers/salesforce")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/salesforce")
 
 const defaultClientID = "3MVG9KsVczVNcM8y6w3Kjszy.DW9gMzcYDHT97WIX3NYNYA35UvITypEhtYc6FDY8qqcDEIQc_qJgZErv6Q_d"
 
@@ -39,7 +39,7 @@ func (c *connection) QueryAsFiles(ctx context.Context, props map[string]any) (ou
 	} else if u, ok := c.config["username"].(string); ok && u != "" { // get from driver configs
 		username = u
 	} else {
-		return nil, fmt.Errorf("the property 'username' is required for Salesforce. Provide 'username' in the YAML properties or pass '--env connector.salesforce.username=...' to 'rill start'")
+		return nil, fmt.Errorf("the property 'username' is required for Salesforce. Provide 'username' in the YAML properties or pass '--env connector.salesforce.username=...' to 'statsparrot start'")
 	}
 
 	if srcProps.Endpoint != "" { // get from src properties
@@ -47,7 +47,7 @@ func (c *connection) QueryAsFiles(ctx context.Context, props map[string]any) (ou
 	} else if e, ok := c.config["endpoint"].(string); ok && e != "" { // get from driver configs
 		endpoint = e
 	} else {
-		return nil, fmt.Errorf("the property 'endpoint' is required for Salesforce. Provide 'endpoint' in the YAML properties or pass '--env connector.salesforce.endpoint=...' to 'rill start'")
+		return nil, fmt.Errorf("the property 'endpoint' is required for Salesforce. Provide 'endpoint' in the YAML properties or pass '--env connector.salesforce.endpoint=...' to 'statsparrot start'")
 	}
 
 	if srcProps.ClientID != "" { // get from src properties
@@ -71,7 +71,7 @@ func (c *connection) QueryAsFiles(ctx context.Context, props map[string]any) (ou
 	}
 
 	if password == "" && key == "" {
-		return nil, fmt.Errorf("the property 'password' or property 'key' is required for Salesforce. Provide 'password' or 'key' in the YAML properties or pass '--env connector.salesforce.password=...' or '--env connector.salesforce.key=...' to 'rill start'")
+		return nil, fmt.Errorf("the property 'password' or property 'key' is required for Salesforce. Provide 'password' or 'key' in the YAML properties or pass '--env connector.salesforce.password=...' or '--env connector.salesforce.key=...' to 'statsparrot start'")
 	}
 
 	authOptions := authenticationOptions{

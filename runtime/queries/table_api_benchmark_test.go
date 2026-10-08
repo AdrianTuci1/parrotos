@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 

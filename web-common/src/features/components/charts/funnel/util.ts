@@ -1,8 +1,8 @@
-import { sanitizeFieldName } from "@rilldata/web-common/components/vega/util";
+import { sanitizeFieldName } from "@statsparrot/web-common/components/vega/util";
 import type {
   ChartSortDirection,
   FieldConfig,
-} from "@rilldata/web-common/features/components/charts/types";
+} from "@statsparrot/web-common/features/components/charts/types";
 
 export function createFunnelSortEncoding(sort: ChartSortDirection | undefined) {
   if (sort && Array.isArray(sort)) {

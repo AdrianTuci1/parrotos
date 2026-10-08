@@ -1,7 +1,7 @@
 import {
   arrayUnorderedEquals,
   createBatches,
-} from "@rilldata/web-common/lib/arrayUtils";
+} from "@statsparrot/web-common/lib/arrayUtils";
 import { describe, expect, it } from "vitest";
 
 describe("createBatches", () => {

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Chip from "@rilldata/web-common/components/chip/core/Chip.svelte";
+  import Chip from "@statsparrot/web-common/components/chip/core/Chip.svelte";
   import EditControls from "./EditControls.svelte";
-  import DragHandle from "@rilldata/web-common/components/icons/DragHandle.svelte";
+  import DragHandle from "@statsparrot/web-common/components/icons/DragHandle.svelte";
   import Checkbox from "./Checkbox.svelte";
   import { YAMLDimension, YAMLMeasure, ROW_HEIGHT } from "./lib";
 

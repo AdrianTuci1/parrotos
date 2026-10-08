@@ -1,6 +1,6 @@
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export enum MeasureFilterType {
   Value = "Value",

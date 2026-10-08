@@ -1,21 +1,21 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { generateExploreLink } from "@rilldata/web-common/features/explore-mappers/generate-explore-link";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { generateExploreLink } from "@statsparrot/web-common/features/explore-mappers/generate-explore-link";
   import {
     ExploreLinkErrorType,
     type ExploreLinkError,
-  } from "@rilldata/web-common/features/explore-mappers/types";
-  import { getErrorMessage } from "@rilldata/web-common/features/explore-mappers/utils";
-  import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/explore-mappers/types";
+  import { getErrorMessage } from "@statsparrot/web-common/features/explore-mappers/utils";
+  import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddCircleOutline from "@rilldata/web-common/components/icons/AddCircleOutline.svelte";
+  import AddCircleOutline from "@statsparrot/web-common/components/icons/AddCircleOutline.svelte";
   import { behaviourEvent } from "../../metrics/initMetrics";
   import {
     BehaviourEventAction,
@@ -10,16 +10,16 @@
     createRuntimeServiceUnpackEmptyMutation,
     createRuntimeServiceUnpackExampleMutation,
   } from "../../runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { EMPTY_PROJECT_TITLE } from "./constants";
   import { EXAMPLES } from "./constants";
-  import { connectorIconMapping } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
-  import ProjectCard from "@rilldata/web-common/features/welcome/ProjectCard.svelte";
+  import { connectorIconMapping } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
+  import ProjectCard from "@statsparrot/web-common/features/welcome/ProjectCard.svelte";
   import { goto } from "$app/navigation";
   import {
     getFileHref,
     navigateToHome,
-  } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
+  } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
 
   export let isLocal = false;
   export let onSelect: () => void = () => {};
@@ -59,7 +59,7 @@
 
       onSelect();
 
-      // Legacy fix for rill dev for race conditions.
+      // Legacy fix for statsparrot dev for race conditions.
       // TODO: find a better fix that the redirect here.
       if (isLocal) {
         setTimeout(() => {

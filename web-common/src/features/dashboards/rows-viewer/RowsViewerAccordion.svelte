@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { usePivotForExplore } from "@rilldata/web-common/features/dashboards/pivot/pivot-data-store";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
-  import { formatCompactInteger } from "@rilldata/web-common/lib/formatters";
-  import { createQueryServiceMetricsViewAggregation } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { usePivotForExplore } from "@statsparrot/web-common/features/dashboards/pivot/pivot-data-store";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
+  import { formatCompactInteger } from "@statsparrot/web-common/lib/formatters";
+  import { createQueryServiceMetricsViewAggregation } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useExploreState } from "web-common/src/features/dashboards/stores/dashboard-stores";
   import ExportMenu from "../../exports/ExportMenu.svelte";
   import { featureFlags } from "../../feature-flags";

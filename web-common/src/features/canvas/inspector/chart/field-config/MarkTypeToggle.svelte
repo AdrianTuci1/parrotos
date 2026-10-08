@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import { BarChart, LineChart } from "lucide-svelte";
   import type { ComponentType, SvelteComponent } from "svelte";
 

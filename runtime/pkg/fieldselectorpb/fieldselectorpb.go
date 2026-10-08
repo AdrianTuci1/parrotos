@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"slices"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 )
 
 // ResolveFields validates and resolves a list of selected fields or a field selector against all available fields.

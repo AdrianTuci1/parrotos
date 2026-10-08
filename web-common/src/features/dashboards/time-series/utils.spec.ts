@@ -1,7 +1,7 @@
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import { describe, expect, it } from "vitest";
 import { getFilterForComparedDimension, niceMeasureExtents } from "./utils";
 

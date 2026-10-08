@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Alert from "@rilldata/web-common/components/alert-dialog/index.js";
-  import CTACard from "@rilldata/web-common/components/calls-to-action/CTACard.svelte";
+  import * as Alert from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import CTACard from "@statsparrot/web-common/components/calls-to-action/CTACard.svelte";
 
   export let open = false;
   export let loading = false;

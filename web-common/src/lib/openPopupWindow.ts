@@ -51,7 +51,7 @@ export class PopupWindow {
         // no-op
       }
       if (this.timer) clearInterval(this.timer);
-      this.window = PopupWindow.open(url, "rillDataPopupWindow");
+      this.window = PopupWindow.open(url, "statsparrotDataPopupWindow");
 
       // periodically check if the new window was closed
       this.timer = setInterval(() => {

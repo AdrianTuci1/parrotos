@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { V1DeploymentStatus } from "@rilldata/web-admin/client";
+import { V1DeploymentStatus } from "@statsparrot/web-admin/client";
 import {
   formatConnectorName,
   formatEnvironmentName,
   getOlapEngineLabel,
-} from "@rilldata/web-common/features/resources/display-utils";
+} from "@statsparrot/web-common/features/resources/display-utils";
 import {
   getStatusDotClass,
   getStatusLabel,
@@ -279,14 +279,14 @@ describe("display-utils", () => {
       ).toBe("DuckLake");
     });
 
-    it("shows Rill-managed for provisioned ClickHouse", () => {
+    it("shows Parrot-managed for provisioned ClickHouse", () => {
       expect(
         getOlapEngineLabel({
           type: "clickhouse",
           name: "clickhouse",
           provision: true,
         }),
-      ).toBe("ClickHouse (Rill-managed)");
+      ).toBe("ClickHouse (Parrot-managed)");
     });
 
     it("returns bare label for non-provisioned ClickHouse", () => {
@@ -307,30 +307,30 @@ describe("display-utils", () => {
 
   describe("getResourceKindTagColor", () => {
     it("returns blue for MetricsView", () => {
-      expect(getResourceKindTagColor("rill.runtime.v1.MetricsView")).toBe(
+      expect(getResourceKindTagColor("statsparrot.runtime.v1.MetricsView")).toBe(
         "blue",
       );
     });
 
     it("returns green for Model", () => {
-      expect(getResourceKindTagColor("rill.runtime.v1.Model")).toBe("green");
+      expect(getResourceKindTagColor("statsparrot.runtime.v1.Model")).toBe("green");
     });
 
     it("returns orange for Report", () => {
-      expect(getResourceKindTagColor("rill.runtime.v1.Report")).toBe("orange");
+      expect(getResourceKindTagColor("statsparrot.runtime.v1.Report")).toBe("orange");
     });
 
     it("returns purple for Source", () => {
-      expect(getResourceKindTagColor("rill.runtime.v1.Source")).toBe("purple");
+      expect(getResourceKindTagColor("statsparrot.runtime.v1.Source")).toBe("purple");
     });
 
     it("returns magenta for Theme", () => {
-      expect(getResourceKindTagColor("rill.runtime.v1.Theme")).toBe("magenta");
+      expect(getResourceKindTagColor("statsparrot.runtime.v1.Theme")).toBe("magenta");
     });
 
     it("returns gray for unknown kinds", () => {
       expect(getResourceKindTagColor("unknown")).toBe("gray");
-      expect(getResourceKindTagColor("rill.runtime.v1.Unknown")).toBe("gray");
+      expect(getResourceKindTagColor("statsparrot.runtime.v1.Unknown")).toBe("gray");
     });
   });
 });

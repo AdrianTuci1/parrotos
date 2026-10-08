@@ -1,4 +1,4 @@
-import { ComparisonDeltaPreviousSuffix } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { ComparisonDeltaPreviousSuffix } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import type {
   Field,
   NumericMarkPropDef,

@@ -3,8 +3,8 @@ package project
 import (
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -80,7 +80,7 @@ func EditCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	editCmd.Flags().IntVar(&prodSlots, "prod-slots", 0, "Slots to allocate for production deployments")
 	editCmd.Flags().IntVar(&devSlots, "dev-slots", 0, "Slots to allocate for dev deployments")
-	editCmd.Flags().StringVar(&prodVersion, "prod-version", "", "Rill version for production deployment")
+	editCmd.Flags().StringVar(&prodVersion, "prod-version", "", "Parrot version for production deployment")
 	editCmd.Flags().Int64Var(&overrideDiskGB, "override-disk-gb", 0, "Override disk size in GB for prod and dev deployments (0 clears the override)")
 	return editCmd
 }

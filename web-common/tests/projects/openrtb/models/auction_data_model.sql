@@ -1,5 +1,5 @@
 -- Model SQL
--- Reference documentation: https://docs.rilldata.com/developers/build/models
+-- Reference documentation: https://docs.statsparrot.com/developers/build/models
 -- @materialize: true
 select
     * EXCLUDE (device_region),

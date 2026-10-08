@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { ChartSeries } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/types";
+  import type { ChartSeries } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/types";
   import {
     clampToRange,
     computeBarSlotGeometry,
-  } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/utils";
+  } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/utils";
   import type { ScaleLinear } from "d3-scale";
 
   const BAR_RADIUS = 3;

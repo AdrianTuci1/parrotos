@@ -1,13 +1,13 @@
 <script lang="ts">
-  import PreviewTable from "@rilldata/web-common/components/preview-table/PreviewTable.svelte";
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-  import ReconcilingSpinner from "@rilldata/web-common/features/entity-management/ReconcilingSpinner.svelte";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import WorkspaceContainer from "@rilldata/web-common/layout/workspace/WorkspaceContainer.svelte";
-  import WorkspaceHeader from "@rilldata/web-common/layout/workspace/WorkspaceHeader.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import PreviewTable from "@statsparrot/web-common/components/preview-table/PreviewTable.svelte";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+  import ReconcilingSpinner from "@statsparrot/web-common/features/entity-management/ReconcilingSpinner.svelte";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import WorkspaceContainer from "@statsparrot/web-common/layout/workspace/WorkspaceContainer.svelte";
+  import WorkspaceHeader from "@statsparrot/web-common/layout/workspace/WorkspaceHeader.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { createParquetPreviewQuery } from "./parquet-preview";
 
   let { fileArtifact }: { fileArtifact: FileArtifact } = $props();
@@ -23,7 +23,7 @@
 
   // DuckDB resolves relative paths against its own working directory, not the
   // project root, so we must read the file by its absolute path. The project's
-  // local root is the `dsn` of the repo connector (only present in Rill
+  // local root is the `dsn` of the repo connector (only present in Parrot
   // Developer, where the project lives on the local filesystem).
   let repoRoot = $derived.by(() => {
     const instance = $instanceQuery.data?.instance;

@@ -1,20 +1,20 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import type { TimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
-import { convertURLSearchParamsToExploreState } from "@rilldata/web-common/features/dashboards/url-state/convertURLSearchParamsToExploreState";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import type { TimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
+import { convertURLSearchParamsToExploreState } from "@statsparrot/web-common/features/dashboards/url-state/convertURLSearchParamsToExploreState";
 import {
   ExploreUrlWebView,
   FromActivePageMap,
   FromURLParamViewMap,
   ToURLParamViewMap,
-} from "@rilldata/web-common/features/dashboards/url-state/mappers";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
+} from "@statsparrot/web-common/features/dashboards/url-state/mappers";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
 import {
   type V1ExploreSpec,
   V1ExploreWebView,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { copyUrlSearchParamsForView } from "web-common/src/features/dashboards/url-state/explore-web-view-specific-url-params";
 
 export function getKeyForSessionStore(
@@ -22,7 +22,7 @@ export function getKeyForSessionStore(
   storageNamespacePrefix: string | undefined,
   webView: ExploreUrlWebView,
 ) {
-  return `rill:app:explore:${storageNamespacePrefix ?? ""}${exploreName}:${webView}`.toLowerCase();
+  return `statsparrot:app:explore:${storageNamespacePrefix ?? ""}${exploreName}:${webView}`.toLowerCase();
 }
 
 /**

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import TimestampDetail from "@rilldata/web-common/components/data-graphic/compositions/timestamp-profile/TimestampDetail.svelte";
-  import TimestampSpark from "@rilldata/web-common/components/data-graphic/compositions/timestamp-profile/TimestampSpark.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { TIMESTAMP_TOKENS } from "@rilldata/web-common/lib/duckdb-data-types";
+  import TimestampDetail from "@statsparrot/web-common/components/data-graphic/compositions/timestamp-profile/TimestampDetail.svelte";
+  import TimestampSpark from "@statsparrot/web-common/components/data-graphic/compositions/timestamp-profile/TimestampSpark.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { TIMESTAMP_TOKENS } from "@statsparrot/web-common/lib/duckdb-data-types";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import ColumnProfileIcon from "../ColumnProfileIcon.svelte";
   import ProfileContainer from "../ProfileContainer.svelte";

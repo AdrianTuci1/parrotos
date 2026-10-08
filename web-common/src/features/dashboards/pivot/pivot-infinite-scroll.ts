@@ -2,8 +2,8 @@ import type {
   PivotDataRow,
   PivotDataStoreConfig,
   TimeFilters,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import { createInExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { createInExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   extractNumbers,
   getTimeGrainFromDimension,

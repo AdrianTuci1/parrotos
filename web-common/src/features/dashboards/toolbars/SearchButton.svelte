@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Close from "@rilldata/web-common/components/icons/Close.svelte";
-  import SearchIcon from "@rilldata/web-common/components/icons/Search.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Close from "@statsparrot/web-common/components/icons/Close.svelte";
+  import SearchIcon from "@statsparrot/web-common/components/icons/Search.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
   import { slideRight } from "../../../lib/transitions";
 
   export let value: string;

@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rilldata/rill/runtime/drivers/duckdb"
+	"github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
 
 	// Import the DuckDB driver
 	_ "github.com/duckdb/duckdb-go/v2"

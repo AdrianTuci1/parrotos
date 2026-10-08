@@ -4,16 +4,16 @@
 -->
 <script lang="ts">
   import { page } from "$app/stores";
-  import { ChartContainer } from "@rilldata/web-common/features/components/charts";
+  import { ChartContainer } from "@statsparrot/web-common/features/components/charts";
   import {
     ResourceKind,
     useResource,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { mapResolverExpressionToV1Expression } from "@rilldata/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard";
-  import { Theme } from "@rilldata/web-common/features/themes/theme";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { mapResolverExpressionToV1Expression } from "@statsparrot/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard";
+  import { Theme } from "@statsparrot/web-common/features/themes/theme";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { readable } from "svelte/store";
   import type { V1Tool } from "../../../../../runtime-client";
   import ToolCall from "../tools/ToolCall.svelte";

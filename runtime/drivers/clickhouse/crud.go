@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 )
 
@@ -121,7 +121,7 @@ func (c *Connection) insertTableAsSelect(ctx context.Context, name, sql string, 
 			return nil, err
 		}
 		// create temp table with the same schema using a deterministic name
-		tempName := fmt.Sprintf("__rill_temp_%s_%x", name, md5.Sum([]byte(sql)))
+		tempName := fmt.Sprintf("__statsparrot_temp_%s_%x", name, md5.Sum([]byte(sql)))
 		// clean up the temp table
 		defer func() {
 			// cleanup using a different ctx to prevent cleanups being impacted by the main ctx cancellation
@@ -456,7 +456,7 @@ func (c *Connection) createTable(ctx context.Context, name, sql string, outputPr
 			return fmt.Errorf("clickhouse: no columns specified for table %q", name)
 		}
 		// infer columns
-		v := safeSQLName(fmt.Sprintf("__rill_temp_%s_%x", name, md5.Sum([]byte(sql))))
+		v := safeSQLName(fmt.Sprintf("__statsparrot_temp_%s_%x", name, md5.Sum([]byte(sql))))
 		defer func() {
 			// cleanup using a different ctx to prevent cleanups being impacted by the main ctx cancellation
 			// this is a best effort cleanup and query can still timeout and we don't want to wait forever due to blocked calls
@@ -794,7 +794,7 @@ func newDictionarySourceTable(name string) string {
 }
 
 // dictionarySourceTable returns the table the dictionary `name` currently sources from.
-// It returns an empty string if the dictionary does not exist or does not source from a table created by Rill.
+// It returns an empty string if the dictionary does not exist or does not source from a table created by Parrot.
 func (c *Connection) dictionarySourceTable(ctx context.Context, name string) (string, error) {
 	args := []any{c.config.Database, name}
 	if c.config.Database == "" {

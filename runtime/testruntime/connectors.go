@@ -14,9 +14,9 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/joho/godotenv"
-	"github.com/rilldata/rill/admin/pkg/pgtestcontainer"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/admin/pkg/pgtestcontainer"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/azure/azurite"
@@ -48,7 +48,7 @@ type ConnectorAcquireFunc func(t TestingT) (vars map[string]string)
 // Test connectors can either be implemented as:
 // - Services embedded in the current process
 // - Services started as ephemeral testcontainers
-// - Real external services configured for use in tests with credentials provided in the root .env file with the prefix RILL_RUNTIME_TEST_.
+// - Real external services configured for use in tests with credentials provided in the root .env file with the prefix STATSPARROT_RUNTIME_TEST_.
 var Connectors = map[string]ConnectorAcquireFunc{
 	// clickhouse starts a ClickHouse test container with no tables initialized.
 	"clickhouse": func(t TestingT) map[string]string {
@@ -60,7 +60,7 @@ var Connectors = map[string]ConnectorAcquireFunc{
 		dsn, cluster := testclickhouse.StartCluster(t)
 		return map[string]string{"dsn": dsn, "cluster": cluster, "mode": "readwrite"}
 	},
-	// Bigquery connector connects to a real bigquery cluster using the credentials json in RILL_RUNTIME_BIGQUERY_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON.
+	// Bigquery connector connects to a real bigquery cluster using the credentials json in STATSPARROT_RUNTIME_BIGQUERY_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON.
 	// The service account must have the following permissions:
 	// - BigQuery Data Viewer
 	// - BigQuery Job User
@@ -68,32 +68,32 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	// The test dataset is pre-populated with tables defined in testdata/init_data/bigquery_init_data.sql.
 	"bigquery": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		gac := os.Getenv("RILL_RUNTIME_BIGQUERY_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON")
-		require.NotEmpty(t, gac, "Bigquery RILL_RUNTIME_BIGQUERY_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON not configured")
+		gac := os.Getenv("STATSPARROT_RUNTIME_BIGQUERY_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON")
+		require.NotEmpty(t, gac, "Bigquery STATSPARROT_RUNTIME_BIGQUERY_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON not configured")
 		return map[string]string{"google_application_credentials": gac}
 	},
-	// Snowflake connector connects to a real snowflake cloud using dsn in RILL_RUNTIME_SNOWFLAKE_TEST_DSN
+	// Snowflake connector connects to a real snowflake cloud using dsn in STATSPARROT_RUNTIME_SNOWFLAKE_TEST_DSN
 	// The test dataset is pre-populated with tables defined in testdata/init_data/snowflake_init_data.sql:
 	"snowflake": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		dsn := os.Getenv("RILL_RUNTIME_SNOWFLAKE_TEST_DSN")
-		require.NotEmpty(t, dsn, "RILL_RUNTIME_SNOWFLAKE_TEST_DSN not configured")
+		dsn := os.Getenv("STATSPARROT_RUNTIME_SNOWFLAKE_TEST_DSN")
+		require.NotEmpty(t, dsn, "STATSPARROT_RUNTIME_SNOWFLAKE_TEST_DSN not configured")
 		return map[string]string{"dsn": dsn}
 	},
-	// Databricks connector connects to a real Databricks SQL warehouse using dsn in RILL_RUNTIME_DATABRICKS_TEST_DSN.
+	// Databricks connector connects to a real Databricks SQL warehouse using dsn in STATSPARROT_RUNTIME_DATABRICKS_TEST_DSN.
 	// The test dataset is pre-populated with tables defined in testdata/init_data/databricks_init_data.sql.
 	"databricks": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		dsn := os.Getenv("RILL_RUNTIME_DATABRICKS_TEST_DSN")
-		require.NotEmpty(t, dsn, "RILL_RUNTIME_DATABRICKS_TEST_DSN not configured")
+		dsn := os.Getenv("STATSPARROT_RUNTIME_DATABRICKS_TEST_DSN")
+		require.NotEmpty(t, dsn, "STATSPARROT_RUNTIME_DATABRICKS_TEST_DSN not configured")
 		return map[string]string{"dsn": dsn}
 	},
 	"motherduck": func(t TestingT) map[string]string {
 		testmode.Expensive(t)
 		loadDotEnv(t)
-		path := os.Getenv("RILL_RUNTIME_MOTHERDUCK_TEST_PATH")
+		path := os.Getenv("STATSPARROT_RUNTIME_MOTHERDUCK_TEST_PATH")
 		require.NotEmpty(t, path)
-		token := os.Getenv("RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN")
+		token := os.Getenv("STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN")
 		require.NotEmpty(t, token)
 
 		return map[string]string{"path": path, "token": token, "schema_name": "integration_test"}
@@ -101,18 +101,18 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	// gcs connector uses an actual gcs bucket with data populated from testdata/init_data/azure.
 	"gcs": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		gac := os.Getenv("RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON")
-		require.NotEmpty(t, gac, "GCS RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON not configured")
+		gac := os.Getenv("STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON")
+		require.NotEmpty(t, gac, "GCS STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON not configured")
 		return map[string]string{
 			"google_application_credentials": gac,
 		}
 	},
 	"gcs_s3_compat": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		hmacKey := os.Getenv("RILL_RUNTIME_GCS_TEST_HMAC_KEY")
-		hmacSecret := os.Getenv("RILL_RUNTIME_GCS_TEST_HMAC_SECRET")
-		require.NotEmpty(t, hmacKey, "GCS RILL_RUNTIME_GCS_TEST_HMAC_KEY not configured")
-		require.NotEmpty(t, hmacSecret, "GCS RILL_RUNTIME_GCS_TEST_HMAC_SECRET not configured")
+		hmacKey := os.Getenv("STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY")
+		hmacSecret := os.Getenv("STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET")
+		require.NotEmpty(t, hmacKey, "GCS STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY not configured")
+		require.NotEmpty(t, hmacSecret, "GCS STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET not configured")
 
 		return map[string]string{
 			"key_id": hmacKey,
@@ -122,10 +122,10 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	// S3 connector uses an actual S3 bucket with data populated from testdata/init_data/azure.
 	"s3": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		accessKeyID := os.Getenv("RILL_RUNTIME_S3_TEST_AWS_ACCESS_KEY_ID")
-		secretAccessKey := os.Getenv("RILL_RUNTIME_S3_TEST_AWS_SECRET_ACCESS_KEY")
-		require.NotEmpty(t, accessKeyID, "S3 RILL_RUNTIME_S3_TEST_AWS_ACCESS_KEY_ID not configured")
-		require.NotEmpty(t, secretAccessKey, "S3 RILL_RUNTIME_S3_TEST_AWS_SECRET_ACCESS_KEY not configured")
+		accessKeyID := os.Getenv("STATSPARROT_RUNTIME_S3_TEST_AWS_ACCESS_KEY_ID")
+		secretAccessKey := os.Getenv("STATSPARROT_RUNTIME_S3_TEST_AWS_SECRET_ACCESS_KEY")
+		require.NotEmpty(t, accessKeyID, "S3 STATSPARROT_RUNTIME_S3_TEST_AWS_ACCESS_KEY_ID not configured")
+		require.NotEmpty(t, secretAccessKey, "S3 STATSPARROT_RUNTIME_S3_TEST_AWS_SECRET_ACCESS_KEY not configured")
 		return map[string]string{
 			"aws_access_key_id":     accessKeyID,
 			"aws_secret_access_key": secretAccessKey,
@@ -136,10 +136,10 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	// and the actual data is stored on S3, which matches the data in testdata/init_data/azure/parquet_test.
 	"athena": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		accessKeyID := os.Getenv("RILL_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID")
-		secretAccessKey := os.Getenv("RILL_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY")
-		require.NotEmpty(t, accessKeyID, "Athena RILL_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID not configured")
-		require.NotEmpty(t, secretAccessKey, "Athena RILL_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY not configured")
+		accessKeyID := os.Getenv("STATSPARROT_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID")
+		secretAccessKey := os.Getenv("STATSPARROT_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY")
+		require.NotEmpty(t, accessKeyID, "Athena STATSPARROT_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID not configured")
+		require.NotEmpty(t, secretAccessKey, "Athena STATSPARROT_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY not configured")
 		return map[string]string{
 			"aws_access_key_id":     accessKeyID,
 			"aws_secret_access_key": secretAccessKey,
@@ -149,20 +149,20 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	// The test dataset is pre-populated with table definitions in testdata/init_data/redshift_init_data.sql,
 	"redshift": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		accessKeyID := os.Getenv("RILL_RUNTIME_REDSHIFT_TEST_AWS_ACCESS_KEY_ID")
-		secretAccessKey := os.Getenv("RILL_RUNTIME_REDSHIFT_TEST_AWS_SECRET_ACCESS_KEY")
-		require.NotEmpty(t, accessKeyID, "RILL_RUNTIME_REDSHIFT_TEST_AWS_ACCESS_KEY_ID not configured")
-		require.NotEmpty(t, secretAccessKey, "RILL_RUNTIME_REDSHIFT_TEST_AWS_SECRET_ACCESS_KEY not configured")
+		accessKeyID := os.Getenv("STATSPARROT_RUNTIME_REDSHIFT_TEST_AWS_ACCESS_KEY_ID")
+		secretAccessKey := os.Getenv("STATSPARROT_RUNTIME_REDSHIFT_TEST_AWS_SECRET_ACCESS_KEY")
+		require.NotEmpty(t, accessKeyID, "STATSPARROT_RUNTIME_REDSHIFT_TEST_AWS_ACCESS_KEY_ID not configured")
+		require.NotEmpty(t, secretAccessKey, "STATSPARROT_RUNTIME_REDSHIFT_TEST_AWS_SECRET_ACCESS_KEY not configured")
 		return map[string]string{
 			"aws_access_key_id":     accessKeyID,
 			"aws_secret_access_key": secretAccessKey,
 		}
 	},
-	// druid connects to a real Druid cluster using the connection string in RILL_RUNTIME_DRUID_TEST_DSN.
+	// druid connects to a real Druid cluster using the connection string in STATSPARROT_RUNTIME_DRUID_TEST_DSN.
 	// This usually uses the master.in cluster.
 	"druid": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		dsn := os.Getenv("RILL_RUNTIME_DRUID_TEST_DSN")
+		dsn := os.Getenv("STATSPARROT_RUNTIME_DRUID_TEST_DSN")
 		require.NotEmpty(t, dsn, "Druid test DSN not configured")
 		return map[string]string{"dsn": dsn}
 	},
@@ -272,7 +272,7 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	},
 	"azure_cloud": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		apiKey := os.Getenv("RILL_RUNTIME_AZURE_TEST_CONNECTION_STRING")
+		apiKey := os.Getenv("STATSPARROT_RUNTIME_AZURE_TEST_CONNECTION_STRING")
 		require.NotEmpty(t, apiKey)
 		return map[string]string{"azure_storage_connection_string": apiKey}
 	},
@@ -328,19 +328,19 @@ var Connectors = map[string]ConnectorAcquireFunc{
 	},
 	"openai": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		apiKey := os.Getenv("RILL_RUNTIME_OPENAI_TEST_API_KEY")
+		apiKey := os.Getenv("STATSPARROT_RUNTIME_OPENAI_TEST_API_KEY")
 		require.NotEmpty(t, apiKey)
 		return map[string]string{"api_key": apiKey}
 	},
 	"claude": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		apiKey := os.Getenv("RILL_RUNTIME_CLAUDE_TEST_API_KEY")
+		apiKey := os.Getenv("STATSPARROT_RUNTIME_CLAUDE_TEST_API_KEY")
 		require.NotEmpty(t, apiKey)
 		return map[string]string{"api_key": apiKey}
 	},
 	"gemini": func(t TestingT) map[string]string {
 		loadDotEnv(t)
-		apiKey := os.Getenv("RILL_RUNTIME_GEMINI_TEST_API_KEY")
+		apiKey := os.Getenv("STATSPARROT_RUNTIME_GEMINI_TEST_API_KEY")
 		require.NotEmpty(t, apiKey)
 		return map[string]string{"api_key": apiKey}
 	},

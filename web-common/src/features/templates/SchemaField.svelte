@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import InformationalField from "@rilldata/web-common/components/forms/InformationalField.svelte";
-  import Checkbox from "@rilldata/web-common/components/forms/Checkbox.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import Radio from "@rilldata/web-common/components/forms/Radio.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import CredentialsInput from "@rilldata/web-common/components/forms/CredentialsInput.svelte";
-  import KeyValueInput from "@rilldata/web-common/components/forms/KeyValueInput.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import InformationalField from "@statsparrot/web-common/components/forms/InformationalField.svelte";
+  import Checkbox from "@statsparrot/web-common/components/forms/Checkbox.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import Radio from "@statsparrot/web-common/components/forms/Radio.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import CredentialsInput from "@statsparrot/web-common/components/forms/CredentialsInput.svelte";
+  import KeyValueInput from "@statsparrot/web-common/components/forms/KeyValueInput.svelte";
   import { normalizeErrors } from "./error-utils";
   import { getFileAccept } from "./file-encoding";
   import type { JSONSchemaField } from "./schemas/types";
-  import FileUploader from "@rilldata/web-common/components/forms/FileUploader.svelte";
+  import FileUploader from "@statsparrot/web-common/components/forms/FileUploader.svelte";
 
   export let id: string;
   export let prop: JSONSchemaField;

@@ -14,41 +14,42 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/billing"
-	"github.com/rilldata/rill/admin/billing/payment"
-	"github.com/rilldata/rill/admin/jobs/river"
-	"github.com/rilldata/rill/admin/server"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/debugserver"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server/auth"
-	rillstorage "github.com/rilldata/rill/runtime/storage"
 	"github.com/spf13/cobra"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/assetstore"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/billing/payment"
+	"github.com/staticlabs/statsparrot/admin/jobs/river"
+	"github.com/staticlabs/statsparrot/admin/server"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/debugserver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	statsparrotstorage "github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/api/option"
 
 	// Register drivers
-	_ "github.com/rilldata/rill/admin/database/postgres"
-	_ "github.com/rilldata/rill/admin/provisioner/clickhousestatic"
-	_ "github.com/rilldata/rill/admin/provisioner/kubernetes"
-	_ "github.com/rilldata/rill/admin/provisioner/static"
-	_ "github.com/rilldata/rill/runtime/drivers/claude"
-	_ "github.com/rilldata/rill/runtime/drivers/gemini"
-	_ "github.com/rilldata/rill/runtime/drivers/mock/ai"
-	_ "github.com/rilldata/rill/runtime/drivers/openai"
+	_ "github.com/staticlabs/statsparrot/admin/database/postgres"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/clickhousestatic"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/kubernetes"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/static"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/claude"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gemini"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock/ai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/openai"
 )
 
 // Config describes admin server config derived from environment variables.
-// Env var keys must be prefixed with RILL_ADMIN_ and are converted from snake_case to CamelCase.
-// For example RILL_ADMIN_HTTP_PORT is mapped to Config.HTTPPort.
+// Env var keys must be prefixed with STATSPARROT_ADMIN_ and are converted from snake_case to CamelCase.
+// For example STATSPARROT_ADMIN_HTTP_PORT is mapped to Config.HTTPPort.
 type Config struct {
 	DatabaseDriver string `default:"postgres" split_words:"true"`
 	DatabaseURL    string `split_words:"true"`
@@ -65,6 +66,11 @@ type Config struct {
 	HTTPPort                  int                    `default:"8080" split_words:"true"`
 	GRPCPort                  int                    `default:"8080" split_words:"true"`
 	DebugPort                 int                    `split_words:"true"`
+	ServeUI                   bool                   `default:"false" split_words:"true"`
+	UIFrameAncestors          string                 `split_words:"true"`
+	RuntimeProxyTarget        string                 `split_words:"true"`
+	RuntimeProxyPrefix        string                 `split_words:"true"`
+	RuntimePublicURL          string                 `split_words:"true"`
 	ExternalURL               string                 `default:"http://localhost:8080" split_words:"true"`
 	ExternalGRPCURL           string                 `envconfig:"external_grpc_url"`
 	FrontendURL               string                 `default:"http://localhost:3000" split_words:"true"`
@@ -82,10 +88,18 @@ type Config struct {
 	GithubClientID            string                 `split_words:"true"`
 	GithubClientSecret        string                 `split_words:"true"`
 	GithubManagedAccount      string                 `split_words:"true"`
-	AssetsBucket              string                 `split_words:"true"`
+	// AssetsDriver selects the object storage for organization assets: "gcs" or "s3".
+	// "s3" works with AWS S3, Cloudflare R2 and MinIO.
+	AssetsDriver string `envconfig:"assets_driver" default:"gcs"`
+	AssetsBucket string `split_words:"true"`
 	// AssetsBucketGoogleCredentialsJSON is only required to be set for local development.
 	// For production use cases the service account will be directly attached to pods which is the recommended way of setting credentials.
 	AssetsBucketGoogleCredentialsJSON string `split_words:"true"`
+	AssetsS3Region                    string `envconfig:"assets_s3_region"`
+	AssetsS3Endpoint                  string `envconfig:"assets_s3_endpoint"`
+	AssetsS3AccessKeyID               string `envconfig:"assets_s3_access_key_id"`
+	AssetsS3SecretAccessKey           string `envconfig:"assets_s3_secret_access_key"`
+	AssetsS3ForcePathStyle            bool   `envconfig:"assets_s3_force_path_style"`
 	EmailSMTPHost                     string `split_words:"true"`
 	EmailSMTPPort                     int    `split_words:"true"`
 	EmailSMTPUsername                 string `split_words:"true"`
@@ -126,7 +140,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			// Init config
 			var conf Config
-			err := envconfig.Process("rill_admin", &conf)
+			err := envconfig.Process("statsparrot_admin", &conf)
 			if err != nil {
 				fmt.Printf("failed to load config: %s\n", err.Error())
 				os.Exit(1)
@@ -248,17 +262,17 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 			switch aiDriver {
 			case "openai":
 				if conf.OpenAIAPIKey == "" {
-					logger.Fatal("RILL_ADMIN_OPENAI_API_KEY is required when AI driver is 'openai'")
+					logger.Fatal("STATSPARROT_ADMIN_OPENAI_API_KEY is required when AI driver is 'openai'")
 				}
 				aiConfig["api_key"] = conf.OpenAIAPIKey
 			case "claude":
 				if conf.ClaudeAPIKey == "" {
-					logger.Fatal("RILL_ADMIN_CLAUDE_API_KEY is required when AI driver is 'claude'")
+					logger.Fatal("STATSPARROT_ADMIN_CLAUDE_API_KEY is required when AI driver is 'claude'")
 				}
 				aiConfig["api_key"] = conf.ClaudeAPIKey
 			case "gemini":
 				if conf.GeminiAPIKey == "" {
-					logger.Fatal("RILL_ADMIN_GEMINI_API_KEY is required when AI driver is 'gemini'")
+					logger.Fatal("STATSPARROT_ADMIN_GEMINI_API_KEY is required when AI driver is 'gemini'")
 				}
 				aiConfig["api_key"] = conf.GeminiAPIKey
 			case "mock_ai":
@@ -272,7 +286,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 			default:
 				logger.Fatal("unknown AI driver", zap.String("driver", aiDriver))
 			}
-			aiHandle, err := drivers.Open(aiDriver, "", "", aiConfig, rillstorage.MustNew(os.TempDir(), nil), activity.NewNoopClient(), logger)
+			aiHandle, err := drivers.Open(aiDriver, "", "", aiConfig, statsparrotstorage.MustNew(os.TempDir(), nil), activity.NewNoopClient(), logger)
 			if err != nil {
 				logger.Fatal("error creating AI client", zap.Error(err))
 			}
@@ -282,16 +296,40 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				logger.Fatal("AI driver does not implement AI interface", zap.String("driver", aiHandle.Driver()))
 			}
 
-			// Init AssetsBucket handle
-			var clientOpts []option.ClientOption
-			if conf.AssetsBucketGoogleCredentialsJSON != "" {
-				clientOpts = append(clientOpts, option.WithCredentialsJSON([]byte(conf.AssetsBucketGoogleCredentialsJSON)))
+			// Init the asset store. Every uploaded archive and organization image goes here.
+			if conf.AssetsBucket == "" {
+				logger.Fatal("STATSPARROT_ADMIN_ASSETS_BUCKET is not set")
 			}
-			storageClient, err := storage.NewClient(cmd.Context(), clientOpts...)
-			if err != nil {
-				logger.Fatal("failed to create assets bucket handle", zap.Error(err))
+			var assets assetstore.Store
+			switch conf.AssetsDriver {
+			case "gcs":
+				var clientOpts []option.ClientOption
+				if conf.AssetsBucketGoogleCredentialsJSON != "" {
+					clientOpts = append(clientOpts, option.WithCredentialsJSON([]byte(conf.AssetsBucketGoogleCredentialsJSON)))
+				}
+				storageClient, err := storage.NewClient(cmd.Context(), clientOpts...)
+				if err != nil {
+					logger.Fatal(
+						"failed to create the assets bucket client: set STATSPARROT_ADMIN_ASSETS_BUCKET_GOOGLE_CREDENTIALS_JSON to a Google service account key that can write to STATSPARROT_ADMIN_ASSETS_BUCKET, or run on a host that provides application default credentials",
+						zap.Error(err),
+					)
+				}
+				assets = assetstore.NewGCS(storageClient.Bucket(conf.AssetsBucket))
+			case "s3":
+				assets, err = assetstore.NewS3(cmd.Context(), assetstore.S3Config{
+					Bucket:          conf.AssetsBucket,
+					Region:          conf.AssetsS3Region,
+					Endpoint:        conf.AssetsS3Endpoint,
+					AccessKeyID:     conf.AssetsS3AccessKeyID,
+					SecretAccessKey: conf.AssetsS3SecretAccessKey,
+					ForcePathStyle:  conf.AssetsS3ForcePathStyle,
+				})
+				if err != nil {
+					logger.Fatal("failed to create the assets bucket client", zap.String("driver", "s3"), zap.Error(err))
+				}
+			default:
+				logger.Fatal("unknown assets driver", zap.String("driver", conf.AssetsDriver), zap.String("supported", "gcs, s3"))
 			}
-			assetsBucket := storageClient.Bucket(conf.AssetsBucket)
 
 			// Parse metrics project name
 			var metricsProjectOrg, metricsProjectName string
@@ -335,7 +373,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				AllowMockBilling:           conf.AllowMockBilling,
 				StoppedDeploymentRetention: conf.StoppedDeploymentRetention,
 			}
-			adm, err := admin.New(cmd.Context(), admOpts, logger, issuer, emailClient, gh, aiService, assetsBucket, biller, p)
+			adm, err := admin.New(cmd.Context(), admOpts, logger, issuer, emailClient, gh, aiService, assets, biller, p)
 			if err != nil {
 				logger.Fatal("error creating service", zap.Error(err))
 			}
@@ -399,6 +437,11 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 					AllowedOrigins:         conf.AllowedOrigins,
 					SessionKeyPairs:        keyPairs,
 					ServePrometheus:        conf.MetricsExporter == observability.PrometheusExporter,
+					ServeUI:                conf.ServeUI,
+					UIFrameAncestors:       conf.UIFrameAncestors,
+					RuntimeProxyTarget:     conf.RuntimeProxyTarget,
+					RuntimeProxyPrefix:     conf.RuntimeProxyPrefix,
+					RuntimePublicURL:       conf.RuntimePublicURL,
 					AuthDomain:             conf.AuthDomain,
 					AuthClientID:           conf.AuthClientID,
 					AuthClientSecret:       conf.AuthClientSecret,

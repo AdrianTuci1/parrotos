@@ -3,8 +3,8 @@
 // runtime-bound add-folder / error-warning badges are deferred; the row keeps the
 // faithful toggle markup, and the "more" control is a hover stand-in rendered
 // with the `group`/`group-hover` classes from the Svelte component.
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
-import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
+import { getPaddingFromPath } from "@statsparrot/web-common/features/file-explorer/nav-tree-spacing";
 import type { Directory } from "./transform-file-list";
 import { directoryState } from "./directory-state";
 import type { NavDragData } from "./types";

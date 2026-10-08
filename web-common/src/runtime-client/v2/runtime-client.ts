@@ -1,8 +1,8 @@
 import { createClient, type Client, type Transport } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { QueryService } from "../../proto/gen/rill/runtime/v1/queries_connect";
-import { RuntimeService } from "../../proto/gen/rill/runtime/v1/api_connect";
-import { ConnectorService } from "../../proto/gen/rill/runtime/v1/connectors_connect";
+import { QueryService } from "../../proto/gen/statsparrot/runtime/v1/queries_connect";
+import { RuntimeService } from "../../proto/gen/statsparrot/runtime/v1/api_connect";
+import { ConnectorService } from "../../proto/gen/statsparrot/runtime/v1/connectors_connect";
 import {
   RUNTIME_ACCESS_TOKEN_DEFAULT_TTL,
   JWT_EXPIRY_WARNING_WINDOW,

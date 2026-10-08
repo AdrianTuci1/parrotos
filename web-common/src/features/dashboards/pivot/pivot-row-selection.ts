@@ -1,8 +1,8 @@
-import { getValuesForExpandedKey } from "@rilldata/web-common/features/dashboards/pivot/pivot-expansion";
+import { getValuesForExpandedKey } from "@statsparrot/web-common/features/dashboards/pivot/pivot-expansion";
 import {
   V1Operation,
   type V1Expression,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { getValuesInExpression } from "../stores/filter-utils";
 import {
   buildPivotFilter,

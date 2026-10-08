@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
 )
 
 // FilePaths implements drivers.FileStore

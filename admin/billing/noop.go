@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/jobs"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/jobs"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 )
 
 var _ Biller = &noop{}

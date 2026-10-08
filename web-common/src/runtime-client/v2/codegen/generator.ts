@@ -50,7 +50,7 @@ function pascalCase(s: string): string {
 }
 
 function extractShortName(typeName: string): string {
-  // "rill.runtime.v1.MetricsViewAggregationRequest" -> "MetricsViewAggregationRequest"
+  // "statsparrot.runtime.v1.MetricsViewAggregationRequest" -> "MetricsViewAggregationRequest"
   const parts = typeName.split(".");
   return parts[parts.length - 1];
 }
@@ -80,7 +80,7 @@ function getProtoImportPath(serviceName: string): string {
       `Unknown service "${serviceName}"; add it to the fileMap in getProtoImportPath`,
     );
   }
-  return `../../../proto/gen/rill/runtime/v1/${fileMap[serviceName]}`;
+  return `../../../proto/gen/statsparrot/runtime/v1/${fileMap[serviceName]}`;
 }
 
 // --- JSON bridge: Orval type helpers ---

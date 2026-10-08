@@ -4,14 +4,14 @@
     createAdminServiceListMagicAuthTokensInfinite,
     createAdminServiceRevokeMagicAuthToken,
     getAdminServiceListMagicAuthTokensQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { useDashboards } from "@rilldata/web-admin/features/dashboards/listing/selectors";
-  import PublicURLsResourceTable from "@rilldata/web-admin/features/public-urls/PublicURLsResourceTable.svelte";
-  import RadixLarge from "@rilldata/web-common/components/typography/RadixLarge.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { useDashboards } from "@statsparrot/web-admin/features/dashboards/listing/selectors";
+  import PublicURLsResourceTable from "@statsparrot/web-admin/features/public-urls/PublicURLsResourceTable.svelte";
+  import RadixLarge from "@statsparrot/web-common/components/typography/RadixLarge.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { useQueryClient } from "@tanstack/svelte-query";
 
   const runtimeClient = useRuntimeClient();
@@ -125,7 +125,7 @@
         <p class="text-sm text-fg-tertiary font-medium">
           {m.public_url_page_description()}
           <a
-            href="https://docs.rilldata.com/guide/dashboards/public-urls"
+            href="https://docs.statsparrot.com/guide/dashboards/public-urls"
             target="_blank"
             class="text-primary-600 hover:text-primary-700 active:text-primary-800"
           >

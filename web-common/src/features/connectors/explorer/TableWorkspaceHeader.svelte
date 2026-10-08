@@ -2,9 +2,9 @@
   import {
     Button,
     IconSpaceFixer,
-  } from "@rilldata/web-common/components/button";
-  import PanelCTA from "@rilldata/web-common/components/panel/PanelCTA.svelte";
-  import ResponsiveButtonText from "@rilldata/web-common/components/panel/ResponsiveButtonText.svelte";
+  } from "@statsparrot/web-common/components/button";
+  import PanelCTA from "@statsparrot/web-common/components/panel/PanelCTA.svelte";
+  import ResponsiveButtonText from "@statsparrot/web-common/components/panel/ResponsiveButtonText.svelte";
   import Add from "../../../components/icons/Add.svelte";
   import { WorkspaceHeader } from "../../../layout/workspace";
   import { BehaviourEventMedium } from "../../../metrics/service/BehaviourEventTypes";

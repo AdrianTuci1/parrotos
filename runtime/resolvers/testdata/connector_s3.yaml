@@ -7,38 +7,38 @@ project_files:
     materialize: true
     connector: clickhouse
     output: clickhouse
-    sql: "SELECT * FROM s3('s3://integration-test.rilldata.com/csv_test/all_datatypes.csv', '{{.env.connector.s3.aws_access_key_id}}', '{{.env.connector.s3.aws_secret_access_key}}', 'CSVWithNames')"
+    sql: "SELECT * FROM s3('s3://integration-test.statsparrot.com/csv_test/all_datatypes.csv', '{{.env.connector.s3.aws_access_key_id}}', '{{.env.connector.s3.aws_secret_access_key}}', 'CSVWithNames')"
   clickhouse_all_datatypes_glob.yaml:
     type: model
     materialize: true
     connector: clickhouse
     output: clickhouse
-    sql: "SELECT * FROM s3('s3://integration-test.rilldata.com/glob_test/y=202*/a*.csv', '{{.env.connector.s3.aws_access_key_id}}', '{{.env.connector.s3.aws_secret_access_key}}', 'CSVWithNames')"
+    sql: "SELECT * FROM s3('s3://integration-test.statsparrot.com/glob_test/y=202*/a*.csv', '{{.env.connector.s3.aws_access_key_id}}', '{{.env.connector.s3.aws_secret_access_key}}', 'CSVWithNames')"
   clickhouse_all_datatypes_parquet.yaml:
     type: model
     materialize: true
     connector: clickhouse
     output: clickhouse
-    sql: "SELECT * FROM s3('s3://integration-test.rilldata.com/parquet_test/all_datatypes.parquet', '{{.env.connector.s3.aws_access_key_id}}', '{{.env.connector.s3.aws_secret_access_key}}', 'Parquet')"
+    sql: "SELECT * FROM s3('s3://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet', '{{.env.connector.s3.aws_access_key_id}}', '{{.env.connector.s3.aws_secret_access_key}}', 'Parquet')"
   duckdb_all_datatypes_csv.yaml:
     type: model
     connector: duckdb
     materialize: true
-    sql: "select * from read_csv('s3://integration-test.rilldata.com/csv_test/all_datatypes.csv', auto_detect=true, ignore_errors=1, header=true)"
+    sql: "select * from read_csv('s3://integration-test.statsparrot.com/csv_test/all_datatypes.csv', auto_detect=true, ignore_errors=1, header=true)"
   duckdb_all_datatypes_glob.yaml:
     type: model
     connector: duckdb
     materialize: true
-    sql: "select * from read_csv('s3://integration-test.rilldata.com/glob_test/y=202*/a*.csv', auto_detect=true, ignore_errors=1, header=true)"
+    sql: "select * from read_csv('s3://integration-test.statsparrot.com/glob_test/y=202*/a*.csv', auto_detect=true, ignore_errors=1, header=true)"
   duckdb_all_datatypes_parquet.yaml:
     type: model
     connector: duckdb
     materialize: true
-    sql: "select * from read_parquet('s3://integration-test.rilldata.com/parquet_test/all_datatypes.parquet')"
+    sql: "select * from read_parquet('s3://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet')"
   duckdb_explicit_s3_connector.yaml:
     type: model
     connector: s3
-    uri: "s3://integration-test.rilldata.com/parquet_test/all_datatypes.parquet"
+    uri: "s3://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet"
   duckdb_partitions_paths_with_new_line.yaml:
     type: model
     connector: duckdb
@@ -46,7 +46,7 @@ project_files:
     partitions:
       glob:
         path: |
-          s3://integration-test.rilldata.com/glob_test/y=202*/a*.csv
+          s3://integration-test.statsparrot.com/glob_test/y=202*/a*.csv
     sql: "select * from read_csv('{{ .partition.uri }}', auto_detect=true, ignore_errors=0, header=true)"
     output:
       incremental_strategy: merge
@@ -56,18 +56,18 @@ project_files:
     connector: duckdb
     materialize: true
     pre_exec: "SET default_null_order = 'nulls_last';CREATE SECRET secret1 (TYPE s3, KEY_ID '{{.env.connector.s3.aws_access_key_id}}', SECRET '{{.env.connector.s3.aws_secret_access_key}}', REGION 'us-east-1', URL_STYLE path)"
-    sql: "select *,current_setting('default_null_order') as setting_order from read_parquet('s3://integration-test.rilldata.com/parquet_test/all_datatypes.parquet')"
+    sql: "select *,current_setting('default_null_order') as setting_order from read_parquet('s3://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet')"
   duckdb_pre_exec_without_secret.yaml:
     type: model
     connector: duckdb
     materialize: true
     pre_exec: "SET default_null_order = 'nulls_last'"
-    sql: "select *,current_setting('default_null_order') as setting_order from read_parquet('s3://integration-test.rilldata.com/parquet_test/all_datatypes.parquet')"
+    sql: "select *,current_setting('default_null_order') as setting_order from read_parquet('s3://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet')"
   duckdb_public_bucket.yaml:
     type: model
     connector: duckdb
     materialize: true
-    sql: "select * from read_parquet('s3://rilldata-public/integration-test/all_datatypes.parquet')"
+    sql: "select * from read_parquet('s3://staticlabs-public/integration-test/all_datatypes.parquet')"
 tests:
   - name: test_data_for_clickhouse_all_datatypes_csv
     resolver: sql

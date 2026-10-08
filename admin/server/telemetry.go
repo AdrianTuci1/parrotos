@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 )
 
 func (s *Server) RecordEvents(ctx context.Context, req *adminv1.RecordEventsRequest) (*adminv1.RecordEventsResponse, error) {

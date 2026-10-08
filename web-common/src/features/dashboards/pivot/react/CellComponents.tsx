@@ -6,9 +6,9 @@ import {
   type ReactNode,
 } from "react";
 import type { Row } from "@tanstack/react-table";
-import { LOADING_CELL } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { PivotDataRow } from "@rilldata/web-common/features/dashboards/pivot/types";
+import { LOADING_CELL } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { PivotDataRow } from "@statsparrot/web-common/features/dashboards/pivot/types";
 
 /**
  * React context carrying the pivot table's `assembled` flag into the cell

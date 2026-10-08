@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 type selfToGCSExecutor struct {
@@ -64,7 +64,7 @@ func (e *selfToGCSExecutor) export(ctx context.Context, props map[string]any, ou
 		return "", err
 	}
 
-	outputLocation, err = url.JoinPath(outputLocation, "rill-tmp-"+uuid.New().String(), "/")
+	outputLocation, err = url.JoinPath(outputLocation, "statsparrot-tmp-"+uuid.New().String(), "/")
 	if err != nil {
 		return "", err
 	}

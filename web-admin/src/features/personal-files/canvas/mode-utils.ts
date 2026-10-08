@@ -1,4 +1,4 @@
-import { sessionStorageStore } from "@rilldata/web-common/lib/store-utils/session-storage.ts";
+import { sessionStorageStore } from "@statsparrot/web-common/lib/store-utils/session-storage.ts";
 
 export function getCanvasModeStore(
   organization: string,
@@ -6,7 +6,7 @@ export function getCanvasModeStore(
   name: string,
 ) {
   return sessionStorageStore(
-    `app:rill:${organization}:${project}:${name}`,
+    `app:statsparrot:${organization}:${project}:${name}`,
     "view",
   );
 }
@@ -18,7 +18,7 @@ export function setCanvasMode(
   mode: "view" | "edit",
 ) {
   sessionStorage.setItem(
-    `app:rill:${organization}:${project}:${name}`,
+    `app:statsparrot:${organization}:${project}:${name}`,
     JSON.stringify(mode),
   );
 }

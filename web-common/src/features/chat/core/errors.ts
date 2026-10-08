@@ -1,4 +1,4 @@
-import { SSEHttpError } from "@rilldata/web-common/runtime-client/sse";
+import { SSEHttpError } from "@statsparrot/web-common/runtime-client/sse";
 
 /**
  * Format transport error into user-friendly message

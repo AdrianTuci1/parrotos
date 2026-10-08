@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Copy } from "lucide-svelte";
-  import CrossIcon from "@rilldata/web-common/components/icons/CrossIcon.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import CrossIcon from "@statsparrot/web-common/components/icons/CrossIcon.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
 
   export let error: string | undefined;
 </script>

@@ -11,7 +11,7 @@ import type {
   SourceErrorCodes,
   SourceFileType,
 } from "./SourceEventTypes";
-import type { AddDataBehaviourEventFields } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+import type { AddDataBehaviourEventFields } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 import { sanitizePageUrl } from "./sanitizePageUrl";
 
 export enum ErrorEventAction {

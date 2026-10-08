@@ -1,6 +1,6 @@
-import { openQuery } from "@rilldata/web-common/features/explore-mappers/open-query";
+import { openQuery } from "@statsparrot/web-common/features/explore-mappers/open-query";
 import { getLocalRuntimeClient } from "../../../../lib/runtime-client";
-import { getQueryFromUrl } from "@rilldata/web-common/features/chat/core/citation-url-utils.ts";
+import { getQueryFromUrl } from "@statsparrot/web-common/features/chat/core/citation-url-utils.ts";
 
 export async function load({ url }) {
   const query = getQueryFromUrl(url);

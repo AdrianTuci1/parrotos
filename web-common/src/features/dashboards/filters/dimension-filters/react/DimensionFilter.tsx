@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import type { FilterManager } from "@rilldata/web-common/features/canvas/stores/filter-manager";
-import type { DimensionFilterItem } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import type { FilterManager } from "@statsparrot/web-common/features/canvas/stores/filter-manager";
+import type { DimensionFilterItem } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
 import {
   getEffectiveSelectedValues,
   getItemLists,
   getSearchPlaceholder,
   shouldDisableApplyButton,
-} from "@rilldata/web-common/features/dashboards/filters/dimension-filters/helpers";
+} from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/helpers";
 import {
   mergeDimensionSearchValues,
   splitDimensionSearchText,
-} from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import {
   useDimensionSearchCount,
   useDimensionSearchResults,

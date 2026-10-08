@@ -1,6 +1,6 @@
 # Using the State Managers Provider
 
-The StateManagersProvider provides an object with all dependent services for the Rill UI's business model logic.
+The StateManagersProvider provides an object with all dependent services for the Parrot UI's business model logic.
 Here is an example of using it:
 
 ```svelte

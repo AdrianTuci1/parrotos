@@ -11,15 +11,15 @@ const config = defineConfig({
     rolldownOptions: {
       // This ensures that the web-admin package is not bundled into the web-local package.
       // This is necessary because the Scheduled Reports dialog lives in `web-common` and imports the admin-client.
-      external: (id) => id.startsWith("@rilldata/web-admin/"),
+      external: (id) => id.startsWith("@statsparrot/web-admin/"),
     },
   },
   resolve: {
     alias: {
       src: "/src", // trick to get absolute imports to work
-      "@rilldata/web-local": "/src",
-      "@rilldata/web-common": "/../web-common/src",
-      "@rilldata/web-admin": "/../web-admin/src",
+      "@statsparrot/web-local": "/src",
+      "@statsparrot/web-common": "/../web-common/src",
+      "@statsparrot/web-admin": "/../web-admin/src",
     },
   },
   server: {
@@ -56,7 +56,7 @@ const config = defineConfig({
     }),
   ],
   envDir: "../",
-  envPrefix: "RILL_UI_PUBLIC_",
+  envPrefix: "STATSPARROT_UI_PUBLIC_",
 });
 
 export default config;

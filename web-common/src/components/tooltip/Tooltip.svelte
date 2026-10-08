@@ -31,7 +31,7 @@ FIXME: In the future, we should also be listening to focus events from the child
   import type {
     Alignment,
     Location,
-  } from "@rilldata/web-common/lib/place-element";
+  } from "@statsparrot/web-common/lib/place-element";
   import { hoverIntent } from "./hover-intent";
   import {
     CHILD_REQUESTED_TOOLTIP_SUPPRESSION_CONTEXT_KEY,

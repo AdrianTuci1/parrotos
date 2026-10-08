@@ -3,13 +3,13 @@
 -->
 <script lang="ts">
   import { page } from "$app/stores";
-  import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
-  import MCPConnectDialog from "@rilldata/web-admin/features/ai/mcp/MCPConnectDialog.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import APIIcon from "@rilldata/web-common/components/icons/APIIcon.svelte";
-  import ProjectChat from "@rilldata/web-common/features/chat/ProjectChat.svelte";
-  import { setConnectClientContext } from "@rilldata/web-common/features/chat/connect/connect-client-context";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
+  import MCPConnectDialog from "@statsparrot/web-admin/features/ai/mcp/MCPConnectDialog.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import APIIcon from "@statsparrot/web-common/components/icons/APIIcon.svelte";
+  import ProjectChat from "@statsparrot/web-common/features/chat/ProjectChat.svelte";
+  import { setConnectClientContext } from "@statsparrot/web-common/features/chat/connect/connect-client-context";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

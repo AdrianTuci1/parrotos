@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { coerceResourceKind, ResourceKind } from "./resource-selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 
 describe("resource-selectors", () => {
   describe("coerceResourceKind", () => {

@@ -3,7 +3,7 @@ import { parseDocument } from "yaml";
 export function initBlankDashboardYAML(dashboardTitle: string) {
   const metricsTemplate = `
 # Dashboard YAML
-# Reference documentation: https://docs.rilldata.com/reference/project-files/dashboards
+# Reference documentation: https://docs.statsparrot.com/reference/project-files/dashboards
 
 type: metrics_view
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { COLUMN_PROFILE_CONFIG } from "@rilldata/web-common/layout/config";
+  import { COLUMN_PROFILE_CONFIG } from "@statsparrot/web-common/layout/config";
   import { onMount } from "svelte";
   import { useRuntimeClient } from "../../runtime-client/v2";
   import {
     createQueryServiceTableColumns,
     createQueryServiceTableRows,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { getColumnType } from "./column-types";
   import { getSummaries } from "./queries";
   import { defaultSort, sortByName, sortByNullity } from "./utils";

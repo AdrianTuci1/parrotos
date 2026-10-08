@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -1068,7 +1068,7 @@ parent: dash
 func TestStageChanges(t *testing.T) {
 	// Create source and model
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:        map[string]string{"rill.yaml": ""},
+		Files:        map[string]string{"statsparrot.yaml": ""},
 		StageChanges: true,
 	})
 	testruntime.PutFiles(t, rt, id, map[string]string{
@@ -1128,7 +1128,7 @@ func TestWatch(t *testing.T) {
 	// Drop source, wait and verify
 
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:     map[string]string{"rill.yaml": ""},
+		Files:     map[string]string{"statsparrot.yaml": ""},
 		WatchRepo: true,
 	})
 
@@ -1439,7 +1439,7 @@ func TestDedicatedConnector(t *testing.T) {
 	vars["connector.my-gcs.google_application_credentials"] = cfgGcs["google_application_credentials"]
 
 	files := map[string]string{
-		"rill.yaml": `
+		"statsparrot.yaml": `
 connectors:
 - name: s3-integrated
   type: s3

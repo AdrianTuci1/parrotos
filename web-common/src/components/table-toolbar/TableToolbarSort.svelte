@@ -1,9 +1,9 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
   import type { SortOption } from "./types";
-  import { type RuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { type RuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   type SortSize = "sm" | "lg";
 

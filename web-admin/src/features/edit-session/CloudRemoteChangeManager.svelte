@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { getDeploymentGithubStatus } from "@rilldata/web-admin/features/edit-session/selectors.ts";
-  import RemoteSyncDialogs from "@rilldata/web-common/features/project/RemoteSyncDialogs.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { getDeploymentGithubStatus } from "@statsparrot/web-admin/features/edit-session/selectors.ts";
+  import RemoteSyncDialogs from "@statsparrot/web-common/features/project/RemoteSyncDialogs.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onMount } from "svelte";
   import { derived } from "svelte/store";
 

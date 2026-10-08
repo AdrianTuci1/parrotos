@@ -4,21 +4,21 @@ import {
   AddDataStep,
   ImportDataStep,
   type ImportStepConfig,
-} from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+} from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
 import {
   isConnectorType,
   isExplorerType,
-} from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
-import { connectorFormCache } from "@rilldata/web-common/features/add-data/manager/steps/connector.ts";
+} from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
+import { connectorFormCache } from "@statsparrot/web-common/features/add-data/manager/steps/connector.ts";
 import {
   behaviourEvent,
   errorEventHandler,
-} from "@rilldata/web-common/metrics/initMetrics.ts";
+} from "@statsparrot/web-common/metrics/initMetrics.ts";
 import {
   type AddDataBehaviourEventFields,
   BehaviourEventAction,
-} from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+} from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 
 export enum TransitionEventType {
   Init,

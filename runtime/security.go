@@ -13,12 +13,12 @@ import (
 	"sync"
 
 	"github.com/hashicorp/golang-lru/simplelru"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/slack"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/expressionpb"
-	"github.com/rilldata/rill/runtime/pkg/pbutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/slack"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/expressionpb"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pbutil"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 )

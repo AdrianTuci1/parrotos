@@ -1,4 +1,4 @@
-import type { V1Message } from "@rilldata/web-common/runtime-client";
+import type { V1Message } from "@statsparrot/web-common/runtime-client";
 
 /**
  * Generic block that doesnt really have specific rendering.

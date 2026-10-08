@@ -1,43 +1,43 @@
 import {
   getMetricsViewTimeRangeFromExploreQueryOptions,
   useMetricsViewTimeRange,
-} from "@rilldata/web-common/features/dashboards/selectors";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+} from "@statsparrot/web-common/features/dashboards/selectors";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
 import {
   useExploreState,
   useStableExploreState,
-} from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getValidComparisonOption } from "@rilldata/web-common/features/dashboards/time-controls/time-range-store";
-import { getOrderedStartEnd } from "@rilldata/web-common/features/dashboards/time-series/utils";
+} from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getValidComparisonOption } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-store";
+import { getOrderedStartEnd } from "@statsparrot/web-common/features/dashboards/time-series/utils";
 import {
   getExploreValidSpecQueryOptions,
   useExploreValidSpec,
-} from "@rilldata/web-common/features/explores/selectors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/explores/selectors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getComparionRangeForScrub,
   getTimeComparisonParametersForComponent,
-} from "@rilldata/web-common/lib/time/comparisons";
-import { DEFAULT_TIME_RANGES } from "@rilldata/web-common/lib/time/config";
-import { getValidatedTimeGrain } from "@rilldata/web-common/lib/time/grains";
+} from "@statsparrot/web-common/lib/time/comparisons";
+import { DEFAULT_TIME_RANGES } from "@statsparrot/web-common/lib/time/config";
+import { getValidatedTimeGrain } from "@statsparrot/web-common/lib/time/grains";
 import {
   allowedGrainsForInterval,
   V1TimeGrainToDateTimeUnit,
-} from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/lib/time/new-grains";
 import {
   convertTimeRangePreset,
   getAdjustedFetchTime,
-} from "@rilldata/web-common/lib/time/ranges";
-import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+} from "@statsparrot/web-common/lib/time/ranges";
+import { isoDurationToFullTimeRange } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import {
   type DashboardTimeControls,
   type ScrubRange,
   TimeComparisonOption,
   type TimeRange,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   type V1ExploreSpec,
   type V1ExploreTimeRange,
@@ -47,15 +47,15 @@ import {
   V1TimeGrain,
   type V1TimeRange,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { createQuery, type QueryObserverResult } from "@tanstack/svelte-query";
 import type { Readable } from "svelte/store";
 import { derived } from "svelte/store";
 import { memoizeMetricsStore } from "../state-managers/memoize-metrics-store";
-import { parseRillTime } from "../url-state/time-ranges/parser";
-import type { RillTime } from "../url-state/time-ranges/RillTime";
+import { parseParrotTime } from "../url-state/time-ranges/parser";
+import type { ParrotTime } from "../url-state/time-ranges/ParrotTime";
 import { DateTime, Interval } from "luxon";
-import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
+import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
 
 export type TimeRangeState = {
   // Selected ranges with start and end filled based on time range type
@@ -332,13 +332,13 @@ export function calculateTimeRangePartial(
   );
   if (!selectedTimeRange) return undefined;
 
-  let parsed: RillTime | undefined;
+  let parsed: ParrotTime | undefined;
 
   if (currentSelectedTimeRange.name === TimeRangePreset.CUSTOM) {
     parsed = undefined;
   } else if (currentSelectedTimeRange?.name) {
     try {
-      parsed = parseRillTime(currentSelectedTimeRange.name);
+      parsed = parseParrotTime(currentSelectedTimeRange.name);
     } catch {
       //no-op
     }

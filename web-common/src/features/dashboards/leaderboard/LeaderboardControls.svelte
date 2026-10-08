@@ -1,11 +1,11 @@
 <script lang="ts">
-  import DashboardMetricsDraggableList from "@rilldata/web-common/components/menu/DashboardMetricsDraggableList.svelte";
-  import { LeaderboardContextColumn } from "@rilldata/web-common/features/dashboards/leaderboard-context-column";
-  import { filterOutSomeAdvancedAggregationMeasures } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures.ts";
+  import DashboardMetricsDraggableList from "@statsparrot/web-common/components/menu/DashboardMetricsDraggableList.svelte";
+  import { LeaderboardContextColumn } from "@statsparrot/web-common/features/dashboards/leaderboard-context-column";
+  import { filterOutSomeAdvancedAggregationMeasures } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures.ts";
   import { metricsExplorerStore } from "web-common/src/features/dashboards/stores/dashboard-stores";
   import { getStateManagers } from "../state-managers/state-managers";
-  import LeaderboardMeasureNamesDropdown from "@rilldata/web-common/components/menu/LeaderboardMeasureNamesDropdown.svelte";
-  import LeaderboardAdvancedActions from "@rilldata/web-common/components/menu/LeaderboardAdvancedActions.svelte";
+  import LeaderboardMeasureNamesDropdown from "@statsparrot/web-common/components/menu/LeaderboardMeasureNamesDropdown.svelte";
+  import LeaderboardAdvancedActions from "@statsparrot/web-common/components/menu/LeaderboardAdvancedActions.svelte";
 
   export let exploreName: string;
 

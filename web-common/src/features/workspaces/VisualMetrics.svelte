@@ -1,29 +1,29 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import Close from "@rilldata/web-common/components/icons/Close.svelte";
-  import Search from "@rilldata/web-common/components/icons/Search.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
-  import { clamp } from "@rilldata/web-common/lib/clamp";
-  import { TIMESTAMPS } from "@rilldata/web-common/lib/duckdb-data-types";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import Close from "@statsparrot/web-common/components/icons/Close.svelte";
+  import Search from "@statsparrot/web-common/components/icons/Search.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
+  import { clamp } from "@statsparrot/web-common/lib/clamp";
+  import { TIMESTAMPS } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import {
     createConnectorServiceOLAPListTables,
     createQueryServiceTableColumns,
     createRuntimeServiceAnalyzeConnectors,
     createRuntimeServiceGetInstance,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import {
     V1TimeGrain,
     type MetricsViewSpecDimension,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { Clock, PlusIcon } from "lucide-svelte";
   import { tick } from "svelte";
   import { parseDocument, Scalar, YAMLMap, YAMLSeq } from "yaml";
@@ -53,7 +53,7 @@
     getAllowedGrainsFromOrder,
     getGrainOrder,
     V1TimeGrainToDateTimeUnit,
-  } from "@rilldata/web-common/lib/time/new-grains";
+  } from "@statsparrot/web-common/lib/time/new-grains";
 
   const store = connectorExplorerStore.duplicateStore(
     (connector, database, schema, table) => {

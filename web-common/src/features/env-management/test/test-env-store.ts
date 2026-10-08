@@ -1,7 +1,7 @@
-import { EnvEditSessionVariable } from "@rilldata/web-common/features/env-management/env-edit-session-variable.ts";
-import { EnvStore } from "@rilldata/web-common/features/env-management/env-store.ts";
-import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-import type { JSONSchemaObject } from "@rilldata/web-common/features/templates/schemas/types.ts";
+import { EnvEditSessionVariable } from "@statsparrot/web-common/features/env-management/env-edit-session-variable.ts";
+import { EnvStore } from "@statsparrot/web-common/features/env-management/env-store.ts";
+import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+import type { JSONSchemaObject } from "@statsparrot/web-common/features/templates/schemas/types.ts";
 
 export async function makeTestEnvStore(
   initValues: Record<string, string> = {},

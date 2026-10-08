@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getBillingStatsForOrg } from "@rilldata/web-admin/features/billing/plans/selectors";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { getBillingStatsForOrg } from "@statsparrot/web-admin/features/billing/plans/selectors";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization }: { organization: string } = $props();
 

@@ -2,7 +2,7 @@
   import {
     Button,
     type ButtonType,
-  } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-common/components/button";
 
   export let title: string;
   export let description: string | null = null;

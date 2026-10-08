@@ -15,17 +15,17 @@ import {
   type V1OrganizationPermissions,
   type V1ProjectPermissions,
   type V1User,
-} from "@rilldata/web-admin/client";
-import { redirectToLogin } from "@rilldata/web-admin/client/redirect-utils";
-import { redirectToLoginOrRequestAccess } from "@rilldata/web-admin/features/authentication/checkUserAccess";
-import { getFetchOrganizationQueryOptions } from "@rilldata/web-admin/features/organizations/selectors";
-import { fetchProjectDeploymentDetails } from "@rilldata/web-admin/features/projects/selectors";
-import { getOrgWithBearerToken } from "@rilldata/web-admin/features/public-urls/get-org-with-bearer-token";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.js";
+} from "@statsparrot/web-admin/client";
+import { redirectToLogin } from "@statsparrot/web-admin/client/redirect-utils";
+import { redirectToLoginOrRequestAccess } from "@statsparrot/web-admin/features/authentication/checkUserAccess";
+import { getFetchOrganizationQueryOptions } from "@statsparrot/web-admin/features/organizations/selectors";
+import { fetchProjectDeploymentDetails } from "@statsparrot/web-admin/features/projects/selectors";
+import { getOrgWithBearerToken } from "@statsparrot/web-admin/features/public-urls/get-org-with-bearer-token";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.js";
 import { error, type Page } from "@sveltejs/kit";
 import { isAxiosError } from "axios";
-import { maybeRedirectToWelcomePage } from "@rilldata/web-admin/features/welcome/utils.ts";
+import { maybeRedirectToWelcomePage } from "@statsparrot/web-admin/features/welcome/utils.ts";
 
 export const load = async ({ params, url, route, depends }) => {
   depends("app:root");

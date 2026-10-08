@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { connectorIconMapping } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
-  import { connectorInfoMap } from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
-  import { getAnalyzedConnectors } from "@rilldata/web-common/features/connectors/selectors.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import type { AddDataConfig } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+  import { connectorIconMapping } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
+  import { connectorInfoMap } from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
+  import { getAnalyzedConnectors } from "@statsparrot/web-common/features/connectors/selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import type { AddDataConfig } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
   import {
     getConnectorDriverForSchema,
     isConnectorType,
-  } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-  import { inferSchemaForConnector } from "@rilldata/web-common/features/entity-management/add/selectors.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+  import { inferSchemaForConnector } from "@statsparrot/web-common/features/entity-management/add/selectors.ts";
 
   export let config: AddDataConfig;
   export let schemaName: string;

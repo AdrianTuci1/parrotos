@@ -1,5 +1,5 @@
-import { validateAndCleanExploreState } from "@rilldata/web-common/features/dashboards/stores/validate-and-clean-explore-state";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { validateAndCleanExploreState } from "@statsparrot/web-common/features/dashboards/stores/validate-and-clean-explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_DOMAIN_DIMENSION,
@@ -8,11 +8,11 @@ import {
   AD_BIDS_METRICS_3_MEASURES_DIMENSIONS,
   AD_BIDS_PUBLISHER_COUNT_MEASURE,
   AD_BIDS_PUBLISHER_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import {
   DashboardState_LeaderboardSortDirection,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import { describe, expect, it } from "vitest";
 
 const TestCases: {

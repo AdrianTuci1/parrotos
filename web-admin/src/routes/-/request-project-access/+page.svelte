@@ -4,14 +4,14 @@
   import {
     createAdminServiceRequestProjectAccess,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
-  import AccessRequestContainer from "@rilldata/web-admin/features/access-request/AccessRequestContainer.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import Lock from "@rilldata/web-common/components/icons/Lock.svelte";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  } from "@statsparrot/web-admin/client";
+  import AccessRequestContainer from "@statsparrot/web-admin/features/access-request/AccessRequestContainer.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import Lock from "@statsparrot/web-common/components/icons/Lock.svelte";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
   import type { AxiosError } from "axios";
 
   $: organization = $page.url.searchParams.get("organization");

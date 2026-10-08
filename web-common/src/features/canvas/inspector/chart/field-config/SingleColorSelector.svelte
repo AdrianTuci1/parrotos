@@ -1,12 +1,12 @@
 <script lang="ts">
-  import ColorInput from "@rilldata/web-common/components/color-picker/ColorInput.svelte";
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { colorToVariableReference } from "@rilldata/web-common/features/components/charts/util";
+  import ColorInput from "@statsparrot/web-common/components/color-picker/ColorInput.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { colorToVariableReference } from "@statsparrot/web-common/features/components/charts/util";
   import {
     primary,
     secondary,
-  } from "@rilldata/web-common/features/themes/colors";
+  } from "@statsparrot/web-common/features/themes/colors";
   import { type Color } from "chroma-js";
   export let markConfig: string;
   export let onChange: (newColor: string) => void;

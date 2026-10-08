@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 
 	"github.com/joho/godotenv"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/spf13/cobra"
 )
 
@@ -56,8 +56,8 @@ func PullVars(ctx context.Context, ch *cmdutil.Helper, projectPath, projectName,
 	if err != nil {
 		return fmt.Errorf("failed to parse project: %w", err)
 	}
-	if p.RillYAML == nil {
-		return fmt.Errorf("not a valid Rill project (missing a rill.yaml file)")
+	if p.ParrotYAML == nil {
+		return fmt.Errorf("not a valid Parrot project (missing a statsparrot.yaml file)")
 	}
 
 	// Find the cloud project name

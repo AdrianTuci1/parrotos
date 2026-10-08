@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getComparisonLabel } from "@rilldata/web-common/lib/time/comparisons";
-  import type { V1TimeRange } from "@rilldata/web-common/runtime-client";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getComparisonLabel } from "@statsparrot/web-common/lib/time/comparisons";
+  import type { V1TimeRange } from "@statsparrot/web-common/runtime-client";
   import { DateTime, Interval } from "luxon";
   import { getRangeLabel } from "../time-controls/new-time-controls";
   import RangeDisplay from "../time-controls/super-pill/components/RangeDisplay.svelte";

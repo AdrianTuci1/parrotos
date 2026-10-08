@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/rilldata/rill/runtime/pkg/archive"
+	"github.com/staticlabs/statsparrot/runtime/pkg/archive"
 )
 
 // archiveRepo represents a tarball archive file source.

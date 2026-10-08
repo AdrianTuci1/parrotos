@@ -18,17 +18,17 @@ import (
 	"connectrpc.com/connect"
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/google/go-github/v71/github"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/urlutil"
-	"github.com/rilldata/rill/cli/cmd/auth"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/pkce"
-	"github.com/rilldata/rill/cli/pkg/web"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	localv1 "github.com/rilldata/rill/proto/gen/rill/local/v1"
-	"github.com/rilldata/rill/proto/gen/rill/local/v1/localv1connect"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/cli/cmd/auth"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/pkce"
+	"github.com/staticlabs/statsparrot/cli/pkg/web"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	localv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/local/v1"
+	"github.com/staticlabs/statsparrot/proto/gen/statsparrot/local/v1/localv1connect"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -37,7 +37,7 @@ import (
 
 const retries = 3
 
-// Server implements endpoints for the local Rill app (usually served on localhost).
+// Server implements endpoints for the local Parrot app (usually served on localhost).
 type Server struct {
 	logger   *zap.Logger
 	app      *App
@@ -60,7 +60,7 @@ func (s *Server) RegisterHandlers(mux *http.ServeMux, httpPort int, secure, enab
 		mux.Handle("/", web.StaticHandler())
 	}
 
-	// Register auth endpoints (starts and OAuth flow that leads to a token being set in ~/.rill)
+	// Register auth endpoints (starts and OAuth flow that leads to a token being set in ~/.statsparrot)
 	mux.Handle("/auth", s.authHandler(httpPort, secure))
 	mux.Handle("/auth/callback", s.authCallbackHandler())
 	mux.Handle("/auth/logout", s.logoutHandler())
@@ -156,7 +156,7 @@ func (s *Server) PushToGithub(ctx context.Context, r *connect.Request[localv1.Pu
 	}
 	if !gitStatus.HasAccess {
 		// generally this should not happen as IsGithubConnected should be true before pushing to git
-		return nil, fmt.Errorf("rill git app should be installed by user before pushing by visiting %s", gitStatus.GrantAccessUrl)
+		return nil, fmt.Errorf("statsparrot git app should be installed by user before pushing by visiting %s", gitStatus.GrantAccessUrl)
 	}
 
 	// if r.Msg.Account is empty, githubAccount will be "" which is equivalent to using default github account which is same as github username
@@ -171,7 +171,7 @@ func (s *Server) PushToGithub(ctx context.Context, r *connect.Request[localv1.Pu
 	// this is a safety check as DeployValidation should take care of this
 	if githubAccount == "" {
 		if gitStatus.UserInstallationPermission != adminv1.GithubPermission_GITHUB_PERMISSION_WRITE {
-			return nil, fmt.Errorf("rill github app should be installed with write permission on user personal account by visiting %s", gitStatus.GrantAccessUrl)
+			return nil, fmt.Errorf("statsparrot github app should be installed with write permission on user personal account by visiting %s", gitStatus.GrantAccessUrl)
 		}
 	} else {
 		valid := false
@@ -182,7 +182,7 @@ func (s *Server) PushToGithub(ctx context.Context, r *connect.Request[localv1.Pu
 			}
 		}
 		if !valid {
-			return nil, fmt.Errorf("rill github app should be installed with write permission on organization %q by visiting %s", githubAccount, gitStatus.GrantAccessUrl)
+			return nil, fmt.Errorf("statsparrot github app should be installed with write permission on organization %q by visiting %s", githubAccount, gitStatus.GrantAccessUrl)
 		}
 	}
 
@@ -224,7 +224,7 @@ func (s *Server) PushToGithub(ctx context.Context, r *connect.Request[localv1.Pu
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate git commit signature: %w", err)
 	}
-	_, err = gitutil.CommitAll(ctx, s.app.ProjectPath, "", "Auto committed by Rill", author)
+	_, err = gitutil.CommitAll(ctx, s.app.ProjectPath, "", "Auto committed by Parrot", author)
 	if err != nil && !errors.Is(err, gitutil.ErrEmptyCommit) {
 		// on ErrEmptyCommit we still trigger the push
 		return nil, fmt.Errorf("failed to commit files to git: %w", err)
@@ -273,7 +273,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 		return nil, err
 	}
 
-	// check if rill org exists
+	// check if statsparrot org exists
 	_, err = c.GetOrganization(ctx, &adminv1.GetOrganizationRequest{
 		Org: r.Msg.Org,
 	})
@@ -284,7 +284,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 			_, err = c.CreateOrganization(ctx, &adminv1.CreateOrganizationRequest{
 				Name:        r.Msg.Org,
 				DisplayName: r.Msg.NewOrgDisplayName,
-				Description: "Auto created by Rill",
+				Description: "Auto created by Parrot",
 			})
 			if err != nil {
 				return nil, err
@@ -331,7 +331,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 		projRequest = &adminv1.CreateProjectRequest{
 			Org:            r.Msg.Org,
 			Project:        r.Msg.ProjectName,
-			Description:    "Auto created by Rill",
+			Description:    "Auto created by Parrot",
 			Provisioner:    "",
 			ProdVersion:    "",
 			ProdSlots:      int64(DefaultProdSlots(s.app.ch)),
@@ -340,7 +340,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 			DirectoryName:  directoryName,
 			ArchiveAssetId: assetID,
 		}
-	} else if r.Msg.Upload { // upload repo to rill managed storage instead of github
+	} else if r.Msg.Upload { // upload repo to statsparrot managed storage instead of github
 		gitBranch, err := currentGitBranch(ctx, s.app.ProjectPath)
 		if err != nil {
 			return nil, err
@@ -354,7 +354,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 		projRequest = &adminv1.CreateProjectRequest{
 			Org:           r.Msg.Org,
 			Project:       r.Msg.ProjectName,
-			Description:   "Auto created by Rill",
+			Description:   "Auto created by Parrot",
 			Provisioner:   "",
 			ProdVersion:   "",
 			ProdSlots:     int64(DefaultProdSlots(s.app.ch)),
@@ -371,7 +371,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 		}
 		if !userStatus.HasAccess {
 			// generally this should not happen as IsGithubConnected should be true before deploying
-			return nil, fmt.Errorf("rill git app should be installed/authorized by user before deploying, please visit %s", userStatus.GrantAccessUrl)
+			return nil, fmt.Errorf("statsparrot git app should be installed/authorized by user before deploying, please visit %s", userStatus.GrantAccessUrl)
 		}
 
 		gitPath, subPath, err := gitutil.InferRepoRootAndSubpath(s.app.ProjectPath)
@@ -415,7 +415,7 @@ func (s *Server) DeployProject(ctx context.Context, r *connect.Request[localv1.D
 		projRequest = &adminv1.CreateProjectRequest{
 			Org:           r.Msg.Org,
 			Project:       r.Msg.ProjectName,
-			Description:   "Auto created by Rill",
+			Description:   "Auto created by Parrot",
 			Provisioner:   "",
 			ProdVersion:   "",
 			ProdSlots:     int64(DefaultProdSlots(s.app.ch)),
@@ -516,7 +516,7 @@ func (s *Server) RedeployProject(ctx context.Context, r *connect.Request[localv1
 		}
 	} else if r.Msg.Reupload {
 		if projResp.Project.ManagedGitId != "" {
-			// If rill-managed project then push to the repo based on org/project passed in.
+			// If statsparrot-managed project then push to the repo based on org/project passed in.
 			err = s.app.ch.GitHelper(projResp.Project.OrgName, projResp.Project.Name, s.app.ProjectPath).PushToManagedRepo(ctx, false)
 			if err != nil {
 				return nil, err
@@ -547,7 +547,7 @@ func (s *Server) RedeployProject(ctx context.Context, r *connect.Request[localv1
 			}
 			// just for verification confirm that subpath matches the one stored in project
 			if subpath != projResp.Project.Subpath {
-				return nil, fmt.Errorf("current project subpath %q does not match the one stored in rill %q. Try doing deploy using rill cli from github repo root by passing explicit subpath using `rill deploy --subpath %s`", subpath, projResp.Project.Subpath, projResp.Project.Subpath)
+				return nil, fmt.Errorf("current project subpath %q does not match the one stored in statsparrot %q. Try doing deploy using statsparrot cli from github repo root by passing explicit subpath using `statsparrot deploy --subpath %s`", subpath, projResp.Project.Subpath, projResp.Project.Subpath)
 			}
 			author, err := s.app.ch.GitSignature(ctx, reporoot)
 			if err != nil {
@@ -608,7 +608,7 @@ func (s *Server) GetCurrentUser(ctx context.Context, r *connect.Request[localv1.
 		return nil, errors.New("failed to get current user")
 	}
 
-	// get rill user orgs
+	// get statsparrot user orgs
 	resp, err := c.ListOrganizations(ctx, &adminv1.ListOrganizationsRequest{PageSize: 1000})
 	if err != nil {
 		return nil, err
@@ -619,7 +619,7 @@ func (s *Server) GetCurrentUser(ctx context.Context, r *connect.Request[localv1.
 		userOrgs = append(userOrgs, org.Name)
 	}
 
-	representingUser, err := s.app.ch.DotRill.GetRepresentingUser()
+	representingUser, err := s.app.ch.DotStatsparrot.GetRepresentingUser()
 	if err != nil {
 		return nil, errors.New("failed to get assumed user email")
 	}
@@ -632,7 +632,7 @@ func (s *Server) GetCurrentUser(ctx context.Context, r *connect.Request[localv1.
 			DisplayName: userResp.User.DisplayName,
 			PhotoUrl:    userResp.User.PhotoUrl,
 		},
-		RillUserOrgs:       userOrgs,
+		StatsparrotUserOrgs:       userOrgs,
 		IsRepresentingUser: isRepresentingUser,
 	}), nil
 }
@@ -793,7 +793,7 @@ func (s *Server) GetProject(ctx context.Context, r *connect.Request[localv1.GetP
 	}), nil
 }
 
-// authHandler starts the OAuth2 PKCE flow to authenticate the user and get a rill access token.
+// authHandler starts the OAuth2 PKCE flow to authenticate the user and get a statsparrot access token.
 func (s *Server) authHandler(httpPort int, secure bool) http.Handler {
 	scheme := "http"
 	if secure {
@@ -817,7 +817,7 @@ func (s *Server) authHandler(httpPort int, secure bool) http.Handler {
 			origin = "/"
 		}
 
-		authenticator, err := pkce.NewAuthenticator(s.app.ch.AdminURL(), redirectURL, database.AuthClientIDRillWebLocal, origin)
+		authenticator, err := pkce.NewAuthenticator(s.app.ch.AdminURL(), redirectURL, database.AuthClientIDParrotWebLocal, origin)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to generate pkce authenticator: %s", err), http.StatusInternalServerError)
 			return
@@ -828,7 +828,7 @@ func (s *Server) authHandler(httpPort int, secure bool) http.Handler {
 	})
 }
 
-// authCallbackHandler handles the OAuth2 PKCE callback to exchange the authorization code for a rill access token.
+// authCallbackHandler handles the OAuth2 PKCE callback to exchange the authorization code for a statsparrot access token.
 func (s *Server) authCallbackHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		code := r.URL.Query().Get("code")
@@ -864,7 +864,7 @@ func (s *Server) authCallbackHandler() http.Handler {
 		}
 
 		// Save token and reload config
-		err = s.app.ch.DotRill.SetAccessToken(token)
+		err = s.app.ch.DotStatsparrot.SetAccessToken(token)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to save access token: %s", err), http.StatusInternalServerError)
 			return
@@ -908,7 +908,7 @@ func (s *Server) logoutHandler() http.Handler {
 	})
 }
 
-// trackingHandler proxies events to intake.rilldata.io.
+// trackingHandler proxies events to intake.staticlabs.io.
 func (s *Server) trackingHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Read entire body up front (since it may be closed before the request is sent in the goroutine below)
@@ -937,7 +937,7 @@ func (s *Server) trackingHandler() http.Handler {
 	})
 }
 
-// localMetadata contains metadata about the current project and Rill configuration.
+// localMetadata contains metadata about the current project and Parrot configuration.
 type localMetadata struct {
 	InstanceID       string `json:"instance_id"`
 	ProjectPath      string `json:"project_path"`
@@ -953,7 +953,7 @@ type localMetadata struct {
 	GRPCPort         int    `json:"grpc_port"`
 }
 
-// metadataHandler serves the metadata of the local Rill instance.
+// metadataHandler serves the metadata of the local Parrot instance.
 func (s *Server) metadataHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(s.metadata)
@@ -976,7 +976,7 @@ type versionResponse struct {
 	LatestVersion  string `json:"latest_version"`
 }
 
-// versionHandler servers the current and latest version of the Rill CLI.
+// versionHandler servers the current and latest version of the Parrot CLI.
 func (s *Server) versionHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the latest version available
@@ -1021,7 +1021,7 @@ func (nameConflictRetryErrClassifier) Classify(err error) retrier.Action {
 	return retrier.Fail
 }
 
-// traceHandler returns trace information. Traces are stored in a file in `~/.rill/otel_traces.log` in JSON format when `--debug` flag is set.
+// traceHandler returns trace information. Traces are stored in a file in `~/.statsparrot/otel_traces.log` in JSON format when `--debug` flag is set.
 // It uses duckdb to search the JSON file for traces and returns the trace output as JSON.
 // The handler accepts two kind of query parameters:
 // - trace_id: search for traces for a given trace_id

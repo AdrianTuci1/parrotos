@@ -5,8 +5,8 @@ import (
 	"hash/crc32"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 )
 
 // wrapClickhouseComputedTimeDim wraps any select node in the AST having a computed time dimension in an outer select so that inner select has different alias than the time column name and outer select, selects this column using the original time alias.

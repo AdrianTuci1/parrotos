@@ -7,7 +7,7 @@
     "baseColor": "slate"
   },
   "aliases": {
-    "components": "@rilldata/web-common/components",
-    "utils": "@rilldata/web-common/lib"
+    "components": "@statsparrot/web-common/components",
+    "utils": "@statsparrot/web-common/lib"
   }
 }

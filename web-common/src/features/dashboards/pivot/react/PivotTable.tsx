@@ -16,38 +16,38 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
-import { FlatTable } from "@rilldata/web-common/features/dashboards/pivot/react/FlatTable";
-import { NestedTable } from "@rilldata/web-common/features/dashboards/pivot/react/NestedTable";
-import { VirtualTooltip } from "@rilldata/web-common/features/dashboards/pivot/react/VirtualTooltip";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
+import { FlatTable } from "@statsparrot/web-common/features/dashboards/pivot/react/FlatTable";
+import { NestedTable } from "@statsparrot/web-common/features/dashboards/pivot/react/NestedTable";
+import { VirtualTooltip } from "@statsparrot/web-common/features/dashboards/pivot/react/VirtualTooltip";
 import {
   getDimensionColumnProps,
   getMeasureColumnProps,
   getColumnDefForPivot,
-} from "@rilldata/web-common/features/dashboards/pivot/react/pivot-column-definition";
+} from "@statsparrot/web-common/features/dashboards/pivot/react/pivot-column-definition";
 import {
   getNextRowLimit,
   SHOW_MORE_BUTTON,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { NUM_ROWS_PER_PAGE } from "@rilldata/web-common/features/dashboards/pivot/pivot-infinite-scroll";
-import { isElement, isShowMoreRow, splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
-import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { NUM_ROWS_PER_PAGE } from "@statsparrot/web-common/features/dashboards/pivot/pivot-infinite-scroll";
+import { isElement, isShowMoreRow, splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
+import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
 import {
   computeMeasureDomains,
   makeCellFormatter,
   type CellFormatter,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-conditional-formatting";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-conditional-formatting";
 import type {
   PivotClickSelectionState,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-click-selection";
-import type { PivotRowSelectionState } from "@rilldata/web-common/features/dashboards/pivot/pivot-row-selection";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-click-selection";
+import type { PivotRowSelectionState } from "@statsparrot/web-common/features/dashboards/pivot/pivot-row-selection";
 import type {
   PivotDataRow,
   PivotDataStore,
   PivotDataStoreConfig,
   PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 
 // Distance threshold (in pixels) for triggering data fetch
 const ROW_THRESHOLD = 200;

@@ -6,34 +6,34 @@
     createAdminServiceRedeployProject,
     getAdminServiceGetProjectQueryKey,
     getAdminServiceListDeploymentsQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { isActiveDeployment } from "@rilldata/web-admin/features/branches/deployment-utils";
+  } from "@statsparrot/web-admin/client";
+  import { isActiveDeployment } from "@statsparrot/web-admin/features/branches/deployment-utils";
   import {
     getDeploymentGithubStatus,
     invalidateGitStatusQueries,
-  } from "@rilldata/web-admin/features/edit-session/selectors.ts";
-  import { useParserCommitSha } from "@rilldata/web-admin/features/projects/selectors";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { getGitUrlFromRemote } from "@rilldata/web-common/features/project/deploy/github-utils";
-  import MergeConflictResolutionDialog from "@rilldata/web-common/features/project/MergeConflictResolutionDialog.svelte";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-admin/features/edit-session/selectors.ts";
+  import { useParserCommitSha } from "@statsparrot/web-admin/features/projects/selectors";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { getGitUrlFromRemote } from "@statsparrot/web-common/features/project/deploy/github-utils";
+  import MergeConflictResolutionDialog from "@statsparrot/web-common/features/project/MergeConflictResolutionDialog.svelte";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import {
     createRuntimeServiceGitMergeToBranchMutation,
     createRuntimeServiceGitStatus,
     type V1GitMergeToBranchResponse,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { ConnectError } from "@connectrpc/connect";
   import { ExternalLink, GitPullRequest } from "lucide-svelte";
-  import ChangedFilesList from "@rilldata/web-common/features/project/changes/ChangedFilesList.svelte";
-  import ChangedFilesDialog from "@rilldata/web-common/features/project/changes/ChangedFilesDialog.svelte";
+  import ChangedFilesList from "@statsparrot/web-common/features/project/changes/ChangedFilesList.svelte";
+  import ChangedFilesDialog from "@statsparrot/web-common/features/project/changes/ChangedFilesDialog.svelte";
   import { buildPostMergeUrl } from "./post-merge-url";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;
@@ -67,7 +67,7 @@
   const currentBranchStatusQuery = createRuntimeServiceGitStatus(client, {});
   // Query GetProject without a branch param so `data.deployment` reflects
   // the project's primary (prod) deployment. Self-managed projects can lack
-  // a prod deployment when created via `rill project connect-github
+  // a prod deployment when created via `statsparrot project connect-github
   // --skip-deploy` (see `cli/cmd/project/connect_github.go`), and can also
   // sit dormant after hibernation; we mirror PublishPopover's three-state
   // logic and route accordingly.

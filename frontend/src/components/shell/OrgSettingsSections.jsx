@@ -13,11 +13,11 @@ import {
 import "@/styles/settings.css";
 
 /**
- * React ports of Rill's org settings sections (web-admin organizations/settings).
+ * React ports of Parrot's org settings sections (web-admin organizations/settings).
  *
  * Wired to the existing org settings surface (OrganizationSettingsView). These
  * re-use the product's mock/dev data path (useAppStore -> @/services/*) so they
- * render and mutate in demo mode, and mirror Rill's General (logo/favicon/domain
+ * render and mutate in demo mode, and mirror Parrot's General (logo/favicon/domain
  * allow-list), Billing, Usage and Users (groups/guests) sections.
  */
 

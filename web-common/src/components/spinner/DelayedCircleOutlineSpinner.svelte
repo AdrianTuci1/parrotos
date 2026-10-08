@@ -6,7 +6,7 @@
   Use the slot to show the action and pass in the `isLoading` to control loading state.
 -->
 <script lang="ts">
-  import LoadingCircleOutline from "@rilldata/web-common/components/icons/LoadingCircleOutline.svelte";
+  import LoadingCircleOutline from "@statsparrot/web-common/components/icons/LoadingCircleOutline.svelte";
   import { onDestroy } from "svelte";
   import { writable } from "svelte/store";
 

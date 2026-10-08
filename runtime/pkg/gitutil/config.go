@@ -43,7 +43,7 @@ func (g *Config) FullyQualifiedRemote() (string, error) {
 
 func (g *Config) RemoteName() string {
 	if g.ManagedRepo {
-		return "__rill_remote"
+		return "__statsparrot_remote"
 	}
 	return "origin"
 }

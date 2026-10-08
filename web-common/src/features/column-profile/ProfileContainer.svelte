@@ -1,11 +1,11 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import { FormattedDataType } from "@rilldata/web-common/components/data-types";
+  import { FormattedDataType } from "@statsparrot/web-common/components/data-types";
   import {
     COLUMN_PROFILE_CONFIG,
     LIST_SLIDE_DURATION,
-  } from "@rilldata/web-common/layout/config";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  } from "@statsparrot/web-common/layout/config";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
 
   export let columnName: string;
   export let active = false;

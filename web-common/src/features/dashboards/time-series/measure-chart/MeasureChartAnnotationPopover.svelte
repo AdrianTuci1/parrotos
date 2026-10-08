@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { AnnotationGroup } from "./annotation-utils";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   export let hoveredGroup: AnnotationGroup | null;
   export let onHover: (hovered: boolean) => void;
 

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import type { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-  import type { ComponentFilterProperties } from "@rilldata/web-common/features/canvas/components/types";
-  import LocalFiltersHeader from "@rilldata/web-common/features/canvas/LocalFiltersHeader.svelte";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import type { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+  import type { ComponentFilterProperties } from "@statsparrot/web-common/features/canvas/components/types";
+  import LocalFiltersHeader from "@statsparrot/web-common/features/canvas/LocalFiltersHeader.svelte";
   import { onDestroy, onMount } from "svelte";
 
   export let title: string | undefined = undefined;

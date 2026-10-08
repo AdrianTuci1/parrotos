@@ -1,28 +1,28 @@
 <script lang="ts">
   import { invalidate, onNavigate } from "$app/navigation";
   import { page } from "$app/stores";
-  import { errorStore } from "@rilldata/web-admin/components/errors/error-store";
-  import { getHomeBookmarkExploreState } from "@rilldata/web-admin/features/bookmarks/selectors";
-  import DashboardBuilding from "@rilldata/web-common/features/dashboards/DashboardBuilding.svelte";
-  import DashboardErrored from "@rilldata/web-admin/features/dashboards/DashboardErrored.svelte";
+  import { errorStore } from "@statsparrot/web-admin/components/errors/error-store";
+  import { getHomeBookmarkExploreState } from "@statsparrot/web-admin/features/bookmarks/selectors";
+  import DashboardBuilding from "@statsparrot/web-common/features/dashboards/DashboardBuilding.svelte";
+  import DashboardErrored from "@statsparrot/web-admin/features/dashboards/DashboardErrored.svelte";
   import {
     DashboardBannerID,
     DashboardBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
-  import { Dashboard } from "@rilldata/web-common/features/dashboards";
-  import StateManagersProvider from "@rilldata/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
-  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  } from "@statsparrot/web-common/components/banner/constants";
+  import { Dashboard } from "@statsparrot/web-common/features/dashboards";
+  import StateManagersProvider from "@statsparrot/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
+  import DashboardStateManager from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
   import {
     useExploreWithPolling,
     isExploreReconcilingForFirstTime,
     isExploreErrored,
-  } from "@rilldata/web-common/features/explores/selectors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { isNotFoundError } from "@rilldata/web-common/lib/errors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/explores/selectors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { isNotFoundError } from "@statsparrot/web-common/lib/errors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { PageData } from "./$types";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: PageData;
   $: ({ project } = data);
@@ -104,7 +104,7 @@
 </script>
 
 <svelte:head>
-  <title>{exploreTitle || `${exploreName} - Rill`}</title>
+  <title>{exploreTitle || `${exploreName} - Parrot`}</title>
 </svelte:head>
 
 {#if $explore.isSuccess}

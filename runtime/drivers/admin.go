@@ -26,8 +26,8 @@ type ReportDelivery struct {
 	ExportURL      string
 	EditURL        string
 	UnsubscribeURL string
-	UserID         string         // user ID of the intended recipient, will be empty for non-Rill users and users not having project access. In creator mode this will be the user ID of the creator.
-	UserAttrs      map[string]any // user attrs of the intended recipient, will be empty for non-Rill users and users not having project access. In creator mode this will be the user attrs of the creator.
+	UserID         string         // user ID of the intended recipient, will be empty for non-Parrot users and users not having project access. In creator mode this will be the user ID of the creator.
+	UserAttrs      map[string]any // user attrs of the intended recipient, will be empty for non-Parrot users and users not having project access. In creator mode this will be the user attrs of the creator.
 }
 
 type AlertURLs struct {

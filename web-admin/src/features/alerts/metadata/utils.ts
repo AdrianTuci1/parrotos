@@ -1,8 +1,8 @@
-import { getAlertIntervalOptions } from "@rilldata/web-common/features/alerts/delivery-tab/intervals";
-import { DEFAULT_TIME_RANGES } from "@rilldata/web-common/lib/time/config";
-import { humaniseISODuration } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
-import { getSnoozeOptions } from "@rilldata/web-common/features/alerts/delivery-tab/snooze";
-import type { V1AlertSpec } from "@rilldata/web-common/runtime-client";
+import { getAlertIntervalOptions } from "@statsparrot/web-common/features/alerts/delivery-tab/intervals";
+import { DEFAULT_TIME_RANGES } from "@statsparrot/web-common/lib/time/config";
+import { humaniseISODuration } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
+import { getSnoozeOptions } from "@statsparrot/web-common/features/alerts/delivery-tab/snooze";
+import type { V1AlertSpec } from "@statsparrot/web-common/runtime-client";
 import { Duration } from "luxon";
 
 export function humaniseAlertRunDuration(alert: V1AlertSpec | undefined) {

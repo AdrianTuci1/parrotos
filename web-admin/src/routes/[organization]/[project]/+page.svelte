@@ -1,21 +1,21 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import DashboardsTable from "@rilldata/web-admin/features/dashboards/listing/DashboardsTable.svelte";
-  import InlineChat from "@rilldata/web-common/features/chat/layouts/inline/InlineChat.svelte";
-  import DelayedContent from "@rilldata/web-common/features/entity-management/DelayedContent.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import PersonalCanvasesList from "@rilldata/web-admin/features/personal-files/canvas/PersonalCanvasesList.svelte";
-  import CreatePersonalCanvasDialog from "@rilldata/web-admin/features/personal-files/canvas/CreatePersonalCanvasDialog.svelte";
-  import { getPersonalFilteredResources } from "@rilldata/web-admin/features/personal-files/selectors.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import DashboardsTagFilter from "@rilldata/web-admin/features/dashboards/listing/DashboardsTagFilter.svelte";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import DashboardsTable from "@statsparrot/web-admin/features/dashboards/listing/DashboardsTable.svelte";
+  import InlineChat from "@statsparrot/web-common/features/chat/layouts/inline/InlineChat.svelte";
+  import DelayedContent from "@statsparrot/web-common/features/entity-management/DelayedContent.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import PersonalCanvasesList from "@statsparrot/web-admin/features/personal-files/canvas/PersonalCanvasesList.svelte";
+  import CreatePersonalCanvasDialog from "@statsparrot/web-admin/features/personal-files/canvas/CreatePersonalCanvasDialog.svelte";
+  import { getPersonalFilteredResources } from "@statsparrot/web-admin/features/personal-files/selectors.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import DashboardsTagFilter from "@statsparrot/web-admin/features/dashboards/listing/DashboardsTagFilter.svelte";
   import { UrlParamsState } from "web-common/src/lib/store-utils/url-params-state.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
-  import TableToolbarSort from "@rilldata/web-common/components/table-toolbar/TableToolbarSort.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
+  import TableToolbarSort from "@statsparrot/web-common/components/table-toolbar/TableToolbarSort.svelte";
   import { DashboardTableSortOptions } from "../../../features/dashboards/listing/dashboard-favourites.ts";
 
   const { chat, personalCanvases } = featureFlags;

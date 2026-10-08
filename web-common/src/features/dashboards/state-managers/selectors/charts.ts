@@ -1,13 +1,13 @@
-import { timeControlsState } from "@rilldata/web-common/features/dashboards/state-managers/selectors/time-range";
+import { timeControlsState } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/time-range";
 import {
   getDurationFromMS,
   getOffset,
   getTimeWidth,
-} from "@rilldata/web-common/lib/time/transforms";
+} from "@statsparrot/web-common/lib/time/transforms";
 import {
   TimeOffsetType,
   type DashboardTimeControls,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import type { DashboardDataSources } from "./types";
 
 export const chartSelectors = {

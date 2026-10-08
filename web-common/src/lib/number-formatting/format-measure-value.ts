@@ -2,8 +2,8 @@ import {
   getLocaleFromConfig,
   includesCurrencySymbol,
   isValidD3Locale,
-} from "@rilldata/web-common/lib/number-formatting/utils/d3-format-utils";
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/number-formatting/utils/d3-format-utils";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
 import {
   format as d3format,
   formatLocale as d3FormatLocale,
@@ -46,7 +46,7 @@ import {
 } from "./strategies/per-range-tooltip-options";
 
 // D3's SI prefix for 10^9 is "G" (giga), which is correct in scientific/engineering
-// contexts but confusing in BI. Business users expect "B" for billions. Rill's own
+// contexts but confusing in BI. Business users expect "B" for billions. Parrot's own
 // humanizer already uses "B" — this aligns the D3 path with that convention.
 const SI_PREFIX_REMAP: Record<string, string> = { G: "B" };
 const SI_PREFIX_RE = /([yzafpnµmkMGTPEZY])$/;

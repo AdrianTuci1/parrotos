@@ -1,20 +1,20 @@
 <script lang="ts">
-  import type { LeaderboardComponent } from "@rilldata/web-common/features/canvas/components/leaderboard";
-  import { validateLeaderboardSchema } from "@rilldata/web-common/features/canvas/components/leaderboard/selector";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
-  import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+  import type { LeaderboardComponent } from "@statsparrot/web-common/features/canvas/components/leaderboard";
+  import { validateLeaderboardSchema } from "@statsparrot/web-common/features/canvas/components/leaderboard/selector";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
+  import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
   import {
     COMPARISON_COLUMN_WIDTH,
     deltaColumn,
     valueColumn,
-  } from "@rilldata/web-common/features/dashboards/leaderboard/leaderboard-widths";
-  import Leaderboard from "@rilldata/web-common/features/dashboards/leaderboard/Leaderboard.svelte";
-  import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-  import { selectedDimensionValues } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-  import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/dashboards/leaderboard/leaderboard-widths";
+  import Leaderboard from "@statsparrot/web-common/features/dashboards/leaderboard/Leaderboard.svelte";
+  import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+  import { selectedDimensionValues } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+  import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import ComponentHeader from "../../ComponentHeader.svelte";
   import {
     getDimensionColumnWidth,

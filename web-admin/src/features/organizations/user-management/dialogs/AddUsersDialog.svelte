@@ -1,34 +1,34 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import { createAdminServiceAddOrganizationMemberUser } from "@rilldata/web-admin/client";
+  import { createAdminServiceAddOrganizationMemberUser } from "@statsparrot/web-admin/client";
   import {
     buildInviteAttributes,
     invalidateOrgInvites,
     invalidateOrgMemberUsers,
     type AttributeRow,
-  } from "@rilldata/web-admin/features/organizations/user-management/utils";
+  } from "@statsparrot/web-admin/features/organizations/user-management/utils";
   import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-  } from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@rilldata/web-common/components/dialog";
-  import KeyValueInput from "@rilldata/web-common/components/forms/KeyValueInput.svelte";
-  import MultiInput from "@rilldata/web-common/components/forms/MultiInput.svelte";
-  import { RFC5322EmailRegex } from "@rilldata/web-common/components/forms/validation.ts";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { isHTTPError } from "@rilldata/web-common/lib/errors.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-common/components/dialog";
+  import KeyValueInput from "@statsparrot/web-common/components/forms/KeyValueInput.svelte";
+  import MultiInput from "@statsparrot/web-common/components/forms/MultiInput.svelte";
+  import { RFC5322EmailRegex } from "@statsparrot/web-common/components/forms/validation.ts";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { isHTTPError } from "@statsparrot/web-common/lib/errors.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";

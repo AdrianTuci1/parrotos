@@ -3,12 +3,12 @@
  * this file should be deprecated in favor of the other time utils.
  *
  * */
-import type { TimeRange } from "@rilldata/web-common/lib/time/types";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import type { TimeRange } from "@statsparrot/web-common/lib/time/types";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { TimeRangeName_DEPRECATE } from "./time-control-types";
 
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-import { durationToMillis } from "@rilldata/web-common/lib/time/grains";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+import { durationToMillis } from "@statsparrot/web-common/lib/time/grains";
 
 // May not need this anymore as using TimeGrain objects
 export const supportedTimeGrainEnums = () => {

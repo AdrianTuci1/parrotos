@@ -195,7 +195,7 @@ export type JSONSchemaObject = {
   /**
    * Custom button labels per field value.
    * Maps field key -> value -> button labels.
-   * Example: { "connector_type": { "rill-managed": { idle: "Connect", loading: "Connecting..." } } }
+   * Example: { "connector_type": { "statsparrot-managed": { idle: "Connect", loading: "Connecting..." } } }
    */
   "x-button-labels"?: Record<string, Record<string, ButtonLabels>>;
 };

@@ -1,11 +1,11 @@
-import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
-import { ComparisonMarkOpacity } from "@rilldata/web-common/features/components/charts/comparison-builder";
+import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
+import { ComparisonMarkOpacity } from "@statsparrot/web-common/features/components/charts/comparison-builder";
 import {
   isAdaptiveChartType,
   TDDChart,
-} from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
+} from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
 import {
   MainAreaColorGradientDark,
   MainAreaColorGradientLight,

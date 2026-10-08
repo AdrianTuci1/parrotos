@@ -2,20 +2,20 @@ import {
   mapExprToMeasureFilter,
   mapMeasureFilterToExpr,
   type MeasureFilterEntry,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import {
   MeasureFilterOperation,
   MeasureFilterType,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
 import {
   createAndExpression,
   createBinaryExpression,
   createOrExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 
 const TestCases: [

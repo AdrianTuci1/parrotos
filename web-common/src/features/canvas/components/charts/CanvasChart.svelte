@@ -1,12 +1,12 @@
 <script lang="ts">
-  import ComponentHeader from "@rilldata/web-common/features/canvas/ComponentHeader.svelte";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import { Chart } from "@rilldata/web-common/features/components/charts";
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ComponentHeader from "@statsparrot/web-common/features/canvas/ComponentHeader.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import { Chart } from "@statsparrot/web-common/features/components/charts";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { View } from "svelte-vega";
   import { derived } from "svelte/store";
   import type { CanvasChartSpec } from ".";

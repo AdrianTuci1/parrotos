@@ -4,16 +4,16 @@
     getAdminServiceGetProjectQueryKey,
     V1DeploymentStatus,
     type V1GetProjectResponse,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import { invalidateDeployments } from "./deployment-utils";
-  import { Button } from "@rilldata/web-common/components/button";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

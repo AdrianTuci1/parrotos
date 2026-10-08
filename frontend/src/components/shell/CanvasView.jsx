@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { getRuntimeServiceListResourcesQueryOptions } from "@rilldata/web-common/runtime-client";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import { getRuntimeServiceListResourcesQueryOptions } from "@statsparrot/web-common/runtime-client";
 import { useQuery } from "@tanstack/react-query";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import { CanvasEditor } from "@/components/canvas/CanvasEditor";
@@ -9,7 +9,7 @@ import { DEFAULT_METRICS_VIEW, MOCK_METRICS_VIEWS } from "@/data/dataSource";
 import { useAppStore } from "@/stores/useAppStore";
 
 /**
- * Rill-style `/canvas` artifact view.
+ * Parrot-style `/canvas` artifact view.
  *
  * With a `:name` it renders the interactive canvas editor (select / edit / add /
  * remove / reorder / resize cards, persisted to localStorage in mock mode). Without

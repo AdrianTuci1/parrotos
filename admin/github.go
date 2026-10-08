@@ -15,9 +15,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/golang-lru/simplelru"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,6 +28,47 @@ var (
 	ErrGithubInstallationNotFound = fmt.Errorf("github installation not found")
 	ErrBranchNotFound             = fmt.Errorf("branch does not exist in the repository")
 )
+
+var ErrGithubNotConfigured = fmt.Errorf("the GitHub integration is not configured for this deployment")
+
+// unconfiguredGithub implements Github for deployments without a GitHub App.
+//
+// It returns a plain client from the client accessors rather than nil, because callers use the
+// result immediately (for example `AppClient().Apps.FindUserInstallation`). With a plain client
+// those calls fail with a GitHub error instead of panicking.
+type unconfiguredGithub struct{}
+
+var _ Github = (*unconfiguredGithub)(nil)
+
+func (g *unconfiguredGithub) AppClient() *github.Client { return github.NewClient(nil) }
+
+func (g *unconfiguredGithub) InstallationClient(installationID int64, repoID *int64) *github.Client {
+	return github.NewClient(nil)
+}
+
+func (g *unconfiguredGithub) InstallationToken(ctx context.Context, installationID, repoID int64) (string, time.Time, error) {
+	return "", time.Time{}, ErrGithubNotConfigured
+}
+
+func (g *unconfiguredGithub) InstallationTokenForOrg(ctx context.Context, org string) (string, time.Time, error) {
+	return "", time.Time{}, ErrGithubNotConfigured
+}
+
+func (g *unconfiguredGithub) DeleteBranch(ctx context.Context, installationID, repoID int64, remote, branch string) error {
+	return ErrGithubNotConfigured
+}
+
+func (g *unconfiguredGithub) CreateManagedRepo(ctx context.Context, repoPrefix string, autoInit bool) (*github.Repository, error) {
+	return nil, ErrGithubNotConfigured
+}
+
+func (g *unconfiguredGithub) DeleteManagedRepo(ctx context.Context, repo string) error {
+	return ErrGithubNotConfigured
+}
+
+func (g *unconfiguredGithub) ManagedOrgInstallationID() (int64, error) {
+	return 0, ErrGithubNotConfigured
+}
 
 type GithubToken struct {
 	AccessToken  string
@@ -72,7 +113,17 @@ type githubClient struct {
 }
 
 // NewGithub returns a new client for connecting to Github.
+//
+// The GitHub integration is optional: a deployment that publishes projects with
+// `statsparrot deploy --managed` does not configure a GitHub App, and must still start. When
+// no app is configured, the returned client reports the integration as unavailable instead of
+// failing to build a transport.
 func NewGithub(ctx context.Context, appID int64, appPrivateKey, githubManagedAcct string, logger *zap.Logger) (Github, error) {
+	if appID == 0 || strings.TrimSpace(appPrivateKey) == "" {
+		logger.Info("GitHub App is not configured; the Git repository integration is disabled")
+		return &unconfiguredGithub{}, nil
+	}
+
 	atr, err := ghinstallation.NewAppsTransport(retryableHTTPRoundTripper(), appID, []byte(appPrivateKey))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create github app transport: %w", err)
@@ -360,7 +411,7 @@ func (s *Service) ProcessGithubEvent(ctx context.Context, rawEvent any) error {
 }
 
 func (s *Service) processGithubPush(ctx context.Context, event *github.PushEvent) error {
-	// Find Rill project matching the repo that was pushed to
+	// Find Parrot project matching the repo that was pushed to
 	repo := event.GetRepo()
 	projects, err := s.DB.FindProjectsByGitRemote(ctx, *repo.CloneURL)
 	if err != nil {

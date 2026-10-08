@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import PercentageChange from "@rilldata/web-common/components/data-types/PercentageChange.svelte";
-  import Chart from "@rilldata/web-common/components/time-series-chart/Chart.svelte";
-  import type { ChartDataPoint } from "@rilldata/web-common/components/time-series-chart/types";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import BigNumberTooltipContent from "@rilldata/web-common/features/dashboards/big-number/BigNumberTooltipContent.svelte";
-  import { measureSupportsTotalsQuery } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-  import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
-  import RangeDisplay from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components/RangeDisplay.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
-  import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-  import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-  import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import PercentageChange from "@statsparrot/web-common/components/data-types/PercentageChange.svelte";
+  import Chart from "@statsparrot/web-common/components/time-series-chart/Chart.svelte";
+  import type { ChartDataPoint } from "@statsparrot/web-common/components/time-series-chart/types";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import BigNumberTooltipContent from "@statsparrot/web-common/features/dashboards/big-number/BigNumberTooltipContent.svelte";
+  import { measureSupportsTotalsQuery } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+  import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
+  import RangeDisplay from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components/RangeDisplay.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
+  import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+  import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+  import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
   import {
     V1TimeGrain,
     type MetricsViewSpecMeasure,
     type V1MetricsViewAggregationResponse,
     type V1MetricsViewTimeSeriesResponse,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import type { QueryObserverResult } from "@tanstack/svelte-query";
   import { AlertTriangleIcon } from "lucide-svelte";
   import { Interval } from "luxon";

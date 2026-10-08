@@ -1,29 +1,29 @@
-import { LeaderboardContextColumn } from "@rilldata/web-common/features/dashboards/leaderboard-context-column";
-import { getDashboardStateFromUrl } from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
-import { getWhereFilterExpressionIndex } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-import { correctExploreState } from "@rilldata/web-common/features/dashboards/stores/correct-explore-state.ts";
-import { type ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { LeaderboardContextColumn } from "@statsparrot/web-common/features/dashboards/leaderboard-context-column";
+import { getDashboardStateFromUrl } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
+import { getWhereFilterExpressionIndex } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+import { correctExploreState } from "@statsparrot/web-common/features/dashboards/stores/correct-explore-state.ts";
+import { type ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   createAndExpression,
   filterExpressions,
   forEachIdentifier,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { measureSelection } from "@rilldata/web-common/features/dashboards/time-series/measure-selection/measure-selection.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { measureSelection } from "@statsparrot/web-common/features/dashboards/time-series/measure-selection/measure-selection.ts";
 import {
   TimeRangePreset,
   type DashboardTimeControls,
   type ScrubRange,
   type TimeRange,
-} from "@rilldata/web-common/lib/time/types";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/lib/time/types";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   V1ExploreSpec,
   V1Expression,
   V1MetricsViewSpec,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 import { derived, writable, type Readable } from "svelte/store";
 import type { ExpandedState, SortingState } from "tanstack-table-8-svelte-5";
 import { SortType } from "web-common/src/features/dashboards/proto-state/derived-types";

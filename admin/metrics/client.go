@@ -110,7 +110,7 @@ func (c *Client) GetUsageMetrics(ctx context.Context, startTime, endTime, afterT
 
 	uri.Path = path.Join("/v1/instances", c.InstanceID, "/api/billing-usage")
 	// For the billing-usage API definition (the SQL, the event_name list, and the source-based billing filters), see the
-	// billing-usage API of the rill metrics project opened by the OpenMetricsProject method in admin/jobs/river/billing_reporter.go.
+	// billing-usage API of the statsparrot metrics project opened by the OpenMetricsProject method in admin/jobs/river/billing_reporter.go.
 
 	// Add URL query parameters
 	qry := uri.Query()

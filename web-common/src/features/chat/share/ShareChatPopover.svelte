@@ -1,16 +1,16 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover";
-  import { createRuntimeServiceShareConversationMutation } from "@rilldata/web-common/runtime-client";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/components/popover";
+  import { createRuntimeServiceShareConversationMutation } from "@statsparrot/web-common/runtime-client";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { Check, Link, Share } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let conversationId: string | undefined = undefined;
   export let organization: string | undefined = undefined;

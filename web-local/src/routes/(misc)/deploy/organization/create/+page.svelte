@@ -1,15 +1,15 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { Button } from "@rilldata/web-common/components/button";
-  import CreateNewOrgForm from "@rilldata/web-common/features/organization/CreateNewOrgForm.svelte";
-  import { CreateNewOrgFormId } from "@rilldata/web-common/features/organization/CreateNewOrgForm.svelte";
-  import { getDeployOrGithubRouteGetter } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import CreateNewOrgForm from "@statsparrot/web-common/features/organization/CreateNewOrgForm.svelte";
+  import { CreateNewOrgFormId } from "@statsparrot/web-common/features/organization/CreateNewOrgForm.svelte";
+  import { getDeployOrGithubRouteGetter } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
   import {
     createLocalServiceCreateOrganization,
     getLocalServiceGetCurrentUserQueryKey,
-  } from "@rilldata/web-common/runtime-client/local-service.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client/local-service.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
   const deployRouteGetter = getDeployOrGithubRouteGetter(runtimeClient);
@@ -35,7 +35,7 @@
 <div class="text-xl">Let’s create your first organization</div>
 <div class="text-base text-fg-secondary">
   Create an organization to deploy this project to. <a
-    href="https://docs.rilldata.com/reference/cli/org/create"
+    href="https://docs.statsparrot.com/reference/cli/org/create"
     target="_blank">See docs</a
   >
 </div>

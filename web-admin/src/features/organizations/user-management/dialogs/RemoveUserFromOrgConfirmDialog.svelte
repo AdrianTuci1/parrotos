@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     AlertDialog,
     AlertDialogContent,
@@ -8,7 +8,7 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog";
+  } from "@statsparrot/web-common/components/alert-dialog";
   import Button from "web-common/src/components/button/Button.svelte";
 
   export let open = false;

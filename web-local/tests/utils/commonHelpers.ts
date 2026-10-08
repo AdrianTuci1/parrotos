@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { asyncWaitUntil } from "@rilldata/web-common/lib/waitUtils";
+import { asyncWaitUntil } from "@statsparrot/web-common/lib/waitUtils";
 import type { Page } from "playwright";
 
 export async function openFileNavEntryContextMenu(
@@ -90,7 +90,7 @@ export async function renameFileUsingMenu(
   // type new fileName and submit
   await dialog.locator("input").fill(toFileName);
   await Promise.all([
-    page.waitForResponse("**/rill.runtime.v1.RuntimeService/RenameFile"),
+    page.waitForResponse("**/statsparrot.runtime.v1.RuntimeService/RenameFile"),
     clickModalButton(page, "Change Name"),
   ]);
 }
@@ -111,7 +111,7 @@ export async function deleteFile(page: Page, filePath: string) {
   // open context menu and click delete
   await openFileNavEntryContextMenu(page, filePath);
   await Promise.all([
-    page.waitForResponse("**/rill.runtime.v1.RuntimeService/DeleteFile"),
+    page.waitForResponse("**/statsparrot.runtime.v1.RuntimeService/DeleteFile"),
     clickMenuButton(page, "Delete"),
   ]);
 }

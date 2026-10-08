@@ -5,27 +5,27 @@ import (
 	"fmt"
 	"strings"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/parser"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/parser"
 	"google.golang.org/protobuf/proto"
 )
 
 // Built-in resource kinds
 const (
-	ResourceKindProjectParser  string = "rill.runtime.v1.ProjectParser"
-	ResourceKindSource         string = "rill.runtime.v1.Source"
-	ResourceKindModel          string = "rill.runtime.v1.Model"
-	ResourceKindMetricsView    string = "rill.runtime.v1.MetricsView"
-	ResourceKindExplore        string = "rill.runtime.v1.Explore"
-	ResourceKindMigration      string = "rill.runtime.v1.Migration"
-	ResourceKindReport         string = "rill.runtime.v1.Report"
-	ResourceKindAlert          string = "rill.runtime.v1.Alert"
-	ResourceKindRefreshTrigger string = "rill.runtime.v1.RefreshTrigger"
-	ResourceKindTheme          string = "rill.runtime.v1.Theme"
-	ResourceKindComponent      string = "rill.runtime.v1.Component"
-	ResourceKindCanvas         string = "rill.runtime.v1.Canvas"
-	ResourceKindAPI            string = "rill.runtime.v1.API"
-	ResourceKindConnector      string = "rill.runtime.v1.Connector"
+	ResourceKindProjectParser  string = "statsparrot.runtime.v1.ProjectParser"
+	ResourceKindSource         string = "statsparrot.runtime.v1.Source"
+	ResourceKindModel          string = "statsparrot.runtime.v1.Model"
+	ResourceKindMetricsView    string = "statsparrot.runtime.v1.MetricsView"
+	ResourceKindExplore        string = "statsparrot.runtime.v1.Explore"
+	ResourceKindMigration      string = "statsparrot.runtime.v1.Migration"
+	ResourceKindReport         string = "statsparrot.runtime.v1.Report"
+	ResourceKindAlert          string = "statsparrot.runtime.v1.Alert"
+	ResourceKindRefreshTrigger string = "statsparrot.runtime.v1.RefreshTrigger"
+	ResourceKindTheme          string = "statsparrot.runtime.v1.Theme"
+	ResourceKindComponent      string = "statsparrot.runtime.v1.Component"
+	ResourceKindCanvas         string = "statsparrot.runtime.v1.Canvas"
+	ResourceKindAPI            string = "statsparrot.runtime.v1.API"
+	ResourceKindConnector      string = "statsparrot.runtime.v1.Connector"
 )
 
 // ResourceKindFromPretty converts a user-friendly resource kind to a runtime resource kind.
@@ -165,7 +165,7 @@ func ResourceNameToParser(name *runtimev1.ResourceName) parser.ResourceName {
 
 // PrettifyResourceKind returns the resource kind in a user-friendly format suitable for printing.
 func PrettifyResourceKind(k string) string {
-	k = strings.TrimPrefix(k, "rill.runtime.v1.")
+	k = strings.TrimPrefix(k, "statsparrot.runtime.v1.")
 	k = strings.TrimSuffix(k, "V2")
 	return k
 }

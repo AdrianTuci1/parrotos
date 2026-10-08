@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
 
   export let className = "";
 </script>

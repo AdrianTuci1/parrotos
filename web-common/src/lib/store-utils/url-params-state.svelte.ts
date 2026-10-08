@@ -4,7 +4,7 @@ import { SvelteURL } from "svelte/reactivity";
 import {
   ArrayRuneStore,
   type RuneStore,
-} from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+} from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 import { tick } from "svelte";
 
 let newParams: [key: string, value: string | null][] = [];

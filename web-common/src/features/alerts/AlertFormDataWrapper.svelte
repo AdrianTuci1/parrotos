@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     getAlertDashboardName,
     unwrapQueryData,
     useAlertDashboardState,
-  } from "@rilldata/web-admin/features/alerts/selectors.ts";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
-  import { useExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores.ts";
-  import { getNewAlertInitialFormValues } from "@rilldata/web-common/features/alerts/create-alert-utils.ts";
-  import { getExistingAlertInitialFormValues } from "@rilldata/web-common/features/alerts/extract-alert-form-values.ts";
+  } from "@statsparrot/web-admin/features/alerts/selectors.ts";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
+  import { useExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores.ts";
+  import { getNewAlertInitialFormValues } from "@statsparrot/web-common/features/alerts/create-alert-utils.ts";
+  import { getExistingAlertInitialFormValues } from "@statsparrot/web-common/features/alerts/extract-alert-form-values.ts";
   import AlertForm, {
     type CreateAlertProps,
     type EditAlertProps,
-  } from "@rilldata/web-common/features/alerts/AlertForm.svelte";
+  } from "@statsparrot/web-common/features/alerts/AlertForm.svelte";
   import { derived } from "svelte/store";
 
   export let onClose: () => void;

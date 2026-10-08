@@ -2,14 +2,14 @@ import { useMemo, useEffect, Component } from "react";
 import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
 import embed from "vega-embed";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import ChartContainer from "@rilldata/web-common/features/components/charts/react/ChartContainer";
-import { mapResolverExpressionToV1Expression } from "@rilldata/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard";
-import type { ChartType } from "@rilldata/web-common/features/components/charts";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import type { V1Message, V1Tool } from "@rilldata/web-common/runtime-client";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import ChartContainer from "@statsparrot/web-common/features/components/charts/react/ChartContainer";
+import { mapResolverExpressionToV1Expression } from "@statsparrot/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard";
+import type { ChartType } from "@statsparrot/web-common/features/components/charts";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import type { V1Message, V1Tool } from "@statsparrot/web-common/runtime-client";
 import type { ChartBlock as ChartBlockModel } from "../chart-block";
-import ToolCall from "@rilldata/web-common/features/chat/core/messages/tools/react/ToolCall";
+import ToolCall from "@statsparrot/web-common/features/chat/core/messages/tools/react/ToolCall";
 
 /**
  * React translation of `ChatBlock.svelte` (Phase 4, "charts render in chat").

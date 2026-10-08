@@ -4,7 +4,7 @@
     adminServiceGetCurrentUser,
     adminServiceGetOrganizationNameForDomain,
     adminServiceListOrganizations,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import { onMount } from "svelte";
   import { getActiveOrgLocalStorageKey } from "./local-storage";
   import { ADMIN_URL, CANONICAL_ADMIN_URL } from "../../../client/http-client";

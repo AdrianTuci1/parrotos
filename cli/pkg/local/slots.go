@@ -1,6 +1,6 @@
 package local
 
-import "github.com/rilldata/rill/cli/pkg/cmdutil"
+import "github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 
 // DefaultProdSlots returns the prod slot count to request from the admin API.
 //

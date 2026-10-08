@@ -1,14 +1,14 @@
 import {
   selectedMockUserJWT,
   selectedMockUserStore,
-} from "@rilldata/web-common/features/dashboards/granular-access-policies/stores";
-import type { MockUser } from "@rilldata/web-common/features/dashboards/granular-access-policies/useMockUsers";
-import { runtimeServiceIssueDevJWT } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/granular-access-policies/stores";
+import type { MockUser } from "@statsparrot/web-common/features/dashboards/granular-access-policies/useMockUsers";
+import { runtimeServiceIssueDevJWT } from "@statsparrot/web-common/runtime-client";
 import {
   invalidateAllMetricsViews,
   invalidateCanvasQueries,
-} from "@rilldata/web-common/runtime-client/invalidation";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/invalidation";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 
 export async function updateDevJWT(

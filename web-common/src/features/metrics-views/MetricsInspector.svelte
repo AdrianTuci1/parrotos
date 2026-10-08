@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
   import SimpleMessage from "../../layout/inspector/SimpleMessage.svelte";
   import { createConnectorServiceOLAPGetTable } from "../../runtime-client";
   import TableInspector from "../connectors/olap/TableInspector.svelte";
   import ReconcilingSpinner from "../entity-management/ReconcilingSpinner.svelte";
   import { fileArtifacts } from "../entity-management/file-artifacts";
-  import Inspector from "@rilldata/web-common/layout/workspace/Inspector.svelte";
+  import Inspector from "@statsparrot/web-common/layout/workspace/Inspector.svelte";
 
   const runtimeClient = useRuntimeClient();
   const queryClient = useQueryClient();
@@ -50,9 +50,9 @@
   {#if !$remoteContent}
     <SimpleMessage
       message={`For help building dashboards, see:<br /><a
-        href="https://docs.rilldata.com/developers/build/dashboards"
+        href="https://docs.statsparrot.com/developers/build/dashboards"
         target="_blank"
-        rel="noopener noreferrer">https://docs.rilldata.com/developers/build/dashboards</a>`}
+        rel="noopener noreferrer">https://docs.statsparrot.com/developers/build/dashboards</a>`}
       includesHtml
     />
   {:else if $parseError}

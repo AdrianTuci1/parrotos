@@ -1,12 +1,12 @@
-import { isAdminServerQuery } from "@rilldata/web-admin/client/utils";
+import { isAdminServerQuery } from "@statsparrot/web-admin/client/utils";
 import {
   clearAdminNetworkErrorState,
   handleAdminServerNetworkError,
   handleAdminServerQuerySuccess,
   recoverFromAdminNetworkError,
-} from "@rilldata/web-admin/components/errors/admin-network-errors";
-import { errorStore } from "@rilldata/web-admin/components/errors/error-store";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+} from "@statsparrot/web-admin/components/errors/admin-network-errors";
+import { errorStore } from "@statsparrot/web-admin/components/errors/error-store";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 import type { Query, QueryClient } from "@tanstack/svelte-query";
 import { get } from "svelte/store";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

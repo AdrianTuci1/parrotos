@@ -1,13 +1,13 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { Button } from "@rilldata/web-common/components/button";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     getSelectOrganizationRoute,
     getUpdateProjectRoute,
-  } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import type { Project } from "@rilldata/web-common/proto/gen/rill/admin/v1/api_pb.ts";
-  import { createLocalServiceListMatchingProjectsRequest } from "@rilldata/web-common/runtime-client/local-service.ts";
-  import ProjectSelector from "@rilldata/web-common/features/project/deploy/ProjectSelector.svelte";
+  } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import type { Project } from "@statsparrot/web-common/proto/gen/statsparrot/admin/v1/api_pb.ts";
+  import { createLocalServiceListMatchingProjectsRequest } from "@statsparrot/web-common/runtime-client/local-service.ts";
+  import ProjectSelector from "@statsparrot/web-common/features/project/deploy/ProjectSelector.svelte";
 
   const matchingProjects = createLocalServiceListMatchingProjectsRequest();
 
@@ -24,7 +24,7 @@
 <div class="flex flex-col gap-y-2">
   <div class="text-xl">Which project would you like to update?</div>
   <div class="text-sm text-fg-secondary">
-    These all have matching project name with your Rill Developer project.
+    These all have matching project name with your Parrot Developer project.
   </div>
   <div class="w-[500px]">
     <ProjectSelector

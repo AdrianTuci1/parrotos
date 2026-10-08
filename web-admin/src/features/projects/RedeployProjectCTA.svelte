@@ -3,19 +3,19 @@
     createAdminServiceRedeployProject,
     getAdminServiceGetProjectQueryKey,
     type V1GetProjectResponse,
-  } from "@rilldata/web-admin/client";
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils";
-  import { Button } from "@rilldata/web-common/components/button";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import CtaNeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import LoadingCircleOutline from "@rilldata/web-common/components/icons/LoadingCircleOutline.svelte";
-  import MoonCircleOutline from "@rilldata/web-common/components/icons/MoonCircleOutline.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  import LoadingCircleOutline from "@statsparrot/web-common/components/icons/LoadingCircleOutline.svelte";
+  import MoonCircleOutline from "@statsparrot/web-common/components/icons/MoonCircleOutline.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import ProjectAccessControls from "./ProjectAccessControls.svelte";
 
   export let organization: string;

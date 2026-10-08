@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import RefreshIcon from "@rilldata/web-common/components/icons/RefreshIcon.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import RefreshIcon from "@statsparrot/web-common/components/icons/RefreshIcon.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     V1ReconcileStatus,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { createRuntimeServiceCreateTriggerMutation } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { createRuntimeServiceCreateTriggerMutation } from "@statsparrot/web-common/runtime-client";
 
   export let resource: V1Resource | undefined;
   export let hasUnsavedChanges = false;

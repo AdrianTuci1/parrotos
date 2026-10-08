@@ -3,8 +3,8 @@ package env
 import (
 	"path/filepath"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
 	"github.com/spf13/cobra"
 )
 

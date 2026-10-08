@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
   import {
     getAllowedTimeGrains,
     isGrainBigger,
-  } from "@rilldata/web-common/lib/time/grains";
-  import { translateGrainName } from "@rilldata/web-common/lib/time/new-grains";
-  import type { AvailableTimeGrain } from "@rilldata/web-common/lib/time/types";
+  } from "@statsparrot/web-common/lib/time/grains";
+  import { translateGrainName } from "@statsparrot/web-common/lib/time/new-grains";
+  import type { AvailableTimeGrain } from "@statsparrot/web-common/lib/time/types";
   import type { V1TimeGrain } from "../../../runtime-client";
 
   export let tdd = false;

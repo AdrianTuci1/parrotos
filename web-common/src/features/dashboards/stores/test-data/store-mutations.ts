@@ -1,38 +1,38 @@
 import {
   MeasureFilterOperation,
   MeasureFilterType,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types";
 import {
   applyDimensionContainsMode,
   applyDimensionInListMode,
   removeDimensionFilter,
   toggleDimensionValueSelection,
-} from "@rilldata/web-common/features/dashboards/state-managers/actions/dimension-filters";
-import { handleDimensionMeasureColumnHeaderClick } from "@rilldata/web-common/features/dashboards/state-managers/actions/dimension-table.ts";
+} from "@statsparrot/web-common/features/dashboards/state-managers/actions/dimension-filters";
+import { handleDimensionMeasureColumnHeaderClick } from "@statsparrot/web-common/features/dashboards/state-managers/actions/dimension-table.ts";
 import {
   setPrimaryDimension,
   toggleDimensionVisibility,
-} from "@rilldata/web-common/features/dashboards/state-managers/actions/dimensions";
-import { clearAllFilters } from "@rilldata/web-common/features/dashboards/state-managers/actions/filters";
+} from "@statsparrot/web-common/features/dashboards/state-managers/actions/dimensions";
+import { clearAllFilters } from "@statsparrot/web-common/features/dashboards/state-managers/actions/filters";
 import {
   removeMeasureFilter,
   setMeasureFilter,
-} from "@rilldata/web-common/features/dashboards/state-managers/actions/measure-filters";
-import { toggleMeasureVisibility } from "@rilldata/web-common/features/dashboards/state-managers/actions/measures";
+} from "@statsparrot/web-common/features/dashboards/state-managers/actions/measure-filters";
+import { toggleMeasureVisibility } from "@statsparrot/web-common/features/dashboards/state-managers/actions/measures";
 import {
   setSortDescending,
   toggleSort,
-} from "@rilldata/web-common/features/dashboards/state-managers/actions/sorting";
-import type { DashboardMutables } from "@rilldata/web-common/features/dashboards/state-managers/actions/types";
+} from "@statsparrot/web-common/features/dashboards/state-managers/actions/sorting";
+import type { DashboardMutables } from "@statsparrot/web-common/features/dashboards/state-managers/actions/types";
 import {
   metricsExplorerStore,
   updateMetricsExplorerByName,
-} from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
+} from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_COUNTRY_DIMENSION,
@@ -42,23 +42,23 @@ import {
   AD_BIDS_METRICS_INIT,
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_TIMESTAMP_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import {
   RandomDomains,
   RandomPublishers,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/random";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/random";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
 import {
   type DashboardTimeControls,
   type TimeRange,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
-import { asyncWait } from "@rilldata/web-common/lib/waitUtils.ts";
-import { DashboardState_LeaderboardSortType } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/lib/time/types";
+import { asyncWait } from "@statsparrot/web-common/lib/waitUtils.ts";
+import { DashboardState_LeaderboardSortType } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type V1ExploreSpec,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   setLeaderboardMeasureNames,
   setLeaderboardSortByMeasureName,
@@ -173,7 +173,7 @@ export const AD_BIDS_SET_PREVIOUS_PERIOD_COMPARE_TIME_RANGE_FILTER: TestDashboar
     metricsExplorerStore.displayTimeComparison(AD_BIDS_EXPLORE_NAME, true);
     metricsExplorerStore.setSelectedComparisonRange(
       AD_BIDS_EXPLORE_NAME,
-      { name: "rill-PP" } as DashboardTimeControls,
+      { name: "statsparrot-PP" } as DashboardTimeControls,
       AD_BIDS_METRICS_INIT,
     );
   };
@@ -182,11 +182,11 @@ export const AD_BIDS_SET_PREVIOUS_WEEK_COMPARE_TIME_RANGE_FILTER: TestDashboardM
     metricsExplorerStore.displayTimeComparison(AD_BIDS_EXPLORE_NAME, true);
     metricsExplorerStore.setSelectedComparisonRange(
       AD_BIDS_EXPLORE_NAME,
-      { name: "rill-PW" } as DashboardTimeControls,
+      { name: "statsparrot-PW" } as DashboardTimeControls,
       AD_BIDS_METRICS_INIT,
     );
   };
-export const AD_BIDS_SET_PREVIOUS_WEEK_RILL_TIME_COMPARE_TIME_RANGE_FILTER: TestDashboardMutation =
+export const AD_BIDS_SET_PREVIOUS_WEEK_STATSPARROT_TIME_COMPARE_TIME_RANGE_FILTER: TestDashboardMutation =
   () => {
     metricsExplorerStore.displayTimeComparison(AD_BIDS_EXPLORE_NAME, true);
     metricsExplorerStore.setSelectedComparisonRange(
@@ -401,7 +401,7 @@ export const AD_BIDS_SORT_PIVOT_BY_DOMAIN_DESC: TestDashboardMutation = () =>
 export const AD_BIDS_SORT_PIVOT_BY_TIME_DAY_ASC: TestDashboardMutation = () =>
   metricsExplorerStore.setPivotSort(AD_BIDS_EXPLORE_NAME, [
     {
-      id: `${AD_BIDS_TIMESTAMP_DIMENSION}_rill_${V1TimeGrain.TIME_GRAIN_DAY}`,
+      id: `${AD_BIDS_TIMESTAMP_DIMENSION}_statsparrot_${V1TimeGrain.TIME_GRAIN_DAY}`,
       desc: false,
     },
   ]);
@@ -410,12 +410,12 @@ export const AD_BIDS_SORT_PIVOT_BY_IMPRESSIONS_DESC: TestDashboardMutation =
     metricsExplorerStore.setPivotSort(AD_BIDS_EXPLORE_NAME, [
       { id: AD_BIDS_IMPRESSIONS_MEASURE, desc: true },
     ]);
-// Matches actual TanStack Table sort id format: {timeDimension}_rill_{grain}
-export const AD_BIDS_SORT_PIVOT_BY_RILL_TIME_DAY_DESC: TestDashboardMutation =
+// Matches actual TanStack Table sort id format: {timeDimension}_statsparrot_{grain}
+export const AD_BIDS_SORT_PIVOT_BY_STATSPARROT_TIME_DAY_DESC: TestDashboardMutation =
   () =>
     metricsExplorerStore.setPivotSort(AD_BIDS_EXPLORE_NAME, [
       {
-        id: `${AD_BIDS_TIMESTAMP_DIMENSION}_rill_${V1TimeGrain.TIME_GRAIN_DAY}`,
+        id: `${AD_BIDS_TIMESTAMP_DIMENSION}_statsparrot_${V1TimeGrain.TIME_GRAIN_DAY}`,
         desc: true,
       },
     ]);

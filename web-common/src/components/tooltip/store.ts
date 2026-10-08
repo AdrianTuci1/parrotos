@@ -8,4 +8,4 @@ import { writable } from "svelte/store";
 export const childRequestedTooltipSuppression = writable(false);
 
 export const CHILD_REQUESTED_TOOLTIP_SUPPRESSION_CONTEXT_KEY =
-  "rill:app:childRequestedTooltipSuppression";
+  "statsparrot:app:childRequestedTooltipSuppression";

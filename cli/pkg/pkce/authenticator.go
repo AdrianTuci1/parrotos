@@ -12,7 +12,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/rilldata/rill/admin/pkg/oauth"
+	"github.com/staticlabs/statsparrot/admin/pkg/oauth"
 )
 
 const (
@@ -116,7 +116,7 @@ func tokenRequest(baseAuthURL, code, clientID, redirectURI, codeVerifier string)
 		"client_id":              []string{clientID},
 		"redirect_uri":           []string{redirectURI},
 		"code_verifier":          []string{codeVerifier},
-		"token_response_version": []string{"standard"}, // For backward compatibility with older Rill CLI, see utils.go in oauth pkg
+		"token_response_version": []string{"standard"}, // For backward compatibility with older Parrot CLI, see utils.go in oauth pkg
 	}
 	req, err := http.NewRequest(
 		http.MethodPost,

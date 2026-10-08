@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ChangeBillingContactDialog from "@rilldata/web-admin/features/billing/contact/ChangeBillingContactDialog.svelte";
-  import { getOrganizationBillingContactUser } from "@rilldata/web-admin/features/billing/contact/selectors";
-  import AvatarListItem from "@rilldata/web-common/components/avatar/AvatarListItem.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ChangeBillingContactDialog from "@statsparrot/web-admin/features/billing/contact/ChangeBillingContactDialog.svelte";
+  import { getOrganizationBillingContactUser } from "@statsparrot/web-admin/features/billing/contact/selectors";
+  import AvatarListItem from "@statsparrot/web-common/components/avatar/AvatarListItem.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization }: { organization: string } = $props();
 

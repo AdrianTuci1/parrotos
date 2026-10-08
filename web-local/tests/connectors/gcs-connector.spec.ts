@@ -137,12 +137,12 @@ test.describe("GCS connector", () => {
   test("Save button hidden after advancing to model step", async ({ page }) => {
     // Skip test if environment variables are not set
     if (
-      !process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY ||
-      !process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY ||
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET
     ) {
       test.skip(
         true,
-        "RILL_RUNTIME_GCS_TEST_HMAC_KEY or RILL_RUNTIME_GCS_TEST_HMAC_SECRET environment variable is not set",
+        "STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY or STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET environment variable is not set",
       );
     }
 
@@ -155,10 +155,10 @@ test.describe("GCS connector", () => {
     await page.getByRole("radio", { name: "HMAC keys" }).click();
     await page
       .getByRole("textbox", { name: "Access Key ID" })
-      .fill(process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY!);
+      .fill(process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY!);
     await page
       .getByRole("textbox", { name: "Secret Access Key" })
-      .fill(process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET!);
+      .fill(process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET!);
 
     // Save button should be visible on the connector step.
     const saveButton = page
@@ -175,12 +175,12 @@ test.describe("GCS connector", () => {
   });
 
   test("Submission using HMAC auth method", async ({ page }) => {
-    const hmacKey = process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY;
-    const hmacSecret = process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET;
+    const hmacKey = process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY;
+    const hmacSecret = process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET;
     if (!hmacKey || !hmacSecret) {
       test.skip(
         true,
-        "RILL_RUNTIME_GCS_TEST_HMAC_KEY or RILL_RUNTIME_GCS_TEST_HMAC_SECRET is not set",
+        "STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY or STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET is not set",
       );
     }
     test.slow();
@@ -204,7 +204,7 @@ test.describe("GCS connector", () => {
     // First submission attempt
     await openGcsFlowWithHmac();
     const firstPath =
-      "gs://rilldata-public/github-analytics/Clickhouse/2025/06/commits_2025_06.parquet";
+      "gs://staticlabs-public/github-analytics/Clickhouse/2025/06/commits_2025_06.parquet";
     const firstModelName = "gcs_model_one";
     await page.getByRole("textbox", { name: "GCS URI" }).fill(firstPath);
     await page
@@ -237,7 +237,7 @@ test.describe("GCS connector", () => {
     await page
       .getByRole("textbox", { name: "GCS URI" })
       .fill(
-        "gs://rilldata-public/github-analytics/Clickhouse/2025/06/commits_2025_06.parquet",
+        "gs://staticlabs-public/github-analytics/Clickhouse/2025/06/commits_2025_06.parquet",
       );
     await page.getByRole("textbox", { name: "Model name" }).fill(modelName);
     await page.getByRole("button", { name: "Import Data" }).click();

@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/iancoleman/strcase"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
 	"golang.org/x/exp/maps"
 )
 
@@ -30,14 +30,14 @@ func (r *Runtime) FeatureFlags(ctx context.Context, instanceID string, claims *S
 var defaultFeatureFlags = map[string]string{
 	// Controls whether the export functionality is visible
 	"exports": "true",
-	// Controls visibility of the source data viewer table in Rill Cloud for metrics views
+	// Controls visibility of the source data viewer table in Parrot Cloud for metrics views
 	"cloud_data_viewer": "false",
 	// Controls visibility of the global dimension search feature
 	"dimension_search": "false",
 	// TODO: more info
 	"two_tiered_navigation": "false",
-	// Controls visibility of the RillTime syntax range picker
-	"rill_time": "true",
+	// Controls visibility of the ParrotTime syntax range picker
+	"statsparrot_time": "true",
 	// Controls visibility of the public URL sharing option in dashboards
 	"hide_public_url": "{{.user.embed}}",
 	// TODO: more info
@@ -50,7 +50,7 @@ var defaultFeatureFlags = map[string]string{
 	"chat": "true",
 	// Controls visibility of dashboard-level chat functionality
 	"dashboard_chat": "{{ not .user.embed }}",
-	// Controls visibility of local rill developer chat functionality
+	// Controls visibility of local statsparrot developer chat functionality
 	"developer_chat": "true",
 	// Controls whether charts are rendered in AI chats
 	"chat_charts": "true",

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
 
   export let disabled = false;
   export let selected = false;

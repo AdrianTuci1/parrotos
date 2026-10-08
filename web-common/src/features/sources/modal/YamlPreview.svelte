@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
   import { Copy } from "lucide-svelte";
 
   export let title: string;

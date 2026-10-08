@@ -1,12 +1,12 @@
 <script lang="ts">
-  import GithubRepoInline from "@rilldata/web-admin/features/projects/github/GithubRepoInline.svelte";
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import GithubRepoInline from "@statsparrot/web-admin/features/projects/github/GithubRepoInline.svelte";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const urlParams = new URLSearchParams(window.location.search);
   const redirectURL = urlParams.get("redirect");

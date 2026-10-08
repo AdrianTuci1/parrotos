@@ -59,7 +59,7 @@ function generateCSSBlock(): string {
     const predefinedVars = predefinedDarkVariants
       ?.map(
         (color, i) =>
-          `  --color-${overwrite ? colorName : `rill-${colorName}`}-dark-${TailwindColorSpacing[i]}: ${getCssString(color)};`,
+          `  --color-${overwrite ? colorName : `statsparrot-${colorName}`}-dark-${TailwindColorSpacing[i]}: ${getCssString(color)};`,
       )
       .join("\n");
 

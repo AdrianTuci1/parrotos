@@ -3,11 +3,11 @@ import {
   type V1ListResourcesResponse,
   type V1OlapTableInfo,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import { connectorServiceOLAPListTables } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { connectorServiceOLAPListTables } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createInfiniteQuery } from "@tanstack/svelte-query";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import { derived, type Readable } from "svelte/store";
 
 /**

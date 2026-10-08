@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { IconButton } from "@rilldata/web-common/components/button";
+  import { IconButton } from "@statsparrot/web-common/components/button";
   import { EyeIcon, EyeOffIcon } from "lucide-svelte";
   import { onMount, type ComponentType, type SvelteComponent } from "svelte";
   import { slide } from "svelte/transition";

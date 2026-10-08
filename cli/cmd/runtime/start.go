@@ -11,17 +11,17 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/debugserver"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/debugserver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -29,42 +29,42 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	// Load connectors and reconcilers for runtime
-	_ "github.com/rilldata/rill/runtime/drivers/admin"
-	_ "github.com/rilldata/rill/runtime/drivers/athena"
-	_ "github.com/rilldata/rill/runtime/drivers/azure"
-	_ "github.com/rilldata/rill/runtime/drivers/bigquery"
-	_ "github.com/rilldata/rill/runtime/drivers/claude"
-	_ "github.com/rilldata/rill/runtime/drivers/clickhouse"
-	_ "github.com/rilldata/rill/runtime/drivers/databricks"
-	_ "github.com/rilldata/rill/runtime/drivers/druid"
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
-	_ "github.com/rilldata/rill/runtime/drivers/file"
-	_ "github.com/rilldata/rill/runtime/drivers/gcs"
-	_ "github.com/rilldata/rill/runtime/drivers/gemini"
-	_ "github.com/rilldata/rill/runtime/drivers/https"
-	_ "github.com/rilldata/rill/runtime/drivers/mock/ai"
-	_ "github.com/rilldata/rill/runtime/drivers/mysql"
-	_ "github.com/rilldata/rill/runtime/drivers/openai"
-	_ "github.com/rilldata/rill/runtime/drivers/pinot"
-	_ "github.com/rilldata/rill/runtime/drivers/postgres"
-	_ "github.com/rilldata/rill/runtime/drivers/redshift"
-	_ "github.com/rilldata/rill/runtime/drivers/s3"
-	_ "github.com/rilldata/rill/runtime/drivers/salesforce"
-	_ "github.com/rilldata/rill/runtime/drivers/slack"
-	_ "github.com/rilldata/rill/runtime/drivers/snowflake"
-	_ "github.com/rilldata/rill/runtime/drivers/sqlite"
-	_ "github.com/rilldata/rill/runtime/drivers/starrocks"
-	_ "github.com/rilldata/rill/runtime/drivers/statsparrot"
-	_ "github.com/rilldata/rill/runtime/reconcilers"
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/admin"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/athena"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/azure"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/bigquery"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/claude"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/clickhouse"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/databricks"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/druid"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/file"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gcs"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gemini"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/https"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock/ai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mysql"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/openai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/pinot"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/postgres"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/redshift"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/s3"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/salesforce"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/slack"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/snowflake"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/sqlite"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/starrocks"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/statsparrot"
+	_ "github.com/staticlabs/statsparrot/runtime/reconcilers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 // Config describes runtime server config derived from environment variables.
-// Env var keys must be prefixed with RILL_RUNTIME_ and are converted from snake_case to CamelCase.
-// For example RILL_RUNTIME_HTTP_PORT is mapped to Config.HTTPPort.
+// Env var keys must be prefixed with STATSPARROT_RUNTIME_ and are converted from snake_case to CamelCase.
+// For example STATSPARROT_RUNTIME_HTTP_PORT is mapped to Config.HTTPPort.
 type Config struct {
 	MetastoreDriver         string                 `default:"sqlite" split_words:"true"`
-	MetastoreURL            string                 `default:"file:rill?mode=memory&cache=shared" split_words:"true"`
+	MetastoreURL            string                 `default:"file:statsparrot?mode=memory&cache=shared" split_words:"true"`
 	MetastoreID             string                 `split_words:"true"`
 	RedisURL                string                 `default:"" split_words:"true"`
 	MetricsExporter         observability.Exporter `default:"prometheus" split_words:"true"`
@@ -118,7 +118,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			// Init config
 			var conf Config
-			err := envconfig.Process("rill_runtime", &conf)
+			err := envconfig.Process("statsparrot_runtime", &conf)
 			if err != nil {
 				fmt.Printf("failed to load config: %s\n", err.Error())
 				os.Exit(1)

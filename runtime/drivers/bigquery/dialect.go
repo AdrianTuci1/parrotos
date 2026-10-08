@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 )
 
 // restrictedAliasCharactersRegex matches characters that are NOT supported in
@@ -72,7 +72,7 @@ func (d *dialect) OrderByAliasExpression(name string, desc bool) string {
 
 func (d *dialect) JoinOnExpression(lhs, rhs string) string {
 	// BigQuery requires plain equality for FULL joins
-	return fmt.Sprintf("coalesce(CAST(%s AS STRING), '__rill_sentinel__') = coalesce(CAST(%s AS STRING), '__rill_sentinel__')", lhs, rhs)
+	return fmt.Sprintf("coalesce(CAST(%s AS STRING), '__statsparrot_sentinel__') = coalesce(CAST(%s AS STRING), '__statsparrot_sentinel__')", lhs, rhs)
 }
 
 func (d *dialect) DateTruncExpr(dim *runtimev1.MetricsViewSpec_Dimension, grain runtimev1.TimeGrain, tz string, firstDayOfWeek, firstMonthOfYear int) (string, error) {
@@ -87,7 +87,7 @@ func (d *dialect) DateTruncExpr(dim *runtimev1.MetricsViewSpec_Dimension, grain 
 	}
 
 	specifier := d.ConvertToDateTruncSpecifier(grain)
-	// BigQuery's bare WEEK specifier truncates to Sunday-start weeks. Rill's firstDayOfWeek follows ISO 8601
+	// BigQuery's bare WEEK specifier truncates to Sunday-start weeks. Parrot's firstDayOfWeek follows ISO 8601
 	// (1=Monday, 7=Sunday, default 1), so map it to BigQuery's WEEK(<WEEKDAY>) form to keep them aligned.
 	if grain == runtimev1.TimeGrain_TIME_GRAIN_WEEK {
 		specifier = weekSpecifier(firstDayOfWeek)

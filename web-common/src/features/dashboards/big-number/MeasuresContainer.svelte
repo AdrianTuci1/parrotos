@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
   import MeasureBigNumber from "./MeasureBigNumber.svelte";
-  import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-  import DashboardMetricsDraggableList from "@rilldata/web-common/components/menu/DashboardMetricsDraggableList.svelte";
+  import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+  import DashboardMetricsDraggableList from "@statsparrot/web-common/components/menu/DashboardMetricsDraggableList.svelte";
 
   export let metricsViewName: string;
 

@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 import chroma from "chroma-js";
-import { resolveCSSVariable } from "@rilldata/web-common/features/components/charts/util";
+import { resolveCSSVariable } from "@statsparrot/web-common/features/components/charts/util";
 import type { PaginationResult, Placement } from "./layout";
 
 export interface AssembleMeta {
@@ -123,7 +123,7 @@ function drawFooter(
   const yPt = result.pageHeightPt - 10;
   const generatedText = `Generated ${meta.generatedAt}`;
   const linkPrefix = "Open the live dashboard: ";
-  const linkText = "View in Rill";
+  const linkText = "View in Parrot";
 
   doc.setFontSize(8);
   setTextColor(doc, FOOTER_TEXT_COLOR);

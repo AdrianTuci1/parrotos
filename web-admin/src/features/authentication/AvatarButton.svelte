@@ -15,20 +15,20 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/stores";
-  import { redirectToLogout } from "@rilldata/web-admin/client/redirect-utils";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import { redirectToLogout } from "@statsparrot/web-admin/client/redirect-utils";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
   import {
     initPylonChat,
     type UserLike,
-  } from "@rilldata/web-common/features/help/initPylonChat";
+  } from "@statsparrot/web-common/features/help/initPylonChat";
   import {
     createAdminServiceGetCurrentUser,
     type V1ProjectPermissions,
   } from "../../client";
-  import LanguageSwitcher from "@rilldata/web-common/components/i18n/LanguageSwitcher.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import LanguageSwitcher from "@statsparrot/web-common/components/i18n/LanguageSwitcher.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import ViewAsUserPopover from "../view-as-user/ViewAsUserPopover.svelte";
-  import ThemeToggle from "@rilldata/web-common/features/themes/ThemeToggle.svelte";
+  import ThemeToggle from "@statsparrot/web-common/features/themes/ThemeToggle.svelte";
 
   export let projectPermissions: V1ProjectPermissions | undefined = undefined;
 
@@ -130,7 +130,7 @@
     <DropdownMenu.Separator />
 
     <DropdownMenu.Item
-      href="https://docs.rilldata.com"
+      href="https://docs.statsparrot.com"
       target="_blank"
       rel="noreferrer noopener"
     >

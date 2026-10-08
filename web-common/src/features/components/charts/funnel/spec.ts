@@ -1,4 +1,4 @@
-import { sanitizeValueForVega } from "@rilldata/web-common/components/vega/util";
+import { sanitizeValueForVega } from "@statsparrot/web-common/components/vega/util";
 import type { VisualizationSpec } from "svelte-vega";
 import type { Field } from "vega-lite/types_unstable/channeldef.js";
 import type { UnitSpec } from "vega-lite/types_unstable/spec/unit.js";

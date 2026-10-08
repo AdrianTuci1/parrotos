@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import { EnvironmentType } from "./types";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let environment: string;
   export let name: string;

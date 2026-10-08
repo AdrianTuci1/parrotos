@@ -5,7 +5,7 @@ project_files:
   all_datatypes_duckdb.yaml:
     type: model
     connector: athena
-    output_location: "s3://integration-test.rilldata.com/athena/"
+    output_location: "s3://integration-test.statsparrot.com/athena/"
     sql: "select * from integration_test.all_datatypes"
     output:
       connector: duckdb

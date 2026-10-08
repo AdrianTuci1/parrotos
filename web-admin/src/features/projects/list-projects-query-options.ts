@@ -1,4 +1,4 @@
-import { getAdminServiceListProjectsForOrganizationQueryOptions } from "@rilldata/web-admin/client";
+import { getAdminServiceListProjectsForOrganizationQueryOptions } from "@statsparrot/web-admin/client";
 
 const PAGE_SIZE = 1000;
 

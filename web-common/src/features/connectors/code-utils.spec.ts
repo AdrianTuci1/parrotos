@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
+import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
 import {
   replaceAiConnectorInYAML,
   replaceOlapConnectorInYAML,
@@ -10,9 +10,9 @@ import {
 import {
   envMappedVarsAndValuesToObject,
   makeTestEnvEditSession,
-} from "@rilldata/web-common/features/env-management/test/test-env-store.ts";
-import { getGenericEnvVarName } from "@rilldata/web-common/features/connectors/env-utils.ts";
-import type { JSONSchemaObject } from "@rilldata/web-common/features/templates/schemas/types.ts";
+} from "@statsparrot/web-common/features/env-management/test/test-env-store.ts";
+import { getGenericEnvVarName } from "@statsparrot/web-common/features/connectors/env-utils.ts";
+import type { JSONSchemaObject } from "@statsparrot/web-common/features/templates/schemas/types.ts";
 
 // Import the template for testing
 const YAML_MODEL_TEMPLATE = `type: model
@@ -421,7 +421,7 @@ describe("generateYAML", () => {
     const connector: V1ConnectorDriver = {
       name: "clickhouse",
       docsUrl:
-        "https://docs.rilldata.com/developers/build/connectors/data-source/clickhouse",
+        "https://docs.statsparrot.com/developers/build/connectors/data-source/clickhouse",
     };
     const { envEditSession } = await makeTestEnvEditSession(
       connector.name,

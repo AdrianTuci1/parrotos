@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +21,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "Azure Blob Storage",
 	Description: "Connect to Azure Blob Storage.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/azure",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/azure",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:    "azure_storage_account",

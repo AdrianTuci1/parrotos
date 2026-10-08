@@ -12,10 +12,10 @@ import (
 	"github.com/openai/openai-go/v3/azure"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/shared"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -30,7 +30,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "OpenAI",
 	Description: "Connect to OpenAI's API for language models.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/services/openai",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/services/openai",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "api_key",
@@ -293,7 +293,7 @@ func (o *openaiHandle) Ping(ctx context.Context) error {
 
 // Complete implements drivers.AIService.
 func (o *openaiHandle) Complete(ctx context.Context, opts *drivers.CompleteOptions) (*drivers.CompleteResult, error) {
-	// Convert Rill messages to OpenAI's message format
+	// Convert Parrot messages to OpenAI's message format
 	var reqMsgs []openai.ChatCompletionMessageParamUnion
 	for _, msg := range opts.Messages {
 		openaiMsgs, err := messageToOpenAI(msg)
@@ -303,7 +303,7 @@ func (o *openaiHandle) Complete(ctx context.Context, opts *drivers.CompleteOptio
 		reqMsgs = append(reqMsgs, openaiMsgs...)
 	}
 
-	// Convert Rill tools to OpenAI's tool format
+	// Convert Parrot tools to OpenAI's tool format
 	var openaiTools []openai.ChatCompletionToolUnionParam
 	for _, tool := range opts.Tools {
 		openaiTool, err := toolToOpenAI(tool)
@@ -350,7 +350,7 @@ func (o *openaiHandle) Complete(ctx context.Context, opts *drivers.CompleteOptio
 		return nil, errors.New("no choices returned")
 	}
 
-	// Convert OpenAI's response to Rill's message format
+	// Convert OpenAI's response to Parrot's message format
 	resMsgs, err := messageFromOpenAI(res.Choices[0].Message)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert response message: %w", err)
@@ -366,13 +366,13 @@ func (o *openaiHandle) Complete(ctx context.Context, opts *drivers.CompleteOptio
 	return result, nil
 }
 
-// messageToOpenAI converts a single Rill CompletionMessage to one or more OpenAI ChatCompletionMessages.
+// messageToOpenAI converts a single Parrot CompletionMessage to one or more OpenAI ChatCompletionMessages.
 //
 // This handles the asymmetric nature of OpenAI's tool calling pattern:
 // - Tool calls: Multiple calls are grouped in ONE assistant message (how OpenAI sends them)
 // - Tool results: Each result becomes a SEPARATE message with role="tool" (how OpenAI expects responses)
 //
-// Note: In practice, Rill messages have at most 1 text block (from OpenAI's single Content field),
+// Note: In practice, Parrot messages have at most 1 text block (from OpenAI's single Content field),
 // so we don't need to worry about concatenating multiple text blocks.
 func messageToOpenAI(msg *aiv1.CompletionMessage) ([]openai.ChatCompletionMessageParamUnion, error) {
 	var result []openai.ChatCompletionMessageParamUnion

@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -100,7 +100,7 @@ func TestOLAP(t *testing.T) {
 			map[string]any{"t": time.Date(2025, 1, 1, 23, 59, 59, 999999000, time.UTC)},
 		},
 		{
-			"SELECT float_col FROM `rilldata.integration_test.all_datatypes` where int_col = ?",
+			"SELECT float_col FROM `staticlabs.integration_test.all_datatypes` where int_col = ?",
 			[]any{1},
 			map[string]any{"float_col": 1.1},
 		},
@@ -124,7 +124,7 @@ func TestOLAP(t *testing.T) {
 func TestEmptyRows(t *testing.T) {
 	testmode.Expensive(t)
 	_, olap := acquireTestBigQuery(t)
-	rows, err := olap.Query(t.Context(), &drivers.Statement{Query: "SELECT int_col, float_col FROM `rilldata.integration_test.all_datatypes` LIMIT 0"})
+	rows, err := olap.Query(t.Context(), &drivers.Statement{Query: "SELECT int_col, float_col FROM `staticlabs.integration_test.all_datatypes` LIMIT 0"})
 	require.NoError(t, err)
 	defer rows.Close()
 
@@ -144,16 +144,16 @@ func TestExec(t *testing.T) {
 	name := "test_exec" + uuid.New().String()[:8]
 	t.Cleanup(func() {
 		// drop table
-		err := olap.Exec(context.Background(), &drivers.Statement{Query: "DROP TABLE IF EXISTS `rilldata.integration_test." + name + "`"})
+		err := olap.Exec(context.Background(), &drivers.Statement{Query: "DROP TABLE IF EXISTS `staticlabs.integration_test." + name + "`"})
 		require.NoError(t, err)
 	})
 
 	// create table with dry run
-	err := olap.Exec(t.Context(), &drivers.Statement{Query: "CREATE TABLE `rilldata.integration_test." + name + "` (id INT64, name STRING)", DryRun: true})
+	err := olap.Exec(t.Context(), &drivers.Statement{Query: "CREATE TABLE `staticlabs.integration_test." + name + "` (id INT64, name STRING)", DryRun: true})
 	require.NoError(t, err)
 
 	// create table actually
-	err = olap.Exec(t.Context(), &drivers.Statement{Query: "CREATE OR REPLACE TABLE `rilldata.integration_test." + name + "` (id INT64, name STRING)"})
+	err = olap.Exec(t.Context(), &drivers.Statement{Query: "CREATE OR REPLACE TABLE `staticlabs.integration_test." + name + "` (id INT64, name STRING)"})
 	require.NoError(t, err)
 
 }
@@ -162,7 +162,7 @@ func TestLoadDDL(t *testing.T) {
 	testmode.Expensive(t)
 	_, olap := acquireTestBigQuery(t)
 
-	table, err := olap.InformationSchema().Lookup(t.Context(), "rilldata", "integration_test", "all_datatypes")
+	table, err := olap.InformationSchema().Lookup(t.Context(), "staticlabs", "integration_test", "all_datatypes")
 	require.NoError(t, err)
 	err = olap.InformationSchema().LoadDDL(t.Context(), table)
 	require.NoError(t, err)
@@ -312,7 +312,7 @@ func TestQuerySchema(t *testing.T) {
 	testmode.Expensive(t)
 	_, olap := acquireTestBigQuery(t)
 
-	schema, err := olap.QuerySchema(t.Context(), "SELECT * FROM `rilldata.integration_test.all_datatypes`", nil)
+	schema, err := olap.QuerySchema(t.Context(), "SELECT * FROM `staticlabs.integration_test.all_datatypes`", nil)
 	require.NoError(t, err)
 	require.NotNil(t, schema)
 	require.Len(t, schema.Fields, 34)
@@ -379,7 +379,7 @@ func TestAllDatatypesRowCount(t *testing.T) {
 		{2, 2},  // LIMIT less than total rows
 	}
 	for _, tc := range tests {
-		rows, err := olap.Head(t.Context(), "rilldata", "integration_test", "all_datatypes", int64(tc.limit))
+		rows, err := olap.Head(t.Context(), "staticlabs", "integration_test", "all_datatypes", int64(tc.limit))
 		require.NoError(t, err)
 		count := 0
 		for rows.Next() {

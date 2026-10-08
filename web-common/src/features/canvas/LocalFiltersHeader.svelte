@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Filter from "@rilldata/web-common/components/icons/Filter.svelte";
-  import type { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-  import FilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/FilterChipsReadOnly.svelte";
+  import Filter from "@statsparrot/web-common/components/icons/Filter.svelte";
+  import type { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+  import FilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/FilterChipsReadOnly.svelte";
   import type {
     MetricsViewSpecDimension,
     MetricsViewSpecMeasure,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { readable, type Readable } from "svelte/store";
 
   export let component: BaseCanvasComponent;

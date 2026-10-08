@@ -128,8 +128,8 @@ test.describe("ClickHouse connector", () => {
         [`CLICKHOUSE_DSN_1`],
       );
 
-      // Go to the `rill.yaml` and verify the OLAP connector is set
-      await page.getByRole("link", { name: "rill.yaml" }).click();
+      // Go to the `statsparrot.yaml` and verify the OLAP connector is set
+      await page.getByRole("link", { name: "statsparrot.yaml" }).click();
       await validateYamlContents(page, [`olap_connector: clickhouse`]);
 
       // Assert that the connector explorer now has a ClickHouse connector
@@ -175,8 +175,8 @@ test.describe("ClickHouse connector", () => {
 
       await selectAdBidsAndSubmit(page, true);
 
-      // Go to the `rill.yaml` and verify the OLAP connector is set
-      await page.getByRole("link", { name: "rill.yaml" }).click();
+      // Go to the `statsparrot.yaml` and verify the OLAP connector is set
+      await page.getByRole("link", { name: "statsparrot.yaml" }).click();
       await validateYamlContents(page, [`olap_connector: clickhouse`]);
 
       // Assert that the connector explorer now has a ClickHouse connector
@@ -400,8 +400,8 @@ test.describe("ClickHouse connector", () => {
       await page.getByRole("link", { name: ".env" }).click();
       await validateYamlContents(page, [], [`CLICKHOUSE_PASSWORD`]);
 
-      // Go to the `rill.yaml` and verify the OLAP connector is unset
-      await page.getByRole("link", { name: "rill.yaml" }).click();
+      // Go to the `statsparrot.yaml` and verify the OLAP connector is unset
+      await page.getByRole("link", { name: "statsparrot.yaml" }).click();
       await validateYamlContents(page, [], [`olap_connector: clickhouse`]);
     });
   });

@@ -1,8 +1,8 @@
-import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils.ts";
+import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils.ts";
 import {
   type MetricsViewSpecMeasure,
   MetricsViewSpecMeasureType,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { visibleMeasures } from "./measures";
 import type { DashboardDataSources } from "./types";
 

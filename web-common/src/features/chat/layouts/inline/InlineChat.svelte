@@ -1,12 +1,12 @@
 <script lang="ts">
   import { beforeNavigate } from "$app/navigation";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     cleanupConversationManager,
     getConversationManager,
   } from "../../core/conversation-manager";
   import ChatInput from "../../core/input/ChatInput.svelte";
-  import { projectChat } from "@rilldata/web-common/features/project/chat-context.ts";
+  import { projectChat } from "@statsparrot/web-common/features/project/chat-context.ts";
 
   export let noMargin = false;
   export let height: string | undefined = undefined;

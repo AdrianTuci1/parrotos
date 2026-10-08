@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import ExplainAndFixErrorButton from "@statsparrot/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import DashboardBuilding from "../dashboards/DashboardBuilding.svelte";
   import DelayedSpinner from "../entity-management/DelayedSpinner.svelte";
 

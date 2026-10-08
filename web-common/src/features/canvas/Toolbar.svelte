@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
   import { Copy, Columns } from "lucide-svelte";
   import type { BaseCanvasComponent } from "./components/BaseCanvasComponent";
   import type { ComponentWithMetricsView } from "./components/types";

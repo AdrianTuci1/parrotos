@@ -2,7 +2,7 @@ import type {
   V1GetDeploymentCredentialsResponse,
   V1GetProjectResponse,
   V1ProjectPermissions,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import { describe, expect, it } from "vitest";
 import { resolveRuntimeConnection } from "./project-runtime";
 

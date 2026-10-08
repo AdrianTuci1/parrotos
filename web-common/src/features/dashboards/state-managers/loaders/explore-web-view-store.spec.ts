@@ -1,10 +1,10 @@
-import { DashboardFetchMocks } from "@rilldata/web-common/features/dashboards/dashboard-fetch-mocks";
-import DashboardStateManagerTest from "@rilldata/web-common/features/dashboards/state-managers/loaders/test/DashboardStateManagerTest.svelte";
+import { DashboardFetchMocks } from "@statsparrot/web-common/features/dashboards/dashboard-fetch-mocks";
+import DashboardStateManagerTest from "@statsparrot/web-common/features/dashboards/state-managers/loaders/test/DashboardStateManagerTest.svelte";
 import {
   type HoistedPageForExploreTests,
   PageMockForExploreTests,
-} from "@rilldata/web-common/features/dashboards/state-managers/loaders/test/PageMockForExploreTests";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
+} from "@statsparrot/web-common/features/dashboards/state-managers/loaders/test/PageMockForExploreTests";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
 import {
   AD_BIDS_EXPLORE_INIT,
   AD_BIDS_EXPLORE_NAME,
@@ -12,7 +12,7 @@ import {
   AD_BIDS_METRICS_3_MEASURES_DIMENSIONS,
   AD_BIDS_METRICS_NAME,
   AD_BIDS_TIME_RANGE_SUMMARY,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import {
   AD_BIDS_APPLY_PUB_DIMENSION_FILTER,
   AD_BIDS_OPEN_PIVOT_WITH_ALL_FIELDS,
@@ -27,13 +27,13 @@ import {
   AD_BIDS_TOGGLE_BID_PRICE_MEASURE_VISIBILITY,
   applyMutationsToDashboard,
   type TestDashboardMutation,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/store-mutations";
-import { getCleanMetricsExploreForAssertion } from "@rilldata/web-common/features/dashboards/url-state/url-state-variations.spec";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/store-mutations";
+import { getCleanMetricsExploreForAssertion } from "@statsparrot/web-common/features/dashboards/url-state/url-state-variations.spec";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   RUNTIME_CONTEXT_KEY,
   RuntimeClient,
-} from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/v2";
 import { render, screen, waitFor } from "@testing-library/svelte";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -69,14 +69,14 @@ const TestCases: {
       view: "explore",
       mutations: [],
       expectedSearch:
-        "tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&sort_type=percent",
+        "tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&sort_type=percent",
     },
     view: {
       view: "tdd",
       additionalParams: "&measure=" + AD_BIDS_IMPRESSIONS_MEASURE,
       mutations: [],
       expectedSearch:
-        "view=tdd&tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measure=impressions",
+        "view=tdd&tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measure=impressions",
     },
   },
   {
@@ -85,14 +85,14 @@ const TestCases: {
       view: "explore",
       mutations: [AD_BIDS_OPEN_PUB_DIMENSION_TABLE],
       expectedSearch:
-        "tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&expand_dim=publisher&sort_type=percent",
+        "tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&expand_dim=publisher&sort_type=percent",
     },
     view: {
       view: "tdd",
       additionalParams: "&measure=" + AD_BIDS_IMPRESSIONS_MEASURE,
       mutations: [],
       expectedSearch:
-        "view=tdd&tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measure=impressions",
+        "view=tdd&tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measure=impressions",
     },
   },
 
@@ -102,7 +102,7 @@ const TestCases: {
       view: "explore",
       mutations: [],
       expectedSearch:
-        "tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&sort_type=percent",
+        "tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&sort_type=percent",
     },
     view: {
       view: "pivot",
@@ -111,7 +111,7 @@ const TestCases: {
         AD_BIDS_SORT_PIVOT_BY_TIME_DAY_ASC,
       ],
       expectedSearch:
-        "view=pivot&tr=P7D&compare_tr=rill-PP&f=publisher+IN+%28%27Google%27%29&rows=publisher%2Ctime.hour&cols=domain%2Ctime.day%2Cimpressions&sort_by=time.day&sort_dir=ASC&table_mode=nest",
+        "view=pivot&tr=P7D&compare_tr=statsparrot-PP&f=publisher+IN+%28%27Google%27%29&rows=publisher%2Ctime.hour&cols=domain%2Ctime.day%2Cimpressions&sort_by=time.day&sort_dir=ASC&table_mode=nest",
     },
   },
   {
@@ -120,7 +120,7 @@ const TestCases: {
       view: "explore",
       mutations: [AD_BIDS_OPEN_PUB_DIMENSION_TABLE],
       expectedSearch:
-        "tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&expand_dim=publisher&sort_type=percent",
+        "tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measures=impressions&dims=publisher&expand_dim=publisher&sort_type=percent",
     },
     view: {
       view: "pivot",
@@ -129,7 +129,7 @@ const TestCases: {
         AD_BIDS_SORT_PIVOT_BY_TIME_DAY_ASC,
       ],
       expectedSearch:
-        "view=pivot&tr=P7D&compare_tr=rill-PP&f=publisher+IN+%28%27Google%27%29&rows=publisher%2Ctime.hour&cols=domain%2Ctime.day%2Cimpressions&sort_by=time.day&sort_dir=ASC&table_mode=nest",
+        "view=pivot&tr=P7D&compare_tr=statsparrot-PP&f=publisher+IN+%28%27Google%27%29&rows=publisher%2Ctime.hour&cols=domain%2Ctime.day%2Cimpressions&sort_by=time.day&sort_dir=ASC&table_mode=nest",
     },
   },
   {
@@ -139,7 +139,7 @@ const TestCases: {
       additionalParams: "&measure=" + AD_BIDS_IMPRESSIONS_MEASURE,
       mutations: [],
       expectedSearch:
-        "view=tdd&tr=P7D&compare_tr=rill-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measure=impressions",
+        "view=tdd&tr=P7D&compare_tr=statsparrot-PP&grain=day&f=publisher+IN+%28%27Google%27%29&measure=impressions",
     },
     view: {
       view: "pivot",
@@ -148,7 +148,7 @@ const TestCases: {
         AD_BIDS_SORT_PIVOT_BY_TIME_DAY_ASC,
       ],
       expectedSearch:
-        "view=pivot&tr=P7D&compare_tr=rill-PP&f=publisher+IN+%28%27Google%27%29&rows=publisher%2Ctime.hour&cols=domain%2Ctime.day%2Cimpressions&sort_by=time.day&sort_dir=ASC&table_mode=nest",
+        "view=pivot&tr=P7D&compare_tr=statsparrot-PP&f=publisher+IN+%28%27Google%27%29&rows=publisher%2Ctime.hour&cols=domain%2Ctime.day%2Cimpressions&sort_by=time.day&sort_dir=ASC&table_mode=nest",
     },
   },
 ];

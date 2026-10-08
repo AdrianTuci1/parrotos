@@ -1,14 +1,14 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import { mapQueryToDashboard } from "@rilldata/web-common/features/explore-mappers/map-to-explore";
-  import { getExplorePageUrlSearchParams } from "@rilldata/web-common/features/explore-mappers/utils";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import { mapQueryToDashboard } from "@statsparrot/web-common/features/explore-mappers/map-to-explore";
+  import { getExplorePageUrlSearchParams } from "@statsparrot/web-common/features/explore-mappers/utils";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { PageData } from "./$types";
 
   export let data: PageData;

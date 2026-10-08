@@ -1,8 +1,8 @@
 ---
-description: Detailed instructions and examples for developing connector resources in Rill
+description: Detailed instructions and examples for developing connector resources in Parrot
 ---
 
-# Instructions for developing a connector in Rill
+# Instructions for developing a connector in Parrot
 
 ## Introduction
 
@@ -44,7 +44,7 @@ NOTE: Some legacy projects use the deprecated `.vars` instead of `.env`.
 
 ### Managed connectors
 
-OLAP connectors can be provisioned automatically by Rill using `managed: true`. This is supported for `duckdb` and `clickhouse` drivers:
+OLAP connectors can be provisioned automatically by Parrot using `managed: true`. This is supported for `duckdb` and `clickhouse` drivers:
 
 ```yaml
 type: connector
@@ -52,13 +52,13 @@ driver: duckdb
 managed: true
 ```
 
-When a managed connector is reconciled, Rill provisions the database infrastructure. The user is billed for the CPU, memory, and disk usage of the provisioned database.
+When a managed connector is reconciled, Parrot provisions the database infrastructure. The user is billed for the CPU, memory, and disk usage of the provisioned database.
 
 ### Access modes
 
 Control read/write access using the `mode` property:
 
-- `mode: read`: Prevents Rill models from writing to this connector
+- `mode: read`: Prevents Parrot models from writing to this connector
 - `mode: readwrite`: Allows both reading and writing (default for managed connectors)
 
 Use `mode: read` when connecting to external databases with pre-existing tables to prevent unintended modifications.
@@ -88,9 +88,9 @@ prod:
 
 ### DuckDB
 
-DuckDB is Rill's default embedded OLAP database. Key properties:
+DuckDB is Parrot's default embedded OLAP database. Key properties:
 
-- `managed: true`: Rill provisions and manages the database
+- `managed: true`: Parrot provisions and manages the database
 - `init_sql`: SQL to run at startup (install extensions, create secrets, attach databases)
 
 For MotherDuck (cloud DuckDB), use the `path` property with `md:` prefix:
@@ -104,9 +104,9 @@ token: "{{ .env.motherduck_token }}"
 
 ### ClickHouse
 
-ClickHouse can be user-managed or Rill-managed. Key properties:
+ClickHouse can be user-managed or Parrot-managed. Key properties:
 
-- `managed: true`: Rill provisions and manages an empty Clickhouse cluster. If set, don't set any other connector properties.
+- `managed: true`: Parrot provisions and manages an empty Clickhouse cluster. If set, don't set any other connector properties.
 - `host`, `port`, `username`, `password`: Connection credentials
 - `database`: Target database name
 - `ssl: true`: Required for ClickHouse Cloud
@@ -241,7 +241,7 @@ init_sql: |
   )
 ```
 
-This is now deprecated in favor of creating a dedicated `s3.yaml` connector file, which Rill will automatically load and create as a secret in DuckDB.
+This is now deprecated in favor of creating a dedicated `s3.yaml` connector file, which Parrot will automatically load and create as a secret in DuckDB.
 
 ### DuckDB: With extensions
 

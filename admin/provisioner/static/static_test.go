@@ -7,13 +7,13 @@ import (
 
 	"github.com/c2h5oh/datasize"
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/pgtestcontainer"
-	"github.com/rilldata/rill/admin/provisioner"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/pgtestcontainer"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 
-	_ "github.com/rilldata/rill/admin/database/postgres"
+	_ "github.com/staticlabs/statsparrot/admin/database/postgres"
 )
 
 func TestProvision(t *testing.T) {

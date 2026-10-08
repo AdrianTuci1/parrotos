@@ -9,12 +9,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/runtime/ai/instructions"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/examples"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/ai/instructions"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/examples"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,7 @@ func InitCmd(ch *cmdutil.Helper) *cobra.Command {
 	exampleOptions, _ := examples.List()
 
 	var long strings.Builder
-	long.WriteString("Initialize a new Rill project. Use flags to customize the project or run interactively to be prompted for each option.")
+	long.WriteString("Initialize a new Parrot project. Use flags to customize the project or run interactively to be prompted for each option.")
 	if len(exampleOptions) > 0 {
 		long.WriteString("\n\nAvailable example projects:\n")
 		for _, ex := range exampleOptions {
@@ -36,16 +36,16 @@ func InitCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	initCmd := &cobra.Command{
 		Use:   "init [<path>]",
-		Short: "Initialize a new Rill project",
+		Short: "Initialize a new Parrot project",
 		Long:  long.String(),
 		Example: `  # Interactive initialization (prompts for all options)
-  rill init
+  statsparrot init
 
   # Create an empty DuckDB project with Claude agent instructions
-  rill init my-project --olap duckdb --agent claude
+  statsparrot init my-project --olap duckdb --agent claude
 
-  # Add Claude agent instructions to an existing Rill project
-  rill init ./existing-project --agent claude`,
+  # Add Claude agent instructions to an existing Parrot project
+  statsparrot init ./existing-project --agent claude`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Assess what flags were set
 			numFlags := 0
@@ -65,18 +65,18 @@ func InitCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			// Resolve project path:
 			// - If a path arg is provided, use it directly.
-			// - If cwd contains rill.yaml, default to cwd.
+			// - If cwd contains statsparrot.yaml, default to cwd.
 			// - Otherwise prompt interactively.
 			var projectPath string
 			if len(args) > 0 {
 				projectPath = args[0]
-			} else if cmdutil.HasRillProject(".") {
+			} else if cmdutil.HasParrotProject(".") {
 				projectPath = "."
 			} else {
 				if !ch.Interactive {
 					return fmt.Errorf("project path argument is required when not running interactively")
 				}
-				name, err := cmdutil.InputPrompt("Project name", "my-rill-project")
+				name, err := cmdutil.InputPrompt("Project name", "my-statsparrot-project")
 				if err != nil {
 					return err
 				}
@@ -97,9 +97,9 @@ func InitCmd(ch *cmdutil.Helper) *cobra.Command {
 			projectName := filepath.Base(projectPath)
 
 			// If a project already exists, we allow adding agent files via --agent, but no other changes.
-			if cmdutil.HasRillProject(projectPath) {
+			if cmdutil.HasParrotProject(projectPath) {
 				if !explicitAgent || numFlags > 1 {
-					return fmt.Errorf("init failed because a Rill project already exists at %q (hint: only the --agent flag is supported for updating an existing project)", projectPath)
+					return fmt.Errorf("init failed because a Parrot project already exists at %q (hint: only the --agent flag is supported for updating an existing project)", projectPath)
 				}
 				repo, _, err := cmdutil.RepoForProjectPath(projectPath)
 				if err != nil {
@@ -186,7 +186,7 @@ func InitCmd(ch *cmdutil.Helper) *cobra.Command {
 			if err := parser.InitEmpty(cmd.Context(), repo, instanceID, projectName, olap); err != nil {
 				return fmt.Errorf("failed to create empty project: %w", err)
 			}
-			ch.Printf("Created a new Rill project at %s\n", projectPath)
+			ch.Printf("Created a new Parrot project at %s\n", projectPath)
 
 			// Unpack example files
 			if example != "" {
@@ -231,10 +231,10 @@ func InitCmd(ch *cmdutil.Helper) *cobra.Command {
 			escaped := fileutil.ShellEscape(projectPathRelative)
 			if ch.Interactive {
 				ch.Printf("\nSuccess! Run the following command to start the project:\n\n")
-				ch.Printf("  rill start %s\n\n", escaped)
-				ch.Printf("Tip: Use `rill start --preview` to launch in preview mode for a dashboard-only experience.\n\n")
+				ch.Printf("  statsparrot start %s\n\n", escaped)
+				ch.Printf("Tip: Use `statsparrot start --preview` to launch in preview mode for a dashboard-only experience.\n\n")
 			} else {
-				ch.Printf("Run `rill validate %s` to build and validate the project, or `rill start %s` to build and serve the project on localhost\n", escaped, escaped)
+				ch.Printf("Run `statsparrot validate %s` to build and validate the project, or `statsparrot start %s` to build and serve the project on localhost\n", escaped, escaped)
 			}
 
 			return nil

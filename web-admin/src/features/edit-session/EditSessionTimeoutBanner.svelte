@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { onDestroy, onMount } from "svelte";
 
   const BANNER_ID = "edit-session-timeout";

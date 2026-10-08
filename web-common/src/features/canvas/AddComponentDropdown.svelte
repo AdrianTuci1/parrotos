@@ -1,11 +1,11 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
   import {
     CHART_CONFIG,
     VISIBLE_CHART_TYPES,
-  } from "@rilldata/web-common/features/components/charts/config";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/components/charts/config";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { Layers, Plus, PlusCircle } from "lucide-svelte";
   import type { ComponentType, SvelteComponent } from "svelte";
   import type { ChartType } from "../components/charts/types";

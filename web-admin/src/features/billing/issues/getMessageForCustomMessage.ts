@@ -2,8 +2,8 @@ import {
   type V1BillingIssue,
   V1BillingIssueLevel,
   V1BillingIssueType,
-} from "@rilldata/web-admin/client";
-import type { BillingIssueMessage } from "@rilldata/web-admin/features/billing/issues/useBillingIssueMessage";
+} from "@statsparrot/web-admin/client";
+import type { BillingIssueMessage } from "@statsparrot/web-admin/features/billing/issues/useBillingIssueMessage";
 
 export function getCustomMessageIssue(issues: V1BillingIssue[]) {
   return issues.find(

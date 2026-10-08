@@ -1,7 +1,7 @@
 <script lang="ts">
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import { Interval, DateTime } from "luxon";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let timeString: string | undefined;
   export let interval: Interval<true>;

@@ -1,8 +1,8 @@
-import { needsPaymentSetup } from "@rilldata/web-admin/features/billing/issues/getMessageForPaymentIssues";
-import type { BillingIssueMessage } from "@rilldata/web-admin/features/billing/issues/useBillingIssueMessage";
-import { fetchPaymentsPortalURL } from "@rilldata/web-admin/features/billing/plans/selectors";
-import { fetchOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors";
-import type { TeamPlanDialogTypes } from "@rilldata/web-admin/features/billing/plans/types";
+import { needsPaymentSetup } from "@statsparrot/web-admin/features/billing/issues/getMessageForPaymentIssues";
+import type { BillingIssueMessage } from "@statsparrot/web-admin/features/billing/issues/useBillingIssueMessage";
+import { fetchPaymentsPortalURL } from "@statsparrot/web-admin/features/billing/plans/selectors";
+import { fetchOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors";
+import type { TeamPlanDialogTypes } from "@statsparrot/web-admin/features/billing/plans/types";
 import { writable } from "svelte/store";
 
 export class BillingCTAHandler {

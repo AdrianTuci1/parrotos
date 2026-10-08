@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const SearchFilesName = "search_files"
@@ -39,7 +39,7 @@ func (t *SearchFiles) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        SearchFilesName,
 		Title:       "Search files",
-		Description: "Searches for a pattern across files in the Rill project. Returns matching file paths, line numbers, and snippets. Use this before read_file to discover which files contain specific content.",
+		Description: "Searches for a pattern across files in the Parrot project. Returns matching file paths, line numbers, and snippets. Use this before read_file to discover which files contain specific content.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(false),
 			IdempotentHint:  true,

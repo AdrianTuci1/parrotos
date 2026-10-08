@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/duration"
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	"github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/duration"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 )
 
 func timeGrainToDuration(tg runtimev1.TimeGrain) duration.Duration {

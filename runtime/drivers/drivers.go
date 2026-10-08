@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 
@@ -48,7 +48,7 @@ func Open(driver, connectorName, instanceID string, config map[string]any, st *s
 	return conn, nil
 }
 
-// Driver represents an external service that Rill can connect to.
+// Driver represents an external service that Parrot can connect to.
 type Driver interface {
 	// Spec returns metadata about the driver, such as which configuration properties it supports.
 	Spec() Spec

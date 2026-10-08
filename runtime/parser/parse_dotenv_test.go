@@ -12,7 +12,7 @@ func TestEnvParsing(t *testing.T) {
 	t.Run("without env file", func(t *testing.T) {
 		ctx := context.Background()
 		repo := makeRepo(t, map[string]string{
-			`rill.yaml`: ``,
+			`statsparrot.yaml`: ``,
 		})
 
 		parser, err := Parse(ctx, repo, "", "", "duckdb", true)
@@ -23,7 +23,7 @@ func TestEnvParsing(t *testing.T) {
 	t.Run("with single env file", func(t *testing.T) {
 		ctx := context.Background()
 		repo := makeRepo(t, map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			".env": `
 TEST=test
 FOO=bar
@@ -42,7 +42,7 @@ FOO=bar
 	t.Run("with multiple env files", func(t *testing.T) {
 		ctx := context.Background()
 		repo := makeRepo(t, map[string]string{
-			`rill.yaml`: ``,
+			`statsparrot.yaml`: ``,
 			".env": `
 ROOT_TEST_VAR=root
 `,
@@ -63,7 +63,7 @@ MODELS_FOLDER_TEST_VAR=models
 	t.Run("env value merge behavior", func(t *testing.T) {
 		ctx := context.Background()
 		repo := makeRepo(t, map[string]string{
-			`rill.yaml`: ``,
+			`statsparrot.yaml`: ``,
 			".env": `
 SHARED_VAR=root_value
 ROOT_ONLY=root_value
@@ -96,7 +96,7 @@ NESTED_ONLY=nested_value
 
 func TestNamedDotEnv(t *testing.T) {
 	repo := makeRepo(t, map[string]string{
-		"rill.yaml": ``,
+		"statsparrot.yaml": ``,
 		".env": `
 BASE_VAR=base
 SHARED_VAR=from_base
@@ -142,7 +142,7 @@ func TestEnvReparse(t *testing.T) {
 	ctx := context.Background()
 
 	// Create an empty project
-	repo := makeRepo(t, map[string]string{`rill.yaml`: ``, ".env": `ROOT_VAR=root_val`})
+	repo := makeRepo(t, map[string]string{`statsparrot.yaml`: ``, ".env": `ROOT_VAR=root_val`})
 	p, err := Parse(ctx, repo, "", "", "duckdb", true)
 	require.NoError(t, err)
 	requireResourcesAndErrors(t, p, nil, nil)
@@ -152,7 +152,7 @@ func TestEnvReparse(t *testing.T) {
 	require.Equal(t, "root_val", env["ROOT_VAR"], "root-only variable should be preserved")
 
 	// Update the root .env file
-	putRepo(t, repo, map[string]string{`rill.yaml`: ``, ".env": `ROOT_VAR=new_root_val`})
+	putRepo(t, repo, map[string]string{`statsparrot.yaml`: ``, ".env": `ROOT_VAR=new_root_val`})
 
 	// Reparse
 	diff, err := p.Reparse(ctx, []string{".env"})

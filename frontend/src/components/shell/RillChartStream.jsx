@@ -1,7 +1,7 @@
 import { useMemo, Component } from "react";
 import { BarChart3 } from "lucide-react";
-import { Messages } from "@rilldata/web-common/features/chat/core/messages/react";
-import { toRillChartMessages, isChartToolCall, resolveChartToolCall } from "./rillChatAdapter";
+import { Messages } from "@statsparrot/web-common/features/chat/core/messages/react";
+import { toParrotChartMessages, isChartToolCall, resolveChartToolCall } from "./statsparrotChatAdapter";
 import MockChart from "@/components/widgets/MockChart";
 import {
   getMockAggregationRows,
@@ -9,32 +9,32 @@ import {
 } from "@/data/mockAdapter";
 
 /**
- * RillChartStream — renders the chart portion of a product chat message.
+ * ParrotChartStream — renders the chart portion of a product chat message.
  *
- * Maps the store's `toolCalls` onto the Rill `V1Message[]` shape (via
- * `rillChatAdapter`) and renders it with the ported `Messages` renderer, which
+ * Maps the store's `toolCalls` onto the Parrot `V1Message[]` shape (via
+ * `statsparrotChatAdapter`) and renders it with the ported `Messages` renderer, which
  * routes each `create_chart` call through `ChartBlock` (collapsible tool-call
  * header + live chart). Non-chart tool calls are not handled here — the product
  * keeps rendering those through its own dispatcher, so composer/tool behavior
  * is preserved. Returns `null` when the message has no chart tool calls.
  *
- * The ported Rill `ChartContainer` (used by `ChartBlock`) builds its data query
+ * The ported Parrot `ChartContainer` (used by `ChartBlock`) builds its data query
  * with `@tanstack/svelte-query`, which needs a Svelte component context that
  * does not exist in this React host. So the live chart path crashes here. We
  * wrap it in an error boundary and fall back to mock charts (mockAdapter) so a
  * chat with charts never blanks the app, while the real runtime path stays
  * intact for when `ChartContainer` is properly ported to React Query.
  */
-export function RillChartStream({ message, metricsView }) {
+export function ParrotChartStream({ message, metricsView }) {
   const messages = useMemo(
-    () => toRillChartMessages(message, { metricsView }),
+    () => toParrotChartMessages(message, { metricsView }),
     [message, metricsView],
   );
 
   if (messages.length === 0) return null;
 
   return (
-    <div className="chat-rill-chart-blocks">
+    <div className="chat-statsparrot-chart-blocks">
       <ChartBoundary message={message} metricsView={metricsView}>
         <Messages messages={messages} />
       </ChartBoundary>

@@ -1,6 +1,6 @@
 import {
   formatIANA,
-} from "@rilldata/web-common/lib/time/timezone";
+} from "@statsparrot/web-common/lib/time/timezone";
 import { DateTime } from "luxon";
 
 /**

@@ -1,8 +1,8 @@
-import type { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-import type { ComponentWithMetricsView } from "@rilldata/web-common/features/canvas/components/types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { transformTimeAndFiltersToExploreState } from "@rilldata/web-common/features/explores/explore-link/explore-state-transformer";
+import type { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+import type { ComponentWithMetricsView } from "@statsparrot/web-common/features/canvas/components/types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { transformTimeAndFiltersToExploreState } from "@statsparrot/web-common/features/explores/explore-link/explore-state-transformer";
 
 export interface CanvasLinkContext {
   organization?: string;

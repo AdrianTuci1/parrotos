@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Progress } from "@rilldata/web-common/components/progress";
-  import GlobalDimensionSearchResult from "@rilldata/web-common/features/dashboards/dimension-search/GlobalDimensionSearchResult.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Progress } from "@statsparrot/web-common/components/progress";
+  import GlobalDimensionSearchResult from "@statsparrot/web-common/features/dashboards/dimension-search/GlobalDimensionSearchResult.svelte";
   import {
     type DimensionSearchResult,
     useDimensionSearchResults,
-  } from "@rilldata/web-common/features/dashboards/dimension-search/useDimensionSearchResults";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/dashboards/dimension-search/useDimensionSearchResults";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
-  } from "@rilldata/web-common/components/dropdown-menu";
+  } from "@statsparrot/web-common/components/dropdown-menu";
 
   export let searchText: string;
   export let onSelect: () => void;

@@ -1,7 +1,7 @@
 const SAMPLE_SIZE = 30;
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-import { clamp } from "@rilldata/web-common/lib/clamp";
-import { type V1MetricsViewColumn } from "@rilldata/web-common/runtime-client";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+import { clamp } from "@statsparrot/web-common/lib/clamp";
+import { type V1MetricsViewColumn } from "@statsparrot/web-common/runtime-client";
 
 export function extractSamples<T>(arr: T[], sampleSize: number = 30) {
   if (arr.length <= sampleSize) {

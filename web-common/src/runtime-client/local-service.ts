@@ -1,7 +1,7 @@
 import type { PartialMessage } from "@bufbuild/protobuf";
 import { type ConnectError, createPromiseClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { LocalService } from "@rilldata/web-common/proto/gen/rill/local/v1/api_connect";
+import { LocalService } from "@statsparrot/web-common/proto/gen/statsparrot/local/v1/api_connect";
 import {
   DeployProjectRequest,
   GetCurrentProjectRequest,
@@ -16,7 +16,7 @@ import {
   ListProjectsForOrgRequest,
   GetProjectRequest,
   GithubRepoStatusRequest,
-} from "@rilldata/web-common/proto/gen/rill/local/v1/api_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/local/v1/api_pb";
 import {
   createMutation,
   createQuery,

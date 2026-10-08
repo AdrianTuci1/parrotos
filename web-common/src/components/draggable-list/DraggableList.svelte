@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { Snippet } from "svelte";
-  import { clamp } from "@rilldata/web-common/lib/clamp";
+  import { clamp } from "@statsparrot/web-common/lib/clamp";
 
   const ITEM_HEIGHT = 28;
   const UPPER_BOUND = 12;

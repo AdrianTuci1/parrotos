@@ -1,13 +1,13 @@
 import {
   ResourceKind,
   fetchResources,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   getRuntimeServiceGetResourceQueryKey,
   type V1Resource,
   type V1ResourceName,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { derived, get, writable } from "svelte/store";
 import { FileArtifact } from "./file-artifact";

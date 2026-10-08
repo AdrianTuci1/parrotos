@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { type BookmarkEntry } from "@rilldata/web-admin/features/bookmarks/utils.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { DropdownMenuItem } from "@rilldata/web-common/components/dropdown-menu";
-  import BookmarkFilled from "@rilldata/web-common/components/icons/BookmarkFilled.svelte";
-  import BookmarkOutline from "@rilldata/web-common/components/icons/BookmarkOutline.svelte";
-  import FilterFilled from "@rilldata/web-common/components/icons/FilterFilled.svelte";
-  import FilterOutline from "@rilldata/web-common/components/icons/FilterOutline.svelte";
-  import HomeBookmark from "@rilldata/web-common/components/icons/HomeBookmark.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import { type BookmarkEntry } from "@statsparrot/web-admin/features/bookmarks/utils.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { DropdownMenuItem } from "@statsparrot/web-common/components/dropdown-menu";
+  import BookmarkFilled from "@statsparrot/web-common/components/icons/BookmarkFilled.svelte";
+  import BookmarkOutline from "@statsparrot/web-common/components/icons/BookmarkOutline.svelte";
+  import FilterFilled from "@statsparrot/web-common/components/icons/FilterFilled.svelte";
+  import FilterOutline from "@statsparrot/web-common/components/icons/FilterOutline.svelte";
+  import HomeBookmark from "@statsparrot/web-common/components/icons/HomeBookmark.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
   import { Pencil } from "lucide-svelte";
 
   export let bookmark: BookmarkEntry;

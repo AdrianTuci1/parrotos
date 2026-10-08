@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/drivers/mock"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock"
 )
 
 func TestGlobUnpartitioned(t *testing.T) {
@@ -327,7 +327,7 @@ path: %s
 	// Initialize the test runtime
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml":      ``,
+			"statsparrot.yaml":      ``,
 			"connector.yaml": connectorYAML,
 		},
 	})

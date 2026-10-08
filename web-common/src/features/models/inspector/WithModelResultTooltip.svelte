@@ -1,8 +1,8 @@
 <script lang="ts">
-  import AlertTriangle from "@rilldata/web-common/components/icons/AlertTriangle.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
+  import AlertTriangle from "@statsparrot/web-common/components/icons/AlertTriangle.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
 
   export let modelHasError = false;
 </script>

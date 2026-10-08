@@ -1,17 +1,17 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   getAvailableComparisonsForTimeRange,
   getTimeComparisonParametersForComponent,
-} from "@rilldata/web-common/lib/time/comparisons";
+} from "@statsparrot/web-common/lib/time/comparisons";
 import {
   DEFAULT_TIME_RANGES,
   LATEST_WINDOW_TIME_RANGES,
   PERIOD_TO_DATE_RANGES,
   PREVIOUS_COMPLETE_DATE_RANGES,
   type TimeRangeMetaSet,
-} from "@rilldata/web-common/lib/time/config";
-import { getChildTimeRanges } from "@rilldata/web-common/lib/time/ranges";
-import { isoDurationToTimeRangeMeta } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+} from "@statsparrot/web-common/lib/time/config";
+import { getChildTimeRanges } from "@statsparrot/web-common/lib/time/ranges";
+import { isoDurationToTimeRangeMeta } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
@@ -19,18 +19,18 @@ import {
   type TimeRangeMeta,
   type TimeRangeOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   type V1ExploreSpec,
   type V1ExploreTimeRange,
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryObserverResult } from "@tanstack/svelte-query";
-import { RillTime } from "../url-state/time-ranges/RillTime";
+import { ParrotTime } from "../url-state/time-ranges/ParrotTime";
 import { DateTime, Interval } from "luxon";
-import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
+import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
 
 export type TimeRangeControlsState = {
   latestWindowTimeRanges: Array<TimeRangeOption>;
@@ -279,5 +279,5 @@ export function getValidComparisonOption(
 export type UITimeRange = V1ExploreTimeRange & {
   meta?: TimeRangeMeta;
   enabled?: boolean;
-  parsed?: RillTime;
+  parsed?: ParrotTime;
 };

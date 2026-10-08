@@ -14,7 +14,7 @@ project_files:
     materialize: true
     sql: |
       SELECT *
-      FROM delta_scan('gs://integration-test.rilldata.com/delta/orders_delta')
+      FROM delta_scan('gs://integration-test.statsparrot.com/delta/orders_delta')
 tests:
   - name: test_row_count_for_model_delta_to_duckdb_with_gcs_hmac
     resolver: sql

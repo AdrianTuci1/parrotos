@@ -1,19 +1,19 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import ColorInput from "@rilldata/web-common/components/color-picker/ColorInput.svelte";
-  import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import ColorInput from "@statsparrot/web-common/components/color-picker/ColorInput.svelte";
+  import type { ChartFieldInput } from "@statsparrot/web-common/features/canvas/inspector/types";
   import type {
     ColorMapping,
     FieldConfig,
-  } from "@rilldata/web-common/features/components/charts/types";
+  } from "@statsparrot/web-common/features/components/charts/types";
   import {
     colorToVariableReference,
     getColorForValues,
     resolveCSSVariable,
-  } from "@rilldata/web-common/features/components/charts/util";
-  import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
+  } from "@statsparrot/web-common/features/components/charts/util";
+  import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
   import { ChevronDown, ChevronRight } from "lucide-svelte";
 
   export let colorMapping: ColorMapping | undefined;

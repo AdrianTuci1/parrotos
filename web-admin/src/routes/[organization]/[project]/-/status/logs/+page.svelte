@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ProjectLogsPage from "@rilldata/web-admin/features/projects/status/logs/ProjectLogsPage.svelte";
+  import ProjectLogsPage from "@statsparrot/web-admin/features/projects/status/logs/ProjectLogsPage.svelte";
 </script>
 
 <ProjectLogsPage />

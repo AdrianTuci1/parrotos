@@ -1,4 +1,4 @@
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 /**
  * Get relative time for recent dates (e.g., "2m ago", "1h ago")

@@ -17,37 +17,37 @@ import (
 
 	"github.com/google/go-github/v71/github"
 	"github.com/joho/godotenv"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/billing"
-	"github.com/rilldata/rill/admin/billing/payment"
-	"github.com/rilldata/rill/admin/client"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/jobs/river"
-	"github.com/rilldata/rill/admin/pkg/pgtestcontainer"
-	"github.com/rilldata/rill/admin/server"
-	"github.com/rilldata/rill/cli/pkg/version"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	runtimeserver "github.com/rilldata/rill/runtime/server"
-	runtimeauth "github.com/rilldata/rill/runtime/server/auth"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/billing/payment"
+	"github.com/staticlabs/statsparrot/admin/client"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/jobs/river"
+	"github.com/staticlabs/statsparrot/admin/pkg/pgtestcontainer"
+	"github.com/staticlabs/statsparrot/admin/server"
+	"github.com/staticlabs/statsparrot/cli/pkg/version"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	runtimeserver "github.com/staticlabs/statsparrot/runtime/server"
+	runtimeauth "github.com/staticlabs/statsparrot/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	riverqueue "github.com/riverqueue/river"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
 	// Register drivers
-	_ "github.com/rilldata/rill/admin/database/postgres"
-	_ "github.com/rilldata/rill/admin/provisioner/static"
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
-	_ "github.com/rilldata/rill/runtime/drivers/file"
-	_ "github.com/rilldata/rill/runtime/drivers/mock/ai"
-	_ "github.com/rilldata/rill/runtime/drivers/sqlite"
+	_ "github.com/staticlabs/statsparrot/admin/database/postgres"
+	_ "github.com/staticlabs/statsparrot/admin/provisioner/static"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/file"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock/ai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/sqlite"
 )
 
 // Fixture is a test fixture for an admin service and server.
@@ -253,7 +253,7 @@ func (f *Fixture) NewUserWithEmail(t *testing.T, emailAddr string) (*database.Us
 	u, err := f.Admin.CreateOrUpdateUser(ctx, emailAddr, name, "")
 	require.NoError(t, err)
 
-	tkn, err := f.Admin.IssueUserAuthToken(ctx, u.ID, database.AuthClientIDRillWeb, "Test session", nil, nil, false)
+	tkn, err := f.Admin.IssueUserAuthToken(ctx, u.ID, database.AuthClientIDParrotWeb, "Test session", nil, nil, false)
 	require.NoError(t, err)
 
 	return u, f.NewClient(t, tkn.Token().String())
@@ -313,10 +313,10 @@ func newGithub(t *testing.T) admin.Github {
 		require.NoError(t, err)
 	}
 
-	githubAppID, err := strconv.ParseInt(os.Getenv("RILL_ADMIN_TEST_GITHUB_APP_ID"), 10, 64)
+	githubAppID, err := strconv.ParseInt(os.Getenv("STATSPARROT_ADMIN_TEST_GITHUB_APP_ID"), 10, 64)
 	require.NoError(t, err)
 
-	github, err := admin.NewGithub(t.Context(), githubAppID, os.Getenv("RILL_ADMIN_TEST_GITHUB_APP_PRIVATE_KEY"), os.Getenv("RILL_ADMIN_TEST_GITHUB_MANAGED_ACCOUNT"), zap.Must(zap.NewDevelopment()))
+	github, err := admin.NewGithub(t.Context(), githubAppID, os.Getenv("STATSPARROT_ADMIN_TEST_GITHUB_APP_PRIVATE_KEY"), os.Getenv("STATSPARROT_ADMIN_TEST_GITHUB_MANAGED_ACCOUNT"), zap.Must(zap.NewDevelopment()))
 	require.NoError(t, err)
 	return github
 }

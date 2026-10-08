@@ -1,30 +1,30 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import ResourceError from "@rilldata/web-common/features/resources/ResourceError.svelte";
-  import ResourceList from "@rilldata/web-admin/features/resources/ResourceList.svelte";
-  import ResourceListEmptyState from "@rilldata/web-admin/features/resources/ResourceListEmptyState.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ResourceError from "@statsparrot/web-common/features/resources/ResourceError.svelte";
+  import ResourceList from "@statsparrot/web-admin/features/resources/ResourceList.svelte";
+  import ResourceListEmptyState from "@statsparrot/web-admin/features/resources/ResourceListEmptyState.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { renderComponent } from "tanstack-table-8-svelte-5";
   import DashboardsTableCompositeCell from "./DashboardsTableCompositeCell.svelte";
   import { useDashboards, useIsInitialBuild } from "./selectors";
   import { UrlParamsState } from "web-common/src/lib/store-utils/url-params-state.svelte.ts";
-  import { getAllTagsForResources } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
-  import ResizableSidebar from "@rilldata/web-common/layout/ResizableSidebar.svelte";
-  import DashboardsTagSidebar from "@rilldata/web-admin/features/dashboards/listing/DashboardsTagSidebar.svelte";
-  import { filterResources } from "@rilldata/web-common/features/resources/resource-filter-utils.ts";
+  import { getAllTagsForResources } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
+  import ResizableSidebar from "@statsparrot/web-common/layout/ResizableSidebar.svelte";
+  import DashboardsTagSidebar from "@statsparrot/web-admin/features/dashboards/listing/DashboardsTagSidebar.svelte";
+  import { filterResources } from "@statsparrot/web-common/features/resources/resource-filter-utils.ts";
   import {
     DashboardTableSortOptions,
     getDashboardFavouritesStore,
     RecentlyUsedDashboards,
   } from "./dashboard-favourites.ts";
-  import { DebouncedRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
-  import { TableToolbar } from "@rilldata/web-common/components/table-toolbar";
-  import { dedupe } from "@rilldata/web-common/lib/arrayUtils.ts";
+  import { DebouncedRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
+  import { TableToolbar } from "@statsparrot/web-common/components/table-toolbar";
+  import { dedupe } from "@statsparrot/web-common/lib/arrayUtils.ts";
 
   type DashboardRow = V1Resource & { lastUsed: number };
 
@@ -245,7 +245,7 @@
           >
             <span slot="action">
               {@html m.dashboard_list_create_to_start({
-                link: `<a href="https://docs.rilldata.com/developers/build/dashboards" target="_blank" rel="noopener noreferrer">${escapeHtml(m.dashboard_list_create())}</a>`,
+                link: `<a href="https://docs.statsparrot.com/developers/build/dashboards" target="_blank" rel="noopener noreferrer">${escapeHtml(m.dashboard_list_create())}</a>`,
               })}
             </span>
           </ResourceListEmptyState>

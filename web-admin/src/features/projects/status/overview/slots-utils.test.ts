@@ -33,6 +33,6 @@ describe("slots-utils", () => {
   it("tiers have correct bill calculations", () => {
     const tier = SLOT_TIERS[0]; // 2 slots
     expect(tier.slots).toBe(2);
-    expect(tier.rillBill).toBe(Math.round(2 * 0.15 * 730));
+    expect(tier.statsparrotBill).toBe(Math.round(2 * 0.15 * 730));
   });
 });

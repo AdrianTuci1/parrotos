@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
 
   export let allItems: Set<string>;
   export let selectedItems: Set<string>;

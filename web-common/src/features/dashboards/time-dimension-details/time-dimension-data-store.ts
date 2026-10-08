@@ -1,25 +1,25 @@
-import { createSparkline } from "@rilldata/web-common/components/data-graphic/marks/sparkline";
-import { useSelectedValuesForCompareDimension } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+import { createSparkline } from "@statsparrot/web-common/components/data-graphic/marks/sparkline";
+import { useSelectedValuesForCompareDimension } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   getDimensionValueTimeSeries,
   type DimensionDataItem,
-} from "@rilldata/web-common/features/dashboards/time-series/multiple-dimension-queries";
+} from "@statsparrot/web-common/features/dashboards/time-series/multiple-dimension-queries";
 import {
   type TimeSeriesDatum,
   useTimeSeriesDataStore,
-} from "@rilldata/web-common/features/dashboards/time-series/timeseries-data-store";
-import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-import { formatProperFractionAsPercent } from "@rilldata/web-common/lib/number-formatting/proper-fraction-formatter";
-import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
+} from "@statsparrot/web-common/features/dashboards/time-series/timeseries-data-store";
+import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+import { formatProperFractionAsPercent } from "@statsparrot/web-common/lib/number-formatting/proper-fraction-formatter";
+import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
 import {
   DEFAULT_TIME_RANGES,
   TIME_COMPARISON,
-} from "@rilldata/web-common/lib/time/config";
-import { TimeRangePreset } from "@rilldata/web-common/lib/time/types";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/config";
+import { TimeRangePreset } from "@statsparrot/web-common/lib/time/types";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
 import { derived, writable, type Readable } from "svelte/store";
 import { memoizeMetricsStore } from "../state-managers/memoize-metrics-store";
 import type {

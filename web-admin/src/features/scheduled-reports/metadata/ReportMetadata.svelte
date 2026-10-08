@@ -1,29 +1,29 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { isNotFoundError } from "@rilldata/web-common/lib/errors";
-  import MetadataList from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataList.svelte";
-  import { extractNotifier } from "@rilldata/web-admin/features/scheduled-reports/metadata/notifiers-utils";
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { hasValidMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-  import { getMappedExploreUrl } from "@rilldata/web-common/features/explore-mappers/get-mapped-explore-url.ts";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-  import ScheduledReportDialog from "@rilldata/web-common/features/scheduled-reports/ScheduledReportDialog.svelte";
-  import { stripInternalReportParams } from "@rilldata/web-common/features/scheduled-reports/utils";
+  import { isNotFoundError } from "@statsparrot/web-common/lib/errors";
+  import MetadataList from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataList.svelte";
+  import { extractNotifier } from "@statsparrot/web-admin/features/scheduled-reports/metadata/notifiers-utils";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { hasValidMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+  import { getMappedExploreUrl } from "@statsparrot/web-common/features/explore-mappers/get-mapped-explore-url.ts";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+  import ScheduledReportDialog from "@statsparrot/web-common/features/scheduled-reports/ScheduledReportDialog.svelte";
+  import { stripInternalReportParams } from "@statsparrot/web-common/features/scheduled-reports/utils";
   import {
     ResourceKind,
     useResource,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     getRuntimeServiceListResourcesQueryKey,
     V1ExportFormat,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { createAdminServiceDeleteReport } from "../../../client";
   import ProjectAccessControls from "../../projects/ProjectAccessControls.svelte";
@@ -41,7 +41,7 @@
     formatNextRunOn,
     formatRefreshSchedule,
   } from "./utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

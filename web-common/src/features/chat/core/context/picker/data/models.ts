@@ -1,23 +1,23 @@
 import {
   getQueryServiceTableColumnsQueryOptions,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   getIdForContext,
   type InlineContext,
   InlineContextType,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-import { getActiveResourceStore } from "@rilldata/web-common/features/entity-management/nav-utils.ts";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+import { getActiveResourceStore } from "@statsparrot/web-common/features/entity-management/nav-utils.ts";
 import {
   getClientFilteredResourcesQueryOptions,
   ResourceKind,
-} from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import { derived, type Readable } from "svelte/store";
 import { createQuery } from "@tanstack/svelte-query";
-import { ContextPickerUIState } from "@rilldata/web-common/features/chat/core/context/picker/ui-state.ts";
-import type { PickerItem } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { ContextPickerUIState } from "@statsparrot/web-common/features/chat/core/context/picker/ui-state.ts";
+import type { PickerItem } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 /**
  * Creates a store that contains a 2-level list of sources/model resources.

@@ -1,17 +1,17 @@
 <script lang="ts">
-  import InlineErrorIndicator from "@rilldata/web-common/features/dashboards/errors/InlineErrorIndicator.svelte";
-  import TDDMeasureChart from "@rilldata/web-common/features/dashboards/time-dimension-details/charts/TDDChart.svelte";
-  import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
-  import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+  import InlineErrorIndicator from "@statsparrot/web-common/features/dashboards/errors/InlineErrorIndicator.svelte";
+  import TDDMeasureChart from "@statsparrot/web-common/features/dashboards/time-dimension-details/charts/TDDChart.svelte";
+  import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
+  import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
   import {
     createQueryServiceMetricsViewTimeSeries,
     V1TimeGrain,
     type V1Expression,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { keepPreviousData } from "@tanstack/svelte-query";
   import { DateTime, Interval } from "luxon";
   import { onDestroy, onMount } from "svelte";

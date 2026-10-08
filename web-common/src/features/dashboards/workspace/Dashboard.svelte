@@ -1,22 +1,22 @@
 <script lang="ts">
-  import CellInspector from "@rilldata/web-common/components/CellInspector.svelte";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
+  import CellInspector from "@statsparrot/web-common/components/CellInspector.svelte";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
   import {
     extractErrorStatusCode,
     isNotFoundError,
-  } from "@rilldata/web-common/lib/errors";
-  import PivotDisplay from "@rilldata/web-common/features/dashboards/pivot/PivotDisplay.svelte";
-  import TabBar from "@rilldata/web-common/features/dashboards/tab-bar/TabBar.svelte";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { dynamicHeight } from "@rilldata/web-common/layout/layout-settings.ts";
-  import { navigationOpen } from "@rilldata/web-common/layout/navigation/Navigation.svelte";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
-  import { githubStarNudge } from "@rilldata/web-common/features/github-star/github-star.svelte";
+  } from "@statsparrot/web-common/lib/errors";
+  import PivotDisplay from "@statsparrot/web-common/features/dashboards/pivot/PivotDisplay.svelte";
+  import TabBar from "@statsparrot/web-common/features/dashboards/tab-bar/TabBar.svelte";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings.ts";
+  import { navigationOpen } from "@statsparrot/web-common/layout/navigation/Navigation.svelte";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
+  import { githubStarNudge } from "@statsparrot/web-common/features/github-star/github-star.svelte";
   import { onDestroy, onMount } from "svelte";
   import { get, readable, type Readable } from "svelte/store";
   import { useExploreState } from "web-common/src/features/dashboards/stores/dashboard-stores";
-  import { DashboardState_ActivePage } from "../../../proto/gen/rill/ui/v1/dashboard_pb";
+  import { DashboardState_ActivePage } from "../../../proto/gen/statsparrot/ui/v1/dashboard_pb";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import { activeDashboardTheme } from "../../themes/active-dashboard-theme";
   import { createResolvedThemeStore } from "../../themes/selectors";
@@ -63,7 +63,7 @@
   const timeControlsStore = useTimeControlStore(StateManagers);
 
   onMount(() => {
-    // Github star nudge is Rill developer only.
+    // Github star nudge is Parrot developer only.
     // Nudge on dashboard render.
     if (!isEmbedded && !get(adminServer)) githubStarNudge.armPayoff();
   });
@@ -94,7 +94,7 @@
     selectedDimensionName && $getDimensionByName(selectedDimensionName);
   $: expandedMeasureName = $exploreState?.tdd?.expandedMeasureName;
 
-  $: isRillDeveloper = $readOnly === false;
+  $: isParrotDeveloper = $readOnly === false;
 
   // Check if the mock user (if selected) has access to the explore
   $: exploreQuery = useExploreValidSpec(client, exploreName);
@@ -289,7 +289,7 @@
 
     <CellInspector />
 
-    {#if (isRillDeveloper || $cloudDataViewer) && !showTimeDimensionDetail && !mockUserHasNoAccess}
+    {#if (isParrotDeveloper || $cloudDataViewer) && !showTimeDimensionDetail && !mockUserHasNoAccess}
       <RowsViewerAccordion {metricsViewName} {exploreName} />
     {/if}
   </article>

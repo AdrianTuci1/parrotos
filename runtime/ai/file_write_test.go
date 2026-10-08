@@ -3,8 +3,8 @@ package ai_test
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DashboardChat from "@rilldata/web-common/features/chat/DashboardChat.svelte";
+  import DashboardChat from "@statsparrot/web-common/features/chat/DashboardChat.svelte";
 </script>
 
 <div class="flex flex-1 overflow-hidden">

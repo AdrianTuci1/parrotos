@@ -1,4 +1,4 @@
-import { MEASURES_PADDING } from "@rilldata/web-common/features/dashboards/leaderboard/leaderboard-widths.ts";
+import { MEASURES_PADDING } from "@statsparrot/web-common/features/dashboards/leaderboard/leaderboard-widths.ts";
 
 export const MIN_DIMENSION_COLUMN_WIDTH = 150;
 export const DEFAULT_DIMENSION_COLUMN_WIDTH = 164;

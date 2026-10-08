@@ -5,13 +5,13 @@ import {
   createLikeExpression,
   createOrExpression,
   createSubQueryExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   convertExpressionToFilterParam,
   convertFilterParamToExpression,
   stripParserError,
-} from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 import { describe, it, expect } from "vitest";
 import grammar from "./expression.js";
 import nearley from "nearley";

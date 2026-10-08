@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { timeAgo } from "@rilldata/web-common/lib/time/relative-time";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { timeAgo } from "@statsparrot/web-common/lib/time/relative-time";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let dashboard: string;
 

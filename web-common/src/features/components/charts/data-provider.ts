@@ -1,12 +1,12 @@
-import { timeGrainToVegaTimeUnitMap } from "@rilldata/web-common/components/vega/util";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import type { MetricsViewSelectors } from "@rilldata/web-common/features/metrics-views/metrics-view-selectors";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+import { timeGrainToVegaTimeUnitMap } from "@statsparrot/web-common/components/vega/util";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import type { MetricsViewSelectors } from "@statsparrot/web-common/features/metrics-views/metrics-view-selectors";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { derived, type Readable } from "svelte/store";
 import type { CanvasEntity } from "../../canvas/stores/canvas-entity";
 import { primary, secondary } from "../../themes/colors";

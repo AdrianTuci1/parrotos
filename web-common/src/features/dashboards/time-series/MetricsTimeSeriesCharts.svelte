@@ -1,43 +1,43 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import DashboardMetricsDraggableList from "@rilldata/web-common/components/menu/DashboardMetricsDraggableList.svelte";
-  import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-  import ReplacePivotDialog from "@rilldata/web-common/features/dashboards/pivot/ReplacePivotDialog.svelte";
-  import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import DashboardMetricsDraggableList from "@statsparrot/web-common/components/menu/DashboardMetricsDraggableList.svelte";
+  import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+  import ReplacePivotDialog from "@statsparrot/web-common/features/dashboards/pivot/ReplacePivotDialog.svelte";
+  import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
   import {
     PivotChipType,
     type PivotChipData,
-  } from "@rilldata/web-common/features/dashboards/pivot/types";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+  } from "@statsparrot/web-common/features/dashboards/pivot/types";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
   import {
     metricsExplorerStore,
     useExploreState,
-  } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import ChartTypeSelector from "@rilldata/web-common/features/dashboards/time-dimension-details/charts/ChartTypeSelector.svelte";
-  import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-  import BackToExplore from "@rilldata/web-common/features/dashboards/time-series/BackToExplore.svelte";
-  import ChartSettingsMenu from "@rilldata/web-common/features/dashboards/time-series/ChartSettingsMenu.svelte";
-  import { measureSelection } from "@rilldata/web-common/features/dashboards/time-series/measure-selection/measure-selection.ts";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-  import { translateV1TimeGrain } from "@rilldata/web-common/lib/time/new-grains";
+  } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import ChartTypeSelector from "@statsparrot/web-common/features/dashboards/time-dimension-details/charts/ChartTypeSelector.svelte";
+  import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+  import BackToExplore from "@statsparrot/web-common/features/dashboards/time-series/BackToExplore.svelte";
+  import ChartSettingsMenu from "@statsparrot/web-common/features/dashboards/time-series/ChartSettingsMenu.svelte";
+  import { measureSelection } from "@statsparrot/web-common/features/dashboards/time-series/measure-selection/measure-selection.ts";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+  import { translateV1TimeGrain } from "@statsparrot/web-common/lib/time/new-grains";
   import {
     TimeComparisonOption,
     TimeRangePreset,
     type AvailableTimeGrain,
     type DashboardTimeControls,
-  } from "@rilldata/web-common/lib/time/types";
-  import { type MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/time/types";
+  import { type MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { DateTime, Interval } from "luxon";
   import { Button } from "../../../components/button";
   import Pivot from "../../../components/icons/Pivot.svelte";
   import { TIME_GRAIN } from "../../../lib/time/config";
-  import { DashboardState_ActivePage } from "../../../proto/gen/rill/ui/v1/dashboard_pb";
+  import { DashboardState_ActivePage } from "../../../proto/gen/statsparrot/ui/v1/dashboard_pb";
   import Spinner from "../../entity-management/Spinner.svelte";
   import { featureFlags } from "../../feature-flags";
   import MeasureBigNumber from "../big-number/MeasureBigNumber.svelte";
@@ -45,10 +45,10 @@
   import MeasureChart from "./measure-chart/MeasureChart.svelte";
   import MeasureChartXAxis from "./measure-chart/MeasureChartXAxis.svelte";
   import { ScrubController } from "./measure-chart/ScrubController";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import ScreenshotContainer from "@rilldata/web-common/features/dashboards/time-series/ScreenshotContainer.svelte";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import ScreenshotContainer from "@statsparrot/web-common/features/dashboards/time-series/ScreenshotContainer.svelte";
 
-  const { rillTime } = featureFlags;
+  const { statsparrotTime } = featureFlags;
 
   // Singleton scrub controller — shared across all charts
   const scrubController = new ScrubController();
@@ -302,7 +302,7 @@
         selectedItems={visibleMeasureNames}
       />
 
-      {#if $rillTime && activeTimeGrain}
+      {#if $statsparrotTime && activeTimeGrain}
         <DropdownMenu.Root bind:open={grainDropdownOpen}>
           <DropdownMenu.Trigger>
             {#snippet child({ props })}

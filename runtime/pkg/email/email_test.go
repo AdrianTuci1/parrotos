@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,7 +50,7 @@ func TestCopyrightYear(t *testing.T) {
 	require.Contains(t, mock.body, opts.ButtonLink)
 
 	year := time.Now().Year()
-	require.Contains(t, mock.body, fmt.Sprintf("© %d Rill Data, Inc", year))
+	require.Contains(t, mock.body, fmt.Sprintf("© %d Parrot Data, Inc", year))
 }
 
 func TestOrganizationInvite(t *testing.T) {

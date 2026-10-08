@@ -4,14 +4,14 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/stretchr/testify/require"
 )
 
 func TestExploreFieldSelector(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// explore e1
 		`explores/e1.yaml`: `
 type: explore

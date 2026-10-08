@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"

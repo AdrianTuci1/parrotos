@@ -31,7 +31,7 @@ export const motherduckSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Enable write mode",
       description:
-        "Read-write mode allows Rill to drop, create, and modify tables, not just query them",
+        "Read-write mode allows Parrot to drop, create, and modify tables, not just query them",
       default: false,
       "x-display": "toggle",
       "x-yaml-value": "readwrite",

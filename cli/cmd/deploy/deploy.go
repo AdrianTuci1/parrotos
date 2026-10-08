@@ -3,14 +3,14 @@ package deploy
 import (
 	"fmt"
 
-	"github.com/rilldata/rill/cli/cmd/auth"
-	"github.com/rilldata/rill/cli/cmd/project"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/local"
+	"github.com/staticlabs/statsparrot/cli/cmd/auth"
+	"github.com/staticlabs/statsparrot/cli/cmd/project"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/local"
 	"github.com/spf13/cobra"
 )
 
-// DeployCmd is the guided tour for deploying rill projects to rill cloud.
+// DeployCmd is the guided tour for deploying statsparrot projects to statsparrot cloud.
 func DeployCmd(ch *cmdutil.Helper) *cobra.Command {
 	opts := &project.DeployOpts{
 		ProdVersion: "latest",
@@ -18,7 +18,7 @@ func DeployCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	deployCmd := &cobra.Command{
 		Use:   "deploy [<path>]",
-		Short: "Deploy project to Rill Cloud",
+		Short: "Deploy project to Parrot Cloud",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if !ch.IsAuthenticated() {
 				err := auth.LoginWithTelemetry(cmd.Context(), ch, "")
@@ -39,7 +39,7 @@ func DeployCmd(ch *cmdutil.Helper) *cobra.Command {
 				if !ch.Interactive {
 					return fmt.Errorf("must specify --managed or --github in non-interactive mode")
 				}
-				confirmed, err := cmdutil.YesNoPrompt("Enable automatic deploys to Rill Cloud from GitHub?", false)
+				confirmed, err := cmdutil.YesNoPrompt("Enable automatic deploys to Parrot Cloud from GitHub?", false)
 				if err != nil {
 					return err
 				}
@@ -80,9 +80,9 @@ func DeployCmd(ch *cmdutil.Helper) *cobra.Command {
 			panic(err)
 		}
 	}
-	deployCmd.Flags().BoolVar(&opts.PushEnv, "push-env", true, "Push local .env file to Rill Cloud")
-	deployCmd.Flags().BoolVar(&opts.ForcePush, "force-push", false, "Force push local changes in case of Rill managed repos")
-	deployCmd.Flags().BoolVar(&opts.Managed, "managed", false, "Create project using rill managed repo")
+	deployCmd.Flags().BoolVar(&opts.PushEnv, "push-env", true, "Push local .env file to Parrot Cloud")
+	deployCmd.Flags().BoolVar(&opts.ForcePush, "force-push", false, "Force push local changes in case of Parrot managed repos")
+	deployCmd.Flags().BoolVar(&opts.Managed, "managed", false, "Create project using statsparrot managed repo")
 	deployCmd.Flags().BoolVar(&opts.ArchiveUpload, "archive", false, "Create project using tarballs(for testing only)")
 	err := deployCmd.Flags().MarkHidden("archive")
 	if err != nil {

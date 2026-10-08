@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
-import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store.ts";
+import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store.ts";
 import { goto } from "$app/navigation";
-import type { Conversation } from "@rilldata/web-common/features/chat/core/conversation.ts";
-import { getMetricsResolverQueryToUrlMapperStore } from "@rilldata/web-common/features/chat/core/messages/text/citation-url-mapper.ts";
+import type { Conversation } from "@statsparrot/web-common/features/chat/core/conversation.ts";
+import { getMetricsResolverQueryToUrlMapperStore } from "@statsparrot/web-common/features/chat/core/messages/text/citation-url-mapper.ts";
 
 /**
  * Adds a click handler to the given node, that intercepts clicks to links and uses svelte's goto.

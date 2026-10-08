@@ -1,12 +1,12 @@
 <script lang="ts">
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
   import {
     PERIOD_TO_DATE_RANGES,
     LATEST_WINDOW_TIME_RANGES,
     PREVIOUS_COMPLETE_DATE_RANGES,
     DEFAULT_TIME_RANGES,
-  } from "@rilldata/web-common/lib/time/config";
+  } from "@statsparrot/web-common/lib/time/config";
   import SelectionDropdown from "./SelectionDropdown.svelte";
 
   const ranges = [

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { tick } from "svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
   import LocalProjectStatusIndicator from "../../routes/LocalProjectStatusIndicator.svelte";
 
   const { chat } = featureFlags;

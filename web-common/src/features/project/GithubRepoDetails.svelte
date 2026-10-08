@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
   import {
     getGitUrlFromRemote,
     getRepoNameFromGitRemote,
-  } from "@rilldata/web-common/features/project/deploy/github-utils.ts";
+  } from "@statsparrot/web-common/features/project/deploy/github-utils.ts";
 
   export let gitRemote: string;
   export let subpath: string;

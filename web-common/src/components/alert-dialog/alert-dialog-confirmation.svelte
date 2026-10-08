@@ -7,11 +7,11 @@
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogTitle,
-  } from "@rilldata/web-common/components/alert-dialog/index.js";
+  } from "@statsparrot/web-common/components/alert-dialog/index.js";
   import {
     Button,
     type ButtonType,
-  } from "@rilldata/web-common/components/button/index.js";
+  } from "@statsparrot/web-common/components/button/index.js";
 
   // A simple confirm/cancel alert dialog. Open state is controlled by the caller
   // (open + onOpenChange) so it can be driven by any kind of pending-action state.

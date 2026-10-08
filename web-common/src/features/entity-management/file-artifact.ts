@@ -1,18 +1,18 @@
 import {
   isPinned,
   isManaged,
-} from "@rilldata/web-common/features/entity-management/actions/protected-files";
+} from "@statsparrot/web-common/features/entity-management/actions/protected-files";
 import {
   extractFileExtension,
   splitFolderAndFileName,
-} from "@rilldata/web-common/features/entity-management/file-path-utils";
+} from "@statsparrot/web-common/features/entity-management/file-path-utils";
 import {
   ResourceKind,
   SingletonProjectParserName,
   useProjectParser,
   useResource,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
 import {
   V1ReconcileStatus,
   type V1ParseError,
@@ -20,8 +20,8 @@ import {
   type V1ResourceName,
   getRuntimeServiceGetResourceQueryKey,
   type V1GetResourceResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 import {
   derived,
@@ -35,7 +35,7 @@ import {
   isFileWithoutAutosave,
 } from "../editor/config";
 import { inferResourceKind } from "./infer-resource-kind";
-import { debounce } from "@rilldata/web-common/lib/create-debouncer";
+import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
 import { AsyncSaveState } from "./async-save-state";
 import type { FileIO } from "./file-io";
 import type { EditorSelection } from "@codemirror/state";

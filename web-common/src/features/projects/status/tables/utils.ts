@@ -1,11 +1,11 @@
 import type {
   V1OlapTableInfo,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import { formatMemorySize } from "@rilldata/web-common/lib/number-formatting/memory-size";
+} from "@statsparrot/web-common/runtime-client";
+import { formatMemorySize } from "@statsparrot/web-common/lib/number-formatting/memory-size";
 
 /**
- * Filters out temporary tables (e.g., __rill_tmp_ prefixed tables)
+ * Filters out temporary tables (e.g., __statsparrot_tmp_ prefixed tables)
  */
 export function filterTemporaryTables(
   tables: V1OlapTableInfo[] | undefined,
@@ -13,7 +13,7 @@ export function filterTemporaryTables(
   return (
     tables?.filter(
       (t): t is V1OlapTableInfo =>
-        !!t.name && !t.name.startsWith("__rill_tmp_"),
+        !!t.name && !t.name.startsWith("__statsparrot_tmp_"),
     ) ?? []
   );
 }

@@ -1,18 +1,18 @@
 import { goto } from "$app/navigation";
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { type DimensionFilterItem } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-import type { MeasureFilterItem } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measure-filters";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { type DimensionFilterItem } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+import type { MeasureFilterItem } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measure-filters";
 import type {
   MetricsViewSpecDimension,
   V1CanvasPresetFilterExpr,
   V1Expression,
   V1MetricsView,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   V1Operation,
   type MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   derived,
   get,

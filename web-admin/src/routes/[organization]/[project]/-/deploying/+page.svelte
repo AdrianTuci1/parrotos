@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { useDeployingDashboards } from "@rilldata/web-admin/features/dashboards/listing/deploying-dashboards.ts";
-  import DashboardBuilding from "@rilldata/web-common/features/dashboards/DashboardBuilding.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useDeployingDashboards } from "@statsparrot/web-admin/features/dashboards/listing/deploying-dashboards.ts";
+  import DashboardBuilding from "@statsparrot/web-common/features/dashboards/DashboardBuilding.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { PageData } from "./$types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: PageData;
   const { organization, project, targetDashboard, preCommitSha } = data;

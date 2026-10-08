@@ -1,13 +1,13 @@
-import { createAdminServiceSearchProjectUsers } from "@rilldata/web-admin/client";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { getDashboardNameFromReport } from "@rilldata/web-common/features/scheduled-reports/utils";
-import type { V1ReportSpec } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import { createAdminServiceSearchProjectUsers } from "@statsparrot/web-admin/client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { getDashboardNameFromReport } from "@statsparrot/web-common/features/scheduled-reports/utils";
+import type { V1ReportSpec } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import {
   createRuntimeServiceGetResource,
   createRuntimeServiceListResources,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { smartRefetchIntervalFunc } from "@rilldata/web-admin/lib/refetch-interval-store";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { smartRefetchIntervalFunc } from "@statsparrot/web-admin/lib/refetch-interval-store";
 
 export function useReports(client: RuntimeClient, enabled = true) {
   return createRuntimeServiceListResources(

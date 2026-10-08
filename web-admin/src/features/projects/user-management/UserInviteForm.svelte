@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     createAdminServiceAddProjectMemberUser,
     getAdminServiceListProjectInvitesQueryKey,
     getAdminServiceListProjectMemberUsersQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { invalidateOrgMemberUsers } from "@rilldata/web-admin/features/organizations/user-management/utils";
-  import UserRoleSelect from "@rilldata/web-admin/features/projects/user-management/UserRoleSelect.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import MultiInput from "@rilldata/web-common/components/forms/MultiInput.svelte";
-  import { RFC5322EmailRegex } from "@rilldata/web-common/components/forms/validation";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-admin/client";
+  import { invalidateOrgMemberUsers } from "@statsparrot/web-admin/features/organizations/user-management/utils";
+  import UserRoleSelect from "@statsparrot/web-admin/features/projects/user-management/UserRoleSelect.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import MultiInput from "@statsparrot/web-common/components/forms/MultiInput.svelte";
+  import { RFC5322EmailRegex } from "@statsparrot/web-common/components/forms/validation";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";

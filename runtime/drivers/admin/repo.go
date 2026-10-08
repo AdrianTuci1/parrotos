@@ -16,11 +16,11 @@ import (
 	"time"
 
 	"github.com/bmatcuk/doublestar/v4"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/ctxsync"
-	"github.com/rilldata/rill/runtime/pkg/filewatcher"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ctxsync"
+	"github.com/staticlabs/statsparrot/runtime/pkg/filewatcher"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"go.uber.org/zap"
 	"golang.org/x/sync/singleflight"
 	"gopkg.in/yaml.v3"
@@ -61,7 +61,7 @@ type repo struct {
 	// pullErr is the last error encountered during pull. It is set to nil when a pull is successful.
 	// Even if pullErr is not nil, ready can still be true if a previous pull was successful.
 	pullErr error
-	// ignorePaths is a list of paths to ignore when listing or accessing files. It's populated by parsing rill.yaml during pull.
+	// ignorePaths is a list of paths to ignore when listing or accessing files. It's populated by parsing statsparrot.yaml during pull.
 	ignorePaths []string
 	// git wraps files retrieved from a remote Git repository.
 	git *gitRepo
@@ -622,7 +622,7 @@ func (r *repo) Commit(ctx context.Context, message string) (string, error) {
 	if !r.git.editable() {
 		return "", fmt.Errorf("repo is not editable")
 	}
-	return gitutil.CommitAll(ctx, r.git.repoDir, r.git.subpath, message, gitutil.Signature{Name: "Rill", Email: "noreply@rilldata.com"})
+	return gitutil.CommitAll(ctx, r.git.repoDir, r.git.subpath, message, gitutil.Signature{Name: "Parrot", Email: "noreply@staticlabs.com"})
 }
 
 // Pull implements drivers.RepoStore.
@@ -889,18 +889,18 @@ func (r *repo) pullInner(ctx context.Context, opts *drivers.PullOptions) error {
 		}
 	}
 
-	// Parse `ignore_paths` from `rill.yaml` without fully parsing the project.
+	// Parse `ignore_paths` from `statsparrot.yaml` without fully parsing the project.
 	// This enables us to honor `ignore_paths` closer to the file system level, greatly improving performance.
-	// NOTE: Not checking r.virtual for rill.yaml because it'll never be stored there.
+	// NOTE: Not checking r.virtual for statsparrot.yaml because it'll never be stored there.
 	var root string
 	if r.archive != nil {
 		root = r.archive.root()
 	} else {
 		root = r.git.root()
 	}
-	rawYAML, err := os.ReadFile(filepath.Join(root, "rill.yaml"))
+	rawYAML, err := os.ReadFile(filepath.Join(root, "statsparrot.yaml"))
 	if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("failed to read rill.yaml: %w", err)
+		return fmt.Errorf("failed to read statsparrot.yaml: %w", err)
 	}
 	if rawYAML != nil {
 		tmp := &struct {

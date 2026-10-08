@@ -1,8 +1,8 @@
 <script lang="ts">
-  import AlertTriangle from "@rilldata/web-common/components/icons/AlertTriangle.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import AlertTriangle from "@statsparrot/web-common/components/icons/AlertTriangle.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import { slide } from "svelte/transition";
 
   export let fileArtifact: FileArtifact;

@@ -6,9 +6,9 @@ project_files:
     type: model
     connector: redshift
     database: "test_db"
-    output_location: "s3://integration-test.rilldata.com/redshift_temp/"
+    output_location: "s3://integration-test.statsparrot.com/redshift_temp/"
     workgroup: "integration-test-wg"
-    role_arn: "arn:aws:iam::248432388601:role/system/integration-test-rilldata-com"
+    role_arn: "arn:aws:iam::248432388601:role/system/integration-test-staticlabs-com"
     region: "us-east-1"
     sql: "select * from all_datatypes"
     output:

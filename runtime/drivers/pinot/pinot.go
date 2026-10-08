@@ -10,10 +10,10 @@ import (
 	"github.com/XSAM/otelsql"
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/pinot/sqldriver"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/pinot/sqldriver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 )
@@ -26,7 +26,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "Pinot",
 	Description: "Connect to Apache Pinot.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/olap/pinot",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/olap/pinot",
 	// Important: Any edits to the below properties must be accompanied by changes to the client-side form validation schemas.
 	ConfigProperties: []*drivers.PropertySpec{
 		{

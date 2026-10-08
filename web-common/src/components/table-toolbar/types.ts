@@ -1,7 +1,7 @@
 import type {
   ArrayRuneStore,
   RuneStore,
-} from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+} from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 import type { ColumnSort } from "tanstack-table-8-svelte-5";
 
 export type ViewMode = "list" | "grid";

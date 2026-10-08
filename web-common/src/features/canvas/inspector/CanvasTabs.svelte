@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tab from "@rilldata/web-common/features/dashboards/tab-bar/Tab.svelte";
+  import Tab from "@statsparrot/web-common/features/dashboards/tab-bar/Tab.svelte";
 
   export let currentTab = "options";
 

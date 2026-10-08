@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { useCanvas } from "@rilldata/web-common/features/canvas/selector";
+  import { useCanvas } from "@statsparrot/web-common/features/canvas/selector";
   import { useRuntimeClient } from "../../runtime-client/v2";
   import { featureFlags } from "../feature-flags";
-  import ChatToggle from "@rilldata/web-common/features/chat/layouts/sidebar/ChatToggle.svelte";
+  import ChatToggle from "@statsparrot/web-common/features/chat/layouts/sidebar/ChatToggle.svelte";
   import {
     dashboardChatActions,
     dashboardChatOpen,
-  } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store";
+  } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store";
   import ViewAsButton from "../dashboards/granular-access-policies/ViewAsButton.svelte";
   import {
     useDashboardPolicyCheck,
-    useRillYamlPolicyCheck,
+    useParrotYamlPolicyCheck,
   } from "../dashboards/granular-access-policies/useSecurityPolicyCheck";
-  import CanvasEditButton from "@rilldata/web-common/features/canvas/CanvasEditButton.svelte";
+  import CanvasEditButton from "@statsparrot/web-common/features/canvas/CanvasEditButton.svelte";
 
   const client = useRuntimeClient();
 
@@ -22,7 +22,7 @@
   $: canvasFilePath = $canvasQuery.data?.filePath ?? "";
 
   $: canvasPolicyCheck = useDashboardPolicyCheck(client, canvasFilePath);
-  $: rillYamlPolicyCheck = useRillYamlPolicyCheck(client);
+  $: statsparrotYamlPolicyCheck = useParrotYamlPolicyCheck(client);
 
   // Check if any metrics view referenced by this canvas has security rules
   $: referencedMetricsViewsHavePolicy = Object.values(
@@ -31,7 +31,7 @@
 
   $: hasSecurityPolicy =
     $canvasPolicyCheck.data ||
-    $rillYamlPolicyCheck.data ||
+    $statsparrotYamlPolicyCheck.data ||
     referencedMetricsViewsHavePolicy;
 
   const { dashboardChat, readOnly } = featureFlags;

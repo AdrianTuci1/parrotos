@@ -1,6 +1,6 @@
 import { createQuery } from "@tanstack/svelte-query";
-import { getValidMetricsViewsQueryOptions } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import { getValidMetricsViewsQueryOptions } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import { derived, type Readable } from "svelte/store";
 import {
   type MetricsViewSpecDimension,
@@ -8,13 +8,13 @@ import {
   type V1CanvasSpec,
   type V1ComponentSpec,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
-import { createQueryServiceResolveCanvas } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
+import { createQueryServiceResolveCanvas } from "@statsparrot/web-common/runtime-client";
 import {
   getClientFilteredResourcesQueryOptions,
   ResourceKind,
-} from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 /**
  * Metadata used to map a value to a label.

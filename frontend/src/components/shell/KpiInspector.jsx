@@ -20,9 +20,9 @@ const MARK_OPTIONS = [
 ];
 
 /**
- * Rill-style KPI/measure card inspector (right-side panel).
+ * Parrot-style KPI/measure card inspector (right-side panel).
  *
- * In Rill the per-card editor is the Canvas inspector: clicking a card selects it and
+ * In Parrot the per-card editor is the Canvas inspector: clicking a card selects it and
  * the inspector renders that card's fields (`ComponentsEditor`/`ParamMapper` →
  * `inputParams()`: title, description, sparkline, comparison, axes), plus, for the
  * custom-chart card, an "Edit with AI" prompt that routes to the developer agent.
@@ -233,7 +233,7 @@ export default function KpiInspector({
           <div className="mock-inspector-section-title">Expression</div>
           <div className="mock-inspector-code">{measure.expression || measure.name}</div>
           <div className="mock-inspector-note">
-            Expressions are edited in the metrics-view YAML in Rill; shown read-only here.
+            Expressions are edited in the metrics-view YAML in Parrot; shown read-only here.
           </div>
         </section>
       </div>

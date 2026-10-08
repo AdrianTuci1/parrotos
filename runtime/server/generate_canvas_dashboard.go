@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/server/auth"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -271,7 +271,7 @@ const stackedBarExample = `stacked_bar:
   metrics_view: "<metrics_view_name>"
   title: "Stacked Metrics Over Time"
   color:
-    field: "rill_measures"
+    field: "statsparrot_measures"
     legendOrientation: "top"
     type: "value"
   x:
@@ -448,7 +448,7 @@ const chartGuidelinesPrompt = `
 - **value**: Special type for multiple measures (used in color field)
 
 ### Special Fields
-- **rill_measures**: Special field for multiple measures in stacked charts and area charts. The field name is only used in color field object. DO NOT USE it for other keys except for "color" key in the field object.
+- **statsparrot_measures**: Special field for multiple measures in stacked charts and area charts. The field name is only used in color field object. DO NOT USE it for other keys except for "color" key in the field object.
 
 ### Common Field Properties
 - **field**: The field name from the metrics view
@@ -478,8 +478,8 @@ For bar_chart, stacked_bar, line_chart, and area_chart types in single measure m
 For dynamic coloring based on data dimensions:
 ` + "```json" + `
 {
-  "field": "dimension_name|rill_measures",      // The data field to base colors on
-  "type": "nominal|value", // Data type, use value only when field in "rill_measures"
+  "field": "dimension_name|statsparrot_measures",      // The data field to base colors on
+  "type": "nominal|value", // Data type, use value only when field in "statsparrot_measures"
   "limit": 10,                     // Limit denotes the maximum number of color categories
   "legendOrientation": "top|bottom|left|right" // Legend position (optional)
 }
@@ -953,7 +953,7 @@ func marshalCanvasDashboardYAML(doc *canvasDashboardYAML, aiPowered bool) (strin
 	buf := new(bytes.Buffer)
 
 	buf.WriteString("# Canvas Dashboard YAML\n")
-	buf.WriteString("# Reference documentation: https://docs.rilldata.com/reference/project-files/canvas-dashboards\n")
+	buf.WriteString("# Reference documentation: https://docs.statsparrot.com/reference/project-files/canvas-dashboards\n")
 	if aiPowered {
 		buf.WriteString("# This file was generated using AI.\n")
 	}

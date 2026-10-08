@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
 
   export let title: string;
   export let description: string = "";

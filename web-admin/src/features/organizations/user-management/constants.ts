@@ -1,4 +1,4 @@
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function getOrgRolesDescriptionMap() {
   return {
@@ -9,5 +9,5 @@ export function getOrgRolesDescriptionMap() {
   };
 }
 
-// Source: https://github.com/rilldata/rill/blob/main/admin/database/validate.go#L57
+// Source: https://github.com/staticlabs/statsparrot/blob/main/admin/database/validate.go#L57
 export const SLUG_REGEX = /^[_a-zA-Z0-9][-_a-zA-Z0-9]*$/;

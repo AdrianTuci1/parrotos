@@ -1,22 +1,22 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import Export from "@rilldata/web-common/components/icons/Export.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import Export from "@statsparrot/web-common/components/icons/Export.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
   import {
     createQueryServiceExportMutation,
     V1ExportFormat,
     type V1Query,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onMount } from "svelte";
   import type TScheduledReportDialog from "../scheduled-reports/ScheduledReportDialog.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
 
   const runtimeClient = useRuntimeClient();
 
@@ -71,7 +71,7 @@
   }
 
   // Only import the Scheduled Report dialog if in the Cloud context.
-  // This ensures Rill Developer doesn't try and fail to import the admin-client.
+  // This ensures Parrot Developer doesn't try and fail to import the admin-client.
   let ScheduledReportDialog: typeof TScheduledReportDialog;
   onMount(async () => {
     if (includeScheduledReport) {

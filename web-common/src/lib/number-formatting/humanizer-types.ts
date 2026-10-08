@@ -1,4 +1,4 @@
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
 
 /**
  * This enum represents all of the valid strings that can be

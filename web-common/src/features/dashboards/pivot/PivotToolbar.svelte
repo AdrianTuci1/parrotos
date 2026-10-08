@@ -3,14 +3,14 @@
 </script>
 
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Checkbox from "@rilldata/web-common/components/forms/Checkbox.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import PivotPanel from "@rilldata/web-common/components/icons/PivotPanel.svelte";
-  import { PIVOT_ROW_LIMIT_OPTIONS } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-  import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils.ts";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Checkbox from "@statsparrot/web-common/components/forms/Checkbox.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import PivotPanel from "@statsparrot/web-common/components/icons/PivotPanel.svelte";
+  import { PIVOT_ROW_LIMIT_OPTIONS } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+  import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils.ts";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
   import { writable } from "svelte/store";
   import Collapse from "../../../components/icons/Collapse.svelte";
   import Pivot from "../../../components/icons/Pivot.svelte";
@@ -18,7 +18,7 @@
   import TooltipContent from "../../../components/tooltip/TooltipContent.svelte";
   import TableIcon from "../../canvas/icons/TableIcon.svelte";
   import type { PivotChipData, PivotState, PivotTableMode } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let pivotState: PivotState;
   export let showPanels = true;

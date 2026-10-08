@@ -1,5 +1,5 @@
 version: v2
-name: buf.build/rilldata/rill
+name: buf.build/staticlabs/statsparrot
 deps:
   - buf.build/envoyproxy/protoc-gen-validate
   - buf.build/googleapis/googleapis

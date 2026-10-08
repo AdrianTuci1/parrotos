@@ -1,5 +1,5 @@
 // Package statsparrot hosts the Statsparrot reverse-ETL extension grafted onto the
-// Rill runtime. Data sources stay 1:1 with Rill (its native connectors: DuckDB,
+// Parrot runtime. Data sources stay 1:1 with Parrot (its native connectors: DuckDB,
 // BigQuery, ClickHouse, files, etc.); the only custom piece is the `reversetl`
 // webhook fan-out. A model whose output connector is `reversetl` runs its SQL
 // against the instance's warehouse (the input connector) and POSTs the returned
@@ -7,7 +7,7 @@
 // fan out and where.
 //
 // (The earlier multi-SaaS ingestion connectors — Stripe, Shopify, WooCommerce,
-// GA4, Meta Ads, TikTok Ads — were removed to keep sources 1:1 with Rill.)
+// GA4, Meta Ads, TikTok Ads — were removed to keep sources 1:1 with Parrot.)
 package statsparrot
 
 import (
@@ -15,9 +15,9 @@ import (
 	"errors"
 	"maps"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 )
 

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
   import { isEmbedPage } from "../layout/navigation/navigation-utils";
   import AlertCircleOutline from "./icons/AlertCircleOutline.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let statusCode: number | null | undefined = undefined;
   export let header: string;

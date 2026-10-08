@@ -7,14 +7,14 @@
     V1MagicAuthToken,
     RpcStatus,
     V1ListMagicAuthTokensResponse,
-  } from "@rilldata/web-admin/client";
-  import InfiniteScrollTable from "@rilldata/web-common/components/table/InfiniteScrollTable.svelte";
+  } from "@statsparrot/web-admin/client";
+  import InfiniteScrollTable from "@statsparrot/web-common/components/table/InfiniteScrollTable.svelte";
   import type {
     InfiniteData,
     InfiniteQueryObserverResult,
   } from "@tanstack/svelte-query";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 
   interface MagicAuthTokenProps extends V1MagicAuthToken {
     dashboardTitle: string;

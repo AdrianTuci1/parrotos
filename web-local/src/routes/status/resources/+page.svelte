@@ -1,22 +1,22 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { onMount } from "svelte";
-  import ResourcesFilterableTable from "@rilldata/web-common/features/resources/ResourcesFilterableTable.svelte";
+  import ResourcesFilterableTable from "@statsparrot/web-common/features/resources/ResourcesFilterableTable.svelte";
   import ParseErrorsSection from "../ParseErrorsSection.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     createRuntimeServiceCreateTriggerMutation,
     createRuntimeServiceListResources,
     getRuntimeServiceListResourcesQueryKey,
     V1ReconcileStatus,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
   import {
     createUrlFilterSync,
     parseArrayParam,
     parseStringParam,
-  } from "@rilldata/web-common/lib/url-filter-sync";
+  } from "@statsparrot/web-common/lib/url-filter-sync";
 
   const runtimeClient = useRuntimeClient();
   const queryClient = useQueryClient();

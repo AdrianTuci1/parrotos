@@ -3,7 +3,7 @@
 // ExplainAndFix error button are deferred to the runtime-bound phase; the
 // component reproduces the bordered editor surface plus the error banner.
 import type { ReactNode } from "react";
-import { AlertIcon } from "@rilldata/web-common/features/file-explorer/react/icons";
+import { AlertIcon } from "@statsparrot/web-common/features/file-explorer/react/icons";
 
 export default function WorkspaceEditorContainer({
   error,

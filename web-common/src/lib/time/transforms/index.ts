@@ -1,6 +1,6 @@
 /**
  * Utility functions around transforming Date objects in ways
- * that are useful to the Rill dashboard. The core function to use here is
+ * that are useful to the Parrot dashboard. The core function to use here is
  * transformDate, which takes a reference time and a list of transformations
  * to apply to that reference time. The transformations are applied in the order
  * they appear in the list.
@@ -8,7 +8,7 @@
  * We are opting to define transformations in a way that can be serialized
  * in a configuration file.
  */
-import { PeriodToUnitsMap } from "@rilldata/web-common/lib/time/config";
+import { PeriodToUnitsMap } from "@statsparrot/web-common/lib/time/config";
 import { DateTime, Duration } from "luxon";
 import {
   Period,

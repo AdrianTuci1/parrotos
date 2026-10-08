@@ -4,7 +4,7 @@ import WorkspaceDispatcher, {
   type FileArtifactDescriptor,
 } from "./WorkspaceDispatcher";
 import { workspaceForKind } from "./workspace-kind";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 
 function makeArtifact(overrides: Partial<FileArtifactDescriptor> = {}): FileArtifactDescriptor {
   return {

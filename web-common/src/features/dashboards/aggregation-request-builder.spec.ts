@@ -1,12 +1,12 @@
 import {
   aggregationRequestWithRowsAndColumns,
   buildAggregationRequest,
-} from "@rilldata/web-common/features/dashboards/aggregation-request-utils.ts";
-import { getDimensionTableAggregationRequestForTime } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-export.ts";
-import { LeaderboardContextColumn } from "@rilldata/web-common/features/dashboards/leaderboard-context-column.ts";
-import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils.ts";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+} from "@statsparrot/web-common/features/dashboards/aggregation-request-utils.ts";
+import { getDimensionTableAggregationRequestForTime } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-export.ts";
+import { LeaderboardContextColumn } from "@statsparrot/web-common/features/dashboards/leaderboard-context-column.ts";
+import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils.ts";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_DOMAIN_DIMENSION,
@@ -17,8 +17,8 @@ import {
   AD_BIDS_METRICS_NAME,
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_TIME_RANGE_SUMMARY,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data.ts";
-import { getInitExploreStateForTest } from "@rilldata/web-common/features/dashboards/stores/test-data/helpers.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data.ts";
+import { getInitExploreStateForTest } from "@statsparrot/web-common/features/dashboards/stores/test-data/helpers.ts";
 import {
   AD_BIDS_FLAT_PIVOT_TABLE,
   AD_BIDS_OPEN_IMP_TDD,
@@ -31,13 +31,13 @@ import {
   AD_BIDS_SORT_BY_PERCENT_CHANGE_IMPRESSIONS,
   applyMutationsToDashboard,
   type TestDashboardMutation,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/store-mutations.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/store-mutations.ts";
 import {
   getTimeControlState,
   type TimeControlState,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
-import { extractRowsAndColumns } from "@rilldata/web-common/features/scheduled-reports/utils.ts";
-import type { V1MetricsViewAggregationRequest } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
+import { extractRowsAndColumns } from "@statsparrot/web-common/features/scheduled-reports/utils.ts";
+import type { V1MetricsViewAggregationRequest } from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 import { describe, expect, it } from "vitest";
 import { getPivotAggregationRequest } from "web-common/src/features/dashboards/pivot/pivot-export.ts";
@@ -141,7 +141,7 @@ describe("Report rows and columns", () => {
           AD_BIDS_BID_PRICE_MEASURE,
         ],
 
-        updatedRows: ["timestamp_rill_TIME_GRAIN_HOUR"],
+        updatedRows: ["timestamp_statsparrot_TIME_GRAIN_HOUR"],
         updatedColumns: [
           AD_BIDS_PUBLISHER_DIMENSION,
           AD_BIDS_IMPRESSIONS_MEASURE,
@@ -239,13 +239,13 @@ describe("Report rows and columns", () => {
         mutations: [AD_BIDS_OPEN_IMP_TDD, AD_BIDS_SET_DOMAIN_COMPARE_DIMENSION],
         expectedRows: [AD_BIDS_DOMAIN_DIMENSION],
         expectedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [AD_BIDS_DOMAIN_DIMENSION],
         updatedColumns: [
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
@@ -271,13 +271,13 @@ describe("Report rows and columns", () => {
         mutations: [AD_BIDS_OPEN_IMP_TDD, AD_BIDS_SET_DOMAIN_COMPARE_DIMENSION],
         expectedRows: [AD_BIDS_DOMAIN_DIMENSION],
         expectedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [AD_BIDS_PUBLISHER_DIMENSION],
         updatedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
@@ -303,13 +303,13 @@ describe("Report rows and columns", () => {
         mutations: [AD_BIDS_OPEN_IMP_TDD, AD_BIDS_SET_DOMAIN_COMPARE_DIMENSION],
         expectedRows: [AD_BIDS_DOMAIN_DIMENSION],
         expectedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [AD_BIDS_DOMAIN_DIMENSION],
         updatedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_BID_PRICE_MEASURE,
         ],
 
@@ -335,13 +335,13 @@ describe("Report rows and columns", () => {
         mutations: [AD_BIDS_OPEN_IMP_TDD, AD_BIDS_SET_DOMAIN_COMPARE_DIMENSION],
         expectedRows: [AD_BIDS_DOMAIN_DIMENSION],
         expectedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [AD_BIDS_DOMAIN_DIMENSION, AD_BIDS_PUBLISHER_DIMENSION],
         updatedColumns: [
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
           AD_BIDS_BID_PRICE_MEASURE,
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
@@ -391,21 +391,21 @@ describe("Report rows and columns", () => {
         mutations: [AD_BIDS_OPEN_PIVOT_WITH_ALL_FIELDS],
         expectedRows: [
           AD_BIDS_PUBLISHER_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
         ],
         expectedColumns: [
           AD_BIDS_DOMAIN_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [
           AD_BIDS_DOMAIN_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_HOUR",
+          "timestamp_statsparrot_TIME_GRAIN_HOUR",
         ],
         updatedColumns: [
           AD_BIDS_PUBLISHER_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_BID_PRICE_MEASURE,
         ],
 
@@ -438,14 +438,14 @@ describe("Report rows and columns", () => {
         expectedRows: [],
         expectedColumns: [
           AD_BIDS_DOMAIN_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [],
         updatedColumns: [
           AD_BIDS_PUBLISHER_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_BID_PRICE_MEASURE,
         ],
 
@@ -468,19 +468,19 @@ describe("Report rows and columns", () => {
         title: "Sort by time dimension",
         mutations: [
           AD_BIDS_FLAT_PIVOT_TABLE,
-          AD_BIDS_SET_TIME_PIVOT_FILTER("timestamp_rill_TIME_GRAIN_DAY"),
+          AD_BIDS_SET_TIME_PIVOT_FILTER("timestamp_statsparrot_TIME_GRAIN_DAY"),
         ],
         expectedRows: [],
         expectedColumns: [
           AD_BIDS_DOMAIN_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 
         updatedRows: [],
         updatedColumns: [
           AD_BIDS_PUBLISHER_DIMENSION,
-          "timestamp_rill_TIME_GRAIN_DAY",
+          "timestamp_statsparrot_TIME_GRAIN_DAY",
           AD_BIDS_IMPRESSIONS_MEASURE,
         ],
 

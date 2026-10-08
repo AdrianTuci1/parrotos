@@ -3,7 +3,7 @@
     Tabs,
     TabsList,
     TabsTrigger,
-  } from "@rilldata/web-common/components/tabs";
+  } from "@statsparrot/web-common/components/tabs";
 
   export let value: string;
   export let options: { value: string; label: string }[];

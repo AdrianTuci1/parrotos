@@ -1,8 +1,8 @@
-import { ExploreStateDefaultChartType } from "@rilldata/web-common/features/dashboards/url-state/defaults";
+import { ExploreStateDefaultChartType } from "@statsparrot/web-common/features/dashboards/url-state/defaults";
 
-import { reverseMap } from "@rilldata/web-common/lib/map-utils.ts";
-import { DashboardState_LeaderboardSortType } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-import { V1ExploreSortType } from "@rilldata/web-common/runtime-client";
+import { reverseMap } from "@statsparrot/web-common/lib/map-utils.ts";
+import { DashboardState_LeaderboardSortType } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+import { V1ExploreSortType } from "@statsparrot/web-common/runtime-client";
 
 const LegacyCharTypeToPresetChartType: Record<string, string> = {
   default: ExploreStateDefaultChartType,

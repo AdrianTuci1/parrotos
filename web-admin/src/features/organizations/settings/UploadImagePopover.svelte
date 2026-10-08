@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { createAdminServiceCreateAsset } from "@rilldata/web-admin/client";
-  import { CANONICAL_ADMIN_URL } from "@rilldata/web-admin/client/http-client";
-  import { Button } from "@rilldata/web-common/components/button/index.js";
-  import ImageInput from "@rilldata/web-common/components/forms/ImageInput.svelte";
-  import EditIcon from "@rilldata/web-common/components/icons/EditIcon.svelte";
+  import { createAdminServiceCreateAsset } from "@statsparrot/web-admin/client";
+  import { CANONICAL_ADMIN_URL } from "@statsparrot/web-admin/client/http-client";
+  import { Button } from "@statsparrot/web-common/components/button/index.js";
+  import ImageInput from "@statsparrot/web-common/components/forms/ImageInput.svelte";
+  import EditIcon from "@statsparrot/web-common/components/icons/EditIcon.svelte";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover/index.js";
-  import { extractFileExtension } from "@rilldata/web-common/features/entity-management/file-path-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/popover/index.js";
+  import { extractFileExtension } from "@statsparrot/web-common/features/entity-management/file-path-utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   export let imageUrl: string;
   export let accept: string;
   export let label: string;
@@ -78,7 +78,7 @@
     class="flex items-center relative group h-[72px] border border-gray-300 hover:bg-surface-hover w-fit {!imageUrl
       ? 'w-24'
       : 'w-20'}"
-    style={dark ? "background-color: var(--color-rill-gray-dark-50)" : ""}
+    style={dark ? "background-color: var(--color-statsparrot-gray-dark-50)" : ""}
   >
     <div class="m-auto px-4 w-fit h-10">
       {#if imageUrl}

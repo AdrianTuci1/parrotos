@@ -1,14 +1,14 @@
-import type { Annotation } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/annotation-utils";
-import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter.ts";
-import { Period, TimeUnit } from "@rilldata/web-common/lib/time/types.ts";
+import type { Annotation } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/annotation-utils";
+import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter.ts";
+import { Period, TimeUnit } from "@statsparrot/web-common/lib/time/types.ts";
 import {
   createQueryServiceMetricsViewAnnotations,
   type V1MetricsViewAnnotationsResponseAnnotation,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { DateTime, Interval } from "luxon";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config.ts";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config.ts";
 import { keepPreviousData } from "@tanstack/svelte-query";
 
 /**

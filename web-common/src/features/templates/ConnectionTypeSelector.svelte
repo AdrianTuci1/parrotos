@@ -1,13 +1,13 @@
 <script lang="ts">
   import { Select as SelectPrimitive } from "bits-ui";
-  import * as Select from "@rilldata/web-common/components/select";
+  import * as Select from "@statsparrot/web-common/components/select";
   import { Cloud, HardDrive, Play, Server, Sparkles } from "lucide-svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import GoogleCloudStorageIcon from "@rilldata/web-common/components/icons/connectors/GoogleCloudStorageIcon.svelte";
-  import AmazonS3Icon from "@rilldata/web-common/components/icons/connectors/AmazonS3Icon.svelte";
-  import MicrosoftAzureBlobStorageIcon from "@rilldata/web-common/components/icons/connectors/MicrosoftAzureBlobStorageIcon.svelte";
-  import { createRuntimeServiceAnalyzeConnectors } from "@rilldata/web-common/runtime-client/v2/gen/runtime-service";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import GoogleCloudStorageIcon from "@statsparrot/web-common/components/icons/connectors/GoogleCloudStorageIcon.svelte";
+  import AmazonS3Icon from "@statsparrot/web-common/components/icons/connectors/AmazonS3Icon.svelte";
+  import MicrosoftAzureBlobStorageIcon from "@statsparrot/web-common/components/icons/connectors/MicrosoftAzureBlobStorageIcon.svelte";
+  import { createRuntimeServiceAnalyzeConnectors } from "@statsparrot/web-common/runtime-client/v2/gen/runtime-service";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { ComponentType, SvelteComponent } from "svelte";
 
   type ConnectionOption = {
@@ -35,7 +35,7 @@
     playground: Play,
     "self-managed": Server,
     "self-hosted": Server,
-    "rill-managed": Sparkles,
+    "statsparrot-managed": Sparkles,
     gcs: GoogleCloudStorageIcon,
     s3: AmazonS3Icon,
     azure: MicrosoftAzureBlobStorageIcon,
@@ -47,7 +47,7 @@
     playground: { bg: "bg-green-100", text: "text-green-600" },
     "self-managed": { bg: "bg-purple-100", text: "text-purple-600" },
     "self-hosted": { bg: "bg-purple-100", text: "text-purple-600" },
-    "rill-managed": { bg: "bg-blue-100", text: "text-blue-600" },
+    "statsparrot-managed": { bg: "bg-blue-100", text: "text-blue-600" },
     gcs: { bg: "", text: "" },
     s3: { bg: "", text: "" },
     azure: { bg: "", text: "" },

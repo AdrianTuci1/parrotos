@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import Add from "@rilldata/web-common/components/icons/Add.svelte";
-  import CanvasIcon from "@rilldata/web-common/components/icons/CanvasIcon.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import Add from "@statsparrot/web-common/components/icons/Add.svelte";
+  import CanvasIcon from "@statsparrot/web-common/components/icons/CanvasIcon.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     useGetCanvasesForMetricsView,
     useGetExploresForMetricsView,

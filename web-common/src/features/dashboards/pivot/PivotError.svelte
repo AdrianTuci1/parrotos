@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import CopyIcon from "@rilldata/web-common/components/icons/CopyIcon.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import CopyIcon from "@statsparrot/web-common/components/icons/CopyIcon.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import type { PivotQueryError } from "./types";
 
   export let errors: PivotQueryError[];

@@ -1,8 +1,8 @@
 import {
   contextColWidthDefaults,
   LeaderboardContextColumn,
-} from "@rilldata/web-common/features/dashboards/leaderboard-context-column";
-import { type ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+} from "@statsparrot/web-common/features/dashboards/leaderboard-context-column";
+import { type ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 
 // TODO: Remove this in favour of just `getDefaultExplorePreset`
 export function getFullInitExploreState(

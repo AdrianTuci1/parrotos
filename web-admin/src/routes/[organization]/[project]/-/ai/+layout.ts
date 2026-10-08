@@ -1,9 +1,9 @@
 import {
   getLastConversationId,
   setLastConversationId,
-} from "@rilldata/web-common/features/chat/layouts/fullpage/fullpage-store";
-import { getFeatureFlags } from "@rilldata/web-common/features/feature-flags.js";
-import { getCloudRuntimeClient } from "@rilldata/web-admin/lib/runtime-client";
+} from "@statsparrot/web-common/features/chat/layouts/fullpage/fullpage-store";
+import { getFeatureFlags } from "@statsparrot/web-common/features/feature-flags.js";
+import { getCloudRuntimeClient } from "@statsparrot/web-admin/lib/runtime-client";
 import { redirect } from "@sveltejs/kit";
 
 export const load = async ({

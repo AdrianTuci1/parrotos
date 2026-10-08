@@ -1,6 +1,6 @@
 <script lang="ts">
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
   import SelectionDropdown from "./SelectionDropdown.svelte";
 
   export let defaultItems: string[];

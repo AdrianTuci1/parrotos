@@ -1,0 +1,67 @@
+# Runs the hosted Parrot deployment: the admin API, the complete web app and a runtime for
+# every project, behind Caddy for TLS.
+#
+# Usage:
+#   cd deploy/hosted
+#   cp .env.example .env    # then fill it in
+#   docker compose up -d --build
+#
+# Postgres is NOT part of this file on purpose. Use a managed instance (Neon, Lightsail Managed
+# Databases, RDS) and point STATSPARROT_ADMIN_DATABASE_URL at it: the database holds accounts,
+# organizations, projects and the job queue, and is the one thing you cannot afford to lose
+# with the host.
+
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/hosted/Dockerfile
+      args:
+        # Baked into the web app, which needs to know where the API is before it can call it.
+        # Keeping it equal to STATSPARROT_SERVE_PUBLIC_URL is what makes the deployment
+        # same-origin without any cross-origin configuration.
+        STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL: ${STATSPARROT_SERVE_PUBLIC_URL:?set STATSPARROT_SERVE_PUBLIC_URL in .env}
+    image: statsparrot-hosted:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # The data directory is a volume; keep it in sync with the volume below.
+      STATSPARROT_SERVE_RUNTIME_DATA_DIR: /var/lib/statsparrot
+    volumes:
+      # Project data, DuckDB files and the runtime metastore. Losing this loses every
+      # project's runtime state (the projects themselves live in Postgres and in the
+      # repositories they were deployed from).
+      - statsparrot-data:/var/lib/statsparrot
+    # The admin port is only reachable from Caddy, never from the internet. Note that the
+    # runtime's own port must also stay closed; see the firewall note in README.md.
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/statsparrot", "admin", "ping", "--url", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # The hostname Caddy obtains a certificate for. Must match the host in
+      # STATSPARROT_SERVE_PUBLIC_URL.
+      STATSPARROT_DOMAIN: ${STATSPARROT_DOMAIN:?set STATSPARROT_DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  statsparrot-data:
+  caddy-data:
+  caddy-config:

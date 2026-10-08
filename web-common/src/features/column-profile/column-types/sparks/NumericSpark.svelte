@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { COLUMN_PROFILE_CONFIG } from "@rilldata/web-common/layout/config";
-  import type { NumericHistogramBinsBin } from "@rilldata/web-common/runtime-client";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { COLUMN_PROFILE_CONFIG } from "@statsparrot/web-common/layout/config";
+  import type { NumericHistogramBinsBin } from "@statsparrot/web-common/runtime-client";
   import { createHistogramScales } from "../histogram-utils";
 
   const height = 18;

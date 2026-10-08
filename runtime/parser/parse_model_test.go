@@ -4,14 +4,14 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func TestModelOutput(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`m1.sql`: `
 SELECT 1
 `,
@@ -132,7 +132,7 @@ output:
 
 func TestModelWithExtraResolverFields(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		`m1.yaml`: `
 type: model
 sql: SELECT 1

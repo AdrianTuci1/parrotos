@@ -2,8 +2,8 @@ package upgrade
 
 import (
 	goversion "github.com/hashicorp/go-version"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/installscript"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/installscript"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ func UpgradeCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	upgradeCmd := &cobra.Command{
 		Use:   "upgrade",
-		Short: "Upgrade Rill to the latest version",
+		Short: "Upgrade Parrot to the latest version",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if version != "" {
@@ -35,7 +35,7 @@ func UpgradeCmd(ch *cmdutil.Helper) *cobra.Command {
 		},
 	}
 
-	upgradeCmd.Flags().StringVar(&version, "version", "", "Install a specific version of Rill")
+	upgradeCmd.Flags().StringVar(&version, "version", "", "Install a specific version of Parrot")
 	upgradeCmd.Flags().BoolVar(&nightly, "nightly", false, "Install the latest nightly build")
 
 	return upgradeCmd

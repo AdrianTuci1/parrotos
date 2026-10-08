@@ -20,8 +20,8 @@ import (
 	"github.com/c2h5oh/datasize"
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/provisioner"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	k8serrs "k8s.io/apimachinery/pkg/api/errors"
@@ -170,13 +170,13 @@ func (p *KubernetesProvisioner) Provision(ctx context.Context, r *provisioner.Re
 		return nil, err
 	}
 
-	// Resolve "latest" version to the current Rill version
+	// Resolve "latest" version to the current Parrot version
 	version := args.Version
 	if version == "" {
 		version = "latest"
 	}
-	if version == "latest" && opts.RillVersion != "" {
-		version = opts.RillVersion
+	if version == "latest" && opts.ParrotVersion != "" {
+		version = opts.ParrotVersion
 	}
 
 	// Use 'prod' if no environment is specified
@@ -243,9 +243,9 @@ func (p *KubernetesProvisioner) Provision(ctx context.Context, r *provisioner.Re
 		}
 	}
 
-	applyOptions := metav1.ApplyOptions{FieldManager: "rill-cloud-admin", Force: true}
+	applyOptions := metav1.ApplyOptions{FieldManager: "statsparrot-cloud-admin", Force: true}
 	labels := map[string]string{
-		"app.kubernetes.io/managed-by": "rill-cloud-admin",
+		"app.kubernetes.io/managed-by": "statsparrot-cloud-admin",
 		"app.kubernetes.io/instance":   provisionID,
 	}
 	annotations := map[string]string{
@@ -458,7 +458,7 @@ func (p *KubernetesProvisioner) CheckResource(ctx context.Context, r *provisione
 
 	// Determine if we should re-provision, and exit early if not
 	trigger := false
-	trigger = trigger || state.Version != opts.RillVersion                                                                           // Version changed
+	trigger = trigger || state.Version != opts.ParrotVersion                                                                           // Version changed
 	trigger = trigger || depl.ObjectMeta.Annotations["checksum/templates"] != p.templatesChecksum                                    // Templates changed
 	trigger = trigger || depl.ObjectMeta.Annotations["organization_plan"] != opts.Annotations["organization_plan"]                   // Billing plan changed
 	trigger = trigger || depl.ObjectMeta.Annotations["organization_custom_domain"] != opts.Annotations["organization_custom_domain"] // Custom domain changed

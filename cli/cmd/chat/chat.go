@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/ai"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/ai"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 	"google.golang.org/grpc/codes"
@@ -28,7 +28,7 @@ func ChatCmd(ch *cmdutil.Helper) *cobra.Command {
 	chatCmd := &cobra.Command{
 		Use:               "chat [<project-name>]",
 		Args:              cobra.MaximumNArgs(1),
-		Short:             "Chat with the Rill AI",
+		Short:             "Chat with the Parrot AI",
 		PersistentPreRunE: cmdutil.CheckChain(cmdutil.CheckAuth(ch), cmdutil.CheckOrganization(ch)),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Determine project name
@@ -148,7 +148,7 @@ func ChatCmd(ch *cmdutil.Helper) *cobra.Command {
 	chatCmd.Flags().StringVar(&project, "project", "", "Project name")
 	chatCmd.Flags().StringVar(&path, "path", ".", "Project directory")
 	chatCmd.Flags().StringVar(&branch, "branch", "", "Target deployment by Git branch (default: primary deployment)")
-	chatCmd.Flags().BoolVar(&local, "local", false, "Target locally running Rill")
+	chatCmd.Flags().BoolVar(&local, "local", false, "Target locally running Parrot")
 
 	return chatCmd
 }
@@ -156,7 +156,7 @@ func ChatCmd(ch *cmdutil.Helper) *cobra.Command {
 // printWelcome prints a welcome message with usage tips.
 func printWelcome() {
 	fmt.Println("╭─────────────────────────────────────────────╮")
-	fmt.Println("│ Welcome to Rill AI Chat                     │")
+	fmt.Println("│ Welcome to Parrot AI Chat                     │")
 	fmt.Println("├─────────────────────────────────────────────┤")
 	fmt.Println("│ Tips:                                       │")
 	fmt.Println("│ • Type your message and press Enter.        │")

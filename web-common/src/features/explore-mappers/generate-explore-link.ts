@@ -1,10 +1,10 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { createLinkError } from "@rilldata/web-common/features/explore-mappers/explore-validation";
-import { ExploreLinkErrorType } from "@rilldata/web-common/features/explore-mappers/types";
-import { getExplorePageUrlSearchParams } from "@rilldata/web-common/features/explore-mappers/utils";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store.ts";
-import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { createLinkError } from "@statsparrot/web-common/features/explore-mappers/explore-validation";
+import { ExploreLinkErrorType } from "@statsparrot/web-common/features/explore-mappers/types";
+import { getExplorePageUrlSearchParams } from "@statsparrot/web-common/features/explore-mappers/utils";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store.ts";
+import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
 
 /**
  * Generates the explore page URL with proper search parameters

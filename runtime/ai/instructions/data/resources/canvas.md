@@ -1,8 +1,8 @@
 ---
-description: Detailed instructions and examples for developing canvas dashboard resources in Rill
+description: Detailed instructions and examples for developing canvas dashboard resources in Parrot
 ---
 
-# Instructions for developing a canvas dashboard in Rill
+# Instructions for developing a canvas dashboard in Parrot
 
 ## Introduction
 
@@ -441,7 +441,7 @@ stacked_bar:
   metrics_view: sales_metrics
   title: "Cost Breakdown Over Time"
   color:
-    field: rill_measures
+    field: statsparrot_measures
     type: value
     legendOrientation: top
   x:
@@ -487,7 +487,7 @@ stacked_bar_normalized:
   metrics_view: inventory_metrics
   title: "Inventory Status Distribution"
   color:
-    field: rill_measures
+    field: statsparrot_measures
     type: value
     legendOrientation: top
     colorMapping:
@@ -921,7 +921,7 @@ SELECT campaign, conversions FROM conversion_metrics ORDER BY conversions DESC L
 - Apply `format_d3` or `format_preset` from measure metadata to axis and tooltip format strings
 - Pick the best mark type for the data: bar, line, area, point, rect (heatmap), arc (pie/donut), etc.
 - Include tooltips with all relevant fields and human-readable formatting
-- Use a clean, professional color scheme; prefer Rill's categorical palette when possible
+- Use a clean, professional color scheme; prefer Parrot's categorical palette when possible
 - For temporal axes: set `"type": "temporal"` and choose an appropriate `timeUnit`
 - For categorical axes: sort by the primary measure descending unless the user specifies otherwise
 - For layered or multi-view charts, use the `"layer"` or `"concat"` composition operators
@@ -1051,7 +1051,7 @@ custom_chart:
 - **`nominal`**: Categorical data (strings, categories). Use for dimensions.
 - **`temporal`**: Time-based data (dates, timestamps). Use for time dimensions.
 - **`quantitative`**: Numerical data (counts, amounts). Use for measures.
-- **`value`**: Special type for multiple measures. Use only in color field with `rill_measures`.
+- **`value`**: Special type for multiple measures. Use only in color field with `statsparrot_measures`.
 
 ### Axis Properties
 
@@ -1141,13 +1141,13 @@ color:
     scheme: sequential
 ```
 
-### Special Field: rill_measures
+### Special Field: statsparrot_measures
 
-Use `rill_measures` in the color field when displaying multiple measures in stacked charts:
+Use `statsparrot_measures` in the color field when displaying multiple measures in stacked charts:
 
 ```yaml
 color:
-  field: rill_measures
+  field: statsparrot_measures
   type: value
   legendOrientation: top
 y:
@@ -1192,7 +1192,7 @@ Override time settings with detailed control:
 ```yaml
 stacked_bar:
   metrics_view: sales_metrics
-  time_filters: tr=P12M&compare_tr=rill-PY&grain=week
+  time_filters: tr=P12M&compare_tr=statsparrot-PY&grain=week
   # ... other config
 ```
 

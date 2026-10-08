@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import {
     ArrowLeft,
     ArrowRight,

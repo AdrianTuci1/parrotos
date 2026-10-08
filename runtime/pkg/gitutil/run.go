@@ -20,7 +20,7 @@ import (
 	oteltrace "go.opentelemetry.io/otel/trace"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/pkg/gitutil")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/pkg/gitutil")
 
 // Run executes a git command with the specified arguments in the given path and returns its output or an error.
 // If path is empty, the command runs without -C (use for commands like `clone` that take an explicit destination).

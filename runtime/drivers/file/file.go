@@ -9,14 +9,14 @@ import (
 	"sync"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/admin/client"
-	"github.com/rilldata/rill/cli/pkg/dotrill"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
-	"github.com/rilldata/rill/runtime/pkg/filewatcher"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/admin/client"
+	"github.com/staticlabs/statsparrot/cli/pkg/dotstatsparrot"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/filewatcher"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
@@ -65,8 +65,8 @@ type configProperties struct {
 	HomeDir             string `mapstructure:"home_dir"`
 }
 
-// a smaller subset of relevant parts of rill.yaml
-type rillYAML struct {
+// a smaller subset of relevant parts of statsparrot.yaml
+type statsparrotYAML struct {
 	IgnorePaths []string `yaml:"ignore_paths"`
 }
 
@@ -96,16 +96,16 @@ func (d driver) Open(_, instanceID string, config map[string]any, st *storage.Cl
 		root:         absPath,
 		driverConfig: conf,
 		driverName:   d.name,
-		dotRill:      dotrill.New(conf.HomeDir),
+		dotStatsparrot:      dotstatsparrot.New(conf.HomeDir),
 	}
 	if err := c.checkRoot(); err != nil {
 		return nil, err
 	}
 
-	// Read rill.yaml and fill in `ignore_paths`
-	rawYaml, err := c.Get(context.Background(), "/rill.yaml")
+	// Read statsparrot.yaml and fill in `ignore_paths`
+	rawYaml, err := c.Get(context.Background(), "/statsparrot.yaml")
 	if err == nil {
-		yml := &rillYAML{}
+		yml := &statsparrotYAML{}
 		err = yaml.Unmarshal([]byte(rawYaml), yml)
 		if err == nil {
 			c.ignorePaths = yml.IgnorePaths
@@ -153,7 +153,7 @@ type connection struct {
 
 	gitConfig *gitutil.Config // git config for repo
 	admin     *client.Client  // admin client for admin service, used to obtain github tokens
-	dotRill   dotrill.DotRill
+	dotStatsparrot   dotstatsparrot.DotStatsparrot
 	gitMu     sync.Mutex // mutex to protect git related operations
 
 	watcher     *filewatcher.LazyWatcher

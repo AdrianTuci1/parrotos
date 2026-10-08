@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
   import type {
     AllKeys,
     ComponentInputParam,
-  } from "@rilldata/web-common/features/canvas/inspector/types";
+  } from "@statsparrot/web-common/features/canvas/inspector/types";
   import {
     ResourceKind,
     useFilteredResources,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { isString } from "../../workspaces/visual-util";
   import type { BaseCanvasComponent } from "../components/BaseCanvasComponent";
   import type { ComponentSpec } from "../components/types";
@@ -46,5 +46,5 @@
   onChange={(value) => {
     component.updateProperty(key, value);
   }}
-  tooltip="View documentation: https://docs.rilldata.com/reference/project-files/metrics-views"
+  tooltip="View documentation: https://docs.statsparrot.com/reference/project-files/metrics-views"
 />

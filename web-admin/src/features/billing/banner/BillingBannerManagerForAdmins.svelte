@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { BillingCTAHandler } from "@rilldata/web-admin/features/billing/BillingCTAHandler";
+  import { BillingCTAHandler } from "@statsparrot/web-admin/features/billing/BillingCTAHandler";
   import {
     type BillingIssueMessage,
     useBillingIssueMessage,
-  } from "@rilldata/web-admin/features/billing/issues/useBillingIssueMessage";
-  import ChoosePlanDialog from "@rilldata/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
+  } from "@statsparrot/web-admin/features/billing/issues/useBillingIssueMessage";
+  import ChoosePlanDialog from "@statsparrot/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
   import {
     BillingBannerID,
     BillingBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-common/components/banner/constants";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 
   export let organization: string;
 

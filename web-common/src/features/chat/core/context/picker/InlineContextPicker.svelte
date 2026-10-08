@@ -4,7 +4,7 @@
   import {
     getIdForContext,
     type InlineContext,
-  } from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
+  } from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
   import {
     autoUpdate,
     computePosition,
@@ -14,14 +14,14 @@
     inline,
   } from "@floating-ui/dom";
   import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-svelte";
-  import * as Kbd from "@rilldata/web-common/components/kbd";
-  import { ContextPickerUIState } from "@rilldata/web-common/features/chat/core/context/picker/ui-state.ts";
-  import { getFilteredPickerItems } from "@rilldata/web-common/features/chat/core/context/picker/filters.ts";
-  import { buildPickerTree } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-  import { KeyboardNavigationManager } from "@rilldata/web-common/features/chat/core/context/picker/keyboard-navigation.ts";
-  import ExpandableOption from "@rilldata/web-common/features/chat/core/context/picker/ExpandableOption.svelte";
-  import SimpleOption from "@rilldata/web-common/features/chat/core/context/picker/SimpleOption.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import * as Kbd from "@statsparrot/web-common/components/kbd";
+  import { ContextPickerUIState } from "@statsparrot/web-common/features/chat/core/context/picker/ui-state.ts";
+  import { getFilteredPickerItems } from "@statsparrot/web-common/features/chat/core/context/picker/filters.ts";
+  import { buildPickerTree } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+  import { KeyboardNavigationManager } from "@statsparrot/web-common/features/chat/core/context/picker/keyboard-navigation.ts";
+  import ExpandableOption from "@statsparrot/web-common/features/chat/core/context/picker/ExpandableOption.svelte";
+  import SimpleOption from "@statsparrot/web-common/features/chat/core/context/picker/SimpleOption.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let selectedChatContext: InlineContext | null = null;
   export let searchText: string = "";

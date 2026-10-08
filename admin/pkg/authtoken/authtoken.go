@@ -15,7 +15,7 @@ import (
 var ErrMalformed = errors.New("malformed auth token")
 
 // Prefix is prepended to every auth token.
-const Prefix = "rill"
+const Prefix = "statsparrot"
 
 // Type is part of the token prefix in the string representation.
 type Type string
@@ -39,7 +39,7 @@ func (t Type) Validate() bool {
 
 // Token is a parsed authentication token with a type, UUID ID, and 24-byte secret.
 // Tokens can be (de)serialized as strings.
-// Example string representation of a user token: rill_usr_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK.
+// Example string representation of a user token: statsparrot_usr_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK.
 type Token struct {
 	Type   Type
 	ID     uuid.UUID
@@ -140,7 +140,7 @@ func (t *Token) SecretHash() []byte {
 	return hashed[:]
 }
 
-// Prefix returns a safe, partial display string for the token, e.g., "rill_usr_abcdefghij".
+// Prefix returns a safe, partial display string for the token, e.g., "statsparrot_usr_abcdefghij".
 // This works even if t.Secret is empty (all zeroes), as long as t.ID is set.
 func (t *Token) Prefix() string {
 	payload := make([]byte, 40)

@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/c2h5oh/datasize"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 var ignoreFileList = []string{

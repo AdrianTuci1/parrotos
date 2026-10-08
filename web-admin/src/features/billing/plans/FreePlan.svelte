@@ -1,10 +1,10 @@
 <script lang="ts">
-  import PlanContainer from "@rilldata/web-admin/features/billing/plans/PlanContainer.svelte";
-  import { formatCredit } from "@rilldata/web-admin/features/billing/plans/utils.ts";
-  import { getPlanCredits } from "@rilldata/web-admin/features/billing/plans/selectors.ts";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
-  import PricingLink from "@rilldata/web-admin/features/billing/plans/modules/PricingLink.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import PlanContainer from "@statsparrot/web-admin/features/billing/plans/PlanContainer.svelte";
+  import { formatCredit } from "@statsparrot/web-admin/features/billing/plans/utils.ts";
+  import { getPlanCredits } from "@statsparrot/web-admin/features/billing/plans/selectors.ts";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
+  import PricingLink from "@statsparrot/web-admin/features/billing/plans/modules/PricingLink.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

@@ -7,8 +7,8 @@ import {
 } from "react";
 import { createStateManagers } from "../state-managers";
 import type { StateManagers } from "../state-managers";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
 
 const StateManagersContext = createContext<StateManagers | undefined>(
   undefined,
@@ -19,7 +19,7 @@ export interface StateManagersProviderProps {
   metricsViewName?: string;
   /** The explore resource name used as the store entity key. */
   exploreName: string;
-  /** Re-sync `metricsViewName` on change (Rill uses this for visual editing). */
+  /** Re-sync `metricsViewName` on change (Parrot uses this for visual editing). */
   visualEditing?: boolean;
   children: ReactNode;
 }
@@ -27,7 +27,7 @@ export interface StateManagersProviderProps {
 /**
  * React translation of `StateManagersProvider.svelte`.
  *
- * Rill's explore state-management lives in Svelte context (`getStateManagers()`).
+ * Parrot's explore state-management lives in Svelte context (`getStateManagers()`).
  * Svelte context is unavailable in a React host, so this provider builds the same
  * `StateManagers` object via the framework-agnostic `createStateManagers()` factory
  * and exposes it through React context. The selectors/actions/stores it returns are
@@ -51,7 +51,7 @@ export function StateManagersProvider({
     });
   }, [metricsViewName, exploreName, runtimeClient]);
 
-  // Rill re-syncs the metrics view name when entering visual editing.
+  // Parrot re-syncs the metrics view name when entering visual editing.
   useEffect(() => {
     if (visualEditing && stateManagers && metricsViewName) {
       stateManagers.metricsViewName.set(metricsViewName);

@@ -1,5 +1,5 @@
 import { Interval, DateTime } from "luxon";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 /**
  * React translation of `super-pill/new-time-dropdown/PrimaryRangeTooltip.svelte`. The

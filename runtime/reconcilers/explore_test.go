@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestExplores(t *testing.T) {
@@ -223,7 +223,7 @@ colors:
 func TestExploreValidState(t *testing.T) {
 	// Create an instance with StageChanges==true
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:        map[string]string{"rill.yaml": ""},
+		Files:        map[string]string{"statsparrot.yaml": ""},
 		StageChanges: true,
 	})
 
@@ -314,7 +314,7 @@ defaults:
   measures: ['x']
   comparison_mode: time
 security:
-  access: "{{ .user.admin }} OR '{{ .user.domain }}' == 'rilldata.com'"
+  access: "{{ .user.admin }} OR '{{ .user.domain }}' == 'staticlabs.com'"
 `,
 	})
 
@@ -348,7 +348,7 @@ security:
 					},
 					SecurityRules: []*runtimev1.SecurityRule{
 						{Rule: &runtimev1.SecurityRule_Access{Access: &runtimev1.SecurityRuleAccess{
-							ConditionExpression: "{{ .user.admin }} OR '{{ .user.domain }}' == 'rilldata.com'",
+							ConditionExpression: "{{ .user.admin }} OR '{{ .user.domain }}' == 'staticlabs.com'",
 							Allow:               true,
 						}}},
 					},
@@ -369,7 +369,7 @@ security:
 						SecurityRules: []*runtimev1.SecurityRule{
 							// Derived from metrics_view and explore
 							{Rule: &runtimev1.SecurityRule_Access{Access: &runtimev1.SecurityRuleAccess{
-								ConditionExpression: "(true) AND ({{ .user.admin }} OR '{{ .user.domain }}' == 'rilldata.com')",
+								ConditionExpression: "(true) AND ({{ .user.admin }} OR '{{ .user.domain }}' == 'staticlabs.com')",
 								Allow:               true,
 							}}},
 							// Inherited from metrics_view
@@ -392,7 +392,7 @@ security:
 func TestExploreDataRefreshedOn(t *testing.T) {
 	// Create an instance with StageChanges==true
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files:        map[string]string{"rill.yaml": ""},
+		Files:        map[string]string{"statsparrot.yaml": ""},
 		StageChanges: true,
 	})
 

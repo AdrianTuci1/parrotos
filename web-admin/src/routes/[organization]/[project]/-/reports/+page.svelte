@@ -1,9 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ProjectPage from "@rilldata/web-admin/features/projects/ProjectPage.svelte";
-  import ReportsTable from "@rilldata/web-admin/features/scheduled-reports/listing/ReportsTable.svelte";
-  import { useReports } from "@rilldata/web-admin/features/scheduled-reports/selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ProjectPage from "@statsparrot/web-admin/features/projects/ProjectPage.svelte";
+  import ReportsTable from "@statsparrot/web-admin/features/scheduled-reports/listing/ReportsTable.svelte";
+  import { useReports } from "@statsparrot/web-admin/features/scheduled-reports/selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
 

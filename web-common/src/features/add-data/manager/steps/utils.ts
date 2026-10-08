@@ -1,18 +1,18 @@
-import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
+import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
 import {
   connectorInfoMap,
   getBackendConnectorName,
   getConnectorSchema,
   getDocsCategory,
-} from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { fetchAnalyzeConnectors } from "@rilldata/web-common/features/connectors/selectors.ts";
+} from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { fetchAnalyzeConnectors } from "@statsparrot/web-common/features/connectors/selectors.ts";
 import {
   type AddDataConfig,
   ImportDataStep,
-} from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
+} from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
 
 export function getConnectorDriverForSchema(
   schemaName: string,
@@ -26,7 +26,7 @@ export function getConnectorDriverForSchema(
   return {
     name: backendName,
     displayName: schema?.title ?? connectorInfo.displayName ?? schemaName,
-    docsUrl: `https://docs.rilldata.com/developers/build/connectors/${getDocsCategory(category)}/${backendName}`,
+    docsUrl: `https://docs.statsparrot.com/developers/build/connectors/${getDocsCategory(category)}/${backendName}`,
     implementsObjectStore: category === "objectStore",
     implementsOlap: category === "olap",
     implementsSqlStore: category === "sqlStore",

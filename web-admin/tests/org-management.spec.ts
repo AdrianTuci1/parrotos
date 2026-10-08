@@ -16,8 +16,8 @@ test.describe.serial("Org management flow", () => {
   }) => {
     // Check that the required environment variables are set. This is for type-safety.
     if (
-      !process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL ||
-      !process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD
+      !process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL ||
+      !process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD
     ) {
       throw new Error(
         "Missing required environment variables for authentication",
@@ -29,8 +29,8 @@ test.describe.serial("Org management flow", () => {
 
     await loginUser(
       anonPage,
-      process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL,
-      process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD,
+      process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL,
+      process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD,
     );
 
     await expect(anonPage.getByText("Pick your color mode")).toBeVisible();
@@ -72,8 +72,8 @@ test.describe.serial("Org management flow", () => {
   }) => {
     // Check that the required environment variables are set. This is for type-safety.
     if (
-      !process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL ||
-      !process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD
+      !process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL ||
+      !process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD
     ) {
       throw new Error(
         "Missing required environment variables for authentication",
@@ -82,8 +82,8 @@ test.describe.serial("Org management flow", () => {
 
     await loginUser(
       anonPage,
-      process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL,
-      process.env.RILL_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD,
+      process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_EMAIL,
+      process.env.STATSPARROT_DEVTOOL_E2E_VIEWER_ACCOUNT_PASSWORD,
     );
 
     // Start the delete org process

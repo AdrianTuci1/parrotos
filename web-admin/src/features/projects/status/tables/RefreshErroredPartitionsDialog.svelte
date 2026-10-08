@@ -6,8 +6,8 @@
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-  } from "@rilldata/web-common/components/alert-dialog/index.js";
-  import { Button } from "@rilldata/web-common/components/button/index.js";
+  } from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import { Button } from "@statsparrot/web-common/components/button/index.js";
 
   export let open = false;
   export let modelName: string;

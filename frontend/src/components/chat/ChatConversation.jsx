@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { CornerDownLeft } from "lucide-react";
-import { Messages } from "@rilldata/web-common/features/chat/core/messages/react";
+import { Messages } from "@statsparrot/web-common/features/chat/core/messages/react";
 import { ContextComposer } from "@/components/chat/ContextComposer";
 import { toV1Messages } from "@/components/chat/v1Messages";
 
 /**
  * Full-page conversation pane for the AI view.
  *
- * Renders the message stream with Rill's `Messages` React port (text / thinking /
+ * Renders the message stream with Parrot's `Messages` React port (text / thinking /
  * tool-call / chart blocks fed from the store's messages through `toV1Messages`),
  * plus a pinned composer and a sticky approve/deny bar when a tool action is pending.
  */
@@ -31,7 +31,7 @@ export function ChatConversation({
 
   return (
     <div className="ai-main">
-      <div ref={containerRef} className="ai-messages chat-rill-chart-blocks">
+      <div ref={containerRef} className="ai-messages chat-statsparrot-chart-blocks">
         <Messages messages={v1Messages} isStreaming={streaming} />
         <div ref={messagesEndRef} />
       </div>

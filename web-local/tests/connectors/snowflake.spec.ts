@@ -5,9 +5,9 @@ test.describe("Snowflake connector", () => {
   test.use({ project: "Blank" });
 
   test("submits connector with DSN", async ({ page }) => {
-    const dsn = process.env.RILL_RUNTIME_SNOWFLAKE_TEST_DSN;
+    const dsn = process.env.STATSPARROT_RUNTIME_SNOWFLAKE_TEST_DSN;
     if (!dsn) {
-      test.skip(true, "RILL_RUNTIME_SNOWFLAKE_TEST_DSN is not set");
+      test.skip(true, "STATSPARROT_RUNTIME_SNOWFLAKE_TEST_DSN is not set");
     }
 
     // Open Add Data modal and pick Snowflake

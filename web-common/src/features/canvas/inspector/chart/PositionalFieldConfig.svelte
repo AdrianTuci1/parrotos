@@ -1,15 +1,15 @@
 <script lang="ts">
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import ColorPaletteSelector from "@rilldata/web-common/features/canvas/inspector/chart/field-config/ColorPaletteSelector.svelte";
-  import ColorRangeSelector from "@rilldata/web-common/features/canvas/inspector/chart/field-config/ColorRangeSelector.svelte";
-  import MultiPositionalFieldsInput from "@rilldata/web-common/features/canvas/inspector/fields/MultiPositionalFieldsInput.svelte";
-  import SingleFieldInput from "@rilldata/web-common/features/canvas/inspector/fields/SingleFieldInput.svelte";
-  import type { ComponentInputParam } from "@rilldata/web-common/features/canvas/inspector/types";
-  import { shouldShowPopover } from "@rilldata/web-common/features/canvas/inspector/util";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import type { FieldConfig } from "@rilldata/web-common/features/components/charts/types";
-  import { isFieldConfig } from "@rilldata/web-common/features/components/charts/util";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import ColorPaletteSelector from "@statsparrot/web-common/features/canvas/inspector/chart/field-config/ColorPaletteSelector.svelte";
+  import ColorRangeSelector from "@statsparrot/web-common/features/canvas/inspector/chart/field-config/ColorRangeSelector.svelte";
+  import MultiPositionalFieldsInput from "@statsparrot/web-common/features/canvas/inspector/fields/MultiPositionalFieldsInput.svelte";
+  import SingleFieldInput from "@statsparrot/web-common/features/canvas/inspector/fields/SingleFieldInput.svelte";
+  import type { ComponentInputParam } from "@statsparrot/web-common/features/canvas/inspector/types";
+  import { shouldShowPopover } from "@statsparrot/web-common/features/canvas/inspector/util";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import type { FieldConfig } from "@statsparrot/web-common/features/components/charts/types";
+  import { isFieldConfig } from "@statsparrot/web-common/features/components/charts/util";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import FieldConfigPopover from "./field-config/FieldConfigPopover.svelte";
   import MarkTypeToggle from "./field-config/MarkTypeToggle.svelte";
 

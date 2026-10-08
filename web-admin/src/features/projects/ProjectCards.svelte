@@ -1,9 +1,9 @@
 <script lang="ts">
   import ProjectCard from "./ProjectCard.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { listProjectsForOrgQueryOptions } from "@rilldata/web-admin/features/projects/list-projects-query-options";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { listProjectsForOrgQueryOptions } from "@statsparrot/web-admin/features/projects/list-projects-query-options";
   import { createQuery } from "@tanstack/svelte-query";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import * as Alert from "@rilldata/web-common/components/alert-dialog/index.js";
-  import { Button } from "@rilldata/web-common/components/button";
+  import * as Alert from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import { Button } from "@statsparrot/web-common/components/button";
 
   export let open: boolean;
-  export let rillManagedProject: boolean;
+  export let statsparrotManagedProject: boolean;
   export let deployUrl: string;
 </script>
 
@@ -17,7 +17,7 @@
     <Alert.Header>
       <Alert.Title>Overwrite this project?</Alert.Title>
       <Alert.Description>
-        {#if rillManagedProject}
+        {#if statsparrotManagedProject}
           Existing project files will be replaced with new ones and cannot be
           retrieved again.
         {:else}
@@ -29,7 +29,7 @@
     <Alert.Footer class="mt-5">
       <Button onClick={() => (open = false)} type="secondary">Cancel</Button>
       <Button
-        type={rillManagedProject ? "destructive" : "primary"}
+        type={statsparrotManagedProject ? "destructive" : "primary"}
         href={deployUrl}
       >
         Yes, overwrite

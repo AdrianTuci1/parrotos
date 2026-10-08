@@ -6,7 +6,7 @@ const REQUIRED_PARAMS =
 
 function initEmbedStore(params: string) {
   EmbedStore.init(
-    new URL(`https://ui.rilldata.com/-/embed?${REQUIRED_PARAMS}&${params}`),
+    new URL(`https://ui.statsparrot.com/-/embed?${REQUIRED_PARAMS}&${params}`),
   );
   return EmbedStore.getInstance()!;
 }

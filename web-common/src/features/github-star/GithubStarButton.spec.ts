@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-import { InMemoryRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+import { InMemoryRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 import GithubStarButton from "./GithubStarButton.svelte";
 import {
   GITHUB_STAR_URL,
@@ -51,14 +51,14 @@ describe("GithubStarButton", () => {
     vi.useRealTimers();
   });
 
-  it("renders nothing at all on Rill Cloud", async () => {
+  it("renders nothing at all on Parrot Cloud", async () => {
     featureFlags.adminServer.set(true);
     const nudge = renderArmed();
     await settle();
 
-    // Neither the button nor the nudge: this is a Rill Developer feature.
+    // Neither the button nor the nudge: this is a Parrot Developer feature.
     expect(screen.queryByText("Star us on GitHub")).not.toBeInTheDocument();
-    expect(screen.queryByText("Enjoying Rill?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Enjoying Parrot?")).not.toBeInTheDocument();
     expect(nudge.state.status).toBe("armed");
     expect(nudge.state.mutedUntil).toBeUndefined();
   });
@@ -75,14 +75,14 @@ describe("GithubStarButton", () => {
     render(GithubStarButton, { props: { nudge: createNudge() } });
     await settle();
 
-    expect(screen.queryByText("Enjoying Rill?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Enjoying Parrot?")).not.toBeInTheDocument();
   });
 
   it("opens unprompted once a payoff has armed it", async () => {
     renderArmed();
     await settle();
 
-    expect(screen.getByText("Enjoying Rill?")).toBeInTheDocument();
+    expect(screen.getByText("Enjoying Parrot?")).toBeInTheDocument();
   });
 
   it("does not take the keyboard when the nudge opens", async () => {
@@ -92,7 +92,7 @@ describe("GithubStarButton", () => {
     renderArmed();
     await settle();
 
-    expect(screen.getByText("Enjoying Rill?")).toBeInTheDocument();
+    expect(screen.getByText("Enjoying Parrot?")).toBeInTheDocument();
     expect(document.activeElement).toBe(editor);
   });
 
@@ -105,7 +105,7 @@ describe("GithubStarButton", () => {
     await settle();
 
     // The nudge stays open; it just does not hold the keyboard hostage.
-    expect(screen.getByText("Enjoying Rill?")).toBeInTheDocument();
+    expect(screen.getByText("Enjoying Parrot?")).toBeInTheDocument();
     expect(document.activeElement).toBe(editor);
   });
 
@@ -118,7 +118,7 @@ describe("GithubStarButton", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     await settle();
 
-    expect(screen.queryByText("Enjoying Rill?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Enjoying Parrot?")).not.toBeInTheDocument();
     expect(document.activeElement).toBe(editor);
   });
 
@@ -141,7 +141,7 @@ describe("GithubStarButton", () => {
     screen.getByText("Star us on GitHub").closest("a")!.click();
     await settle();
 
-    expect(screen.queryByText("Enjoying Rill?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Enjoying Parrot?")).not.toBeInTheDocument();
     expect(nudge.state.status).toBe("done");
     expect(nudge.state.mutedUntil).toBeUndefined();
   });
@@ -176,6 +176,6 @@ describe("GithubStarButton", () => {
     await settle();
     await settle();
 
-    expect(screen.queryByText("Enjoying Rill?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Enjoying Parrot?")).not.toBeInTheDocument();
   });
 });

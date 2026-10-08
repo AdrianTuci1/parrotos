@@ -1,20 +1,20 @@
 import { useCallback, useMemo, type ReactNode } from "react";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import type { DashboardStateSync } from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateSync";
-import { applyDimensionInListMode as applyDimensionInListModeDirectly } from "@rilldata/web-common/features/dashboards/state-managers/actions/dimension-filters";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils";
-import { isExpressionUnsupported } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { isUrlTooLong } from "@rilldata/web-common/features/dashboards/url-state/url-length-limits";
-import { convertExpressionToFilterParam } from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import type { DashboardStateSync } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateSync";
+import { applyDimensionInListMode as applyDimensionInListModeDirectly } from "@statsparrot/web-common/features/dashboards/state-managers/actions/dimension-filters";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils";
+import { isExpressionUnsupported } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { isUrlTooLong } from "@statsparrot/web-common/features/dashboards/url-state/url-length-limits";
+import { convertExpressionToFilterParam } from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import type {
   V1ExploreTimeRange,
   V1Expression,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { DimensionFilter } from "../dimension-filters/react";
 import { MeasureFilter } from "../measure-filters/react";
 import FilterButton from "./FilterButton";

@@ -1,15 +1,15 @@
 <script lang="ts">
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import { Search } from "@rilldata/web-common/components/search";
-  import PartitionsTable from "@rilldata/web-common/features/models/partitions/PartitionsTable.svelte";
-  import PartitionsFilter from "@rilldata/web-common/features/models/partitions/PartitionsFilter.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import PartitionsTable from "@statsparrot/web-common/features/models/partitions/PartitionsTable.svelte";
+  import PartitionsFilter from "@statsparrot/web-common/features/models/partitions/PartitionsFilter.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import {
     shouldFilterByErrored,
     shouldFilterByPending,
     type PartitionFilterType,
   } from "./utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open = false;
   export let resource: V1Resource | null = null;

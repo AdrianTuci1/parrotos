@@ -1,8 +1,8 @@
 <script lang="ts">
   import { WandIcon } from "lucide-svelte";
-  import NavigationMenuItem from "@rilldata/web-common/layout/navigation/NavigationMenuItem.svelte";
+  import NavigationMenuItem from "@statsparrot/web-common/layout/navigation/NavigationMenuItem.svelte";
   import MetricsViewIcon from "../../../components/icons/MetricsViewIcon.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
   import { featureFlags } from "../../feature-flags";
 
   export let onClick: () => void;

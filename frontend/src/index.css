@@ -3,8 +3,8 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
-/* The ported Rill React components live in ../web-common (aliased as
-   @rilldata/web-common). Tailwind v4's auto content detection does not scan that
+/* The ported Parrot React components live in ../web-common (aliased as
+   @statsparrot/web-common). Tailwind v4's auto content detection does not scan that
    sibling package, so their utility classes (text-fg-secondary, bg-surface-subtle,
    ...) were never emitted and the ported UI rendered with default browser styling.
    Scan it explicitly so the ported components pick up the theme tokens. */
@@ -28,7 +28,7 @@
   --color-accent: #A8C7FA;
   --color-accent-hover: #8AB4F8;
 
-  /* Rill file-explorer / navigation tokens (surface + fg scale) */
+  /* Parrot file-explorer / navigation tokens (surface + fg scale) */
   --color-surface-base: #0B0D0E;
   --color-surface-subtle: #131314;
   --color-surface-hover: #2A2D31;

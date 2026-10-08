@@ -1,6 +1,6 @@
-import { fetchMagicAuthToken } from "@rilldata/web-admin/features/projects/selectors";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.js";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { fetchMagicAuthToken } from "@statsparrot/web-admin/features/projects/selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.js";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { error, redirect } from "@sveltejs/kit";
 
 export const load = async ({

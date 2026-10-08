@@ -1,12 +1,12 @@
 import { page } from "$app/stores";
-import { BehaviourEventHandler } from "@rilldata/web-common/metrics/BehaviourEventHandler";
-import { ErrorEventHandler } from "@rilldata/web-common/metrics/ErrorEventHandler";
-import { mapScreenName } from "@rilldata/web-common/metrics/mapScreenName";
-import { BehaviourEventFactory } from "@rilldata/web-common/metrics/service/BehaviourEventFactory";
-import { MetricsService } from "@rilldata/web-common/metrics/service/MetricsService";
-import { ProductHealthEventFactory } from "@rilldata/web-common/metrics/service/ProductHealthEventFactory";
-import { RillIntakeClient } from "@rilldata/web-common/metrics/service/RillIntakeClient";
-import { GetMetadataResponse } from "@rilldata/web-common/proto/gen/rill/local/v1/api_pb";
+import { BehaviourEventHandler } from "@statsparrot/web-common/metrics/BehaviourEventHandler";
+import { ErrorEventHandler } from "@statsparrot/web-common/metrics/ErrorEventHandler";
+import { mapScreenName } from "@statsparrot/web-common/metrics/mapScreenName";
+import { BehaviourEventFactory } from "@statsparrot/web-common/metrics/service/BehaviourEventFactory";
+import { MetricsService } from "@statsparrot/web-common/metrics/service/MetricsService";
+import { ProductHealthEventFactory } from "@statsparrot/web-common/metrics/service/ProductHealthEventFactory";
+import { ParrotIntakeClient } from "@statsparrot/web-common/metrics/service/ParrotIntakeClient";
+import { GetMetadataResponse } from "@statsparrot/web-common/proto/gen/statsparrot/local/v1/api_pb";
 import { get } from "svelte/store";
 import { ActiveEventHandler } from "./ActiveEventHandler";
 import { collectCommonUserFields } from "./collectCommonUserFields";
@@ -22,7 +22,7 @@ export async function initMetrics(
   localConfig: GetMetadataResponse,
   host: string,
 ) {
-  metricsService = new MetricsService(new RillIntakeClient(host), [
+  metricsService = new MetricsService(new ParrotIntakeClient(host), [
     new ProductHealthEventFactory(),
     new BehaviourEventFactory(),
     new ErrorEventFactory(),

@@ -1,16 +1,16 @@
 import {
   type ChatConfig,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
 import type {
   RuntimeServiceCompleteBody,
   V1AnalystAgentContext,
-} from "@rilldata/web-common/runtime-client";
-import { getCanvasNameStore } from "@rilldata/web-common/features/dashboards/nav-utils.ts";
+} from "@statsparrot/web-common/runtime-client";
+import { getCanvasNameStore } from "@statsparrot/web-common/features/dashboards/nav-utils.ts";
 import { derived, type Readable } from "svelte/store";
-import { getCanvasStoreUnguarded } from "@rilldata/web-common/features/canvas/state-managers/state-managers.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { getCanvasStoreUnguarded } from "@statsparrot/web-common/features/canvas/state-managers/state-managers.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function createCanvasChatConfig(client: RuntimeClient): ChatConfig {
   return {

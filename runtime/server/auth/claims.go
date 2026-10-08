@@ -5,8 +5,8 @@ import (
 	"slices"
 
 	"github.com/golang-jwt/jwt/v4"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -83,8 +83,8 @@ var _ ClaimsProvider = (*devJWTClaims)(nil)
 
 func (c *devJWTClaims) Claims(instanceID string) *runtime.SecurityClaims {
 	// If there are no permissions set, we allow all permissions.
-	// This should keep Rill Developer working behind auth proxies that add an Authorization header with a non-Rill JWT.
-	// (The security risk here is not important since this is only used for Rill Developer, not Rill Cloud.)
+	// This should keep Parrot Developer working behind auth proxies that add an Authorization header with a non-Parrot JWT.
+	// (The security risk here is not important since this is only used for Parrot Developer, not Parrot Cloud.)
 	perms := c.Permissions
 	if len(perms) == 0 {
 		perms = runtime.AllPermissions

@@ -1,6 +1,6 @@
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
-import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+import { createRuntimeServiceListResources } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 
 /**

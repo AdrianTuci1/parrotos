@@ -1,15 +1,15 @@
 import { useState, useCallback } from "react";
 import { useAppStore } from "@/stores/useAppStore";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
 import { resolveRuntimeConfig } from "@/data/dataSource";
-import { sendToRillRouter, DEFAULT_AGENT } from "@/components/shell/rillRouter";
+import { sendToParrotRouter, DEFAULT_AGENT } from "@/components/shell/statsparrotRouter";
 
 const CHART_METRICS_VIEW = resolveRuntimeConfig().defaultMetricsView;
 
 /**
  * Shared chat controller: send / stream / approve / reject logic for the AI view.
  *
- * Drives the Rill agent router (analyst_agent) for a conversation identified by the
+ * Drives the Parrot agent router (analyst_agent) for a conversation identified by the
  * active chat session, streaming into the app store's message list. Exposes the
  * state and handlers both the full-page AI view and the legacy inline chat consume,
  * so the send path stays identical across surfaces.
@@ -78,7 +78,7 @@ export function useChatController() {
       }));
     }
 
-    const rillConversationId = activeChat?.conversationId;
+    const statsparrotConversationId = activeChat?.conversationId;
 
     addMessage(currentChatId, { role: "user", content: text });
     setInput("");
@@ -86,10 +86,10 @@ export function useChatController() {
     setStreamContent("");
 
     try {
-      const result = await sendToRillRouter({
+      const result = await sendToParrotRouter({
         runtimeClient,
         prompt: text,
-        conversationId: rillConversationId,
+        conversationId: statsparrotConversationId,
         agent: DEFAULT_AGENT,
       });
 

@@ -1,15 +1,15 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import type { TeamPlanDialogTypes } from "@rilldata/web-admin/features/billing/plans/types.ts";
-  import { getSubscriptionResumedText } from "@rilldata/web-admin/features/billing/plans/utils.ts";
+  import type { TeamPlanDialogTypes } from "@statsparrot/web-admin/features/billing/plans/types.ts";
+  import { getSubscriptionResumedText } from "@statsparrot/web-admin/features/billing/plans/utils.ts";
   import {
     resolvePlanHighlights,
     SELF_SERVE_PLANS,
     getTranslatedPlanDisplayName,
     getTranslatedPlanTagline,
     getTranslatedPlanPriceUnit,
-  } from "@rilldata/web-admin/features/billing/plans/plan-details.ts";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
+  } from "@statsparrot/web-admin/features/billing/plans/plan-details.ts";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
   import {
     AlertDialog,
     AlertDialogContent,
@@ -17,18 +17,18 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import { upgradeToPlan } from "@rilldata/web-admin/features/billing/plans/upgrade-to-plan.ts";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors.ts";
+  } from "@statsparrot/web-common/components/alert-dialog";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import { upgradeToPlan } from "@statsparrot/web-admin/features/billing/plans/upgrade-to-plan.ts";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors.ts";
   import {
     createAdminServiceGetOrganization,
     createAdminServiceListPublicBillingPlans,
-  } from "@rilldata/web-admin/client";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     open = $bindable(false),

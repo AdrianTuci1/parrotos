@@ -1,12 +1,12 @@
 <script lang="ts">
-  import AlertHistoryStatusChip from "@rilldata/web-admin/features/alerts/history/AlertHistoryStatusChip.svelte";
-  import { formatRunDate } from "@rilldata/web-admin/features/scheduled-reports/tableUtils";
+  import AlertHistoryStatusChip from "@statsparrot/web-admin/features/alerts/history/AlertHistoryStatusChip.svelte";
+  import { formatRunDate } from "@statsparrot/web-admin/features/scheduled-reports/tableUtils";
   import {
     V1AssertionStatus,
     type V1AlertExecution,
     type V1AssertionResult,
-  } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let alertTime: string;
   export let timeZone: string;

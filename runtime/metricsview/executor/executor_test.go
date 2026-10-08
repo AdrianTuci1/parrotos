@@ -3,18 +3,18 @@ package executor_test
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestResolveQueryAttributesTemplate(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"clickhouse"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"m1.sql": `
 SELECT 1
 `,

@@ -4,11 +4,11 @@ import { ChatConversation } from "@/components/chat/ChatConversation";
 import "@/styles/chat.css";
 
 /**
- * Rill-style `/ai` view: full-page chat.
+ * Parrot-style `/ai` view: full-page chat.
  *
- * Reuses the shared chat controller for the send/stream/approve path and Rill's
+ * Reuses the shared chat controller for the send/stream/approve path and Parrot's
  * `Messages` React port for the message stream (text / thinking / tool-call / chart
- * blocks). The conversation rail lives in the main project sidebar (see RillSidebar),
+ * blocks). The conversation rail lives in the main project sidebar (see ParrotSidebar),
  * which swaps the file tree for the session list while on this menu.
  */
 export function AiView() {

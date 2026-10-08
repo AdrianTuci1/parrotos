@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import VirtualTooltip from "@rilldata/web-common/components/virtualized-table/VirtualTooltip.svelte";
-  import FlatTable from "@rilldata/web-common/features/dashboards/pivot/FlatTable.svelte";
-  import type { PivotClickSelectionState } from "@rilldata/web-common/features/dashboards/pivot/pivot-click-selection";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import VirtualTooltip from "@statsparrot/web-common/components/virtualized-table/VirtualTooltip.svelte";
+  import FlatTable from "@statsparrot/web-common/features/dashboards/pivot/FlatTable.svelte";
+  import type { PivotClickSelectionState } from "@statsparrot/web-common/features/dashboards/pivot/pivot-click-selection";
   import {
     getDimensionColumnProps,
     getMeasureColumnProps,
-  } from "@rilldata/web-common/features/dashboards/pivot/pivot-column-definition";
+  } from "@statsparrot/web-common/features/dashboards/pivot/pivot-column-definition";
   import {
     getNextRowLimit,
     SHOW_MORE_BUTTON,
-  } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-  import { NUM_ROWS_PER_PAGE } from "@rilldata/web-common/features/dashboards/pivot/pivot-infinite-scroll";
-  import type { PivotRowSelectionState } from "@rilldata/web-common/features/dashboards/pivot/pivot-row-selection";
+  } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+  import { NUM_ROWS_PER_PAGE } from "@statsparrot/web-common/features/dashboards/pivot/pivot-infinite-scroll";
+  import type { PivotRowSelectionState } from "@statsparrot/web-common/features/dashboards/pivot/pivot-row-selection";
   import {
     isElement,
     isShowMoreRow,
     splitPivotChips,
-  } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import {
     createVirtualizer,
     defaultRangeExtractor,

@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import type { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+import type { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
 import {
   combineDimensionSearchCounts,
   combineDimensionSearchResults,
   getFilterForSearchArgs,
-} from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-filter-values";
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { getFiltersForOtherDimensions } from "@rilldata/web-common/features/dashboards/selectors";
+} from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-filter-values";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { getFiltersForOtherDimensions } from "@statsparrot/web-common/features/dashboards/selectors";
 import {
   createAndExpression,
   sanitiseExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   queryServiceMetricsViewAggregation,
   V1BuiltinMeasure,
   type V1Expression,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 /**
  * Mirror of the Svelte `DimensionSearchArgs` used by `useDimensionSearch` /

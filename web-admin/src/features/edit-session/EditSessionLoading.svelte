@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { V1DeploymentStatus } from "@rilldata/web-admin/client";
-  import { Button } from "@rilldata/web-common/components/button";
-  import CtaNeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
+  import { V1DeploymentStatus } from "@statsparrot/web-admin/client";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
   import { onDestroy, onMount } from "svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let status: V1DeploymentStatus | undefined;
   export let href: string;

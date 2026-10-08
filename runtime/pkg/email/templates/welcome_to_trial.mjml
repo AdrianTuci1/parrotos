@@ -15,10 +15,10 @@
   <mj-body>
     <mj-section padding-top="24px">
       <mj-column>
-        <mj-image container-background-color="#FFF" width="48px" src="https://cdn.rilldata.com/email-transactional/rill-logo-purple-square.png" />
+        <mj-image container-background-color="#FFF" width="48px" src="https://cdn.statsparrot.com/email-transactional/statsparrot-logo-purple-square.png" />
 
         <mj-text font-size="20px">
-          Welcome to Rill
+          Welcome to Parrot
         </mj-text>
       </mj-column>
     </mj-section>
@@ -36,17 +36,17 @@
 
     <mj-section>
       <mj-column>
-        <mj-button background-color="#FFF" color="#4736F5" padding="0px" href="https://docs.rilldata.com" font-weight="600" padding-bottom="0">Documentation and tutorials →</mj-button>
+        <mj-button background-color="#FFF" color="#4736F5" padding="0px" href="https://docs.statsparrot.com" font-weight="600" padding-bottom="0">Documentation and tutorials →</mj-button>
         <mj-text padding-top="0" padding-bottom="32px">
           Check out the quickstart, example projects, then dive deep into advanced features.
         </mj-text>
 
-        <mj-button background-color="#FFF" color="#4736F5" padding="0px" href="https://docs.rilldata.com/notes" font-weight="600" padding-bottom="0">Release notes → </mj-button>
+        <mj-button background-color="#FFF" color="#4736F5" padding="0px" href="https://docs.statsparrot.com/notes" font-weight="600" padding-bottom="0">Release notes → </mj-button>
         <mj-text padding-top="0" padding-bottom="32px">
           We are constantly shipping new features. Follow our release notes to stay up to date.
         </mj-text>
-        <mj-text>We are here to help you and your team. If you have any questions, feel free to contact us via <a href="mailto:support@rilldata.com" style="color:#4736F5">email</a>, or via chat on <a href="https://docs.rilldata.com/contact#in-app-chat" style="color:#4736F5">Rill Developer or Rill Cloud.</a></mj-text>
-        <mj-text>- The Rill Team</mj-text>
+        <mj-text>We are here to help you and your team. If you have any questions, feel free to contact us via <a href="mailto:support@staticlabs.com" style="color:#4736F5">email</a>, or via chat on <a href="https://docs.statsparrot.com/contact#in-app-chat" style="color:#4736F5">Parrot Developer or Parrot Cloud.</a></mj-text>
+        <mj-text>- The Parrot Team</mj-text>
       </mj-column>
     </mj-section>
 
@@ -57,11 +57,11 @@
         <mj-spacer height="20px" />
 
         <mj-text align="center" font-size="12px" line-height="1.5">
-          © {{ now.Year }} Rill Data, Inc.<br />
+          © {{ now.Year }} Parrot Data, Inc.<br />
           18 Bartol St. • San Francisco • CA<br />
-          <a href="https://www.rilldata.com/contact">Contact us</a> •
+          <a href="https://www.statsparrot.com/contact">Contact us</a> •
           <a href="https://bit.ly/3unvA05">Community</a> •
-          <a href="https://www.rilldata.com/legal/privacy">Privacy Policy</a>
+          <a href="https://www.statsparrot.com/legal/privacy">Privacy Policy</a>
         </mj-text>
       </mj-column>
     </mj-section>

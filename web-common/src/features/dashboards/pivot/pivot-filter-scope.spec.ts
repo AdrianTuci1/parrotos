@@ -13,8 +13,8 @@
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 import { buildFinalPivotStateDetails } from "./pivot-data-assembly";
 import {

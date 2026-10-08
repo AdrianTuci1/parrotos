@@ -1,12 +1,12 @@
 import { useRef, useState, type ReactNode, type MouseEvent } from "react";
-import { clamp } from "@rilldata/web-common/lib/clamp";
+import { clamp } from "@statsparrot/web-common/lib/clamp";
 
 type Direction = "NS" | "EW";
 type Side = "left" | "right" | "top" | "bottom";
 type Justify = "center" | "start" | "end";
 
 /**
- * React translation of @rilldata/web-common/layout/Resizer.svelte. Renders a
+ * React translation of @statsparrot/web-common/layout/Resizer.svelte. Renders a
  * drag handle that reports a new dimension via `onUpdate`. The parent owns the
  * dimension value, so during a drag we persist the starting dimension ref and
  * recompute the delta on each mousemove.

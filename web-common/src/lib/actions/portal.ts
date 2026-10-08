@@ -2,7 +2,7 @@ import { tick } from "svelte";
 
 type Target = HTMLElement | string;
 
-export function portal(node: HTMLElement, target: Target = "#rill-portal") {
+export function portal(node: HTMLElement, target: Target = "#statsparrot-portal") {
   let targetElement: HTMLElement;
 
   async function update(newTarget: Target) {

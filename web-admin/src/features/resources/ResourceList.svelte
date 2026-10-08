@@ -14,7 +14,7 @@
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
   import ResourceListToolbar from "./ResourceListToolbar.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { flip } from "svelte/animate";
 
   export let data: unknown[] = [];

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { createRuntimeServiceListFiles } from "@rilldata/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { createRuntimeServiceListFiles } from "@statsparrot/web-common/runtime-client";
   import {
     extractBranchFromPath,
     injectBranchIntoPath,
-  } from "@rilldata/web-admin/features/branches/branch-utils.ts";
+  } from "@statsparrot/web-admin/features/branches/branch-utils.ts";
   import { goto } from "$app/navigation";
-  import { projectWelcomeStatus } from "@rilldata/web-admin/features/welcome/project/welcome-status.ts";
+  import { projectWelcomeStatus } from "@statsparrot/web-admin/features/welcome/project/welcome-status.ts";
 
   const runtimeClient = useRuntimeClient();
 
@@ -20,10 +20,10 @@
   // So we need this to add a redirect to welcome page.
   $effect(() => {
     if (!$filesQuery.isSuccess) return;
-    const hasRillYaml = $filesQuery.data?.files?.some(
-      (file) => file.path === "/rill.yaml",
+    const hasParrotYaml = $filesQuery.data?.files?.some(
+      (file) => file.path === "/statsparrot.yaml",
     );
-    if (!hasRillYaml) {
+    if (!hasParrotYaml) {
       projectWelcomeStatus.setProjectWelcomeStep(project, true);
       void goto(
         injectBranchIntoPath(

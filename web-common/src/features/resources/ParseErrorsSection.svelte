@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import type { V1ParseError } from "@rilldata/web-common/runtime-client";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import type { V1ParseError } from "@statsparrot/web-common/runtime-client";
 
   export let parseErrors: V1ParseError[] = [];
   export let parserReconcileError: string | undefined = undefined;

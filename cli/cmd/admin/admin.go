@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
 
@@ -15,6 +15,7 @@ func AdminCmd(ch *cmdutil.Helper) *cobra.Command {
 		GroupID: internalGroupID,
 	}
 
+	adminCmd.AddCommand(GenerateSigningKeyCmd(ch))
 	adminCmd.AddCommand(MigrateCmd(ch))
 	adminCmd.AddCommand(PingCmd(ch))
 	adminCmd.AddCommand(StartCmd(ch))

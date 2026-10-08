@@ -1,5 +1,5 @@
-import { dynamicHeight } from "@rilldata/web-common/layout/layout-settings.ts";
-import { guidGenerator } from "@rilldata/web-common/lib/guid.ts";
+import { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings.ts";
+import { guidGenerator } from "@statsparrot/web-common/lib/guid.ts";
 
 /**
  * Stores embed params in-memory so that the components that manipulate url need not be aware of these.
