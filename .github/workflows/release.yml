@@ -1,0 +1,146 @@
+name: 📦 Release Local Binaries
+
+# Builds the local development binary for macOS, Linux and Windows and attaches the three to a
+# GitHub release. It runs only when started by hand: nothing here is triggered by a push.
+#
+# Each platform is built on its own runner, because the DuckDB driver links a C library and the
+# three need three different toolchains.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to create or update, for example v0.2.0. The binaries are attached to it.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 🛠️ ${{ matrix.os }} / ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            os: darwin
+            arch: arm64
+            platform: osx_arm64
+            binary: statsparrot
+            archive: tar.gz
+          - runner: ubuntu-latest
+            os: linux
+            arch: amd64
+            platform: linux_amd64
+            binary: statsparrot
+            archive: tar.gz
+          - runner: windows-latest
+            os: windows
+            arch: amd64
+            platform: windows_amd64
+            binary: statsparrot.exe
+            archive: zip
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: 🔨 Build the binary
+        shell: bash
+        env:
+          # Only this platform's extensions: the binary embeds the ones it can load, and the
+          # extension files are per-platform.
+          STATSPARROT_DUCKDB_PLATFORMS: ${{ matrix.platform }}
+          VERSION: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          npm ci
+
+          # Builds the project UI, which the binary serves.
+          npm run build
+
+          rm -rf cli/pkg/web/embed/dist
+          mkdir -p cli/pkg/web/embed/dist
+          cp -r web-local/build/. cli/pkg/web/embed/dist/
+
+          # Downloads the DuckDB extensions for this platform so the runtime never fetches them.
+          go run scripts/embed_duckdb_ext/main.go
+
+          mkdir -p dist
+          CGO_ENABLED=1 go build -trimpath \
+            -ldflags "-s -w -X main.Version=${VERSION} -X main.Commit=${GITHUB_SHA} -X main.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -o dist/${{ matrix.binary }} cli/main.go
+
+          # Fail here rather than in someone's terminal.
+          ./dist/${{ matrix.binary }} version
+
+      - name: 📦 Package
+        shell: bash
+        env:
+          VERSION: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          name="statsparrot_${VERSION}_${{ matrix.os }}_${{ matrix.arch }}"
+          cd dist
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            powershell -NoProfile -Command "Compress-Archive -Path '${{ matrix.binary }}' -DestinationPath '${name}.zip' -Force"
+          else
+            tar -czf "${name}.tar.gz" "${{ matrix.binary }}"
+          fi
+          ls -lh
+
+      - name: ⬆️ Upload the archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: statsparrot-${{ matrix.os }}-${{ matrix.arch }}
+          path: dist/*.${{ matrix.archive }}
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: 🏷️ Attach the binaries to the release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: ⬇️ Download the archives
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: 🏷️ Create or update the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          ls -lh dist
+
+          # Re-running with the same tag replaces the assets, so a bad build is fixable without
+          # moving the tag.
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release upload "$VERSION" dist/* --clobber
+          else
+            gh release create "$VERSION" dist/* \
+              --title "$VERSION" \
+              --generate-notes \
+              --target "$GITHUB_SHA"
+          fi

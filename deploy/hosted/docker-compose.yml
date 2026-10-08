@@ -16,11 +16,6 @@ services:
     build:
       context: ../..
       dockerfile: deploy/hosted/Dockerfile
-      args:
-        # Baked into the web app, which needs to know where the API is before it can call it.
-        # Keeping it equal to STATSPARROT_SERVE_PUBLIC_URL is what makes the deployment
-        # same-origin without any cross-origin configuration.
-        STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL: ${STATSPARROT_SERVE_PUBLIC_URL:?set STATSPARROT_SERVE_PUBLIC_URL in .env}
     image: statsparrot-hosted:latest
     restart: unless-stopped
     env_file:

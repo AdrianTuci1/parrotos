@@ -1,12 +1,21 @@
 import type { AxiosRequestConfig } from "axios";
 import Axios from "axios";
 
+/** The URL the web app was built for, when the build set one. Empty in an image that has to run on
+ * more than one host. */
+const configuredAdminURL = import.meta.env.STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL;
+
 /**
  * The canonical URL of the admin server.
  * It does not change when the frontend is running on a custom domain.
+ *
+ * With no URL configured at build time the app falls back to the origin it was loaded from. The
+ * admin server serves the API and the web app on one origin, so that origin is the admin server:
+ * one image then runs on any host, without rebuilding it for that host.
  */
 export const CANONICAL_ADMIN_URL =
-  import.meta.env.STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL || "http://localhost:8080";
+  configuredAdminURL ||
+  (typeof window === "undefined" ? "http://localhost:8080" : window.location.origin);
 
 export const CANONICAL_ADMIN_API_URL = `${CANONICAL_ADMIN_URL.replace("https://admin", "https://api")}`;
 
