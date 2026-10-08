@@ -19,8 +19,8 @@ type ParrotAgent struct {
 
 var _ Tool[*ParrotAgentArgs, *ParrotAgentResult] = (*ParrotAgent)(nil)
 
-// ParrotAgentArgs mirrors the tools exposed by the Parrot (Sentry chat) agent in
-// services/chat/index.js and routes them onto the Parrot runtime AI tool layer
+// ParrotAgentArgs mirrors the tools exposed by the Parrot agent and routes them
+// onto the Parrot runtime AI tool layer
 // (list_metrics_views / query_metrics_view / create_chart).
 //
 //	Action is the Parrot tool name being invoked.
