@@ -1,5 +1,6 @@
 import React from "react";
 import { CustomLink } from "../components/CustomLink.jsx";
+import { APP_URL } from "../config.js";
 import "./BottomCtaSection.css";
 
 export function BottomCtaSection() {
@@ -12,7 +13,7 @@ export function BottomCtaSection() {
         <h2 className="cta-title">Get instant insights with Statsparrot.</h2>
 
         <div className="cta-button-group">
-          <a href="https://app.statsparrot.com/signup" className="btn-cta-download">
+          <a href={APP_URL} className="btn-cta-download">
             Try for free
             <span className="arrow-icon" style={{ display: "flex", alignItems: "center" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
