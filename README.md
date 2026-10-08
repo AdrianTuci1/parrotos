@@ -23,10 +23,17 @@ Requires Go 1.26 or newer, Node 20 or newer, and a C toolchain (DuckDB is a C li
 the binary).
 
 ```bash
-make cli
+make local-bin
 ./statsparrot init my-project
 ./statsparrot start my-project
 ```
+
+`make cli` builds the same binary and additionally fetches the DuckDB extensions for every platform,
+which only a release build needs.
+
+Prebuilt binaries for macOS (arm64), Linux (amd64) and Windows (amd64) are attached to the GitHub
+releases. They are built by **Actions → 📦 Release Local Binaries**, which runs when started by hand
+and does nothing on its own.
 
 `start` builds the project and serves the web app on <http://localhost:9009>. Add `--port` to change
 the port, `--no-open` to skip opening a browser, `--reset` to re-ingest the sources. From the same
@@ -47,6 +54,9 @@ One container serves the admin API, the complete web app (organizations, project
 runtime for every project, all on one origin. A project is built from files, so publishing one is a
 copy plus `statsparrot deploy`.
 
+The image is built without a hostname baked in, so the same image runs on Lightsail, on a PaaS and on
+your own machine: the web app calls the origin it was loaded from.
+
 ### What you need
 
 | Requirement | Notes |
@@ -58,14 +68,44 @@ copy plus `statsparrot deploy`.
 | A bucket | Organization branding and project archives: Google Cloud Storage, AWS S3, Cloudflare R2 or MinIO |
 | Ports 80 and 443 reachable | Nothing else |
 
-### 1. Create the host
+### One command
 
 ```bash
+make launch DOMAIN=example.com                      # create the instance, then ship the stack
+make launch HOST=203.0.113.10 SSH_KEY=~/.ssh/k.pem  # ship to an instance that already exists
+```
+
+`deploy/launch.sh` checks the tools it needs, runs Terraform for the instance and the DNS record
+unless `--host` is given, writes the host's addresses into `deploy/hosted/.env`, waits for cloud-init
+to install Docker, and then builds the image for the host's architecture, transfers it over SSH,
+starts the stack and verifies it. Fill in `.env` first: it refuses to ship a deployment whose
+database URL or OIDC settings are still placeholders. `make deploy HOST=...` skips all of that and
+only ships.
+
+### Or without local tools
+
+**Actions → 🚀 Deploy Hosted**, started by hand, does the same on a runner: `deploy-only` for an
+instance that exists, `provision-and-deploy` to create one. It needs the secrets and variables listed
+at the top of [`.github/workflows/deploy-hosted.yml`](.github/workflows/deploy-hosted.yml).
+Provisioning from there keeps the Terraform state in the bucket named by `TF_STATE_BUCKET`, because a
+runner keeps no state of its own.
+
+### Or on a PaaS
+
+[`render.yaml`](render.yaml) and [`railway.json`](railway.json) build the same image. Create the
+service from this repository, fill in the environment variables from
+[`deploy/hosted/.env.example`](deploy/hosted/.env.example), mount a volume at
+`/var/lib/statsparrot` and point `STATSPARROT_ADMIN_DATABASE_URL` at a managed Postgres.
+
+### The steps by hand
+
+```bash
+# 1. Create the host.
 cd deploy/terraform/lightsail
 cp terraform.tfvars.example terraform.tfvars   # set domain and cloudflare_zone_id
 export CLOUDFLARE_API_TOKEN=...                # Zone -> DNS -> Edit
 
-terraform init && terraform apply
+terraform init -backend=false && terraform apply
 
 # Only when Terraform created the key pair.
 terraform output -raw private_key_pem > lightsail.pem && chmod 600 lightsail.pem
@@ -77,9 +117,8 @@ ssh -i lightsail.pem ubuntu@$(terraform output -raw static_ip) 'cloud-init statu
 Your own host needs Docker and the compose plugin, nothing else. Details, including what ends up in
 Terraform state: [`deploy/terraform/lightsail/README.md`](deploy/terraform/lightsail/README.md).
 
-### 2. Configure it
-
 ```bash
+# 2. Configure it.
 cd deploy/hosted
 cp .env.example .env
 ```
@@ -97,9 +136,8 @@ cp .env.example .env
 Register `${STATSPARROT_SERVE_PUBLIC_URL}/auth/login/callback` as a redirect URI in your OIDC
 provider.
 
-### 3. Ship it
-
 ```bash
+# 3. Ship it.
 ./deploy/hosted/deploy.sh --host bi.example.com --ssh-key deploy/terraform/lightsail/lightsail.pem
 ```
 
@@ -111,11 +149,8 @@ user has no organization yet, so create one, then create a project.
 Updates are the same command. Logs are `docker compose logs -f app`; metrics are on `/metrics` inside
 the host and are not published.
 
-### 4. Publish a project to it
-
-From the machine where you develop the project:
-
 ```bash
+# 4. Publish a project to it, from where you develop the project.
 statsparrot login
 statsparrot deploy --managed
 ```
@@ -124,7 +159,8 @@ The project's files are uploaded and the runtime reconciles them. Nothing has to
 server and no Git repository is required.
 
 [`deploy/hosted/README.md`](deploy/hosted/README.md) is the runbook: expected log lines, verification
-commands, splitting the admin and runtime roles, resource use and troubleshooting.
+commands, splitting the admin and runtime roles, resource use, edge caching through Cloudflare, and
+troubleshooting.
 
 ## License
 

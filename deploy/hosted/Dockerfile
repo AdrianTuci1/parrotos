@@ -20,13 +20,17 @@ RUN npm install
 
 COPY . .
 
-# The web app is compiled with the admin URL baked in, because it has to know where the API
-# lives before it can read anything from it. It must be the origin the deployment is reachable
-# on: the app compares it to the origin it was loaded from, and falls back to an "/api" path
-# prefix on a custom domain when the two differ.
+# The web app can be compiled against a fixed admin URL, and left without one.
 #
-# Pass the same value as STATSPARROT_SERVE_PUBLIC_URL. The compose file does this for you.
-ARG STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL="http://localhost:8080"
+# Leave it empty (the default) and the app talks to the origin it was loaded from, which is the
+# same server: the image then runs on any host, including one whose hostname is only known after
+# the image is built. It is what makes the same image usable on Lightsail, Render, Railway and
+# anywhere else.
+#
+# Set it to the origin the deployment is reachable on to bake that origin in instead. The app
+# compares the two and switches to the "/api" path prefix when the second-level domain differs,
+# so baking is only useful when the deployment is reachable on more than one hostname.
+ARG STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL=""
 ENV STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL=${STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL}
 RUN npm run build -w web-admin
 
