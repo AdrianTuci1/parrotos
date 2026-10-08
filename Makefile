@@ -19,6 +19,29 @@ cli.prepare: runtime.examples.embed
 	cp -r web-local/build/* cli/pkg/web/embed/dist
 	go run scripts/embed_duckdb_ext/main.go
 
+# The hosted binary: one artifact that serves the admin API, the complete web app (roles,
+# organizations, projects) and a runtime for every project, all on a single origin.
+.PHONY: serve
+serve: serve.prepare
+	go build -o statsparrot-hosted cli/main.go
+
+.PHONY: serve.prepare
+serve.prepare: admin-ui runtime.examples.embed
+	go run scripts/embed_duckdb_ext/main.go
+
+# Builds the hosted web app into the admin package's embed directory, so that the admin
+# server can serve it straight from the binary.
+.PHONY: admin-ui
+admin-ui: admin-ui.build
+	rm -rf admin/pkg/web/embed/dist || true
+	mkdir -p admin/pkg/web/embed/dist
+	cp -r web-admin/build/* admin/pkg/web/embed/dist
+
+.PHONY: admin-ui.build
+admin-ui.build:
+	npm install
+	npm run build -w web-admin
+
 .PHONY: coverage.go
 coverage.go:
 	rm -rf coverage/go.out
@@ -59,15 +82,18 @@ proto.generate:
 
 KEEP_EXAMPLES := statsparrot-openrtb-prog-ads statsparrot-github-analytics statsparrot-cost-monitoring
 
+# The examples repository may be private or unavailable. A failed clone is a warning rather
+# than an error: the binary builds fine without the example projects.
 .PHONY: runtime.examples.embed
 runtime.examples.embed:
-	@set -e; \
-	rm -rf runtime/pkg/examples/embed/dist || true; \
+	@rm -rf runtime/pkg/examples/embed/dist || true; \
 	mkdir -p runtime/pkg/examples/embed/dist; \
-	# Create a temp dir (GNU mktemp first, then BSD/macOS fallback)
 	TMP_CLONE_DIR=$$(mktemp -d 2>/dev/null || mktemp -d -t statsparrot-examples); \
 	trap 'rm -rf "$$TMP_CLONE_DIR"' EXIT; \
-	git clone --quiet --depth=1 https://github.com/staticlabs/statsparrot-examples.git "$$TMP_CLONE_DIR"; \
-	for d in $(KEEP_EXAMPLES); do \
-		cp -R "$$TMP_CLONE_DIR/$$d" runtime/pkg/examples/embed/dist/; \
-	done
+	if git clone --quiet --depth=1 https://github.com/staticlabs/statsparrot-examples.git "$$TMP_CLONE_DIR"; then \
+		for d in $(KEEP_EXAMPLES); do \
+			cp -R "$$TMP_CLONE_DIR/$$d" runtime/pkg/examples/embed/dist/; \
+		done; \
+	else \
+		echo "warning: could not clone statsparrot-examples, building without example projects"; \
+	fi

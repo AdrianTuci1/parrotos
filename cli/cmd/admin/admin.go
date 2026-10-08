@@ -15,6 +15,7 @@ func AdminCmd(ch *cmdutil.Helper) *cobra.Command {
 		GroupID: internalGroupID,
 	}
 
+	adminCmd.AddCommand(GenerateSigningKeyCmd(ch))
 	adminCmd.AddCommand(MigrateCmd(ch))
 	adminCmd.AddCommand(PingCmd(ch))
 	adminCmd.AddCommand(StartCmd(ch))

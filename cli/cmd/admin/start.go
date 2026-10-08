@@ -14,7 +14,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
+	"github.com/spf13/cobra"
 	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/assetstore"
 	"github.com/staticlabs/statsparrot/admin/billing"
 	"github.com/staticlabs/statsparrot/admin/billing/payment"
 	"github.com/staticlabs/statsparrot/admin/jobs/river"
@@ -29,7 +31,6 @@ import (
 	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
 	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	statsparrotstorage "github.com/staticlabs/statsparrot/runtime/storage"
-	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
@@ -65,6 +66,11 @@ type Config struct {
 	HTTPPort                  int                    `default:"8080" split_words:"true"`
 	GRPCPort                  int                    `default:"8080" split_words:"true"`
 	DebugPort                 int                    `split_words:"true"`
+	ServeUI                   bool                   `default:"false" split_words:"true"`
+	UIFrameAncestors          string                 `split_words:"true"`
+	RuntimeProxyTarget        string                 `split_words:"true"`
+	RuntimeProxyPrefix        string                 `split_words:"true"`
+	RuntimePublicURL          string                 `split_words:"true"`
 	ExternalURL               string                 `default:"http://localhost:8080" split_words:"true"`
 	ExternalGRPCURL           string                 `envconfig:"external_grpc_url"`
 	FrontendURL               string                 `default:"http://localhost:3000" split_words:"true"`
@@ -82,10 +88,18 @@ type Config struct {
 	GithubClientID            string                 `split_words:"true"`
 	GithubClientSecret        string                 `split_words:"true"`
 	GithubManagedAccount      string                 `split_words:"true"`
-	AssetsBucket              string                 `split_words:"true"`
+	// AssetsDriver selects the object storage for organization assets: "gcs" or "s3".
+	// "s3" works with AWS S3, Cloudflare R2 and MinIO.
+	AssetsDriver string `envconfig:"assets_driver" default:"gcs"`
+	AssetsBucket string `split_words:"true"`
 	// AssetsBucketGoogleCredentialsJSON is only required to be set for local development.
 	// For production use cases the service account will be directly attached to pods which is the recommended way of setting credentials.
 	AssetsBucketGoogleCredentialsJSON string `split_words:"true"`
+	AssetsS3Region                    string `envconfig:"assets_s3_region"`
+	AssetsS3Endpoint                  string `envconfig:"assets_s3_endpoint"`
+	AssetsS3AccessKeyID               string `envconfig:"assets_s3_access_key_id"`
+	AssetsS3SecretAccessKey           string `envconfig:"assets_s3_secret_access_key"`
+	AssetsS3ForcePathStyle            bool   `envconfig:"assets_s3_force_path_style"`
 	EmailSMTPHost                     string `split_words:"true"`
 	EmailSMTPPort                     int    `split_words:"true"`
 	EmailSMTPUsername                 string `split_words:"true"`
@@ -282,16 +296,40 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				logger.Fatal("AI driver does not implement AI interface", zap.String("driver", aiHandle.Driver()))
 			}
 
-			// Init AssetsBucket handle
-			var clientOpts []option.ClientOption
-			if conf.AssetsBucketGoogleCredentialsJSON != "" {
-				clientOpts = append(clientOpts, option.WithCredentialsJSON([]byte(conf.AssetsBucketGoogleCredentialsJSON)))
+			// Init the asset store. Every uploaded archive and organization image goes here.
+			if conf.AssetsBucket == "" {
+				logger.Fatal("STATSPARROT_ADMIN_ASSETS_BUCKET is not set")
 			}
-			storageClient, err := storage.NewClient(cmd.Context(), clientOpts...)
-			if err != nil {
-				logger.Fatal("failed to create assets bucket handle", zap.Error(err))
+			var assets assetstore.Store
+			switch conf.AssetsDriver {
+			case "gcs":
+				var clientOpts []option.ClientOption
+				if conf.AssetsBucketGoogleCredentialsJSON != "" {
+					clientOpts = append(clientOpts, option.WithCredentialsJSON([]byte(conf.AssetsBucketGoogleCredentialsJSON)))
+				}
+				storageClient, err := storage.NewClient(cmd.Context(), clientOpts...)
+				if err != nil {
+					logger.Fatal(
+						"failed to create the assets bucket client: set STATSPARROT_ADMIN_ASSETS_BUCKET_GOOGLE_CREDENTIALS_JSON to a Google service account key that can write to STATSPARROT_ADMIN_ASSETS_BUCKET, or run on a host that provides application default credentials",
+						zap.Error(err),
+					)
+				}
+				assets = assetstore.NewGCS(storageClient.Bucket(conf.AssetsBucket))
+			case "s3":
+				assets, err = assetstore.NewS3(cmd.Context(), assetstore.S3Config{
+					Bucket:          conf.AssetsBucket,
+					Region:          conf.AssetsS3Region,
+					Endpoint:        conf.AssetsS3Endpoint,
+					AccessKeyID:     conf.AssetsS3AccessKeyID,
+					SecretAccessKey: conf.AssetsS3SecretAccessKey,
+					ForcePathStyle:  conf.AssetsS3ForcePathStyle,
+				})
+				if err != nil {
+					logger.Fatal("failed to create the assets bucket client", zap.String("driver", "s3"), zap.Error(err))
+				}
+			default:
+				logger.Fatal("unknown assets driver", zap.String("driver", conf.AssetsDriver), zap.String("supported", "gcs, s3"))
 			}
-			assetsBucket := storageClient.Bucket(conf.AssetsBucket)
 
 			// Parse metrics project name
 			var metricsProjectOrg, metricsProjectName string
@@ -335,7 +373,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				AllowMockBilling:           conf.AllowMockBilling,
 				StoppedDeploymentRetention: conf.StoppedDeploymentRetention,
 			}
-			adm, err := admin.New(cmd.Context(), admOpts, logger, issuer, emailClient, gh, aiService, assetsBucket, biller, p)
+			adm, err := admin.New(cmd.Context(), admOpts, logger, issuer, emailClient, gh, aiService, assets, biller, p)
 			if err != nil {
 				logger.Fatal("error creating service", zap.Error(err))
 			}
@@ -399,6 +437,11 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 					AllowedOrigins:         conf.AllowedOrigins,
 					SessionKeyPairs:        keyPairs,
 					ServePrometheus:        conf.MetricsExporter == observability.PrometheusExporter,
+					ServeUI:                conf.ServeUI,
+					UIFrameAncestors:       conf.UIFrameAncestors,
+					RuntimeProxyTarget:     conf.RuntimeProxyTarget,
+					RuntimeProxyPrefix:     conf.RuntimeProxyPrefix,
+					RuntimePublicURL:       conf.RuntimePublicURL,
 					AuthDomain:             conf.AuthDomain,
 					AuthClientID:           conf.AuthClientID,
 					AuthClientSecret:       conf.AuthClientSecret,

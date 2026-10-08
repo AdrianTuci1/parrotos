@@ -367,7 +367,7 @@ func (s *Server) GetProject(ctx context.Context, req *adminv1.GetProjectRequest)
 
 	return &adminv1.GetProjectResponse{
 		Project:            s.projToDTO(proj, org.Name),
-		Deployment:         deploymentToDTO(depl),
+		Deployment:         s.deploymentToDTO(depl),
 		Jwt:                jwt,
 		ProjectPermissions: permissions,
 	}, nil
@@ -1545,7 +1545,7 @@ func (s *Server) GetCloneCredentials(ctx context.Context, req *adminv1.GetCloneC
 		if err != nil {
 			return nil, err
 		}
-		downloadURL, err := s.generateSignedDownloadURL(asset)
+		downloadURL, err := s.generateSignedDownloadURL(ctx, asset)
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
@@ -2327,27 +2327,27 @@ func (s *Server) githubRepoIDForProject(ctx context.Context, p *database.Project
 	return id, nil
 }
 
-func deploymentToDTO(d *database.Deployment) *adminv1.Deployment {
-	var s adminv1.DeploymentStatus
+func (s *Server) deploymentToDTO(d *database.Deployment) *adminv1.Deployment {
+	var status adminv1.DeploymentStatus
 	switch d.Status {
 	case database.DeploymentStatusUnspecified:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_UNSPECIFIED
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_UNSPECIFIED
 	case database.DeploymentStatusPending:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_PENDING
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_PENDING
 	case database.DeploymentStatusUpdating:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_UPDATING
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_UPDATING
 	case database.DeploymentStatusRunning:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_RUNNING
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_RUNNING
 	case database.DeploymentStatusErrored:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_ERRORED
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_ERRORED
 	case database.DeploymentStatusStopping:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_STOPPING
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_STOPPING
 	case database.DeploymentStatusStopped:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_STOPPED
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_STOPPED
 	case database.DeploymentStatusDeleting:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_DELETING
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_DELETING
 	case database.DeploymentStatusDeleted:
-		s = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_DELETED
+		status = adminv1.DeploymentStatus_DEPLOYMENT_STATUS_DELETED
 	default:
 		panic(fmt.Errorf("unhandled deployment status %d", d.Status))
 	}
@@ -2359,9 +2359,9 @@ func deploymentToDTO(d *database.Deployment) *adminv1.Deployment {
 		Environment:       d.Environment,
 		Branch:            d.Branch,
 		Editable:          d.Editable,
-		RuntimeHost:       d.RuntimeHost,
+		RuntimeHost:       s.clientRuntimeHost(d.RuntimeHost),
 		RuntimeInstanceId: d.RuntimeInstanceID,
-		Status:            s,
+		Status:            status,
 		StatusMessage:     d.StatusMessage,
 		CreatedOn:         timestamppb.New(d.CreatedOn),
 		UpdatedOn:         timestamppb.New(d.UpdatedOn),

@@ -144,7 +144,7 @@ func (s *Server) ListDeployments(ctx context.Context, req *adminv1.ListDeploymen
 
 	dtos := make([]*adminv1.Deployment, len(newDepls))
 	for i, d := range newDepls {
-		dtos[i] = deploymentToDTO(d)
+		dtos[i] = s.deploymentToDTO(d)
 	}
 
 	return &adminv1.ListDeploymentsResponse{
@@ -238,7 +238,7 @@ func (s *Server) GetDeployment(ctx context.Context, req *adminv1.GetDeploymentRe
 	s.admin.Used.Deployment(depl.ID)
 
 	return &adminv1.GetDeploymentResponse{
-		RuntimeHost: depl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(depl.RuntimeHost),
 		InstanceId:  depl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(opts.ttl.Seconds()),
@@ -385,7 +385,7 @@ func (s *Server) CreateDeployment(ctx context.Context, req *adminv1.CreateDeploy
 	}
 
 	return &adminv1.CreateDeploymentResponse{
-		Deployment: deploymentToDTO(depl),
+		Deployment: s.deploymentToDTO(depl),
 	}, nil
 }
 
@@ -425,7 +425,7 @@ func (s *Server) StartDeployment(ctx context.Context, req *adminv1.StartDeployme
 	s.admin.Used.Deployment(depl.ID)
 
 	return &adminv1.StartDeploymentResponse{
-		Deployment: deploymentToDTO(depl),
+		Deployment: s.deploymentToDTO(depl),
 	}, nil
 }
 
@@ -573,7 +573,7 @@ func (s *Server) GetDeploymentCredentials(ctx context.Context, req *adminv1.GetD
 	s.admin.Used.Deployment(prodDepl.ID)
 
 	return &adminv1.GetDeploymentCredentialsResponse{
-		RuntimeHost: prodDepl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(prodDepl.RuntimeHost),
 		InstanceId:  prodDepl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(opts.ttl.Seconds()),
@@ -678,7 +678,7 @@ func (s *Server) GetIFrame(ctx context.Context, req *adminv1.GetIFrameRequest) (
 
 	// Build the iframe URL search params
 	iframeQuery := map[string]string{
-		"runtime_host": prodDepl.RuntimeHost,
+		"runtime_host": s.clientRuntimeHost(prodDepl.RuntimeHost),
 		"instance_id":  prodDepl.RuntimeInstanceID,
 		"access_token": jwt,
 	}
@@ -731,7 +731,7 @@ func (s *Server) GetIFrame(ctx context.Context, req *adminv1.GetIFrameRequest) (
 
 	return &adminv1.GetIFrameResponse{
 		IframeSrc:   iFrameURL,
-		RuntimeHost: prodDepl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(prodDepl.RuntimeHost),
 		InstanceId:  prodDepl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(opts.ttl.Seconds()),

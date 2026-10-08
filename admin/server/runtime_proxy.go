@@ -104,6 +104,13 @@ func (s *Server) runtimeProxyForOrgAndProject(w http.ResponseWriter, r *http.Req
 	// This enables the runtime to know the runtime proxy path that was used.
 	req.Header.Set("X-Original-URI", r.RequestURI)
 
+	return proxyRoundTrip(w, req)
+}
+
+// proxyRoundTrip sends req upstream and streams the response back to w, flushing eagerly
+// for server-sent events. Response headers are copied except Access-Control-Allow-Origin,
+// which the admin server sets itself and which would otherwise cause browser CORS errors.
+func proxyRoundTrip(w http.ResponseWriter, req *http.Request) error {
 	// Send the proxied request using http.DefaultClient. The default client automatically handles caching/pooling of TCP connections.
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

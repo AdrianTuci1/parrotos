@@ -7,10 +7,10 @@ import path from "path";
 import {
   ADMIN_STORAGE_STATE,
   VIEWER_STORAGE_STATE,
-  RILL_EMBED_SERVICE_TOKEN_FILE,
-  RILL_ORG_NAME,
-  RILL_PROJECT_NAME,
-  RILL_EMBED_HTML_FILE,
+  STATSPARROT_EMBED_SERVICE_TOKEN_FILE,
+  STATSPARROT_ORG_NAME,
+  STATSPARROT_PROJECT_NAME,
+  STATSPARROT_EMBED_HTML_FILE,
 } from "@statsparrot/web-integration/tests/constants.ts";
 import fs from "fs";
 import { generateEmbed } from "@statsparrot/web-common/tests/utils/generate-embed.ts";
@@ -35,7 +35,7 @@ type MyFixtures = {
   embeddedHideNavigationBar: boolean;
 };
 
-export const rillCloud = base.extend<MyFixtures>({
+export const statsparrotCloud = base.extend<MyFixtures>({
   embeddedInitialState: [null, { option: true }],
   embeddedResourceName: ["bids_explore", { option: true }],
   embeddedResourceType: ["statsparrot.runtime.v1.Explore", { option: true }],
@@ -87,20 +87,20 @@ export const rillCloud = base.extend<MyFixtures>({
       },
       use,
     ) => {
-      const readPath = path.join(process.cwd(), RILL_EMBED_SERVICE_TOKEN_FILE);
-      const rillServiceToken = fs.readFileSync(readPath, "utf-8");
+      const readPath = path.join(process.cwd(), STATSPARROT_EMBED_SERVICE_TOKEN_FILE);
+      const statsparrotServiceToken = fs.readFileSync(readPath, "utf-8");
 
       await generateEmbed({
-        organization: RILL_ORG_NAME,
-        project: RILL_PROJECT_NAME,
+        organization: STATSPARROT_ORG_NAME,
+        project: STATSPARROT_PROJECT_NAME,
         resourceName: embeddedResourceName,
         resourceType: embeddedResourceType,
-        serviceToken: rillServiceToken,
+        serviceToken: statsparrotServiceToken,
         initialState: embeddedInitialState,
         hideNavigationBar: embeddedHideNavigationBar,
       });
       const filePath =
-        "file://" + path.resolve(process.cwd(), RILL_EMBED_HTML_FILE);
+        "file://" + path.resolve(process.cwd(), STATSPARROT_EMBED_HTML_FILE);
 
       const context = await browser.newContext();
       const embedPage = await context.newPage();

@@ -42,17 +42,17 @@ River is used to run persistent background jobs for initializing billing for org
 ## Configuration
 Following are the billing related configuration:
 ```
-RILL_ADMIN_ORB_API_KEY=
-RILL_ADMIN_STRIPE_API_KEY=
-RILL_ADMIN_STRIPE_WEBHOOK_SECRET=
-RILL_ADMIN_ORB_WEBHOOK_SECRET=
+STATSPARROT_ADMIN_ORB_API_KEY=
+STATSPARROT_ADMIN_STRIPE_API_KEY=
+STATSPARROT_ADMIN_STRIPE_WEBHOOK_SECRET=
+STATSPARROT_ADMIN_ORB_WEBHOOK_SECRET=
 ```
 Both Orb and Stripe provides test-mode for development. Depending on the `...API_KEY` admin service will connect to the test or prod env.
 
-Cloud .env has the test-mode values for first three and devtool starts stripe cli to forward Stripe events to the admin service. `RILL_ADMIN_ORB_WEBHOOK_SECRET` will be commented out as there is no automated way to set up utility to listed Orb events. Orb events are anyways used for handling rare scenarios.
+Cloud .env has the test-mode values for first three and devtool starts stripe cli to forward Stripe events to the admin service. `STATSPARROT_ADMIN_ORB_WEBHOOK_SECRET` will be commented out as there is no automated way to set up utility to listed Orb events. Orb events are anyways used for handling rare scenarios.
 
 ### Manual Orb Webhook setup (optional)
-If required, one can use ngrok cli to start a forwarder like this `ngrok http --domain=<ngrok-provided-ip> 8080`. Visit https://app.withorb.com/webhooks to add an endpoint with URL `https://<ngrok-provided-ip>/billing/webhook` and configure the signing secret as `RILL_ADMIN_ORB_WEBHOOK_SECRET`. 
+If required, one can use ngrok cli to start a forwarder like this `ngrok http --domain=<ngrok-provided-ip> 8080`. Visit https://app.withorb.com/webhooks to add an endpoint with URL `https://<ngrok-provided-ip>/billing/webhook` and configure the signing secret as `STATSPARROT_ADMIN_ORB_WEBHOOK_SECRET`. 
 
 ## Usage
 On new org creation there is no subscription created but few billing issues will be raised which can be viewed using `statsparrot billing list-issues`.

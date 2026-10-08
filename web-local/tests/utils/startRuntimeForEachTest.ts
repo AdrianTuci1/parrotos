@@ -13,7 +13,7 @@ const TEST_PORT_GRPC = 9083;
 
 export function startRuntimeForEachTest() {
   let childProcess: ChildProcess;
-  let rillShutdown = false;
+  let statsparrotShutdown = false;
 
   test.beforeEach(async () => {
     rmSync(TEST_PROJECT_DIRECTORY, {
@@ -29,7 +29,7 @@ export function startRuntimeForEachTest() {
       'compiler: statsparrot-beta\ntitle: "Test Project"',
     );
 
-    const cmd = `start --no-open --port ${TEST_PORT} --port-grpc ${TEST_PORT_GRPC} --db ${TEST_PROJECT_DIRECTORY}/stage.db?rill_pool_size=4 ${TEST_PROJECT_DIRECTORY} --env connector.duckdb.external_table_storage=false`;
+    const cmd = `start --no-open --port ${TEST_PORT} --port-grpc ${TEST_PORT_GRPC} --db ${TEST_PROJECT_DIRECTORY}/stage.db?statsparrot_pool_size=4 ${TEST_PROJECT_DIRECTORY} --env connector.duckdb.external_table_storage=false`;
 
     childProcess = spawn("../statsparrot", cmd.split(" "), {
       stdio: "pipe",
@@ -39,7 +39,7 @@ export function startRuntimeForEachTest() {
     // Runtime sometimes ends the process but still hasnt released closed the duckdb connection.
     // So wait for the stdio to close. We also need to set `stdio: pipe` and forward the io
     childProcess.on("close", () => {
-      rillShutdown = true;
+      statsparrotShutdown = true;
     });
     childProcess.stdout?.on("data", (chunk: Uint8Array) => {
       process.stdout?.write(chunk);
@@ -74,7 +74,7 @@ export function startRuntimeForEachTest() {
     await asyncWaitUntil(async () => !(await isPortOpen(TEST_PORT)));
     await processExit;
 
-    await waitUntil(() => rillShutdown, 5000);
+    await waitUntil(() => statsparrotShutdown, 5000);
 
     rmSync(TEST_PROJECT_DIRECTORY, {
       force: true,

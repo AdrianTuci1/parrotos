@@ -42,7 +42,7 @@ type DotStatsparrot struct {
 	homeDir string
 }
 
-// New creates a new Dotrill instance.
+// New creates a new DotStatsparrot instance.
 // If homeDir is empty, it creates `.statsparrot` in the user's home directory.
 func New(homeDir string) DotStatsparrot {
 	if homeDir == "" {

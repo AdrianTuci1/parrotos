@@ -1208,7 +1208,7 @@ func (s *Server) pushAssetToGit(ctx context.Context, assetID, remote, branch, to
 		return err
 	}
 
-	downloadURL, err := s.generateSignedDownloadURL(asset)
+	downloadURL, err := s.generateSignedDownloadURL(ctx, asset)
 	if err != nil {
 		return err
 	}

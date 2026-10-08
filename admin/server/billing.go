@@ -1029,7 +1029,7 @@ func (s *Server) GetBillingProjectCredentials(ctx context.Context, req *adminv1.
 	s.admin.Used.Deployment(prodDepl.ID)
 
 	return &adminv1.GetBillingProjectCredentialsResponse{
-		RuntimeHost: prodDepl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(prodDepl.RuntimeHost),
 		InstanceId:  prodDepl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(runtimeAccessTokenDefaultTTL.Seconds()),

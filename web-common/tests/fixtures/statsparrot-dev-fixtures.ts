@@ -14,11 +14,11 @@ type MyFixtures = {
   cliHomeDir: string;
   project: string | undefined;
   projectDir: string | undefined;
-  rillDevPage: Page;
-  rillDevBrowserState: string | undefined;
+  statsparrotDevPage: Page;
+  statsparrotDevBrowserState: string | undefined;
 };
 
-export const rillDev = base.extend<MyFixtures>({
+export const statsparrotDev = base.extend<MyFixtures>({
   // Add a default home if cliHome is not provided so that tests always have a different home than the user's home.
   // This will make sure that login status won't conflicts with dev's login status when run locally.
   cliHomeDir: [makeTempDir("home"), { option: true }],
@@ -26,17 +26,17 @@ export const rillDev = base.extend<MyFixtures>({
   // We default to using a randomly created temporary directory for project.
   // This can be used to get a consistent
   projectDir: [undefined, { option: true }],
-  // If set, used to create the context used to create the rillDevPage.
+  // If set, used to create the context used to create the statsparrotDevPage.
   // A fresh context is used if not provided.
-  rillDevBrowserState: [undefined, { option: true }],
+  statsparrotDevBrowserState: [undefined, { option: true }],
 
-  rillDevPage: async (
+  statsparrotDevPage: async (
     {
       browser,
       project,
       projectDir,
       cliHomeDir,
-      rillDevBrowserState,
+      statsparrotDevBrowserState,
       timezoneId,
       locale,
     },
@@ -108,7 +108,7 @@ export const rillDev = base.extend<MyFixtures>({
     });
 
     const context = await browser.newContext({
-      storageState: rillDevBrowserState ?? { cookies: [], origins: [] },
+      storageState: statsparrotDevBrowserState ?? { cookies: [], origins: [] },
       ...(timezoneId ? { timezoneId } : {}),
       ...(locale ? { locale } : {}),
     });

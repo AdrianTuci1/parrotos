@@ -14,8 +14,10 @@ import (
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/hashicorp/go-version"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/cors"
 	"github.com/staticlabs/statsparrot/admin"
 	"github.com/staticlabs/statsparrot/admin/database"
+	adminweb "github.com/staticlabs/statsparrot/admin/pkg/web"
 	"github.com/staticlabs/statsparrot/admin/server/auth"
 	"github.com/staticlabs/statsparrot/admin/server/cookies"
 	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
@@ -26,7 +28,6 @@ import (
 	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
 	runtimeauth "github.com/staticlabs/statsparrot/runtime/server/auth"
-	"github.com/rs/cors"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -51,11 +52,21 @@ var (
 )
 
 type Options struct {
-	HTTPPort               int
-	GRPCPort               int
-	AllowedOrigins         []string
-	SessionKeyPairs        [][]byte
-	ServePrometheus        bool
+	HTTPPort         int
+	GRPCPort         int
+	AllowedOrigins   []string
+	SessionKeyPairs  [][]byte
+	ServePrometheus  bool
+	ServeUI          bool
+	UIFrameAncestors string
+	// RuntimeProxyTarget is the internal URL of a runtime to expose under RuntimeProxyPrefix
+	// on the admin server's own origin. Leave empty to disable the proxy.
+	RuntimeProxyTarget string
+	// RuntimeProxyPrefix is the path prefix for RuntimeProxyTarget. Defaults to "/runtime".
+	RuntimeProxyPrefix string
+	// RuntimePublicURL is the runtime URL returned to browsers in place of each deployment's
+	// internal host. It should be the public URL of RuntimeProxyPrefix.
+	RuntimePublicURL       string
 	AuthDomain             string
 	AuthClientID           string
 	AuthClientSecret       string
@@ -253,9 +264,34 @@ func (s *Server) HTTPHandler(ctx context.Context) (http.Handler, error) {
 		_, _ = w.Write(favicon)
 	})
 
+	// Expose a runtime under a path prefix on the admin's own origin. This is what makes a
+	// single artifact enough to serve the whole product: the browser reaches every project's
+	// runtime through the same hostname as the API and the UI.
+	if s.opts.RuntimeProxyTarget != "" {
+		prefixHandler := observability.Middleware(
+			"runtime-prefix-proxy",
+			s.logger,
+			httputil.Handler(s.runtimePrefixProxy),
+		)
+		observability.MuxHandle(mux, s.runtimeProxyPrefix()+"{path...}", prefixHandler)
+	}
+
 	// Add Prometheus
 	if s.opts.ServePrometheus {
 		mux.Handle("/metrics", promhttp.Handler())
+	}
+
+	// Add the hosted UI. Registered last so that every API, auth, GitHub, billing and
+	// metrics route above takes precedence over the SPA's index.html fallback.
+	if s.opts.ServeUI {
+		extraHeaders := map[string]string{}
+		if s.opts.UIFrameAncestors != "" {
+			// A <meta> Content-Security-Policy cannot express frame-ancestors, so embedding
+			// permissions have to come from a response header. It does not conflict with the
+			// CSP the UI build emits, since that one cannot contain frame-ancestors either.
+			extraHeaders["Content-Security-Policy"] = "frame-ancestors " + s.opts.UIFrameAncestors
+		}
+		mux.Handle("/", adminweb.StaticHandler(adminweb.Options{ExtraHeaders: extraHeaders}))
 	}
 
 	// Add auth endpoints (not gRPC handlers, just regular endpoints on /auth/*)

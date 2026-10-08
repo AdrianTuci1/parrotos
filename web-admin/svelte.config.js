@@ -15,12 +15,12 @@ const dev = adminFrontendURL?.includes("localhost");
 // Derive *.statsparrot.com / *.staticlabs.io / *.staticlabs.in from the env URL so
 // connect-src covers all subdomains in whichever environment is being built,
 // without statically listing all three TLDs.
-let rillWildcard = "https://*.statsparrot.com"; // fallback for local dev
+let statsparrotWildcard = "https://*.statsparrot.com"; // fallback for local dev
 const adminURL = process.env.STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL;
 if (adminURL && !dev) {
   const hostname = new URL(adminURL).hostname; // e.g. "admin.statsparrot.com"
   const baseDomain = hostname.split(".").slice(1).join("."); // e.g. "staticlabs.com"
-  rillWildcard = `https://*.${baseDomain}`;
+  statsparrotWildcard = `https://*.${baseDomain}`;
 }
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -85,7 +85,7 @@ const config = {
         "base-uri": ["self"],
         "connect-src": [
           "self",
-          rillWildcard,
+          statsparrotWildcard,
           "https://apichatwidget.usepylon.com",
           "https://docs.google.com",
           "https://storage.googleapis.com",

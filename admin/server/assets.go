@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
+	"github.com/staticlabs/statsparrot/admin/assetstore"
 	"github.com/staticlabs/statsparrot/admin/database"
 	"github.com/staticlabs/statsparrot/admin/server/auth"
 	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
@@ -129,24 +129,13 @@ func (s *Server) CreateAsset(ctx context.Context, req *adminv1.CreateAssetReques
 	assetID := uuid.New().String()
 	objectPath := path.Join(req.Type, fmt.Sprintf("%s__%s__%s%s", org.Name, req.Name, assetID, req.Extension))
 	objectURL := &url.URL{
-		Scheme: "gs",
+		Scheme: s.admin.Assets.Scheme(),
 		Host:   s.admin.Assets.BucketName(),
 		Path:   objectPath,
 	}
 
 	// Generate a signed URL for uploading the asset
-	signingHeadersMap := newGCSUploadHeaders(maxSize)
-	var signingHeaders []string
-	for k, v := range signingHeadersMap {
-		signingHeaders = append(signingHeaders, fmt.Sprintf("%s:%s", k, v))
-	}
-	opts := &storage.SignedURLOptions{
-		Scheme:  storage.SigningSchemeV4,
-		Method:  "PUT",
-		Headers: signingHeaders,
-		Expires: time.Now().Add(15 * time.Minute),
-	}
-	signedURL, err := s.admin.Assets.SignedURL(objectPath, opts)
+	signedURL, signingHeadersMap, err := s.admin.Assets.SignedUploadURL(ctx, objectPath, maxSize, 15*time.Minute)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +216,7 @@ func (s *Server) assetHandler(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(http.StatusOK)
 
 	// Download the asset and stream it to the client
-	data, err := s.admin.Assets.Object(strings.TrimPrefix(u.Path, "/")).NewReader(r.Context())
+	data, err := s.admin.Assets.NewReader(r.Context(), assetstore.ObjectPath(u))
 	if err != nil {
 		if errors.Is(err, r.Context().Err()) {
 			return httputil.Error(http.StatusRequestTimeout, err)
@@ -249,31 +238,12 @@ func (s *Server) assetHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 // generateSignedDownloadURL generates a signed URL for downloading the asset.
-func (s *Server) generateSignedDownloadURL(asset *database.Asset) (string, error) {
-	// asset.Path is of the form "gs://<bucket>/<path>"
+func (s *Server) generateSignedDownloadURL(ctx context.Context, asset *database.Asset) (string, error) {
+	// asset.Path is of the form "<scheme>://<bucket>/<path>"
 	u, err := url.Parse(asset.Path)
 	if err != nil {
 		return "", err
 	}
 
-	opts := &storage.SignedURLOptions{
-		Scheme:  storage.SigningSchemeV4,
-		Method:  "GET",
-		Expires: time.Now().Add(15 * time.Minute),
-	}
-
-	signedURL, err := s.admin.Assets.SignedURL(strings.TrimPrefix(u.Path, "/"), opts)
-	if err != nil {
-		return "", err
-	}
-	return signedURL, nil
-}
-
-// newGCSUploadHeaders returns a map of headers to be used when generating a signed URL for uploading an asset to GCS.
-// They are used to enforce a maximum asset size for uploads.
-func newGCSUploadHeaders(maxSize int64) map[string]string {
-	return map[string]string{
-		"Content-Type":                "application/octet-stream",
-		"x-goog-content-length-range": fmt.Sprintf("1,%d", maxSize),
-	}
+	return s.admin.Assets.SignedDownloadURL(ctx, assetstore.ObjectPath(u), 15*time.Minute)
 }
