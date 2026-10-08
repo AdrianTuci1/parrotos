@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
 
@@ -14,27 +14,27 @@ func completionCmd(ch *cmdutil.Helper) *cobra.Command {
 		Short: "Generate completion script for your shell",
 		Long: `To load completions:
 Bash:
-  $ source <(rill completion bash)
+  $ source <(statsparrot completion bash)
   # To load completions for each session, execute once:
   # Linux:
-  $ rill completion bash > /etc/bash_completion.d/rill
+  $ statsparrot completion bash > /etc/bash_completion.d/statsparrot
   # macOS:
-  $ rill completion bash > /usr/local/etc/bash_completion.d/rill
+  $ statsparrot completion bash > /usr/local/etc/bash_completion.d/statsparrot
 Zsh:
   # If shell completion is not already enabled in your environment,
   # you will need to enable it.  You can execute the following once:
   $ echo "autoload -U compinit; compinit" >> ~/.zshrc
   # To load completions for each session, execute once:
-  $ rill completion zsh > "${fpath[1]}/_rill"
+  $ statsparrot completion zsh > "${fpath[1]}/_statsparrot"
   # You will need to start a new shell for this setup to take effect.
 fish:
-  $ rill completion fish | source
+  $ statsparrot completion fish | source
   # To load completions for each session, execute once:
-  $ rill completion fish > ~/.config/fish/completions/rill.fish
+  $ statsparrot completion fish > ~/.config/fish/completions/statsparrot.fish
 PowerShell:
-  PS> rill completion powershell | Out-String | Invoke-Expression
+  PS> statsparrot completion powershell | Out-String | Invoke-Expression
   # To load completions for every new session, run:
-  PS> rill completion powershell > rill.ps1
+  PS> statsparrot completion powershell > statsparrot.ps1
   # and source this file from your PowerShell profile.
 `,
 		DisableFlagsInUseLine: true,

@@ -30,7 +30,7 @@ test.describe("visual explore editing", () => {
         page.getByRole("textbox", { name: "codemirror editor" }).textContent(),
       )
       .toContain(
-        '# Explore YAML# Reference documentation: https://docs.rilldata.com/reference/project-files/explore-dashboardstype: exploretitle: "Adbids dashboard"metrics_view: AdBids_metricsdimensions:  - publisher  - domain  - timestamp  - offset_timestampmeasures:  - total_records  - bid_price_sumtime_ranges:  - PT6H  - PT24H  - P7D  - P14D  - P4W  - P12M  - rill-TD  - rill-WTD  - rill-MTD  - rill-QTD  - rill-YTD  - rill-PDC  - rill-PWC  - rill-PMC  - rill-PQC  - rill-PYC  - inftime_zones:  - UTC  - America/Los_Angeles  - America/Chicago  - America/New_York  - Europe/London  - Europe/Paris  - Asia/Jerusalem  - Europe/Moscow  - Asia/Kolkata  - Asia/Shanghai  - Asia/Tokyo  - Australia/Sydneytheme:  light:    primary: hsl(180, 100%, 50%)    secondary: lightgreen  dark:    primary: hsl(180, 100%, 50%)    secondary: lightgreen',
+        '# Explore YAML# Reference documentation: https://docs.statsparrot.com/reference/project-files/explore-dashboardstype: exploretitle: "Adbids dashboard"metrics_view: AdBids_metricsdimensions:  - publisher  - domain  - timestamp  - offset_timestampmeasures:  - total_records  - bid_price_sumtime_ranges:  - PT6H  - PT24H  - P7D  - P14D  - P4W  - P12M  - statsparrot-TD  - statsparrot-WTD  - statsparrot-MTD  - statsparrot-QTD  - statsparrot-YTD  - statsparrot-PDC  - statsparrot-PWC  - statsparrot-PMC  - statsparrot-PQC  - statsparrot-PYC  - inftime_zones:  - UTC  - America/Los_Angeles  - America/Chicago  - America/New_York  - Europe/London  - Europe/Paris  - Asia/Jerusalem  - Europe/Moscow  - Asia/Kolkata  - Asia/Shanghai  - Asia/Tokyo  - Australia/Sydneytheme:  light:    primary: hsl(180, 100%, 50%)    secondary: lightgreen  dark:    primary: hsl(180, 100%, 50%)    secondary: lightgreen',
       );
 
     await page.getByRole("button", { name: "Expression" }).first().click();
@@ -44,7 +44,7 @@ test.describe("visual explore editing", () => {
         page.getByRole("textbox", { name: "codemirror editor" }).textContent(),
       )
       .toContain(
-        '# Explore YAML# Reference documentation: https://docs.rilldata.com/reference/project-files/explore-dashboardstype: exploretitle: "Adbids dashboard"metrics_view: AdBids_metricsdimensions:  expr: "*"measures:  expr: "*"time_ranges:  - PT6H  - PT24H  - P7D  - P14D  - P4W  - P3M  - P12M  - rill-TD  - rill-WTD  - rill-MTD  - rill-QTD  - rill-YTD  - rill-PDC  - rill-PWC  - rill-PMC  - rill-PQC  - rill-PYCtime_zones:  - UTC  - America/Los_Angeles  - America/Chicago  - America/New_York  - Europe/London  - Europe/Paris  - Asia/Jerusalem  - Europe/Moscow  - Asia/Kolkata  - Asia/Shanghai  - Asia/Tokyo  - Australia/Sydney',
+        '# Explore YAML# Reference documentation: https://docs.statsparrot.com/reference/project-files/explore-dashboardstype: exploretitle: "Adbids dashboard"metrics_view: AdBids_metricsdimensions:  expr: "*"measures:  expr: "*"time_ranges:  - PT6H  - PT24H  - P7D  - P14D  - P4W  - P3M  - P12M  - statsparrot-TD  - statsparrot-WTD  - statsparrot-MTD  - statsparrot-QTD  - statsparrot-YTD  - statsparrot-PDC  - statsparrot-PWC  - statsparrot-PMC  - statsparrot-PQC  - statsparrot-PYCtime_zones:  - UTC  - America/Los_Angeles  - America/Chicago  - America/New_York  - Europe/London  - Europe/Paris  - Asia/Jerusalem  - Europe/Moscow  - Asia/Kolkata  - Asia/Shanghai  - Asia/Tokyo  - Australia/Sydney',
       );
   });
 });

@@ -1,4 +1,4 @@
-import { type InlineContext } from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
+import { type InlineContext } from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
 
 export type PickerItem = {
   id: string;

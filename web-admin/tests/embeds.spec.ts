@@ -196,7 +196,7 @@ test.describe("Embeds", () => {
       ).toBeVisible();
       await recorder.expectContaining(`{"id":1337,"result":true}`);
 
-      // Set new rill syntax that includes `+` in the syntax.
+      // Set new statsparrot syntax that includes `+` in the syntax.
       await embedPage.evaluate(() => {
         const iframe = document.querySelector("iframe");
         iframe?.contentWindow?.postMessage(
@@ -241,7 +241,7 @@ test.describe("Embeds", () => {
         `{"id":1337,"result":{"success":true,"appliedState":"tr=P7D&grain=day&f=advertiser_name+IN+%28%27Instacart%27%29","errors":[]}}`,
       );
 
-      // Set new rill syntax that includes `+` in the syntax.
+      // Set new statsparrot syntax that includes `+` in the syntax.
       await embedPage.evaluate(() => {
         const iframe = document.querySelector("iframe");
         iframe?.contentWindow?.postMessage(
@@ -417,7 +417,7 @@ test.describe("Embeds", () => {
     test.describe("embedded explore with initial state", () => {
       test.use({
         embeddedInitialState:
-          "&tr=PT6H&compare_tr=rill-PP&f=advertiser_name+IN+('Instacart')",
+          "&tr=PT6H&compare_tr=statsparrot-PP&f=advertiser_name+IN+('Instacart')",
       });
 
       test("init state is applied to dashboard", async ({ embedPage }) => {
@@ -434,7 +434,7 @@ test.describe("Embeds", () => {
         );
 
         await recorder.expectContaining(
-          "tr=PT6H&compare_tr=rill-PP&grain=hour&f=advertiser_name+IN+%28%27Instacart%27%29",
+          "tr=PT6H&compare_tr=statsparrot-PP&grain=hour&f=advertiser_name+IN+%28%27Instacart%27%29",
         );
       });
     });
@@ -443,7 +443,7 @@ test.describe("Embeds", () => {
   test.describe("embedded canvas", () => {
     test.use({
       embeddedResourceName: "bids_canvas",
-      embeddedResourceType: "rill.runtime.v1.Canvas",
+      embeddedResourceType: "statsparrot.runtime.v1.Canvas",
     });
 
     test("embeds should load", async ({ embedPage }) => {
@@ -465,7 +465,7 @@ test.describe("Embeds", () => {
       await frame.getByRole("row", { name: "Instacart $1.1k" }).click();
 
       await recorder.expectContaining(
-        "tr=PT24H&compare_tr=rill-PP&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29",
+        "tr=PT24H&compare_tr=statsparrot-PP&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29",
       );
     });
 
@@ -492,7 +492,7 @@ test.describe("Embeds", () => {
       });
 
       await recorder.expectContaining(
-        `{"id":1337,"result":{"state":"tr=PT24H&compare_tr=rill-PP&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29"}}`,
+        `{"id":1337,"result":{"state":"tr=PT24H&compare_tr=statsparrot-PP&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29"}}`,
       );
     });
 
@@ -508,7 +508,7 @@ test.describe("Embeds", () => {
             id: 1337,
             method: "setState",
             params:
-              "tr=P7D&compare_tr=rill-PW&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29",
+              "tr=P7D&compare_tr=statsparrot-PW&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29",
           },
           "*",
         );
@@ -525,7 +525,7 @@ test.describe("Embeds", () => {
             id: 1338,
             method: "setState",
             params:
-              "tr=2D+as+of+latest%2FD%2B1D&grain=day&compare_tr=rill-PP&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29",
+              "tr=2D+as+of+latest%2FD%2B1D&grain=day&compare_tr=statsparrot-PP&f.bids_metrics=advertiser_name+IN+%28%27Instacart%27%29",
           },
           "*",
         );
@@ -584,7 +584,7 @@ test.describe("Embeds", () => {
     test.describe("embedded canvas with initial state", () => {
       test.use({
         embeddedInitialState:
-          "&tr=PT6H&compare_tr=rill-PP&f=advertiser_name+IN+('Instacart')",
+          "&tr=PT6H&compare_tr=statsparrot-PP&f=advertiser_name+IN+('Instacart')",
       });
 
       test("init state is applied to canvas", async ({ embedPage }) => {
@@ -597,7 +597,7 @@ test.describe("Embeds", () => {
         );
 
         await recorder.expectContaining(
-          "tr=PT6H&compare_tr=rill-PP&f=advertiser_name+IN+%28%27Instacart%27%29",
+          "tr=PT6H&compare_tr=statsparrot-PP&f=advertiser_name+IN+%28%27Instacart%27%29",
         );
       });
     });
@@ -606,7 +606,7 @@ test.describe("Embeds", () => {
   test.describe("embedded canvas with a hidden navigation bar", () => {
     test.use({
       embeddedResourceName: "bids_canvas",
-      embeddedResourceType: "rill.runtime.v1.Canvas",
+      embeddedResourceType: "statsparrot.runtime.v1.Canvas",
       embeddedHideNavigationBar: true,
     });
 

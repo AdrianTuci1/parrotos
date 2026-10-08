@@ -1,24 +1,24 @@
 <script lang="ts">
-  import * as Alert from "@rilldata/web-common/components/alert-dialog";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import * as Alert from "@statsparrot/web-common/components/alert-dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import {
     NUMERICS,
     TIMESTAMPS,
-  } from "@rilldata/web-common/lib/duckdb-data-types";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-  import type { V1ProfileColumn } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+  import type { V1ProfileColumn } from "@statsparrot/web-common/runtime-client";
   import { parseDocument, YAMLMap, YAMLSeq } from "yaml";
   import { FileArtifact } from "../entity-management/file-artifact";
   import { YAMLDimension, YAMLMeasure, type MenuOption } from "./lib";
   import SimpleSqlExpression from "./SimpleSQLExpression.svelte";
-  import TagInput from "@rilldata/web-common/components/forms/TagInput.svelte";
+  import TagInput from "@statsparrot/web-common/components/forms/TagInput.svelte";
 
   export let item: YAMLMeasure | YAMLDimension;
   export let fileArtifact: FileArtifact;

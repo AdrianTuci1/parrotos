@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { DataTypeIcon } from "@rilldata/web-common/components/data-types";
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
-  import Pin from "@rilldata/web-common/components/icons/Pin.svelte";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
+  import { DataTypeIcon } from "@statsparrot/web-common/components/data-types";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
+  import Pin from "@statsparrot/web-common/components/icons/Pin.svelte";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@statsparrot/web-common/components/tooltip/StackingWord.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
   import {
     copyToClipboard,
     isClipboardApiSupported,
-  } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import { getContext } from "svelte";
   import { fly } from "svelte/transition";
   import TooltipDescription from "../../tooltip/TooltipDescription.svelte";

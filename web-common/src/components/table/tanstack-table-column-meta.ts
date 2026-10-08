@@ -1,6 +1,6 @@
 import type { RowData } from "tanstack-table-8-svelte-5";
 import type { ComponentType, SvelteComponent } from "svelte";
-import type { PivotMeasureFormatting } from "@rilldata/web-common/features/dashboards/pivot/types";
+import type { PivotMeasureFormatting } from "@statsparrot/web-common/features/dashboards/pivot/types";
 
 declare module "tanstack-table-8-svelte-5" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

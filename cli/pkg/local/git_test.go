@@ -26,7 +26,7 @@ func TestCurrentGitBranch(t *testing.T) {
 		gitExec(t, dir, "init")
 		gitExec(t, dir, "checkout", "-b", "main")
 		gitExec(t, dir, "config", "user.name", "Test User")
-		gitExec(t, dir, "config", "user.email", "test@rilldata.com")
+		gitExec(t, dir, "config", "user.email", "test@staticlabs.com")
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "file.txt"), []byte("content"), 0644))
 		gitExec(t, dir, "add", ".")
 		gitExec(t, dir, "commit", "-m", "initial commit")

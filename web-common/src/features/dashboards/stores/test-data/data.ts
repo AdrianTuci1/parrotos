@@ -1,24 +1,24 @@
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getRillDefaultExploreState } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state.ts";
-import { getRillDefaultExploreUrlParams } from "@rilldata/web-common/features/dashboards/url-state/get-rill-default-explore-url-params.ts";
-import { getDefaultExplorePreset } from "@rilldata/web-common/features/dashboards/url-state/getDefaultExplorePreset";
-import { getLocalIANA } from "@rilldata/web-common/lib/time/timezone";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state.ts";
+import { getParrotDefaultExploreUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/get-statsparrot-default-explore-url-params.ts";
+import { getDefaultExplorePreset } from "@statsparrot/web-common/features/dashboards/url-state/getDefaultExplorePreset";
+import { getLocalIANA } from "@statsparrot/web-common/lib/time/timezone";
 import {
   getOffset,
   getStartOfPeriod,
-} from "@rilldata/web-common/lib/time/transforms";
+} from "@statsparrot/web-common/lib/time/transforms";
 import {
   type DashboardTimeControls,
   Period,
   TimeOffsetType,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/lib/time/types";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type MetricsViewSpecDimension,
   MetricsViewSpecDimensionType,
@@ -32,7 +32,7 @@ import {
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export const AD_BIDS_NAME = "AdBids";
 export const AD_BIDS_METRICS_NAME = AD_BIDS_NAME + "_metrics";
@@ -318,7 +318,7 @@ export const AD_BIDS_EXPLORE: V1ExploreSpec = {
 export const AD_BIDS_PRESET: V1ExplorePreset = {
   timeRange: "P7D",
   timezone: "Asia/Kathmandu",
-  compareTimeRange: "rill-PP",
+  compareTimeRange: "statsparrot-PP",
   comparisonMode: V1ExploreComparisonMode.EXPLORE_COMPARISON_MODE_TIME,
   measures: [AD_BIDS_IMPRESSIONS_MEASURE],
   dimensions: [AD_BIDS_PUBLISHER_DIMENSION],
@@ -450,13 +450,13 @@ export const AD_BIDS_PIVOT_ENTITY: Partial<ExploreState> = {
   },
 };
 
-export const AD_BIDS_RILL_DEFAULT_EXPLORE_STATE = getRillDefaultExploreState(
+export const AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_STATE = getParrotDefaultExploreState(
   AD_BIDS_METRICS_3_MEASURES_DIMENSIONS_WITH_TIME,
   AD_BIDS_EXPLORE_WITH_3_MEASURES_DIMENSIONS,
   AD_BIDS_TIME_RANGE_SUMMARY.timeRangeSummary,
 );
-export const AD_BIDS_RILL_DEFAULT_EXPLORE_URL_PARAMS =
-  getRillDefaultExploreUrlParams(
+export const AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_URL_PARAMS =
+  getParrotDefaultExploreUrlParams(
     AD_BIDS_METRICS_3_MEASURES_DIMENSIONS_WITH_TIME,
     AD_BIDS_EXPLORE_WITH_3_MEASURES_DIMENSIONS,
     AD_BIDS_TIME_RANGE_SUMMARY.timeRangeSummary,

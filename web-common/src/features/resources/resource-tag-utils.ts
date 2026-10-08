@@ -1,11 +1,11 @@
 // Virtual tag value used for dashboards that have no tags. Used as the
 // ?tags= URL param value, the map key for grouping, and the comparison
 // constant for "show untagged" logic.
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import {
   buildTagIndex,
   type DimensionTag,
-} from "@rilldata/web-common/components/menu/tag-utils.ts";
+} from "@statsparrot/web-common/components/menu/tag-utils.ts";
 
 export function getAllTagsForResources(
   resources: V1Resource[],

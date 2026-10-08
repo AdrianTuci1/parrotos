@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Chart from "@rilldata/web-common/features/components/charts/Chart.svelte";
-  import { transformChartSpecToPivotState } from "@rilldata/web-common/features/components/charts/explore-transformer";
-  import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-  import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import { useExploreAvailability } from "@rilldata/web-common/features/explore-mappers/explore-validation";
-  import { transformTimeAndFiltersToExploreState } from "@rilldata/web-common/features/explores/explore-link/explore-state-transformer";
-  import ExploreLink from "@rilldata/web-common/features/explores/explore-link/ExploreLink.svelte";
-  import { MetricsViewSelectors } from "@rilldata/web-common/features/metrics-views/metrics-view-selectors";
-  import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import Chart from "@statsparrot/web-common/features/components/charts/Chart.svelte";
+  import { transformChartSpecToPivotState } from "@statsparrot/web-common/features/components/charts/explore-transformer";
+  import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+  import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import { useExploreAvailability } from "@statsparrot/web-common/features/explore-mappers/explore-validation";
+  import { transformTimeAndFiltersToExploreState } from "@statsparrot/web-common/features/explores/explore-link/explore-state-transformer";
+  import ExploreLink from "@statsparrot/web-common/features/explores/explore-link/ExploreLink.svelte";
+  import { MetricsViewSelectors } from "@statsparrot/web-common/features/metrics-views/metrics-view-selectors";
+  import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
-  import Filter from "@rilldata/web-common/components/icons/Filter.svelte";
-  import FilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/FilterChipsReadOnly.svelte";
-  import ThemeProvider from "@rilldata/web-common/features/dashboards/ThemeProvider.svelte";
-  import { THEME_STORE_CONTEXT_KEY } from "@rilldata/web-common/features/themes/theme-boundary";
+  import Filter from "@statsparrot/web-common/components/icons/Filter.svelte";
+  import FilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/FilterChipsReadOnly.svelte";
+  import ThemeProvider from "@statsparrot/web-common/features/dashboards/ThemeProvider.svelte";
+  import { THEME_STORE_CONTEXT_KEY } from "@statsparrot/web-common/features/themes/theme-boundary";
   import { getContext, hasContext } from "svelte";
   import type { View } from "svelte-vega";
   import type { Readable, Writable } from "svelte/store";

@@ -1,31 +1,31 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
   import { XIcon } from "lucide-svelte";
-  import AlertCircleOutline from "@rilldata/web-common/components/icons/AlertCircleOutline.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
+  import AlertCircleOutline from "@statsparrot/web-common/components/icons/AlertCircleOutline.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     type AddDataConfig,
     type ImportAddDataStep,
     ImportDataStep,
     ImportDataStepsOrder,
-  } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
   import {
     cleanupImportStep,
     runImportSteps,
-  } from "@rilldata/web-common/features/add-data/manager/steps/import.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/import.ts";
   import { onMount } from "svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
   import {
     getFileHref,
     withEditorPrefix,
-  } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
-  import FeatherCheckCircle from "@rilldata/web-common/components/icons/FeatherCheckCircle.svelte";
-  import type { AddDataStateManager } from "@rilldata/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
+  } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
+  import FeatherCheckCircle from "@statsparrot/web-common/components/icons/FeatherCheckCircle.svelte";
+  import type { AddDataStateManager } from "@statsparrot/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
 
   export let config: AddDataConfig;
   export let stateManager: AddDataStateManager;

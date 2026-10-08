@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import TablePreviewWorkspace from "@rilldata/web-common/features/connectors/olap/TablePreviewWorkspace.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import TablePreviewWorkspace from "@statsparrot/web-common/features/connectors/olap/TablePreviewWorkspace.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
   import { error } from "@sveltejs/kit";
   import { onMount } from "svelte";
 
@@ -20,7 +20,7 @@
 </script>
 
 <svelte:head>
-  <title>Rill Developer | {table}</title>
+  <title>Parrot Developer | {table}</title>
 </svelte:head>
 
 <TablePreviewWorkspace connector={name} {database} {databaseSchema} {table} />

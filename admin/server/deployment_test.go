@@ -9,11 +9,11 @@ import (
 	"testing"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/rilldata/rill/admin/testadmin"
-	"github.com/rilldata/rill/cli/testcli"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	"github.com/staticlabs/statsparrot/cli/testcli"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -33,7 +33,7 @@ func TestDeploymentJWTs(t *testing.T) {
 	// Create empty test project
 	projectDir := t.TempDir()
 	require.NoError(t, os.MkdirAll(projectDir, 0755))
-	require.NoError(t, os.WriteFile(filepath.Join(projectDir, "rill.yaml"), []byte("olap_connector: duckdb\n"), 0644))
+	require.NoError(t, os.WriteFile(filepath.Join(projectDir, "statsparrot.yaml"), []byte("olap_connector: duckdb\n"), 0644))
 
 	// Deploy the test project.
 	// NOTE: Using testcli since it's what we've got. TODO: Move to direct API calls when we have better test utilities here.
@@ -80,8 +80,8 @@ func TestDeploymentJWTs(t *testing.T) {
 		requireHasPerms(t, perms, runtime.ReadInstance, runtime.ReadResolvers, runtime.EditTrigger)
 	})
 
-	t.Run("GetDeployment for non-Rill email", func(t *testing.T) {
-		email := "non-rill@example.com"
+	t.Run("GetDeployment for non-Parrot email", func(t *testing.T) {
+		email := "non-statsparrot@example.com"
 
 		resp, err := u1Client.GetDeployment(t.Context(), &adminv1.GetDeploymentRequest{
 			DeploymentId: depl.ID,

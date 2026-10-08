@@ -3,13 +3,13 @@ import { matchSorter } from "match-sorter";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
-import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+} from "@statsparrot/web-common/runtime-client";
+import type { SearchableFilterSelectableGroup } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
 import {
   getDimensionDisplayName,
   getMeasureDisplayName,
-} from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export type FilterButtonSide = "top" | "right" | "bottom" | "left";
 

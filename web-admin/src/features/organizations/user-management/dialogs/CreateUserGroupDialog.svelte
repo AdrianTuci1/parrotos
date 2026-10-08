@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import type { V1OrganizationMemberUser } from "@rilldata/web-admin/client";
+  import type { V1OrganizationMemberUser } from "@statsparrot/web-admin/client";
   import {
     createAdminServiceAddUsergroupMemberUser,
     createAdminServiceCreateUsergroup,
     createAdminServiceListOrganizationMemberUsersInfinite,
     getAdminServiceListUsergroupMemberUsersQueryKey,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     invalidateOrgMemberUsers,
     invalidateOrgUsergroups,
-  } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
-  import AvatarListItem from "@rilldata/web-common/components/avatar/AvatarListItem.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Combobox from "@rilldata/web-common/components/combobox/Combobox.svelte";
+  } from "@statsparrot/web-admin/features/organizations/user-management/utils.ts";
+  import AvatarListItem from "@statsparrot/web-common/components/avatar/AvatarListItem.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Combobox from "@statsparrot/web-common/components/combobox/Combobox.svelte";
   import {
     Dialog,
     DialogContent,
@@ -22,14 +22,14 @@
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@rilldata/web-common/components/dialog";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-common/components/dialog";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
-  import { SLUG_REGEX } from "@rilldata/web-admin/features/organizations/user-management/constants.ts";
+  import { SLUG_REGEX } from "@statsparrot/web-admin/features/organizations/user-management/constants.ts";
 
   export let open = false;
   export let groupName: string;

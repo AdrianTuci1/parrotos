@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { DataTypeIcon } from "@rilldata/web-common/components/data-types";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { LIST_SLIDE_DURATION } from "@rilldata/web-common/layout/config";
+  import { DataTypeIcon } from "@statsparrot/web-common/components/data-types";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { LIST_SLIDE_DURATION } from "@statsparrot/web-common/layout/config";
 
   export let isFetching = false;
   export let type: string;

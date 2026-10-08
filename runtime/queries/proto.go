@@ -5,10 +5,10 @@ import (
 	"slices"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/metricsview/metricssql"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/metricssql"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -352,7 +352,7 @@ func overrideTimeRange(tr *runtimev1.TimeRange, t time.Time) *runtimev1.TimeRang
 		tr = &runtimev1.TimeRange{}
 	}
 	if tr.Expression != "" {
-		// Do not add `end` for rill time expressions. Execution time will be passed through to executor.Query.
+		// Do not add `end` for statsparrot time expressions. Execution time will be passed through to executor.Query.
 		return tr
 	}
 

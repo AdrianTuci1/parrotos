@@ -11,7 +11,7 @@ import type {
   JSONSchemaField,
   MultiStepFormSchema,
 } from "../../templates/schemas/types";
-import { validateFileSize } from "@rilldata/web-common/features/sources/upload-utils.ts";
+import { validateFileSize } from "@statsparrot/web-common/features/sources/upload-utils.ts";
 
 /**
  * Registry of named validators referenced via `"x-custom-validator"` on a

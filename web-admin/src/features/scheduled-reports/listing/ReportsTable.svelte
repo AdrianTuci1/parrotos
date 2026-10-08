@@ -1,11 +1,11 @@
 <script lang="ts">
-  import ResourceList from "@rilldata/web-common/features/resources/ResourceList.svelte";
-  import ResourceListEmptyState from "@rilldata/web-common/features/resources/ResourceListEmptyState.svelte";
-  import ReportIcon from "@rilldata/web-common/components/icons/ReportIcon.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import ResourceList from "@statsparrot/web-common/features/resources/ResourceList.svelte";
+  import ResourceListEmptyState from "@statsparrot/web-common/features/resources/ResourceListEmptyState.svelte";
+  import ReportIcon from "@statsparrot/web-common/components/icons/ReportIcon.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
   import ReportsTableCompositeCell from "./ReportsTableCompositeCell.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: V1Resource[];
   export let organization: string;
@@ -76,7 +76,7 @@
     <span slot="action">
       {@html m.reports_empty_action({
         reportsLink:
-          '<a href="https://docs.rilldata.com/guide/reports/exports" target="_blank" rel="noopener noreferrer">' +
+          '<a href="https://docs.statsparrot.com/guide/reports/exports" target="_blank" rel="noopener noreferrer">' +
           m.reports_link_text() +
           "</a>",
       })}

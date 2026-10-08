@@ -1,26 +1,26 @@
 <script lang="ts">
   import type { ConnectError } from "@connectrpc/connect";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
   import {
     getIsOrgOnTrial,
     getPlanUpgradeUrl,
-  } from "@rilldata/web-common/features/organization/utils.ts";
-  import { getDeployingPageUrl } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import { GithubRepoNoAccessError } from "@rilldata/web-common/features/project/deploy/deploy-errors.ts";
-  import { getLocalGitRepoStatus } from "@rilldata/web-common/features/project/selectors.ts";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics.ts";
-  import { BehaviourEventAction } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+  } from "@statsparrot/web-common/features/organization/utils.ts";
+  import { getDeployingPageUrl } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import { GithubRepoNoAccessError } from "@statsparrot/web-common/features/project/deploy/deploy-errors.ts";
+  import { getLocalGitRepoStatus } from "@statsparrot/web-common/features/project/selectors.ts";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics.ts";
+  import { BehaviourEventAction } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
   import {
     createLocalServiceDeploy,
     createLocalServiceGetCurrentProject,
-  } from "@rilldata/web-common/runtime-client/local-service.ts";
-  import { createRuntimeServiceGitStatus } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import DeployError from "@rilldata/web-common/features/project/deploy/DeployError.svelte";
-  import CTAHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CTANeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  } from "@statsparrot/web-common/runtime-client/local-service.ts";
+  import { createRuntimeServiceGitStatus } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import DeployError from "@statsparrot/web-common/features/project/deploy/DeployError.svelte";
+  import CTAHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CTANeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
   import { onMount } from "svelte";
   import { derived, get } from "svelte/store";
   import type { PageData } from "./$types";
@@ -90,7 +90,7 @@
     await behaviourEvent?.fireDeployEvent(BehaviourEventAction.DeploySuccess);
     if (!resp.frontendUrl) return;
 
-    // projectUrl: https://ui.rilldata.com/<org>/<project>
+    // projectUrl: https://ui.statsparrot.com/<org>/<project>
     const projectInviteUrl = getDeployingPageUrl(resp.frontendUrl, true);
     window.open(projectInviteUrl, "_self");
   }

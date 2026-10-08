@@ -1,6 +1,6 @@
 <script lang="ts">
-  import MetadataLabel from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
-  import { Tag } from "@rilldata/web-common/components/tag/index.js";
+  import MetadataLabel from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
+  import { Tag } from "@statsparrot/web-common/components/tag/index.js";
   export let data: string[];
   export let label: string;
 </script>

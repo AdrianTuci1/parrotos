@@ -12,9 +12,9 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"golang.org/x/sync/semaphore"
 )
@@ -27,7 +27,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "MySQL",
 	Description: "Connect to MySQL.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/mysql",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/mysql",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "dsn",

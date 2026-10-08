@@ -1,4 +1,4 @@
-import type { V1Expression } from "@rilldata/web-admin/client/gen/index.schemas";
+import type { V1Expression } from "@statsparrot/web-admin/client/gen/index.schemas";
 import { getDimensionFilterWithSearch } from "../dashboards/dimension-table/dimension-table-utils";
 import { mergeDimensionAndMeasureFilters } from "../dashboards/filters/measure-filters/measure-filter-utils";
 import { sanitiseExpression } from "../dashboards/stores/filter-utils";

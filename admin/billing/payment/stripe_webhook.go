@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rilldata/rill/admin/jobs"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/jobs"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"github.com/stripe/stripe-go/v79"
 	"github.com/stripe/stripe-go/v79/webhook"
 	"go.uber.org/zap"

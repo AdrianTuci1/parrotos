@@ -1,27 +1,27 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import ColumnProfile from "@rilldata/web-common/features/column-profile/ColumnProfile.svelte";
-  import { getSummaries } from "@rilldata/web-common/features/column-profile/queries";
-  import ReconcilingSpinner from "@rilldata/web-common/features/entity-management/ReconcilingSpinner.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import ColumnProfile from "@statsparrot/web-common/features/column-profile/ColumnProfile.svelte";
+  import { getSummaries } from "@statsparrot/web-common/features/column-profile/queries";
+  import ReconcilingSpinner from "@statsparrot/web-common/features/entity-management/ReconcilingSpinner.svelte";
   import {
     formatConnectorType,
     getFileExtension,
-  } from "@rilldata/web-common/features/sources/sourceUtils";
-  import CollapsibleSectionTitle from "@rilldata/web-common/layout/CollapsibleSectionTitle.svelte";
-  import SimpleMessage from "@rilldata/web-common/layout/inspector/SimpleMessage.svelte";
-  import Inspector from "@rilldata/web-common/layout/workspace/Inspector.svelte";
+  } from "@statsparrot/web-common/features/sources/sourceUtils";
+  import CollapsibleSectionTitle from "@statsparrot/web-common/layout/CollapsibleSectionTitle.svelte";
+  import SimpleMessage from "@statsparrot/web-common/layout/inspector/SimpleMessage.svelte";
+  import Inspector from "@statsparrot/web-common/layout/workspace/Inspector.svelte";
   import {
     formatBigNumberPercentage,
     formatInteger,
-  } from "@rilldata/web-common/lib/formatters";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/formatters";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createQueryServiceTableCardinality,
     createQueryServiceTableColumns,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { keepPreviousData } from "@tanstack/svelte-query";
   import { derived } from "svelte/store";
   import { LIST_SLIDE_DURATION } from "../../../layout/config";

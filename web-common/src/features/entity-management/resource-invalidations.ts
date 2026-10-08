@@ -1,7 +1,7 @@
 import {
   getRuntimeServiceGetResourceQueryKey,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryClient } from "@tanstack/svelte-query";
 
 export function refreshResource(

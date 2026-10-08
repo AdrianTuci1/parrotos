@@ -1,16 +1,16 @@
 import {
   queryServiceMetricsViewTimeRanges,
   queryServiceMetricsViewTimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { getLocalRuntimeClient } from "./runtime-client";
 import { Interval, DateTime, type DateTimeUnit } from "luxon";
-import { GrainAliasToOrder } from "@rilldata/web-common/lib/time/new-grains";
+import { GrainAliasToOrder } from "@statsparrot/web-common/lib/time/new-grains";
 
 const GRAINS = ["Y", "Q", "M", "W", "D", "H", "m", "s"] as const;
 
 const REF = "ref";
 
-type RillGrain = (typeof GRAINS)[number];
+type ParrotGrain = (typeof GRAINS)[number];
 
 type TimeMetadata = {
   watermark: DateTime;
@@ -201,7 +201,7 @@ function lastNPeriodToNow(metadata: TimeMetadata, upTo: number = 100) {
   return tests;
 }
 
-function getHigherOrderGrain(grain: RillGrain): RillGrain | undefined {
+function getHigherOrderGrain(grain: ParrotGrain): ParrotGrain | undefined {
   const index = GRAINS.indexOf(grain);
 
   const higherOrderGrain = GRAINS[index - 1];

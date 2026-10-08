@@ -2,7 +2,7 @@ import {
   LATEST_WINDOW_TIME_RANGES,
   PERIOD_TO_DATE_RANGES,
   PREVIOUS_COMPLETE_DATE_RANGES,
-} from "@rilldata/web-common/lib/time/config";
+} from "@statsparrot/web-common/lib/time/config";
 
 export function isString(value: unknown): value is string {
   return typeof value === "string";

@@ -1,9 +1,9 @@
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import {
   isModelPartitioned,
   isModelIncremental,
   hasModelErroredPartitions,
-} from "@rilldata/web-common/features/projects/status/tables/utils";
+} from "@statsparrot/web-common/features/projects/status/tables/utils";
 
 export type ModelAction =
   | "describe"

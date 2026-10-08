@@ -11,16 +11,16 @@ import (
 	_ "embed"
 )
 
-//go:embed schema/rillyaml.schema.yaml
-var rillYAMLSchema string
+//go:embed schema/statsparrotyaml.schema.yaml
+var statsparrotYAMLSchema string
 
 //go:embed schema/project.schema.yaml
 var resourceYAMLSchema string
 
-// Utils for parsing rillYAMLSchema and resourceYAMLSchema
+// Utils for parsing statsparrotYAMLSchema and resourceYAMLSchema
 var (
-	parsedRillYAMLSchemaOnce sync.Once
-	parsedRillYAMLSchema     *jsonschema.Schema
+	parsedParrotYAMLSchemaOnce sync.Once
+	parsedParrotYAMLSchema     *jsonschema.Schema
 
 	parsedResourceYAMLSchemaOnce sync.Once
 	parsedResourceYAMLSchema     *jsonschema.Schema
@@ -40,18 +40,18 @@ var resourceKindToDefinitionKey = map[ResourceKind]string{
 	ResourceKindConnector:   "connectors",
 }
 
-// JSONSchemaForRillYAML returns the JSON schema for validating rill.yaml files.
-func JSONSchemaForRillYAML() (*jsonschema.Schema, error) {
+// JSONSchemaForParrotYAML returns the JSON schema for validating statsparrot.yaml files.
+func JSONSchemaForParrotYAML() (*jsonschema.Schema, error) {
 	// Ensure the schema is parsed
-	parsedRillYAMLSchemaOnce.Do(func() {
+	parsedParrotYAMLSchemaOnce.Do(func() {
 		var err error
-		parsedRillYAMLSchema, err = parseSchemaFromYAML(rillYAMLSchema)
+		parsedParrotYAMLSchema, err = parseSchemaFromYAML(statsparrotYAMLSchema)
 		if err != nil {
 			panic(fmt.Sprintf("failed to parse schema: %v", err))
 		}
 	})
 
-	return parsedRillYAMLSchema, nil
+	return parsedParrotYAMLSchema, nil
 }
 
 // JSONSchemaForResourceType returns a JSON schema for validating the properties of a given resource type.

@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/expressionpb"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/expressionpb"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"github.com/xuri/excelize/v2"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -21,7 +21,7 @@ import (
 
 	// Register drivers
 
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
 )
 
 func TestMetricsViewsComparisonAgainstClickHouse(t *testing.T) {
@@ -1271,7 +1271,7 @@ func adBidsTimeRange(t *testing.T, rt *runtime.Runtime, instanceID string) (min,
 // returns min, the halfway point, and max as protobuf timestamps.
 func bigQueryAdBidsTimeRange(t *testing.T, rt *runtime.Runtime, instanceID string) (min, half, max *timestamppb.Timestamp) {
 	ctr := &queries.ColumnTimeRange{
-		Database:       "rilldata",
+		Database:       "staticlabs",
 		DatabaseSchema: "integration_test",
 		TableName:      "ad_bids",
 		ColumnName:     "timestamp",

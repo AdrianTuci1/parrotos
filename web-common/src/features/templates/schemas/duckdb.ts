@@ -8,25 +8,25 @@ export const duckdbSchema: MultiStepFormSchema = {
   "x-category": "olap",
   "x-button-labels": {
     connector_type: {
-      "rill-managed": { idle: "Connect", loading: "Connecting..." },
+      "statsparrot-managed": { idle: "Connect", loading: "Connecting..." },
     },
   },
   properties: {
     connector_type: {
       type: "string",
       title: "Connection type",
-      enum: ["rill-managed", "self-hosted"],
-      default: "rill-managed",
+      enum: ["statsparrot-managed", "self-hosted"],
+      default: "statsparrot-managed",
       "x-display": "select",
       "x-select-style": "rich",
-      "x-enum-labels": ["Rill Managed", "Local File"],
+      "x-enum-labels": ["Parrot Managed", "Local File"],
       "x-enum-descriptions": [
-        "Rill manages your DuckDB infrastructure",
+        "Parrot manages your DuckDB infrastructure",
         "Connect to your own DuckDB database file",
       ],
       "x-ui-only": true,
       "x-grouped-fields": {
-        "rill-managed": ["managed"],
+        "statsparrot-managed": ["managed"],
         "self-hosted": ["path"],
       },
       "x-step": "connector",
@@ -35,12 +35,12 @@ export const duckdbSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Managed",
       description:
-        "This option uses DuckDB as an OLAP engine with Rill-managed infrastructure. No additional configuration is required - Rill will handle the setup and management of your DuckDB instance.",
+        "This option uses DuckDB as an OLAP engine with Parrot-managed infrastructure. No additional configuration is required - Parrot will handle the setup and management of your DuckDB instance.",
       default: false,
       "x-informational": true,
       "x-ui-only": true,
       "x-visible-if": {
-        connector_type: "rill-managed",
+        connector_type: "statsparrot-managed",
       },
       "x-step": "connector",
     },
@@ -58,7 +58,7 @@ export const duckdbSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Enable write mode",
       description:
-        "Read-write mode allows Rill to drop, create, and modify tables, not just query them",
+        "Read-write mode allows Parrot to drop, create, and modify tables, not just query them",
       default: false,
       "x-display": "toggle",
       "x-yaml-value": "readwrite",
@@ -70,7 +70,7 @@ export const duckdbSchema: MultiStepFormSchema = {
   required: ["connector_type"],
   allOf: [
     {
-      if: { properties: { connector_type: { const: "rill-managed" } } },
+      if: { properties: { connector_type: { const: "statsparrot-managed" } } },
       then: {
         required: ["managed"],
         properties: {

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import { DateTime, Duration } from "luxon";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
 
   export let date: DateTime = DateTime.now();
   export let zone: string;

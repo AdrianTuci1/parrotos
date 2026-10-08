@@ -1,7 +1,7 @@
 import {
   humaniseISODuration,
   isoDurationToTimeRange,
-} from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+} from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import { describe, it, expect } from "vitest";
 
 describe("isoDurationToTimeRange", () => {

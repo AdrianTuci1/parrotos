@@ -3,14 +3,14 @@
   import {
     createAdminServiceUpdateOrganization,
     getAdminServiceGetOrganizationQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils";
-  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
-  import UploadImagePopover from "@rilldata/web-admin/features/organizations/settings/UploadImagePopover.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Rill from "@rilldata/web-common/components/icons/Rill.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils";
+  import SettingsContainer from "@statsparrot/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  import UploadImagePopover from "@statsparrot/web-admin/features/organizations/settings/UploadImagePopover.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Parrot from "@statsparrot/web-common/components/icons/Parrot.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,
@@ -120,7 +120,7 @@
           onSave={onSaveLight}
           onRemove={onRemoveLight}
         >
-          <Rill width="64" height="40" mode="light" />
+          <Parrot width="64" height="40" mode="light" />
         </UploadImagePopover>
         {#if organizationLogoUrl}
           <Button
@@ -155,7 +155,7 @@
           onSave={onSaveDark}
           onRemove={onRemoveDark}
         >
-          <Rill width="64" height="40" mode="dark" />
+          <Parrot width="64" height="40" mode="dark" />
         </UploadImagePopover>
         {#if organizationLogoDarkUrl}
           <Button

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";

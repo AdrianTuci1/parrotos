@@ -1,25 +1,25 @@
-import { WelcomeStatus } from "@rilldata/web-common/features/welcome/status.ts";
+import { WelcomeStatus } from "@statsparrot/web-common/features/welcome/status.ts";
 
 export const ssr = false;
 
 import { redirect } from "@sveltejs/kit";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.js";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.js";
 import {
   getRuntimeServiceListFilesQueryKey,
   runtimeServiceListFiles,
   type V1ListFilesResponse,
-} from "@rilldata/web-common/runtime-client/index.js";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.js";
-import { handleUninitializedProject } from "@rilldata/web-common/features/welcome/is-project-initialized.js";
-import { localServiceGetMetadata } from "@rilldata/web-common/runtime-client/local-service";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+} from "@statsparrot/web-common/runtime-client/index.js";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.js";
+import { handleUninitializedProject } from "@statsparrot/web-common/features/welcome/is-project-initialized.js";
+import { localServiceGetMetadata } from "@statsparrot/web-common/runtime-client/local-service";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 import { getLocalRuntimeClient } from "../lib/runtime-client";
 import {
   DEVELOPER_ALLOWED_PREFIXES,
   PREVIEW_ALLOWED_PREFIXES,
 } from "./route-constants";
 import { Settings } from "luxon";
-import { RuntimeFileIO } from "@rilldata/web-common/features/entity-management/file-io.ts";
+import { RuntimeFileIO } from "@statsparrot/web-common/features/entity-management/file-io.ts";
 
 Settings.defaultLocale = "en";
 
@@ -89,7 +89,7 @@ export async function load({ url, depends, untrack, route }) {
     ? `/files${firstDashboardFile?.path}`
     : "/";
 
-  let initialized = !!files.files?.some(({ path }) => path === "/rill.yaml");
+  let initialized = !!files.files?.some(({ path }) => path === "/statsparrot.yaml");
 
   const trackedRedirectPath = untrack(() => {
     if (!url.searchParams.get("redirect")) return false;

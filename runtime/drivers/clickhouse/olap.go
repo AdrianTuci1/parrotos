@@ -10,10 +10,10 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/jmoiron/sqlx"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/sqlstring"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/sqlstring"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
@@ -23,8 +23,8 @@ import (
 
 // Create instruments
 var (
-	tracer                = otel.Tracer("github.com/rilldata/rill/runtime/drivers/clickhouse")
-	meter                 = otel.Meter("github.com/rilldata/rill/runtime/drivers/clickhouse")
+	tracer                = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/clickhouse")
+	meter                 = otel.Meter("github.com/staticlabs/statsparrot/runtime/drivers/clickhouse")
 	queriesCounter        = observability.Must(meter.Int64Counter("queries"))
 	queueLatencyHistogram = observability.Must(meter.Int64Histogram("queue_latency", metric.WithUnit("ms")))
 	queryLatencyHistogram = observability.Must(meter.Int64Histogram("query_latency", metric.WithUnit("ms")))
@@ -539,7 +539,7 @@ func contextWithoutDeadline(parent context.Context) context.Context {
 	return ctx
 }
 
-// databaseTypeToPB converts Clickhouse types to Rill's generic schema type.
+// databaseTypeToPB converts Clickhouse types to Parrot's generic schema type.
 // Refer the list of types here: https://clickhouse.com/docs/en/sql-reference/data-types
 func databaseTypeToPB(dbt string, nullable bool) (*runtimev1.Type, error) {
 	rawType := dbt

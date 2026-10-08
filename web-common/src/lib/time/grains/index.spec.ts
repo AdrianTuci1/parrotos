@@ -1,5 +1,5 @@
 import { V1TimeGrain } from "../../../runtime-client/gen/index.schemas";
-import { overwriteGetLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+import { overwriteGetLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 import { DEFAULT_TIME_RANGES, TIME_COMPARISON, TIME_GRAIN } from "../config";
 import {
   durationToMillis,
@@ -10,7 +10,7 @@ import {
 } from "../grains";
 import { TimeComparisonOption, TimeRangePreset } from "../types";
 import { Interval, DateTime } from "luxon";
-import { parseRillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
+import { parseParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
 import { afterEach, describe, it, expect } from "vitest";
 
 afterEach(() => overwriteGetLocale(() => "en"));
@@ -247,10 +247,10 @@ describe("getValidatedTimeGrain", () => {
     });
   });
 
-  describe("uses rangePrecision from parsed RillTime as fallback", () => {
+  describe("uses rangePrecision from parsed ParrotTime as fallback", () => {
     it("uses rangePrecision when requestedPrecision is not provided", () => {
       const interval = createInterval(7); // 7 days: allows hour, day
-      const parsed = parseRillTime("7d as of latest/d"); // snap to day
+      const parsed = parseParrotTime("7d as of latest/d"); // snap to day
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -262,7 +262,7 @@ describe("getValidatedTimeGrain", () => {
 
     it("uses rangePrecision when requestedPrecision is not allowed", () => {
       const interval = createInterval(30); // 30 days: allows hour, day, week
-      const parsed = parseRillTime("30d as of latest/d"); // snap to day
+      const parsed = parseParrotTime("30d as of latest/d"); // snap to day
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -274,7 +274,7 @@ describe("getValidatedTimeGrain", () => {
 
     it("ignores rangePrecision when not in allowed grains", () => {
       const interval = createInterval(365); // ~1 year: allows day, week, month, quarter
-      const parsed = parseRillTime("365d as of latest/h"); // snap to hour, not allowed for 365 days
+      const parsed = parseParrotTime("365d as of latest/h"); // snap to hour, not allowed for 365 days
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -300,7 +300,7 @@ describe("getValidatedTimeGrain", () => {
 
     it("uses first allowed grain when both precisions are invalid", () => {
       const interval = createInterval(365); // ~1 year
-      const parsed = parseRillTime("365d as of latest/m"); // minute precision, not allowed
+      const parsed = parseParrotTime("365d as of latest/m"); // minute precision, not allowed
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -338,10 +338,10 @@ describe("getValidatedTimeGrain", () => {
     });
   });
 
-  describe("integration with real Rill time strings", () => {
+  describe("integration with real Parrot time strings", () => {
     it("derives day grain for 365d as of latest/h", () => {
       const interval = createInterval(365);
-      const parsed = parseRillTime("365d as of latest/h");
+      const parsed = parseParrotTime("365d as of latest/h");
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -354,7 +354,7 @@ describe("getValidatedTimeGrain", () => {
 
     it("derives hour grain for 24h as of latest/h", () => {
       const interval = createIntervalHours(24);
-      const parsed = parseRillTime("24h as of latest/h");
+      const parsed = parseParrotTime("24h as of latest/h");
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -366,7 +366,7 @@ describe("getValidatedTimeGrain", () => {
 
     it("derives week grain for 52w as of latest/w", () => {
       const interval = createInterval(52 * 7); // 52 weeks
-      const parsed = parseRillTime("52w as of latest/w");
+      const parsed = parseParrotTime("52w as of latest/w");
       const result = getValidatedTimeGrain(
         interval,
         V1TimeGrain.TIME_GRAIN_MINUTE,
@@ -378,7 +378,7 @@ describe("getValidatedTimeGrain", () => {
 
     it("derives minute grain for 24h as of latest/m (1440 buckets)", () => {
       const interval = createIntervalHours(24);
-      const parsed = parseRillTime("24h as of latest/m");
+      const parsed = parseParrotTime("24h as of latest/m");
       const result = getValidatedTimeGrain(
         interval,
 

@@ -1,5 +1,5 @@
-import { defaultImageAlignment } from "@rilldata/web-common/features/canvas/components/image";
-import type { ComponentAlignment } from "@rilldata/web-common/features/canvas/components/types";
+import { defaultImageAlignment } from "@statsparrot/web-common/features/canvas/components/image";
+import type { ComponentAlignment } from "@statsparrot/web-common/features/canvas/components/types";
 
 // Return object-position CSS property for image
 export function getImagePosition(alignment: ComponentAlignment | undefined) {

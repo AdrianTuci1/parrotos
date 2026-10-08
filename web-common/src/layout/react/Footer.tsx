@@ -4,11 +4,11 @@
 // query in the Svelte original (`createLocalServiceGetMetadata`); `starButton`
 // and `trafficLights` are the GitHub-star and RuntimeTrafficLights features.
 import type { ReactNode } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import {
   Tooltip,
   Shortcut,
-} from "@rilldata/web-common/features/dashboards/leaderboard/react/primitives";
+} from "@statsparrot/web-common/features/dashboards/leaderboard/react/primitives";
 import { GithubIcon, InfoCircleIcon } from "./icons";
 
 export interface FooterProps {
@@ -21,7 +21,7 @@ export interface FooterProps {
 const lineItems = [
   {
     label: m.footer_report_issue(),
-    href: "https://github.com/rilldata/rill/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
+    href: "https://github.com/staticlabs/statsparrot/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
   },
 ];
 
@@ -60,7 +60,7 @@ export default function Footer({
             location="top"
             content={
               <div className="rounded p-2 bg-popover text-popover-foreground shadow-lg">
-                <div className="font-medium">{m.footer_rill_developer()}</div>
+                <div className="font-medium">{m.footer_statsparrot_developer()}</div>
                 <div className="flex flex-row items-center gap-x-2">
                   <span>{m.footer_view_documentation()}</span>
                   <Shortcut>{m.footer_shortcut_click()}</Shortcut>
@@ -69,7 +69,7 @@ export default function Footer({
             }
           >
             <a
-              href="https://docs.rilldata.com"
+              href="https://docs.statsparrot.com"
               target="_blank"
               rel="noreferrer noopener"
               className="text-fg-secondary"

@@ -1,0 +1,270 @@
+/* ==========================================================================
+   Parrot-style project navigation sidebar
+   ========================================================================== */
+
+/* Make the project body a positioning context so the rail (and the floating
+   "reopen" toggle when collapsed) anchor below the topbar. */
+.layout-body {
+  position: relative;
+}
+
+.statsparrot-sidebar {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--color-surface-base, #0b0d0e);
+  border-right: 1px solid #25282c;
+  width: var(--statsparrot-nav-width, 240px);
+  transition: width 0.3s ease-in-out;
+  user-select: none;
+  z-index: 0;
+}
+
+.statsparrot-sidebar.resizing {
+  transition: none;
+}
+
+/* Manual collapse to zero width (desktop). */
+.statsparrot-sidebar.collapsed {
+  width: 0 !important;
+}
+
+.statsparrot-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Header: project name + rail-collapse toggle ─────────────────────────── */
+.statsparrot-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 10px 0 12px;
+  border-bottom: 1px solid #25282c;
+  flex: none;
+}
+
+.statsparrot-sidebar-project-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e3e3e3;
+  letter-spacing: -0.01em;
+}
+
+.statsparrot-sidebar-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-fg-muted, #8e918f);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.statsparrot-sidebar-collapse-btn:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+/* ── Add Asset ───────────────────────────────────────────────────────────── */
+.statsparrot-sidebar-add {
+  flex: none;
+  padding: 8px 12px 6px;
+}
+
+.statsparrot-add-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #25282c;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-fg-secondary, #c4c7c5);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.statsparrot-add-trigger:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  border-color: #32363b;
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+.statsparrot-add-trigger .statsparrot-add-caret {
+  margin-left: auto;
+}
+
+.statsparrot-add-menu {
+  min-width: 220px;
+}
+
+.statsparrot-add-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* ── File tree ───────────────────────────────────────────────────────────── */
+.statsparrot-sidebar-tree {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* The ported FileExplorer's top-level tree list scrolls within the rail. */
+.statsparrot-sidebar-tree > ul {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Keep the FileExplorer's pinned project header at a fixed height. */
+.statsparrot-sidebar-tree > .project-header {
+  flex: none;
+}
+
+/* ── Footer: section navigation ──────────────────────────────────────────── */
+.statsparrot-sidebar-footer {
+  flex: none;
+  border-top: 1px solid #25282c;
+  padding: 8px 8px 10px;
+}
+
+.statsparrot-sidebar-footer-label {
+  padding: 0 6px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fg-muted, #8e918f);
+}
+
+.statsparrot-sidebar-footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.statsparrot-sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 28px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-fg-muted, #8e918f);
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.statsparrot-sidebar-nav-item svg {
+  flex: none;
+  color: inherit;
+}
+
+.statsparrot-sidebar-nav-item:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+.statsparrot-sidebar-nav-item.active {
+  background-color: #1c1c1e;
+  color: #f3f4f6;
+  font-weight: 500;
+}
+
+/* ── Resizable rail handle ───────────────────────────────────────────────── */
+.statsparrot-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.statsparrot-sidebar-resizer:hover {
+  background-color: rgba(168, 199, 250, 0.25);
+}
+
+/* Floating "reopen" button shown when the rail is collapsed to zero. */
+.statsparrot-sidebar-reopen {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #25282c;
+  border-radius: 6px;
+  background-color: var(--color-surface-base, #0b0d0e);
+  color: var(--color-fg-muted, #8e918f);
+  cursor: pointer;
+  z-index: 50;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.statsparrot-sidebar-reopen:hover {
+  background-color: var(--color-surface-active, #1a1d1e);
+  color: var(--color-fg-primary, #e3e3e3);
+}
+
+/* ── Mobile: hide the rail unless the topbar hamburger opens it ──────────── */
+@media (max-width: 768px) {
+  .statsparrot-sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0 !important;
+    z-index: 40;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .statsparrot-sidebar.mobile-open {
+    width: var(--statsparrot-nav-width, 240px) !important;
+  }
+
+  /* A manually-collapsed rail stays hidden even when the hamburger is open. */
+  .statsparrot-sidebar.collapsed.mobile-open {
+    width: 0 !important;
+  }
+
+  .statsparrot-sidebar-reopen {
+    display: none;
+  }
+}

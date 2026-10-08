@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { V1ThemeSpec } from "@rilldata/web-common/runtime-client";
+import type { V1ThemeSpec } from "@statsparrot/web-common/runtime-client";
 import { Theme } from "./theme";
 
 const PRIMARY = "#49A9DE";
@@ -35,7 +35,7 @@ function parseCSS(css: string): {
 
 describe("Theme", () => {
   describe("palette-derived semantic tokens", () => {
-    // app.css declares these on :root against Rill's own palette. Custom properties are
+    // app.css declares these on :root against Parrot's own palette. Custom properties are
     // substituted where they are declared, so a theme scoped to .dashboard-theme-boundary
     // cannot reach them; the theme has to re-declare them on the boundary itself.
     const colors = { primary: PRIMARY, secondary: SECONDARY };
@@ -82,7 +82,7 @@ describe("Theme", () => {
       expect(dark["dimension"]).toBe(light["color-theme-950"]);
     });
 
-    it("falls back to Rill's defaults in dark mode when the theme is light-only", () => {
+    it("falls back to Parrot's defaults in dark mode when the theme is light-only", () => {
       const { dark } = parseCSS(new Theme({ light: colors }).css);
 
       expect(dark["accent-primary"]).toBe("unset");
@@ -130,7 +130,7 @@ describe("Theme", () => {
 
     it("let fg-primary keep ownership of fg-accent in dark mode too", () => {
       // The light block derives fg-accent from the palette. Resetting it to `unset` in the
-      // dark block would both discard dark's own fg-primary and fall back to Rill's indigo.
+      // dark block would both discard dark's own fg-primary and fall back to Parrot's indigo.
       const { dark } = parseCSS(
         new Theme({
           light: { primary: PRIMARY },
@@ -146,7 +146,7 @@ describe("Theme", () => {
   });
 
   describe("palette aliasing", () => {
-    it("shadows Rill's primary and secondary palettes inside the boundary", () => {
+    it("shadows Parrot's primary and secondary palettes inside the boundary", () => {
       // So that the `bg-primary-500`-style utilities used throughout dashboard
       // components follow the theme without each one having to be migrated.
       const { light } = parseCSS(

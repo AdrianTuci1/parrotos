@@ -4,23 +4,23 @@
   import {
     ConnectionStatus,
     createSSEStream,
-  } from "@rilldata/web-common/runtime-client/sse";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client/sse";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     V1LogLevel,
     type V1WatchLogsResponse,
-  } from "@rilldata/web-common/runtime-client";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
+  } from "@statsparrot/web-common/runtime-client";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
   import {
     createUrlFilterSync,
     parseArrayParam,
     parseStringParam,
-  } from "@rilldata/web-common/lib/url-filter-sync";
+  } from "@statsparrot/web-common/lib/url-filter-sync";
   import { ProjectLogsStore, type LogEntry } from "./project-logs-store";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
 

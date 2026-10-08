@@ -1,18 +1,18 @@
-import { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
+import { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
 import {
   type CanvasComponentType,
   type ComponentAlignment,
   type ComponentCommonProperties,
-} from "@rilldata/web-common/features/canvas/components/types";
-import { getCommonOptions } from "@rilldata/web-common/features/canvas/components/util";
-import type { InputParams } from "@rilldata/web-common/features/canvas/inspector/types";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/canvas/components/types";
+import { getCommonOptions } from "@statsparrot/web-common/features/canvas/components/util";
+import type { InputParams } from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import type { CanvasEntity, ComponentPath } from "../../stores/canvas-entity";
 import Image from "./Image.svelte";
 
 export { default as Image } from "./Image.svelte";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export const defaultImageAlignment: ComponentAlignment = {
   horizontal: "center",
@@ -59,7 +59,7 @@ export class ImageComponent extends BaseCanvasComponent<ImageSpec> {
 
   static newComponentSpec(): ImageSpec {
     return {
-      url: "https://cdn.prod.website-files.com/659ddac460dbacbdc813b204/660b0f85094eb576187342cf_rill_logo_sq_gradient.svg",
+      url: "https://cdn.prod.website-files.com/659ddac460dbacbdc813b204/660b0f85094eb576187342cf_statsparrot_logo_sq_gradient.svg",
     };
   }
 }

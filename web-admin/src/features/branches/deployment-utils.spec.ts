@@ -4,8 +4,8 @@ import {
   V1DeploymentStatus,
   type V1Deployment,
   type V1ListDeploymentsResponse,
-} from "@rilldata/web-admin/client";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-admin/client";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   isActiveDeployment,
   isProdDeployment,
@@ -16,11 +16,11 @@ const { listDeploymentsMock } = vi.hoisted(() => ({
   listDeploymentsMock: vi.fn<() => Promise<V1ListDeploymentsResponse>>(),
 }));
 
-vi.mock("@rilldata/web-admin/client", async () => {
+vi.mock("@statsparrot/web-admin/client", async () => {
   // Import the rest of the client. Mainly needed for type definitions.
   const actual = await vi.importActual<
-    typeof import("@rilldata/web-admin/client")
-  >("@rilldata/web-admin/client");
+    typeof import("@statsparrot/web-admin/client")
+  >("@statsparrot/web-admin/client");
   return {
     ...actual,
     adminServiceListDeployments: (...args: unknown[]) =>
@@ -28,7 +28,7 @@ vi.mock("@rilldata/web-admin/client", async () => {
   };
 });
 
-const ORG = "rilldata";
+const ORG = "staticlabs";
 const PROJECT = "openrtb";
 
 function makeDeployment(overrides: Partial<V1Deployment>): V1Deployment {
@@ -106,7 +106,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(result).toBeUndefined();
     });
 
@@ -120,7 +120,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(result).toBeUndefined();
     });
 
@@ -135,7 +135,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(result).toBeUndefined();
     });
 
@@ -155,7 +155,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(result).toBeUndefined();
     });
 
@@ -172,7 +172,7 @@ describe("deployment-utils", () => {
       });
 
       const result = await call(
-        "/rilldata/openrtb/@edit-branch/explore/revenue",
+        "/staticlabs/openrtb/@edit-branch/explore/revenue",
       );
       expect(result).toBeUndefined();
     });
@@ -189,7 +189,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb/@some-other-branch");
+      const result = await call("/staticlabs/openrtb/@some-other-branch");
       expect(result).toBeUndefined();
     });
 
@@ -209,11 +209,11 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(isRedirect(result)).toBe(true);
       if (!isRedirect(result)) return; // type-safety
       expect(result.status).toBe(307);
-      expect(result.location).toBe("/rilldata/openrtb/@edit-branch/-/edit");
+      expect(result.location).toBe("/staticlabs/openrtb/@edit-branch/-/edit");
     });
 
     it("redirects when there is no prod deployment at all", async () => {
@@ -228,11 +228,11 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb/explore/revenue");
+      const result = await call("/staticlabs/openrtb/explore/revenue");
       expect(isRedirect(result)).toBe(true);
       if (!isRedirect(result)) return; // type-safety
       expect(result.status).toBe(307);
-      expect(result.location).toBe("/rilldata/openrtb/@edit-branch/-/edit");
+      expect(result.location).toBe("/staticlabs/openrtb/@edit-branch/-/edit");
     });
 
     it("redirects when prod is in PENDING (still active) — sanity check on active statuses", async () => {
@@ -251,14 +251,14 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(result).toBeUndefined();
     });
 
     it("returns undefined when deployments list is empty", async () => {
       listDeploymentsMock.mockResolvedValue({ deployments: [] });
 
-      const result = await call("/rilldata/openrtb");
+      const result = await call("/staticlabs/openrtb");
       expect(result).toBeUndefined();
     });
 
@@ -276,7 +276,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb/-/deploying");
+      const result = await call("/staticlabs/openrtb/-/deploying");
       expect(result).toBeUndefined();
     });
 
@@ -293,7 +293,7 @@ describe("deployment-utils", () => {
         ],
       });
 
-      const result = await call("/rilldata/openrtb/-/invite");
+      const result = await call("/staticlabs/openrtb/-/invite");
       expect(result).toBeUndefined();
     });
   });

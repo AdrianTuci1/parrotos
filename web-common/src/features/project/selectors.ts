@@ -1,9 +1,9 @@
-import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-import type { Project } from "@rilldata/web-common/proto/gen/rill/admin/v1/api_pb.ts";
+import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+import type { Project } from "@statsparrot/web-common/proto/gen/statsparrot/admin/v1/api_pb.ts";
 import {
   createLocalServiceGetProjectRequest,
   getLocalServiceGithubRepoStatusQueryOptions,
-} from "@rilldata/web-common/runtime-client/local-service.ts";
+} from "@statsparrot/web-common/runtime-client/local-service.ts";
 import { createQuery } from "@tanstack/svelte-query";
 import { derived } from "svelte/store";
 import { parse } from "yaml";
@@ -16,7 +16,7 @@ import type { RuntimeClient } from "../../runtime-client/v2";
 export function useProjectTitle(client: RuntimeClient) {
   return createRuntimeServiceGetFile(
     client,
-    { path: "/rill.yaml" },
+    { path: "/statsparrot.yaml" },
     {
       query: {
         select: (data) => {
@@ -41,7 +41,7 @@ export function useProjectTitle(client: RuntimeClient) {
             projectData?.display_name ||
               projectData?.title ||
               projectData?.name ||
-              "Untitled Rill Project",
+              "Untitled Parrot Project",
           );
         },
       },

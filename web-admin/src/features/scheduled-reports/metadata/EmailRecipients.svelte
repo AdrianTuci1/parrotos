@@ -1,7 +1,7 @@
 <script lang="ts">
-  import MetadataLabel from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
-  import { Tag } from "@rilldata/web-common/components/tag/index.js";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import MetadataLabel from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
+  import { Tag } from "@statsparrot/web-common/components/tag/index.js";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let emailRecipients: string[];
 </script>

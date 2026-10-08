@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -47,7 +47,7 @@ func SwitchCmd(ch *cmdutil.Helper) *cobra.Command {
 				defaultOrg = args[0]
 			}
 
-			err = ch.DotRill.SetDefaultOrg(defaultOrg)
+			err = ch.DotStatsparrot.SetDefaultOrg(defaultOrg)
 			if err != nil {
 				return err
 			}
@@ -63,7 +63,7 @@ func SwitchCmd(ch *cmdutil.Helper) *cobra.Command {
 
 func SwitchSelectFlow(ch *cmdutil.Helper, orgs []*adminv1.Organization) (string, error) {
 	if len(orgs) < 1 {
-		fmt.Println("No organizations found, run `rill org create` first.")
+		fmt.Println("No organizations found, run `statsparrot org create` first.")
 		return "", nil
 	}
 
@@ -72,7 +72,7 @@ func SwitchSelectFlow(ch *cmdutil.Helper, orgs []*adminv1.Organization) (string,
 		orgNames = append(orgNames, org.Name)
 	}
 
-	org, err := ch.DotRill.GetDefaultOrg()
+	org, err := ch.DotStatsparrot.GetDefaultOrg()
 	if err != nil {
 		return "", err
 	}
@@ -107,5 +107,5 @@ func SetDefaultOrg(ctx context.Context, ch *cmdutil.Helper) error {
 	}
 
 	ch.Org = orgName
-	return ch.DotRill.SetDefaultOrg(orgName)
+	return ch.DotStatsparrot.SetDefaultOrg(orgName)
 }

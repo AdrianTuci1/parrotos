@@ -1,4 +1,4 @@
-import { createIframeRPCHandler } from "@rilldata/web-common/lib/rpc";
+import { createIframeRPCHandler } from "@statsparrot/web-common/lib/rpc";
 import type { Page } from "@sveltejs/kit";
 import { get, writable, type Readable, type Updater } from "svelte/store";
 

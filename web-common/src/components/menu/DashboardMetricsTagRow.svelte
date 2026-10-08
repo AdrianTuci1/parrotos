@@ -1,9 +1,9 @@
 <script lang="ts">
-  import EyeIcon from "@rilldata/web-common/components/icons/Eye.svelte";
-  import EyeOffIcon from "@rilldata/web-common/components/icons/EyeInvisible.svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { detectOverflow } from "@rilldata/web-common/lib/actions/detect-overflow";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import EyeIcon from "@statsparrot/web-common/components/icons/Eye.svelte";
+  import EyeOffIcon from "@statsparrot/web-common/components/icons/EyeInvisible.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { detectOverflow } from "@statsparrot/web-common/lib/actions/detect-overflow";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { DimensionTag, TagVisibilityState } from "./tag-utils";
 
   type Props = {

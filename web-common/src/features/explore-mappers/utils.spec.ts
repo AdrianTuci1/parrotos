@@ -1,4 +1,4 @@
-import { getExploreName } from "@rilldata/web-common/features/explore-mappers/utils.ts";
+import { getExploreName } from "@statsparrot/web-common/features/explore-mappers/utils.ts";
 import { describe, expect, it } from "vitest";
 
 describe("getExploreName", () => {

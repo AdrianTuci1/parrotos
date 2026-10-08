@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import CriteriaForm from "@rilldata/web-common/features/alerts/criteria-tab/CriteriaForm.svelte";
-  import { CriteriaGroupOptions } from "@rilldata/web-common/features/alerts/criteria-tab/operations";
-  import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
-  import { getEmptyMeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-  import type { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import CriteriaForm from "@statsparrot/web-common/features/alerts/criteria-tab/CriteriaForm.svelte";
+  import { CriteriaGroupOptions } from "@statsparrot/web-common/features/alerts/criteria-tab/operations";
+  import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
+  import { getEmptyMeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+  import type { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
   import { Trash2Icon } from "lucide-svelte";
   import type { SuperForm } from "sveltekit-superforms/client";
 

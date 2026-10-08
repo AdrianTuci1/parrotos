@@ -8,10 +8,10 @@ import (
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/pathutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pathutil"
 )
 
 const CreateChartName = "create_chart"
@@ -62,8 +62,8 @@ func (t *CreateChart) CheckAccess(ctx context.Context) (bool, error) {
 		return false, nil
 	}
 
-	// Only allow for rill user agents since it doesn't work with external MCP clients
-	if !strings.HasPrefix(s.CatalogSession().UserAgent, "rill") {
+	// Only allow for statsparrot user agents since it doesn't work with external MCP clients
+	if !strings.HasPrefix(s.CatalogSession().UserAgent, "statsparrot") {
 		return false, nil
 	}
 
@@ -292,8 +292,8 @@ func validateChartFields(chartType string, spec map[string]any, mvSpec *runtimev
 
 	case "bar_chart", "line_chart", "area_chart", "stacked_bar", "stacked_bar_normalized":
 		if colorField, ok := pathutil.GetPath(spec, "color.field"); ok {
-			// Skip validation for special field "rill_measures"
-			if fieldStr, ok := colorField.(string); !ok || fieldStr != "rill_measures" {
+			// Skip validation for special field "statsparrot_measures"
+			if fieldStr, ok := colorField.(string); !ok || fieldStr != "statsparrot_measures" {
 				if err := validateField(availableFields, colorField); err != nil {
 					return fmt.Errorf("invalid color field: %w", err)
 				}
@@ -795,7 +795,7 @@ Example Specification
 
 Field details:
 bids_metrics: metrics_view
-rill_measures: special field
+statsparrot_measures: special field
 __time: timestamp dimension
 clicks, video_starts, video_completes, ctr, ecpm, impressions: measures
 
@@ -810,7 +810,7 @@ clicks, video_starts, video_completes, ctr, ecpm, impressions: measures
       "end": "2024-12-31T23:59:59Z"
     },
     "color": {
-      "field": "rill_measures",
+      "field": "statsparrot_measures",
       "legendOrientation": "top",
       "type": "value"
     },
@@ -846,7 +846,7 @@ Note that when charting out multiple fields using "fields" key, you must also ad
 Example Specification
 
 Field details:
-rill_commits_metrics: metrics_view
+statsparrot_commits_metrics: metrics_view
 username: dimension
 date: timestamp dimension
 number_of_commits: measure
@@ -855,7 +855,7 @@ number_of_commits: measure
 {
   "chart_type": "stacked_bar_normalized",
   "spec": {
-    "metrics_view": "rill_commits_metrics",
+    "metrics_view": "statsparrot_commits_metrics",
     "time_range": {
       "start": "2024-01-01T00:00:00Z",
       "end": "2024-12-31T23:59:59Z"
@@ -885,7 +885,7 @@ number_of_commits: measure
 Example Specification
 
 Field details:
-rill_commits_metrics: metrics_view
+statsparrot_commits_metrics: metrics_view
 username: dimension
 number_of_commits: measure
 
@@ -893,7 +893,7 @@ number_of_commits: measure
 {
   "chart_type": "donut_chart",
   "spec": {
-    "metrics_view": "rill_commits_metrics",
+    "metrics_view": "statsparrot_commits_metrics",
     "time_range": {
       "start": "2024-01-01T00:00:00Z",
       "end": "2024-12-31T23:59:59Z"
@@ -1048,7 +1048,7 @@ __time: timestamp dimension
 date: timestamp dimension
 1d_qps: measure
 requests: measure
-rill_measures: special field
+statsparrot_measures: special field
 
 ` + "```json" + `
 {
@@ -1060,7 +1060,7 @@ rill_measures: special field
       "end": "2024-12-31T23:59:59Z"
     },
     "color": {
-      "field": "rill_measures",
+      "field": "statsparrot_measures",
       "legendOrientation": "top",
       "type": "value"
     },
@@ -1167,7 +1167,7 @@ total_impressions: measure
 - **showTotal**: Displays the measure total without any breakdown. Only used for donut chart to display totals in center
 
 ### Special Fields
-- **rill_measures**: Special field for multiple measures in stacked charts and area charts. The field name is only used in color field object. DO NOT USE it for other keys except for "color" key in the field object.
+- **statsparrot_measures**: Special field for multiple measures in stacked charts and area charts. The field name is only used in color field object. DO NOT USE it for other keys except for "color" key in the field object.
 
 ## Color Configuration
 
@@ -1193,8 +1193,8 @@ In breakdown mode "measures" -
 For dynamic coloring based on data dimensions:
 ` + "```json" + `
 {
-  "field": "dimension_name|rill_measures",      // The data field to base colors on
-  "type": "nominal|value", // Data type, use value only when field in "rill_measures"
+  "field": "dimension_name|statsparrot_measures",      // The data field to base colors on
+  "type": "nominal|value", // Data type, use value only when field in "statsparrot_measures"
   "limit": 10,                     // Limit denotes the maximum number of color categories
   "legendOrientation": "top|bottom|left|right" // Legend position (optional)
 }

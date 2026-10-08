@@ -1,4 +1,4 @@
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import {
   isModelPartitioned,
   isModelIncremental,

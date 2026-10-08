@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.js";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.js";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
 
   $: reconcilingItems = fileArtifacts.getReconcilingResourceNames();
   $: typedReconcilingItems = $reconcilingItems.map((reconcilingItem) => ({

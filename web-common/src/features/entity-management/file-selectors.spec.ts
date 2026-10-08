@@ -1,7 +1,7 @@
 import {
   useDirectoryNamesInDirectorySelector,
   useFileNamesInDirectorySelector,
-} from "@rilldata/web-common/features/entity-management/file-selectors";
+} from "@statsparrot/web-common/features/entity-management/file-selectors";
 import { describe, expect, it } from "vitest";
 
 describe("useFileNamesInDirectorySelector", () => {

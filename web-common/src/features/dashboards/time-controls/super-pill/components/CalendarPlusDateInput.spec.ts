@@ -1,5 +1,5 @@
-import CalendarPlusDateInputTest from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components/CalendarPlusDateInputTest.svelte";
-import { mockAnimationsForComponentTesting } from "@rilldata/web-common/lib/test/mock-animations";
+import CalendarPlusDateInputTest from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components/CalendarPlusDateInputTest.svelte";
+import { mockAnimationsForComponentTesting } from "@statsparrot/web-common/lib/test/mock-animations";
 import { act, fireEvent, render, screen } from "@testing-library/svelte";
 import { DateTime, Interval, type DateTimeUnit } from "luxon";
 import { describe, expect, it, vi } from "vitest";

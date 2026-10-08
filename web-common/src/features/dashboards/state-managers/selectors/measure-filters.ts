@@ -1,12 +1,12 @@
-import { getMeasureDisplayName } from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import type { DashboardDataSources } from "@rilldata/web-common/features/dashboards/state-managers/selectors/types";
-import type { AtLeast } from "@rilldata/web-common/features/dashboards/state-managers/types";
-import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { getMeasureDisplayName } from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import type { DashboardDataSources } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/types";
+import type { AtLeast } from "@statsparrot/web-common/features/dashboards/state-managers/types";
+import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export const measureHasFilter = (
   dashData: AtLeast<DashboardDataSources, "dashboard">,

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/provisioner"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
 )
 
 type ProvisionOptions struct {
@@ -106,7 +106,7 @@ func (s *Service) Provision(ctx context.Context, opts *ProvisionOptions) (*datab
 	r, err = p.Provision(ctx, r, &provisioner.ResourceOptions{
 		Args:        opts.Args,
 		Annotations: opts.Annotations,
-		RillVersion: s.resolveRillVersion(),
+		ParrotVersion: s.resolveParrotVersion(),
 	})
 	if err != nil {
 		ctx, cancel := context.WithTimeout(ctx, 10*time.Second)

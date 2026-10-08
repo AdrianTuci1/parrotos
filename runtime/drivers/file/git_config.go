@@ -5,13 +5,13 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/rilldata/rill/admin/client"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/admin/client"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 )
 
-var errProjectNotFound = errors.New("not connected to a rill project")
+var errProjectNotFound = errors.New("not connected to a statsparrot project")
 
 // loadGitConfig loads the git configuration for the repository
 // Should be called with c.gitMu held.
@@ -41,8 +41,8 @@ func (c *connection) loadGitConfig(ctx context.Context) (*gitutil.Config, error)
 	remote, err := gitutil.ExtractRemotes(repoRoot, false)
 	if err == nil {
 		for _, r := range remote {
-			if r.Name == "__rill_remote" {
-				req.RillMgdGitRemote = r.URL
+			if r.Name == "__statsparrot_remote" {
+				req.StatsparrotMgdGitRemote = r.URL
 			} else {
 				gitRemote, err := r.Github()
 				if err == nil {
@@ -60,7 +60,7 @@ func (c *connection) loadGitConfig(ctx context.Context) (*gitutil.Config, error)
 	}
 
 	// filter by org
-	org, err := c.dotRill.GetDefaultOrg()
+	org, err := c.dotStatsparrot.GetDefaultOrg()
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (c *connection) gitSignature(ctx context.Context, client *client.Client, pa
 	}
 
 	if client == nil {
-		return gitutil.Signature{Name: "Rill", Email: "noreply@rilldata.com"}, nil
+		return gitutil.Signature{Name: "Parrot", Email: "noreply@staticlabs.com"}, nil
 	}
 	userResp, err := client.GetCurrentUser(ctx, &adminv1.GetCurrentUserRequest{})
 	if err != nil {
@@ -128,7 +128,7 @@ func (c *connection) getAdminClient() (*client.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	admin, err := client.New(adminURL, accessToken, "rill-runtime")
+	admin, err := client.New(adminURL, accessToken, "statsparrot-runtime")
 	if err != nil {
 		return nil, err
 	}
@@ -140,14 +140,14 @@ func (c *connection) adminToken() (string, error) {
 	if c.driverConfig.AccessTokenOverride != "" {
 		return c.driverConfig.AccessTokenOverride, nil
 	}
-	return c.dotRill.GetAccessToken()
+	return c.dotStatsparrot.GetAccessToken()
 }
 
 func (c *connection) adminURL() (string, error) {
 	if c.driverConfig.AdminURLOverride != "" {
 		return c.driverConfig.AdminURLOverride, nil
 	}
-	adminURL, err := c.dotRill.GetDefaultAdminURL()
+	adminURL, err := c.dotStatsparrot.GetDefaultAdminURL()
 	if err != nil {
 		return "", err
 	}
@@ -157,4 +157,4 @@ func (c *connection) adminURL() (string, error) {
 	return adminURL, nil
 }
 
-const defaultAdminURL = "https://admin.rilldata.com"
+const defaultAdminURL = "https://admin.statsparrot.com"

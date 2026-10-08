@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import CTAButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CTAHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CTAMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import CTAPylonHelp from "@rilldata/web-common/components/calls-to-action/CTAPylonHelp.svelte";
-  import CancelCircleInverse from "@rilldata/web-common/components/icons/CancelCircleInverse.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import CTAButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CTAHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CTAMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import CTAPylonHelp from "@statsparrot/web-common/components/calls-to-action/CTAPylonHelp.svelte";
+  import CancelCircleInverse from "@statsparrot/web-common/components/icons/CancelCircleInverse.svelte";
   import {
     DeployErrorType,
     getPrettyDeployError,
     isQuotaDeployError,
-  } from "@rilldata/web-common/features/project/deploy/deploy-errors";
+  } from "@statsparrot/web-common/features/project/deploy/deploy-errors";
 
   export let error: Error;
   export let isOrgOnTrial: boolean;

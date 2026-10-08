@@ -1,4 +1,4 @@
-import type { BannerMessage } from "@rilldata/web-common/lib/event-bus/events.ts";
+import type { BannerMessage } from "@statsparrot/web-common/lib/event-bus/events.ts";
 
 type BannerDismissState = {
   id: string;
@@ -8,7 +8,7 @@ type BannerDismissState = {
 export function isBannerDismissed(dismiss: BannerMessage["dismissible"]) {
   if (!dismiss) return false;
 
-  const key = `rill:banner:dismiss:${dismiss.key}`;
+  const key = `statsparrot:banner:dismiss:${dismiss.key}`;
   try {
     const rawValue = localStorage.getItem(key);
     if (!rawValue) return false;
@@ -22,7 +22,7 @@ export function isBannerDismissed(dismiss: BannerMessage["dismissible"]) {
 
 export function dismissBanner(dismiss: BannerMessage["dismissible"]) {
   if (!dismiss) return;
-  const key = `rill:banner:dismiss:${dismiss.key}`;
+  const key = `statsparrot:banner:dismiss:${dismiss.key}`;
   const value: BannerDismissState = {
     id: dismiss.id,
   };

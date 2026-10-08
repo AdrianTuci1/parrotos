@@ -4,7 +4,7 @@
 // which depend on the runtime `fileArtifacts`/queryClient and are therefore
 // deferred to the runtime-bound phase. The React port keeps the tree pure so the
 // graph stays free of SvelteKit `$app` imports.
-import type { V1DirEntry } from "@rilldata/web-common/runtime-client";
+import type { V1DirEntry } from "@statsparrot/web-common/runtime-client";
 
 export interface Directory {
   name: string;

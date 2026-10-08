@@ -1,9 +1,9 @@
-import { projectWelcomeStatus } from "@rilldata/web-admin/features/welcome/project/welcome-status.ts";
+import { projectWelcomeStatus } from "@statsparrot/web-admin/features/welcome/project/welcome-status.ts";
 import { redirect } from "@sveltejs/kit";
 import {
   extractBranchFromPath,
   injectBranchIntoPath,
-} from "@rilldata/web-admin/features/branches/branch-utils.ts";
+} from "@statsparrot/web-admin/features/branches/branch-utils.ts";
 
 export const load = ({ params: { organization, project }, url }) => {
   if (!projectWelcomeStatus.isProjectWelcomeStep(project)) {

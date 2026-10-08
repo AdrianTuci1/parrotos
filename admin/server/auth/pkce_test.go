@@ -3,7 +3,7 @@ package auth
 import (
 	"testing"
 
-	"github.com/rilldata/rill/admin/database"
+	"github.com/staticlabs/statsparrot/admin/database"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,7 +24,7 @@ func TestIsRedirectURIAllowed(t *testing.T) {
 	})
 
 	t.Run("localhost client allows any port on /auth/callback", func(t *testing.T) {
-		client := &database.AuthClient{ID: database.AuthClientIDRillWebLocal}
+		client := &database.AuthClient{ID: database.AuthClientIDParrotWebLocal}
 		require.True(t, isRedirectURIAllowed(client, "http://localhost:3000/auth/callback"))
 		require.True(t, isRedirectURIAllowed(client, "https://localhost:12345/auth/callback"))
 		require.False(t, isRedirectURIAllowed(client, "http://localhost:3000/other"))

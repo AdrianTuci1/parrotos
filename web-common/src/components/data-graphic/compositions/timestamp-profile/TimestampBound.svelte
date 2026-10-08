@@ -5,24 +5,24 @@
    * This component will render the label bound on the TimestampDetail.svelte graph.
    * It also enables a shift + click to copy the bound as a query-ready timestamp.
    */
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@statsparrot/web-common/components/tooltip/StackingWord.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
   import {
     copyToClipboard,
     isClipboardApiSupported,
-  } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
   import {
     datePortion,
     timePortion,
-  } from "@rilldata/web-common/lib/formatters";
-  import { timeGrainToDuration } from "@rilldata/web-common/lib/time/grains";
-  import { removeLocalTimezoneOffset } from "@rilldata/web-common/lib/time/timezone";
-  import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/formatters";
+  import { timeGrainToDuration } from "@statsparrot/web-common/lib/time/grains";
+  import { removeLocalTimezoneOffset } from "@statsparrot/web-common/lib/time/timezone";
+  import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 
   export let value: Date;
   export let grain: V1TimeGrain;

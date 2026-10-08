@@ -3,13 +3,13 @@ import {
   adminServiceGetCurrentUser,
   getAdminServiceGetCurrentUserQueryKey,
   type V1GetCurrentUserResponse,
-} from "@rilldata/web-admin/client";
-import { redirectToLogin } from "@rilldata/web-admin/client/redirect-utils";
+} from "@statsparrot/web-admin/client";
+import { redirectToLogin } from "@statsparrot/web-admin/client/redirect-utils";
 import {
   isProjectRequestAccessPage,
   withinProject,
-} from "@rilldata/web-admin/features/navigation/nav-utils";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-admin/features/navigation/nav-utils";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import type { Page } from "@sveltejs/kit";
 
 export async function redirectToLoginIfNotLoggedIn() {

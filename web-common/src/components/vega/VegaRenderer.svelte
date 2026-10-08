@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import type { ColorMapping } from "@rilldata/web-common/features/components/charts/types";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import type { ColorMapping } from "@statsparrot/web-common/features/components/charts/types";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onDestroy } from "svelte";
   import {
     type SignalListeners,
@@ -127,7 +127,7 @@
   bind:contentRect
   role="presentation"
   class:px-2={canvasDashboard}
-  class="rill-vega-container overflow-hidden size-full flex flex-col items-center justify-center"
+  class="statsparrot-vega-container overflow-hidden size-full flex flex-col items-center justify-center"
   onmouseleave={handleMouseLeave}
 >
   {#if error}

@@ -1,14 +1,14 @@
-import { DashboardFetchMocks } from "@rilldata/web-common/features/dashboards/dashboard-fetch-mocks.ts";
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+import { DashboardFetchMocks } from "@statsparrot/web-common/features/dashboards/dashboard-fetch-mocks.ts";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
 import {
   createAndExpression,
   createBinaryExpression,
   createInExpression,
   createSubQueryExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-import { getExploreStateFromYAMLConfig } from "@rilldata/web-common/features/dashboards/stores/get-explore-state-from-yaml-config.ts";
-import { getRillDefaultExploreState } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+import { getExploreStateFromYAMLConfig } from "@statsparrot/web-common/features/dashboards/stores/get-explore-state-from-yaml-config.ts";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state.ts";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_DOMAIN_DIMENSION,
@@ -19,20 +19,20 @@ import {
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_TIME_RANGE_SUMMARY,
   AD_BIDS_TIMESTAMP_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data.ts";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data.ts";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types.ts";
 import {
   type MapQueryResponse,
   mapQueryToDashboard,
-} from "@rilldata/web-common/features/explore-mappers/map-to-explore.ts";
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb.ts";
+} from "@statsparrot/web-common/features/explore-mappers/map-to-explore.ts";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb.ts";
 import {
   type V1MetricsViewAggregationRequest,
   V1Operation,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("getDashboardFromAggregationRequest", () => {
@@ -380,7 +380,7 @@ async function runTest({
 
   expect(mapQueryResp.error).toBeNull();
 
-  const rillDefaultExploreState = getRillDefaultExploreState(
+  const statsparrotDefaultExploreState = getParrotDefaultExploreState(
     AD_BIDS_METRICS_3_MEASURES_DIMENSIONS_WITH_TIME,
     AD_BIDS_EXPLORE_WITH_3_MEASURES_DIMENSIONS,
     AD_BIDS_TIME_RANGE_SUMMARY.timeRangeSummary,
@@ -391,7 +391,7 @@ async function runTest({
     AD_BIDS_METRICS_3_MEASURES_DIMENSIONS_WITH_TIME.smallestTimeGrain,
   );
   const expectedExploreState = {
-    ...rillDefaultExploreState,
+    ...statsparrotDefaultExploreState,
     ...exploreStateFromYAMLConfig,
     ...expectedAdditionalExploreState,
   };

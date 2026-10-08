@@ -2,10 +2,10 @@ import {
   adminServiceGetBillingSubscription,
   getAdminServiceGetBillingSubscriptionQueryKey,
   type RpcStatus,
-} from "@rilldata/web-admin/client";
-import { getNeverSubscribedIssue } from "@rilldata/web-admin/features/billing/issues/getMessageForCancelledIssue";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.js";
+} from "@statsparrot/web-admin/client";
+import { getNeverSubscribedIssue } from "@statsparrot/web-admin/features/billing/issues/getMessageForCancelledIssue";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.js";
 import { error, redirect } from "@sveltejs/kit";
 import { isAxiosError } from "axios";
 import type { PageLoad } from "./$types";

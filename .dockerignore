@@ -1,0 +1,32 @@
+# Build inputs and artifacts that the image produces itself.
+node_modules
+**/node_modules
+web-admin/build
+web-local/build
+admin/pkg/web/embed/dist
+cli/pkg/web/embed/dist
+coverage
+
+# Local state, secrets and built binaries.
+.env
+**/.env
+dev-cloud-state
+statsparrot-demo
+statsparrot
+statsparrot-hosted
+
+# Repository metadata.
+.git
+.github
+
+# The other products and the infrastructure definitions in this repository are not part of
+# the hosted build.
+backend
+frontend
+landing
+services
+connector
+e2e
+terraform
+k8s
+vps

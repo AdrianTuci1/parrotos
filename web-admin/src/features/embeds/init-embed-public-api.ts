@@ -1,26 +1,26 @@
 import { goto } from "$app/navigation";
 import { page } from "$app/stores";
-import { getDashboardFromEmbedRoute } from "@rilldata/web-admin/features/embeds/embed-route-utils.ts";
-import { EmbedStorageNamespacePrefix } from "@rilldata/web-admin/features/embeds/constants.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { buildValidatedExploreUrl } from "@rilldata/web-common/features/dashboards/state-managers/loaders/build-validated-explore-url.ts";
-import { clearExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-import type { PageContentResized } from "@rilldata/web-common/lib/event-bus/events.ts";
-import { Throttler } from "@rilldata/web-common/lib/throttler.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { getDashboardFromEmbedRoute } from "@statsparrot/web-admin/features/embeds/embed-route-utils.ts";
+import { EmbedStorageNamespacePrefix } from "@statsparrot/web-admin/features/embeds/constants.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { buildValidatedExploreUrl } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/build-validated-explore-url.ts";
+import { clearExploreSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+import type { PageContentResized } from "@statsparrot/web-common/lib/event-bus/events.ts";
+import { Throttler } from "@statsparrot/web-common/lib/throttler.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { get } from "svelte/store";
 import {
   emitNotification,
   registerRPCMethod,
-} from "@rilldata/web-common/lib/rpc";
-import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
-import { getEmbedThemeStoreInstance } from "@rilldata/web-common/features/embeds/embed-theme";
-import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store";
+} from "@statsparrot/web-common/lib/rpc";
+import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
+import { getEmbedThemeStoreInstance } from "@statsparrot/web-common/features/embeds/embed-theme";
+import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store";
 import {
   dashboardChatActions,
   dashboardChatOpen,
-} from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store";
+} from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store";
 
 const STATE_CHANGE_THROTTLE_TIMEOUT = 200;
 const RESIZE_THROTTLE_TIMEOUT = 200;

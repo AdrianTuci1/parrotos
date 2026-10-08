@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Column from "@rilldata/web-common/components/icons/Column.svelte";
-  import Row from "@rilldata/web-common/components/icons/Row.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Column from "@statsparrot/web-common/components/icons/Column.svelte";
+  import Row from "@statsparrot/web-common/components/icons/Row.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import { writable } from "svelte/store";
   import { getStateManagers } from "../state-managers/state-managers";
   import { metricsExplorerStore } from "../stores/dashboard-stores";
@@ -25,7 +25,7 @@
     handleTimeChipDrop,
     isNewTimeChip,
     updateTimeChipGrain,
-  } from "@rilldata/web-common/features/dashboards/pivot/time-pill-utils";
+  } from "@statsparrot/web-common/features/dashboards/pivot/time-pill-utils";
   import { timePillSelectors } from "./time-pill-store";
 
   export type Zone =
@@ -57,7 +57,7 @@
 </script>
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let items: PivotChipData[] = [];
   export let placeholder: string | null = null;

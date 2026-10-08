@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import FieldList from "@rilldata/web-common/features/scheduled-reports/fields/FieldList.svelte";
-  import { getFieldsForExplore } from "@rilldata/web-common/features/scheduled-reports/fields/selectors.ts";
-  import type { ReportValues } from "@rilldata/web-common/features/scheduled-reports/utils.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import FieldList from "@statsparrot/web-common/features/scheduled-reports/fields/FieldList.svelte";
+  import { getFieldsForExplore } from "@statsparrot/web-common/features/scheduled-reports/fields/selectors.ts";
+  import type { ReportValues } from "@statsparrot/web-common/features/scheduled-reports/utils.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { ValidationErrors } from "sveltekit-superforms";
 
   export let rows: string[];

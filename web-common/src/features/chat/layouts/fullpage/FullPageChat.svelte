@@ -1,10 +1,10 @@
 <script lang="ts">
   import { beforeNavigate } from "$app/navigation";
   import { page } from "$app/stores";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { projectChat } from "@rilldata/web-common/features/project/chat-context.ts";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { projectChat } from "@statsparrot/web-common/features/project/chat-context.ts";
   import { onMount } from "svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     cleanupConversationManager,
     getConversationManager,

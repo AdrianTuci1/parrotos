@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import type { HeaderPosition } from "@rilldata/web-common/components/virtualized-table/types";
+import type { HeaderPosition } from "@statsparrot/web-common/components/virtualized-table/types";
 import { useDimensionTableConfig } from "./context";
 
 /**

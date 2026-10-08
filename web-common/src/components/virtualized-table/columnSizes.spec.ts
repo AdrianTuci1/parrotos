@@ -1,4 +1,4 @@
-import { VirtualizedTableColumnSizes } from "@rilldata/web-common/components/virtualized-table/columnSizes";
+import { VirtualizedTableColumnSizes } from "@statsparrot/web-common/components/virtualized-table/columnSizes";
 import { describe, it, expect } from "vitest";
 
 describe("VirtualizedTableColumnSizes", () => {

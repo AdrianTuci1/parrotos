@@ -1,11 +1,11 @@
-import { DashboardFetchMocks } from "@rilldata/web-common/features/dashboards/dashboard-fetch-mocks";
-import DashboardStateManagerTest from "@rilldata/web-common/features/dashboards/state-managers/loaders/test/DashboardStateManagerTest.svelte";
+import { DashboardFetchMocks } from "@statsparrot/web-common/features/dashboards/dashboard-fetch-mocks";
+import DashboardStateManagerTest from "@statsparrot/web-common/features/dashboards/state-managers/loaders/test/DashboardStateManagerTest.svelte";
 import {
   type HoistedPageForExploreTests,
   PageMockForExploreTests,
-} from "@rilldata/web-common/features/dashboards/state-managers/loaders/test/PageMockForExploreTests";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+} from "@statsparrot/web-common/features/dashboards/state-managers/loaders/test/PageMockForExploreTests";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_EXPLORE_INIT,
@@ -14,7 +14,7 @@ import {
   AD_BIDS_METRICS_NAME,
   AD_BIDS_PUBLISHER_DIMENSION,
   AD_BIDS_TIME_RANGE_SUMMARY,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import {
   AD_BIDS_APPLY_PUB_DIMENSION_FILTER,
   AD_BIDS_SET_P4W_TIME_RANGE_FILTER,
@@ -24,17 +24,17 @@ import {
   AD_BIDS_TOGGLE_IMPRESSIONS_MEASURE_VISIBILITY,
   applyMutationsToDashboard,
   type TestDashboardMutation,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/store-mutations";
-import { getCleanMetricsExploreForAssertion } from "@rilldata/web-common/features/dashboards/url-state/url-state-variations.spec";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/store-mutations";
+import { getCleanMetricsExploreForAssertion } from "@statsparrot/web-common/features/dashboards/url-state/url-state-variations.spec";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   DashboardState_LeaderboardSortDirection,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   RUNTIME_CONTEXT_KEY,
   RuntimeClient,
-} from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/v2";
 import { render, screen, waitFor } from "@testing-library/svelte";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

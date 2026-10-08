@@ -1008,7 +1008,7 @@ func TestFetch_UpdatesRemoteTrackingRefs(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "clone")
 	require.NoError(t, CloneWithConfig(ctx, path, config))
 
-	before, err := Hash(ctx, path, "refs/remotes/__rill_remote/main")
+	before, err := Hash(ctx, path, "refs/remotes/__statsparrot_remote/main")
 	require.NoError(t, err)
 
 	createRemoteCommit(t, remote, "new.txt", "new content", "remote commit")
@@ -1016,7 +1016,7 @@ func TestFetch_UpdatesRemoteTrackingRefs(t *testing.T) {
 
 	require.NoError(t, Fetch(ctx, path, config))
 
-	after, err := Hash(ctx, path, "refs/remotes/__rill_remote/main")
+	after, err := Hash(ctx, path, "refs/remotes/__statsparrot_remote/main")
 	require.NoError(t, err)
 	require.NotEqual(t, before, after, "fetch must advance the remote-tracking ref")
 

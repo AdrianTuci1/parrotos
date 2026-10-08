@@ -1,10 +1,10 @@
 import {
   sanitizeFieldName,
   sanitizeValueForVega,
-} from "@rilldata/web-common/components/vega/util";
-import { SortOrderField } from "@rilldata/web-common/features/components/charts/comparison-builder";
-import type { TooltipValue } from "@rilldata/web-common/features/components/charts/types";
-import { ComparisonDeltaPreviousSuffix } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+} from "@statsparrot/web-common/components/vega/util";
+import { SortOrderField } from "@statsparrot/web-common/features/components/charts/comparison-builder";
+import type { TooltipValue } from "@statsparrot/web-common/features/components/charts/types";
+import { ComparisonDeltaPreviousSuffix } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
 import type { VisualizationSpec } from "svelte-vega";
 import type {
   Field,

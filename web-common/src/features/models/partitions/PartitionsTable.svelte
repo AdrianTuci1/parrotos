@@ -1,5 +1,5 @@
 <script lang="ts">
-  import BasicTable from "@rilldata/web-common/components/table/BasicTable.svelte";
+  import BasicTable from "@statsparrot/web-common/components/table/BasicTable.svelte";
   import { type ColumnDef, renderComponent } from "tanstack-table-8-svelte-5";
   import {
     type V1ModelPartition,

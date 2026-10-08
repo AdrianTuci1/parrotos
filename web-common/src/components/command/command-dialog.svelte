@@ -2,7 +2,7 @@
   import type { Dialog as DialogPrimitive } from "bits-ui";
   import type { Command as CommandPrimitive } from "bits-ui";
   import Command from "./command.svelte";
-  import * as Dialog from "@rilldata/web-common/components/dialog/index.js";
+  import * as Dialog from "@statsparrot/web-common/components/dialog/index.js";
 
   type $$Props = Omit<DialogPrimitive.RootProps, "child" | "children" | "ref"> &
     Omit<CommandPrimitive.RootProps, "child" | "children" | "ref">;

@@ -1,13 +1,13 @@
 <script lang="ts">
-  import AlertHistoryTableCompositeCell from "@rilldata/web-admin/features/alerts/history/AlertHistoryTableCompositeCell.svelte";
-  import NoAlertRunsYet from "@rilldata/web-admin/features/alerts/history/NoAlertRunsYet.svelte";
-  import { useAlert } from "@rilldata/web-admin/features/alerts/selectors";
-  import ResourceList from "@rilldata/web-common/features/resources/ResourceList.svelte";
-  import type { V1AlertExecution } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import AlertHistoryTableCompositeCell from "@statsparrot/web-admin/features/alerts/history/AlertHistoryTableCompositeCell.svelte";
+  import NoAlertRunsYet from "@statsparrot/web-admin/features/alerts/history/NoAlertRunsYet.svelte";
+  import { useAlert } from "@statsparrot/web-admin/features/alerts/selectors";
+  import ResourceList from "@statsparrot/web-common/features/resources/ResourceList.svelte";
+  import type { V1AlertExecution } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { ColumnDef } from "tanstack-table-8-svelte-5";
   import { renderComponent } from "tanstack-table-8-svelte-5";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let alert: string;
 

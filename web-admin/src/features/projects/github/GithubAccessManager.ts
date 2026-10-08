@@ -2,16 +2,16 @@ import {
   createAdminServiceGetGithubUserStatus,
   getAdminServiceGetGithubUserStatusQueryKey,
   getAdminServiceListGithubUserReposQueryKey,
-} from "@rilldata/web-admin/client";
-import { PopupWindow } from "@rilldata/web-common/lib/openPopupWindow.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
-import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics.ts";
-import { BehaviourEventAction } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+} from "@statsparrot/web-admin/client";
+import { PopupWindow } from "@statsparrot/web-common/lib/openPopupWindow.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
+import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics.ts";
+import { BehaviourEventAction } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 import { get, writable } from "svelte/store";
 
 /**
- * Handles github access. Opens a popup window to prompt user to install rill github app.
+ * Handles github access. Opens a popup window to prompt user to install statsparrot github app.
  * When the popup is closed `githubConnectionFailed` is set if user did not give access.
  */
 export class GithubAccessManager {

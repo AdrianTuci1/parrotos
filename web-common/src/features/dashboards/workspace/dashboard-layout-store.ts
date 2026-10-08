@@ -1,4 +1,4 @@
-import { localStorageStore } from "@rilldata/web-common/lib/store-utils/local-storage";
+import { localStorageStore } from "@statsparrot/web-common/lib/store-utils/local-storage";
 
 // Explore view: width (px) of the timeseries charts beside the leaderboards.
 export const DEFAULT_TIMESERIES_WIDTH = 580;

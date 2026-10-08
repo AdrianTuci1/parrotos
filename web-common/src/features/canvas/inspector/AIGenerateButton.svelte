@@ -1,7 +1,7 @@
 <script lang="ts">
-  import AnimatedDots from "@rilldata/web-common/features/chat/core/messages/AnimatedDots.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import AnimatedDots from "@statsparrot/web-common/features/chat/core/messages/AnimatedDots.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { BaseCanvasComponent } from "../components/BaseCanvasComponent";
   import {
     getAgentStreamingStore,

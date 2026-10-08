@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import RemoteSyncDialogs from "@rilldata/web-common/features/project/RemoteSyncDialogs.svelte";
-  import { createRuntimeServiceGitStatus } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import RemoteSyncDialogs from "@statsparrot/web-common/features/project/RemoteSyncDialogs.svelte";
+  import { createRuntimeServiceGitStatus } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { derived } from "svelte/store";
 
   const runtimeClient = useRuntimeClient();

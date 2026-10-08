@@ -1,23 +1,23 @@
-import { splitDimensionsAndMeasuresAsRowsAndColumns } from "@rilldata/web-common/features/dashboards/aggregation-request-utils.ts";
-import { getDimensionNameFromAggregationDimension } from "@rilldata/web-common/features/dashboards/aggregation-request/dimension-utils.ts";
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils.ts";
-import { includeExcludeModeFromFilters } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores.ts";
-import { ExploreMetricsViewMetadata } from "@rilldata/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
-import { Filters } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-import { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
+import { splitDimensionsAndMeasuresAsRowsAndColumns } from "@statsparrot/web-common/features/dashboards/aggregation-request-utils.ts";
+import { getDimensionNameFromAggregationDimension } from "@statsparrot/web-common/features/dashboards/aggregation-request/dimension-utils.ts";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils.ts";
+import { includeExcludeModeFromFilters } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores.ts";
+import { ExploreMetricsViewMetadata } from "@statsparrot/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
+import { Filters } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+import { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
 import {
   mapV1TimeRangeToSelectedComparisonTimeRange,
   mapV1TimeRangeToSelectedTimeRange,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers.ts";
-import { getExploreName } from "@rilldata/web-common/features/explore-mappers/utils";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers.ts";
+import { getExploreName } from "@statsparrot/web-common/features/explore-mappers/utils";
 import {
   getExistingScheduleFormValues,
   getInitialScheduleFormValues,
-} from "@rilldata/web-common/features/scheduled-reports/time-utils";
+} from "@statsparrot/web-common/features/scheduled-reports/time-utils";
 import {
   type DashboardTimeControls,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types.ts";
+} from "@statsparrot/web-common/lib/time/types.ts";
 import {
   V1ExportFormat,
   type V1Expression,
@@ -27,8 +27,8 @@ import {
   type V1ReportSpec,
   type V1TimeRange,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 export enum ReportRunAs {
   Recipient = "recipient",

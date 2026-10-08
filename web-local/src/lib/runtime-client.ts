@@ -1,5 +1,5 @@
-import { getRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { getRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 // Detect dev mode without depending on SvelteKit's $app/environment
 // (which is unavailable to tsc outside Vite/SvelteKit context)

@@ -3,7 +3,7 @@
   This is handy for preventing the spinner from flickering.
 -->
 <script lang="ts">
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
   import DelayedContent from "./DelayedContent.svelte";
   import Spinner from "./Spinner.svelte";
 

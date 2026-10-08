@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import FilterOutlined from "@rilldata/web-common/components/icons/FilterOutlined.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import FilterOutlined from "@statsparrot/web-common/components/icons/FilterOutlined.svelte";
   import type { FilterGroup } from "./types";
 
   let {

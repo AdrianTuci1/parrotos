@@ -5,7 +5,7 @@
     developerChatActions,
     developerChatOpen,
   } from "./layouts/sidebar/sidebar-store";
-  import { developerChatConfig } from "@rilldata/web-common/features/editor/chat-utils.ts";
+  import { developerChatConfig } from "@statsparrot/web-common/features/editor/chat-utils.ts";
 
   const { developerChat } = featureFlags;
 </script>

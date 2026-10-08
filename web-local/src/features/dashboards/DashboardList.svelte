@@ -1,10 +1,10 @@
 <script lang="ts">
-  import DashboardsTable from "@rilldata/web-common/features/dashboards/listing/DashboardsTable.svelte";
-  import ResourceListEmptyState from "@rilldata/web-common/features/resources/ResourceListEmptyState.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import { useDashboards } from "@rilldata/web-common/features/dashboards/listing/selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
+  import DashboardsTable from "@statsparrot/web-common/features/dashboards/listing/DashboardsTable.svelte";
+  import ResourceListEmptyState from "@statsparrot/web-common/features/resources/ResourceListEmptyState.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import { useDashboards } from "@statsparrot/web-common/features/dashboards/listing/selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
 
   export let limit: number | undefined = undefined;
   export let showSearch = false;

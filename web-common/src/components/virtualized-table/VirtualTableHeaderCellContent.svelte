@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DataTypeIcon from "@rilldata/web-common/components/data-types/DataTypeIcon.svelte";
-  import type { V1MetricsViewColumn } from "@rilldata/web-common/runtime-client";
+  import DataTypeIcon from "@statsparrot/web-common/components/data-types/DataTypeIcon.svelte";
+  import type { V1MetricsViewColumn } from "@statsparrot/web-common/runtime-client";
 
   export let name: V1MetricsViewColumn["name"];
   export let type: V1MetricsViewColumn["type"];

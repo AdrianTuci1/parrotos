@@ -15,7 +15,7 @@ const FORMAT_OPTIONS = [
 ];
 
 /**
- * Per-card property editor (Rill's `ParamMapper` translation). Renders the editable
+ * Per-card property editor (Parrot's `ParamMapper` translation). Renders the editable
  * fields for the selected canvas card by type and an "Edit with AI" prompt for the
  * analytics cards. Writes each change back via `onChange(specPatch)`.
  */

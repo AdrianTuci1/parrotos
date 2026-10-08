@@ -2,18 +2,18 @@ import type {
   CanvasComponentType,
   ComponentSize,
   ComponentSpec,
-} from "@rilldata/web-common/features/canvas/components/types";
+} from "@statsparrot/web-common/features/canvas/components/types";
 import type {
   AllKeys,
   InputParams,
-} from "@rilldata/web-common/features/canvas/inspector/types";
-import { getFiltersFromText } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+} from "@statsparrot/web-common/features/canvas/inspector/types";
+import { getFiltersFromText } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import type {
   V1Expression,
   V1Resource,
   V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ComponentType, SvelteComponent } from "svelte";
 import type { Readable, Unsubscriber } from "svelte/store";
 import { derived, get, writable, type Writable } from "svelte/store";
@@ -27,7 +27,7 @@ import type {
   TimeAndFilterStore,
   TimeRangeState,
 } from "../../dashboards/time-controls/time-control-store";
-import { TimeRangePreset } from "@rilldata/web-common/lib/time/types";
+import { TimeRangePreset } from "@statsparrot/web-common/lib/time/types";
 import type {
   CanvasEntity,
   ComponentPath,

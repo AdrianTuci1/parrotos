@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
   import {
     DEFAULT_LABELS_FORMAT,
     DEFAULT_LABELS_THRESHOLD,
     type LabelsConfig,
     type LabelsFormat,
-  } from "@rilldata/web-common/features/components/charts/circular/constants";
+  } from "@statsparrot/web-common/features/components/charts/circular/constants";
 
   export let key: string;
   export let label: string;

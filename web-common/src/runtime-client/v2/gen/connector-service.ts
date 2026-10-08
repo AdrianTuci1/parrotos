@@ -22,7 +22,7 @@ import {
   ListTablesRequest,
   OLAPGetTableRequest,
   OLAPListTablesRequest,
-} from "../../../proto/gen/rill/runtime/v1/connectors_pb";
+} from "../../../proto/gen/statsparrot/runtime/v1/connectors_pb";
 import type {
   V1GetTableResponse,
   V1ListBucketsResponse,

@@ -87,7 +87,7 @@
   type: result
   tool: query_metrics_view
   content_type: json
-  content: '{"schema":[{"name":"adomain","type":"STRING"},{"name":"advertiser_name","type":"STRING"},{"name":"overall_spend","type":"FLOAT64"}],"data":[["espaciourbano.cl","ESPACIO URBANO",15832.241]],"open_url":"https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/9b70e704-d293-45f8-a319-1c01b8189861/message/ada83b17-1535-4f0a-a15f-bef36eb40afa/-/open"}'
+  content: '{"schema":[{"name":"adomain","type":"STRING"},{"name":"advertiser_name","type":"STRING"},{"name":"overall_spend","type":"FLOAT64"}],"data":[["espaciourbano.cl","ESPACIO URBANO",15832.241]],"open_url":"https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/9b70e704-d293-45f8-a319-1c01b8189861/message/ada83b17-1535-4f0a-a15f-bef36eb40afa/-/open"}'
 - id: a9c1cc28-64ef-4f1f-a085-e5e055936ba3
   parent_id: bb213482-e942-4b36-ac9f-ed483308eb7e
   session_id: 9b70e704-d293-45f8-a319-1c01b8189861
@@ -97,4 +97,4 @@
   type: result
   tool: analyst_agent
   content_type: json
-  content: '{"response":"**ESPACIO URBANO** has the highest **overall_spend** in this component’s view (adomain: *espaciourbano.cl*, overall_spend: *15,832.241*) ([Top advertiser by overall spend](https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/9b70e704-d293-45f8-a319-1c01b8189861/message/ada83b17-1535-4f0a-a15f-bef36eb40afa/-/open))."}'
+  content: '{"response":"**ESPACIO URBANO** has the highest **overall_spend** in this component’s view (adomain: *espaciourbano.cl*, overall_spend: *15,832.241*) ([Top advertiser by overall spend](https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/9b70e704-d293-45f8-a319-1c01b8189861/message/ada83b17-1535-4f0a-a15f-bef36eb40afa/-/open))."}'

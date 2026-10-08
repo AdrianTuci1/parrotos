@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,7 +13,7 @@ func TestBuiltinSQL(t *testing.T) {
 	ctx := context.Background()
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			`rill.yaml`:      ``,
+			`statsparrot.yaml`:      ``,
 			`models/foo.sql`: `SELECT 10 AS a`,
 		},
 	})

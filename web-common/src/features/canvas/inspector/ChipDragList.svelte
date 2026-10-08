@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import MeasureFormatChip from "@rilldata/web-common/features/dashboards/pivot/MeasureFormatChip.svelte";
-  import PivotPortalItem from "@rilldata/web-common/features/dashboards/pivot/PivotPortalItem.svelte";
-  import { swapListener } from "@rilldata/web-common/features/dashboards/pivot/swapListener";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import MeasureFormatChip from "@statsparrot/web-common/features/dashboards/pivot/MeasureFormatChip.svelte";
+  import PivotPortalItem from "@statsparrot/web-common/features/dashboards/pivot/PivotPortalItem.svelte";
+  import { swapListener } from "@statsparrot/web-common/features/dashboards/pivot/swapListener";
   import {
     PivotChipType,
     type PivotChipData,
     type PivotMeasureFormatting,
-  } from "@rilldata/web-common/features/dashboards/pivot/types";
+  } from "@statsparrot/web-common/features/dashboards/pivot/types";
   import { writable } from "svelte/store";
   import type { FieldType } from "./types";
 

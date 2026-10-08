@@ -3,11 +3,11 @@ package gcs_test
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -21,7 +21,7 @@ func TestObjectStore(t *testing.T) {
 
 	objectStore, ok := conn.AsObjectStore()
 	require.True(t, ok)
-	bucket := "integration-test.rilldata.com"
+	bucket := "integration-test.statsparrot.com"
 	t.Run("testListObjectsForGlobPagination_pageSize1", func(t *testing.T) { testListObjectsForGlobPagination(t, objectStore, bucket, 1) })
 	t.Run("testListObjectsForGlobPagination_pageSize2", func(t *testing.T) { testListObjectsForGlobPagination(t, objectStore, bucket, 2) })
 	t.Run("testListObjectsForGlobPagination_pageSize3", func(t *testing.T) { testListObjectsForGlobPagination(t, objectStore, bucket, 3) })
@@ -53,14 +53,14 @@ func TestObjectStore(t *testing.T) {
 func TestObjectStorePathPrefixes(t *testing.T) {
 	testmode.Expensive(t)
 	cfg := testruntime.AcquireConnector(t, "gcs")
-	cfg["path_prefixes"] = "gcs://integration-test.rilldata.com/glob_test/"
+	cfg["path_prefixes"] = "gcs://integration-test.statsparrot.com/glob_test/"
 	conn, err := drivers.Open("gcs", "", "default", cfg, storage.MustNew(t.TempDir(), nil), activity.NewNoopClient(), zap.NewNop())
 	require.NoError(t, err)
 	t.Cleanup(func() { conn.Close() })
 
 	objectStore, ok := conn.AsObjectStore()
 	require.True(t, ok)
-	bucket := "integration-test.rilldata.com"
+	bucket := "integration-test.statsparrot.com"
 
 	t.Run("testPathSameAllowedPrefix", func(t *testing.T) { testPathSameAllowedPrefix(t, objectStore, bucket) })
 	t.Run("testPathWithInAllowedPrefix", func(t *testing.T) { testPathWithInAllowedPrefix(t, objectStore, bucket) })
@@ -77,7 +77,7 @@ func TestObjectStoreHMAC(t *testing.T) {
 
 	objectStore, ok := conn.AsObjectStore()
 	require.True(t, ok)
-	bucket := "integration-test.rilldata.com"
+	bucket := "integration-test.statsparrot.com"
 	t.Run("testListObjectsForGlobPagination_pageSize1", func(t *testing.T) { testListObjectsForGlobPagination(t, objectStore, bucket, 1) })
 	t.Run("testListObjectsForGlobPagination_pageSize2", func(t *testing.T) { testListObjectsForGlobPagination(t, objectStore, bucket, 2) })
 	t.Run("testListObjectsForGlobPagination_pageSize3", func(t *testing.T) { testListObjectsForGlobPagination(t, objectStore, bucket, 3) })
@@ -109,14 +109,14 @@ func TestObjectStoreHMAC(t *testing.T) {
 func TestObjectStoreHMACPathPrefixes(t *testing.T) {
 	testmode.Expensive(t)
 	cfg := testruntime.AcquireConnector(t, "gcs_s3_compat")
-	cfg["path_prefixes"] = "gcs://integration-test.rilldata.com/glob_test/"
+	cfg["path_prefixes"] = "gcs://integration-test.statsparrot.com/glob_test/"
 	conn, err := drivers.Open("gcs", "", "default", cfg, storage.MustNew(t.TempDir(), nil), activity.NewNoopClient(), zap.NewNop())
 	require.NoError(t, err)
 	t.Cleanup(func() { conn.Close() })
 
 	objectStore, ok := conn.AsObjectStore()
 	require.True(t, ok)
-	bucket := "integration-test.rilldata.com"
+	bucket := "integration-test.statsparrot.com"
 
 	t.Run("testPathSameAllowedPrefix", func(t *testing.T) { testPathSameAllowedPrefix(t, objectStore, bucket) })
 	t.Run("testPathWithInAllowedPrefix", func(t *testing.T) { testPathWithInAllowedPrefix(t, objectStore, bucket) })

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/server/cookies"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/server/cookies"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )

@@ -42,7 +42,7 @@ export const ducklakeSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Read only",
       description:
-        "Restrict Rill to read-only queries. Disable to let Rill drop, create, and modify tables.",
+        "Restrict Parrot to read-only queries. Disable to let Parrot drop, create, and modify tables.",
       default: true,
       "x-display": "toggle",
       "x-yaml-value": { true: "readonly", false: "readwrite" },
@@ -208,7 +208,7 @@ export const ducklakeSchema: MultiStepFormSchema = {
 
     // ── Parameters tab: data path ────────────────────────────
     // `data_path_type` picks the storage backend. For object storage
-    // (s3/gcs/azure) we require the matching Rill connector so that
+    // (s3/gcs/azure) we require the matching Parrot connector so that
     // DuckDB secret bridging (generateSecretSQL) has credentials to use.
     data_path_type: {
       type: "string",

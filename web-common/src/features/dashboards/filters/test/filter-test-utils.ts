@@ -1,4 +1,4 @@
-import { DashboardFetchMocks } from "@rilldata/web-common/features/dashboards/dashboard-fetch-mocks";
+import { DashboardFetchMocks } from "@statsparrot/web-common/features/dashboards/dashboard-fetch-mocks";
 import { act, screen, waitFor } from "@testing-library/svelte";
 import { expect } from "vitest";
 

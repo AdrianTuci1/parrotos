@@ -1,15 +1,15 @@
 <script lang="ts">
-  import Chart from "@rilldata/web-common/components/icons/Chart.svelte";
-  import Pivot from "@rilldata/web-common/components/icons/Pivot.svelte";
-  import Tag from "@rilldata/web-common/components/tag/Tag.svelte";
-  import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  import Chart from "@statsparrot/web-common/components/icons/Chart.svelte";
+  import Pivot from "@statsparrot/web-common/components/icons/Pivot.svelte";
+  import Tag from "@statsparrot/web-common/components/tag/Tag.svelte";
+  import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { ComponentType } from "svelte";
   import Tab from "./Tab.svelte";
 

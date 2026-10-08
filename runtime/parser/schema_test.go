@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestJSONSchemaForRillYAML(t *testing.T) {
-	schema, err := JSONSchemaForRillYAML()
+func TestJSONSchemaForParrotYAML(t *testing.T) {
+	schema, err := JSONSchemaForParrotYAML()
 	require.NoError(t, err)
 	require.NotNil(t, schema)
 	require.Equal(t, "Project YAML", schema.Title)

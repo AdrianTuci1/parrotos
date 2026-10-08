@@ -1,5 +1,5 @@
 import type { QueryObserverResult } from "@tanstack/svelte-query";
-import type { CanvasResponse } from "@rilldata/web-common/features/canvas/selector";
+import type { CanvasResponse } from "@statsparrot/web-common/features/canvas/selector";
 import type { ConnectError } from "@connectrpc/connect";
 import type { Readable } from "svelte/store";
 import type { GridItemHTMLElement, GridStackNode } from "gridstack";

@@ -9,14 +9,14 @@ const alias: Alias[] = [
     replacement: "/src",
   },
   {
-    // Must precede the generic `@rilldata/web-common` alias below: Vite resolves
+    // Must precede the generic `@statsparrot/web-common` alias below: Vite resolves
     // aliases in order, and the generic one would otherwise capture the generated
     // i18n module path before the specific stub can match.
-    find: "@rilldata/web-common/lib/i18n/gen/messages",
+    find: "@statsparrot/web-common/lib/i18n/gen/messages",
     replacement: "/../web-common/tests/i18n-messages.mock.ts",
   },
   {
-    find: "@rilldata/web-common",
+    find: "@statsparrot/web-common",
     replacement: "/../web-common/src",
   },
 ];
@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     // canvas-entity dynamically imports the admin client only in the cloud context; stub
     // it so web-common unit tests that pull in canvas-entity can resolve the import graph.
     alias.push({
-      find: "@rilldata/web-admin/client",
+      find: "@statsparrot/web-admin/client",
       replacement: "/../web-common/tests/web-admin-client.mock.ts",
     });
   }

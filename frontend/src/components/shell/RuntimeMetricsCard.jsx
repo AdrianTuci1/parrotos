@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
 import {
   getQueryServiceMetricsViewAggregationQueryOptions,
   getQueryServiceMetricsViewTimeRangeQueryOptions,
-} from "@rilldata/web-common/runtime-client";
-import { MetricsViewSelectors } from "@rilldata/web-common/features/metrics-views/metrics-view-selectors";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+} from "@statsparrot/web-common/runtime-client";
+import { MetricsViewSelectors } from "@statsparrot/web-common/features/metrics-views/metrics-view-selectors";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import {
   getMockMetricsView,
   getMockTotalRow,
@@ -18,7 +18,7 @@ import { resolveDataSource, DEFAULT_METRICS_VIEW } from "@/data/dataSource";
  *
  * Reaches through the app-root <RuntimeClientProvider> (mounted by
  * RuntimeHostProvider via AppDataProvider) and runs a REAL metrics-view
- * aggregation over the Go Connect transport — the exact Rill admin/runtime query
+ * aggregation over the Go Connect transport — the exact Parrot admin/runtime query
  * cache path that the settings previously short-circuited to mocks.
  *
  * When no runtime_url is configured the card degrades to the mock adapter so the
@@ -34,7 +34,7 @@ export function RuntimeMetricsCard({ metricsViewName, title }) {
         <div className="settings-card-header-text">
           <h3 className="settings-card-title">{title || "Live runtime metrics"}</h3>
           <p className="settings-card-subtitle">
-            Queried from the Rill runtime metrics view <code>{metricsView}</code>
+            Queried from the Parrot runtime metrics view <code>{metricsView}</code>
             {dataSource.mode === "runtime" ? ` at ${dataSource.host}` : " · demo data"}
           </p>
         </div>
@@ -116,7 +116,7 @@ function MetricsGrid({ measures, totalRow, error, loading }) {
   if (error) {
     return (
       <p className="settings-placeholder">
-        Failed to load metrics from the Rill runtime. Showing demo data instead.
+        Failed to load metrics from the Parrot runtime. Showing demo data instead.
       </p>
     );
   }

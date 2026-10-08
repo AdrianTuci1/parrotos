@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { EditorView } from "@codemirror/view";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { initBlankDashboardYAML } from "@rilldata/web-common/features/metrics-views/metrics-internal-store";
-  import { useModels } from "@rilldata/web-common/features/models/selectors";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { initBlankDashboardYAML } from "@statsparrot/web-common/features/metrics-views/metrics-internal-store";
+  import { useModels } from "@statsparrot/web-common/features/models/selectors";
   import {
     type V1Resource,
     runtimeServicePutFile,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useIsModelingSupportedForDefaultOlapDriverOLAP as useIsModelingSupportedForDefaultOlapDriver } from "../../connectors/selectors";
   import { createDashboardFromTableInMetricsEditor } from "../ai-generation/generateMetricsView";
 

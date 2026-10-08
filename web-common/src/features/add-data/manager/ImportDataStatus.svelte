@@ -3,10 +3,10 @@
     type AddDataConfig,
     type ImportAddDataStep,
     ImportDataStep,
-  } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onMount } from "svelte";
-  import { Button } from "@rilldata/web-common/components/button";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     WandIcon,
     CheckCircle2Icon,
@@ -16,18 +16,18 @@
   import {
     createCanvasDashboardFromTableWithAgent,
     useCreateMetricsViewWithCanvasAndExploreUIAction,
-  } from "@rilldata/web-common/features/metrics-views/ai-generation/generateMetricsView.ts";
-  import { MetricsEventSpace } from "@rilldata/web-common/metrics/service/MetricsTypes.ts";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-  import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
+  } from "@statsparrot/web-common/features/metrics-views/ai-generation/generateMetricsView.ts";
+  import { MetricsEventSpace } from "@statsparrot/web-common/metrics/service/MetricsTypes.ts";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+  import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
   import {
     getFileHref,
     withEditorPrefix,
-  } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
-  import { runImportSteps } from "@rilldata/web-common/features/add-data/manager/steps/import.ts";
-  import type { AddDataStateManager } from "@rilldata/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
+  } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
+  import { runImportSteps } from "@statsparrot/web-common/features/add-data/manager/steps/import.ts";
+  import type { AddDataStateManager } from "@statsparrot/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
 
   export let config: AddDataConfig;
   export let stateManager: AddDataStateManager;

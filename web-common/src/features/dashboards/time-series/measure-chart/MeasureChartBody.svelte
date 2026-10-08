@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import BarChart from "@rilldata/web-common/components/time-series-chart/BarChart.svelte";
-  import { snapToNearestNonNull } from "@rilldata/web-common/components/time-series-chart/sparse-data-utils";
-  import TimeSeriesChart from "@rilldata/web-common/components/time-series-chart/TimeSeriesChart.svelte";
-  import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-  import type { Annotation } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/annotation-utils";
-  import { qualitativeColorsArray } from "@rilldata/web-common/features/themes/palette-store";
-  import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import { formatGrainBucket } from "@rilldata/web-common/lib/time/ranges/formatter";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import BarChart from "@statsparrot/web-common/components/time-series-chart/BarChart.svelte";
+  import { snapToNearestNonNull } from "@statsparrot/web-common/components/time-series-chart/sparse-data-utils";
+  import TimeSeriesChart from "@statsparrot/web-common/components/time-series-chart/TimeSeriesChart.svelte";
+  import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+  import type { Annotation } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/annotation-utils";
+  import { qualitativeColorsArray } from "@statsparrot/web-common/features/themes/palette-store";
+  import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import { formatGrainBucket } from "@statsparrot/web-common/lib/time/ranges/formatter";
   import type {
     MetricsViewSpecMeasure,
     V1TimeGrain,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { scaleLinear } from "d3-scale";
   import type { Interval } from "luxon";
   import { DateTime } from "luxon";

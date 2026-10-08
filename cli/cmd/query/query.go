@@ -3,8 +3,8 @@ package query
 import (
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -27,11 +27,11 @@ func QueryCmd(ch *cmdutil.Helper) *cobra.Command {
 		Use:   "query [<project>]",
 		Short: "Query data in a project",
 		Long:  long,
-		Example: `  # SQL query against a Rill Cloud project
-  rill query my-project --sql "SELECT * FROM my-table"
+		Example: `  # SQL query against a Parrot Cloud project
+  statsparrot query my-project --sql "SELECT * FROM my-table"
 
-  # SQL query against a local Rill project running with 'rill start'
-  rill query --local --sql "SELECT * FROM my-table"`,
+  # SQL query against a local Parrot project running with 'statsparrot start'
+  statsparrot query --local --sql "SELECT * FROM my-table"`,
 		RunE: func(cmd *cobra.Command, cmdArgs []string) error {
 			// Validate the inputs
 			if resolver == "" && sql == "" {
@@ -59,23 +59,23 @@ func QueryCmd(ch *cmdutil.Helper) *cobra.Command {
 			}
 			if !local && project == "" {
 				if !ch.Interactive {
-					return fmt.Errorf("set --project to target a Rill Cloud project, or use --local to target a locally running Rill project")
+					return fmt.Errorf("set --project to target a Parrot Cloud project, or use --local to target a locally running Parrot project")
 				}
-				// Check if a local Rill project is running; if so, target it automatically.
-				if cmdutil.IsLocalRillRunning(cmd.Context()) {
+				// Check if a local Parrot project is running; if so, target it automatically.
+				if cmdutil.IsLocalParrotRunning(cmd.Context()) {
 					local = true
 				} else {
 					var err error
-					project, err = ch.InferProjectName(cmd.Context(), path, "set --project to target a Rill Cloud project, or use --local to target a locally running Rill project")
+					project, err = ch.InferProjectName(cmd.Context(), path, "set --project to target a Parrot Cloud project, or use --local to target a locally running Parrot project")
 					if err != nil {
 						return err
 					}
 				}
 			}
 
-			// If targeting a local runtime, verify that rill start is running.
-			if local && !cmdutil.IsLocalRillRunning(cmd.Context()) {
-				return fmt.Errorf("could not connect to a local Rill project on http://localhost:9009 (run `rill start` to start the project, then retry this query)")
+			// If targeting a local runtime, verify that statsparrot start is running.
+			if local && !cmdutil.IsLocalParrotRunning(cmd.Context()) {
+				return fmt.Errorf("could not connect to a local Parrot project on http://localhost:9009 (run `statsparrot start` to start the project, then retry this query)")
 			}
 
 			// Connect to the runtime
@@ -111,7 +111,7 @@ func QueryCmd(ch *cmdutil.Helper) *cobra.Command {
 	queryCmd.Flags().StringVar(&project, "project", "", "Project name")
 	queryCmd.Flags().StringVar(&path, "path", ".", "Project directory")
 	queryCmd.Flags().StringVar(&branch, "branch", "", "Target deployment by Git branch (default: primary deployment)")
-	queryCmd.Flags().BoolVar(&local, "local", false, "Target local runtime instead of Rill Cloud")
+	queryCmd.Flags().BoolVar(&local, "local", false, "Target local runtime instead of Parrot Cloud")
 
 	// Query flags
 	queryCmd.Flags().StringVar(&sql, "sql", "", "A SELECT query to execute")

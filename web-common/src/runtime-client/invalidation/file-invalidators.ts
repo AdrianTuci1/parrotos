@@ -1,9 +1,9 @@
 import { invalidate } from "$app/navigation";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-import { extractFileExtension } from "@rilldata/web-common/features/entity-management/file-path-utils";
-import { getParquetPreviewQueryKey } from "@rilldata/web-common/features/workspaces/parquet-preview";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-import { Throttler } from "@rilldata/web-common/lib/throttler";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+import { extractFileExtension } from "@statsparrot/web-common/features/entity-management/file-path-utils";
+import { getParquetPreviewQueryKey } from "@statsparrot/web-common/features/workspaces/parquet-preview";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+import { Throttler } from "@statsparrot/web-common/lib/throttler";
 import type { QueryClient } from "@tanstack/svelte-query";
 import {
   getRuntimeServiceGetFileQueryKey,
@@ -13,8 +13,8 @@ import {
   V1FileEvent,
   type V1GitStatusResponse,
   type V1WatchFilesResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 const REFETCH_LIST_FILES_THROTTLE_MS = 100;
 
@@ -37,7 +37,7 @@ export function createFileInvalidatorState(): FileInvalidatorState {
 /**
  * File-event handler. Refetches file content on write, clears cached content
  * on delete, maintains `seenFiles` bookkeeping, and runs a throttled
- * listFiles refetch when the working set changes. `/rill.yaml` is the one
+ * listFiles refetch when the working set changes. `/statsparrot.yaml` is the one
  * path with extra work: it drives the dev JWT cache and app:init loader.
  */
 export async function handleFileEvent(
@@ -63,12 +63,12 @@ export async function handleFileEvent(
         } else {
           await artifact.fetchContent(true);
         }
-        if (event.path === "/rill.yaml") {
+        if (event.path === "/statsparrot.yaml") {
           void queryClient.invalidateQueries({
             queryKey: getRuntimeServiceIssueDevJWTQueryKey(instanceId),
           });
           await invalidate("app:init");
-          eventBus.emit("rill-yaml-updated");
+          eventBus.emit("statsparrot-yaml-updated");
         } else if (event.path === "/.env") {
           eventBus.emit("env-file-updated", event.path);
         }
@@ -84,8 +84,8 @@ export async function handleFileEvent(
         });
         fileArtifacts.removeFile(event.path);
         // The dev JWT is intentionally NOT invalidated on delete: the key is
-        // project-bound and the next load of rill.yaml handles re-issuance.
-        if (event.path === "/rill.yaml") {
+        // project-bound and the next load of statsparrot.yaml handles re-issuance.
+        if (event.path === "/statsparrot.yaml") {
           await invalidate("app:init");
         } else if (event.path === "/.env") {
           // Notify the env store on delete too, otherwise it keeps stale keys

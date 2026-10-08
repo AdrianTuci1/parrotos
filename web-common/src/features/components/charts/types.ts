@@ -11,19 +11,19 @@ import type {
   HeatmapChartSpec,
   ScatterPlotChartProvider,
   ScatterPlotChartSpec,
-} from "@rilldata/web-common/features/components/charts";
+} from "@statsparrot/web-common/features/components/charts";
 import type {
   V1Expression,
   V1MetricsViewAggregationDimension,
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationResponse,
   V1MetricsViewAggregationSort,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
   type V1MetricsViewAggregationResponseDataItem,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 import type { Color } from "chroma-js";
 import type { ColorScheme } from "vega";

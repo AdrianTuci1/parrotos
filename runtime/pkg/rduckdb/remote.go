@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/gcerrors"

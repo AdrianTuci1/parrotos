@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let label: string;
   export let values: string[];

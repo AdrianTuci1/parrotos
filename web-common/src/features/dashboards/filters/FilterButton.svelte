@@ -1,17 +1,17 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import Add from "@rilldata/web-common/components/icons/Add.svelte";
-  import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
-  import SearchableMenuContent from "@rilldata/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { getDimensionDisplayName } from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import Add from "@statsparrot/web-common/components/icons/Add.svelte";
+  import type { SearchableFilterSelectableGroup } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+  import SearchableMenuContent from "@statsparrot/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { getDimensionDisplayName } from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
   import type {
     MetricsViewSpecDimension,
     MetricsViewSpecMeasure,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { getMeasureDisplayName } from "./getDisplayName";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let allDimensions: MetricsViewSpecDimension[];
   export let filteredSimpleMeasures: MetricsViewSpecMeasure[];

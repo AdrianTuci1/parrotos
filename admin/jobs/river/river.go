@@ -9,9 +9,9 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/jobs"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/jobs"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 	"github.com/riverqueue/river/rivermigrate"
@@ -26,8 +26,8 @@ import (
 )
 
 var (
-	tracer              = otel.Tracer("github.com/rilldata/rill/admin/jobs/river")
-	meter               = otel.Meter("github.com/rilldata/rill/admin/jobs/river")
+	tracer              = otel.Tracer("github.com/staticlabs/statsparrot/admin/jobs/river")
+	meter               = otel.Meter("github.com/staticlabs/statsparrot/admin/jobs/river")
 	jobLatencyHistogram = observability.Must(meter.Int64Histogram("job_latency", metric.WithUnit("ms")))
 )
 

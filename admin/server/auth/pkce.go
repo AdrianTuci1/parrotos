@@ -14,9 +14,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/oauth"
-	"github.com/rilldata/rill/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/oauth"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
 	"go.uber.org/zap"
 )
 
@@ -37,7 +37,7 @@ func (a *Authenticator) handlePKCE(w http.ResponseWriter, r *http.Request, clien
 		return
 	}
 
-	if clientID != database.AuthClientIDRillWebLocal && len(authClient.RedirectURIs) == 0 {
+	if clientID != database.AuthClientIDParrotWebLocal && len(authClient.RedirectURIs) == 0 {
 		http.Error(w, "client has no registered redirect URIs", http.StatusBadRequest)
 		return
 	}
@@ -423,8 +423,8 @@ func isRedirectURIAllowed(client *database.AuthClient, normalizedRedirect string
 		return false
 	}
 
-	// For localhost rill dev, allow any localhost redirect with /auth/callback path
-	if client.ID == database.AuthClientIDRillWebLocal {
+	// For localhost statsparrot dev, allow any localhost redirect with /auth/callback path
+	if client.ID == database.AuthClientIDParrotWebLocal {
 		parsed, err := url.Parse(normalizedRedirect)
 		if err != nil {
 			return false

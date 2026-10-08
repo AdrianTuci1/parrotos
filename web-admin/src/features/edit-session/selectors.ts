@@ -1,12 +1,12 @@
-import { queryClient as globalQueryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { queryClient as globalQueryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived } from "svelte/store";
 import {
   createRuntimeServiceGitStatus,
   getRuntimeServiceGitStatusQueryKey,
   runtimeServiceGitStatus,
   type V1GitStatusResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryClient } from "@tanstack/query-core";
 
 export function getDeploymentGithubStatus(

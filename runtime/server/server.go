@@ -13,20 +13,20 @@ import (
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	gateway "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/middleware"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/pkg/securetoken"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/server/auth"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/middleware"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/pkg/securetoken"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"github.com/rs/cors"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
@@ -171,15 +171,15 @@ func (s *Server) HTTPHandler(ctx context.Context, registerAdditionalHandlers fun
 	runtimev1.RegisterConnectorServiceServer(grpcServer, s)
 
 	// Add gRPC and gRPC-to-REST transcoder.
-	// This will be the fallback for REST routes like `/v1/ping` and GPRC routes like `/rill.admin.v1.RuntimeService/Ping`.
+	// This will be the fallback for REST routes like `/v1/ping` and GPRC routes like `/statsparrot.admin.v1.RuntimeService/Ping`.
 	transcoder, err := vanguardgrpc.NewTranscoder(grpcServer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create transcoder: %w", err)
 	}
 	httpMux.Handle("/v1/", transcoder)
-	httpMux.Handle("/rill.runtime.v1.RuntimeService/", transcoder)
-	httpMux.Handle("/rill.runtime.v1.QueryService/", transcoder)
-	httpMux.Handle("/rill.runtime.v1.ConnectorService/", transcoder)
+	httpMux.Handle("/statsparrot.runtime.v1.RuntimeService/", transcoder)
+	httpMux.Handle("/statsparrot.runtime.v1.QueryService/", transcoder)
+	httpMux.Handle("/statsparrot.runtime.v1.ConnectorService/", transcoder)
 
 	// Call callback to register additional paths
 	// NOTE: This is so ugly, but not worth refactoring it properly right now.
@@ -217,9 +217,9 @@ func (s *Server) HTTPHandler(ctx context.Context, registerAdditionalHandlers fun
 	}
 
 	// Adds the MCP server handlers.
-	// The path without an instance ID is a convenience path intended for Rill Developer (localhost). In this case, the implementation falls back to using the default instance ID.
+	// The path without an instance ID is a convenience path intended for Parrot Developer (localhost). In this case, the implementation falls back to using the default instance ID.
 	mcpHandler := observability.Middleware("runtime", s.logger, auth.HTTPMiddleware(s.aud, middleware.ActivityHTTPMiddleware(s.activity, runtime.RequestSourceMCP)(s.mcpHandler())))
-	observability.MuxHandle(httpMux, "/mcp", mcpHandler)                                    // Routes to the default instance ID (for Rill Developer on localhost)
+	observability.MuxHandle(httpMux, "/mcp", mcpHandler)                                    // Routes to the default instance ID (for Parrot Developer on localhost)
 	observability.MuxHandle(httpMux, "/v1/instances/{instance_id}/mcp", mcpHandler)         // The MCP handler will extract the instance ID from the request path.
 	observability.MuxHandle(httpMux, "/mcp/sse", mcpHandler)                                // Backwards compatibility
 	observability.MuxHandle(httpMux, "/mcp/message", mcpHandler)                            // Backwards compatibility
@@ -276,12 +276,12 @@ func HTTPErrorHandler(ctx context.Context, mux *gateway.ServeMux, marshaler gate
 }
 
 func timeoutSelector(fullMethodName string) time.Duration {
-	if strings.HasPrefix(fullMethodName, "/rill.runtime.v1.RuntimeService") && (strings.Contains(fullMethodName, "/Trigger") || strings.HasSuffix(fullMethodName, "Reconcile")) {
+	if strings.HasPrefix(fullMethodName, "/statsparrot.runtime.v1.RuntimeService") && (strings.Contains(fullMethodName, "/Trigger") || strings.HasSuffix(fullMethodName, "Reconcile")) {
 		return time.Minute * 59 // Not 60 to avoid forced timeout on ingress
 	}
 
-	if strings.HasPrefix(fullMethodName, "/rill.runtime.v1.QueryService") ||
-		strings.HasPrefix(fullMethodName, "/rill.runtime.v1.ConnectorService") {
+	if strings.HasPrefix(fullMethodName, "/statsparrot.runtime.v1.QueryService") ||
+		strings.HasPrefix(fullMethodName, "/statsparrot.runtime.v1.ConnectorService") {
 		return time.Minute * 5
 	}
 
@@ -298,7 +298,7 @@ func timeoutSelector(fullMethodName string) time.Duration {
 	}
 
 	if fullMethodName == runtimev1.RuntimeService_Complete_FullMethodName || fullMethodName == runtimev1.RuntimeService_CompleteStreaming_FullMethodName {
-		return time.Minute * 59 // Hard cap. Actual timeout is configured using config variable rill.ai.completion_timeout_seconds.
+		return time.Minute * 59 // Hard cap. Actual timeout is configured using config variable statsparrot.ai.completion_timeout_seconds.
 	}
 
 	if fullMethodName == runtimev1.RuntimeService_Health_FullMethodName || fullMethodName == runtimev1.RuntimeService_InstanceHealth_FullMethodName {
@@ -464,7 +464,7 @@ func withTrace(err error, collector *observability.RequestScopedCollector) error
 	return &traceError{err: err, collector: collector}
 }
 
-// canTrace returns true for Rill Developer (SkipChecks=true) and project admins (ReadInstance).
+// canTrace returns true for Parrot Developer (SkipChecks=true) and project admins (ReadInstance).
 func canTrace(claims *runtime.SecurityClaims) bool {
 	return claims.Can(runtime.ReadInstance)
 }

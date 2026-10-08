@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 // Mock only the raw revert RPC; keep the real query-key helpers so we assert against the actual
 // key shape the app uses.
 const gitRevertMock = vi.fn();
-vi.mock("@rilldata/web-common/runtime-client", async (importActual) => {
+vi.mock("@statsparrot/web-common/runtime-client", async (importActual) => {
   const actual =
-    await importActual<typeof import("@rilldata/web-common/runtime-client")>();
+    await importActual<typeof import("@statsparrot/web-common/runtime-client")>();
   return {
     ...actual,
     runtimeServiceGitRevert: (...args: unknown[]) => gitRevertMock(...args),

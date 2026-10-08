@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
 )
 
 var ErrNotAGitRepository = errors.New("not a git repository")
@@ -115,10 +115,10 @@ func InferRepoRoot(path string) (string, error) {
 }
 
 // InferRepoRootAndSubpath infers the root of the Git repository and the subpath from the given path.
-// Since the extraction stops at first .git directory it means that if a subpath in a github monorepo is deployed as a rill managed project it will prevent the subpath from being inferred.
+// Since the extraction stops at first .git directory it means that if a subpath in a github monorepo is deployed as a statsparrot managed project it will prevent the subpath from being inferred.
 // This means :
 // - user will need to explicitly set the subpath if they want to connect this to Github.
-// - When finding matching projects it will only list the rill managed projects for that subpath.
+// - When finding matching projects it will only list the statsparrot managed projects for that subpath.
 func InferRepoRootAndSubpath(path string) (string, string, error) {
 	// check if is a git repository
 	repoRoot, err := InferRepoRoot(path)

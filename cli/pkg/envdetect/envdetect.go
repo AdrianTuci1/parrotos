@@ -49,5 +49,5 @@ func IsWSLWindowsPartition(path string) bool {
 
 // GetWSLWarningMessage returns the warning message for WSL Windows partition usage
 func GetWSLWarningMessage() string {
-	return "WARNING: You are running Rill on a Windows partition inside WSL. This is not recommended and will cause file system conflicts. Please run Rill from a Linux filesystem (e.g., ~/projects/my-rill-project) instead of a Windows drive (e.g., /mnt/c/...)."
+	return "WARNING: You are running Parrot on a Windows partition inside WSL. This is not recommended and will cause file system conflicts. Please run Parrot from a Linux filesystem (e.g., ~/projects/my-statsparrot-project) instead of a Windows drive (e.g., /mnt/c/...)."
 }

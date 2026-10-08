@@ -1,31 +1,31 @@
 <script lang="ts">
   import { fade, slide } from "svelte/transition";
   import { goto } from "$app/navigation";
-  import ConnectedPreviewTable from "@rilldata/web-common/components/preview-table/ConnectedPreviewTable.svelte";
-  import { getNameFromFile } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
+  import ConnectedPreviewTable from "@statsparrot/web-common/components/preview-table/ConnectedPreviewTable.svelte";
+  import { getNameFromFile } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
   import {
     ResourceKind,
     resourceIsLoading,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors.js";
-  import { handleEntityRename } from "@rilldata/web-common/features/entity-management/actions/ui-actions.ts";
-  import WorkspaceInspector from "@rilldata/web-common/features/models/inspector/WorkspaceInspector.svelte";
-  import ModelEditor from "@rilldata/web-common/features/models/workspace/ModelEditor.svelte";
-  import ModelWorkspaceCtAs from "@rilldata/web-common/features/models/workspace/ModelWorkspaceCTAs.svelte";
-  import WorkspaceContainer from "@rilldata/web-common/layout/workspace/WorkspaceContainer.svelte";
-  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
-  import WorkspaceHeader from "@rilldata/web-common/layout/workspace/WorkspaceHeader.svelte";
-  import WorkspaceTableContainer from "@rilldata/web-common/layout/workspace/WorkspaceTableContainer.svelte";
-  import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import type { V1Model } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors.js";
+  import { handleEntityRename } from "@statsparrot/web-common/features/entity-management/actions/ui-actions.ts";
+  import WorkspaceInspector from "@statsparrot/web-common/features/models/inspector/WorkspaceInspector.svelte";
+  import ModelEditor from "@statsparrot/web-common/features/models/workspace/ModelEditor.svelte";
+  import ModelWorkspaceCtAs from "@statsparrot/web-common/features/models/workspace/ModelWorkspaceCTAs.svelte";
+  import WorkspaceContainer from "@statsparrot/web-common/layout/workspace/WorkspaceContainer.svelte";
+  import WorkspaceEditorContainer from "@statsparrot/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import WorkspaceHeader from "@statsparrot/web-common/layout/workspace/WorkspaceHeader.svelte";
+  import WorkspaceTableContainer from "@statsparrot/web-common/layout/workspace/WorkspaceTableContainer.svelte";
+  import { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import type { V1Model } from "@statsparrot/web-common/runtime-client";
 
-  import { isProfilingQuery } from "@rilldata/web-common/runtime-client/query-matcher";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { isProfilingQuery } from "@statsparrot/web-common/runtime-client/query-matcher";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import ReconcilingSpinner from "../entity-management/ReconcilingSpinner.svelte";
   import ReconcileWarningPanel from "../entity-management/ReconcileWarningPanel.svelte";
   import { getUserFriendlyError } from "../models/error-utils";
-  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+  import ExplainAndFixErrorButton from "@statsparrot/web-common/features/chat/ExplainAndFixErrorButton.svelte";
 
   export let fileArtifact: FileArtifact;
 

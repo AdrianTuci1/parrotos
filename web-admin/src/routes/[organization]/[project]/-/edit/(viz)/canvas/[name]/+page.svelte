@@ -1,9 +1,9 @@
 <script lang="ts">
-  import CanvasDashboardEmbed from "@rilldata/web-common/features/canvas/CanvasDashboardEmbed.svelte";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import DashboardChat from "@rilldata/web-common/features/chat/DashboardChat.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CanvasDashboardEmbed from "@statsparrot/web-common/features/canvas/CanvasDashboardEmbed.svelte";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import DashboardChat from "@statsparrot/web-common/features/chat/DashboardChat.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-  <title>Rill | {canvasName}</title>
+  <title>Parrot | {canvasName}</title>
 </svelte:head>
 
 {#key client.instanceId}

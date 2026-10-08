@@ -2,14 +2,14 @@
   import {
     connectorClassMapping,
     connectorIconMapping,
-  } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
-  import type { AddDataConfig } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { Search } from "@rilldata/web-common/components/search";
+  } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
+  import type { AddDataConfig } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { Search } from "@statsparrot/web-common/components/search";
   import { ChevronRightIcon } from "lucide-svelte";
-  import { getSupportedConnectorInfos } from "@rilldata/web-common/features/add-data/manager/selectors.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
+  import { getSupportedConnectorInfos } from "@statsparrot/web-common/features/add-data/manager/selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
 
   export let config: AddDataConfig;
   export let onSelect: (name: string) => void;

@@ -1,22 +1,22 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import InputWithConfirm from "@rilldata/web-common/components/forms/InputWithConfirm.svelte";
-  import HideBottomPane from "@rilldata/web-common/components/icons/HideBottomPane.svelte";
-  import HideSidebar from "@rilldata/web-common/components/icons/HideSidebar.svelte";
-  import SlidingWords from "@rilldata/web-common/components/tooltip/SlidingWords.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { getIconComponent } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import InputWithConfirm from "@statsparrot/web-common/components/forms/InputWithConfirm.svelte";
+  import HideBottomPane from "@statsparrot/web-common/components/icons/HideBottomPane.svelte";
+  import HideSidebar from "@statsparrot/web-common/components/icons/HideSidebar.svelte";
+  import SlidingWords from "@statsparrot/web-common/components/tooltip/SlidingWords.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { getIconComponent } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import CodeToggle, {
     type ViewOption,
-  } from "@rilldata/web-common/features/visual-editing/CodeToggle.svelte";
-  import WorkspaceBreadcrumbs from "@rilldata/web-common/features/workspaces/WorkspaceBreadcrumbs.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/features/visual-editing/CodeToggle.svelte";
+  import WorkspaceBreadcrumbs from "@statsparrot/web-common/features/workspaces/WorkspaceBreadcrumbs.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { navigationOpen } from "../navigation/Navigation.svelte";
   import { workspaces } from "./workspace-stores";
-  import ConnectorRefreshButton from "@rilldata/web-common/features/connectors/ConnectorRefreshButton.svelte";
-  import ConnectorAddModelButton from "@rilldata/web-common/features/connectors/ConnectorAddModelButton.svelte";
+  import ConnectorRefreshButton from "@statsparrot/web-common/features/connectors/ConnectorRefreshButton.svelte";
+  import ConnectorAddModelButton from "@statsparrot/web-common/features/connectors/ConnectorAddModelButton.svelte";
   import type { Snippet } from "svelte";
 
   let {

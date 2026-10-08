@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
-  import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
+  import { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
   import { slide } from "svelte/transition";
 
   export let fade = false;

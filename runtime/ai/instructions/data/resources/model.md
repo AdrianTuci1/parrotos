@@ -1,16 +1,16 @@
 ---
-description: Detailed instructions and examples for developing model resources in Rill
+description: Detailed instructions and examples for developing model resources in Parrot
 ---
 
-# Instructions for developing a model in Rill
+# Instructions for developing a model in Parrot
 
 ## Introduction
 
 Models are resources that specify ETL or transformation logic, outputting a tabular dataset to one of the project's connectors. They are typically found near the root of the project's DAG, referencing only connectors and other models.
 
-By default, models output data as a table with the same name as the model in the project's default OLAP connector. The core of a model is usually a `SELECT` SQL statement, which Rill executes as `CREATE TABLE <name> AS <SELECT statement>`. The SQL should be a plain SELECT query without a trailing semicolon.
+By default, models output data as a table with the same name as the model in the project's default OLAP connector. The core of a model is usually a `SELECT` SQL statement, which Parrot executes as `CREATE TABLE <name> AS <SELECT statement>`. The SQL should be a plain SELECT query without a trailing semicolon.
 
-Models in Rill are similar to models in dbt, but support additional advanced features:
+Models in Parrot are similar to models in dbt, but support additional advanced features:
 - **Different input and output connectors:** Run a query in one database (e.g., BigQuery) and output results to another (e.g., DuckDB or ClickHouse).
 - **Stateful incremental ingestion:** Track state and load only new or changed data.
 - **Partition support:** Define explicit partitions (e.g., Hive-partitioned files in S3) for scalable, idempotent incremental runs.
@@ -78,7 +78,7 @@ The `output.incremental_strategy` property controls how new data is merged with 
 
 ### Partition-based incremental models
 
-Use the `partitions:` property to define explicit data partitions. Combined with `incremental: true`, Rill tracks which partitions have been processed to avoid duplicate processing. Example:
+Use the `partitions:` property to define explicit data partitions. Combined with `incremental: true`, Parrot tracks which partitions have been processed to avoid duplicate processing. Example:
 
 ```yaml
 type: model
@@ -92,7 +92,7 @@ partitions:
 sql: SELECT * FROM read_parquet('{{ .partition.uri }}')
 ```
 
-Each partition gets inserted using the `partition_overwrite` strategy by default. The `partition_overwrite` strategy overwrites partitions based on the column(s) described in `output.partition_by`. If `partition_by` is not explicitly specified, a column `__rill_partition` is injected into the table and used for partitioning.
+Each partition gets inserted using the `partition_overwrite` strategy by default. The `partition_overwrite` strategy overwrites partitions based on the column(s) described in `output.partition_by`. If `partition_by` is not explicitly specified, a column `__statsparrot_partition` is injected into the table and used for partitioning.
 
 ### State-based incremental models
 
@@ -192,7 +192,7 @@ Use `{{ ref "model_name" }}` to reference parent models in SQL statements that u
 sql: SELECT * FROM {{ ref "events_raw" }} WHERE country = 'US'
 ```
 
-**Note:** If your SQL statement contains no other templating, the `ref` function is optional for DuckDB SQL snippets; Rill can in that case invoke DuckDB's SQL parser to automatically detect model references. This does not apply for non-DuckDB SQL models.
+**Note:** If your SQL statement contains no other templating, the `ref` function is optional for DuckDB SQL snippets; Parrot can in that case invoke DuckDB's SQL parser to automatically detect model references. This does not apply for non-DuckDB SQL models.
 
 ## Refresh schedules
 
@@ -230,7 +230,7 @@ NOTE: This is not a production-ready feature. You may see it in some projects, b
 
 ### Change modes
 
-The `change_mode:` property controls how Rill handles changes to model specifications:
+The `change_mode:` property controls how Parrot handles changes to model specifications:
 
 - `reset`: Drop and recreate the model automatically (default).
 - `manual`: Require a manual refresh to apply changes (user can choose to do an incremental or full refresh).
@@ -261,7 +261,7 @@ This is configured by default for common errors, so only add an explicit `retry`
 
 ### DuckDB
 
-- **Model references:** When the SQL contains no other templating, `{{ ref "model" }}` is optional; Rill uses DuckDB's SQL parser to detect references.
+- **Model references:** When the SQL contains no other templating, `{{ ref "model" }}` is optional; Parrot uses DuckDB's SQL parser to detect references.
 - **Connector secrets:** By default, all compatible connectors are automatically mounted as DuckDB secrets. Use `create_secrets_from_connectors:` to explicitly control which connectors are available.
 - **Pre/post execution:** Use `pre_exec:` and `post_exec:` for setup and teardown queries (e.g., attaching external databases). Some legacy projects configure DuckDB secrets here, but with the automatic secret creation referenced above, it is usually better to create separate connector files instead.
 - **Cloud storage paths:** DuckDB can read directly from S3 (`s3://`) and GCS (`gs://`) paths in `read_parquet()`, `read_csv()`, and `read_json()` functions.
@@ -275,7 +275,7 @@ This is configured by default for common errors, so only add an explicit `retry`
   sql: SELECT * FROM s3('s3://bucket/path/*.parquet', '{{ .env.aws_access_key }}', '{{ .env.aws_secret_key }}', 'Parquet')
   ```
 - **Required order_by:** The `output:` section must always include an `order_by` property for materialized ClickHouse tables.
-- **MergeTree vs. ReplicatedMergeTree:** You don't need to configure `MergeTree` or `ReplicatedMergeTree` engines explicitly. Rill uses `MergeTree` for materialized models by default, and automatically switches to `ReplicatedMergeTree` (creating distributed tables) when connected to a Clickhouse cluster.
+- **MergeTree vs. ReplicatedMergeTree:** You don't need to configure `MergeTree` or `ReplicatedMergeTree` engines explicitly. Parrot uses `MergeTree` for materialized models by default, and automatically switches to `ReplicatedMergeTree` (creating distributed tables) when connected to a Clickhouse cluster.
 - **LowCardinality types:** Use `LowCardinality(String)` for string columns with limited distinct values (e.g., country, device_type, status) to improve storage and query performance.
 - **TTL for data retention:** Use `output.ttl` to automatically expire old data and prevent unbounded growth in incremental models.
 - **Performance indexes:** If performance is poor for models powering metrics views, add indexes via `output.columns` to improve query performance. Common index types include `bloom_filter` for high-cardinality columns and `set(N)` for low-cardinality columns.

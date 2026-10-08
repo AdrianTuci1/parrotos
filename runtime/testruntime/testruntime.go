@@ -13,41 +13,41 @@ import (
 
 	"github.com/c2h5oh/datasize"
 	"github.com/joho/godotenv"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/drivers/starrocks/teststarrocks"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/drivers/starrocks/teststarrocks"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	// Load database drivers for testing.
-	_ "github.com/rilldata/rill/runtime/drivers/admin"
-	_ "github.com/rilldata/rill/runtime/drivers/athena"
-	_ "github.com/rilldata/rill/runtime/drivers/bigquery"
-	_ "github.com/rilldata/rill/runtime/drivers/claude"
-	_ "github.com/rilldata/rill/runtime/drivers/clickhouse"
-	_ "github.com/rilldata/rill/runtime/drivers/databricks"
-	_ "github.com/rilldata/rill/runtime/drivers/druid"
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
-	_ "github.com/rilldata/rill/runtime/drivers/file"
-	_ "github.com/rilldata/rill/runtime/drivers/gcs"
-	_ "github.com/rilldata/rill/runtime/drivers/gemini"
-	_ "github.com/rilldata/rill/runtime/drivers/https"
-	_ "github.com/rilldata/rill/runtime/drivers/mock/ai"
-	_ "github.com/rilldata/rill/runtime/drivers/openai"
-	_ "github.com/rilldata/rill/runtime/drivers/postgres"
-	_ "github.com/rilldata/rill/runtime/drivers/redshift"
-	_ "github.com/rilldata/rill/runtime/drivers/s3"
-	_ "github.com/rilldata/rill/runtime/drivers/snowflake"
-	_ "github.com/rilldata/rill/runtime/drivers/sqlite"
-	_ "github.com/rilldata/rill/runtime/drivers/starrocks"
-	_ "github.com/rilldata/rill/runtime/reconcilers"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/admin"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/athena"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/bigquery"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/claude"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/clickhouse"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/databricks"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/druid"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/file"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gcs"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gemini"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/https"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/mock/ai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/openai"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/postgres"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/redshift"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/s3"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/snowflake"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/sqlite"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/starrocks"
+	_ "github.com/staticlabs/statsparrot/runtime/reconcilers"
 )
 
 // TestingT satisfies both *testing.T and *testing.B.
@@ -116,22 +116,22 @@ func NewInstanceWithOptions(t TestingT, opts InstanceOptions) (*runtime.Runtime,
 	rt := New(t, !opts.DisableHostAccess)
 	ctx := t.Context()
 
-	olapDriver := os.Getenv("RILL_RUNTIME_TEST_OLAP_DRIVER")
+	olapDriver := os.Getenv("STATSPARROT_RUNTIME_TEST_OLAP_DRIVER")
 	if olapDriver == "" {
 		olapDriver = "duckdb"
 	}
-	olapDSN := os.Getenv("RILL_RUNTIME_TEST_OLAP_DSN")
+	olapDSN := os.Getenv("STATSPARROT_RUNTIME_TEST_OLAP_DSN")
 	if olapDSN == "" {
 		olapDSN = ":memory:"
 	}
 
 	vars := make(map[string]string)
 	maps.Copy(vars, opts.Variables)
-	if vars["rill.stage_changes"] == "" {
-		vars["rill.stage_changes"] = strconv.FormatBool(opts.StageChanges)
+	if vars["statsparrot.stage_changes"] == "" {
+		vars["statsparrot.stage_changes"] = strconv.FormatBool(opts.StageChanges)
 	}
-	if vars["rill.watch_repo"] == "" {
-		vars["rill.watch_repo"] = strconv.FormatBool(opts.WatchRepo)
+	if vars["statsparrot.watch_repo"] == "" {
+		vars["statsparrot.watch_repo"] = strconv.FormatBool(opts.WatchRepo)
 	}
 
 	// Making LLM completions in tests is disabled by default.
@@ -195,8 +195,8 @@ func NewInstanceWithOptions(t TestingT, opts InstanceOptions) (*runtime.Runtime,
 	if opts.Files == nil {
 		opts.Files = make(map[string]string)
 	}
-	if _, ok := opts.Files["rill.yaml"]; !ok {
-		opts.Files["rill.yaml"] = ""
+	if _, ok := opts.Files["statsparrot.yaml"]; !ok {
+		opts.Files["statsparrot.yaml"] = ""
 	}
 
 	for path, data := range opts.Files {
@@ -224,7 +224,7 @@ func NewInstanceWithOptions(t TestingT, opts InstanceOptions) (*runtime.Runtime,
 // NewInstance is a convenience wrapper around NewInstanceWithOptions, using defaults sensible for most tests.
 func NewInstance(t TestingT) (*runtime.Runtime, string) {
 	return NewInstanceWithOptions(t, InstanceOptions{
-		Files: map[string]string{"rill.yaml": ""},
+		Files: map[string]string{"statsparrot.yaml": ""},
 	})
 }
 
@@ -234,7 +234,7 @@ func NewInstanceWithModel(t TestingT, name, sql string) (*runtime.Runtime, strin
 	path := filepath.Join("models", name+".sql")
 	return NewInstanceWithOptions(t, InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			path:        sql,
 		},
 	})
@@ -258,11 +258,11 @@ func newInstanceHelper(t TestingT, name string, instConfig map[string]string) (*
 	_, currentFile, _, _ := goruntime.Caller(0)
 	projectPath := filepath.Join(currentFile, "..", "testdata", name)
 
-	olapDriver := os.Getenv("RILL_RUNTIME_TEST_OLAP_DRIVER") // todo: refactor a couple of tests that use envs
+	olapDriver := os.Getenv("STATSPARROT_RUNTIME_TEST_OLAP_DRIVER") // todo: refactor a couple of tests that use envs
 	if olapDriver == "" {
 		olapDriver = "duckdb"
 	}
-	olapDSN := os.Getenv("RILL_RUNTIME_TEST_OLAP_DSN")
+	olapDSN := os.Getenv("STATSPARROT_RUNTIME_TEST_OLAP_DSN")
 	if olapDSN == "" {
 		olapDSN = ":memory:"
 	}
@@ -318,7 +318,7 @@ func NewInstanceForDruidProject(t *testing.T) (*runtime.Runtime, string, error) 
 	if err == nil { // avoid .env in CI environment
 		require.NoError(t, godotenv.Load(envPath))
 	}
-	if os.Getenv("RILL_RUNTIME_DRUID_TEST_DSN") == "" {
+	if os.Getenv("STATSPARROT_RUNTIME_DRUID_TEST_DSN") == "" {
 		t.Skip("skipping the test without the test instance")
 	}
 
@@ -327,7 +327,7 @@ func NewInstanceForDruidProject(t *testing.T) (*runtime.Runtime, string, error) 
 
 	_, currentFile, _, _ = goruntime.Caller(0)
 	projectPath := filepath.Join(currentFile, "..", "testdata", "ad_bids_druid")
-	dsn := os.Getenv("RILL_RUNTIME_DRUID_TEST_DSN")
+	dsn := os.Getenv("STATSPARROT_RUNTIME_DRUID_TEST_DSN")
 
 	inst := &drivers.Instance{
 		Environment:      "test",
@@ -409,7 +409,7 @@ func NewInstanceWithClickhouseProject(t TestingT, withCluster bool) (*runtime.Ru
 				Config: Must(structpb.NewStruct(map[string]any{"dsn": fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())})),
 			},
 		},
-		Variables: map[string]string{"rill.stage_changes": "false"},
+		Variables: map[string]string{"statsparrot.stage_changes": "false"},
 	}
 
 	err := rt.CreateInstance(ctx, inst)
@@ -461,7 +461,7 @@ func NewInstanceWithStarRocksProject(t TestingT) (*runtime.Runtime, string) {
 				Config: Must(structpb.NewStruct(map[string]any{"dsn": fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())})),
 			},
 		},
-		Variables: map[string]string{"rill.stage_changes": "false"},
+		Variables: map[string]string{"statsparrot.stage_changes": "false"},
 	}
 
 	err := rt.CreateInstance(ctx, inst)

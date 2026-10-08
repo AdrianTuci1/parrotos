@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Radio from "@rilldata/web-common/components/forms/Radio.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Tabs from "@rilldata/web-common/components/forms/Tabs.svelte";
-  import { TabsContent } from "@rilldata/web-common/components/tabs";
+  import Radio from "@statsparrot/web-common/components/forms/Radio.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Tabs from "@statsparrot/web-common/components/forms/Tabs.svelte";
+  import { TabsContent } from "@statsparrot/web-common/components/tabs";
   import SchemaField from "./SchemaField.svelte";
   import ConnectionTypeSelector from "./ConnectionTypeSelector.svelte";
   import GroupedFieldsRenderer from "./GroupedFieldsRenderer.svelte";

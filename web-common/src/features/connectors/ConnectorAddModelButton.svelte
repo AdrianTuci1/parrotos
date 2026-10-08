@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { SOURCES } from "@rilldata/web-common/features/sources/modal/constants";
-  import { getSchemaNameFromDriver } from "@rilldata/web-common/features/sources/modal/connector-schemas";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { SOURCES } from "@statsparrot/web-common/features/sources/modal/constants";
+  import { getSchemaNameFromDriver } from "@statsparrot/web-common/features/sources/modal/connector-schemas";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { Plus } from "lucide-svelte";
-  import AddDataModal from "@rilldata/web-common/features/add-data/AddDataModal.svelte";
+  import AddDataModal from "@statsparrot/web-common/features/add-data/AddDataModal.svelte";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes.ts";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes.ts";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 
   export let resource: V1Resource | undefined;
   export let hasUnsavedChanges = false;

@@ -1,7 +1,7 @@
 package expressionpb
 
 import (
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 

@@ -1,4 +1,4 @@
-const appId = import.meta.env.RILL_UI_PUBLIC_PYLON_APP_ID as string;
+const appId = import.meta.env.STATSPARROT_UI_PUBLIC_PYLON_APP_ID as string;
 
 /**
  * Function implementation is copied from https://docs.usepylon.com/chat/setup

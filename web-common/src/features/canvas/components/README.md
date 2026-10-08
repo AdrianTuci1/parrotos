@@ -1,4 +1,4 @@
-# Rill Templates
+# Parrot Templates
 
 ## Defining templates
 

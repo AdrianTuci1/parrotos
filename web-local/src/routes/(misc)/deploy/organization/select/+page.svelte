@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import CreateNewOrgForm from "@rilldata/web-common/features/organization/CreateNewOrgForm.svelte";
-  import { CreateNewOrgFormId } from "@rilldata/web-common/features/organization/CreateNewOrgForm.svelte";
-  import { getDeployOrGithubRouteGetter } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import CreateNewOrgForm from "@statsparrot/web-common/features/organization/CreateNewOrgForm.svelte";
+  import { CreateNewOrgFormId } from "@statsparrot/web-common/features/organization/CreateNewOrgForm.svelte";
+  import { getDeployOrGithubRouteGetter } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import {
     createLocalServiceCreateOrganization,
     createLocalServiceGetCurrentUser,
     getLocalServiceGetCurrentUserQueryKey,
-  } from "@rilldata/web-common/runtime-client/local-service.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client/local-service.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const user = createLocalServiceGetCurrentUser();
 
@@ -25,7 +25,7 @@
   $: createProjectUrl = deployRouteGetterFunc(selectedOrg);
 
   $: orgOptions =
-    $user.data?.rillUserOrgs?.map((o) => ({ value: o, label: o })) ?? [];
+    $user.data?.statsparrotUserOrgs?.map((o) => ({ value: o, label: o })) ?? [];
 
   const orgCreator = createLocalServiceCreateOrganization();
 
@@ -50,7 +50,7 @@
 <div class="text-xl">Select an organization</div>
 <div class="text-base text-fg-secondary">
   Choose an organization to deploy this project to. <a
-    href="https://docs.rilldata.com/reference/cli/org"
+    href="https://docs.statsparrot.com/reference/cli/org"
     target="_blank">See docs</a
   >
 </div>

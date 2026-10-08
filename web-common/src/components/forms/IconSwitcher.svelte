@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ComponentType, SvelteComponent } from "svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
 
   export let fields: {
     id: string;

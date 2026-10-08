@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 // webhookExecutor implements drivers.ModelExecutor for the `reversetl` output

@@ -1,13 +1,13 @@
-import type { FieldType } from "@rilldata/web-common/features/canvas/inspector/types";
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+import type { FieldType } from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
 import {
   getDimensionDisplayName,
   getMeasureDisplayName,
-} from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
-import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-import { isGrainBigger } from "@rilldata/web-common/lib/time/grains";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
+import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+import { isGrainBigger } from "@statsparrot/web-common/lib/time/grains";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { derived } from "svelte/store";
 import { parseDocument } from "yaml";
 
@@ -79,7 +79,7 @@ export function useMetricFieldData(
           return {
             grain: grain,
             label: `Time ${TIME_GRAIN[grain].label}`,
-            id: `${metricsViewSpec?.timeDimension}_rill_${grain}`,
+            id: `${metricsViewSpec?.timeDimension}_statsparrot_${grain}`,
           };
         });
 

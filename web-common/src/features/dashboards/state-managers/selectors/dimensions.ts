@@ -1,4 +1,4 @@
-import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
+import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
 import type { DashboardDataSources } from "./types";
 
 export const allDimensions = ({

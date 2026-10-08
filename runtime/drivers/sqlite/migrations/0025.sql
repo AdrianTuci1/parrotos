@@ -1,2 +1,2 @@
-UPDATE catalogv2 SET kind = 'rill.runtime.v1.Canvas' WHERE kind = 'rill.runtime.v1.Dashboard';
+UPDATE catalogv2 SET kind = 'statsparrot.runtime.v1.Canvas' WHERE kind = 'statsparrot.runtime.v1.Dashboard';
 

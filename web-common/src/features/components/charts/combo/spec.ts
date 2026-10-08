@@ -1,10 +1,10 @@
-import { sanitizeValueForVega } from "@rilldata/web-common/components/vega/util";
+import { sanitizeValueForVega } from "@statsparrot/web-common/components/vega/util";
 import type {
   ChartDataResult,
   ColorMapping,
-} from "@rilldata/web-common/features/components/charts/types";
-import { resolveCSSVariable } from "@rilldata/web-common/features/components/charts/util";
-import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
+} from "@statsparrot/web-common/features/components/charts/types";
+import { resolveCSSVariable } from "@statsparrot/web-common/features/components/charts/util";
+import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
 import type { VisualizationSpec } from "svelte-vega";
 import type { ColorDef, Field } from "vega-lite/types_unstable/channeldef.js";
 import type { LayerSpec } from "vega-lite/types_unstable/spec/layer.js";

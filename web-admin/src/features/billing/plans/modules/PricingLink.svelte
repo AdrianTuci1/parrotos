@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 </script>
 
 <a
   class="pricing-link"
-  href="https://www.rilldata.com/pricing"
+  href="https://www.statsparrot.com/pricing"
   target="_blank"
   rel="noreferrer noopener"
 >

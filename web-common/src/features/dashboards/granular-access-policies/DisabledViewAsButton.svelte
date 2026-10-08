@@ -1,9 +1,9 @@
 <script lang="ts">
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import EyeIcon from "@rilldata/web-common/components/icons/EyeIcon.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import EyeIcon from "@statsparrot/web-common/components/icons/EyeIcon.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 </script>
 
 <Tooltip distance={8}>

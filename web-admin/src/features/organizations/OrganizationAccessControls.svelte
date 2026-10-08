@@ -2,7 +2,7 @@
   import {
     createAdminServiceGetOrganization,
     type V1OrganizationPermissions,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import type { CreateQueryResult } from "@tanstack/svelte-query";
 
   export let organization: string;

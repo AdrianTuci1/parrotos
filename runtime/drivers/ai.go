@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/jsonschema-go/jsonschema"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
 )
 
 type AIService interface {

@@ -1,16 +1,16 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { getConnectorsWithImportSupport } from "@rilldata/web-common/features/entity-management/add/selectors.ts";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { useIsModelingSupportedForDefaultOlapDriverOLAP as useIsModelingSupportedForDefaultOlapDriver } from "@rilldata/web-common/features/connectors/selectors.ts";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { getConnectorsWithImportSupport } from "@statsparrot/web-common/features/entity-management/add/selectors.ts";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { useIsModelingSupportedForDefaultOlapDriverOLAP as useIsModelingSupportedForDefaultOlapDriver } from "@statsparrot/web-common/features/connectors/selectors.ts";
   import {
     connectorClassMapping,
     connectorIconMapping,
-  } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
-  import File from "@rilldata/web-common/components/icons/File.svelte";
-  import { createResourceAndNavigate } from "@rilldata/web-common/features/entity-management/add/new-files.ts";
+  } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
+  import File from "@statsparrot/web-common/components/icons/File.svelte";
+  import { createResourceAndNavigate } from "@statsparrot/web-common/features/entity-management/add/new-files.ts";
 
   export let onSelect: (connector: string) => void;
 

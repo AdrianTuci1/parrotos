@@ -3,7 +3,7 @@ import type {
   PageContentResized,
   NotificationMessage,
 } from "./events";
-import { EventEmitter } from "@rilldata/web-common/lib/event-emitter.ts";
+import { EventEmitter } from "@statsparrot/web-common/lib/event-emitter.ts";
 
 export interface Events {
   notification: NotificationMessage;
@@ -16,7 +16,7 @@ export interface Events {
   "shift-command-click": void;
   "page-content-resized": PageContentResized;
   "start-chat": string;
-  "rill-yaml-updated": void;
+  "statsparrot-yaml-updated": void;
   "env-file-updated": string;
   "remote-changes-detected": void;
 }

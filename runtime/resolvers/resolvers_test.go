@@ -10,12 +10,12 @@ import (
 	"testing"
 
 	"github.com/joho/godotenv"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/metricsview/metricssql"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/metricssql"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -123,7 +123,7 @@ func TestResolvers(t *testing.T) {
 
 			// Create a map of project files for the runtime instance.
 			projectFiles := make(map[string]string)
-			projectFiles["rill.yaml"] = ""
+			projectFiles["statsparrot.yaml"] = ""
 			for name, node := range tf.ProjectFiles {
 				bytes, err := yaml.Marshal(&node)
 				require.NoError(t, err)

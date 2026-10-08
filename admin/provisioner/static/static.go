@@ -9,9 +9,9 @@ import (
 
 	"github.com/c2h5oh/datasize"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/provisioner"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 )
 
@@ -137,7 +137,7 @@ func (p *StaticProvisioner) Provision(ctx context.Context, r *provisioner.Resour
 	}
 	state = &runtimeState{
 		Slots:   args.Slots,
-		Version: opts.RillVersion,
+		Version: opts.ParrotVersion,
 	}
 	return &provisioner.Resource{
 		ID:     r.ID,
@@ -211,9 +211,9 @@ func (p *StaticProvisioner) CheckResource(ctx context.Context, r *provisioner.Re
 		return nil, err
 	}
 
-	if state.Version != opts.RillVersion {
+	if state.Version != opts.ParrotVersion {
 		// TODO: Instead of always updating the version, we should poll the runtime to check its current version.
-		state.Version = opts.RillVersion
+		state.Version = opts.ParrotVersion
 	}
 
 	return &provisioner.Resource{

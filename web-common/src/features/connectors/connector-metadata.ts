@@ -20,12 +20,12 @@ import RedshiftIcon from "../../components/icons/connectors/RedshiftIcon.svelte"
 import SnowflakeIcon from "../../components/icons/connectors/SnowflakeIcon.svelte";
 import SalesforceIcon from "../../components/icons/connectors/SalesforceIcon.svelte";
 import StarRocksIcon from "../../components/icons/connectors/StarRocksIcon.svelte";
-import MicrosoftAzureBlobStorageIcon from "@rilldata/web-common/components/icons/connectors/MicrosoftAzureBlobStorageIcon.svelte";
+import MicrosoftAzureBlobStorageIcon from "@statsparrot/web-common/components/icons/connectors/MicrosoftAzureBlobStorageIcon.svelte";
 import SupabaseIcon from "../../components/icons/connectors/SupabaseIcon.svelte";
 import { File } from "lucide-svelte";
-import GoogleCloudStorageIcon from "@rilldata/web-common/components/icons/connectors/GoogleCloudStorageIcon.svelte";
-import HTTPSIcon from "@rilldata/web-common/components/icons/connectors/HTTPSIcon.svelte";
-import SQLiteIcon from "@rilldata/web-common/components/icons/connectors/SQLiteIcon.svelte";
+import GoogleCloudStorageIcon from "@statsparrot/web-common/components/icons/connectors/GoogleCloudStorageIcon.svelte";
+import HTTPSIcon from "@statsparrot/web-common/components/icons/connectors/HTTPSIcon.svelte";
+import SQLiteIcon from "@statsparrot/web-common/components/icons/connectors/SQLiteIcon.svelte";
 
 export const connectorIconMapping = {
   athena: AthenaIcon,

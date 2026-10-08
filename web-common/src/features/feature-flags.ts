@@ -1,4 +1,4 @@
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import { writable } from "svelte/store";
 import {
   createRuntimeServiceGetInstance,
@@ -13,8 +13,8 @@ class FeatureFlag {
   private state = writable(false);
   subscribe = this.state.subscribe;
 
-  constructor(scope: "user" | "rill", defaultValue: boolean) {
-    this._internal = scope === "rill";
+  constructor(scope: "user" | "statsparrot", defaultValue: boolean) {
+    this._internal = scope === "statsparrot";
     this._default = defaultValue;
     this.set(defaultValue);
   }
@@ -38,23 +38,23 @@ class FeatureFlags {
   ready: Promise<void>;
   private _resolveReady!: () => void;
 
-  adminServer = new FeatureFlag("rill", false);
-  readOnly = new FeatureFlag("rill", false);
+  adminServer = new FeatureFlag("statsparrot", false);
+  readOnly = new FeatureFlag("statsparrot", false);
   // Until we figure out a good way to test managed github we need to use the legacy archive method.
   // Right now this is true only in an E2E environment.
   legacyArchiveDeploy = new FeatureFlag(
-    "rill",
+    "statsparrot",
     !!import.meta.env.VITE_PLAYWRIGHT_TEST,
   );
 
-  // These are fallback defaults in case of issues in parsing rill.yaml.
+  // These are fallback defaults in case of issues in parsing statsparrot.yaml.
   // Full defaults are in defaultFeatureFlags in runtime/drivers/registry.go
   ai = new FeatureFlag("user", !import.meta.env.VITE_PLAYWRIGHT_TEST);
   exports = new FeatureFlag("user", true);
   cloudDataViewer = new FeatureFlag("user", false);
   dimensionSearch = new FeatureFlag("user", false);
   twoTieredNavigation = new FeatureFlag("user", false);
-  rillTime = new FeatureFlag("user", true);
+  statsparrotTime = new FeatureFlag("user", true);
   hidePublicUrl = new FeatureFlag("user", false);
   exportHeader = new FeatureFlag("user", false);
   alerts = new FeatureFlag("user", true);

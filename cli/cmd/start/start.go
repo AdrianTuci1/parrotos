@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/envdetect"
-	"github.com/rilldata/rill/cli/pkg/local"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/envdetect"
+	"github.com/staticlabs/statsparrot/cli/pkg/local"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +46,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				if err != nil {
 					return err
 				}
-			} else if !cmdutil.HasRillProject(".") {
+			} else if !cmdutil.HasParrotProject(".") {
 				if !ch.Interactive {
 					return fmt.Errorf("required arg <path> missing")
 				}
@@ -62,7 +62,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				}
 
 				if currentDir == homeDir {
-					if err := cmdutil.ConfirmPrompt("You are trying to start Rill in your home directory, which is not recommended. Do you want to continue?", false); err != nil {
+					if err := cmdutil.ConfirmPrompt("You are trying to start Parrot in your home directory, which is not recommended. Do you want to continue?", false); err != nil {
 						return err
 					}
 				}
@@ -76,7 +76,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 					displayPath = strings.Replace(currentDir, homeDir, "~", 1)
 				}
 
-				msg := fmt.Sprintf("Rill will create project files in %q. Do you want to continue?", displayPath)
+				msg := fmt.Sprintf("Parrot will create project files in %q. Do you want to continue?", displayPath)
 				if err := cmdutil.ConfirmPrompt(msg, defval); err != nil {
 					return err
 				}
@@ -171,7 +171,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 	startCmd.Flags().StringSliceVarP(&envVars, "env", "e", []string{}, "Set environment variables")
 	startCmd.Flags().StringVar(&environment, "environment", "dev", `Environment name`)
 	startCmd.Flags().BoolVar(&reset, "reset", false, "Clear and re-ingest source data")
-	startCmd.Flags().BoolVar(&pullEnv, "pull-env", true, "Pull environment variables from Rill Cloud before starting the project")
+	startCmd.Flags().BoolVar(&pullEnv, "pull-env", true, "Pull environment variables from Parrot Cloud before starting the project")
 	startCmd.Flags().BoolVar(&noOpen, "no-open", false, "Do not open browser")
 	startCmd.Flags().BoolVar(&verbose, "verbose", false, "Sets the log level to debug")
 	startCmd.Flags().BoolVar(&readonly, "readonly", false, "Deprecated: use --preview instead")
@@ -191,7 +191,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 		panic(err)
 	}
 
-	// Deprecated support for "--readonly". Projects should be shared via Rill Cloud.
+	// Deprecated support for "--readonly". Projects should be shared via Parrot Cloud.
 	if err := startCmd.Flags().MarkHidden("readonly"); err != nil {
 		panic(err)
 	}

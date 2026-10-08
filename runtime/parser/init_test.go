@@ -13,18 +13,18 @@ func TestInitDefaultOLAP(t *testing.T) {
 	err := InitEmpty(t.Context(), repo, "test-instance", "Test Project", "")
 	require.NoError(err)
 
-	// Verify the contents of the rill.yaml file
-	rillYAML, err := repo.Get(t.Context(), "rill.yaml")
+	// Verify the contents of the statsparrot.yaml file
+	statsparrotYAML, err := repo.Get(t.Context(), "statsparrot.yaml")
 	require.NoError(err)
-	require.Contains(rillYAML, "compiler: ")
-	require.Contains(rillYAML, "display_name: Test Project")
-	require.Contains(rillYAML, "olap_connector: duckdb")
+	require.Contains(statsparrotYAML, "compiler: ")
+	require.Contains(statsparrotYAML, "display_name: Test Project")
+	require.Contains(statsparrotYAML, "olap_connector: duckdb")
 
 	// Verify the contents of the .gitignore file
 	gitignore, err := repo.Get(t.Context(), ".gitignore")
 	require.NoError(err)
 	require.Contains(gitignore, ".DS_Store")
-	require.Contains(gitignore, "# Rill")
+	require.Contains(gitignore, "# Parrot")
 	require.Contains(gitignore, ".env")
 	require.Contains(gitignore, "tmp")
 
@@ -41,18 +41,18 @@ func TestInitWithDuckDB(t *testing.T) {
 	err := InitEmpty(t.Context(), repo, "test-instance", "Test Project", "duckdb")
 	require.NoError(err)
 
-	// Verify the contents of the rill.yaml file
-	rillYAML, err := repo.Get(t.Context(), "rill.yaml")
+	// Verify the contents of the statsparrot.yaml file
+	statsparrotYAML, err := repo.Get(t.Context(), "statsparrot.yaml")
 	require.NoError(err)
-	require.Contains(rillYAML, "compiler: ")
-	require.Contains(rillYAML, "display_name: Test Project")
-	require.Contains(rillYAML, "olap_connector: duckdb")
+	require.Contains(statsparrotYAML, "compiler: ")
+	require.Contains(statsparrotYAML, "display_name: Test Project")
+	require.Contains(statsparrotYAML, "olap_connector: duckdb")
 
 	// Verify the contents of the .gitignore file
 	gitignore, err := repo.Get(t.Context(), ".gitignore")
 	require.NoError(err)
 	require.Contains(gitignore, ".DS_Store")
-	require.Contains(gitignore, "# Rill")
+	require.Contains(gitignore, "# Parrot")
 	require.Contains(gitignore, ".env")
 	require.Contains(gitignore, "tmp")
 
@@ -71,18 +71,18 @@ func TestInitWithClickHouse(t *testing.T) {
 	err := InitEmpty(t.Context(), repo, "test-instance", "Test Project", "clickhouse")
 	require.NoError(err)
 
-	// Verify the contents of the rill.yaml file
-	rillYAML, err := repo.Get(t.Context(), "rill.yaml")
+	// Verify the contents of the statsparrot.yaml file
+	statsparrotYAML, err := repo.Get(t.Context(), "statsparrot.yaml")
 	require.NoError(err)
-	require.Contains(rillYAML, "compiler: ")
-	require.Contains(rillYAML, "display_name: Test Project")
-	require.Contains(rillYAML, "olap_connector: clickhouse")
+	require.Contains(statsparrotYAML, "compiler: ")
+	require.Contains(statsparrotYAML, "display_name: Test Project")
+	require.Contains(statsparrotYAML, "olap_connector: clickhouse")
 
 	// Verify the contents of the .gitignore file
 	gitignore, err := repo.Get(t.Context(), ".gitignore")
 	require.NoError(err)
 	require.Contains(gitignore, ".DS_Store")
-	require.Contains(gitignore, "# Rill")
+	require.Contains(gitignore, "# Parrot")
 	require.Contains(gitignore, ".env")
 	require.Contains(gitignore, "tmp")
 

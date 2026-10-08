@@ -1,7 +1,7 @@
 import {
   sanitizeFieldName,
   sanitizeValueForVega,
-} from "@rilldata/web-common/components/vega/util";
+} from "@statsparrot/web-common/components/vega/util";
 import type { VisualizationSpec } from "svelte-vega";
 import {
   createColorEncoding,

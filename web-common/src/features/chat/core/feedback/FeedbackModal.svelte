@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Textarea from "@rilldata/web-common/components/forms/Textarea.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Textarea from "@statsparrot/web-common/components/forms/Textarea.svelte";
   import type { Conversation } from "../conversation";
-  import CheckboxCard from "@rilldata/web-common/components/forms/CheckboxCard.svelte";
+  import CheckboxCard from "@statsparrot/web-common/components/forms/CheckboxCard.svelte";
   import {
     type FeedbackCategory,
     getCategoriesForAgent,

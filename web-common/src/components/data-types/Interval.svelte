@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatDuckdbIntervalLossless } from "@rilldata/web-common/lib/number-formatting/strategies/intervals";
+  import { formatDuckdbIntervalLossless } from "@statsparrot/web-common/lib/number-formatting/strategies/intervals";
   import Base from "./Base.svelte";
   export let isNull = false;
   export let inTable = false;

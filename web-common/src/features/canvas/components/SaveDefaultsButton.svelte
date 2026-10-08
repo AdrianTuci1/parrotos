@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import LeaderboardIcon from "../icons/LeaderboardIcon.svelte";
-  import CheckCircleNew from "@rilldata/web-common/components/icons/CheckCircleNew.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
+  import CheckCircleNew from "@statsparrot/web-common/components/icons/CheckCircleNew.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
 
   export let canvasName: string;
   export let instanceId: string;

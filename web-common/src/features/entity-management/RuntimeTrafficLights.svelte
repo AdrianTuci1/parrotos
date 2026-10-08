@@ -1,7 +1,7 @@
 <script lang="ts">
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { ConnectionStatus } from "@rilldata/web-common/runtime-client/sse";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { ConnectionStatus } from "@statsparrot/web-common/runtime-client/sse";
   import { getContext } from "svelte";
   import { writable, type Writable } from "svelte/store";
   import { WATCHER_CONTEXT_KEY, type WatcherContext } from "./watcher-context";
@@ -40,11 +40,11 @@
         {#if status === ConnectionStatus.CONNECTING}
           Attempting to reconnect
         {:else if status === ConnectionStatus.CLOSED}
-          Disconnected from Rill engine
+          Disconnected from Parrot engine
         {:else if status === ConnectionStatus.PAUSED}
           Connection paused due to inactivity
         {:else if status === ConnectionStatus.OPEN}
-          Connected to Rill engine
+          Connected to Parrot engine
         {/if}
       </TooltipContent>
     </Tooltip.Content>

@@ -3,8 +3,8 @@ package project
 import (
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ func PartitionsCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			if !local && project == "" {
 				var err error
-				project, err = ch.InferProjectName(cmd.Context(), path, "use --project to specify the name or --local to target a local Rill process")
+				project, err = ch.InferProjectName(cmd.Context(), path, "use --project to specify the name or --local to target a local Parrot process")
 				if err != nil {
 					return err
 				}
@@ -72,7 +72,7 @@ func PartitionsCmd(ch *cmdutil.Helper) *cobra.Command {
 	partitionsCmd.Flags().BoolVar(&errored, "errored", false, "Only fetch errored partitions")
 	partitionsCmd.Flags().BoolVar(&skipped, "skipped", false, "Only fetch skipped partitions")
 	partitionsCmd.MarkFlagsMutuallyExclusive("pending", "errored", "skipped")
-	partitionsCmd.Flags().BoolVar(&local, "local", false, "Target locally running Rill")
+	partitionsCmd.Flags().BoolVar(&local, "local", false, "Target locally running Parrot")
 	partitionsCmd.Flags().Uint32Var(&pageSize, "page-size", 50, "Number of partitions to return per page")
 	partitionsCmd.Flags().StringVar(&pageToken, "page-token", "", "Pagination token")
 

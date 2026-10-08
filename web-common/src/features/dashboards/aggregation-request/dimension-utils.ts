@@ -1,9 +1,9 @@
-import type { PivotChipData } from "@rilldata/web-common/features/dashboards/pivot/types.ts";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config.ts";
+import type { PivotChipData } from "@statsparrot/web-common/features/dashboards/pivot/types.ts";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config.ts";
 import {
   type V1MetricsViewAggregationDimension,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export function getDimensionForTimeField(
   timeDimension: string,
@@ -17,7 +17,7 @@ export function getDimensionForTimeField(
     timeZone: selectedTimezone,
     alias: humanReadableAlias
       ? `Time ${pivotChipData.title}`
-      : `${timeDimension}_rill_${pivotChipData.id}`,
+      : `${timeDimension}_statsparrot_${pivotChipData.id}`,
   };
 }
 
@@ -25,10 +25,10 @@ export function getDimensionNameFromAggregationDimension(
   dimension: V1MetricsViewAggregationDimension,
 ) {
   if (!dimension.timeGrain) return dimension.name!;
-  return `${dimension.name}_rill_${dimension.timeGrain}`;
+  return `${dimension.name}_statsparrot_${dimension.timeGrain}`;
 }
 
-const timeDimensionNameRegex = /^(.*)_rill_(.*)$/;
+const timeDimensionNameRegex = /^(.*)_statsparrot_(.*)$/;
 export function getAggregationDimensionFromFieldName(
   fieldName: string,
   timeZone: string,

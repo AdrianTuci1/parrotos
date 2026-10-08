@@ -1,8 +1,8 @@
 import {
   createAdminServiceListDeployments,
   getAdminServiceListDeploymentsQueryKey,
-} from "@rilldata/web-admin/client";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-admin/client";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import { derived } from "svelte/store";
 
 /**

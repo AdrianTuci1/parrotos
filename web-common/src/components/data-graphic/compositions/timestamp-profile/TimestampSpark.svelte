@@ -2,13 +2,13 @@
   import { extent } from "d3-array";
   import { scaleLinear } from "d3-scale";
   import { scaleTime } from "d3-scale";
-  import { guidGenerator } from "@rilldata/web-common/lib/guid";
+  import { guidGenerator } from "@statsparrot/web-common/lib/guid";
   import {
     createLineGenerator,
     createAreaGenerator,
     pathDoesNotDropToZero,
   } from "../../utils";
-  import type { TimestampDataPoint } from "@rilldata/web-common/features/column-profile/queries";
+  import type { TimestampDataPoint } from "@statsparrot/web-common/features/column-profile/queries";
 
   const gradientId = `spark-gradient-${guidGenerator()}`;
 

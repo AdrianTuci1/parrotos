@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useOptionalRuntimeClient } from "@rilldata/web-common/runtime-client/react";
+import { useOptionalRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
 import {
   loadCanvas as loadCanvasLocal,
   makeItem,
@@ -23,8 +23,8 @@ import {
  * Holds the canvas `model` (rows -> items -> spec) plus the current selection and
  * exposes the editing mutations the builder needs. A row is either a plain row
  * (`kind:'row'`) or a tab group (`kind:'tabgroup'`); editing a tab group targets its
- * active tab's rows, matching Rill. Every mutation persists the model to localStorage
- * so a reload keeps the layout (mock stand-in for Rill's runtime reconciled YAML).
+ * active tab's rows, matching Parrot. Every mutation persists the model to localStorage
+ * so a reload keeps the layout (mock stand-in for Parrot's runtime reconciled YAML).
  */
 const isTabGroup = (row) => row?.kind === "tabgroup" || Array.isArray(row?.tabs);
 const activeTabOf = (row) => row.tabs.find((t) => t.id === row.activeTab) || row.tabs[0];
@@ -97,7 +97,7 @@ export function useCanvasState(canvasName) {
 
   // Probe the runtime by reading the canvas YAML. Success => runtime reachable =>
   // adopt the runtime transport (dashboards/<name>.yaml) and the file's model.
-  // Failure (e.g. no `rill start` runtime in mock/dev) => fall back to localStorage.
+  // Failure (e.g. no `statsparrot start` runtime in mock/dev) => fall back to localStorage.
   useEffect(() => {
     let active = true;
     (async () => {

@@ -1,15 +1,15 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { isEditPage } from "@rilldata/web-admin/features/navigation/nav-utils";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { isEditPage } from "@statsparrot/web-admin/features/navigation/nav-utils";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { errorStore } from "../../components/errors/error-store";
   import ViewAsUserPopover from "./ViewAsUserPopover.svelte";
   import { viewAsUserStore } from "./viewAsUserStore";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n/index.ts";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n/index.ts";
 
   let active: boolean = $state(false);
   let disabled = $derived(isEditPage(page));

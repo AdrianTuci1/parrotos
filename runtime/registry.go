@@ -10,13 +10,13 @@ import (
 	"sync"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/logbuffer"
-	"github.com/rilldata/rill/runtime/pkg/logutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/logbuffer"
+	"github.com/staticlabs/statsparrot/runtime/pkg/logutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
@@ -337,7 +337,7 @@ func (r *registryCache) create(ctx context.Context, inst *drivers.Instance) erro
 	}
 
 	if !r.rt.AllowHostAccess() {
-		// envs for local runtimes are pulled on rill start taking into account CLI flag, only reload for runtimes on cloud
+		// envs for local runtimes are pulled on statsparrot start taking into account CLI flag, only reload for runtimes on cloud
 		_, err = r.rt.ReloadConfig(ctx, inst.ID)
 		return err
 	}
@@ -532,7 +532,7 @@ func (r *registryCache) ensureRepoReady(ctx context.Context, instanceID string) 
 	defer release()
 
 	// Pull the latest changes
-	// on rill developer do not pull latest changes - all pulls should be user triggered
+	// on statsparrot developer do not pull latest changes - all pulls should be user triggered
 	return repo.Pull(ctx, &drivers.PullOptions{UserTriggered: !r.rt.AllowHostAccess()})
 }
 
@@ -633,12 +633,12 @@ func (r *registryCache) updateProjectConfig(iwc *instanceWithController) error {
 		return err
 	}
 
-	if p.RillYAML == nil {
+	if p.ParrotYAML == nil {
 		// Empty project
 		return nil
 	}
 
-	return r.rt.UpdateInstanceWithRillYAML(iwc.ctx, iwc.instanceID, p, false)
+	return r.rt.UpdateInstanceWithParrotYAML(iwc.ctx, iwc.instanceID, p, false)
 }
 
 func sizeOfDir(path string) int64 {

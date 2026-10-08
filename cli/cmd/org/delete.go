@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +15,8 @@ func DeleteCmd(ch *cmdutil.Helper) *cobra.Command {
 		Short: "Delete organization",
 		Long: `Delete an organization and all its associated projects.
 This operation cannot be undone. Use --force to skip confirmation.`,
-		Example: `  rill org delete myorg
-  rill org delete myorg --force`,
+		Example: `  statsparrot org delete myorg
+  statsparrot org delete myorg --force`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := ch.Client()
@@ -78,7 +78,7 @@ This operation cannot be undone. Use --force to skip confirmation.`,
 
 			// If deleting the default org, set the default org to empty
 			if name == ch.Org {
-				err = ch.DotRill.SetDefaultOrg("")
+				err = ch.DotStatsparrot.SetDefaultOrg("")
 				if err != nil {
 					return err
 				}

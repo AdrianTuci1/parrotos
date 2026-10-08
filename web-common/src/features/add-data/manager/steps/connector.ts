@@ -1,4 +1,4 @@
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   getRuntimeServiceGetFileQueryKey,
   getRuntimeServiceGetInstanceQueryKey,
@@ -10,41 +10,41 @@ import {
   type V1ConnectorDriver,
   type V1GetInstanceResponse,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import { isProjectInitialized } from "@rilldata/web-common/features/welcome/is-project-initialized.ts";
+} from "@statsparrot/web-common/runtime-client";
+import { isProjectInitialized } from "@statsparrot/web-common/features/welcome/is-project-initialized.ts";
 import {
   waitForProjectParser,
   waitForResourceReconciliation,
-} from "@rilldata/web-common/features/entity-management/actions/actions.ts";
-import { EMPTY_PROJECT_TITLE } from "@rilldata/web-common/features/welcome/constants.ts";
-import { OLAP_ENGINES } from "@rilldata/web-common/features/sources/modal/constants.ts";
+} from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
+import { EMPTY_PROJECT_TITLE } from "@statsparrot/web-common/features/welcome/constants.ts";
+import { OLAP_ENGINES } from "@statsparrot/web-common/features/sources/modal/constants.ts";
 import { invalidate } from "$app/navigation";
 import {
   getConnectorSchema,
   isMultiStepConnector,
-} from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
-import { findRadioEnumKey } from "@rilldata/web-common/features/templates/schema-utils.ts";
-import type { MultiStepFormSchema } from "@rilldata/web-common/features/templates/schemas/types.ts";
+} from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
+import { findRadioEnumKey } from "@statsparrot/web-common/features/templates/schema-utils.ts";
+import type { MultiStepFormSchema } from "@statsparrot/web-common/features/templates/schemas/types.ts";
 import {
   addLeadingSlash,
   getFileAPIPathFromNameAndType,
-} from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
-import { EntityType } from "@rilldata/web-common/features/entity-management/types.ts";
+} from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
+import { EntityType } from "@statsparrot/web-common/features/entity-management/types.ts";
 import {
   maybeUnsetOlapConnectorInYaml,
-  updateRillYAMLWithOlapConnector,
-} from "@rilldata/web-common/features/connectors/code-utils.ts";
+  updateParrotYAMLWithOlapConnector,
+} from "@statsparrot/web-common/features/connectors/code-utils.ts";
 import type { QueryClient } from "@tanstack/svelte-query";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { getConnectorYAML } from "@rilldata/web-common/features/add-data/form/connector-source-yaml-generator.ts";
-import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { getConnectorYAML } from "@statsparrot/web-common/features/add-data/form/connector-source-yaml-generator.ts";
+import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
 import {
   getProjectParserVersion,
   waitForProjectParserVersion,
-} from "@rilldata/web-common/features/entity-management/project-parser.ts";
-import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-import type { EnvStore } from "@rilldata/web-common/features/env-management/env-store.ts";
+} from "@statsparrot/web-common/features/entity-management/project-parser.ts";
+import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+import type { EnvStore } from "@statsparrot/web-common/features/env-management/env-store.ts";
 
 export async function createConnector({
   runtimeClient,
@@ -145,7 +145,7 @@ export async function createConnector({
     }
 
     if (OLAP_ENGINES.includes(connectorDriver.name as string)) {
-      await setOlapConnectorInRillYAML(
+      await setOlapConnectorInParrotYAML(
         queryClient,
         runtimeClient,
         connectorName,
@@ -185,8 +185,8 @@ export async function maybeDeleteConnector(
   // Update the .env file with the removed env vars
   await envEditSession.rollback();
 
-  // Update the rill.yaml file to remove the connector as the OLAP connector.
-  await unsetOlapConnectorInRillYAML(runtimeClient, queryClient, connectorName);
+  // Update the statsparrot.yaml file to remove the connector as the OLAP connector.
+  await unsetOlapConnectorInParrotYAML(runtimeClient, queryClient, connectorName);
 }
 
 export async function maybeInitProject(client: RuntimeClient) {
@@ -205,14 +205,14 @@ export async function maybeInitProject(client: RuntimeClient) {
   await invalidate("init");
 }
 
-async function setOlapConnectorInRillYAML(
+async function setOlapConnectorInParrotYAML(
   queryClient: QueryClient,
   client: RuntimeClient,
   newConnectorName: string,
 ): Promise<void> {
   await runtimeServicePutFile(client, {
-    path: "rill.yaml",
-    blob: await updateRillYAMLWithOlapConnector(
+    path: "statsparrot.yaml",
+    blob: await updateParrotYAMLWithOlapConnector(
       client,
       queryClient,
       newConnectorName,
@@ -226,17 +226,17 @@ const ConnectorUnsetCheckMaxRetries = 5;
 const ConnectorUnsetCheckIntervalConstant = 300;
 const ConnectorUnsetCheckIntervalMultiplier = 300;
 
-async function unsetOlapConnectorInRillYAML(
+async function unsetOlapConnectorInParrotYAML(
   runtimeClient: RuntimeClient,
   queryClient: QueryClient,
   connectorName: string,
 ) {
-  // Get the existing rill.yaml file
+  // Get the existing statsparrot.yaml file
   const file = await queryClient.fetchQuery({
     queryKey: getRuntimeServiceGetFileQueryKey(runtimeClient.instanceId, {
-      path: "rill.yaml",
+      path: "statsparrot.yaml",
     }),
-    queryFn: () => runtimeServiceGetFile(runtimeClient, { path: "rill.yaml" }),
+    queryFn: () => runtimeServiceGetFile(runtimeClient, { path: "statsparrot.yaml" }),
   });
   const blob = file.blob || "";
 
@@ -244,11 +244,11 @@ async function unsetOlapConnectorInRillYAML(
   if (!ok) return;
 
   await runtimeServicePutFile(runtimeClient, {
-    path: "rill.yaml",
+    path: "statsparrot.yaml",
     blob: newBlob,
   });
 
-  // Wait for rill.yaml to be updated
+  // Wait for statsparrot.yaml to be updated
   let retryCount = 0;
   while (retryCount < ConnectorUnsetCheckMaxRetries) {
     try {
@@ -266,7 +266,7 @@ async function unsetOlapConnectorInRillYAML(
         // Connector is not changed yet
         throw new Error("Connector not updated");
       }
-      // Connector is removed from rill.yaml
+      // Connector is removed from statsparrot.yaml
       break;
     } catch {
       retryCount++;

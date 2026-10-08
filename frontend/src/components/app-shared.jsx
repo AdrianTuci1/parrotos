@@ -2,9 +2,9 @@
 export const orgSections = ['stats', 'access', 'org-settings', 'metrics', 'invitations'];
 
 // Project-level sub-navbar items.
-// Storage/Graph/Chat/Analytics were removed as redundant or non-Rill surfaces:
+// Storage/Graph/Chat/Analytics were removed as redundant or non-Parrot surfaces:
 // analytics duplicated the metrics explorer (Explore) + dashboard cards, matching
-// Rill's artefact-driven navigation, which has no flat tab for a raw analytics
+// Parrot's artefact-driven navigation, which has no flat tab for a raw analytics
 // dashboard.
 export const projectSections = [
   'explore',
@@ -25,7 +25,7 @@ export const analyticsViews = [
   { id: 'web', label: 'Web' },
 ];
 
-// Project artifact sections, ordered to mirror Rill's artifact-level navigation.
+// Project artifact sections, ordered to mirror Parrot's artifact-level navigation.
 export const projectNavItems = [
   { id: 'explore', title: 'Explore', icon: 'bar-chart-3' },
   { id: 'dashboard', title: 'Dashboards', icon: 'layout-dashboard' },

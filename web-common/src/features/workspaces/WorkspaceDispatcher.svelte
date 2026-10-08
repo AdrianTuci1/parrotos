@@ -1,25 +1,25 @@
 <script lang="ts">
   import { afterNavigate } from "$app/navigation";
   import type { EditorView } from "@codemirror/view";
-  import { customYAMLwithJSONandSQL } from "@rilldata/web-common/components/editor/presets/yamlWithJsonAndSql";
-  import { GeneratingMessage } from "@rilldata/web-common/components/generating-message";
-  import { generatingCanvasFilePath } from "@rilldata/web-common/features/canvas/ai-generation/generateCanvas";
-  import Editor from "@rilldata/web-common/features/editor/Editor.svelte";
-  import FileWorkspaceHeader from "@rilldata/web-common/features/editor/FileWorkspaceHeader.svelte";
-  import { getExtensionsForFile } from "@rilldata/web-common/features/editor/getExtensionsForFile";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { directoryState } from "@rilldata/web-common/features/file-explorer/directory-store";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import CanvasWorkspace from "@rilldata/web-common/features/workspaces/CanvasWorkspace.svelte";
-  import ExploreWorkspace from "@rilldata/web-common/features/workspaces/ExploreWorkspace.svelte";
-  import MetricsWorkspace from "@rilldata/web-common/features/workspaces/MetricsWorkspace.svelte";
-  import ModelWorkspace from "@rilldata/web-common/features/workspaces/ModelWorkspace.svelte";
-  import ParquetWorkspace from "@rilldata/web-common/features/workspaces/ParquetWorkspace.svelte";
-  import WorkspaceContainer from "@rilldata/web-common/layout/workspace/WorkspaceContainer.svelte";
-  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.js";
+  import { customYAMLwithJSONandSQL } from "@statsparrot/web-common/components/editor/presets/yamlWithJsonAndSql";
+  import { GeneratingMessage } from "@statsparrot/web-common/components/generating-message";
+  import { generatingCanvasFilePath } from "@statsparrot/web-common/features/canvas/ai-generation/generateCanvas";
+  import Editor from "@statsparrot/web-common/features/editor/Editor.svelte";
+  import FileWorkspaceHeader from "@statsparrot/web-common/features/editor/FileWorkspaceHeader.svelte";
+  import { getExtensionsForFile } from "@statsparrot/web-common/features/editor/getExtensionsForFile";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { directoryState } from "@statsparrot/web-common/features/file-explorer/directory-store";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import CanvasWorkspace from "@statsparrot/web-common/features/workspaces/CanvasWorkspace.svelte";
+  import ExploreWorkspace from "@statsparrot/web-common/features/workspaces/ExploreWorkspace.svelte";
+  import MetricsWorkspace from "@statsparrot/web-common/features/workspaces/MetricsWorkspace.svelte";
+  import ModelWorkspace from "@statsparrot/web-common/features/workspaces/ModelWorkspace.svelte";
+  import ParquetWorkspace from "@statsparrot/web-common/features/workspaces/ParquetWorkspace.svelte";
+  import WorkspaceContainer from "@statsparrot/web-common/layout/workspace/WorkspaceContainer.svelte";
+  import WorkspaceEditorContainer from "@statsparrot/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.js";
   import { onMount } from "svelte";
-  import { getReadonlyNotice } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
+  import { getReadonlyNotice } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
 
   const workspaces = new Map([
     [ResourceKind.Source, ModelWorkspace],
@@ -85,7 +85,7 @@
 </script>
 
 <svelte:head>
-  <title>Rill Developer | {fileName}</title>
+  <title>Parrot Developer | {fileName}</title>
 </svelte:head>
 
 <div class="flex h-full overflow-hidden">

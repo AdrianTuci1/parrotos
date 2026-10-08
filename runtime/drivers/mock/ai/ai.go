@@ -4,11 +4,11 @@ import (
 	"context"
 	"strings"
 
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	rillai "github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	statsparrotai "github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -187,7 +187,7 @@ func (c *connection) handleToolCalling() *aiv1.CompletionMessage {
 				BlockType: &aiv1.ContentBlock_ToolCall{
 					ToolCall: &aiv1.ToolCall{
 						Id:    "tool_call_123",
-						Name:  rillai.ListMetricsViewsName,
+						Name:  statsparrotai.ListMetricsViewsName,
 						Input: inputStruct,
 					},
 				},

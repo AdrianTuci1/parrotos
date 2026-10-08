@@ -1,5 +1,5 @@
 import type { Reroute } from "@sveltejs/kit";
-import { removeBranchFromPath } from "@rilldata/web-admin/features/branches/branch-utils";
+import { removeBranchFromPath } from "@statsparrot/web-admin/features/branches/branch-utils";
 
 /**
  * Strip `@branch` from the URL before route matching.

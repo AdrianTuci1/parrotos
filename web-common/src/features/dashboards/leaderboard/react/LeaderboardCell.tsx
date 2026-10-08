@@ -10,13 +10,13 @@
  */
 import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
-import { TOOLTIP_STRING_LIMIT } from "@rilldata/web-common/layout/config";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
+import { TOOLTIP_STRING_LIMIT } from "@statsparrot/web-common/layout/config";
 import {
   copyToClipboard,
   isClipboardApiSupported,
-} from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+} from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
 import { Shortcut, StackingWord } from "./primitives";
 
 const HideLeaderboardTooltipAfter = 3000;

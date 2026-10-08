@@ -30,7 +30,7 @@ const (
 
 // OTel metrics for Kafka delivery
 var (
-	meter                  = otel.Meter("github.com/rilldata/rill/runtime/pkg/activity")
+	meter                  = otel.Meter("github.com/staticlabs/statsparrot/runtime/pkg/activity")
 	deliverySuccessCounter = must(meter.Int64Counter("kafka_delivery_success"))
 	deliveryFailureCounter = must(meter.Int64Counter("kafka_delivery_failure"))
 )

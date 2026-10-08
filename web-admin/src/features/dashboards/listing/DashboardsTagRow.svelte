@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { detectOverflow } from "@rilldata/web-common/lib/actions/detect-overflow";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { detectOverflow } from "@statsparrot/web-common/lib/actions/detect-overflow";
   import { Star } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     name,

@@ -1,5 +1,5 @@
-import type { LineStatus } from "@rilldata/web-common/components/editor/line-status/state";
-import type { V1ParseError } from "@rilldata/web-common/runtime-client";
+import type { LineStatus } from "@statsparrot/web-common/components/editor/line-status/state";
+import type { V1ParseError } from "@statsparrot/web-common/runtime-client";
 
 export enum ValidationState {
   OK = "OK",

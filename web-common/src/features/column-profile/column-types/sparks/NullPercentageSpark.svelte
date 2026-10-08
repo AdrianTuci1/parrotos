@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { COLUMN_PROFILE_CONFIG } from "@rilldata/web-common/layout/config";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { COLUMN_PROFILE_CONFIG } from "@statsparrot/web-common/layout/config";
   import {
     DATA_TYPE_COLORS,
     isNested,
-  } from "@rilldata/web-common/lib/duckdb-data-types";
-  import { singleDigitPercentage } from "@rilldata/web-common/lib/formatters";
+  } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import { singleDigitPercentage } from "@statsparrot/web-common/lib/formatters";
   import BarAndLabel from "../../../../components/BarAndLabel.svelte";
 
   export let type: string;

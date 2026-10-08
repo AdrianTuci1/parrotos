@@ -2,12 +2,12 @@
   import {
     resourceIconMapping,
     resourceLabelMapping,
-  } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
+  } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
   import {
     ResourceKind,
     resourceKindStyleName,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let kind: ResourceKind;
   export let showIcon = true;

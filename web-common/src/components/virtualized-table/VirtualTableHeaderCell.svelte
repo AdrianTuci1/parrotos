@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Pin from "@rilldata/web-common/components/icons/Pin.svelte";
+  import Pin from "@statsparrot/web-common/components/icons/Pin.svelte";
   import type VirtualTableHeaderCellContent from "./VirtualTableHeaderCellContent.svelte";
   import type { ComponentType } from "svelte";
   import { HEADER_HEIGHT } from "./VirtualTable.svelte";

@@ -11,14 +11,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/provisioner"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -144,7 +144,7 @@ func (s *Server) ListDeployments(ctx context.Context, req *adminv1.ListDeploymen
 
 	dtos := make([]*adminv1.Deployment, len(newDepls))
 	for i, d := range newDepls {
-		dtos[i] = deploymentToDTO(d)
+		dtos[i] = s.deploymentToDTO(d)
 	}
 
 	return &adminv1.ListDeploymentsResponse{
@@ -238,7 +238,7 @@ func (s *Server) GetDeployment(ctx context.Context, req *adminv1.GetDeploymentRe
 	s.admin.Used.Deployment(depl.ID)
 
 	return &adminv1.GetDeploymentResponse{
-		RuntimeHost: depl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(depl.RuntimeHost),
 		InstanceId:  depl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(opts.ttl.Seconds()),
@@ -299,7 +299,7 @@ func (s *Server) CreateDeployment(ctx context.Context, req *adminv1.CreateDeploy
 			if err != nil {
 				return nil, status.Error(codes.Internal, err.Error())
 			}
-			branch = fmt.Sprintf("rill/%s", hex.EncodeToString(b))
+			branch = fmt.Sprintf("statsparrot/%s", hex.EncodeToString(b))
 		}
 		slots = proj.DevSlots
 	default:
@@ -385,7 +385,7 @@ func (s *Server) CreateDeployment(ctx context.Context, req *adminv1.CreateDeploy
 	}
 
 	return &adminv1.CreateDeploymentResponse{
-		Deployment: deploymentToDTO(depl),
+		Deployment: s.deploymentToDTO(depl),
 	}, nil
 }
 
@@ -425,7 +425,7 @@ func (s *Server) StartDeployment(ctx context.Context, req *adminv1.StartDeployme
 	s.admin.Used.Deployment(depl.ID)
 
 	return &adminv1.StartDeploymentResponse{
-		Deployment: deploymentToDTO(depl),
+		Deployment: s.deploymentToDTO(depl),
 	}, nil
 }
 
@@ -573,7 +573,7 @@ func (s *Server) GetDeploymentCredentials(ctx context.Context, req *adminv1.GetD
 	s.admin.Used.Deployment(prodDepl.ID)
 
 	return &adminv1.GetDeploymentCredentialsResponse{
-		RuntimeHost: prodDepl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(prodDepl.RuntimeHost),
 		InstanceId:  prodDepl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(opts.ttl.Seconds()),
@@ -678,7 +678,7 @@ func (s *Server) GetIFrame(ctx context.Context, req *adminv1.GetIFrameRequest) (
 
 	// Build the iframe URL search params
 	iframeQuery := map[string]string{
-		"runtime_host": prodDepl.RuntimeHost,
+		"runtime_host": s.clientRuntimeHost(prodDepl.RuntimeHost),
 		"instance_id":  prodDepl.RuntimeInstanceID,
 		"access_token": jwt,
 	}
@@ -731,7 +731,7 @@ func (s *Server) GetIFrame(ctx context.Context, req *adminv1.GetIFrameRequest) (
 
 	return &adminv1.GetIFrameResponse{
 		IframeSrc:   iFrameURL,
-		RuntimeHost: prodDepl.RuntimeHost,
+		RuntimeHost: s.clientRuntimeHost(prodDepl.RuntimeHost),
 		InstanceId:  prodDepl.RuntimeInstanceID,
 		AccessToken: jwt,
 		TtlSeconds:  uint32(opts.ttl.Seconds()),
@@ -874,7 +874,7 @@ func (s *Server) getAttributesForUser(ctx context.Context, orgID, projID, userID
 
 		user, err := s.admin.DB.FindUserByEmail(ctx, userEmail)
 		if err != nil {
-			// For user attributes, we do not require the email to exist as a Rill user.
+			// For user attributes, we do not require the email to exist as a Parrot user.
 			// For example, the attributes may be used for a dashboard embedded as an iframe on a third-party website.
 			// For these cases, we return attributes that present the email as a non-admin user.
 			if errors.Is(err, database.ErrNotFound) {

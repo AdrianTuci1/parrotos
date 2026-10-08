@@ -1,24 +1,24 @@
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
 import {
   type AlertFormValues,
   getAlertQueryArgsFromFormValues,
-} from "@rilldata/web-common/features/alerts/form-utils";
-import { getComparisonProperties } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-utils";
+} from "@statsparrot/web-common/features/alerts/form-utils";
+import { getComparisonProperties } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-utils";
 import {
   ComparisonDeltaAbsoluteSuffix,
   ComparisonDeltaPreviousSuffix,
   ComparisonDeltaRelativeSuffix,
   ComparisonPercentOfTotal,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
 import type {
   Filters,
   FiltersState,
-} from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
 import type {
   TimeControls,
   TimeControlState,
-} from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
 import {
   createQueryServiceMetricsViewAggregation,
   queryServiceMetricsViewAggregation,
@@ -28,8 +28,8 @@ import {
   type V1MetricsViewAggregationRequest,
   type V1MetricsViewAggregationResponseDataItem,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/query-core";
 import type {
   CreateQueryOptions,

@@ -1,34 +1,34 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
   import {
     getEffectiveSelectedValues,
     getItemLists,
     getSearchPlaceholder,
     shouldDisableApplyButton,
-  } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/helpers";
+  } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/helpers";
   import {
     mergeDimensionSearchValues,
     splitDimensionSearchText,
-  } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
-  import DimensionFilterChipBody from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilterChipBody.svelte";
-  import DimensionFilterFooter from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilterFooter.svelte";
-  import DimensionFilterModeSelector from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilterModeSelector.svelte";
-  import type { V1Expression } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
+  import DimensionFilterChipBody from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilterChipBody.svelte";
+  import DimensionFilterFooter from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilterFooter.svelte";
+  import DimensionFilterModeSelector from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilterModeSelector.svelte";
+  import type { V1Expression } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     useAllSearchResultsCount,
     useDimensionSearch,
   } from "web-common/src/features/dashboards/filters/dimension-filters/dimension-filter-values";
   import type { DimensionFilterItem } from "../../state-managers/selectors/dimension-filters";
-  import type { FilterManager } from "@rilldata/web-common/features/canvas/stores/filter-manager";
+  import type { FilterManager } from "@statsparrot/web-common/features/canvas/stores/filter-manager";
   import PinButton from "../PinButton.svelte";
   import RequiredButton from "../RequiredButton.svelte";
 

@@ -1,39 +1,39 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { initializeI18n } from "@rilldata/web-common/lib/i18n";
+  import { initializeI18n } from "@statsparrot/web-common/lib/i18n";
   import {
     handleAdminServerNetworkError,
     handleAdminServerQuerySuccess,
     registerAdminNetworkRecoveryListeners,
-  } from "@rilldata/web-admin/components/errors/admin-network-errors";
-  import { dynamicHeight } from "@rilldata/web-common/layout/layout-settings.ts";
-  import BillingBannerManager from "@rilldata/web-admin/features/billing/banner/BillingBannerManager.svelte";
+  } from "@statsparrot/web-admin/components/errors/admin-network-errors";
+  import { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings.ts";
+  import BillingBannerManager from "@statsparrot/web-admin/features/billing/banner/BillingBannerManager.svelte";
   import {
     isBillingUpgradePage,
     isOnboardingPage,
     isPublicReportPage,
     withinOrganization,
     withinProject,
-  } from "@rilldata/web-admin/features/navigation/nav-utils";
-  import OrganizationTabs from "@rilldata/web-admin/features/organizations/OrganizationTabs.svelte";
-  import { initCloudMetrics } from "@rilldata/web-admin/features/telemetry/initCloudMetrics";
-  import BannerCenter from "@rilldata/web-common/components/banner/BannerCenter.svelte";
-  import NotificationCenter from "@rilldata/web-common/components/notifications/NotificationCenter.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { initPylonWidget } from "@rilldata/web-common/features/help/initPylonWidget";
-  import { isEmbedPage } from "@rilldata/web-common/layout/navigation/navigation-utils.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { errorEventHandler } from "@rilldata/web-common/metrics/initMetrics";
+  } from "@statsparrot/web-admin/features/navigation/nav-utils";
+  import OrganizationTabs from "@statsparrot/web-admin/features/organizations/OrganizationTabs.svelte";
+  import { initCloudMetrics } from "@statsparrot/web-admin/features/telemetry/initCloudMetrics";
+  import BannerCenter from "@statsparrot/web-common/components/banner/BannerCenter.svelte";
+  import NotificationCenter from "@statsparrot/web-common/components/notifications/NotificationCenter.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { initPylonWidget } from "@statsparrot/web-common/features/help/initPylonWidget";
+  import { isEmbedPage } from "@statsparrot/web-common/layout/navigation/navigation-utils.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { errorEventHandler } from "@statsparrot/web-common/metrics/initMetrics";
   import { type Query, QueryClientProvider } from "@tanstack/svelte-query";
   import { onMount } from "svelte";
   import ErrorBoundary from "../components/errors/ErrorBoundary.svelte";
   import OrgHeader from "../features/organizations/OrgHeader.svelte";
-  import "@rilldata/web-common/app.css";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
-  import { getThemedLogoUrl } from "@rilldata/web-admin/features/themes/organization-logo";
-  import type { V1Organization } from "@rilldata/web-admin/client";
+  import "@statsparrot/web-common/app.css";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
+  import { getThemedLogoUrl } from "@statsparrot/web-admin/features/themes/organization-logo";
+  import type { V1Organization } from "@statsparrot/web-admin/client";
 
   export let data;
 
@@ -108,9 +108,9 @@
   $: onOnboardingPage = isOnboardingPage($page);
 
   $: hideTopBar =
-    // upgrade callback landing page shouldn't show any rill identifications
+    // upgrade callback landing page shouldn't show any statsparrot identifications
     isBillingUpgradePage($page) ||
-    // public reports are shared to external users who shouldn't be shown any rill related stuff
+    // public reports are shared to external users who shouldn't be shown any statsparrot related stuff
     isPublicReportPage($page) ||
     onOnboardingPage;
   $: hideBillingManager =
@@ -141,7 +141,7 @@
 </script>
 
 <svelte:head>
-  <meta content="Rill Cloud" name="description" />
+  <meta content="Parrot Cloud" name="description" />
   {#if organizationFaviconUrl}
     <link rel="icon" href={organizationFaviconUrl} />
   {:else}

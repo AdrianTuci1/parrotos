@@ -1,5 +1,5 @@
-import { inferResourceKind } from "@rilldata/web-common/features/entity-management/infer-resource-kind";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { inferResourceKind } from "@statsparrot/web-common/features/entity-management/infer-resource-kind";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import { describe, expect, it } from "vitest";
 
 describe("inferResourceName", () => {

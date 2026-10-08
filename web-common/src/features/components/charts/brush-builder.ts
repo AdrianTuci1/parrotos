@@ -1,4 +1,4 @@
-import { ScrubBoxColor } from "@rilldata/web-common/features/dashboards/time-series/chart-colors";
+import { ScrubBoxColor } from "@statsparrot/web-common/features/dashboards/time-series/chart-colors";
 import type { View } from "svelte-vega";
 import type { SelectionParameter } from "vega-lite/types_unstable/selection.js";
 import { resolveCSSVariable } from "./util";

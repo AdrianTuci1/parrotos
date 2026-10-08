@@ -1,5 +1,5 @@
 {
-  "name": "@rilldata/dev",
+  "name": "@statsparrot/dev",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,18 +11,18 @@
     "web-local"
   ],
   "scripts": {
-    "build:i18n": "paraglide-js compile --project web-common/src/lib/i18n/project.inlang --outdir web-common/src/lib/i18n/gen",
+    "build:i18n": "paraglide-js compile --project web-commonsrclibi18nproject.inlang --outdir web-commonsrclibi18ngen",
     "build": "npm run build:i18n && npm run build -w web-local",
     "dev": "sh -c 'npm run dev-runtime -- \"$@\" & npm run dev-web -- --port 3001 & wait' --",
     "dev-web": "npm run dev -w web-local -- ",
-    "dev-runtime": "node scripts/dev.js",
+    "dev-runtime": "node scriptsdev.js",
     "clean": "rm -rf dev-project",
     "test": "npm run test -w web-common & PLAYWRIGHT_TEST=true make cli && npm run test -w web-local",
     "local-test": "cd web-local && npx playwright test --headed --project=e2e-chrome -g",
-    "gen:colors": "node web-common/src/features/themes/gen-colors.ts",
-    "quality": "bash ./scripts/web-test-code-quality.sh",
-    "quality:ci": "FAIL_FAST=true bash ./scripts/web-test-code-quality.sh",
-    "check:edit-route-parity": "node ./scripts/check-edit-route-parity.js"
+    "gen:colors": "node web-commonsrcfeaturesthemesgen-colors.ts",
+    "quality": "bash .scriptsweb-test-code-quality.sh",
+    "quality:ci": "FAIL_FAST=true bash .scriptsweb-test-code-quality.sh",
+    "check:edit-route-parity": "node .scriptscheck-edit-route-parity.js"
   },
   "devDependencies": {
     "@inlang/paraglide-js": "^2.10.0",

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
 
   export let reportName: string;
 </script>

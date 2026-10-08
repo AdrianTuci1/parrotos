@@ -4,22 +4,22 @@ import {
   ComparisonPercentOfTotal,
   mapMeasureFilterToExpr,
   type MeasureFilterEntry,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { MeasureFilterType } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { MeasureFilterType } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   mapSelectedComparisonTimeRangeToV1TimeRange,
   mapSelectedTimeRangeToV1TimeRange,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers.ts";
-import type { FiltersState } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-import type { TimeControlState } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
-import { getInitialScheduleFormValues } from "@rilldata/web-common/features/scheduled-reports/time-utils.ts";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers.ts";
+import type { FiltersState } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+import type { TimeControlState } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
+import { getInitialScheduleFormValues } from "@statsparrot/web-common/features/scheduled-reports/time-utils.ts";
 import type {
   V1ExploreSpec,
   V1MetricsViewAggregationRequest,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ValidationErrors } from "sveltekit-superforms";
 import { yup, type ValidationAdapter } from "sveltekit-superforms/adapters";
 import { object, array, string } from "yup";

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
   import { ArrowDown, ArrowUp, Copy, Trash2 } from "lucide-svelte";
 
   export let displayName: string;

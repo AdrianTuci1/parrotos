@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/rilldata/rill/admin/pkg/urlutil"
-	"github.com/rilldata/rill/cli/pkg/browser"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/browser"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
 
@@ -30,13 +30,13 @@ func OpenCmd(ch *cmdutil.Helper) *cobra.Command {
 				email = args[0]
 			}
 			if email == "" {
-				email, err = ch.DotRill.GetRepresentingUser()
+				email, err = ch.DotStatsparrot.GetRepresentingUser()
 				if err != nil {
 					return err
 				}
 			}
 			if email == "" {
-				return errors.New("no user specified; you must specify a user's email or separately assume a user with `rill sudo user assume`")
+				return errors.New("no user specified; you must specify a user's email or separately assume a user with `statsparrot sudo user assume`")
 			}
 
 			qry := map[string]string{

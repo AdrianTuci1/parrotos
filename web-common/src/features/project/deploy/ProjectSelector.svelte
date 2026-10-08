@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Search } from "@rilldata/web-common/components/search";
-  import ProjectSelectorItem from "@rilldata/web-common/features/project/deploy/ProjectSelectorItem.svelte";
-  import type { Project } from "@rilldata/web-common/proto/gen/rill/admin/v1/api_pb";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import ProjectSelectorItem from "@statsparrot/web-common/features/project/deploy/ProjectSelectorItem.svelte";
+  import type { Project } from "@statsparrot/web-common/proto/gen/statsparrot/admin/v1/api_pb";
   import { matchSorter } from "match-sorter";
 
   export let projects: Project[] = [];

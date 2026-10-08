@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { AdminServiceIssueMagicAuthTokenBody } from "@rilldata/web-admin/client";
-  import ExploreFilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/ExploreFilterChipsReadOnly.svelte";
-  import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils.ts";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import type { AdminServiceIssueMagicAuthTokenBody } from "@statsparrot/web-admin/client";
+  import ExploreFilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/ExploreFilterChipsReadOnly.svelte";
+  import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils.ts";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     getExploreFields,
     getSanitizedExploreStateParam,
     hasDashboardDimensionThresholdFilter,
     hasDashboardWhereFilter,
   } from "./form-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let onFilterStateChange: (hasFilters: boolean) => void;
   export let onProvideFilters: (

@@ -5,7 +5,7 @@ import {
   getAdminServiceListOrganizationMemberUsergroupsQueryKey,
   getAdminServiceListOrganizationMemberUsersInfiniteQueryKey,
   getAdminServiceListOrganizationMemberUsersQueryKey,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import { QueryClient, type QueryKey } from "@tanstack/query-core";
 import { describe, expect, it } from "vitest";
 import {

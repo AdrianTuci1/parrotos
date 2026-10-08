@@ -27,7 +27,7 @@ describe("bucketYamlRanges with maxQueryTimeRange", () => {
     expect(buckets.allTime).toBe(false);
   });
 
-  it("filters the default RILL_LATEST set when no yamlRanges are provided", () => {
+  it("filters the default STATSPARROT_LATEST set when no yamlRanges are provided", () => {
     const cap = Duration.fromISO("P14D");
     const buckets = bucketYamlRanges([], undefined, false, cap);
     const labels = buckets.latest.map((p) => p.toString());

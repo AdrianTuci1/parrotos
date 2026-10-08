@@ -2,19 +2,19 @@ import {
   LOADING_CELL,
   MAX_ROW_EXPANSION_LIMIT,
   SHOW_MORE_BUTTON,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { mergeFilters } from "@rilldata/web-common/features/dashboards/pivot/pivot-merge-filters";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { mergeFilters } from "@statsparrot/web-common/features/dashboards/pivot/pivot-merge-filters";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import type {
   V1Expression,
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationResponse,
   V1MetricsViewAggregationResponseDataItem,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 import { type Readable, derived, readable, writable } from "svelte/store";

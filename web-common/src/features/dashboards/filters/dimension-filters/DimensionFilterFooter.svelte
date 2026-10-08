@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let mode: DimensionFilterMode;
   export let excludeMode: boolean;

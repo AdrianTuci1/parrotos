@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import APIIcon from "@rilldata/web-common/components/icons/APIIcon.svelte";
-  import ClaudeIcon from "@rilldata/web-common/components/icons/connectors/ClaudeIcon.svelte";
-  import GeminiIcon from "@rilldata/web-common/components/icons/connectors/GeminiIcon.svelte";
-  import OpenAIIcon from "@rilldata/web-common/components/icons/connectors/OpenAIIcon.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import APIIcon from "@statsparrot/web-common/components/icons/APIIcon.svelte";
+  import ClaudeIcon from "@statsparrot/web-common/components/icons/connectors/ClaudeIcon.svelte";
+  import GeminiIcon from "@statsparrot/web-common/components/icons/connectors/GeminiIcon.svelte";
+  import OpenAIIcon from "@statsparrot/web-common/components/icons/connectors/OpenAIIcon.svelte";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/popover";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { getConnectClientContext } from "./connect-client-context";
 
-  // The MCPConnectDialog is wired only on Rill Cloud chat surfaces whose layout
+  // The MCPConnectDialog is wired only on Parrot Cloud chat surfaces whose layout
   // sets the connect-client context. Elsewhere there is nothing to open, so the
   // popover renders nothing.
   const connectClient = getConnectClientContext();

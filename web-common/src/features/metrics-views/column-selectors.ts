@@ -1,8 +1,8 @@
-import { TIMESTAMPS } from "@rilldata/web-common/lib/duckdb-data-types";
+import { TIMESTAMPS } from "@statsparrot/web-common/lib/duckdb-data-types";
 import type {
   StructTypeField,
   V1StructType,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 // This file has simple code that will eventually be moved into selectors similar to other entities
 

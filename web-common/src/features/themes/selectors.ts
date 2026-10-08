@@ -1,15 +1,15 @@
 import {
   ResourceKind,
   useResource,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import { derived, type Readable } from "svelte/store";
 import { Theme } from "./theme";
 import type { ConnectError } from "@connectrpc/connect";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryObserverResult } from "@tanstack/svelte-query";
 import type { CanvasResponse } from "../canvas/selector";
 import type { ExploreValidSpecResponse } from "../explores/selectors";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 
 export function useTheme(client: RuntimeClient, name: string) {
   return useResource(client, name, ResourceKind.Theme);

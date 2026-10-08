@@ -2,7 +2,7 @@
   import { json } from "@codemirror/lang-json";
   import { EditorState } from "@codemirror/state";
   import { EditorView, placeholder } from "@codemirror/view";
-  import { base as baseExtensions } from "@rilldata/web-common/components/editor/presets/base";
+  import { base as baseExtensions } from "@statsparrot/web-common/components/editor/presets/base";
   import { onDestroy, onMount } from "svelte";
   import { get } from "svelte/store";
   import type { BaseCanvasComponent } from "../../components/BaseCanvasComponent";

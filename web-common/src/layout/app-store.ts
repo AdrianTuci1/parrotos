@@ -1,5 +1,5 @@
 import { page } from "$app/stores";
-import type { EntityType } from "@rilldata/web-common/features/entity-management/types";
+import type { EntityType } from "@statsparrot/web-common/features/entity-management/types";
 import { derived, writable } from "svelte/store";
 import {
   MetricsEventScreenName,

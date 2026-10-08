@@ -1,4 +1,4 @@
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   getConnectorServiceOLAPListTablesQueryKey,
   getRuntimeServiceAnalyzeConnectorsQueryKey,
@@ -8,8 +8,8 @@ import {
   type V1Resource,
   V1ResourceEvent,
   type V1WatchResourcesResponse,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -28,20 +28,20 @@ const {
 }));
 
 vi.mock(
-  "@rilldata/web-common/features/entity-management/file-artifacts",
+  "@statsparrot/web-common/features/entity-management/file-artifacts",
   () => ({
     fileArtifacts: { updateArtifacts, deleteResource },
   }),
 );
 
 vi.mock(
-  "@rilldata/web-common/features/connectors/explorer/connector-explorer-store",
+  "@statsparrot/web-common/features/connectors/explorer/connector-explorer-store",
   () => ({
     connectorExplorerStore: { deleteItem },
   }),
 );
 
-vi.mock("@rilldata/web-common/features/sources/sources-store", () => ({
+vi.mock("@statsparrot/web-common/features/sources/sources-store", () => ({
   sourceIngestionTracker: { isPending, trackIngested },
 }));
 

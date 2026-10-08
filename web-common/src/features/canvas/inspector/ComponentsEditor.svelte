@@ -2,10 +2,10 @@
   import {
     getHeaderForComponent,
     isCanvasComponentType,
-  } from "@rilldata/web-common/features/canvas/components/util";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import SidebarWrapper from "@rilldata/web-common/features/visual-editing/SidebarWrapper.svelte";
+  } from "@statsparrot/web-common/features/canvas/components/util";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import SidebarWrapper from "@statsparrot/web-common/features/visual-editing/SidebarWrapper.svelte";
   import type { BaseCanvasComponent } from "../components/BaseCanvasComponent";
   import VegaConfigInput from "./chart/VegaConfigInput.svelte";
   import ComponentTabs from "./ComponentTabs.svelte";

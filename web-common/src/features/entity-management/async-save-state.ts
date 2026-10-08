@@ -5,7 +5,7 @@ import { fileArtifacts } from "./file-artifacts";
 // of an async, multi-step save operation.
 // It is used to show loading/error state in relevant components
 
-// In Rill, saving a file is a multi-step process:
+// In Parrot, saving a file is a multi-step process:
 // 1. Initiate the save operation via runtimeServicePutFile
 // 2. Receive (asynchronously) a FILE_EVENT_WRITE event from the server
 // 3. Re-fetch the file content and check for conflicts

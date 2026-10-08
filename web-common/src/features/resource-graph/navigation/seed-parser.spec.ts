@@ -11,8 +11,8 @@ import {
   buildGraphUrlNew,
   URL_PARAMS,
 } from "./seed-parser";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 
 describe("seed-utils", () => {
   describe("normalizeSeed", () => {
@@ -81,9 +81,9 @@ describe("seed-utils", () => {
     });
 
     it("should handle fully qualified kind", () => {
-      const result = normalizeSeed("rill.runtime.v1.Model:orders");
+      const result = normalizeSeed("statsparrot.runtime.v1.Model:orders");
       expect(result).toEqual({
-        kind: "rill.runtime.v1.Model",
+        kind: "statsparrot.runtime.v1.Model",
         name: "orders",
       });
     });
@@ -207,10 +207,10 @@ describe("seed-utils", () => {
     });
 
     it("should handle fully qualified kind strings", () => {
-      expect(tokenForKind("rill.runtime.v1.Source")).toBe("sources");
-      expect(tokenForKind("rill.runtime.v1.Model")).toBe("models");
-      expect(tokenForKind("rill.runtime.v1.MetricsView")).toBe("metrics");
-      expect(tokenForKind("rill.runtime.v1.Explore")).toBe("dashboards");
+      expect(tokenForKind("statsparrot.runtime.v1.Source")).toBe("sources");
+      expect(tokenForKind("statsparrot.runtime.v1.Model")).toBe("models");
+      expect(tokenForKind("statsparrot.runtime.v1.MetricsView")).toBe("metrics");
+      expect(tokenForKind("statsparrot.runtime.v1.Explore")).toBe("dashboards");
     });
 
     it("should return null for undefined kind", () => {
@@ -286,7 +286,7 @@ describe("seed-utils", () => {
     });
 
     it("should handle fully qualified kinds in seeds", () => {
-      expect(tokenForSeedString("rill.runtime.v1.Model:orders")).toBe("models");
+      expect(tokenForSeedString("statsparrot.runtime.v1.Model:orders")).toBe("models");
     });
 
     it("should be case-insensitive", () => {
@@ -550,7 +550,7 @@ describe("seed-utils", () => {
         {
           meta: {
             name: {
-              kind: "rill.runtime.v1.Component" as ResourceKind,
+              kind: "statsparrot.runtime.v1.Component" as ResourceKind,
               name: "button",
             },
             hidden: false,
@@ -824,10 +824,10 @@ describe("seed-utils", () => {
 
     it("should parse expanded parameter", () => {
       const url = new URL(
-        "http://localhost/graph?resource=orders&expanded=rill.runtime.v1.Model:orders",
+        "http://localhost/graph?resource=orders&expanded=statsparrot.runtime.v1.Model:orders",
       );
       const result = parseGraphUrlParams(url);
-      expect(result.expanded).toBe("rill.runtime.v1.Model:orders");
+      expect(result.expanded).toBe("statsparrot.runtime.v1.Model:orders");
     });
 
     it("should handle empty URL", () => {
@@ -915,10 +915,10 @@ describe("seed-utils", () => {
     it("should build URL with resource and expanded", () => {
       const result = buildGraphUrlNew({
         resources: ["model:orders"],
-        expanded: "rill.runtime.v1.Model:orders",
+        expanded: "statsparrot.runtime.v1.Model:orders",
       });
       expect(result).toBe(
-        "/graph?resource=model%3Aorders&expanded=rill.runtime.v1.Model%3Aorders",
+        "/graph?resource=model%3Aorders&expanded=statsparrot.runtime.v1.Model%3Aorders",
       );
     });
 

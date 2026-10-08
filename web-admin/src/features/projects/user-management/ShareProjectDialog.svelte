@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
-  import ShareProjectForm from "@rilldata/web-admin/features/projects/user-management/ShareProjectForm.svelte";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
+  import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
+  import ShareProjectForm from "@statsparrot/web-admin/features/projects/user-management/ShareProjectForm.svelte";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
 
   export let organization: string;
   export let project: string;

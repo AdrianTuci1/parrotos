@@ -6,7 +6,7 @@
   import Spinner from "../../../entity-management/Spinner.svelte";
   import { EntityStatus } from "../../../entity-management/types";
   import type { ConversationManager } from "../../core/conversation-manager";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let conversationManager: ConversationManager;
   export let basePath: string;
@@ -22,7 +22,7 @@
   $: listConversationsQuery = conversationManager.listConversationsQuery();
 
   $: conversations = ($listConversationsQuery.data?.conversations ?? []).filter(
-    (c) => c.userAgent !== "rill/report",
+    (c) => c.userAgent !== "statsparrot/report",
   );
   $: isLoading = $listConversationsQuery.isLoading;
   $: isError = $listConversationsQuery.isError;

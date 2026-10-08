@@ -11,8 +11,8 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -46,7 +46,7 @@ func LoggingUnaryServerInterceptor(logger *zap.Logger) grpc.UnaryServerIntercept
 		// Log pings at debug level
 		// TODO: Change when we move to standard gRPC health checks
 		lvl := zap.InfoLevel
-		if info.FullMethod == "/rill.admin.v1.AdminService/Ping" || info.FullMethod == "/rill.runtime.v1.RuntimeService/Ping" {
+		if info.FullMethod == "/statsparrot.admin.v1.AdminService/Ping" || info.FullMethod == "/statsparrot.runtime.v1.RuntimeService/Ping" {
 			lvl = zap.DebugLevel
 		}
 

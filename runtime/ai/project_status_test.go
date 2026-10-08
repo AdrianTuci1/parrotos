@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -211,7 +211,7 @@ func TestProjectStatusWaitUntilIdle(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"clickhouse"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: clickhouse",
+			"statsparrot.yaml": "olap_connector: clickhouse",
 			"models/orders.yaml": `
 type: model
 sql: SELECT 1 AS order_id, 100.50 AS total_amount

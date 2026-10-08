@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/duckdb"
-	"github.com/rilldata/rill/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 	"go.uber.org/zap"
 )
 
@@ -215,7 +215,7 @@ func (e *Executor) executePivotExport(ctx context.Context, ast *metricsview.AST,
 // checkPivotColumns returns an error if the pivot would produce more columns than the configured limit.
 // The staged data in tableName is queried for the number of distinct combinations of the pivoted dimensions,
 // which is multiplied by the number of measures to estimate the resulting column count.
-// The limit is a conservative safety cap (configurable via rill.metrics.pivot_export_column_limit); a limit of 0 disables the check.
+// The limit is a conservative safety cap (configurable via statsparrot.metrics.pivot_export_column_limit); a limit of 0 disables the check.
 func (e *Executor) checkPivotColumns(ctx context.Context, olap drivers.OLAPStore, tableName string, pivot *pivotAST) error {
 	limit := e.instanceCfg.MetricsPivotExportColumnLimit
 	if limit <= 0 || len(pivot.on) == 0 {

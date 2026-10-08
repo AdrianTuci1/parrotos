@@ -1,17 +1,17 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import AdaptiveChart from "@rilldata/web-common/components/icons/AdaptiveChart.svelte";
-  import BarChart from "@rilldata/web-common/components/icons/BarChart.svelte";
-  import LineChart from "@rilldata/web-common/components/icons/LineChart.svelte";
-  import StackedArea from "@rilldata/web-common/components/icons/StackedArea.svelte";
-  import StackedBar from "@rilldata/web-common/components/icons/StackedBar.svelte";
-  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import AdaptiveChart from "@statsparrot/web-common/components/icons/AdaptiveChart.svelte";
+  import BarChart from "@statsparrot/web-common/components/icons/BarChart.svelte";
+  import LineChart from "@statsparrot/web-common/components/icons/LineChart.svelte";
+  import StackedArea from "@statsparrot/web-common/components/icons/StackedArea.svelte";
+  import StackedBar from "@statsparrot/web-common/components/icons/StackedBar.svelte";
+  import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
   import {
     TDDChart,
     isAdaptiveChartType,
-  } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
+  } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
   import type { ComponentType, SvelteComponent } from "svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let exploreName: string;
   export let chartType: TDDChart;

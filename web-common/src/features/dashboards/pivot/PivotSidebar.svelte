@@ -1,17 +1,17 @@
 <script lang="ts">
-  import TagFilterBanner from "@rilldata/web-common/components/menu/TagFilterBanner.svelte";
-  import type { TagIndex } from "@rilldata/web-common/components/menu/tag-utils";
+  import TagFilterBanner from "@statsparrot/web-common/components/menu/TagFilterBanner.svelte";
+  import type { TagIndex } from "@statsparrot/web-common/components/menu/tag-utils";
   import {
     pivotTagColumnWidth,
     TAG_COLUMN,
-  } from "@rilldata/web-common/features/dashboards/workspace/dashboard-layout-store";
-  import { Search } from "@rilldata/web-common/components/search";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
+  } from "@statsparrot/web-common/features/dashboards/workspace/dashboard-layout-store";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
   import {
     splitPivotChips,
     splitTagItems,
-  } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils.ts";
-  import { type TimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+  } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils.ts";
+  import { type TimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
   import { onMount } from "svelte";
   import type {
     PivotSidebarSection,
@@ -22,7 +22,7 @@
   import { timePillActions, timePillSelectors } from "./time-pill-store";
   import type { PivotChipData } from "./types";
   import { PivotChipType } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let pivotState: PivotState;
   export let measures: PivotChipData[];

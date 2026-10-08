@@ -12,27 +12,27 @@ import {
   type V1MetricsViewSpec,
   V1ReconcileStatus,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
 import type { CreateQueryOptions, QueryClient } from "@tanstack/svelte-query";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 export enum ResourceKind {
-  ProjectParser = "rill.runtime.v1.ProjectParser",
-  Alert = "rill.runtime.v1.Alert",
-  Report = "rill.runtime.v1.Report",
-  Source = "rill.runtime.v1.Source",
-  Connector = "rill.runtime.v1.Connector",
-  Model = "rill.runtime.v1.Model",
-  MetricsView = "rill.runtime.v1.MetricsView",
-  Explore = "rill.runtime.v1.Explore",
-  Theme = "rill.runtime.v1.Theme",
-  Component = "rill.runtime.v1.Component",
-  Canvas = "rill.runtime.v1.Canvas",
-  API = "rill.runtime.v1.API",
-  RefreshTrigger = "rill.runtime.v1.RefreshTrigger",
-  Migration = "rill.runtime.v1.Migration",
+  ProjectParser = "statsparrot.runtime.v1.ProjectParser",
+  Alert = "statsparrot.runtime.v1.Alert",
+  Report = "statsparrot.runtime.v1.Report",
+  Source = "statsparrot.runtime.v1.Source",
+  Connector = "statsparrot.runtime.v1.Connector",
+  Model = "statsparrot.runtime.v1.Model",
+  MetricsView = "statsparrot.runtime.v1.MetricsView",
+  Explore = "statsparrot.runtime.v1.Explore",
+  Theme = "statsparrot.runtime.v1.Theme",
+  Component = "statsparrot.runtime.v1.Component",
+  Canvas = "statsparrot.runtime.v1.Canvas",
+  API = "statsparrot.runtime.v1.API",
+  RefreshTrigger = "statsparrot.runtime.v1.RefreshTrigger",
+  Migration = "statsparrot.runtime.v1.Migration",
 }
 
 export function displayResourceKind(kind: ResourceKind | undefined) {
@@ -106,9 +106,9 @@ export type UserFacingResourceKinds = Exclude<
 
 export const SingletonProjectParserName = "parser";
 
-// In the UI, we shouldn't show the `rill.runtime.v1` prefix
+// In the UI, we shouldn't show the `statsparrot.runtime.v1` prefix
 export function prettyResourceKind(kind: string) {
-  return kind.replace(/^rill\.runtime\.v1\./, "");
+  return kind.replace(/^statsparrot\.runtime\.v1\./, "");
 }
 
 /**
@@ -169,7 +169,7 @@ export function useResource<T = V1Resource>(
   );
 }
 
-// FIXME: To remove this duplicate of `useResource` https://github.com/rilldata/rill/pull/5531#discussion_r1733027626
+// FIXME: To remove this duplicate of `useResource` https://github.com/staticlabs/statsparrot/pull/5531#discussion_r1733027626
 /**
  * `useResourceV2` is a more flexible version of `useResource` that accepts
  *  any `queryOptions`, not just `select` and `queryClient`.

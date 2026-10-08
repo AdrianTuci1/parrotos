@@ -1,6 +1,6 @@
-import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-import type { V1DirEntry } from "@rilldata/web-common/runtime-client";
+import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+import type { V1DirEntry } from "@statsparrot/web-common/runtime-client";
 import { QueryClient } from "@tanstack/svelte-query";
 import { derived } from "svelte/store";
 

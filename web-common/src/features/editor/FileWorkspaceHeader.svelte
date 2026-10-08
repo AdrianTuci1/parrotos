@@ -1,10 +1,10 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { handleEntityRename } from "@rilldata/web-common/features/entity-management/actions/ui-actions.ts";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { splitFolderAndFileName } from "@rilldata/web-common/features/entity-management/file-path-utils";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { handleEntityRename } from "@statsparrot/web-common/features/entity-management/actions/ui-actions.ts";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { splitFolderAndFileName } from "@statsparrot/web-common/features/entity-management/file-path-utils";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { WorkspaceHeader } from "../../layout/workspace";
   import type { ResourceKind } from "../entity-management/resource-selectors";
 

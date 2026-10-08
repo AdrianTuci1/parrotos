@@ -126,7 +126,7 @@ export function humanReadableErrorMessage(
       return serverError;
     }
     case GRPC_ERROR_CODES.InvalidArgument: {
-      // Rill errors
+      // Parrot errors
       if (
         serverError.match(/an existing object with name '.*' already exists/)
       ) {

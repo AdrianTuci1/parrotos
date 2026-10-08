@@ -6,7 +6,7 @@ import Axios from "axios";
  * It does not change when the frontend is running on a custom domain.
  */
 export const CANONICAL_ADMIN_URL =
-  import.meta.env.RILL_UI_PUBLIC_RILL_ADMIN_URL || "http://localhost:8080";
+  import.meta.env.STATSPARROT_UI_PUBLIC_STATSPARROT_ADMIN_URL || "http://localhost:8080";
 
 export const CANONICAL_ADMIN_API_URL = `${CANONICAL_ADMIN_URL.replace("https://admin", "https://api")}`;
 

@@ -4,15 +4,15 @@ import (
 	"context"
 	"testing"
 
-	_ "github.com/rilldata/rill/runtime/drivers/s3"
-	"github.com/rilldata/rill/runtime/testruntime"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/s3"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAcquireHandle(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			`rill.yaml`: `
+			`statsparrot.yaml`: `
 display_name: Hello world
 description: This project says hello to the world
 

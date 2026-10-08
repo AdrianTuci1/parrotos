@@ -1,11 +1,11 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import GithubSuccess from "@rilldata/web-common/components/icons/GithubSuccess.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import GithubSuccess from "@statsparrot/web-common/components/icons/GithubSuccess.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { onMount } from "svelte";
 
   onMount(() => {

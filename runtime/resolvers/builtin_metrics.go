@@ -3,8 +3,8 @@ package resolvers
 import (
 	"context"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 )
 
 func init() {

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import CanvasFilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/CanvasFilterChipsReadOnly.svelte";
-  import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import CanvasFilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/CanvasFilterChipsReadOnly.svelte";
+  import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   // Off-screen, read-only render of the canvas's active time range and filters.
   // It mirrors the explore "Download as PNG" summary so the PDF capture shows a

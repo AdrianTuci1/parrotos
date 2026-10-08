@@ -6,7 +6,7 @@
  */
 
 import { themeManager } from "./theme-manager";
-import type { V1ThemeSpec } from "@rilldata/web-common/runtime-client";
+import type { V1ThemeSpec } from "@statsparrot/web-common/runtime-client";
 import chroma, { type Color } from "chroma-js";
 
 export const resolveThemeColors = (

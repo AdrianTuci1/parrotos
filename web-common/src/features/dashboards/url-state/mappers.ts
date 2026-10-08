@@ -1,13 +1,13 @@
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { reverseMap } from "@rilldata/web-common/lib/map-utils.ts";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-import { TimeRangePreset } from "@rilldata/web-common/lib/time/types";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { reverseMap } from "@statsparrot/web-common/lib/map-utils.ts";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+import { TimeRangePreset } from "@statsparrot/web-common/lib/time/types";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   V1ExploreSortType,
   V1ExploreWebView,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export enum ExploreUrlWebView {
   Explore = "explore",

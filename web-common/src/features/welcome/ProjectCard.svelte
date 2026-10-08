@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LoadingCircleOutline from "@rilldata/web-common/components/icons/LoadingCircleOutline.svelte";
+  import LoadingCircleOutline from "@statsparrot/web-common/components/icons/LoadingCircleOutline.svelte";
 
   export let onclick: () => void;
   export let loading: boolean;

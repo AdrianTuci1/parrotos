@@ -1,8 +1,8 @@
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived } from "svelte/store";
-import { createAdminServiceListPersonalFiles } from "@rilldata/web-admin/client";
-import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { createAdminServiceListPersonalFiles } from "@statsparrot/web-admin/client";
+import { createRuntimeServiceListResources } from "@statsparrot/web-common/runtime-client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 
 export function getPersonalFilteredResources(
   client: RuntimeClient,

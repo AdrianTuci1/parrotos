@@ -1,13 +1,13 @@
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { allDimensions } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimensions";
-import { allMeasures } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { allDimensions } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimensions";
+import { allMeasures } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
 import {
   dimensionSearchText,
   metricsExplorerStore,
-} from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import { timeControlStateSelector } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import { timeControlStateSelector } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import type { TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import { type Readable, derived } from "svelte/store";
 import {
   canEnablePivotComparison,
@@ -112,14 +112,14 @@ export function getPivotConfig(
       // This is temporary until we have a better way to handle time grains
       let rowDimensionNames = dashboardStore.pivot.rows.map((d) => {
         if (d.type === PivotChipType.Time) {
-          return `${time.timeDimension}_rill_${d.id}`;
+          return `${time.timeDimension}_statsparrot_${d.id}`;
         }
         return d.id;
       });
 
       let colDimensionNames = colDimensions.map((d) => {
         if (d.type === PivotChipType.Time) {
-          return `${time.timeDimension}_rill_${d.id}`;
+          return `${time.timeDimension}_statsparrot_${d.id}`;
         }
         return d.id;
       });

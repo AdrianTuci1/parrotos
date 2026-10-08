@@ -3,9 +3,9 @@ import { page } from "$app/stores";
 import {
   useCanvas,
   type CanvasResponse,
-} from "@rilldata/web-common/features/canvas/selector";
-import type { CanvasSpecResponseStore } from "@rilldata/web-common/features/canvas/types";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/canvas/selector";
+import type { CanvasSpecResponseStore } from "@statsparrot/web-common/features/canvas/types";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   V1ExploreComparisonMode,
   type V1CanvasPreset,
@@ -16,7 +16,7 @@ import {
   type V1MetricsViewSpec,
   type V1Resource,
   type V1ThemeSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   derived,
   get,
@@ -47,9 +47,9 @@ import { Theme } from "../../themes/theme";
 import { createResolvedThemeStore } from "../../themes/selectors";
 import { ExploreStateURLParams } from "../../dashboards/url-state/url-params";
 import { DEFAULT_DASHBOARD_WIDTH, namePrefixFromPath } from "../layout-util";
-import { createCustomMapStore } from "@rilldata/web-common/lib/custom-map-store";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { queryServiceConvertExpressionToMetricsSQL } from "@rilldata/web-common/runtime-client";
+import { createCustomMapStore } from "@statsparrot/web-common/lib/custom-map-store";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { queryServiceConvertExpressionToMetricsSQL } from "@statsparrot/web-common/runtime-client";
 
 export const lastVisitedState = new Map<string, string>();
 
@@ -625,7 +625,7 @@ export class CanvasEntity {
         try {
           // Only gets imported in admin context
           const { getAdminServiceListBookmarksQueryOptions } = await import(
-            "@rilldata/web-admin/client"
+            "@statsparrot/web-admin/client"
           );
 
           const queryOptions = getAdminServiceListBookmarksQueryOptions({

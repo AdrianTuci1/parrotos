@@ -1,16 +1,16 @@
-import { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
+import { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
 import {
   getCommonOptions,
   getFilterOptions,
-} from "@rilldata/web-common/features/canvas/components/util";
-import type { InputParams } from "@rilldata/web-common/features/canvas/inspector/types";
+} from "@statsparrot/web-common/features/canvas/components/util";
+import type { InputParams } from "@statsparrot/web-common/features/canvas/inspector/types";
 
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   V1MetricsViewSpec,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 import type { CanvasEntity, ComponentPath } from "../../stores/canvas-entity";
 import type {
@@ -23,7 +23,7 @@ import KPIGrid from "./KPIGrid.svelte";
 
 export { default as KPIGrid } from "./KPIGrid.svelte";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export const defaultComparisonOptions: ComponentComparisonOptions[] = [
   "delta",

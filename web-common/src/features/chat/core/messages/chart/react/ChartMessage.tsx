@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { V1Message, V1Tool } from "@rilldata/web-common/runtime-client";
+import type { V1Message, V1Tool } from "@statsparrot/web-common/runtime-client";
 import { createChartBlock } from "../chart-block";
 import ChartBlock from "./ChartBlock";
 

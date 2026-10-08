@@ -1,8 +1,8 @@
 <script lang="ts">
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CancelCircleInverse from "@rilldata/web-common/components/icons/CancelCircleInverse.svelte";
-  import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CancelCircleInverse from "@statsparrot/web-common/components/icons/CancelCircleInverse.svelte";
+  import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import ProjectAccessControls from "../projects/ProjectAccessControls.svelte";
 
   export let organization: string;

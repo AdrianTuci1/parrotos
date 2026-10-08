@@ -4,13 +4,13 @@ import {
   AD_BIDS_INIT_MEASURES,
   AD_BIDS_METRICS_INIT,
   AD_BIDS_NAME,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import type { ExploreValidSpecResponse } from "@rilldata/web-common/features/explores/selectors";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import type { ExploreValidSpecResponse } from "@statsparrot/web-common/features/explores/selectors";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
   V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
 import type { QueryObserverResult } from "@tanstack/query-core";
 import { writable } from "svelte/store";

@@ -4,8 +4,8 @@
  * manually define these in the dashboard configuration.
  */
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import type { Duration, DurationUnit } from "luxon";
 import {
   Period,
@@ -770,7 +770,7 @@ export const TIME_COMPARISON: Record<
     description: string;
     comparisonType: TimeComparisonOption;
     offsetIso: string;
-    rillTimeOffset?: string;
+    statsparrotTimeOffset?: string;
   }
 > = {
   [TimeComparisonOption.CONTIGUOUS]: {
@@ -783,7 +783,7 @@ export const TIME_COMPARISON: Record<
     },
     comparisonType: TimeComparisonOption.CONTIGUOUS,
     offsetIso: "",
-    rillTimeOffset: "-1P",
+    statsparrotTimeOffset: "-1P",
   },
   [TimeComparisonOption.CUSTOM]: {
     get label() {
@@ -806,7 +806,7 @@ export const TIME_COMPARISON: Record<
     },
     comparisonType: TimeComparisonOption.DAY,
     offsetIso: "P1D",
-    rillTimeOffset: "-1D",
+    statsparrotTimeOffset: "-1D",
   },
   [TimeComparisonOption.WEEK]: {
     get label() {
@@ -818,7 +818,7 @@ export const TIME_COMPARISON: Record<
     },
     comparisonType: TimeComparisonOption.WEEK,
     offsetIso: "P1W",
-    rillTimeOffset: "-1W",
+    statsparrotTimeOffset: "-1W",
   },
   [TimeComparisonOption.MONTH]: {
     get label() {
@@ -831,7 +831,7 @@ export const TIME_COMPARISON: Record<
     comparisonType: TimeComparisonOption.MONTH,
     // Setting this to P1M prevents month over month comparisons for 31-day months
     offsetIso: "P31D",
-    rillTimeOffset: "-1M",
+    statsparrotTimeOffset: "-1M",
   },
   [TimeComparisonOption.QUARTER]: {
     get label() {
@@ -843,7 +843,7 @@ export const TIME_COMPARISON: Record<
     },
     comparisonType: TimeComparisonOption.QUARTER,
     offsetIso: "P3M",
-    rillTimeOffset: "-1Q",
+    statsparrotTimeOffset: "-1Q",
   },
 
   [TimeComparisonOption.YEAR]: {
@@ -856,7 +856,7 @@ export const TIME_COMPARISON: Record<
     },
     comparisonType: TimeComparisonOption.YEAR,
     offsetIso: "P1Y",
-    rillTimeOffset: "-1Y",
+    statsparrotTimeOffset: "-1Y",
   },
 };
 

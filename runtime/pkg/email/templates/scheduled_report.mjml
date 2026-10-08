@@ -23,7 +23,7 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-image container-background-color="#FFF" width="100px" src="https://cdn.rilldata.com/email-transactional/rill-logo-purple.png" />
+        <mj-image container-background-color="#FFF" width="100px" src="https://cdn.statsparrot.com/email-transactional/statsparrot-logo-purple.png" />
 
         <mj-spacer height="35px" />
 
@@ -62,11 +62,11 @@
         </mj-text>
 
         <mj-text align="center" font-size="12px" line-height="1.5">
-          © {{ now.Year }} Rill Data, Inc.<br />
+          © {{ now.Year }} Parrot Data, Inc.<br />
           18 Bartol St. • San Francisco • CA<br />
-          <a href="https://www.rilldata.com/contact">Contact us</a> •
+          <a href="https://www.statsparrot.com/contact">Contact us</a> •
           <a href="https://bit.ly/3unvA05">Community</a> •
-          <a href="https://www.rilldata.com/legal/privacy">Privacy Policy</a>
+          <a href="https://www.statsparrot.com/legal/privacy">Privacy Policy</a>
         </mj-text>
       </mj-column>
     </mj-section>

@@ -44,7 +44,7 @@ test.describe("File Explorer", () => {
       // feedback so navigating away doesn't race the save.
       await expect(saveButton).toBeDisabled();
       // Navigate away from the file and back to it to verify the changes
-      await page.getByRole("link", { name: "rill.yaml" }).click();
+      await page.getByRole("link", { name: "statsparrot.yaml" }).click();
       await page.getByRole("link", { name: "README.md" }).first().click();
       await expect(
         page.getByText("Here's a README.md file for the e2e test!"),
@@ -104,9 +104,9 @@ test.describe("File Explorer", () => {
       await page.getByRole("menuitem", { name: "New folder" }).hover();
       const [createDirectoryResponse, getFilesResponse] = await Promise.all([
         page.waitForResponse(
-          "**/rill.runtime.v1.RuntimeService/CreateDirectory",
+          "**/statsparrot.runtime.v1.RuntimeService/CreateDirectory",
         ),
-        page.waitForResponse("**/rill.runtime.v1.RuntimeService/ListFiles"),
+        page.waitForResponse("**/statsparrot.runtime.v1.RuntimeService/ListFiles"),
         page.getByRole("menuitem", { name: "New folder" }).click(),
       ]);
 

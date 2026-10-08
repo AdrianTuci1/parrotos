@@ -1,8 +1,8 @@
-import { convertFilterToExpression } from "@rilldata/web-common/features/dashboards/proto-state/filter-converter";
+import { convertFilterToExpression } from "@statsparrot/web-common/features/dashboards/proto-state/filter-converter";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import { describe, it, expect } from "vitest";
 
 describe("filter-converter", () => {

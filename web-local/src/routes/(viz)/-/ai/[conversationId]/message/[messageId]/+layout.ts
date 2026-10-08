@@ -1,5 +1,5 @@
 import { getLocalRuntimeClient } from "../../../../../../../lib/runtime-client";
-import { fetchMessage } from "@rilldata/web-common/features/chat/core/citation-url-utils.ts";
+import { fetchMessage } from "@statsparrot/web-common/features/chat/core/citation-url-utils.ts";
 
 export async function load({ params: { conversationId, messageId } }) {
   const client = getLocalRuntimeClient();

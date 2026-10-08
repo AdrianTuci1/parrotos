@@ -1,12 +1,12 @@
-import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
+import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
 import {
   MeasureFilterBaseTypeOptions,
   MeasureFilterComparisonTypeOptions,
   MeasureFilterPercentOfTotalOption,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config.ts";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types.ts";
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config.ts";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types.ts";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
 
 export function getTypeOptions(
   formValues: AlertFormValues,

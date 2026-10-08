@@ -2,8 +2,8 @@ import {
   ResourceKind,
   useClientFilteredResources,
   useResource,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/query-core";
 import type { Readable } from "svelte/store";
 import { derived } from "svelte/store";

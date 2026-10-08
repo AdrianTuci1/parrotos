@@ -1,4 +1,4 @@
-import type { V1Notifier } from "@rilldata/web-common/runtime-client";
+import type { V1Notifier } from "@statsparrot/web-common/runtime-client";
 
 export type EmailNotifierProperties = {
   recipients: string[];

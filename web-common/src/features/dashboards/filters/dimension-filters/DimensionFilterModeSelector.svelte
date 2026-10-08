@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
   import {
     DimensionFilterMode,
     DimensionFilterModeOptions,
-  } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+  } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
 
   export let mode: DimensionFilterMode;
   export let disabled: boolean = false;

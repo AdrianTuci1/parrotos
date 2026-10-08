@@ -1,4 +1,4 @@
-import { createEventBinding } from "@rilldata/web-common/lib/event-emitter.ts";
+import { createEventBinding } from "@statsparrot/web-common/lib/event-emitter.ts";
 import type { SSEConnection } from "./sse-connection";
 import type { SSEMessage } from "./sse-protocol";
 

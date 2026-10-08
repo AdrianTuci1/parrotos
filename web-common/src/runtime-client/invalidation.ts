@@ -3,7 +3,7 @@ import {
   isColumnProfilingQuery,
   isProfilingQuery,
   isTableProfilingQuery,
-} from "@rilldata/web-common/runtime-client/query-matcher";
+} from "@statsparrot/web-common/runtime-client/query-matcher";
 import type { Query, QueryClient } from "@tanstack/svelte-query";
 
 /** Matches the new key format for a given instanceId. */
@@ -86,7 +86,7 @@ export const invalidateMetricsViewData = (
 ) => {
   // remove inactive queries, this is needed since these would be re-fetched with incorrect filter
   // invalidateQueries by itself doesnt work as of now.
-  // reference: https://github.com/rilldata/rill/pull/2027#discussion_r1161672656
+  // reference: https://github.com/staticlabs/statsparrot/pull/2027#discussion_r1161672656
   queryClient.removeQueries({
     predicate: (query) =>
       invalidationForMetricsViewData(query, metricsViewName),

@@ -1,7 +1,7 @@
 import {
   ArrayRuneStore,
   type RuneStore,
-} from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+} from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 
 export class SvelteLocalStorage<Val, DefaultVal>
   implements RuneStore<Val, DefaultVal>

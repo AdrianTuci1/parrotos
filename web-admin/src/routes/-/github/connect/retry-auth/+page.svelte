@@ -1,15 +1,15 @@
 <!-- This page is for cases when user authorised the github app on another github account which doesn't have access to the repo  -->
 <script lang="ts">
-  import { redirectToGithubLogin } from "@rilldata/web-admin/client/redirect-utils";
-  import GithubRepoInline from "@rilldata/web-admin/features/projects/github/GithubRepoInline.svelte";
-  import GithubUserInline from "@rilldata/web-admin/features/projects/github/GithubUserInline.svelte";
-  import CtaButton from "@rilldata/web-common/components/calls-to-action/CTAButton.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import GithubFail from "@rilldata/web-common/components/icons/GithubFail.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { redirectToGithubLogin } from "@statsparrot/web-admin/client/redirect-utils";
+  import GithubRepoInline from "@statsparrot/web-admin/features/projects/github/GithubRepoInline.svelte";
+  import GithubUserInline from "@statsparrot/web-admin/features/projects/github/GithubUserInline.svelte";
+  import CtaButton from "@statsparrot/web-common/components/calls-to-action/CTAButton.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import GithubFail from "@statsparrot/web-common/components/icons/GithubFail.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const urlParams = new URLSearchParams(window.location.search);
   const remote = urlParams.get("remote");

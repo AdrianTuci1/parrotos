@@ -1,7 +1,7 @@
 <script lang="ts">
   import Spinner from "web-common/src/features/entity-management/Spinner.svelte";
   import { EntityStatus } from "web-common/src/features/entity-management/types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { billingPortalUrl }: { billingPortalUrl: string } = $props();
 

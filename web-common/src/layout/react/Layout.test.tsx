@@ -22,7 +22,7 @@ describe("layout/react port", () => {
     expect(header).toHaveClass("border-transparent");
   });
 
-  it("HeaderLogo renders the Rill mark when no logoUrl is supplied", () => {
+  it("HeaderLogo renders the Parrot mark when no logoUrl is supplied", () => {
     const { container } = render(<HeaderLogo />);
     expect(container.querySelector("a")).toHaveAttribute("href", "/");
     expect(container.querySelector("svg")).toBeTruthy();
@@ -72,7 +72,7 @@ describe("layout/react port", () => {
     expect(screen.getByText(/abc123/)).toBeTruthy();
     const issueLink = screen.getByRole("link", { name: /footer_report_issue/ });
     expect(issueLink.getAttribute("href")).toContain(
-      "https://github.com/rilldata/rill/issues/new",
+      "https://github.com/staticlabs/statsparrot/issues/new",
     );
   });
 

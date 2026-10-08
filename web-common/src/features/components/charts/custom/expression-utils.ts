@@ -1,4 +1,4 @@
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 
 // TODO: Update resolver API to accept V1Expression directly
 

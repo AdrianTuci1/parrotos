@@ -1,10 +1,10 @@
-import { createBatches } from "@rilldata/web-common/lib/arrayUtils";
+import { createBatches } from "@statsparrot/web-common/lib/arrayUtils";
 import {
   createQueryServiceMetricsViewSearch,
   type V1MetricsViewSpec,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived } from "svelte/store";
 
 export type DimensionSearchResult = {

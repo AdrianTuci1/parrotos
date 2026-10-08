@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-  import type { TabGroup } from "@rilldata/web-common/features/canvas/stores/tab-group";
+  import type { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+  import type { TabGroup } from "@statsparrot/web-common/features/canvas/stores/tab-group";
   import CanvasPdfExportTab from "./CanvasPdfExportTab.svelte";
 
   // PDF-capture render of a tab group. Unlike the live CanvasTabGroupView

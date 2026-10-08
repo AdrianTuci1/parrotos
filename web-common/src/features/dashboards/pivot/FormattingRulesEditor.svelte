@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
   import { ChevronDown, ChevronUp, Plus, X } from "lucide-svelte";
   import {
     PIVOT_RULE_COLORS,

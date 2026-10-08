@@ -1,23 +1,23 @@
-import { getComparisonRequestMeasures } from "@rilldata/web-common/features/dashboards/dashboard-utils";
+import { getComparisonRequestMeasures } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
 import {
   ComparisonDeltaAbsoluteSuffix,
   ComparisonDeltaRelativeSuffix,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   mapSelectedComparisonTimeRangeToV1TimeRange,
   mapSelectedTimeRangeToV1TimeRange,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers";
-import { DashboardState_LeaderboardSortType } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers";
+import { DashboardState_LeaderboardSortType } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationRequest,
   V1Query,
   V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 import { buildWhereParamForDimensionTableAndTDDExports } from "../../exports/export-filters";
 import { dimensionSearchText as dimensionSearchTextStore } from "../stores/dashboard-stores";

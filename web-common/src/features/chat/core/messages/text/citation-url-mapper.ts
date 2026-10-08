@@ -1,18 +1,18 @@
-import type { Conversation } from "@rilldata/web-common/features/chat/core/conversation.ts";
-import type { V1Message } from "@rilldata/web-common/runtime-client";
+import type { Conversation } from "@statsparrot/web-common/features/chat/core/conversation.ts";
+import type { V1Message } from "@statsparrot/web-common/runtime-client";
 import {
   getMetricsViewAndExploreSpecsQueryOptions,
   type MetricsViewAndExploreSpecs,
-} from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-import type { Schema as MetricsResolverQuery } from "@rilldata/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+import type { Schema as MetricsResolverQuery } from "@statsparrot/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
 import {
   getQueryFromUrl,
   getResolvedTimeRangesFromMessage,
-} from "@rilldata/web-common/features/chat/core/citation-url-utils.ts";
-import { mapMetricsResolverQueryToDashboard } from "@rilldata/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard.ts";
-import { maybeGetExplorePageUrlSearchParams } from "@rilldata/web-common/features/explore-mappers/utils.ts";
-import { getUrlForExplore } from "@rilldata/web-common/features/explore-mappers/generate-explore-link.ts";
+} from "@statsparrot/web-common/features/chat/core/citation-url-utils.ts";
+import { mapMetricsResolverQueryToDashboard } from "@statsparrot/web-common/features/explore-mappers/map-metrics-resolver-query-to-dashboard.ts";
+import { maybeGetExplorePageUrlSearchParams } from "@statsparrot/web-common/features/explore-mappers/utils.ts";
+import { getUrlForExplore } from "@statsparrot/web-common/features/explore-mappers/generate-explore-link.ts";
 import { createQuery } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 import { page } from "$app/stores";
@@ -20,7 +20,7 @@ import type { Page } from "@sveltejs/kit";
 import {
   MessageType,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
 
 const LEGACY_DASHBOARD_CITATION_URL_PATHNAME_REGEX = /\/-\/open-query\/?$/;
 const DASHBOARD_CITATION_URL_PATHNAME_REGEX =

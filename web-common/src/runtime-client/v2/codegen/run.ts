@@ -11,9 +11,9 @@ import * as path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { QueryService } from "../../../proto/gen/rill/runtime/v1/queries_connect";
-import { RuntimeService } from "../../../proto/gen/rill/runtime/v1/api_connect";
-import { ConnectorService } from "../../../proto/gen/rill/runtime/v1/connectors_connect";
+import { QueryService } from "../../../proto/gen/statsparrot/runtime/v1/queries_connect";
+import { RuntimeService } from "../../../proto/gen/statsparrot/runtime/v1/api_connect";
+import { ConnectorService } from "../../../proto/gen/statsparrot/runtime/v1/connectors_connect";
 
 import {
   generateServiceFile,

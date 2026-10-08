@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/billing"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/billing"
 	"github.com/riverqueue/river"
 	"go.uber.org/zap"
 )
@@ -35,7 +35,7 @@ var orgUsageMetrics = []orgUsageMetric{
 	{
 		name: "seats",
 		collect: func(ctx context.Context, adm *admin.Service, orgID string) (float64, error) {
-			// Exclude internal Rill users from billable seat counts.
+			// Exclude internal Parrot users from billable seat counts.
 			n, err := adm.DB.CountOrganizationMemberUsers(ctx, orgID, "", "%@"+billing.InternalEmailDomain, true)
 			if err != nil {
 				return 0, err

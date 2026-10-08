@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { test } from "../setup/base";
 import { gotoNavEntry } from "../utils/waitHelpers";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 
 async function setupDashboard(page: Page) {
   await gotoNavEntry(page, "/dashboards/AdBids_metrics_explore.yaml");

@@ -1,14 +1,14 @@
 import type {
   ChartSpec,
   FieldConfig,
-} from "@rilldata/web-common/features/components/charts/types";
-import { isFieldConfig } from "@rilldata/web-common/features/components/charts/util";
+} from "@statsparrot/web-common/features/components/charts/types";
+import { isFieldConfig } from "@statsparrot/web-common/features/components/charts/util";
 import type {
   PivotChipData,
   PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 
 /**
  * Transforms a chart spec into a pivot state for explore

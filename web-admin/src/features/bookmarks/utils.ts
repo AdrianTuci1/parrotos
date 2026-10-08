@@ -1,11 +1,11 @@
-import type { V1Bookmark } from "@rilldata/web-admin/client";
-import { isHomeBookmark } from "@rilldata/web-admin/features/bookmarks/selectors.ts";
-import { cleanUrlParams } from "@rilldata/web-common/features/dashboards/url-state/clean-url-params.ts";
-import { parseRillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser.ts";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
-import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter.ts";
-import { type DashboardTimeControls } from "@rilldata/web-common/lib/time/types.ts";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import type { V1Bookmark } from "@statsparrot/web-admin/client";
+import { isHomeBookmark } from "@statsparrot/web-admin/features/bookmarks/selectors.ts";
+import { cleanUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/clean-url-params.ts";
+import { parseParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser.ts";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter.ts";
+import { type DashboardTimeControls } from "@statsparrot/web-common/lib/time/types.ts";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { DateTime, Interval } from "luxon";
 
 export type BookmarkEntry = {
@@ -224,7 +224,7 @@ function isAbsoluteTimeRangeBookmark(bookmarkUrlParams: URLSearchParams) {
   if (!timeRange) return false;
 
   try {
-    const rt = parseRillTime(timeRange);
+    const rt = parseParrotTime(timeRange);
     return rt.isAbsoluteTime();
   } catch {
     return false;

@@ -5,9 +5,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/metrics"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/metrics"
 	"github.com/riverqueue/river"
 	"go.uber.org/zap"
 )

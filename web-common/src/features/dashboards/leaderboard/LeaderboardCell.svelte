@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
-  import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store.ts";
-  import { TOOLTIP_STRING_LIMIT } from "@rilldata/web-common/layout/config.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@statsparrot/web-common/components/tooltip/StackingWord.svelte";
+  import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store.ts";
+  import { TOOLTIP_STRING_LIMIT } from "@statsparrot/web-common/layout/config.ts";
   import {
     copyToClipboard,
     isClipboardApiSupported,
-  } from "@rilldata/web-common/lib/actions/copy-to-clipboard.ts";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click.ts";
+  } from "@statsparrot/web-common/lib/actions/copy-to-clipboard.ts";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click.ts";
   import { Tooltip as TooltipPrimitive } from "bits-ui";
   import { onDestroy } from "svelte";
 

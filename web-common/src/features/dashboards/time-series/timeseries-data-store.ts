@@ -1,26 +1,26 @@
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { filterOutSomeAdvancedMeasures } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { filterOutSomeAdvancedMeasures } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
 import {
   createTotalsForMeasure,
   createUnfilteredTotalsForMeasure,
-} from "@rilldata/web-common/features/dashboards/time-series/totals-data-store";
-import { prepareTimeSeries } from "@rilldata/web-common/features/dashboards/time-series/utils";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+} from "@statsparrot/web-common/features/dashboards/time-series/totals-data-store";
+import { prepareTimeSeries } from "@statsparrot/web-common/features/dashboards/time-series/utils";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
 import {
   type V1MetricsViewAggregationResponse,
   type V1MetricsViewAggregationResponseDataItem,
   type V1MetricsViewTimeSeriesResponse,
-} from "@rilldata/web-common/runtime-client";
-import { createQueryServiceMetricsViewTimeSeries } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
+import { createQueryServiceMetricsViewTimeSeries } from "@statsparrot/web-common/runtime-client";
 import {
   keepPreviousData,
   type CreateQueryResult,
 } from "@tanstack/svelte-query";
 import { type Readable, type Writable, derived, writable } from "svelte/store";
-import { DashboardState_ActivePage } from "../../../proto/gen/rill/ui/v1/dashboard_pb";
+import { DashboardState_ActivePage } from "../../../proto/gen/statsparrot/ui/v1/dashboard_pb";
 import { memoizeMetricsStore } from "../state-managers/memoize-metrics-store";
 import {
   type DimensionDataItem,

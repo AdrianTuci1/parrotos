@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
 import {
   MeasureFilterOperation,
   MeasureFilterOperationOptions,
   MeasureFilterType,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import { getDimensionDisplayName } from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import { getDimensionDisplayName } from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
 import Button from "../../dimension-filters/react/Button";
 import { PinIcon } from "./icons";
 import type { MeasureFilterSide } from "./MeasureFilter";

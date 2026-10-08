@@ -1,4 +1,4 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
 
-declare const RillPublicEmailDomains: string[];
+declare const StatsparrotPublicEmailDomains: string[];

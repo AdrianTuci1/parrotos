@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import RefreshIcon from "@rilldata/web-common/components/icons/RefreshIcon.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import RefreshIcon from "@statsparrot/web-common/components/icons/RefreshIcon.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import {
     V1ReconcileStatus,
     type V1Resource,
     createRuntimeServiceCreateTriggerMutation,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { useRuntimeClient } from "../../../runtime-client/v2";
 
   export let resource: V1Resource | undefined;

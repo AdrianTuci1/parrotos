@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Cancel from "@rilldata/web-common/components/icons/Cancel.svelte";
-  import SearchIcon from "@rilldata/web-common/components/icons/Search.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
-  import GlobalDimensionSearchResults from "@rilldata/web-common/features/dashboards/dimension-search/GlobalDimensionSearchResults.svelte";
-  import { slideRight } from "@rilldata/web-common/lib/transitions";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Cancel from "@statsparrot/web-common/components/icons/Cancel.svelte";
+  import SearchIcon from "@statsparrot/web-common/components/icons/Search.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import GlobalDimensionSearchResults from "@statsparrot/web-common/features/dashboards/dimension-search/GlobalDimensionSearchResults.svelte";
+  import { slideRight } from "@statsparrot/web-common/lib/transitions";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let searchBarOpen = false;
   let searchText = "";

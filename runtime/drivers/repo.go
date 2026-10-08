@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -119,7 +119,7 @@ type WatchEvent struct {
 }
 
 // RepoListLimit is the maximum number of files that can be listed in a call to RepoStore.ListGlob.
-// This limit is effectively a cap on the number of files in a project because `rill start` lists the project directory using a "**" glob.
+// This limit is effectively a cap on the number of files in a project because `statsparrot start` lists the project directory using a "**" glob.
 const RepoListLimit = 2000
 
 // ErrRepoListLimitExceeded should be returned when RepoListLimit is exceeded.
@@ -228,5 +228,5 @@ var ignoredPaths = []string{
 	"/.DS_Store",
 	"/.vscode",
 	"/.idea",
-	"/.rillcloud",
+	"/.statsparrotcloud",
 }

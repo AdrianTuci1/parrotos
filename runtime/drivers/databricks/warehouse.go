@@ -18,14 +18,14 @@ import (
 	"github.com/c2h5oh/datasize"
 	dbsqlrows "github.com/databricks/databricks-sql-go/rows"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"go.uber.org/zap"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/drivers/databricks")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/databricks")
 
 // entire data is buffered in memory before its written to disk so keeping it small reduces memory usage
 // but keeping it too small can lead to bad ingestion performance

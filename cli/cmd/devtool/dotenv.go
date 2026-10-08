@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +33,7 @@ func DotenvRefreshCmd(ch *cmdutil.Helper) *cobra.Command {
 				return fmt.Errorf(".env not used for preset %q", preset)
 			}
 
-			err := checkRillRepo()
+			err := checkParrotRepo()
 			if err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ func DotenvUploadCmd(ch *cmdutil.Helper) *cobra.Command {
 				return fmt.Errorf(".env not used for preset %q", preset)
 			}
 
-			err := checkRillRepo()
+			err := checkParrotRepo()
 			if err != nil {
 				return err
 			}
@@ -93,16 +93,16 @@ func DotenvUploadCmd(ch *cmdutil.Helper) *cobra.Command {
 }
 
 var dotenvURLs = map[string]string{
-	"cloud":   "gs://rill-devtool/dotenv/cloud-dev.env",
-	"minimal": "gs://rill-devtool/dotenv/cloud-dev.env", // "minimal" uses the same .env as "cloud"
-	"e2e":     "gs://rill-devtool/dotenv/cloud-e2e.env",
-	"other":   "gs://rill-devtool/dotenv/other.env",
+	"cloud":   "gs://statsparrot-devtool/dotenv/cloud-dev.env",
+	"minimal": "gs://statsparrot-devtool/dotenv/cloud-dev.env", // "minimal" uses the same .env as "cloud"
+	"e2e":     "gs://statsparrot-devtool/dotenv/cloud-e2e.env",
+	"other":   "gs://statsparrot-devtool/dotenv/other.env",
 }
 
 func checkDotenv() error {
 	_, err := os.Stat(".env")
 	if err != nil {
-		return fmt.Errorf(".env file not found at the root of the rill repository")
+		return fmt.Errorf(".env file not found at the root of the statsparrot repository")
 	}
 	return nil
 }
@@ -112,7 +112,7 @@ func downloadDotenv(ctx context.Context, preset string) error {
 
 	err := exec.CommandContext(ctx, "gcloud", "storage", "cp", dotenvURLs[preset], ".env").Run()
 	if err != nil {
-		return fmt.Errorf("error syncing '.env' file from GCS (you must be a Rill team member and have authenticated `gcloud`): %w", err)
+		return fmt.Errorf("error syncing '.env' file from GCS (you must be a Parrot team member and have authenticated `gcloud`): %w", err)
 	}
 	return nil
 }

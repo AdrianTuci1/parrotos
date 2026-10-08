@@ -4,25 +4,25 @@
   import {
     getDashboardFromEmbedRoute,
     isDifferentDashboard,
-  } from "@rilldata/web-admin/features/embeds/embed-route-utils.ts";
-  import initEmbedPublicAPI from "@rilldata/web-admin/features/embeds/init-embed-public-api.ts";
-  import EmbedHeader from "@rilldata/web-admin/features/embeds/EmbedHeader.svelte";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { VegaLiteTooltipHandler } from "@rilldata/web-common/components/vega/vega-tooltip.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import DashboardChat from "@rilldata/web-common/features/chat/DashboardChat.svelte";
-  import ThemeProvider from "@rilldata/web-common/features/dashboards/ThemeProvider.svelte";
-  import { activeDashboardTheme } from "@rilldata/web-common/features/themes/active-dashboard-theme";
+  } from "@statsparrot/web-admin/features/embeds/embed-route-utils.ts";
+  import initEmbedPublicAPI from "@statsparrot/web-admin/features/embeds/init-embed-public-api.ts";
+  import EmbedHeader from "@statsparrot/web-admin/features/embeds/EmbedHeader.svelte";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { VegaLiteTooltipHandler } from "@statsparrot/web-common/components/vega/vega-tooltip.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import DashboardChat from "@statsparrot/web-common/features/chat/DashboardChat.svelte";
+  import ThemeProvider from "@statsparrot/web-common/features/dashboards/ThemeProvider.svelte";
+  import { activeDashboardTheme } from "@statsparrot/web-common/features/themes/active-dashboard-theme";
   import {
     createIframeRPCHandler,
     emitNotification,
-  } from "@rilldata/web-common/lib/rpc";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
-  import { getRuntimeClient } from "@rilldata/web-common/runtime-client/v2/context";
-  import RuntimeProvider from "@rilldata/web-common/runtime-client/v2/RuntimeProvider.svelte";
+  } from "@statsparrot/web-common/lib/rpc";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
+  import { getRuntimeClient } from "@statsparrot/web-common/runtime-client/v2/context";
+  import RuntimeProvider from "@statsparrot/web-common/runtime-client/v2/RuntimeProvider.svelte";
   import { onMount } from "svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { PageData } from "./$types";
 
   export let data: PageData;

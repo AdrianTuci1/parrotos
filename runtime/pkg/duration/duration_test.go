@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,9 +20,9 @@ func TestParseISO8601(t *testing.T) {
 		{from: "inf", expected: InfDuration{}},
 		{from: "Inf", expected: InfDuration{}},
 		{from: "infinity", err: true},
-		{from: "rill-TD", expected: TruncToDateDuration{timeutil.TimeGrainDay}},
+		{from: "statsparrot-TD", expected: TruncToDateDuration{timeutil.TimeGrainDay}},
 		{from: "TD", err: true},
-		{from: "rill-PM", expected: StandardDuration{Month: 1, rillExtension: "PM"}},
+		{from: "statsparrot-PM", expected: StandardDuration{Month: 1, statsparrotExtension: "PM"}},
 		{from: "PM", err: true},
 	}
 	for _, tt := range tests {

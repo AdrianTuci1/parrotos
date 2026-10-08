@@ -4,14 +4,14 @@
     createAdminServiceDeleteOrganization,
     createAdminServiceGetCurrentUser,
     getAdminServiceGetOrganizationQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { getActiveOrgLocalStorageKey } from "@rilldata/web-admin/features/organizations/active-org/local-storage";
-  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import AlertDialogGuardedConfirmation from "@rilldata/web-common/components/alert-dialog/alert-dialog-guarded-confirmation.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { getActiveOrgLocalStorageKey } from "@statsparrot/web-admin/features/organizations/active-org/local-storage";
+  import SettingsContainer from "@statsparrot/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import AlertDialogGuardedConfirmation from "@statsparrot/web-common/components/alert-dialog/alert-dialog-guarded-confirmation.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization }: { organization: string } = $props();
 

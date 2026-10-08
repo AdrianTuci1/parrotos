@@ -3,13 +3,13 @@
     getLocalIANA,
     formatIANAs,
     allTimeZones,
-  } from "@rilldata/web-common/lib/time/timezone";
+  } from "@statsparrot/web-common/lib/time/timezone";
   import ZoneDisplay from "./ZoneDisplay.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
   import type { DateTime } from "luxon";
   import { Check } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const browserIANA = getLocalIANA();
 

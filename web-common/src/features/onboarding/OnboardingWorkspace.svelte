@@ -1,27 +1,27 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
   import { createRuntimeServiceUnpackExampleMutation } from "../../runtime-client";
   import { useRuntimeClient } from "../../runtime-client/v2";
-  import GenerateSampleData from "@rilldata/web-common/features/sample-data/GenerateSampleData.svelte";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { createResourceAndNavigate } from "@rilldata/web-common/features/entity-management/add/new-files.ts";
-  import { EXAMPLES } from "@rilldata/web-common/features/welcome/constants.ts";
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics.ts";
+  import GenerateSampleData from "@statsparrot/web-common/features/sample-data/GenerateSampleData.svelte";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { createResourceAndNavigate } from "@statsparrot/web-common/features/entity-management/add/new-files.ts";
+  import { EXAMPLES } from "@statsparrot/web-common/features/welcome/constants.ts";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics.ts";
   import {
     BehaviourEventAction,
     BehaviourEventMedium,
-  } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+  } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes.ts";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes.ts";
   import { LightbulbIcon, PresentationIcon } from "lucide-svelte";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-  import ConnectYourDataWidget from "@rilldata/web-common/features/add-data/ConnectYourDataWidget.svelte";
-  import AddDataModal from "@rilldata/web-common/features/add-data/AddDataModal.svelte";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+  import ConnectYourDataWidget from "@statsparrot/web-common/features/add-data/ConnectYourDataWidget.svelte";
+  import AddDataModal from "@statsparrot/web-common/features/add-data/AddDataModal.svelte";
 
   const runtimeClient = useRuntimeClient();
 
@@ -117,7 +117,7 @@
   </div>
 
   <div class="flex flex-col mx-auto w-fit gap-y-2 text-xs text-slate-500">
-    <div class="font-semibold text-center">Tips for data workflow in rill</div>
+    <div class="font-semibold text-center">Tips for data workflow in statsparrot</div>
     <ul class="list-decimal">
       <li>Import data – Add or drag files (Parquet, NDJSON, CSV).</li>
       <li>Model sources – Combine and shape data with SQL.</li>

@@ -4,9 +4,9 @@ import {
   getResourceStatus,
   getStatusPriority,
 } from "./resource-filter-utils";
-import { V1ReconcileStatus } from "@rilldata/web-common/runtime-client";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import { V1ReconcileStatus } from "@statsparrot/web-common/runtime-client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 
 function makeResource(
   name: string,

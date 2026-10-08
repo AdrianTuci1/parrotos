@@ -1,4 +1,4 @@
-import type { V1MetricsViewTimeSeriesResponse } from "@rilldata/web-common/runtime-client";
+import type { V1MetricsViewTimeSeriesResponse } from "@statsparrot/web-common/runtime-client";
 import type { TimeSeriesPoint } from "./types";
 import { DateTime } from "luxon";
 

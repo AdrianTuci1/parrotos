@@ -1,34 +1,34 @@
 <script lang="ts">
-  import VirtualizedTable from "@rilldata/web-common/components/table/VirtualizedTable.svelte";
-  import ResourceTypeBadge from "@rilldata/web-common/features/entity-management/ResourceTypeBadge.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import VirtualizedTable from "@statsparrot/web-common/components/table/VirtualizedTable.svelte";
+  import ResourceTypeBadge from "@statsparrot/web-common/features/entity-management/ResourceTypeBadge.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     createRuntimeServiceCreateTriggerMutation,
     getRuntimeServiceListResourcesQueryKey,
     V1ReconcileStatus,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { getStatusPriority } from "@rilldata/web-common/features/resources/resource-filter-utils";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { getStatusPriority } from "@statsparrot/web-common/features/resources/resource-filter-utils";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { useQueryClient } from "@tanstack/svelte-query";
   import type { ColumnDef } from "tanstack-table-8-svelte-5";
   import { renderComponent } from "tanstack-table-8-svelte-5";
   import ActionsCell from "./ActionsCell.svelte";
-  import NameCell from "@rilldata/web-common/features/projects/status/NameCell.svelte";
-  import RefreshCell from "@rilldata/web-common/features/projects/status/RefreshCell.svelte";
-  import RefreshErroredPartitionsDialog from "@rilldata/web-common/features/projects/status/tables/RefreshErroredPartitionsDialog.svelte";
-  import ModelPartitionsDialog from "@rilldata/web-common/features/projects/status/tables/ModelPartitionsDialog.svelte";
-  import RefreshResourceConfirmDialog from "@rilldata/web-common/features/projects/status/RefreshResourceConfirmDialog.svelte";
-  import ResourceErrorMessage from "@rilldata/web-common/features/projects/status/ResourceErrorMessage.svelte";
-  import ResourceSpecDialog from "@rilldata/web-common/features/projects/status/ResourceSpecDialog.svelte";
+  import NameCell from "@statsparrot/web-common/features/projects/status/NameCell.svelte";
+  import RefreshCell from "@statsparrot/web-common/features/projects/status/RefreshCell.svelte";
+  import RefreshErroredPartitionsDialog from "@statsparrot/web-common/features/projects/status/tables/RefreshErroredPartitionsDialog.svelte";
+  import ModelPartitionsDialog from "@statsparrot/web-common/features/projects/status/tables/ModelPartitionsDialog.svelte";
+  import RefreshResourceConfirmDialog from "@statsparrot/web-common/features/projects/status/RefreshResourceConfirmDialog.svelte";
+  import ResourceErrorMessage from "@statsparrot/web-common/features/projects/status/ResourceErrorMessage.svelte";
+  import ResourceSpecDialog from "@statsparrot/web-common/features/projects/status/ResourceSpecDialog.svelte";
   import {
     getPersonalFileOwner,
     isPersonalFile,
-  } from "@rilldata/web-admin/features/projects/status/selectors.ts";
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/features/projects/status/selectors.ts";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: V1Resource[];
 

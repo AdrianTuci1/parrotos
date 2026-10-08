@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ProjectOverview from "@rilldata/web-admin/features/projects/status/overview/ProjectOverview.svelte";
+  import ProjectOverview from "@statsparrot/web-admin/features/projects/status/overview/ProjectOverview.svelte";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

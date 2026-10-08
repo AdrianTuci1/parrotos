@@ -4,13 +4,13 @@ import (
 	"context"
 	"os"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 
 	// Ensure file driver is loaded
-	_ "github.com/rilldata/rill/runtime/drivers/file"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/file"
 )
 
 // RepoForProjectPath creates an ad-hoc drivers.RepoStore for a local project file path
@@ -24,11 +24,11 @@ func RepoForProjectPath(path string) (drivers.RepoStore, string, error) {
 	return repo, instanceID, nil
 }
 
-func HasRillProject(dir string) bool {
+func HasParrotProject(dir string) bool {
 	repo, _, err := RepoForProjectPath(dir)
 	if err != nil {
 		return false
 	}
-	_, err = repo.Get(context.Background(), "rill.yaml")
+	_, err = repo.Get(context.Background(), "statsparrot.yaml")
 	return err == nil
 }

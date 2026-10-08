@@ -11,11 +11,11 @@
 </script>
 
 <script lang="ts">
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
   import { resourceIconMapping } from "../entity-management/resource-icon-mapping";
   import type { ResourceKind } from "../entity-management/resource-selectors";
   import { Code2Icon } from "lucide-svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
 
   export let selectedView: string = "viz";
   export let resourceKind: ResourceKind;

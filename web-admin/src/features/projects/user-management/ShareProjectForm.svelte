@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
   import {
     createAdminServiceGetCurrentUser,
@@ -9,32 +9,32 @@
     createAdminServiceListProjectMemberUsergroups,
     createAdminServiceListProjectMemberUsers,
     createAdminServiceListUsergroupMemberUsers,
-  } from "@rilldata/web-admin/client";
-  import CopyInviteLinkButton from "@rilldata/web-admin/features/projects/user-management/CopyInviteLinkButton.svelte";
-  import GeneralAccessSelectorDropdown from "@rilldata/web-admin/features/projects/user-management/GeneralAccessSelectorDropdown.svelte";
+  } from "@statsparrot/web-admin/client";
+  import CopyInviteLinkButton from "@statsparrot/web-admin/features/projects/user-management/CopyInviteLinkButton.svelte";
+  import GeneralAccessSelectorDropdown from "@statsparrot/web-admin/features/projects/user-management/GeneralAccessSelectorDropdown.svelte";
   import {
     buildCopyLink,
     buildSearchList,
-  } from "@rilldata/web-admin/features/projects/user-management/helpers.ts";
-  import ProjectUserGroupItem from "@rilldata/web-admin/features/projects/user-management/ProjectUserGroupItem.svelte";
-  import UserAndGroupInviteForm from "@rilldata/web-admin/features/projects/user-management/UserAndGroupInviteForm.svelte";
-  import UsergroupSetRole from "@rilldata/web-admin/features/projects/user-management/UsergroupSetRole.svelte";
-  import UserItem from "@rilldata/web-admin/features/projects/user-management/UserItem.svelte";
-  import Avatar from "@rilldata/web-common/components/avatar/Avatar.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { getRandomBgColor } from "@rilldata/web-common/features/themes/color-config.ts";
+  } from "@statsparrot/web-admin/features/projects/user-management/helpers.ts";
+  import ProjectUserGroupItem from "@statsparrot/web-admin/features/projects/user-management/ProjectUserGroupItem.svelte";
+  import UserAndGroupInviteForm from "@statsparrot/web-admin/features/projects/user-management/UserAndGroupInviteForm.svelte";
+  import UsergroupSetRole from "@statsparrot/web-admin/features/projects/user-management/UsergroupSetRole.svelte";
+  import UserItem from "@statsparrot/web-admin/features/projects/user-management/UserItem.svelte";
+  import Avatar from "@statsparrot/web-common/components/avatar/Avatar.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { getRandomBgColor } from "@statsparrot/web-common/features/themes/color-config.ts";
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import { onMount, onDestroy } from "svelte";
   import {
     adminServiceListProjectMemberUsers,
     getAdminServiceListProjectMemberUsersQueryKey,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     adminServiceListProjectInvites,
     getAdminServiceListProjectInvitesQueryKey,
-  } from "@rilldata/web-admin/client";
-  import type { V1ProjectMemberUser } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
+  import type { V1ProjectMemberUser } from "@statsparrot/web-admin/client";
 
   export let organization: string;
   export let project: string;
@@ -250,7 +250,7 @@
     projectUserGroups.map((pg) => pg.groupName),
   );
 
-  // FIXME: https://linear.app/rilldata/issue/APP-570/add-a-new-endpoint-to-get-current-users-project-membership-by-email
+  // FIXME: https://linear.app/staticlabs/issue/APP-570/add-a-new-endpoint-to-get-current-users-project-membership-by-email
   // Synthetic current-user row to ensure visibility before their real membership loads from the infinite query
   $: syntheticCurrentUser = (() => {
     const u = $currentUser.data?.user;
@@ -434,7 +434,7 @@
 </div>
 <div class="flex flex-row items-center px-3.5 py-3 border-t">
   <a
-    href="https://docs.rilldata.com/guide/administration/users-and-access/roles-permissions#project-level-permissions"
+    href="https://docs.statsparrot.com/guide/administration/users-and-access/roles-permissions#project-level-permissions"
     target="_blank"
     class="text-xs text-primary-600 hover:text-primary-700"
     >{m.users_learn_more_sharing()}</a

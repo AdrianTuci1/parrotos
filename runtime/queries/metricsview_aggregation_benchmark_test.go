@@ -4,13 +4,13 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
 )
 
 func BenchmarkMetricsViewsAggregation(b *testing.B) {

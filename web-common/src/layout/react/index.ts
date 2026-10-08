@@ -1,6 +1,6 @@
-// React-port of the Rill layout shell. Framework-agnostic `.ts` utilities
+// React-port of the Parrot layout shell. Framework-agnostic `.ts` utilities
 // (`config.ts`, `layout-settings.ts`, `workspace/workspace-stores.ts`) are reused
-// verbatim from `@rilldata/web-common/layout/*`; this package only re-exports the
+// verbatim from `@statsparrot/web-common/layout/*`; this package only re-exports the
 // constants and the Svelte view components translated to React.
 export { default as Header } from "./Header";
 export { default as HeaderLogo } from "./HeaderLogo";
@@ -12,7 +12,7 @@ export { default as Navigation } from "./Navigation";
 export { default as ApplicationHeader } from "./ApplicationHeader";
 export { navigationOpen } from "./store";
 export {
-  RillLogoIcon,
+  ParrotLogoIcon,
   HideSidebarIcon,
   SurfaceViewIcon,
   GithubIcon,
@@ -29,8 +29,8 @@ export {
   SURFACE_SLIDE_DURATION,
   LIST_SLIDE_DURATION,
   SURFACE_SLIDE_EASING,
-} from "@rilldata/web-common/layout/config";
+} from "@statsparrot/web-common/layout/config";
 
-export { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
-export type { WorkspaceView } from "@rilldata/web-common/layout/workspace/workspace-stores";
-export { dynamicHeight } from "@rilldata/web-common/layout/layout-settings";
+export { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
+export type { WorkspaceView } from "@statsparrot/web-common/layout/workspace/workspace-stores";
+export { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings";

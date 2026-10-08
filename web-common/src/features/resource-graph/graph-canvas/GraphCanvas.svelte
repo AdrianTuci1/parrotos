@@ -8,7 +8,7 @@
     type NodeTypes,
   } from "@xyflow/svelte";
   import "@xyflow/svelte/dist/base.css";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { writable } from "svelte/store";
   import { onMount, onDestroy } from "svelte";
   import { buildResourceGraph } from "./graph-builder";

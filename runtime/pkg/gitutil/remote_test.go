@@ -39,9 +39,9 @@ func TestSetRemote(t *testing.T) {
 
 	t.Run("updates a managed remote with a different URL", func(t *testing.T) {
 		path := setupTestRepository(t)
-		require.NoError(t, execGit(path, "remote", "add", "__rill_remote", "https://example.com/old.git"))
+		require.NoError(t, execGit(path, "remote", "add", "__statsparrot_remote", "https://example.com/old.git"))
 		require.NoError(t, SetRemote(path, &Config{Remote: "https://example.com/new.git", ManagedRepo: true}))
-		require.Equal(t, "https://example.com/new.git", getURL(t, path, "__rill_remote"))
+		require.Equal(t, "https://example.com/new.git", getURL(t, path, "__statsparrot_remote"))
 	})
 
 	t.Run("no-op when the config has no remote", func(t *testing.T) {
@@ -55,9 +55,9 @@ func TestSetRemote(t *testing.T) {
 func TestRemoveRemote(t *testing.T) {
 	t.Run("removes an existing remote", func(t *testing.T) {
 		path := setupTestRepository(t)
-		require.NoError(t, execGit(path, "remote", "add", "__rill_remote", "https://example.com/repo.git"))
-		require.NoError(t, RemoveRemote(path, "__rill_remote"))
-		_, err := Run(context.Background(), path, "remote", "get-url", "__rill_remote")
+		require.NoError(t, execGit(path, "remote", "add", "__statsparrot_remote", "https://example.com/repo.git"))
+		require.NoError(t, RemoveRemote(path, "__statsparrot_remote"))
+		_, err := Run(context.Background(), path, "remote", "get-url", "__statsparrot_remote")
 		require.Error(t, err)
 	})
 

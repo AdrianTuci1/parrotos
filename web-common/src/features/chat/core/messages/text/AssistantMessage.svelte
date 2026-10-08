@@ -1,6 +1,6 @@
 <!-- Renders assistant responses from router_agent. -->
 <script lang="ts">
-  import { enhanceCitationLinks } from "@rilldata/web-common/features/chat/core/messages/text/enhance-citation-links.ts";
+  import { enhanceCitationLinks } from "@statsparrot/web-common/features/chat/core/messages/text/enhance-citation-links.ts";
   import Markdown from "../../../../../components/markdown/Markdown.svelte";
   import type { Conversation } from "../../conversation";
   import FeedbackButtons from "../../feedback/FeedbackButtons.svelte";

@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -566,7 +566,7 @@ func (s *Service) ResolveVariables(ctx context.Context, depl *database.Deploymen
 	})
 	// Enable the file watcher for editable deployments.
 	systemVars := map[string]string{
-		"rill.watch_repo": strconv.FormatBool(depl.Editable),
+		"statsparrot.watch_repo": strconv.FormatBool(depl.Editable),
 	}
 	return vars, systemVars, nil
 }

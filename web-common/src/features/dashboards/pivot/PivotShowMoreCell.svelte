@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Spacer from "@rilldata/web-common/components/icons/Spacer.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import type { PivotDataRow } from "@rilldata/web-common/features/dashboards/pivot/types";
+  import Spacer from "@statsparrot/web-common/components/icons/Spacer.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import type { PivotDataRow } from "@statsparrot/web-common/features/dashboards/pivot/types";
   import type { Row } from "tanstack-table-8-svelte-5";
 
   export let row: Row<PivotDataRow>;

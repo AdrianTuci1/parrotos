@@ -1,5 +1,5 @@
 import { generateMockData } from './widget-spec';
-import { QueryRequest } from '@rilldata/web-common/proto/gen/rill/runtime/v1/queries_pb';
+import { QueryRequest } from '@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/queries_pb';
 import { executeDirectQuery } from '@/services/DirectQueryService';
 import { cacheService } from '@/services/CacheService';
 

@@ -2,33 +2,33 @@ import {
   type PivotChipData,
   PivotChipType,
   type PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types.ts";
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+} from "@statsparrot/web-common/features/dashboards/pivot/types.ts";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
 import {
   filterIdentifiers,
   maybeConvertEqualityToInExpressions,
   flattenInExpressionValues,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-import { parseTimeRangeFromFilters } from "@rilldata/web-common/features/explore-mappers/parse-time-range-from-filters.ts";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types.ts";
-import { DateTimeUnitToV1TimeGrain } from "@rilldata/web-common/lib/time/new-grains.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+import { parseTimeRangeFromFilters } from "@statsparrot/web-common/features/explore-mappers/parse-time-range-from-filters.ts";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types.ts";
+import { DateTimeUnitToV1TimeGrain } from "@statsparrot/web-common/lib/time/new-grains.ts";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types.ts";
+} from "@statsparrot/web-common/lib/time/types.ts";
 import {
   DashboardState_ActivePage,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb.ts";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb.ts";
 import {
   type V1ExploreSpec,
   type V1Expression,
   type V1MetricsViewSpec,
   V1Operation,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type {
   Dimension,
   Expression,
@@ -36,7 +36,7 @@ import type {
   Schema as MetricsResolverQuery,
   Sort,
   TimeRange,
-} from "@rilldata/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
+} from "@statsparrot/web-common/runtime-client/gen/resolvers/metrics/schema.ts";
 import type { SortingState } from "tanstack-table-8-svelte-5";
 
 export type MetricsResolverQueryMapperArgs = {
@@ -413,7 +413,7 @@ function mapPivot(
         DateTimeUnitToV1TimeGrain[td.compute.time_floor.grain] ??
         V1TimeGrain.TIME_GRAIN_SECOND;
       const id = td?.compute?.time_floor?.grain
-        ? `${td.name}_rill_${grain}`
+        ? `${td.name}_statsparrot_${grain}`
         : s.name;
       return { id, desc: !!s.desc };
     }) ?? [];

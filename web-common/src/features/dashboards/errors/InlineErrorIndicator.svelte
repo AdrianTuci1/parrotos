@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { AlertTriangleIcon, Copy } from "lucide-svelte";
 
   export let message: string | undefined;

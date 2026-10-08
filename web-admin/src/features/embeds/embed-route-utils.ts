@@ -1,5 +1,5 @@
 import type { Page } from "@sveltejs/kit";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 
 export type DashboardInfo = {
   name: string;

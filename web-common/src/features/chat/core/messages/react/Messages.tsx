@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { V1Message, V1Tool } from "@rilldata/web-common/runtime-client";
+import type { V1Message, V1Tool } from "@statsparrot/web-common/runtime-client";
 import { transformToBlocks } from "../block-transform";
 import type { Block } from "../block-transform";
 import type { SimpleToolCall } from "../simple-tool-call/simple-tool-call";

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Calendar from "@rilldata/web-common/components/date-picker/Calendar.svelte";
-  import DateInput from "@rilldata/web-common/components/date-picker/DateInput.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Calendar from "@statsparrot/web-common/components/date-picker/Calendar.svelte";
+  import DateInput from "@statsparrot/web-common/components/date-picker/DateInput.svelte";
   import { DateTime, Duration, Interval, type DateTimeUnit } from "luxon";
-  import { snapToDayOrLargerGrain } from "@rilldata/web-common/lib/time/new-grains.ts";
+  import { snapToDayOrLargerGrain } from "@statsparrot/web-common/lib/time/new-grains.ts";
 
   export let interval: Interval<true> | undefined;
   export let minDate: DateTime | undefined = undefined;
@@ -112,7 +112,7 @@
     onSelectDay={onValidDateInput}
   />
 
-  <!-- {#if usingRillTime} -->
+  <!-- {#if usingParrotTime} -->
   <div class="w-full h-px bg-border"></div>
 
   <div class="flex flex-col gap-y-2">

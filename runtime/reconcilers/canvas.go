@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/pathutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pathutil"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -367,7 +367,7 @@ func (r *CanvasReconciler) validateRequiredFilters(ctx context.Context, spec *ru
 // rendererRefs tracks all metrics views found in canvas component renderer properties.
 // It currently only tracks metrics views, but in the future we may want to add an option to also track metrics view fields and filters.
 // We did that previously, but removed it since such granular security was considered too strict (it also impacts ability to filter by fields not present on the canvas).
-// See this PR for details in case we want to reintroduce it: https://github.com/rilldata/rill/pull/8370
+// See this PR for details in case we want to reintroduce it: https://github.com/staticlabs/statsparrot/pull/8370
 type rendererRefs struct {
 	rt           *runtime.Runtime
 	instanceID   string

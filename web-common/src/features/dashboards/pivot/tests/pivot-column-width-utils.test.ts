@@ -1,7 +1,7 @@
 import {
   distributeColumnWidthsToFillContainer,
   getNestedRowDimensionWidthKey,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-column-width-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-column-width-utils";
 import { describe, expect, it } from "vitest";
 
 describe("getNestedRowDimensionWidthKey", () => {

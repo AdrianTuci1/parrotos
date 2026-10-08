@@ -7,8 +7,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,7 +18,7 @@ func TestSQLLimit(t *testing.T) {
 			"foo.sql": "SELECT range AS val FROM range(100)",
 		},
 		Variables: map[string]string{
-			"rill.interactive_sql_row_limit": "10",
+			"statsparrot.interactive_sql_row_limit": "10",
 		},
 	})
 

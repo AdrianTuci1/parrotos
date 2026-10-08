@@ -1,25 +1,25 @@
 import { page } from "$app/stores";
-import { getScreenNameFromPage } from "@rilldata/web-admin/features/navigation/nav-utils";
-import { RillAdminTelemetryClient } from "@rilldata/web-admin/features/telemetry/RillAdminTelemetryClient";
-import { BehaviourEventHandler } from "@rilldata/web-common/metrics/BehaviourEventHandler";
-import { collectCommonUserFields } from "@rilldata/web-common/metrics/collectCommonUserFields";
-import { ErrorEventHandler } from "@rilldata/web-common/metrics/ErrorEventHandler";
+import { getScreenNameFromPage } from "@statsparrot/web-admin/features/navigation/nav-utils";
+import { ParrotAdminTelemetryClient } from "@statsparrot/web-admin/features/telemetry/ParrotAdminTelemetryClient";
+import { BehaviourEventHandler } from "@statsparrot/web-common/metrics/BehaviourEventHandler";
+import { collectCommonUserFields } from "@statsparrot/web-common/metrics/collectCommonUserFields";
+import { ErrorEventHandler } from "@statsparrot/web-common/metrics/ErrorEventHandler";
 import {
   setBehaviourEvent,
   setErrorEvent,
   setMetricsService,
-} from "@rilldata/web-common/metrics/initMetrics";
-import { BehaviourEventFactory } from "@rilldata/web-common/metrics/service/BehaviourEventFactory";
-import { ErrorEventFactory } from "@rilldata/web-common/metrics/service/ErrorEventFactory";
-import { MetricsService } from "@rilldata/web-common/metrics/service/MetricsService";
-import { ProductHealthEventFactory } from "@rilldata/web-common/metrics/service/ProductHealthEventFactory";
+} from "@statsparrot/web-common/metrics/initMetrics";
+import { BehaviourEventFactory } from "@statsparrot/web-common/metrics/service/BehaviourEventFactory";
+import { ErrorEventFactory } from "@statsparrot/web-common/metrics/service/ErrorEventFactory";
+import { MetricsService } from "@statsparrot/web-common/metrics/service/MetricsService";
+import { ProductHealthEventFactory } from "@statsparrot/web-common/metrics/service/ProductHealthEventFactory";
 import { onDestroy } from "svelte";
 import { get } from "svelte/store";
 
-export const cloudVersion = import.meta.env.RILL_UI_PUBLIC_VERSION;
+export const cloudVersion = import.meta.env.STATSPARROT_UI_PUBLIC_VERSION;
 
 export async function initCloudMetrics() {
-  const telemetryClient = new RillAdminTelemetryClient();
+  const telemetryClient = new ParrotAdminTelemetryClient();
 
   const metricsService = new MetricsService(telemetryClient, [
     new ProductHealthEventFactory(),

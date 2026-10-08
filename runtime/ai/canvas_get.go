@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
@@ -55,8 +55,8 @@ func (t *GetCanvas) CheckAccess(ctx context.Context) (bool, error) {
 		return false, nil
 	}
 
-	// Only allow for rill user agents since it's not useful in MCP contexts.
-	if !strings.HasPrefix(s.CatalogSession().UserAgent, "rill") {
+	// Only allow for statsparrot user agents since it's not useful in MCP contexts.
+	if !strings.HasPrefix(s.CatalogSession().UserAgent, "statsparrot") {
 		return false, nil
 	}
 

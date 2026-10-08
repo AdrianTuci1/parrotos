@@ -3,7 +3,7 @@ import {
   getAdminServiceGetOrganizationQueryKey,
   type V1GetOrganizationResponse,
   type V1Organization,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import type { FetchQueryOptions } from "@tanstack/query-core";
 
 function normalizeOrganization(

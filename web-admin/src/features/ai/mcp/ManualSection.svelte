@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CodeBlock from "@rilldata/web-common/components/code-block/CodeBlock.svelte";
+  import CodeBlock from "@statsparrot/web-common/components/code-block/CodeBlock.svelte";
   import PersonalAccessTokensSection from "../../personal-access-tokens/PersonalAccessTokensSection.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let apiUrl: string;
   export let isPublic: boolean;
@@ -10,7 +10,7 @@
 
   $: publicConfig = `{
   "mcpServers": {
-    "rill": {
+    "statsparrot": {
       "command": "npx",
       "args": [
         "mcp-remote",
@@ -22,7 +22,7 @@
 
   $: privateConfig = `{
   "mcpServers": {
-    "rill": {
+    "statsparrot": {
       "command": "npx",
       "args": [
         "mcp-remote",
@@ -31,7 +31,7 @@
         "Authorization:\${AUTH_HEADER}"
       ],
       "env": {
-        "AUTH_HEADER": "Bearer ${issuedToken ? issuedToken : "<Rill personal access token>"}"
+        "AUTH_HEADER": "Bearer ${issuedToken ? issuedToken : "<Parrot personal access token>"}"
       }
     }
   }
@@ -48,7 +48,7 @@
     <p class="text-sm text-fg-secondary">
       {m.mcp_add_to_config()}
       <a
-        href="https://docs.rilldata.com/guide/ai/mcp#manual-configuration-alternative-method"
+        href="https://docs.statsparrot.com/guide/ai/mcp#manual-configuration-alternative-method"
         target="_blank"
         rel="noopener"
       >

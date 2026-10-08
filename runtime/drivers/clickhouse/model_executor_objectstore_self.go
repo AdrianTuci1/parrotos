@@ -9,11 +9,11 @@ import (
 
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/gcs"
-	"github.com/rilldata/rill/runtime/drivers/s3"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/gcs"
+	"github.com/staticlabs/statsparrot/runtime/drivers/s3"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
 )
 
 type objectStoreInputProps struct {

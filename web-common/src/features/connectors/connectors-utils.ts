@@ -1,4 +1,4 @@
-import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
+import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
 import type { V1AnalyzedConnector } from "../../runtime-client";
 
 export const OLAP_DRIVERS_WITHOUT_MODELING = ["clickhouse", "druid", "pinot"];

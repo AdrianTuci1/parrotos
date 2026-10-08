@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Close from "@rilldata/web-common/components/icons/Close.svelte";
+  import Close from "@statsparrot/web-common/components/icons/Close.svelte";
 
   type Props = {
     tags: string[];

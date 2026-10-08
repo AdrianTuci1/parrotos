@@ -9,17 +9,17 @@ import (
 
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/jmoiron/sqlx"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/druid/druidsqldriver"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/druid/druidsqldriver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	oteltrace "go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime/drivers/druid")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/druid")
 
 const (
 	numRetries = 3

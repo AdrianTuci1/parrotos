@@ -1,13 +1,13 @@
-import { mergeFilters } from "@rilldata/web-common/features/dashboards/pivot/pivot-merge-filters";
+import { mergeFilters } from "@statsparrot/web-common/features/dashboards/pivot/pivot-merge-filters";
 import {
   createInExpression,
   createAndExpression,
   createSubQueryExpression,
   createBinaryExpression,
   createLikeExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { convertExpressionToFilterParam } from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { convertExpressionToFilterParam } from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
 import { describe, it, expect } from "vitest";
 
 describe("mergeFilters", () => {

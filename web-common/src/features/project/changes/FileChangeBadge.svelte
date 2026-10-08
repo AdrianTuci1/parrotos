@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { GitDiffResponse_GitFileStatus } from "@rilldata/web-common/proto/gen/rill/runtime/v1/api_pb";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import type { GitDiffResponse_GitFileStatus } from "@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/api_pb";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { status }: { status: GitDiffResponse_GitFileStatus | undefined } =
     $props();

@@ -10,7 +10,7 @@ import (
 )
 
 // modeEnviromentVariable is the environment variable that controls the test mode.
-const modeEnvironmentVariable = "RILL_RUNTIME_TEST_MODE"
+const modeEnvironmentVariable = "STATSPARROT_RUNTIME_TEST_MODE"
 
 // validModes is the set of valid test modes.
 var validModes = map[string]bool{
@@ -19,7 +19,7 @@ var validModes = map[string]bool{
 }
 
 // Expensive marks the test as an expensive operation.
-// Expensive tests only run when the environment variable RILL_RUNTIME_TEST_MODE=expensive is set.
+// Expensive tests only run when the environment variable STATSPARROT_RUNTIME_TEST_MODE=expensive is set.
 // They will error if the environment variable is not set, unless the -short flag is used, in which case they are skipped.
 func Expensive(t TestingT) {
 	// Skip expensive tests in short mode.
@@ -34,7 +34,7 @@ func Expensive(t TestingT) {
 	}
 }
 
-// Mode returns the current test mode set in the RILL_RUNTIME_TEST_MODE environment variable.
+// Mode returns the current test mode set in the STATSPARROT_RUNTIME_TEST_MODE environment variable.
 // Currently valid values are "" (default) and "expensive".
 func Mode(t TestingT) string {
 	// Load variable

@@ -1,5 +1,5 @@
-import { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { runtimeServiceGitPush } from "@rilldata/web-common/runtime-client";
+import { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { runtimeServiceGitPush } from "@statsparrot/web-common/runtime-client";
 
 export const CreateProjectBranchName = "develop";
 

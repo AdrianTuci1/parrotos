@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/admin/metrics"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/admin/metrics"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 )
 
 const metricsProjectClientTTL = 30 * time.Minute

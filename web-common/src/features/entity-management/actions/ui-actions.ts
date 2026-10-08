@@ -1,19 +1,19 @@
-import { renameFileArtifact } from "@rilldata/web-common/features/entity-management/actions/actions.ts";
+import { renameFileArtifact } from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
 import {
   isPinned,
   isManaged,
-} from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
-import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
-import { splitFolderAndFileName } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
+} from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
+import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
+import { splitFolderAndFileName } from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
 import {
   INVALID_NAME_MESSAGE,
   isDuplicateName,
   VALID_NAME_PATTERN,
-} from "@rilldata/web-common/features/entity-management/name-utils.ts";
-import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
-import { extractErrorMessage } from "@rilldata/web-common/lib/errors.ts";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/entity-management/name-utils.ts";
+import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
+import { extractErrorMessage } from "@statsparrot/web-common/lib/errors.ts";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { queryClient } from "../../../lib/svelte-query/globalQueryClient.ts";
 import { getFileNamesInDirectory } from "../file-selectors.ts";
 

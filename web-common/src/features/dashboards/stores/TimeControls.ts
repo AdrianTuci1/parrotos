@@ -1,20 +1,20 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
-import { normalizeWeekday } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
+import { normalizeWeekday } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls.ts";
 import {
   calculateComparisonTimeRangePartial,
   calculateTimeRangePartial,
   type ComparisonTimeRangeState,
   type TimeRangeState,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
-import { ExploreMetricsViewMetadata } from "@rilldata/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
-import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges.ts";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
+import { ExploreMetricsViewMetadata } from "@statsparrot/web-common/features/dashboards/stores/ExploreMetricsViewMetadata.ts";
+import { isoDurationToFullTimeRange } from "@statsparrot/web-common/lib/time/ranges/iso-ranges.ts";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
   type TimeRange,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types.ts";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/types.ts";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { Settings } from "luxon";
 import {
   derived,

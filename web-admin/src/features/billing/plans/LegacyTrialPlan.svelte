@@ -2,11 +2,11 @@
   import {
     V1BillingIssueType,
     type V1Subscription,
-  } from "@rilldata/web-admin/client";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors";
-  import PlanContainer from "@rilldata/web-admin/features/billing/plans/PlanContainer.svelte";
-  import PricingLink from "@rilldata/web-admin/features/billing/plans/modules/PricingLink.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors";
+  import PlanContainer from "@statsparrot/web-admin/features/billing/plans/PlanContainer.svelte";
+  import PricingLink from "@statsparrot/web-admin/features/billing/plans/modules/PricingLink.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

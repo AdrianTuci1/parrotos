@@ -8,10 +8,10 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog/index.js";
-  import { Button } from "@rilldata/web-common/components/button/index.js";
-  import DeployIcon from "@rilldata/web-common/components/icons/DeployIcon.svelte";
-  import { getDeployRoute } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
+  } from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import { Button } from "@statsparrot/web-common/components/button/index.js";
+  import DeployIcon from "@statsparrot/web-common/components/icons/DeployIcon.svelte";
+  import { getDeployRoute } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
 
   export let open: boolean;
 
@@ -35,13 +35,13 @@
           <AlertDialogDescription>
             You’re about to start a
             <a
-              href="https://www.rilldata.com/pricing"
+              href="https://www.statsparrot.com/pricing"
               target="_blank"
               class="text-primary-600"
             >
               30-day FREE trial
             </a>
-            of Rill Cloud, where you can set alerts, share dashboards, and more.
+            of Parrot Cloud, where you can set alerts, share dashboards, and more.
             The trial grants you 1 project up to 10GB.
           </AlertDialogDescription>
         </AlertDialogHeader>

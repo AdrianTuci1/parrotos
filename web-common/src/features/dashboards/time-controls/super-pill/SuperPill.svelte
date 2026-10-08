@@ -2,11 +2,11 @@
   import {
     TimeRangePreset,
     type TimeRange,
-  } from "@rilldata/web-common/lib/time/types";
+  } from "@statsparrot/web-common/lib/time/types";
   import type {
     V1ExploreTimeRange,
     V1TimeGrain,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { DateTime, Duration, Interval } from "luxon";
   import {
     bucketYamlRanges,
@@ -16,7 +16,7 @@
   import TimeGrainSelector from "../TimeGrainSelector.svelte";
   import * as Elements from "./components";
   import RangePickerV2 from "./new-time-dropdown/RangePickerV2.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
 
   export let minDate: DateTime<true> | undefined;
   export let maxDate: DateTime<true> | undefined;
@@ -59,7 +59,7 @@
   export let onTimeDimensionSelect: ((dimension: string) => void) | undefined =
     undefined;
 
-  const newPicker = featureFlags.rillTime;
+  const newPicker = featureFlags.statsparrotTime;
 
   $: rangeBuckets = bucketYamlRanges(
     timeRanges,

@@ -1,6 +1,6 @@
 /**
  * Stand-in for SvelteKit's `$app/stores` virtual module. Provides reactive stores
- * that the Rill chart/mapping code reads; in this host the page data never comes
+ * that the Parrot chart/mapping code reads; in this host the page data never comes
  * from SvelteKit, so they hold empty defaults.
  */
 import { writable } from "svelte/store";

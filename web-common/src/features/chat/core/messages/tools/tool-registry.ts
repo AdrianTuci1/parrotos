@@ -7,7 +7,7 @@
  * (the main conversation), not tool call UI.
  */
 
-import type { V1Message } from "@rilldata/web-common/runtime-client";
+import type { V1Message } from "@statsparrot/web-common/runtime-client";
 import { MessageContentType, ToolName } from "../../types";
 import { createChartBlock, type ChartBlock } from "../chart/chart-block";
 import {
@@ -15,16 +15,16 @@ import {
   type FileDiffBlock,
   type WriteFileCallData,
 } from "../file-diff/file-diff-block";
-import { addLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
+import { addLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
 import {
   navigateToFile,
   navigateToHome,
-} from "@rilldata/web-common/layout/navigation/editor-routing";
+} from "@statsparrot/web-common/layout/navigation/editor-routing";
 import {
   createSimpleTooCall,
   type SimpleToolCall,
-} from "@rilldata/web-common/features/chat/core/messages/simple-tool-call/simple-tool-call.ts";
-import { isCurrentActivePage } from "@rilldata/web-common/features/file-explorer/utils.ts";
+} from "@statsparrot/web-common/features/chat/core/messages/simple-tool-call/simple-tool-call.ts";
+import { isCurrentActivePage } from "@statsparrot/web-common/features/file-explorer/utils.ts";
 
 // =============================================================================
 // RENDER MODES

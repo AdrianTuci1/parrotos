@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { FormattedDataType } from "@rilldata/web-common/components/data-types";
-  import Shortcut from "@rilldata/web-common/components/tooltip/Shortcut.svelte";
-  import StackingWord from "@rilldata/web-common/components/tooltip/StackingWord.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TooltipShortcutContainer from "@rilldata/web-common/components/tooltip/TooltipShortcutContainer.svelte";
-  import TooltipTitle from "@rilldata/web-common/components/tooltip/TooltipTitle.svelte";
-  import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
-  import { TOOLTIP_STRING_LIMIT } from "@rilldata/web-common/layout/config";
+  import { FormattedDataType } from "@statsparrot/web-common/components/data-types";
+  import Shortcut from "@statsparrot/web-common/components/tooltip/Shortcut.svelte";
+  import StackingWord from "@statsparrot/web-common/components/tooltip/StackingWord.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TooltipShortcutContainer from "@statsparrot/web-common/components/tooltip/TooltipShortcutContainer.svelte";
+  import TooltipTitle from "@statsparrot/web-common/components/tooltip/TooltipTitle.svelte";
+  import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
+  import { TOOLTIP_STRING_LIMIT } from "@statsparrot/web-common/layout/config";
   import {
     copyToClipboard,
     isClipboardApiSupported,
-  } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
-  import { STRING_LIKES } from "@rilldata/web-common/lib/duckdb-data-types";
-  import { formatDataTypeAsDuckDbQueryString } from "@rilldata/web-common/lib/formatters";
+  } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
+  import { STRING_LIKES } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import { formatDataTypeAsDuckDbQueryString } from "@statsparrot/web-common/lib/formatters";
   import { getContext } from "svelte";
-  import ExternalLink from "@rilldata/web-common/components/icons/ExternalLink.svelte";
+  import ExternalLink from "@statsparrot/web-common/components/icons/ExternalLink.svelte";
   import BarAndLabel from "../../BarAndLabel.svelte";
   import type { VirtualizedTableConfig } from "../types";
 

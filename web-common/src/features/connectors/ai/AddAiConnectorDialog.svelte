@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Select as SelectPrimitive } from "bits-ui";
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import * as Select from "@rilldata/web-common/components/select";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import * as Select from "@statsparrot/web-common/components/select";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
   import CaretDownIcon from "../../../components/icons/CaretDownIcon.svelte";
   import ClaudeIcon from "../../../components/icons/connectors/ClaudeIcon.svelte";
   import GeminiIcon from "../../../components/icons/connectors/GeminiIcon.svelte";
@@ -28,8 +28,8 @@
   } from "../../../metrics/service/BehaviourEventTypes";
   import { MetricsEventSpace } from "../../../metrics/service/MetricsTypes";
   import { getScreenNameFromPage } from "../../file-explorer/telemetry";
-  import { getEnvFileStore } from "@rilldata/web-common/features/env-management/env-file-store.ts";
-  import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
+  import { getEnvFileStore } from "@statsparrot/web-common/features/env-management/env-file-store.ts";
+  import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
 
   export let open = false;
 
@@ -66,7 +66,7 @@
   $: modelProp = schema?.properties?.model;
   $: selectedOption = providerOptions.find((o) => o.value === schemaName);
   $: docsUrl = schemaName
-    ? `https://docs.rilldata.com/developers/build/connectors/services/${getBackendConnectorName(schemaName)}`
+    ? `https://docs.statsparrot.com/developers/build/connectors/services/${getBackendConnectorName(schemaName)}`
     : "";
 
   $: envEditSession = new EnvEditSession(envStore, schemaName, schema);

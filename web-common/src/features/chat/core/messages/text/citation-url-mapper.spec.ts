@@ -1,23 +1,23 @@
 import type { Page } from "@sveltejs/kit";
 import { describe, it, expect, beforeAll } from "vitest";
-import type { MetricsViewAndExploreSpecs } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-import { mapMetricsResolverQueryToUrl } from "@rilldata/web-common/features/chat/core/messages/text/citation-url-mapper.ts";
+import type { MetricsViewAndExploreSpecs } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+import { mapMetricsResolverQueryToUrl } from "@statsparrot/web-common/features/chat/core/messages/text/citation-url-mapper.ts";
 import {
   getQueryServiceMetricsViewTimeRangeQueryKey,
   type V1Message,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   AD_BIDS_EXPLORE_NAME,
   AD_BIDS_EXPLORE_WITH_3_MEASURES_DIMENSIONS,
   AD_BIDS_METRICS_3_MEASURES_DIMENSIONS,
   AD_BIDS_METRICS_NAME,
   AD_BIDS_TIME_RANGE_SUMMARY,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import {
   MessageType,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
 
 const MetricsResolverQuery = {
   metrics_view: "AdBids_metrics",

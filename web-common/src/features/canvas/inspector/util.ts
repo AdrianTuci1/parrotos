@@ -1,4 +1,4 @@
-import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
+import type { ChartFieldInput } from "@statsparrot/web-common/features/canvas/inspector/types";
 import type { BaseCanvasComponent } from "../components/BaseCanvasComponent";
 
 export function hasComponentFilters(

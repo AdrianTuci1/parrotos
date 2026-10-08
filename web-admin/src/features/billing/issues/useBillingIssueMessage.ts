@@ -1,15 +1,15 @@
-import { createAdminServiceGetOrganization } from "@rilldata/web-admin/client";
-import { getMessageForPaymentIssues } from "@rilldata/web-admin/features/billing/issues/getMessageForPaymentIssues";
-import { getMessageForCancelledIssue } from "@rilldata/web-admin/features/billing/issues/getMessageForCancelledIssue";
-import { getMessageForCustomMessage } from "@rilldata/web-admin/features/billing/issues/getMessageForCustomMessage";
-import { getMessageForTrialPlan } from "@rilldata/web-admin/features/billing/issues/getMessageForTrialPlan";
-import type { TeamPlanDialogTypes } from "@rilldata/web-admin/features/billing/plans/types";
+import { createAdminServiceGetOrganization } from "@statsparrot/web-admin/client";
+import { getMessageForPaymentIssues } from "@statsparrot/web-admin/features/billing/issues/getMessageForPaymentIssues";
+import { getMessageForCancelledIssue } from "@statsparrot/web-admin/features/billing/issues/getMessageForCancelledIssue";
+import { getMessageForCustomMessage } from "@statsparrot/web-admin/features/billing/issues/getMessageForCustomMessage";
+import { getMessageForTrialPlan } from "@statsparrot/web-admin/features/billing/issues/getMessageForTrialPlan";
+import type { TeamPlanDialogTypes } from "@statsparrot/web-admin/features/billing/plans/types";
 import {
   isProPlan,
   isTeamPlan,
-} from "@rilldata/web-admin/features/billing/plans/utils";
-import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors";
-import type { BannerMessage } from "@rilldata/web-common/lib/event-bus/events";
+} from "@statsparrot/web-admin/features/billing/plans/utils";
+import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors";
+import type { BannerMessage } from "@statsparrot/web-common/lib/event-bus/events";
 import { derived } from "svelte/store";
 
 export type BillingIssueMessage = {

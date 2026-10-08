@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Column from "@rilldata/web-common/components/icons/Column.svelte";
-  import Row from "@rilldata/web-common/components/icons/Row.svelte";
-  import SearchableFilterChip from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterChip.svelte";
-  import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
-  import ReplacePivotDialog from "@rilldata/web-common/features/dashboards/pivot/ReplacePivotDialog.svelte";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Column from "@statsparrot/web-common/components/icons/Column.svelte";
+  import Row from "@statsparrot/web-common/components/icons/Row.svelte";
+  import SearchableFilterChip from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterChip.svelte";
+  import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
+  import ReplacePivotDialog from "@statsparrot/web-common/features/dashboards/pivot/ReplacePivotDialog.svelte";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
   import {
     dimensionSearchText,
     metricsExplorerStore,
-  } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import ComparisonSelector from "@rilldata/web-common/features/dashboards/time-controls/ComparisonSelector.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
+  } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import ComparisonSelector from "@statsparrot/web-common/features/dashboards/time-controls/ComparisonSelector.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
   import type {
     DashboardTimeControls,
     TimeRange,
-  } from "@rilldata/web-common/lib/time/types";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/time/types";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import ExportMenu from "../../exports/ExportMenu.svelte";
   import { featureFlags } from "../../feature-flags";
   import { PivotChipType } from "../pivot/types";
@@ -28,7 +28,7 @@
   import StartPivotButton from "../toolbars/StartPivotButton.svelte";
   import { getTDDExportQuery } from "./tdd-export";
   import type { TDDComparison } from "./types";
-  import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
+  import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
 
   export let exploreName: string;
   export let dimensionName: string;

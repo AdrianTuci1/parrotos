@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/svelte";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@rilldata/web-common/components/dropdown-menu", async () => {
+vi.mock("@statsparrot/web-common/components/dropdown-menu", async () => {
   const Passthrough = (await import("./__fixtures__/SlotPassthrough.svelte"))
     .default;
   const Clickable = (await import("./__fixtures__/ClickableItem.svelte"))
@@ -14,10 +14,10 @@ vi.mock("@rilldata/web-common/components/dropdown-menu", async () => {
   };
 });
 
-vi.mock("@rilldata/web-common/lib/i18n/gen/runtime", async (importOriginal) => {
+vi.mock("@statsparrot/web-common/lib/i18n/gen/runtime", async (importOriginal) => {
   const actual =
     await importOriginal<
-      typeof import("@rilldata/web-common/lib/i18n/gen/runtime")
+      typeof import("@statsparrot/web-common/lib/i18n/gen/runtime")
     >();
   return {
     ...actual,
@@ -26,7 +26,7 @@ vi.mock("@rilldata/web-common/lib/i18n/gen/runtime", async (importOriginal) => {
   };
 });
 
-import { setLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+import { setLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 import LanguageSwitcher from "./LanguageSwitcher.svelte";
 
 describe("LanguageSwitcher", () => {

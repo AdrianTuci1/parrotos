@@ -1,40 +1,40 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { isNotFoundError } from "@rilldata/web-common/lib/errors";
-  import { createAdminServiceDeleteAlert } from "@rilldata/web-admin/client";
-  import EditAlert from "@rilldata/web-admin/features/alerts/EditAlert.svelte";
-  import AlertFilterCriteria from "@rilldata/web-admin/features/alerts/metadata/AlertFilterCriteria.svelte";
-  import AlertFilters from "@rilldata/web-admin/features/alerts/metadata/AlertFilters.svelte";
-  import AlertOwnerBlock from "@rilldata/web-admin/features/alerts/metadata/AlertOwnerBlock.svelte";
-  import { humaniseAlertSnoozeOption } from "@rilldata/web-admin/features/alerts/metadata/utils";
+  import { isNotFoundError } from "@statsparrot/web-common/lib/errors";
+  import { createAdminServiceDeleteAlert } from "@statsparrot/web-admin/client";
+  import EditAlert from "@statsparrot/web-admin/features/alerts/EditAlert.svelte";
+  import AlertFilterCriteria from "@statsparrot/web-admin/features/alerts/metadata/AlertFilterCriteria.svelte";
+  import AlertFilters from "@statsparrot/web-admin/features/alerts/metadata/AlertFilters.svelte";
+  import AlertOwnerBlock from "@statsparrot/web-admin/features/alerts/metadata/AlertOwnerBlock.svelte";
+  import { humaniseAlertSnoozeOption } from "@statsparrot/web-admin/features/alerts/metadata/utils";
   import {
     useAlert,
     useAlertDashboardName,
     useAlertDashboardState,
     useIsAlertCreatedByCode,
-  } from "@rilldata/web-admin/features/alerts/selectors";
-  import ProjectAccessControls from "@rilldata/web-admin/features/projects/ProjectAccessControls.svelte";
-  import MetadataLabel from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
-  import MetadataList from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataList.svelte";
-  import MetadataValue from "@rilldata/web-admin/features/scheduled-reports/metadata/MetadataValue.svelte";
-  import { extractNotifier } from "@rilldata/web-admin/features/scheduled-reports/metadata/notifiers-utils";
-  import { formatRefreshSchedule } from "@rilldata/web-admin/features/scheduled-reports/metadata/utils.ts";
-  import { IconButton } from "@rilldata/web-common/components/button";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { hasValidMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-  import { getMappedExploreUrl } from "@rilldata/web-common/features/explore-mappers/get-mapped-explore-url.ts";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
+  } from "@statsparrot/web-admin/features/alerts/selectors";
+  import ProjectAccessControls from "@statsparrot/web-admin/features/projects/ProjectAccessControls.svelte";
+  import MetadataLabel from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataLabel.svelte";
+  import MetadataList from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataList.svelte";
+  import MetadataValue from "@statsparrot/web-admin/features/scheduled-reports/metadata/MetadataValue.svelte";
+  import { extractNotifier } from "@statsparrot/web-admin/features/scheduled-reports/metadata/notifiers-utils";
+  import { formatRefreshSchedule } from "@statsparrot/web-admin/features/scheduled-reports/metadata/utils.ts";
+  import { IconButton } from "@statsparrot/web-common/components/button";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { hasValidMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+  import { getMappedExploreUrl } from "@statsparrot/web-common/features/explore-mappers/get-mapped-explore-url.ts";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
   import {
     getRuntimeServiceListResourcesQueryKey,
     type V1MetricsViewAggregationRequest,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

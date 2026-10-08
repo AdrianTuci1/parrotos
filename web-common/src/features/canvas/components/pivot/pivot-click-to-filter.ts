@@ -19,7 +19,7 @@ import {
   createEmptyClickSelectionState,
   dimKeyFromDimValues,
   dimKeyFromRow,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-click-selection";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-click-selection";
 import {
   type ExtractedFilter,
   type PivotRowSelectionState,
@@ -31,22 +31,22 @@ import {
   getFiltersForColumnHeader,
   getFiltersForRowData,
   getFiltersForRowHeader,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-row-selection";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-row-selection";
 import {
   getFiltersForCell,
   getFiltersFromRow,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import type {
   PivotDataRow,
   PivotDataState,
   PivotDataStore,
   PivotDataStoreConfig,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 import {
   type Readable,
   type Writable,

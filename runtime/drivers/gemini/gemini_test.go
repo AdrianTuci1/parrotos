@@ -4,14 +4,14 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/drivers/gemini"
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gemini"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestCompletion(t *testing.T) {
@@ -56,7 +56,7 @@ measures:
 	s, err := r.Session(t.Context(), &ai.SessionOptions{
 		InstanceID: instanceID,
 		Claims:     claims,
-		UserAgent:  "rill-evals",
+		UserAgent:  "statsparrot-evals",
 	})
 	require.NoError(t, err)
 	defer func() {

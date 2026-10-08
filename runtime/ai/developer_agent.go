@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai/instructions"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai/instructions"
 )
 
 const DeveloperAgentName = "developer_agent"
@@ -145,7 +145,7 @@ Their request may or may not relate to this file.
 {{ end }}
 
 {{ if .init_project }}
-The project is currently empty apart from a few boilerplate files (like rill.yaml).
+The project is currently empty apart from a few boilerplate files (like statsparrot.yaml).
 You should help them set up their initial project based on their task description.
 Ideally you should set up a full initial data source to dashboard journey.
 If the user did not explicitly mention an initial data source, generate a model with mock data.
@@ -174,7 +174,7 @@ func checkDeveloperAccess(ctx context.Context, rt *runtime.Runtime, internal boo
 
 	// Don't expose agent tools to external clients (like MCP)
 	if internal {
-		if !strings.HasPrefix(s.CatalogSession().UserAgent, "rill") {
+		if !strings.HasPrefix(s.CatalogSession().UserAgent, "statsparrot") {
 			return false, nil
 		}
 	}

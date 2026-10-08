@@ -3,12 +3,12 @@
   Shows the diff visualization with expandable request/response details.
 -->
 <script lang="ts">
-  import Diff2HtmlView from "@rilldata/web-common/components/diff/Diff2HtmlView.svelte";
+  import Diff2HtmlView from "@statsparrot/web-common/components/diff/Diff2HtmlView.svelte";
   import type { V1Tool } from "../../../../../runtime-client";
   import ToolCall from "../tools/ToolCall.svelte";
   import type { FileDiffBlock } from "./file-diff-block";
-  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let block: FileDiffBlock;
   export let tools: V1Tool[] | undefined = undefined;

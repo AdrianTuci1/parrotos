@@ -5,12 +5,12 @@
     dashboardChatActions,
     dashboardChatOpen,
   } from "./layouts/sidebar/sidebar-store";
-  import { createDashboardChatConfig } from "@rilldata/web-common/features/dashboards/chat-context.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { createCanvasChatConfig } from "@rilldata/web-common/features/canvas/chat-context.ts";
-  import ThemeProvider from "@rilldata/web-common/features/dashboards/ThemeProvider.svelte";
-  import { activeDashboardTheme } from "@rilldata/web-common/features/themes/active-dashboard-theme";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { createDashboardChatConfig } from "@statsparrot/web-common/features/dashboards/chat-context.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { createCanvasChatConfig } from "@statsparrot/web-common/features/canvas/chat-context.ts";
+  import ThemeProvider from "@statsparrot/web-common/features/dashboards/ThemeProvider.svelte";
+  import { activeDashboardTheme } from "@statsparrot/web-common/features/themes/active-dashboard-theme";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
 

@@ -1,4 +1,4 @@
-import type { CommonUserFields } from "@rilldata/web-common/metrics/service/MetricsTypes";
+import type { CommonUserFields } from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import UAParser from "ua-parser-js";
 
 export async function collectCommonUserFields(): Promise<CommonUserFields> {

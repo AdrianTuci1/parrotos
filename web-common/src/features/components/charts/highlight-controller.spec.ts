@@ -1,7 +1,7 @@
 import {
   clearExternalHover,
   setExternalHover,
-} from "@rilldata/web-common/features/components/charts/highlight-controller";
+} from "@statsparrot/web-common/features/components/charts/highlight-controller";
 import { describe, expect, it, vi } from "vitest";
 
 // Mock Vega View that tracks signal calls

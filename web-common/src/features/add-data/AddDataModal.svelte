@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import AddDataManager from "@rilldata/web-common/features/add-data/manager/AddDataManager.svelte";
-  import type { AddDataConfig } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import AddDataManager from "@statsparrot/web-common/features/add-data/manager/AddDataManager.svelte";
+  import type { AddDataConfig } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
 
   export let open: boolean = true;
   export let schema: string | undefined = undefined;

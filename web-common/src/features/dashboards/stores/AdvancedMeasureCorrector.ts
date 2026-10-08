@@ -1,13 +1,13 @@
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   MetricsViewSpecMeasureType,
   type MetricsViewSpecMeasure,
   type V1MetricsViewSpec,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 /**
  * Single use class to correct incorrect use of advanced measures.

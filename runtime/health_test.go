@@ -3,16 +3,16 @@ package runtime_test
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 func TestHealth(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": ``,
+			"statsparrot.yaml": ``,
 			"m1.sql":    `SELECT now() AS time, 'a' AS name, 1 AS value`,
 			"mv1.yaml": `
 type: metrics_view

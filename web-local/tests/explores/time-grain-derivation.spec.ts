@@ -37,7 +37,7 @@ test.describe("Time grain derivation from URL", () => {
     ["PT6H (6 hours)", "PT6H", "hour"],
     ["P4W (4 weeks)", "P4W", "week"],
 
-    // Rill time syntax tests with "as of latest" format
+    // Parrot time syntax tests with "as of latest" format
     ["365d as of latest/h+1h", "365d as of latest/h+1h", "day"],
     ["12M as of latest/m+1m", "12M as of latest/m+1m", "day"],
     ["365M as of latest/d+1d", "365M as of latest/d+1d", "month"],
@@ -49,8 +49,8 @@ test.describe("Time grain derivation from URL", () => {
     ["5y as of latest/d", "5y as of latest/d", "week"],
 
     // Period-to-date tests
-    ["week-to-date", "rill-WTD", "day"],
-    ["month-to-date", "rill-MTD", "day"],
+    ["week-to-date", "statsparrot-WTD", "day"],
+    ["month-to-date", "statsparrot-MTD", "day"],
 
     // Snap grain should influence derived grain
     ["7d as of latest/h", "7d as of latest/h", "hour"],

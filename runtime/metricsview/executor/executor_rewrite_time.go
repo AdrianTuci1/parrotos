@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
-	"github.com/rilldata/rill/runtime/pkg/timeutil"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/timeutil"
 )
 
 // RewriteQueryTimeRanges rewrites the time ranges in the query to fixed start/end timestamps.
@@ -83,7 +83,7 @@ func (e *Executor) ResolveTimeRange(ctx context.Context, tr *metricsview.TimeRan
 		ts.Now = *executionTime
 	}
 
-	rillTime, err := rilltime.Parse(tr.Expression, rilltime.ParseOptions{
+	statsparrotTime, err := statspartime.Parse(tr.Expression, statspartime.ParseOptions{
 		SmallestGrain:   timeutil.TimeGrainFromAPI(e.metricsView.SmallestTimeGrain),
 		DefaultTimeZone: tz,
 	})
@@ -92,7 +92,7 @@ func (e *Executor) ResolveTimeRange(ctx context.Context, tr *metricsview.TimeRan
 	}
 
 	// TODO: use grain when we have timeseries from metrics_view_aggregation
-	tr.Start, tr.End, _ = rillTime.Eval(rilltime.EvalOptions{
+	tr.Start, tr.End, _ = statsparrotTime.Eval(statspartime.EvalOptions{
 		Now:        ts.Now,
 		MinTime:    ts.Min,
 		MaxTime:    ts.Max,
@@ -128,7 +128,7 @@ func (e *Executor) resolveISOTimeRange(ctx context.Context, tr *metricsview.Time
 	}
 
 	if tr.IsoDuration != "" {
-		rt, err := rilltime.ParseLegacy(tr.IsoDuration, tr.IsoOffset, tr.RoundToGrain.ToTimeutil(), rilltime.ParseOptions{
+		rt, err := statspartime.ParseLegacy(tr.IsoDuration, tr.IsoOffset, tr.RoundToGrain.ToTimeutil(), statspartime.ParseOptions{
 			DefaultTimeZone: tz,
 			SmallestGrain:   timeutil.TimeGrainFromAPI(e.metricsView.SmallestTimeGrain),
 		})
@@ -143,7 +143,7 @@ func (e *Executor) resolveISOTimeRange(ctx context.Context, tr *metricsview.Time
 			}
 		}
 
-		tr.Start, tr.End, _ = rt.Eval(rilltime.EvalOptions{
+		tr.Start, tr.End, _ = rt.Eval(statspartime.EvalOptions{
 			Now:        ts.Now,
 			MinTime:    ts.Min,
 			MaxTime:    ts.Max,

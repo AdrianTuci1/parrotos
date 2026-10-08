@@ -3,7 +3,7 @@ import {
   MessageContentType,
   MessageType,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types";
+} from "@statsparrot/web-common/features/chat/core/types";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // RILL AGENT ROUTER — adapter for the product chat
@@ -11,22 +11,22 @@ import {
 //
 // The product chat (ChatView/ChatPanel/ChatComposer) models conversation as
 // `{ role, content, toolCalls: [{ type: 'chart', chartSpec, chartType }, ...] }`.
-// Rill's chat instead streams the Go runtime's `/ai/complete/stream` endpoint
+// Parrot's chat instead streams the Go runtime's `/ai/complete/stream` endpoint
 // as `V1Message[]` (CALL/RESULT frames emitted by router_agent -> analyst_agent,
 // with `create_chart` tools returning `{ chart_type, spec }`).
 //
-// This module is the bridge: it turns a product prompt into a Rill router
+// This module is the bridge: it turns a product prompt into a Parrot router
 // request, streams the runtime completion, and translates the parsed stream
 // back into the product's text + `create_chart` toolCalls (which the existing
-// rillChatAdapter/ChartBlock path renders as a real chart). When the runtime's
+// statsparrotChatAdapter/ChartBlock path renders as a real chart). When the runtime's
 // AI backend is unreachable/not configured, it falls back to a deterministic
 // mock router that answers simple prompts with a `create_chart` call against
-// the default metrics view (the .rill-demo `orders_metrics` view).
+// the default metrics view (the .statsparrot-demo `orders_metrics` view).
 //
-// Callers only need `sendToRillRouter(...)`. It returns
+// Callers only need `sendToParrotRouter(...)`. It returns
 //   { conversationId, text, toolCalls, fromMock }
 // where `toolCalls` entries are already product-shaped so ChatPanel renders
-// them via RillChartStream without further transformation.
+// them via ParrotChartStream without further transformation.
 
 /** Default agent for the product chat (dashboards/questions -> analyst). */
 export const DEFAULT_AGENT = ToolName.ANALYST_AGENT;
@@ -36,17 +36,17 @@ export const DEFAULT_AGENT = ToolName.ANALYST_AGENT;
 // ═══════════════════════════════════════════════
 
 /**
- * Send one product prompt through the Rill agent router and return the parsed
+ * Send one product prompt through the Parrot agent router and return the parsed
  * assistant reply as product-shaped `{ text, toolCalls }`.
  *
  * @param {object} opts
- * @param {object|undefined} opts.runtimeClient  Rill RuntimeClient (from useRuntimeClient).
+ * @param {object|undefined} opts.runtimeClient  Parrot RuntimeClient (from useRuntimeClient).
  * @param {string} opts.prompt                   The user's message.
- * @param {string|undefined} opts.conversationId Rill conversation to continue.
+ * @param {string|undefined} opts.conversationId Parrot conversation to continue.
  * @param {string} [opts.agent]                  Agent to route to (analyst_agent).
  * @param {AbortSignal} [opts.signal]
  */
-export async function sendToRillRouter({
+export async function sendToParrotRouter({
   runtimeClient,
   prompt,
   conversationId,
@@ -119,7 +119,7 @@ async function streamFromRuntime({
     signal,
     onFrame: ({ event, data }) => {
       if (event === "error") {
-        throw new Error(data || "Rill runtime completion failed");
+        throw new Error(data || "Parrot runtime completion failed");
       }
 
       let frame;
@@ -162,7 +162,7 @@ async function streamFromRuntime({
         return;
       }
 
-      // Other Rill tools (run_sql, list_metrics_views, navigate, etc.) are
+      // Other Parrot tools (run_sql, list_metrics_views, navigate, etc.) are
       // intentionally not mapped to product toolCalls — they have no product
       // renderer and are internal to the agent's reasoning.
     },
@@ -202,7 +202,7 @@ async function streamCompleteEndpoint({
   });
 
   if (!response.ok || !response.body) {
-    throw new Error(`Rill runtime complete failed: ${response.status}`);
+    throw new Error(`Parrot runtime complete failed: ${response.status}`);
   }
 
   const reader = response.body.getReader();
@@ -318,7 +318,7 @@ function buildMockChartSpec({ metricsView, dimension, measure }) {
 
 /**
  * Extract the assistant reply from a router_agent RESULT message. Its contentData
- * is JSON `{ response, agent }` (RouterAgentResult). Mirrors Rill's
+ * is JSON `{ response, agent }` (RouterAgentResult). Mirrors Parrot's
  * `extractMessageText` for router_agent messages without pulling in the Svelte
  * helpers.
  */
@@ -334,7 +334,7 @@ function extractRouterReply(message) {
 }
 
 /**
- * Build a product chat `create_chart` toolCall from a Rill CALL message, whose
+ * Build a product chat `create_chart` toolCall from a Parrot CALL message, whose
  * contentData is JSON `{ chart_type, spec }` (CreateChartArgs). Returns null when
  * the message is malformed.
  */

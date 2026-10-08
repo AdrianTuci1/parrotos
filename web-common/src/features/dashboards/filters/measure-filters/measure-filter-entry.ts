@@ -3,16 +3,16 @@ import {
   MeasureFilterToProtoOperation,
   MeasureFilterType,
   ProtoToMeasureFilterOperations,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
 import {
   createBetweenExpression,
   createBinaryExpression,
   isBetweenExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export type MeasureFilterEntry = {
   measure: string;

@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config";
+import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import { DateTime, Interval } from "luxon";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
-import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
+import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { CaretDownIcon } from "../../super-pill/new-time-dropdown/react/icons";
 import { RangeDisplay } from "../../super-pill/new-time-dropdown/react/RangeDisplay";
 import { CalendarPlusDateInput } from "../../super-pill/new-time-dropdown/react/CalendarPlusDateInput";

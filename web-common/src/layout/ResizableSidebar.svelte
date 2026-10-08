@@ -12,7 +12,7 @@
 </script>
 
 <script lang="ts">
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
   import { writable, type Writable } from "svelte/store";
 
   export let id: string;

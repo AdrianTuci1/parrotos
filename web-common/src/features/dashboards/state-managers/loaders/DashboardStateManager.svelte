@@ -4,24 +4,24 @@
   import {
     ExploreUrlLimitWarningBannerID,
     ExploreUrlLimitWarningBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import type { CompoundQueryResult } from "@rilldata/web-common/features/compound-query-result";
-  import { DashboardStateDataLoader } from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateDataLoader";
-  import { DashboardStateSync } from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateSync";
-  import { useExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-  import DashboardLoading from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardLoading.svelte";
-  import { isUrlTooLong } from "@rilldata/web-common/features/dashboards/url-state/url-length-limits";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-common/components/banner/constants";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import type { CompoundQueryResult } from "@statsparrot/web-common/features/compound-query-result";
+  import { DashboardStateDataLoader } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateDataLoader";
+  import { DashboardStateSync } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateSync";
+  import { useExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+  import DashboardLoading from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardLoading.svelte";
+  import { isUrlTooLong } from "@statsparrot/web-common/features/dashboards/url-state/url-length-limits";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import {
     extractErrorMessage,
     extractErrorStatusCode,
-  } from "@rilldata/web-common/lib/errors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/errors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onDestroy } from "svelte";
-  import { clearExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
+  import { clearExploreSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
 
   export let exploreName: string;
   export let storageNamespacePrefix: string | undefined = undefined;

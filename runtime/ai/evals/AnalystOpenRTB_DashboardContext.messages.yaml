@@ -67,7 +67,7 @@
   type: result
   tool: query_metrics_view
   content_type: json
-  content: '{"schema":[{"name":"app_site_name","type":"STRING"},{"name":"impressions","type":"INT128"}],"data":[["Not Available",36706]],"open_url":"https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/68014bc9-b4b1-4ddd-a33f-46eae1bd3996/message/6c40591d-f41c-402c-a087-518e564dbe84/-/open"}'
+  content: '{"schema":[{"name":"app_site_name","type":"STRING"},{"name":"impressions","type":"INT128"}],"data":[["Not Available",36706]],"open_url":"https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/68014bc9-b4b1-4ddd-a33f-46eae1bd3996/message/6c40591d-f41c-402c-a087-518e564dbe84/-/open"}'
 - id: a607f744-0355-4fc8-bcca-4274c37a3507
   parent_id: fe87815a-1291-4bb1-ae5b-39e8b89a8fef
   session_id: 68014bc9-b4b1-4ddd-a33f-46eae1bd3996
@@ -77,4 +77,4 @@
   type: result
   tool: analyst_agent
   content_type: json
-  content: '{"response":"Based on the current dashboard filters (Android only) and time range (2023-09-11 to 2023-09-14), **the app_site_name with the most impressions is _“Not Available”_ with 36,706 impressions** ([Impressions by app site name](https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/68014bc9-b4b1-4ddd-a33f-46eae1bd3996/message/6c40591d-f41c-402c-a087-518e564dbe84/-/open))."}'
+  content: '{"response":"Based on the current dashboard filters (Android only) and time range (2023-09-11 to 2023-09-14), **the app_site_name with the most impressions is _“Not Available”_ with 36,706 impressions** ([Impressions by app site name](https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/68014bc9-b4b1-4ddd-a33f-46eae1bd3996/message/6c40591d-f41c-402c-a087-518e564dbe84/-/open))."}'

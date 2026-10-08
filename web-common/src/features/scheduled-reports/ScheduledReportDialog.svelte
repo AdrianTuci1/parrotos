@@ -18,23 +18,23 @@
 </script>
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
   import {
     createAdminServiceCreateReport,
     createAdminServiceEditReport,
     createAdminServiceGetCurrentUser,
     createAdminServiceListProjectMemberUsers,
-  } from "@rilldata/web-admin/client";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
+  } from "@statsparrot/web-admin/client";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
   import {
     aggregationRequestWithFilters,
     aggregationRequestWithRowsAndColumns,
     aggregationRequestWithTimeRange,
     buildAggregationRequest,
-  } from "@rilldata/web-common/features/dashboards/aggregation-request-utils.ts";
-  import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
+  } from "@statsparrot/web-common/features/dashboards/aggregation-request-utils.ts";
+  import { useMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
   import {
     getDashboardNameFromReport,
     getExistingReportInitialFormValues,
@@ -46,9 +46,9 @@
     stripInternalReportParams,
     ReportRunAs,
     type ReportValues,
-  } from "@rilldata/web-common/features/scheduled-reports/utils";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-common/features/scheduled-reports/utils";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import { get } from "svelte/store";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup, type ValidationAdapter } from "sveltekit-superforms/adapters";
@@ -63,7 +63,7 @@
     type V1ReportSpec,
     type V1ReportSpecAnnotations,
   } from "../../runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { getCanvasFilters } from "../canvas/filters/canvas-filter-expressions";
   import { getCanvasStoreUnguarded } from "../canvas/state-managers/state-managers";
   import { getStateManagers } from "../dashboards/state-managers/state-managers";

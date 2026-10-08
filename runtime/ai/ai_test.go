@@ -10,15 +10,15 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 // newSession sets up a new AI session for testing.
@@ -31,7 +31,7 @@ func newSession(t *testing.T, rt *runtime.Runtime, instanceID string) *ai.Sessio
 	s, err := r.Session(t.Context(), &ai.SessionOptions{
 		InstanceID: instanceID,
 		Claims:     claims,
-		UserAgent:  "rill-evals",
+		UserAgent:  "statsparrot-evals",
 	})
 	require.NoError(t, err)
 	t.Cleanup(func() {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { HTMLAttributes } from "svelte/elements";
-  import { cn } from "@rilldata/web-common/lib/shadcn.ts";
+  import { cn } from "@statsparrot/web-common/lib/shadcn.ts";
 
   type $$Props = HTMLAttributes<HTMLElement>;
 

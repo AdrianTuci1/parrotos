@@ -1,6 +1,6 @@
 <script lang="ts">
-  import GlobalDimensionSearch from "@rilldata/web-common/features/dashboards/dimension-search/GlobalDimensionSearch.svelte";
-  import { useExplore } from "@rilldata/web-common/features/explores/selectors";
+  import GlobalDimensionSearch from "@statsparrot/web-common/features/dashboards/dimension-search/GlobalDimensionSearch.svelte";
+  import { useExplore } from "@statsparrot/web-common/features/explores/selectors";
   import { useRuntimeClient } from "../../runtime-client/v2";
   import ChatToggle from "../chat/layouts/sidebar/ChatToggle.svelte";
   import {
@@ -10,7 +10,7 @@
   import ViewAsButton from "../dashboards/granular-access-policies/ViewAsButton.svelte";
   import {
     useDashboardPolicyCheck,
-    useRillYamlPolicyCheck,
+    useParrotYamlPolicyCheck,
   } from "../dashboards/granular-access-policies/useSecurityPolicyCheck";
   import StateManagersProvider from "../dashboards/state-managers/StateManagersProvider.svelte";
   import { featureFlags } from "../feature-flags";
@@ -34,13 +34,13 @@
     runtimeClient,
     metricsViewFilePath,
   );
-  $: rillYamlPolicyCheck = useRillYamlPolicyCheck(runtimeClient);
+  $: statsparrotYamlPolicyCheck = useParrotYamlPolicyCheck(runtimeClient);
 
   const { readOnly, dashboardChat } = featureFlags;
 </script>
 
 <div class="flex gap-2 flex-shrink-0 ml-auto">
-  {#if $explorePolicyCheck.data || $metricsPolicyCheck.data || $rillYamlPolicyCheck.data}
+  {#if $explorePolicyCheck.data || $metricsPolicyCheck.data || $statsparrotYamlPolicyCheck.data}
     <ViewAsButton />
   {/if}
   <StateManagersProvider {metricsViewName} {exploreName} let:ready>

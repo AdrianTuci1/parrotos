@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Overlay from "@rilldata/web-common/components/overlay/Overlay.svelte";
+  import Overlay from "@statsparrot/web-common/components/overlay/Overlay.svelte";
   import { fly } from "svelte/transition";
   import { EntityStatus } from "../features/entity-management/types";
   import Spinner from "../features/entity-management/Spinner.svelte";

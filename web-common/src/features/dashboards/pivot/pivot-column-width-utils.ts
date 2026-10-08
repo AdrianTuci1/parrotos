@@ -1,10 +1,10 @@
-import { extractSamples } from "@rilldata/web-common/components/virtualized-table/init-widths";
-import { isTimeDimension } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+import { extractSamples } from "@statsparrot/web-common/components/virtualized-table/init-widths";
+import { isTimeDimension } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import {
   COMPARISON_PERCENT,
   type PivotDataRow,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import { clamp } from "@rilldata/web-common/lib/clamp";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { clamp } from "@statsparrot/web-common/lib/clamp";
 
 export const COLUMN_WIDTH_CONSTANTS = {
   MIN_COL_WIDTH: 100,

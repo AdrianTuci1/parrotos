@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-  import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+  import type { TimeRangeString } from "@statsparrot/web-common/lib/time/types";
   import {
     createQueryServiceMetricsViewRows,
     type V1Expression,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { isErrorCode } from "@rilldata/web-common/lib/errors";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { isErrorCode } from "@statsparrot/web-common/lib/errors";
   import { writable } from "svelte/store";
   import { useExploreState } from "web-common/src/features/dashboards/stores/dashboard-stores";
   import { PreviewTable } from "../../../components/preview-table";

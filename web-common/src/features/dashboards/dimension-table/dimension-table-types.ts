@@ -1,5 +1,5 @@
-import type { PERC_DIFF } from "@rilldata/web-common/components/data-types/type-utils";
-import type { NumberParts } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
+import type { PERC_DIFF } from "@statsparrot/web-common/components/data-types/type-utils";
+import type { NumberParts } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
 
 /**
  * A DimensionTableRow object represents a single row in a

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const ListMetricsViewsName = "list_metrics_views"
@@ -94,10 +94,10 @@ func (t *ListMetricsViews) Handler(ctx context.Context, args *ListMetricsViewsAr
 
 	// Find instance-wide AI context and add it to the response.
 	// NOTE: These arguably belong in the top-level instructions or other metadata, but that doesn't currently support dynamic values.
-	// Rill's own agents receive the project instructions directly in their prompts,
-	// so this is only for external MCP clients (identified by a non-rill user agent).
+	// Parrot's own agents receive the project instructions directly in their prompts,
+	// so this is only for external MCP clients (identified by a non-statsparrot user agent).
 	var aiInstructions string
-	if !strings.HasPrefix(session.CatalogSession().UserAgent, "rill") {
+	if !strings.HasPrefix(session.CatalogSession().UserAgent, "statsparrot") {
 		instance, err := t.Runtime.Instance(ctx, session.InstanceID())
 		if err != nil {
 			return nil, fmt.Errorf("failed to get instance %q: %w", session.InstanceID(), err)

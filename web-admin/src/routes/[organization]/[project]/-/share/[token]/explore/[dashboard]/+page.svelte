@@ -1,18 +1,18 @@
 <script lang="ts">
   import { onNavigate } from "$app/navigation";
   import { page } from "$app/stores";
-  import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
+  import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
   import {
     TokenBannerID,
     TokenBannerPriority,
-  } from "@rilldata/web-common/components/banner/constants";
-  import { Dashboard } from "@rilldata/web-common/features/dashboards";
-  import StateManagersProvider from "@rilldata/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
-  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/components/banner/constants";
+  import { Dashboard } from "@statsparrot/web-common/features/dashboards";
+  import StateManagersProvider from "@statsparrot/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
+  import DashboardStateManager from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
 

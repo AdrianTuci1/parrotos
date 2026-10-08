@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mazznoer/csscolorparser"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 )
 
 // ThemeYAML is the raw structure of a Theme for the UI in YAML (does not include common fields)

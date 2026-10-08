@@ -9,22 +9,22 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/rilldata/rill/cli/pkg/version"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/conncache"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/cli/pkg/version"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/conncache"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-var tracer = otel.Tracer("github.com/rilldata/rill/runtime")
+var tracer = otel.Tracer("github.com/staticlabs/statsparrot/runtime")
 
 type Options struct {
 	MetastoreConnector           string
@@ -137,12 +137,12 @@ func (r *Runtime) GetInstanceAttributes(ctx context.Context, instanceID string) 
 	return instanceAnnotationsToAttribs(instance)
 }
 
-func (r *Runtime) UpdateInstanceWithRillYAML(ctx context.Context, instanceID string, p *parser.Parser, restartController bool) error {
-	if p.RillYAML == nil {
-		return errors.New("rill.yaml is required to update an instance")
+func (r *Runtime) UpdateInstanceWithParrotYAML(ctx context.Context, instanceID string, p *parser.Parser, restartController bool) error {
+	if p.ParrotYAML == nil {
+		return errors.New("statsparrot.yaml is required to update an instance")
 	}
 
-	rillYAML := p.RillYAML
+	statsparrotYAML := p.ParrotYAML
 	dotEnv := p.GetDotEnv()
 
 	inst, err := r.Instance(ctx, instanceID)
@@ -154,12 +154,12 @@ func (r *Runtime) UpdateInstanceWithRillYAML(ctx context.Context, instanceID str
 	tmp := *inst
 	inst = &tmp
 
-	inst.ProjectDisplayName = rillYAML.DisplayName
-	inst.ProjectOLAPConnector = rillYAML.OLAPConnector
+	inst.ProjectDisplayName = statsparrotYAML.DisplayName
+	inst.ProjectOLAPConnector = statsparrotYAML.OLAPConnector
 
 	// Dedupe connectors
 	connMap := make(map[string]*runtimev1.Connector)
-	for _, c := range rillYAML.Connectors {
+	for _, c := range statsparrotYAML.Connectors {
 		config, err := structpb.NewStruct(c.Defaults)
 		if err != nil {
 			return err
@@ -190,18 +190,18 @@ func (r *Runtime) UpdateInstanceWithRillYAML(ctx context.Context, instanceID str
 	inst.ProjectConnectors = conns
 
 	vars := make(map[string]string)
-	for _, v := range rillYAML.Variables {
+	for _, v := range statsparrotYAML.Variables {
 		vars[v.Name] = v.Default
 	}
 	for k, v := range dotEnv {
 		vars[k] = v
 	}
 	inst.ProjectVariables = vars
-	inst.FeatureFlags = rillYAML.FeatureFlags
-	inst.PublicPaths = rillYAML.PublicPaths
-	inst.AIInstructions = rillYAML.AIInstructions
-	inst.ProjectAIConnector = rillYAML.AIConnector
-	inst.Theme = rillYAML.Theme
+	inst.FeatureFlags = statsparrotYAML.FeatureFlags
+	inst.PublicPaths = statsparrotYAML.PublicPaths
+	inst.AIInstructions = statsparrotYAML.AIInstructions
+	inst.ProjectAIConnector = statsparrotYAML.AIConnector
+	inst.Theme = statsparrotYAML.Theme
 
 	return r.EditInstance(ctx, inst, restartController)
 }
@@ -268,7 +268,7 @@ func (r *Runtime) ReloadConfig(ctx context.Context, instanceID string) (ReloadCo
 		}
 		return ReloadConfigSummary{VarsCount: varsCount, VarsModified: modified}, nil
 	}
-	// For runtimes without a config reloader (rill developer), pull env from admin service and merge with local .env files
+	// For runtimes without a config reloader (statsparrot developer), pull env from admin service and merge with local .env files
 	count, modified, err := r.pullEnv(ctx, instanceID)
 	if err != nil {
 		return ReloadConfigSummary{}, err

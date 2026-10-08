@@ -4,12 +4,12 @@
  -->
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { useRuntimeClient } from "../../runtime-client/v2";
   import { createResourceFile } from "../entity-management/add/new-files.ts";
 

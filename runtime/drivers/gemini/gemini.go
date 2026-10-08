@@ -9,10 +9,10 @@ import (
 	"fmt"
 
 	"github.com/mitchellh/mapstructure"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"google.golang.org/genai"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -28,7 +28,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "Gemini",
 	Description: "Connect to Google's Gemini API for language models.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/services/gemini",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/services/gemini",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "api_key",
@@ -279,7 +279,7 @@ func (h *handle) Ping(ctx context.Context) error {
 
 // Complete implements drivers.AIService.
 func (h *handle) Complete(ctx context.Context, opts *drivers.CompleteOptions) (*drivers.CompleteResult, error) {
-	// Convert Rill messages to Gemini format, extracting system instruction separately
+	// Convert Parrot messages to Gemini format, extracting system instruction separately
 	systemInstructions, contents, err := convertMessages(opts.Messages)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert messages: %w", err)
@@ -320,8 +320,8 @@ func (h *handle) Complete(ctx context.Context, opts *drivers.CompleteOptions) (*
 		return nil, err
 	}
 
-	// Convert response to Rill message format
-	resMsg, err := convertResponseToRillMessage(res)
+	// Convert response to Parrot message format
+	resMsg, err := convertResponseToParrotMessage(res)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert response: %w", err)
 	}
@@ -336,7 +336,7 @@ func (h *handle) Complete(ctx context.Context, opts *drivers.CompleteOptions) (*
 	}, nil
 }
 
-// convertTools converts Rill tools to Gemini tool format.
+// convertTools converts Parrot tools to Gemini tool format.
 func convertTools(tools []*aiv1.Tool) ([]*genai.Tool, error) {
 	var res []*genai.Tool
 	for _, tool := range tools {
@@ -374,7 +374,7 @@ func convertTools(tools []*aiv1.Tool) ([]*genai.Tool, error) {
 	return res, nil
 }
 
-// convertMessages converts Rill messages to Gemini format.
+// convertMessages converts Parrot messages to Gemini format.
 // It returns system parts separately because Gemini's API treats them differently.
 // It also merges consecutive contents with the same role since Gemini requires role alternation.
 func convertMessages(msgs []*aiv1.CompletionMessage) (*genai.Content, []*genai.Content, error) {
@@ -455,7 +455,7 @@ func convertSystemMessage(msg *aiv1.CompletionMessage) ([]*genai.Part, error) {
 	return parts, nil
 }
 
-// convertMessage converts a single Rill message to Gemini Content(s).
+// convertMessage converts a single Parrot message to Gemini Content(s).
 // The callIDToName map is populated with observed tool call IDs. The same map should be used in all calls to this function for a completion.
 func convertMessage(msg *aiv1.CompletionMessage, callIDToName map[string]string) ([]*genai.Content, error) {
 	role := genai.RoleUser
@@ -498,7 +498,7 @@ func convertMessage(msg *aiv1.CompletionMessage, callIDToName map[string]string)
 	return []*genai.Content{{Role: role, Parts: parts}}, nil
 }
 
-// convertFunctionResponse converts a Rill ToolResult to a Gemini FunctionResponse part.
+// convertFunctionResponse converts a Parrot ToolResult to a Gemini FunctionResponse part.
 func convertFunctionResponse(tr *aiv1.ToolResult, toolName string) (*genai.Part, error) {
 	// Check tool name
 	if toolName == "" {
@@ -529,8 +529,8 @@ func convertFunctionResponse(tr *aiv1.ToolResult, toolName string) (*genai.Part,
 	}, nil
 }
 
-// convertResponseToRillMessage converts a Gemini response to a Rill CompletionMessage.
-func convertResponseToRillMessage(res *genai.GenerateContentResponse) (*aiv1.CompletionMessage, error) {
+// convertResponseToParrotMessage converts a Gemini response to a Parrot CompletionMessage.
+func convertResponseToParrotMessage(res *genai.GenerateContentResponse) (*aiv1.CompletionMessage, error) {
 	if len(res.Candidates) == 0 {
 		return nil, errors.New("no candidates in response")
 	}

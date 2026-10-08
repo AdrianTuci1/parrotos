@@ -25,7 +25,7 @@ export const bigquerySchema: MultiStepFormSchema = {
       description: "Google Cloud project ID to use for queries",
       "x-placeholder": "my-project",
       "x-hint":
-        "If empty, Rill will use the project ID from your credentials when available.",
+        "If empty, Parrot will use the project ID from your credentials when available.",
       "x-step": "connector",
     },
     log_queries: {

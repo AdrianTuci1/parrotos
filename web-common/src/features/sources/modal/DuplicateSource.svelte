@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
   import { onDestroy } from "svelte";
   import {
     DuplicateActions,

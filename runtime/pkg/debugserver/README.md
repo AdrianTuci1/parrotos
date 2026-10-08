@@ -4,7 +4,7 @@ This package starts a HTTP server that serves [net/http/pprof](https://pkg.go.de
 
 ## Basic usage
 
-Visit [http://localhost:6060/debug/pprof/](http://localhost:6060/debug/pprof/) for an overview of available functionality. Note that if you're running `rill start`, you must pass the `--debug` flag.
+Visit [http://localhost:6060/debug/pprof/](http://localhost:6060/debug/pprof/) for an overview of available functionality. Note that if you're running `statsparrot start`, you must pass the `--debug` flag.
 
 ## Advanced usage
 

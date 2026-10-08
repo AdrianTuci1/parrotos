@@ -13,10 +13,10 @@ test.describe("BigQuery connector", () => {
   // Get BigQuery credentials from environment variable
   const getCredentialsFromEnv = () => {
     const credentialsJson =
-      process.env.RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON;
+      process.env.STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON;
     if (!credentialsJson) {
       throw new Error(
-        "RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is required",
+        "STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is required",
       );
     }
     return JSON.parse(credentialsJson);
@@ -27,11 +27,11 @@ test.describe("BigQuery connector", () => {
   }) => {
     // Skip test if environment variable is not set
     if (
-      !process.env.RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON
     ) {
       test.skip(
         true,
-        "RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is not set",
+        "STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is not set",
       );
     }
 
@@ -100,11 +100,11 @@ test.describe("BigQuery connector", () => {
       ),
     ).toBeVisible();
 
-    // rilldata/integration_test folder is visible in the tree.
+    // staticlabs/integration_test folder is visible in the tree.
     await expect(
       page
         .getByLabel("Import Table Form")
-        .getByLabel("rilldata.integration_test"),
+        .getByLabel("staticlabs.integration_test"),
     ).toBeVisible();
 
     // Skip creation, it can be heavy on gcs usage.
@@ -125,11 +125,11 @@ test.describe("BigQuery connector", () => {
   }) => {
     // Skip test if environment variable is not set
     if (
-      !process.env.RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON
     ) {
       test.skip(
         true,
-        "RILL_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is not set",
+        "STATSPARROT_RUNTIME_GCS_TEST_GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is not set",
       );
     }
 

@@ -1,5 +1,5 @@
-import { fetchAnalyzeConnectors } from "@rilldata/web-common/features/connectors/selectors.ts";
-import { getLocalRuntimeClient } from "@rilldata/web-local/lib/runtime-client.ts";
+import { fetchAnalyzeConnectors } from "@statsparrot/web-common/features/connectors/selectors.ts";
+import { getLocalRuntimeClient } from "@statsparrot/web-local/lib/runtime-client.ts";
 
 export async function load({ url: { searchParams } }) {
   const client = getLocalRuntimeClient();

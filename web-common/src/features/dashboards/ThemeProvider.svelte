@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { dynamicHeight } from "@rilldata/web-common/layout/layout-settings.ts";
+  import { dynamicHeight } from "@statsparrot/web-common/layout/layout-settings.ts";
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
   import { Theme } from "../themes/theme";

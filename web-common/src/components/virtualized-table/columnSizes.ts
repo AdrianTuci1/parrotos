@@ -1,5 +1,5 @@
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-import type { V1MetricsViewColumn } from "@rilldata/web-common/runtime-client";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+import type { V1MetricsViewColumn } from "@statsparrot/web-common/runtime-client";
 
 export class VirtualizedTableColumnSizes {
   private readonly sizesCache = new Map<string, Map<string, number>>();

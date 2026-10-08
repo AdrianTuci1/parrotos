@@ -4,9 +4,9 @@ import {
   runtimeServiceGetInstance,
   runtimeServiceListFiles,
   runtimeServiceUnpackEmpty,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import { EMPTY_PROJECT_TITLE } from "./constants";
 
 export async function isProjectInitialized(client: RuntimeClient) {
@@ -18,8 +18,8 @@ export async function isProjectInitialized(client: RuntimeClient) {
       },
     });
 
-    // Return true if `rill.yaml` exists, else false
-    return !!files.files?.some(({ path }) => path === "/rill.yaml");
+    // Return true if `statsparrot.yaml` exists, else false
+    return !!files.files?.some(({ path }) => path === "/statsparrot.yaml");
   } catch {
     return false;
   }

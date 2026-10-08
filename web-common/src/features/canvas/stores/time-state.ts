@@ -1,7 +1,7 @@
-import { fromTimeRangesParams } from "@rilldata/web-common/features/dashboards/url-state/convertURLToExplorePreset";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
-import { TimeComparisonOption } from "@rilldata/web-common/lib/time/types";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import { fromTimeRangesParams } from "@statsparrot/web-common/features/dashboards/url-state/convertURLToExplorePreset";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+import { TimeComparisonOption } from "@statsparrot/web-common/lib/time/types";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { DateTime, Interval } from "luxon";
 import { derived, get, writable, type Readable } from "svelte/store";
 import {
@@ -9,21 +9,21 @@ import {
   deriveInterval,
 } from "../../dashboards/time-controls/new-time-controls";
 import type { CanvasEntity, SearchParamsStore } from "./canvas-entity";
-import { parseRillTime } from "../../dashboards/url-state/time-ranges/parser";
+import { parseParrotTime } from "../../dashboards/url-state/time-ranges/parser";
 import {
-  RillLegacyDaxInterval,
-  RillPeriodToGrainInterval,
-  RillTime,
-} from "../../dashboards/url-state/time-ranges/RillTime";
+  ParrotLegacyDaxInterval,
+  ParrotPeriodToGrainInterval,
+  ParrotTime,
+} from "../../dashboards/url-state/time-ranges/ParrotTime";
 import {
   DateTimeUnitToV1TimeGrain,
   minTimeGrainToDefaultTimeRange,
   V1TimeGrainToDateTimeUnit,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { maybeWritable } from "@rilldata/web-common/lib/store-utils";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { maybeWritable } from "@statsparrot/web-common/lib/store-utils";
 import type { TimeManager } from "./time-manager";
-import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
-import { getValidatedTimeGrain } from "@rilldata/web-common/lib/time/grains";
+import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
+import { getValidatedTimeGrain } from "@statsparrot/web-common/lib/time/grains";
 
 export type MinMax = {
   min: DateTime<true>;
@@ -41,9 +41,9 @@ export class TimeState {
   grainStore: Readable<V1TimeGrain | undefined>;
   timeZoneStore: Readable<string>;
 
-  private parsedRange: Readable<RillTime | undefined>;
+  private parsedRange: Readable<ParrotTime | undefined>;
 
-  comparisonRangeStore = writable<string>("rill-PP");
+  comparisonRangeStore = writable<string>("statsparrot-PP");
   comparisonIntervalStore: Readable<Interval<true> | undefined>;
   showTimeComparisonStore = writable<boolean>(false);
 
@@ -111,7 +111,7 @@ export class TimeState {
       if (!range) return undefined;
 
       try {
-        const parsed = parseRillTime(range);
+        const parsed = parseParrotTime(range);
         return parsed;
       } catch {
         return undefined;
@@ -305,7 +305,7 @@ export class TimeState {
       const props = new Map([[ExploreStateURLParams.TimeRange, range]]);
 
       if (setComparisonToContinuous) {
-        props.set(ExploreStateURLParams.ComparisonTimeRange, "rill-PP");
+        props.set(ExploreStateURLParams.ComparisonTimeRange, "statsparrot-PP");
       }
       return this.searchParamsStore.set(props, checkIfSet, replaceState);
     },
@@ -404,11 +404,11 @@ export function getComparisonTypeFromRangeString(
     return TimeComparisonOption.CONTIGUOUS;
   }
   try {
-    const { interval, rangeGrain } = parseRillTime(range);
+    const { interval, rangeGrain } = parseParrotTime(range);
 
     if (
-      interval instanceof RillLegacyDaxInterval ||
-      interval instanceof RillPeriodToGrainInterval
+      interval instanceof ParrotLegacyDaxInterval ||
+      interval instanceof ParrotPeriodToGrainInterval
     ) {
       return rangeGrain && rangeGrain in timeGrainToComparisonOptionMap
         ? timeGrainToComparisonOptionMap[rangeGrain]

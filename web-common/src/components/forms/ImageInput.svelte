@@ -1,6 +1,6 @@
 <script lang="ts">
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
-  import Viz from "@rilldata/web-common/components/icons/Viz.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
+  import Viz from "@statsparrot/web-common/components/icons/Viz.svelte";
 
   export let value: string | string[] | undefined = undefined;
   export let error: string | Record<string | number, string[]> | undefined =

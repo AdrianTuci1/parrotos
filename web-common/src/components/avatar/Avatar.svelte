@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Avatar } from "bits-ui";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
 
   let loadingStatus: Avatar.RootProps["loadingStatus"] = undefined;
   export let src: string | null = null;

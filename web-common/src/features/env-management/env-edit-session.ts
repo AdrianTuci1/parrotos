@@ -1,8 +1,8 @@
-import { EnvEditSessionVariable } from "@rilldata/web-common/features/env-management/env-edit-session-variable.ts";
-import type { EnvStore } from "@rilldata/web-common/features/env-management/env-store.ts";
-import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
-import type { JSONSchemaObject } from "@rilldata/web-common/features/templates/schemas/types.ts";
-import { getGenericEnvVarName } from "@rilldata/web-common/features/connectors/env-utils.ts";
+import { EnvEditSessionVariable } from "@statsparrot/web-common/features/env-management/env-edit-session-variable.ts";
+import type { EnvStore } from "@statsparrot/web-common/features/env-management/env-store.ts";
+import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
+import type { JSONSchemaObject } from "@statsparrot/web-common/features/templates/schemas/types.ts";
+import { getGenericEnvVarName } from "@statsparrot/web-common/features/connectors/env-utils.ts";
 
 export class EnvEditSession {
   public readonly entries = new Map<string, EnvEditSessionVariable>();

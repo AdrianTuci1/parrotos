@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -34,7 +34,7 @@ func testRegistry(t *testing.T, reg drivers.RegistryStore) {
 			{
 				Type:   "sqlite",
 				Name:   "catalog",
-				Config: testruntime.Must(structpb.NewStruct(map[string]any{"dsn": "file:rill?mode=memory&cache=shared"})),
+				Config: testruntime.Must(structpb.NewStruct(map[string]any{"dsn": "file:statsparrot?mode=memory&cache=shared"})),
 			},
 		},
 	}
@@ -85,8 +85,8 @@ func TestInstanceConfigAITimeouts(t *testing.T) {
 	inst := &drivers.Instance{
 		Environment: "prod",
 		Variables: map[string]string{
-			"rill.ai.completion_timeout_seconds": "600",
-			"rill.ai.llm_timeout_seconds":        "600",
+			"statsparrot.ai.completion_timeout_seconds": "600",
+			"statsparrot.ai.llm_timeout_seconds":        "600",
 		},
 	}
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Avatar from "@rilldata/web-common/components/avatar/Avatar.svelte";
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
-  import { getRandomBgColor } from "@rilldata/web-common/features/themes/color-config";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Avatar from "@statsparrot/web-common/components/avatar/Avatar.svelte";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
+  import { getRandomBgColor } from "@statsparrot/web-common/features/themes/color-config";
 
   export let result: any;
   export let resultIndex: number;

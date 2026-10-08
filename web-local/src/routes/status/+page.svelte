@@ -2,25 +2,25 @@
   import {
     ResourceKind,
     SingletonProjectParserName,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     formatConnectorName,
     getOlapEngineLabel,
-  } from "@rilldata/web-common/features/resources/display-utils";
-  import ErrorsOverviewSection from "@rilldata/web-common/features/resources/overview/ErrorsOverviewSection.svelte";
-  import ResourcesOverviewSection from "@rilldata/web-common/features/resources/overview/ResourcesOverviewSection.svelte";
+  } from "@statsparrot/web-common/features/resources/display-utils";
+  import ErrorsOverviewSection from "@statsparrot/web-common/features/resources/overview/ErrorsOverviewSection.svelte";
+  import ResourcesOverviewSection from "@statsparrot/web-common/features/resources/overview/ResourcesOverviewSection.svelte";
   import {
     countByKind,
     groupErrorsByKind,
-  } from "@rilldata/web-common/features/resources/overview-utils";
+  } from "@statsparrot/web-common/features/resources/overview-utils";
   import {
     createRuntimeServiceGetInstance,
     createRuntimeServiceGetResource,
     createRuntimeServiceListResources,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { createLocalServiceGetVersion } from "@rilldata/web-common/runtime-client/local-service";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { createLocalServiceGetVersion } from "@statsparrot/web-common/runtime-client/local-service";
   import { goto } from "$app/navigation";
   import TablesSection from "../../features/tables/TablesSection.svelte";
 
@@ -122,7 +122,7 @@
       <span class="info-value">
         {instance?.aiConnector && instance.aiConnector !== "admin"
           ? formatConnectorName(instance.aiConnector)
-          : "Rill Managed"}
+          : "Parrot Managed"}
       </span>
     </div>
   </div>

@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Card from "@rilldata/web-common/components/card/Card.svelte";
-  import Globe from "@rilldata/web-common/components/icons/Globe.svelte";
-  import Lock from "@rilldata/web-common/components/icons/Lock.svelte";
-  import Tag from "@rilldata/web-common/components/tag/Tag.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import Card from "@statsparrot/web-common/components/card/Card.svelte";
+  import Globe from "@statsparrot/web-common/components/icons/Globe.svelte";
+  import Lock from "@statsparrot/web-common/components/icons/Lock.svelte";
+  import Tag from "@statsparrot/web-common/components/tag/Tag.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import { createAdminServiceGetProject } from "../../client";
   import ProjectAccessControls from "./ProjectAccessControls.svelte";
-  import ProjectCardActions from "@rilldata/web-admin/features/projects/ProjectCardActions.svelte";
-  import GuardedDeleteProjectConfirmation from "@rilldata/web-admin/features/projects/settings/GuardedDeleteProjectConfirmation.svelte";
-  import ProjectRenameDialog from "@rilldata/web-admin/features/projects/settings/ProjectRenameDialog.svelte";
-  import EditBranchDialog from "@rilldata/web-admin/features/edit-session/EditBranchDialog.svelte";
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { getRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ProjectCardActions from "@statsparrot/web-admin/features/projects/ProjectCardActions.svelte";
+  import GuardedDeleteProjectConfirmation from "@statsparrot/web-admin/features/projects/settings/GuardedDeleteProjectConfirmation.svelte";
+  import ProjectRenameDialog from "@statsparrot/web-admin/features/projects/settings/ProjectRenameDialog.svelte";
+  import EditBranchDialog from "@statsparrot/web-admin/features/edit-session/EditBranchDialog.svelte";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { getRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { readable } from "svelte/store";
 
   let { organization, project }: { organization: string; project: string } =

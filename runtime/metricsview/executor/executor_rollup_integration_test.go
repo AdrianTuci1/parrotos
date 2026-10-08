@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/metricsview/executor"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/executor"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/resolvers"
+	_ "github.com/staticlabs/statsparrot/runtime/resolvers"
 )
 
 const (
@@ -26,7 +26,7 @@ const (
 // rollupTestFiles returns the project files for the rollup integration tests.
 func rollupTestFiles() map[string]string {
 	return map[string]string{
-		"rill.yaml": "",
+		"statsparrot.yaml": "",
 		"models/base_events.sql": `
 SELECT
 	ts AS timestamp,
@@ -470,7 +470,7 @@ func TestRollupIntegration(t *testing.T) {
 		t.Run("time_range_coverage_not_covered", func(t *testing.T) {
 			// Only rollup covers Feb+; query from Jan to Mar cannot be covered
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_day.sql": `
 SELECT date_trunc('day', timestamp) AS timestamp, publisher, domain,
@@ -549,7 +549,7 @@ explore:
 			// must skip B (low-end gap) and pick A. Without the asymmetric clamp, the start-side clamp
 			// would mask B's gap and definition order would silently pick B, dropping October data.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_day_b.sql": `
 SELECT date_trunc('day', ts) AS timestamp, 'Google' AS publisher, 'news.com' AS domain,
@@ -611,7 +611,7 @@ explore:
 			// source), so selection switches to the widest-range rule and A's deeper history wins
 			// over B's coarser grain.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_day_a.sql": `
 SELECT date_trunc('day', ts) AS timestamp, 'Google' AS publisher, 'news.com' AS domain,
@@ -673,7 +673,7 @@ explore:
 			// selection because it has the deepest archive. Without the widest-range rule, the
 			// definition-order tiebreaker would have picked B.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_day_b.sql": `
 SELECT date_trunc('day', ts) AS timestamp, 'Google' AS publisher, 'news.com' AS domain,
@@ -731,7 +731,7 @@ explore:
 		t.Run("prefer_definition_order", func(t *testing.T) {
 			// Two monthly rollups, both eligible for the query. The earlier one in the rollups list wins.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_month_wide.sql": `
 SELECT date_trunc('month', timestamp) AS timestamp, publisher, domain,
@@ -802,7 +802,7 @@ explore:
 			// to 2023-01-01. With no time range, the user's "all data" view should expose
 			// the deepest history available, so B (widest range) wins despite A's coarser grain.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_month_a.sql": `
 SELECT date_trunc('month', ts) AS timestamp, 'Google' AS publisher, 'news.com' AS domain,
@@ -859,7 +859,7 @@ explore:
 		t.Run("only_partial_rollup_returns_nil", func(t *testing.T) {
 			// Only rollup is partial (Jan+Feb); no time range requires full coverage
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_week.sql": `
 SELECT date_trunc('week', timestamp) AS timestamp, publisher, domain,
@@ -910,7 +910,7 @@ explore:
 	t.Run("first_day_of_week", func(t *testing.T) {
 		weeklyOnlyFiles := func(fdow int) map[string]string {
 			return map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_week.sql": `
 SELECT date_trunc('week', timestamp) AS timestamp, publisher, domain,
@@ -996,7 +996,7 @@ explore:
 			// Two day-grain rollups with disjoint declared ranges. Distinct physical tables so the
 			// selector picks the one whose declared range covers the query.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_day_hot.sql": `
 SELECT date_trunc('day', timestamp) AS timestamp, publisher, domain,
@@ -1084,7 +1084,7 @@ explore:
 			// against all three; definition order picks the first (least-granular by dim count).
 			// A publisher+domain query is only eligible against the latter two; definition order picks the second.
 			files := map[string]string{
-				"rill.yaml":              "",
+				"statsparrot.yaml":              "",
 				"models/base_events.sql": rollupTestFiles()["models/base_events.sql"],
 				"models/rollup_pub.sql": `
 SELECT date_trunc('day', timestamp) AS timestamp, publisher,

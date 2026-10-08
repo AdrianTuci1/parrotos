@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Back from "@rilldata/web-common/components/icons/Back.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import LeaderboardAdvancedActions from "@rilldata/web-common/components/menu/LeaderboardAdvancedActions.svelte";
-  import ReplacePivotDialog from "@rilldata/web-common/features/dashboards/pivot/ReplacePivotDialog.svelte";
-  import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
-  import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types";
-  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Back from "@statsparrot/web-common/components/icons/Back.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import LeaderboardAdvancedActions from "@statsparrot/web-common/components/menu/LeaderboardAdvancedActions.svelte";
+  import ReplacePivotDialog from "@statsparrot/web-common/features/dashboards/pivot/ReplacePivotDialog.svelte";
+  import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
+  import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types";
+  import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
   import { onDestroy } from "svelte";
   import ExportMenu from "../../exports/ExportMenu.svelte";
   import { SortType } from "../proto-state/derived-types";

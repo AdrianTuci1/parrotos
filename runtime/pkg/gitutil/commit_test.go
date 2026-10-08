@@ -11,7 +11,7 @@ import (
 
 func TestCommitAndForcePush(t *testing.T) {
 	ctx := context.Background()
-	author := Signature{Name: "Rill", Email: "noreply@rilldata.com"}
+	author := Signature{Name: "Parrot", Email: "noreply@staticlabs.com"}
 
 	t.Run("succeeds on matching branch with uncommitted changes", func(t *testing.T) {
 		local, remote := setupRepoWithRemote(t)
@@ -134,10 +134,10 @@ func TestUserSignature(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("returns the configured identity", func(t *testing.T) {
-		path := setupTestRepository(t) // setupGitConfig sets Test User <test@rilldata.com>
+		path := setupTestRepository(t) // setupGitConfig sets Test User <test@staticlabs.com>
 		sig, err := UserSignature(ctx, path)
 		require.NoError(t, err)
-		require.Equal(t, Signature{Name: "Test User", Email: "test@rilldata.com"}, sig)
+		require.Equal(t, Signature{Name: "Test User", Email: "test@staticlabs.com"}, sig)
 	})
 
 	t.Run("errors when the identity is not configured", func(t *testing.T) {
@@ -155,7 +155,7 @@ func TestUserSignature(t *testing.T) {
 
 func TestCommitAndPush(t *testing.T) {
 	ctx := context.Background()
-	author := Signature{Name: "Rill", Email: "noreply@rilldata.com"}
+	author := Signature{Name: "Parrot", Email: "noreply@staticlabs.com"}
 
 	t.Run("initializes a fresh directory on the default branch and pushes", func(t *testing.T) {
 		remote := filepath.Join(t.TempDir(), "remote.git")
@@ -178,14 +178,14 @@ func TestCommitAndPush(t *testing.T) {
 		require.NoError(t, err)
 
 		// the managed remote was persisted with the clean URL
-		url, err := Run(ctx, path, "remote", "get-url", "__rill_remote")
+		url, err := Run(ctx, path, "remote", "get-url", "__statsparrot_remote")
 		require.NoError(t, err)
 		require.Equal(t, remote, url)
 
 		// the default commit message was used
 		msg, err := Run(ctx, path, "log", "-1", "--format=%s")
 		require.NoError(t, err)
-		require.Equal(t, "Auto committed by Rill", msg)
+		require.Equal(t, "Auto committed by Parrot", msg)
 	})
 
 	t.Run("pushes even when there is nothing to commit", func(t *testing.T) {

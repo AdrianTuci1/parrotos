@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Code2, Database } from "lucide-svelte";
-  import { isLikelyView as checkIsLikelyView } from "@rilldata/web-common/features/projects/status/tables/utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { isLikelyView as checkIsLikelyView } from "@statsparrot/web-common/features/projects/status/tables/utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let isView: boolean | undefined;
   export let physicalSizeBytes: string | number | undefined;

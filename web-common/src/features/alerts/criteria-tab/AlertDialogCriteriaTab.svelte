@@ -1,11 +1,11 @@
 <script lang="ts">
-  import FormSection from "@rilldata/web-common/components/forms/FormSection.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import AlertPreview from "@rilldata/web-common/features/alerts/criteria-tab/AlertPreview.svelte";
-  import CriteriaGroup from "@rilldata/web-common/features/alerts/criteria-tab/CriteriaGroup.svelte";
-  import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
-  import type { Filters } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-  import type { TimeControls } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
+  import FormSection from "@statsparrot/web-common/components/forms/FormSection.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import AlertPreview from "@statsparrot/web-common/features/alerts/criteria-tab/AlertPreview.svelte";
+  import CriteriaGroup from "@statsparrot/web-common/features/alerts/criteria-tab/CriteriaGroup.svelte";
+  import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
+  import type { Filters } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+  import type { TimeControls } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
   import type { SuperForm } from "sveltekit-superforms/client";
 
   export let superFormInstance: SuperForm<AlertFormValues>;

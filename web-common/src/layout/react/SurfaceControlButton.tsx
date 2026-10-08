@@ -2,7 +2,7 @@
 // floating control that toggles the navigation sidebar. The Svelte `Button`
 // primitive is rendered as a plain `<button>` here (secondary when the nav is
 // open, ghost when closed), reproducing the `square` glyph-in-a-box look.
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { HideSidebarIcon, SurfaceViewIcon } from "./icons";
 
 export interface SurfaceControlButtonProps {

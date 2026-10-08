@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
   import type { LayoutData } from "./$types";
   import type { Snippet } from "svelte";
 

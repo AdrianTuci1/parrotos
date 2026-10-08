@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { convertExpressionToFilterParam } from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
-  import type { V1Expression } from "@rilldata/web-common/runtime-client";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { convertExpressionToFilterParam } from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
+  import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 
   export let advancedFilter: V1Expression;
 

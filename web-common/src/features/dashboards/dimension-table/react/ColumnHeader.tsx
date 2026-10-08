@@ -1,8 +1,8 @@
 import type { ComponentType } from "react";
-import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { HeaderPosition } from "@rilldata/web-common/components/virtualized-table/types";
-import { Tooltip } from "@rilldata/web-common/features/dashboards/leaderboard/react/primitives";
+import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { HeaderPosition } from "@statsparrot/web-common/components/virtualized-table/types";
+import { Tooltip } from "@statsparrot/web-common/features/dashboards/leaderboard/react/primitives";
 import { ArrowDown, Pin } from "./icons";
 import { StickyHeader } from "./StickyHeader";
 import { useDimensionTableConfig } from "./context";

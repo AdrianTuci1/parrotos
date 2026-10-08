@@ -1,7 +1,7 @@
-import { fromTimeRangeUrlParam } from "@rilldata/web-common/features/dashboards/url-state/convertPresetToExploreState";
-import { fromTimeRangesParams } from "@rilldata/web-common/features/dashboards/url-state/convertURLToExplorePreset";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types";
-import { V1ExploreComparisonMode } from "@rilldata/web-common/runtime-client";
+import { fromTimeRangeUrlParam } from "@statsparrot/web-common/features/dashboards/url-state/convertPresetToExploreState";
+import { fromTimeRangesParams } from "@statsparrot/web-common/features/dashboards/url-state/convertURLToExplorePreset";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types";
+import { V1ExploreComparisonMode } from "@statsparrot/web-common/runtime-client";
 
 export function getLocalComparison(timeFilter: string | undefined) {
   let showLocalTimeComparison = false;

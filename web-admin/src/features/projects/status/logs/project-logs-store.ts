@@ -1,4 +1,4 @@
-import type { V1Log } from "@rilldata/web-common/runtime-client";
+import type { V1Log } from "@statsparrot/web-common/runtime-client";
 
 export type LogEntry = V1Log & { _id: number };
 

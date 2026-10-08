@@ -7,14 +7,14 @@
     type NodeTypes,
   } from "@xyflow/svelte";
   import "@xyflow/svelte/dist/base.css";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import SummaryNode from "./SummaryNode.svelte";
   import { writable } from "svelte/store";
   import { onMount, onDestroy } from "svelte";
   import { themeControl } from "../../themes/theme-control";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { goto } from "$app/navigation";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
 
   export let connectors = 0;
   export let sources = 0;

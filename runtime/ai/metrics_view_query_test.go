@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,9 +29,9 @@ explore:
   skip: true
 `,
 		},
-		FrontendURL: "https://ui.rilldata.com/test-org/test-project",
+		FrontendURL: "https://ui.statsparrot.com/test-org/test-project",
 		Variables: map[string]string{
-			"rill.ai.require_time_range": "false",
+			"statsparrot.ai.require_time_range": "false",
 		},
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, 3, 0, 0)
@@ -49,7 +49,7 @@ explore:
 	require.NoError(t, err)
 	require.NotEmpty(t, res.Schema)
 	require.NotEmpty(t, res.Data)
-	require.Equal(t, res.OpenURL, fmt.Sprintf("https://ui.rilldata.com/test-org/test-project/-/ai/%s/message/%s/-/open", s.ID(), toolRes.Call.ID))
+	require.Equal(t, res.OpenURL, fmt.Sprintf("https://ui.statsparrot.com/test-org/test-project/-/ai/%s/message/%s/-/open", s.ID(), toolRes.Call.ID))
 }
 
 func TestMetricsViewQueryLimit(t *testing.T) {
@@ -69,9 +69,9 @@ explore:
 `,
 		},
 		Variables: map[string]string{
-			"rill.ai.default_query_limit": "3",
-			"rill.ai.max_query_limit":     "5",
-			"rill.ai.require_time_range":  "false",
+			"statsparrot.ai.default_query_limit": "3",
+			"statsparrot.ai.max_query_limit":     "5",
+			"statsparrot.ai.require_time_range":  "false",
 		},
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, 3, 0, 0)
@@ -153,7 +153,7 @@ cache:
 `,
 		},
 		Variables: map[string]string{
-			"rill.ai.require_time_range": "false",
+			"statsparrot.ai.require_time_range": "false",
 		},
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, 3, 0, 0)
@@ -203,7 +203,7 @@ explore:
 `,
 		},
 		Variables: map[string]string{
-			"rill.ai.require_time_range": "false",
+			"statsparrot.ai.require_time_range": "false",
 		},
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, 3, 0, 0)

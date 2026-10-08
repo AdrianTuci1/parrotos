@@ -4,13 +4,13 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	"github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/server/auth"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	"github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -19,7 +19,7 @@ import (
 func TestResolveCanvas(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			// Model
 			"m1.sql": `
 SELECT 'US' AS country
@@ -109,7 +109,7 @@ rows:
 func TestResolveCanvasWithInvalidSQL(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"m1.sql":    `SELECT 'US' AS country`,
 			"mv1.yaml": `
 type: metrics_view
@@ -154,7 +154,7 @@ rows:
 func TestResolveCanvasWithTemplatedSQL(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"m1.sql":    `SELECT 'US' AS country`,
 			"m2.sql":    `SELECT 'CA' AS country`,
 			"mv1.yaml": `
@@ -221,7 +221,7 @@ rows:
 func TestResolveCanvasWithEmptyCanvas(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"c_empty.yaml": `
 type: canvas
 rows: []
@@ -247,7 +247,7 @@ rows: []
 func TestResolveCanvasWithMultipleMetricsViewsReferences(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"m1.sql":    `SELECT 'US' AS country`,
 			"mv1.yaml": `
 type: metrics_view
@@ -293,7 +293,7 @@ rows:
 func TestResolveCanvasWithMetricsSQL(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"m1.sql":    `SELECT 'US' AS country, 100 AS revenue`,
 			"mv1.yaml": `
 type: metrics_view
@@ -342,7 +342,7 @@ rows:
 func TestResolveCanvasWithSecurity(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			// Model
 			"m1.sql": `SELECT 'US' AS country, 1 AS value`,
 			// Metrics view
@@ -359,7 +359,7 @@ measures:
   expression: SUM(value)
 
 security:
-  access: "'{{ .user.domain }}' = 'rilldata.com'"
+  access: "'{{ .user.domain }}' = 'staticlabs.com'"
   exclude:
   - if: true
     names: [sum]
@@ -397,7 +397,7 @@ security:
 
 	// Check when doesn't have access to the canvas.
 	claims := &runtime.SecurityClaims{
-		UserAttributes: map[string]any{"admin": false, "domain": "rilldata.com"},
+		UserAttributes: map[string]any{"admin": false, "domain": "staticlabs.com"},
 		Permissions:    []runtime.Permission{runtime.ReadAPI},
 	}
 	ctx = auth.WithClaims(context.Background(), claims)
@@ -410,7 +410,7 @@ security:
 	// Check metrics view column-level security.
 	// The 'sum' measure should be excluded.
 	claims = &runtime.SecurityClaims{
-		UserAttributes: map[string]any{"admin": true, "domain": "rilldata.com"},
+		UserAttributes: map[string]any{"admin": true, "domain": "staticlabs.com"},
 		Permissions:    []runtime.Permission{runtime.ReadAPI},
 	}
 	ctx = auth.WithClaims(context.Background(), claims)
@@ -428,7 +428,7 @@ security:
 	// Check metrics view access security.
 	// Should have access to the canvas, but not the metrics view.
 	claims = &runtime.SecurityClaims{
-		UserAttributes: map[string]any{"admin": true, "domain": "notrilldata.com"},
+		UserAttributes: map[string]any{"admin": true, "domain": "notstaticlabs.com"},
 		Permissions:    []runtime.Permission{runtime.ReadAPI},
 	}
 	ctx = auth.WithClaims(context.Background(), claims)
@@ -445,7 +445,7 @@ security:
 func TestCanvasAndTemplatedString(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"model.sql": `
 SELECT 'US' AS country, 100 AS revenue
 UNION ALL
@@ -507,7 +507,7 @@ rows:
 		UseFormatTokens: true,
 	})
 	require.NoError(t, err)
-	require.Contains(t, formatRes.Body, "__RILL__FORMAT__")
+	require.Contains(t, formatRes.Body, "__STATSPARROT__FORMAT__")
 	require.Contains(t, formatRes.Body, "mv")
 	require.Contains(t, formatRes.Body, "total_revenue")
 }
@@ -515,7 +515,7 @@ rows:
 func TestCanvasWithKPIGridAndMarkdown(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": "",
+			"statsparrot.yaml": "",
 			"bids.sql": `
 SELECT 
   DATE '2025-11-04' AS timestamp,
@@ -645,7 +645,7 @@ rows:
 		UseFormatTokens: true,
 	})
 	require.NoError(t, err)
-	require.Contains(t, markdownResFormatted.Body, "__RILL__FORMAT__")
+	require.Contains(t, markdownResFormatted.Body, "__STATSPARROT__FORMAT__")
 	require.Contains(t, markdownResFormatted.Body, "bids_metrics")
 	require.Contains(t, markdownResFormatted.Body, "total_bids")
 	require.Contains(t, markdownResFormatted.Body, "450")

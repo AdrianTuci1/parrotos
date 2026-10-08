@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/server/auth"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 )
 
 // runtimeProxyAccessTokenTTL is the TTL for tokens minted by the runtime proxy.
@@ -104,6 +104,13 @@ func (s *Server) runtimeProxyForOrgAndProject(w http.ResponseWriter, r *http.Req
 	// This enables the runtime to know the runtime proxy path that was used.
 	req.Header.Set("X-Original-URI", r.RequestURI)
 
+	return proxyRoundTrip(w, req)
+}
+
+// proxyRoundTrip sends req upstream and streams the response back to w, flushing eagerly
+// for server-sent events. Response headers are copied except Access-Control-Allow-Origin,
+// which the admin server sets itself and which would otherwise cause browser CORS errors.
+func proxyRoundTrip(w http.ResponseWriter, req *http.Request) error {
 	// Send the proxied request using http.DefaultClient. The default client automatically handles caching/pooling of TCP connections.
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -223,7 +230,7 @@ func runtimeHTTPHost(runtimeHost string) string {
 	if !strings.HasPrefix(runtimeHost, "http://localhost:") {
 		return runtimeHost
 	}
-	if host := os.Getenv("RILL_RUNTIME_AUTH_AUDIENCE_URL"); host != "" {
+	if host := os.Getenv("STATSPARROT_RUNTIME_AUTH_AUDIENCE_URL"); host != "" {
 		return host
 	}
 	return "http://localhost:8081"

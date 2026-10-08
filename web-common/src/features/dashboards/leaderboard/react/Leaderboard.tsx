@@ -22,8 +22,8 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Readable } from "svelte/store";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { DashboardState_LeaderboardSortType } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { DashboardState_LeaderboardSortType } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
@@ -31,13 +31,13 @@ import type {
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationResponseDataItem,
   V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   getQueryServiceMetricsViewAggregationQueryOptions,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   getComparisonRequestMeasures,
   getURIRequestMeasure,
@@ -65,7 +65,7 @@ import {
   deltaColumn,
   valueColumn,
 } from "../leaderboard-widths";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import LeaderboardHeader from "./LeaderboardHeader";
 import LeaderboardRow from "./LeaderboardRow";
 import { DelayedLoadingRows, Tooltip } from "./primitives";

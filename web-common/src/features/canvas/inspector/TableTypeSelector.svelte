@@ -1,7 +1,7 @@
 <script lang="ts">
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { PivotCanvasComponent } from "../components/pivot";
 
   export let component: PivotCanvasComponent;

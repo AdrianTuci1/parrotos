@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-  import { sourceIngestionTracker } from "@rilldata/web-common/features/sources/sources-store";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+  import { sourceIngestionTracker } from "@statsparrot/web-common/features/sources/sources-store";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { CreateQueryResult } from "@tanstack/svelte-query";
   import { WandIcon } from "lucide-svelte";
   import { BehaviourEventMedium } from "../../../metrics/service/BehaviourEventTypes";

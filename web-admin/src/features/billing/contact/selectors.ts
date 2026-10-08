@@ -3,10 +3,10 @@ import {
   createAdminServiceGetOrganization,
   type V1OrganizationMemberUser,
   type V1User,
-} from "@rilldata/web-admin/client";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-admin/client";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import { derived, type Readable } from "svelte/store";
-import { getOrgAdminMembers } from "@rilldata/web-admin/features/organizations/user-management/selectors.ts";
+import { getOrgAdminMembers } from "@statsparrot/web-admin/features/organizations/user-management/selectors.ts";
 
 export function getOrganizationBillingContactUser(
   organization: string,

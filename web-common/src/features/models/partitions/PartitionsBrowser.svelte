@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
   import CollapsibleSectionTitle from "../../../layout/CollapsibleSectionTitle.svelte";
   import type { V1Resource } from "../../../runtime-client";
   import PartitionsFilter from "./PartitionsFilter.svelte";

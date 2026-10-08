@@ -13,7 +13,7 @@ import (
 	"github.com/pingcap/tidb/pkg/parser/opcode"
 	// The parser driver provides the ValueExpr implementation and registers itself on import.
 	"github.com/pingcap/tidb/pkg/parser/test_driver"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 // Limits for measure expressions.

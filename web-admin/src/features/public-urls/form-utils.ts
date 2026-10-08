@@ -1,13 +1,13 @@
-import { PivotChipType } from "@rilldata/web-common/features/dashboards/pivot/types";
-import { getProtoFromDashboardState } from "@rilldata/web-common/features/dashboards/proto-state/toProto";
-import { getAllIdentifiers } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { PivotChipType } from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { getProtoFromDashboardState } from "@statsparrot/web-common/features/dashboards/proto-state/toProto";
+import { getAllIdentifiers } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   MetricsViewSpecDimension,
   MetricsViewSpecMeasure,
   V1ExploreSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export function hasDashboardWhereFilter(exploreState: ExploreState) {
   return exploreState.whereFilter?.cond?.exprs?.length;

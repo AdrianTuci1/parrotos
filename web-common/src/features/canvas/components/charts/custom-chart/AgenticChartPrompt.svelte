@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import AnimatedDots from "@rilldata/web-common/features/chat/core/messages/AnimatedDots.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import AnimatedDots from "@statsparrot/web-common/features/chat/core/messages/AnimatedDots.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { getAgentStreamingStore, sendToDevAgent } from "./chart-ai-agent";
   import type { CustomChartComponent } from "./index";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let component: CustomChartComponent;
 

@@ -1,24 +1,24 @@
 # OpenRTB Programmatic Advertising
 
-This is a demo project designed to illustrate using Rill to analyze programmatic bid logs using the canonical open RTB framework.
+This is a demo project designed to illustrate using Parrot to analyze programmatic bid logs using the canonical open RTB framework.
 
-If you have added the full Rill Example project, run `rill start` from this directory to get started.
+If you have added the full Parrot Example project, run `statsparrot start` from this directory to get started.
 
 To run this example specifically:
 
 ```
-git clone https://github.com/rilldata/rill-examples.git
-cd rill-examples/rill-openrtb-prog-ads
-rill start
+git clone https://github.com/staticlabs/statsparrot-examples.git
+cd statsparrot-examples/statsparrot-openrtb-prog-ads
+statsparrot start
 ```
 
-Rill will build your project from data sources to dashboard and then launch in a new browser window.
+Parrot will build your project from data sources to dashboard and then launch in a new browser window.
 
 ## Overview
 
 This dataset contains a week of sampled programmatic bid stream data in two data sources - Auctions and Bids.
 
-Advertisers, DSPs, SSPs, and Publishers will all recognize the familiar metrics (auctions, bids, wins, bid price, bid floor) and dimensions (domain, device details, app/site, etc). Rill’s was born out of a long history with programmatic data via Metamarkets and is well-suited for this type of analysis. More details on OpenRTB via the IAB: https://iabtechlab.com/standards/openrtb/.
+Advertisers, DSPs, SSPs, and Publishers will all recognize the familiar metrics (auctions, bids, wins, bid price, bid floor) and dimensions (domain, device details, app/site, etc). Parrot’s was born out of a long history with programmatic data via Metamarkets and is well-suited for this type of analysis. More details on OpenRTB via the IAB: https://iabtechlab.com/standards/openrtb/.
 
 ## Data Model
 
@@ -51,4 +51,4 @@ For Marketplaces/Technology Providers:
 
 ## Extra Dashboard
 
-An additional dashboard is created with row policies enabled for specific emails. This is used in our embed examples found, [here](https://rill-embedding-example.netlify.app/).
+An additional dashboard is created with row policies enabled for specific emails. This is used in our embed examples found, [here](https://statsparrot-embedding-example.netlify.app/).

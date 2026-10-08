@@ -19,7 +19,7 @@ project_files:
           { "j": "z" }
         ]
       }'::JSON AS data
-  rill.yaml:
+  statsparrot.yaml:
     olap_connector: clickhouse
 tests:
   - name: query_json_type

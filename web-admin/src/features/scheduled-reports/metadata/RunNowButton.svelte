@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { createAdminServiceTriggerReport } from "@rilldata/web-admin/client";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { getRuntimeServiceGetResourceQueryKey } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { createAdminServiceTriggerReport } from "@statsparrot/web-admin/client";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { getRuntimeServiceGetResourceQueryKey } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { useReport } from "../selectors";
 

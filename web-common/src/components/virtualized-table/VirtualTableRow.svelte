@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
   import type {
     V1MetricsViewColumn,
     V1MetricsViewRowsResponseDataItem,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import type { ComponentType } from "svelte";
   import VirtualTableCell from "./VirtualTableCell.svelte";
   import type VirtualTableRowHeader from "./VirtualTableRowHeader.svelte";

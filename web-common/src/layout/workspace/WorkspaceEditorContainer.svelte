@@ -1,14 +1,14 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import { LIST_SLIDE_DURATION } from "@rilldata/web-common/layout/config";
-  import { createRootCauseErrorQuery } from "@rilldata/web-common/features/entity-management/error-utils";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import { LIST_SLIDE_DURATION } from "@statsparrot/web-common/layout/config";
+  import { createRootCauseErrorQuery } from "@statsparrot/web-common/features/entity-management/error-utils";
   import type {
     V1ParseError,
     V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import ExplainAndFixErrorButton from "@statsparrot/web-common/features/chat/ExplainAndFixErrorButton.svelte";
 
   // Direct error string (existing API, still supported)
   export let error: string | undefined = undefined;

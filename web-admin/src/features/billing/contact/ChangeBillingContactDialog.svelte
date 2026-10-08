@@ -2,14 +2,14 @@
   import {
     createAdminServiceUpdateOrganization,
     getAdminServiceGetOrganizationQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { getOrgAdminMembers } from "@rilldata/web-admin/features/organizations/user-management/selectors.ts";
+  } from "@statsparrot/web-admin/client";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { getOrgAdminMembers } from "@statsparrot/web-admin/features/organizations/user-management/selectors.ts";
 
   export let open: boolean;
   export let organization: string;

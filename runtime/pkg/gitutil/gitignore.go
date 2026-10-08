@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 // EnsureGitignoreHas ensures the given path is listed in .gitignore.

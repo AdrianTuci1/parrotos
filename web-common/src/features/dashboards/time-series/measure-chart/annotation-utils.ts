@@ -2,8 +2,8 @@ import type { ChartScales, ChartConfig, TimeSeriesPoint } from "./types";
 import type {
   V1MetricsViewAnnotationsResponseAnnotation,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/runtime-client";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
 import { dateToIndex } from "./utils";
 import type { DateTime } from "luxon";
 

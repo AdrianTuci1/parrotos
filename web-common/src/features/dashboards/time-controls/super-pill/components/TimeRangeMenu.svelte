@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { humaniseISODuration } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { humaniseISODuration } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type {
     RangeBuckets,
     NamedRange,
     ISODurationString,
   } from "../../new-time-controls";
-  import { RILL_TO_LABEL, ALL_TIME_RANGE_ALIAS } from "../../new-time-controls";
+  import { STATSPARROT_TO_LABEL, ALL_TIME_RANGE_ALIAS } from "../../new-time-controls";
 
   export let ranges: RangeBuckets;
   export let selected: NamedRange | ISODurationString;
@@ -39,13 +39,13 @@
   <DropdownMenu.Separator />
 {/if}
 
-{#each ranges.latest as rillTime, i (i)}
+{#each ranges.latest as statsparrotTime, i (i)}
   <DropdownMenu.Item
-    data-range={rillTime.interval.toString()}
+    data-range={statsparrotTime.interval.toString()}
     onclick={handleClick}
   >
-    <span class:font-bold={selected === rillTime.interval.toString()}>
-      {rillTime.getLabel()}
+    <span class:font-bold={selected === statsparrotTime.interval.toString()}>
+      {statsparrotTime.getLabel()}
     </span>
   </DropdownMenu.Item>
 {/each}
@@ -54,13 +54,13 @@
   <DropdownMenu.Separator />
 {/if}
 
-{#each ranges.periodToDate as rillTime, i (i)}
+{#each ranges.periodToDate as statsparrotTime, i (i)}
   <DropdownMenu.Item
-    data-range={rillTime.interval.toString()}
+    data-range={statsparrotTime.interval.toString()}
     onclick={handleClick}
   >
-    <span class:font-bold={selected === rillTime.interval.toString()}>
-      {rillTime.getLabel()}
+    <span class:font-bold={selected === statsparrotTime.interval.toString()}>
+      {statsparrotTime.getLabel()}
     </span>
   </DropdownMenu.Item>
 {/each}
@@ -69,13 +69,13 @@
   <DropdownMenu.Separator />
 {/if}
 
-{#each ranges.previous as rillTime, i (i)}
+{#each ranges.previous as statsparrotTime, i (i)}
   <DropdownMenu.Item
-    data-range={rillTime.interval.toString()}
+    data-range={statsparrotTime.interval.toString()}
     onclick={handleClick}
   >
-    <span class:font-bold={selected === rillTime.interval.toString()}>
-      {rillTime.getLabel()}
+    <span class:font-bold={selected === statsparrotTime.interval.toString()}>
+      {statsparrotTime.getLabel()}
     </span>
   </DropdownMenu.Item>
 {/each}
@@ -84,7 +84,7 @@
   <DropdownMenu.Separator />
   <DropdownMenu.Item onclick={handleClick} data-range={ALL_TIME_RANGE_ALIAS}>
     <span class:font-bold={selected === ALL_TIME_RANGE_ALIAS}>
-      {RILL_TO_LABEL[ALL_TIME_RANGE_ALIAS]}
+      {STATSPARROT_TO_LABEL[ALL_TIME_RANGE_ALIAS]}
     </span>
   </DropdownMenu.Item>
 {/if}

@@ -5,8 +5,8 @@ import {
   INTEGERS,
   isNested,
   TIMESTAMPS,
-} from "@rilldata/web-common/lib/duckdb-data-types";
-import type { NumericHistogramBinsBin } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/duckdb-data-types";
+import type { NumericHistogramBinsBin } from "@statsparrot/web-common/runtime-client";
 
 export function sortByCardinality(a, b) {
   if (a.cardinality && b.cardinality) {

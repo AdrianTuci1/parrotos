@@ -94,7 +94,7 @@
   $: activeBranch = extractBranchFromPath($page.url.pathname);
 
   $: loggedIn = !!$user.data?.user;
-  $: rillLogoHref = !loggedIn ? "https://www.rilldata.com" : "/";
+  $: statsparrotLogoHref = !loggedIn ? "https://www.statsparrot.com" : "/";
 
   $: orgPathsQuery = useBreadcrumbOrgPaths(
     loggedIn,
@@ -194,7 +194,7 @@
 {/snippet}
 
 <Header borderBottom={!onProjectPage}>
-  <HeaderLogo href={rillLogoHref} logoUrl={organizationLogoUrl} />
+  <HeaderLogo href={statsparrotLogoHref} logoUrl={organizationLogoUrl} />
   {#if onPublicURLPage}
     <PageTitle title={publicURLDashboardTitle} />
   {:else if organization}

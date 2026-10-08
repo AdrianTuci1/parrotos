@@ -2,8 +2,8 @@ import type { MultiStepFormSchema } from "./types";
 import {
   PossibleFileExtensions,
   PossibleZipExtensions,
-} from "@rilldata/web-common/features/sources/modal/possible-file-extensions.ts";
-import { UploadFileSizeLimitInBytes } from "@rilldata/web-common/features/sources/upload-utils.ts";
+} from "@statsparrot/web-common/features/sources/modal/possible-file-extensions.ts";
+import { UploadFileSizeLimitInBytes } from "@statsparrot/web-common/features/sources/upload-utils.ts";
 
 export const localFileSchema: MultiStepFormSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
@@ -25,7 +25,7 @@ export const localFileSchema: MultiStepFormSchema = {
       "x-file-size-limit": UploadFileSizeLimitInBytes,
       "x-file-size-soft-limit": true,
       "x-file-size-limit-warning-message":
-        "Files over 100MB can be used locally but deployment to Rill Cloud is not allowed. Consider storing the data externally (e.g. S3) if you plan to deploy this project",
+        "Files over 100MB can be used locally but deployment to Parrot Cloud is not allowed. Consider storing the data externally (e.g. S3) if you plan to deploy this project",
     },
   },
   required: ["file"],

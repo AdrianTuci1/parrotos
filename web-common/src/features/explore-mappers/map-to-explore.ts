@@ -1,22 +1,22 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getExploreStateFromYAMLConfig } from "@rilldata/web-common/features/dashboards/stores/get-explore-state-from-yaml-config.ts";
-import { getRillDefaultExploreState } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state.ts";
-import { getDashboardFromAggregationRequest } from "@rilldata/web-common/features/explore-mappers/get-dashboard-from-aggregation-request.ts";
-import { getDashboardFromComparisonRequest } from "@rilldata/web-common/features/explore-mappers/get-dashboard-from-comparison-request.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getExploreStateFromYAMLConfig } from "@statsparrot/web-common/features/dashboards/stores/get-explore-state-from-yaml-config.ts";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state.ts";
+import { getDashboardFromAggregationRequest } from "@statsparrot/web-common/features/explore-mappers/get-dashboard-from-aggregation-request.ts";
+import { getDashboardFromComparisonRequest } from "@statsparrot/web-common/features/explore-mappers/get-dashboard-from-comparison-request.ts";
 import type {
   QueryRequests,
   TransformerArgs,
   TransformerProperties,
-} from "@rilldata/web-common/features/explore-mappers/types";
-import { convertRequestKeysToCamelCase } from "@rilldata/web-common/features/explore-mappers/utils";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/explore-mappers/types";
+import { convertRequestKeysToCamelCase } from "@statsparrot/web-common/features/explore-mappers/utils";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   createQueryServiceMetricsViewTimeRange,
   type V1MetricsViewAggregationRequest,
   type V1MetricsViewComparisonRequest,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, readable, type Readable } from "svelte/store";
 
 export type MapQueryRequest = {
@@ -162,7 +162,7 @@ export function mapQueryToDashboard(
 
       const { metricsView, explore } = validSpecResp.data;
 
-      const rillDefaultExploreState = getRillDefaultExploreState(
+      const statsparrotDefaultExploreState = getParrotDefaultExploreState(
         validSpecResp.data.metricsView,
         validSpecResp.data.explore,
         timeRangeSummary.data?.timeRangeSummary,
@@ -173,7 +173,7 @@ export function mapQueryToDashboard(
         metricsView.smallestTimeGrain,
       );
       const defaultExploreState = {
-        ...rillDefaultExploreState,
+        ...statsparrotDefaultExploreState,
         ...exploreStateFromYAMLConfig,
       };
       getDashboardState({

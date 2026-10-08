@@ -1,5 +1,5 @@
-import { cascadingExploreStateMerge } from "@rilldata/web-common/features/dashboards/state-managers/cascading-explore-state-merge";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { cascadingExploreStateMerge } from "@statsparrot/web-common/features/dashboards/state-managers/cascading-explore-state-merge";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_COUNTRY_DIMENSION,
@@ -7,13 +7,13 @@ import {
   AD_BIDS_IMPRESSIONS_MEASURE,
   AD_BIDS_PUBLISHER_COUNT_MEASURE,
   AD_BIDS_PUBLISHER_DIMENSION,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/types";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { describe, it, expect } from "vitest";
 
 describe("cascadingExploreStateMerge", () => {
@@ -24,7 +24,7 @@ describe("cascadingExploreStateMerge", () => {
       StateFromURL,
       MostRecentState,
       YAMLConfigState,
-      RillDefaultState,
+      ParrotDefaultState,
     ]);
     expect(finalState).toEqual({
       selectedTimeRange: {
@@ -46,7 +46,7 @@ describe("cascadingExploreStateMerge", () => {
       // Sort by is from YAMLConfigState.
       // Note that validation is not done in cascadingExploreStateMerge so while this is technically invalid it is still merged as is.
       leaderboardSortByMeasureName: AD_BIDS_PUBLISHER_COUNT_MEASURE,
-      // leaderboard measures is from RillDefaultState
+      // leaderboard measures is from ParrotDefaultState
       leaderboardMeasureNames: [AD_BIDS_IMPRESSIONS_MEASURE],
     });
   });
@@ -91,7 +91,7 @@ const YAMLConfigState: Partial<ExploreState> = {
   leaderboardSortByMeasureName: AD_BIDS_PUBLISHER_COUNT_MEASURE,
 };
 
-const RillDefaultState: Partial<ExploreState> = {
+const ParrotDefaultState: Partial<ExploreState> = {
   selectedTimeRange: {
     name: TimeRangePreset.LAST_7_DAYS,
     interval: V1TimeGrain.TIME_GRAIN_DAY,

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Select from "@rilldata/web-common/components/select";
+  import * as Select from "@statsparrot/web-common/components/select";
   import { DateTime } from "luxon";
 
   export let value: DateTime | undefined;

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IconButton } from "@rilldata/web-common/components/button";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { IconButton } from "@statsparrot/web-common/components/button";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { ThumbsDown, ThumbsUp } from "lucide-svelte";
   import { slide } from "svelte/transition";
   import type { Conversation } from "../conversation";

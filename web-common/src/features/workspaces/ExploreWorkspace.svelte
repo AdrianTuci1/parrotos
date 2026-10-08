@@ -1,24 +1,24 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { createRootCauseErrorQuery } from "@rilldata/web-common/features/entity-management/error-utils";
-  import { getNameFromFile } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { createRootCauseErrorQuery } from "@statsparrot/web-common/features/entity-management/error-utils";
+  import { getNameFromFile } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
   import {
     resourceIsLoading,
     ResourceKind,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { handleEntityRename } from "@rilldata/web-common/features/entity-management/actions/ui-actions.ts";
-  import ExploreEditor from "@rilldata/web-common/features/explores/ExploreEditor.svelte";
-  import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
-  import WorkspaceContainer from "@rilldata/web-common/layout/workspace/WorkspaceContainer.svelte";
-  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
-  import WorkspaceHeader from "@rilldata/web-common/layout/workspace/WorkspaceHeader.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { handleEntityRename } from "@statsparrot/web-common/features/entity-management/actions/ui-actions.ts";
+  import ExploreEditor from "@statsparrot/web-common/features/explores/ExploreEditor.svelte";
+  import { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
+  import WorkspaceContainer from "@statsparrot/web-common/layout/workspace/WorkspaceContainer.svelte";
+  import WorkspaceEditorContainer from "@statsparrot/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import WorkspaceHeader from "@statsparrot/web-common/layout/workspace/WorkspaceHeader.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import ExplainAndFixErrorButton from "@statsparrot/web-common/features/chat/ExplainAndFixErrorButton.svelte";
   import ReconcileWarningPanel from "../entity-management/ReconcileWarningPanel.svelte";
   import Spinner from "../entity-management/Spinner.svelte";
   import PreviewButton from "../explores/PreviewButton.svelte";

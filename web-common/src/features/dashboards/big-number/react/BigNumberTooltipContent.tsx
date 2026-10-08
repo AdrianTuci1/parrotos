@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
 
 export interface BigNumberTooltipContentProps {
   measure: MetricsViewSpecMeasure;

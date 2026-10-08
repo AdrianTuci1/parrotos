@@ -1,12 +1,12 @@
 import {
   filterOutSomeAdvancedMeasures,
   measureSupportsTotalsQuery,
-} from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+} from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   type V1MetricsViewSpec,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { describe, it, expect } from "vitest";
 
 describe("measures selectors", () => {

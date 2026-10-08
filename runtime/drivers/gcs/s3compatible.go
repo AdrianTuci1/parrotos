@@ -2,7 +2,7 @@ package gcs
 
 import (
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers/s3"
+	"github.com/staticlabs/statsparrot/runtime/drivers/s3"
 )
 
 // s3CompatibleConn is implemented to provide operations for GCS driver that is configured using S3 compatible credentials only.

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Tag from "@rilldata/web-common/components/tag/Tag.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import ResourceTypeBadge from "@rilldata/web-common/features/entity-management/ResourceTypeBadge.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { timeAgo } from "@rilldata/web-common/lib/time/relative-time";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Tag from "@statsparrot/web-common/components/tag/Tag.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import ResourceTypeBadge from "@statsparrot/web-common/features/entity-management/ResourceTypeBadge.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { timeAgo } from "@statsparrot/web-common/lib/time/relative-time";
 
   let {
     name,

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ExternalLinkIcon } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     displayName,

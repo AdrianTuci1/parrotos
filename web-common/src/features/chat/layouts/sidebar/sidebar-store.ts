@@ -1,8 +1,8 @@
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
 import { localStorageStore } from "../../../../lib/store-utils/local-storage";
 import { sessionStorageStore } from "../../../../lib/store-utils/session-storage";
 import { get, writable, type Writable } from "svelte/store";
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
 
 // =============================================================================
 // SIDEBAR CONSTANTS
@@ -20,7 +20,7 @@ export const SIDEBAR_DEFAULTS = {
 // =============================================================================
 
 // Per-surface open state. Keeping the developer and dashboard panels on
-// independent keys means publishing from a Rill Developer tab does not flip
+// independent keys means publishing from a Parrot Developer tab does not flip
 // the chat-open flag in the freshly opened production tab — Chromium clones
 // sessionStorage when window.open inherits the opener context.
 export const developerChatOpen = sessionStorageStore<boolean>(

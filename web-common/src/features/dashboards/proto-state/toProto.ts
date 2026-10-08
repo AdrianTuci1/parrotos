@@ -5,35 +5,35 @@ import {
   Timestamp,
   Value,
 } from "@bufbuild/protobuf";
-import { mapMeasureFilterToExpr } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { LeaderboardContextColumn } from "@rilldata/web-common/features/dashboards/leaderboard-context-column";
-import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+import { mapMeasureFilterToExpr } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { LeaderboardContextColumn } from "@statsparrot/web-common/features/dashboards/leaderboard-context-column";
+import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import {
   type PivotChipData,
   PivotChipType,
   type PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
 import {
   ToProtoOperationMap,
   ToProtoPivotTableModeMap,
   ToProtoTimeGrainMap,
-} from "@rilldata/web-common/features/dashboards/proto-state/enum-maps";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { arrayOrderedEquals } from "@rilldata/web-common/lib/arrayUtils";
+} from "@statsparrot/web-common/features/dashboards/proto-state/enum-maps";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { arrayOrderedEquals } from "@statsparrot/web-common/lib/arrayUtils";
 import type {
   DashboardTimeControls,
   ScrubRange,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   Condition,
   Expression,
-} from "@rilldata/web-common/proto/gen/rill/runtime/v1/expression_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/expression_pb";
 import {
   DashboardDimensionFilter,
   DashboardState,
@@ -41,12 +41,12 @@ import {
   DashboardState_LeaderboardContextColumn,
   DashboardTimeRange,
   PivotElement,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type {
   V1ExploreSpec,
   V1Expression,
-} from "@rilldata/web-common/runtime-client";
-import { V1Operation, V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
+import { V1Operation, V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 
 // TODO: make a follow up PR to use the one from the proto directly
 const LeaderboardContextColumnMap: Record<

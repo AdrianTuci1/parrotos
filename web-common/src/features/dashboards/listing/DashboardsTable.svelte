@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import ResourceError from "@rilldata/web-common/features/resources/ResourceError.svelte";
-  import ResourceList from "@rilldata/web-common/features/resources/ResourceList.svelte";
-  import ResourceListEmptyState from "@rilldata/web-common/features/resources/ResourceListEmptyState.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import ResourceError from "@statsparrot/web-common/features/resources/ResourceError.svelte";
+  import ResourceList from "@statsparrot/web-common/features/resources/ResourceList.svelte";
+  import ResourceListEmptyState from "@statsparrot/web-common/features/resources/ResourceListEmptyState.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { renderComponent } from "tanstack-table-8-svelte-5";
   import DashboardsTableCompositeCell from "./DashboardsTableCompositeCell.svelte";
 
@@ -133,7 +133,7 @@
           >
             <span slot="action">
               <a
-                href="https://docs.rilldata.com/developers/build/dashboards"
+                href="https://docs.statsparrot.com/developers/build/dashboards"
                 target="_blank"
                 rel="noopener noreferrer"
               >

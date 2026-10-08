@@ -3,8 +3,8 @@
   import IconButton from "../../../../components/button/IconButton.svelte";
   import Close from "../../../../components/icons/Close.svelte";
   import PlusIcon from "../../../../components/icons/PlusIcon.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { type V1Conversation } from "../../../../runtime-client";
   import ConnectClientPopover from "../../connect/ConnectClientPopover.svelte";
   import type { ConversationManager } from "../../core/conversation-manager";
@@ -26,7 +26,7 @@
 
   $: listConversationsQuery = conversationManager.listConversationsQuery();
   $: conversations = ($listConversationsQuery.data?.conversations ?? []).filter(
-    (c) => c.userAgent !== "rill/report",
+    (c) => c.userAgent !== "statsparrot/report",
   );
 
   function handleNewConversation() {

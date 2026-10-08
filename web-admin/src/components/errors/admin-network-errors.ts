@@ -1,8 +1,8 @@
-import { isAdminServerQuery } from "@rilldata/web-admin/client/utils";
-import { errorStore } from "@rilldata/web-admin/components/errors/error-store";
-import { createUserFacingError } from "@rilldata/web-admin/components/errors/user-facing-errors";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-import { isNetworkError } from "@rilldata/web-common/lib/errors";
+import { isAdminServerQuery } from "@statsparrot/web-admin/client/utils";
+import { errorStore } from "@statsparrot/web-admin/components/errors/error-store";
+import { createUserFacingError } from "@statsparrot/web-admin/components/errors/user-facing-errors";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+import { isNetworkError } from "@statsparrot/web-common/lib/errors";
 import type { Query, QueryClient } from "@tanstack/svelte-query";
 
 export const AdminNetworkErrorMessage = "Network Error";
@@ -94,7 +94,7 @@ function showAdminNetworkBanner(queryClient: QueryRefetcher): void {
       type: "warning",
       iconType: "alert",
       message:
-        "Connection to Rill Cloud was interrupted. Showing cached data while we reconnect.",
+        "Connection to Parrot Cloud was interrupted. Showing cached data while we reconnect.",
       cta: {
         type: "button",
         text: "Retry now",

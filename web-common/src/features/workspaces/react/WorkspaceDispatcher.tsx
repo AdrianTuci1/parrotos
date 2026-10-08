@@ -5,7 +5,7 @@
 // generated, and to the code editor branch otherwise. The workspace bodies and the
 // editor are pluggable so the mapping is renderable/testable without the runtime.
 import type { ComponentType, ReactNode } from "react";
-import { WorkspaceContainer } from "@rilldata/web-common/layout/react";
+import { WorkspaceContainer } from "@statsparrot/web-common/layout/react";
 import { workspaceForKind, type WorkspaceKey } from "./workspace-kind";
 import {
   ModelWorkspace,

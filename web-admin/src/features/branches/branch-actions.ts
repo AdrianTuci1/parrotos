@@ -4,9 +4,9 @@ import {
   getAdminServiceListDeploymentsQueryKey,
   type V1GetProjectResponse,
   type V1ListDeploymentsResponse,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import { invalidateDeployments } from "./deployment-utils";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 
 /**
  * Optimistically set a deployment's status in both the ListDeployments

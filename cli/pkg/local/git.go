@@ -5,10 +5,10 @@ import (
 	"errors"
 
 	"connectrpc.com/connect"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	localv1 "github.com/rilldata/rill/proto/gen/rill/local/v1"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	localv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/local/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 )
 
 func (s *Server) GitStatus(ctx context.Context, r *connect.Request[localv1.GitStatusRequest]) (*connect.Response[localv1.GitStatusResponse], error) {
@@ -63,7 +63,7 @@ func (s *Server) GitStatus(ctx context.Context, r *connect.Request[localv1.GitSt
 		return nil, err
 	}
 	// set remote
-	// usually not needed but the older flow did not set the remote by name `rill`
+	// usually not needed but the older flow did not set the remote by name `statsparrot`
 	err = gitutil.SetRemote(gitPath, config)
 	if err != nil {
 		return nil, err

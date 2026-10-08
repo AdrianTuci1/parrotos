@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { V1DeploymentStatus } from "@rilldata/web-admin/client";
+  import { V1DeploymentStatus } from "@statsparrot/web-admin/client";
   import {
     injectBranchIntoPath,
     requestSkipBranchInjection,
-  } from "@rilldata/web-admin/features/branches/branch-utils";
-  import { Button } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import { Button } from "@statsparrot/web-common/components/button";
   import { useDevDeployments } from "./use-edit-session";
   import EditBranchDialog from "./EditBranchDialog.svelte";
 

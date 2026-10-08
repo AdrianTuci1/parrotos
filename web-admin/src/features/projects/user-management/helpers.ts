@@ -2,7 +2,7 @@ import type {
   V1OrganizationMemberUser,
   V1OrganizationInvite,
   V1MemberUsergroup,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 
 export interface SearchListItem {
   identifier: string;

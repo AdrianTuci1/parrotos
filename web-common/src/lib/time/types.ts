@@ -1,4 +1,4 @@
-import type { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import type { DateTimeUnit } from "luxon";
 
 // Note: The majority of types below are redundant with Luxon and should be removed - bgh
@@ -54,7 +54,7 @@ export enum ReferencePoint {
  * Why are we defining these offsets as an interface / object rather than a function?
  * This will enable us to define wholly-custom time ranges in the configuration. Given that
  * there are really only four operations and one input – a duration – this is a fairly tractable and
- * elegant way to handle almost all of the basic time functions of interest in Rill.
+ * elegant way to handle almost all of the basic time functions of interest in Parrot.
  *
  */
 
@@ -80,7 +80,7 @@ interface TimeTruncation {
 }
 
 /**
- * These types tell Rill to take the supplied duration, and map it to the beginning
+ * These types tell Parrot to take the supplied duration, and map it to the beginning
  * or end of the period in which the datetime object is currently in. We utilize the ISO8601 duration
  * to specify when this duration should technically start; we will likely drastically limit the complexity
  * to a small subset of available values. For now, we'll be capitalizing on the Period enum to keep the set
@@ -129,16 +129,16 @@ export enum TimeRangePreset {
   LAST_4_WEEKS = "P4W",
   LAST_3_MONTHS = "P3M",
   LAST_12_MONTHS = "P12M",
-  TODAY = "rill-TD",
-  WEEK_TO_DATE = "rill-WTD",
-  MONTH_TO_DATE = "rill-MTD",
-  QUARTER_TO_DATE = "rill-QTD",
-  YEAR_TO_DATE = "rill-YTD",
-  YESTERDAY_COMPLETE = "rill-PDC",
-  PREVIOUS_WEEK_COMPLETE = "rill-PWC",
-  PREVIOUS_MONTH_COMPLETE = "rill-PMC",
-  PREVIOUS_QUARTER_COMPLETE = "rill-PQC",
-  PREVIOUS_YEAR_COMPLETE = "rill-PYC",
+  TODAY = "statsparrot-TD",
+  WEEK_TO_DATE = "statsparrot-WTD",
+  MONTH_TO_DATE = "statsparrot-MTD",
+  QUARTER_TO_DATE = "statsparrot-QTD",
+  YEAR_TO_DATE = "statsparrot-YTD",
+  YESTERDAY_COMPLETE = "statsparrot-PDC",
+  PREVIOUS_WEEK_COMPLETE = "statsparrot-PWC",
+  PREVIOUS_MONTH_COMPLETE = "statsparrot-PMC",
+  PREVIOUS_QUARTER_COMPLETE = "statsparrot-PQC",
+  PREVIOUS_YEAR_COMPLETE = "statsparrot-PYC",
   CUSTOM = "CUSTOM",
   DEFAULT = "DEFAULT",
 }
@@ -167,7 +167,7 @@ export interface DashboardTimeControls extends TimeRange {
   label?: string;
 }
 
-/** defines configuration for a time grain object in Rill. */
+/** defines configuration for a time grain object in Parrot. */
 export interface TimeGrain {
   /** the grain defined by the runtime */
   grain: V1TimeGrain;
@@ -195,13 +195,13 @@ export type AvailableTimeGrain = Exclude<
 >;
 
 export enum TimeComparisonOption {
-  CONTIGUOUS = "rill-PP",
+  CONTIGUOUS = "statsparrot-PP",
   CUSTOM = "CUSTOM_COMPARISON_RANGE",
-  DAY = "rill-PD",
-  WEEK = "rill-PW",
-  MONTH = "rill-PM",
-  QUARTER = "rill-PQ",
-  YEAR = "rill-PY",
+  DAY = "statsparrot-PD",
+  WEEK = "statsparrot-PW",
+  MONTH = "statsparrot-PM",
+  QUARTER = "statsparrot-PQ",
+  YEAR = "statsparrot-PY",
 }
 
 export enum TimeRoundingStrategy {

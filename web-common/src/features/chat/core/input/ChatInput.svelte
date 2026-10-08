@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { getEditorPlugins } from "@rilldata/web-common/features/chat/core/context/editor-plugins.svelte.ts";
-  import { chatMounted } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  import { getEditorPlugins } from "@statsparrot/web-common/features/chat/core/context/editor-plugins.svelte.ts";
+  import { chatMounted } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { Editor } from "@tiptap/core";
   import { onMount, tick } from "svelte";
   import IconButton from "../../../../components/button/IconButton.svelte";
   import StopCircle from "../../../../components/icons/StopCircle.svelte";
   import type { ConversationManager } from "../conversation-manager";
-  import type { ChatConfig } from "@rilldata/web-common/features/chat/core/types.ts";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import type { ChatConfig } from "@statsparrot/web-common/features/chat/core/types.ts";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { ArrowUp } from "lucide-svelte";
 
   export let conversationManager: ConversationManager;

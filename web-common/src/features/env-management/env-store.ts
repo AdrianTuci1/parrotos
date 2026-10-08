@@ -1,5 +1,5 @@
-import type { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-import { EnvVariable } from "@rilldata/web-common/features/env-management/env-variable.ts";
+import type { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+import { EnvVariable } from "@statsparrot/web-common/features/env-management/env-variable.ts";
 
 export class EnvStore {
   public store = new Map<string, EnvVariable>();

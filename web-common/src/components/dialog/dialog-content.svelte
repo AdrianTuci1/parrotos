@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getThemeBoundaryClass } from "@rilldata/web-common/features/themes/theme-boundary";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { getThemeBoundaryClass } from "@statsparrot/web-common/features/themes/theme-boundary";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import { Dialog as DialogPrimitive } from "bits-ui";
   import { X } from "lucide-svelte";
   import * as Dialog from "web-common/src/components/dialog/index.js";

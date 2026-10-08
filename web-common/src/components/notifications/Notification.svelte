@@ -1,7 +1,7 @@
 <script lang="ts">
   import { scale } from "svelte/transition";
-  import { portal } from "@rilldata/web-common/lib/actions/portal";
-  import type { NotificationMessage } from "@rilldata/web-common/lib/event-bus/events";
+  import { portal } from "@statsparrot/web-common/lib/actions/portal";
+  import type { NotificationMessage } from "@statsparrot/web-common/lib/event-bus/events";
   import { onMount } from "svelte";
   import Button from "../button/Button.svelte";
   import Check from "../icons/Check.svelte";

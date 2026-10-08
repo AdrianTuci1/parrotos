@@ -3,27 +3,27 @@ import {
   createInExpression,
   filterExpressions,
   sanitiseExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   createQueryServiceMetricsViewAggregation,
   type V1Expression,
   type V1MetricsViewAggregationResponse,
   type V1TimeGrain,
   type V1TimeSeriesValue,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { ConnectError } from "@connectrpc/connect";
 import {
   keepPreviousData,
   type CreateQueryResult,
 } from "@tanstack/svelte-query";
 import { transformAggregateDimensionData, prepareTimeSeries } from "../utils";
-import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
 import { DateTime } from "luxon";
 import type { DimensionSeriesData, TimeSeriesPoint } from "./types";
-import type { V1MetricsViewTimeSeriesResponse } from "@rilldata/web-common/runtime-client";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import type { V1MetricsViewTimeSeriesResponse } from "@statsparrot/web-common/runtime-client";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 
 /**
  * Creates an aggregation query for dimension comparison data.

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { V1MemberUsergroup } from "@rilldata/web-admin/client";
+  import type { V1MemberUsergroup } from "@statsparrot/web-admin/client";
   import { renderComponent } from "tanstack-table-8-svelte-5";
   import type { ColumnDef } from "tanstack-table-8-svelte-5";
-  import GroupActionsCell from "@rilldata/web-admin/features/organizations/user-management/table/groups/GroupActionsCell.svelte";
-  import GroupCompositeCell from "@rilldata/web-admin/features/organizations/user-management/table/groups/GroupCompositeCell.svelte";
-  import InfiniteScrollTable from "@rilldata/web-common/components/table/InfiniteScrollTable.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import GroupActionsCell from "@statsparrot/web-admin/features/organizations/user-management/table/groups/GroupActionsCell.svelte";
+  import GroupCompositeCell from "@statsparrot/web-admin/features/organizations/user-management/table/groups/GroupCompositeCell.svelte";
+  import InfiniteScrollTable from "@statsparrot/web-common/components/table/InfiniteScrollTable.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: V1MemberUsergroup[];
   export let currentUserEmail: string;

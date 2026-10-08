@@ -12,22 +12,22 @@ import (
 	"time"
 
 	"github.com/c2h5oh/datasize"
-	"github.com/rilldata/rill/cli/cmd/env"
-	"github.com/rilldata/rill/cli/pkg/browser"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/pkce"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/debugserver"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/ratelimit"
-	runtimeserver "github.com/rilldata/rill/runtime/server"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/cli/cmd/env"
+	"github.com/staticlabs/statsparrot/cli/pkg/browser"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/pkce"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/debugserver"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
+	runtimeserver "github.com/staticlabs/statsparrot/runtime/server"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -88,13 +88,13 @@ func NewApp(ctx context.Context, opts *AppOptions) (*App, error) {
 		_, err = repo.ListGlob(ctx, "**", false)
 		if err != nil {
 			if errors.Is(err, drivers.ErrRepoListLimitExceeded) {
-				return nil, fmt.Errorf("the project directory exceeds the limit of %d files; please open Rill against a directory with fewer files or set \"ignore_paths\" in rill.yaml", drivers.RepoListLimit)
+				return nil, fmt.Errorf("the project directory exceeds the limit of %d files; please open Parrot against a directory with fewer files or set \"ignore_paths\" in statsparrot.yaml", drivers.RepoListLimit)
 			}
 			return nil, fmt.Errorf("failed to list project files: %w", err)
 		}
 	}
 
-	// Always attempt to pull env for any valid Rill project (after projectPath is set)
+	// Always attempt to pull env for any valid Parrot project (after projectPath is set)
 	if opts.PullEnv && opts.Ch.IsAuthenticated() && IsProjectInit(opts.ProjectPath) {
 		err := env.PullVars(ctx, opts.Ch, opts.ProjectPath, "", opts.Environment, false)
 		if err != nil && !errors.Is(err, cmdutil.ErrInferProjectFailed) {
@@ -109,7 +109,7 @@ func NewApp(ctx context.Context, opts *AppOptions) (*App, error) {
 	}
 
 	// Setup logger
-	logPath, err := opts.Ch.DotRill.ResolveFilename("rill.log", true)
+	logPath, err := opts.Ch.DotStatsparrot.ResolveFilename("statsparrot.log", true)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func NewApp(ctx context.Context, opts *AppOptions) (*App, error) {
 	shutdown, err := observability.Start(ctx, logger, &observability.Options{
 		MetricsExporter: observability.PrometheusExporter,
 		TracesExporter:  tracesExporter,
-		ServiceName:     "rill-local",
+		ServiceName:     "statsparrot-local",
 		ServiceVersion:  opts.Ch.Version.String(),
 	})
 	if err != nil {
@@ -154,7 +154,7 @@ func NewApp(ctx context.Context, opts *AppOptions) (*App, error) {
 	}
 
 	// Create a local runtime with an in-memory metastore
-	metastoreConfig, err := structpb.NewStruct(map[string]any{"dsn": "file:rill?mode=memory&cache=shared"})
+	metastoreConfig, err := structpb.NewStruct(map[string]any{"dsn": "file:statsparrot?mode=memory&cache=shared"})
 	if err != nil {
 		return nil, err
 	}
@@ -174,18 +174,18 @@ func NewApp(ctx context.Context, opts *AppOptions) (*App, error) {
 	// if err != nil {
 	// 	return nil, fmt.Errorf("failed to load .env file: %w", err)
 	// }
-	// smtpPort, err := strconv.Atoi(os.Getenv("RILL_RUNTIME_EMAIL_SMTP_PORT"))
+	// smtpPort, err := strconv.Atoi(os.Getenv("STATSPARROT_RUNTIME_EMAIL_SMTP_PORT"))
 	// if err != nil {
 	// 	return nil, fmt.Errorf("failed to get SMTP port: %w", err)
 	// }
 	// sender, err := email.NewSMTPSender(&email.SMTPOptions{
-	// 	SMTPHost:     os.Getenv("RILL_RUNTIME_EMAIL_SMTP_HOST"),
+	// 	SMTPHost:     os.Getenv("STATSPARROT_RUNTIME_EMAIL_SMTP_HOST"),
 	// 	SMTPPort:     smtpPort,
-	// 	SMTPUsername: os.Getenv("RILL_RUNTIME_EMAIL_SMTP_USERNAME"),
-	// 	SMTPPassword: os.Getenv("RILL_RUNTIME_EMAIL_SMTP_PASSWORD"),
-	// 	FromEmail:    os.Getenv("RILL_RUNTIME_EMAIL_SENDER_EMAIL"),
-	// 	FromName:     os.Getenv("RILL_RUNTIME_EMAIL_SENDER_NAME"),
-	// 	BCC:          os.Getenv("RILL_RUNTIME_EMAIL_BCC"),
+	// 	SMTPUsername: os.Getenv("STATSPARROT_RUNTIME_EMAIL_SMTP_USERNAME"),
+	// 	SMTPPassword: os.Getenv("STATSPARROT_RUNTIME_EMAIL_SMTP_PASSWORD"),
+	// 	FromEmail:    os.Getenv("STATSPARROT_RUNTIME_EMAIL_SENDER_EMAIL"),
+	// 	FromName:     os.Getenv("STATSPARROT_RUNTIME_EMAIL_SENDER_NAME"),
+	// 	BCC:          os.Getenv("STATSPARROT_RUNTIME_EMAIL_BCC"),
 	// })
 	// if err != nil {
 	// 	return nil, fmt.Errorf("failed to create email sender: %w", err)
@@ -213,9 +213,9 @@ func NewApp(ctx context.Context, opts *AppOptions) (*App, error) {
 	// Merge opts.Variables with some local overrides of the defaults in runtime/drivers.InstanceConfig.
 	// Not set in system variables since it should be okay to override these on local to test.
 	vars := map[string]string{
-		"rill.download_limit_bytes": "0", // 0 means unlimited
-		"rill.stage_changes":        "false",
-		"rill.watch_repo":           "true", // Run a file watcher instead of requiring manual refreshes
+		"statsparrot.download_limit_bytes": "0", // 0 means unlimited
+		"statsparrot.stage_changes":        "false",
+		"statsparrot.watch_repo":           "true", // Run a file watcher instead of requiring manual refreshes
 	}
 	for k, v := range opts.Variables {
 		vars[k] = v
@@ -374,7 +374,7 @@ func (a *App) Close() error {
 	if err != nil {
 		a.Logger.Error("Graceful shutdown failed", zap.Error(err))
 	} else {
-		a.Logger.Info("Rill shutdown gracefully")
+		a.Logger.Info("Parrot shutdown gracefully")
 	}
 
 	a.loggerCleanUp()
@@ -396,7 +396,7 @@ type ServeOptions struct {
 
 func (a *App) Serve(opts ServeOptions) error {
 	// Get analytics info
-	installID, enabled, err := a.ch.DotRill.AnalyticsInfo()
+	installID, enabled, err := a.ch.DotStatsparrot.AnalyticsInfo()
 	if err != nil {
 		a.Logger.Warnf("error finding install ID: %v", err)
 	}
@@ -494,7 +494,7 @@ func (a *App) PollServer(ctx context.Context, httpPort int, openOnHealthy, secur
 		// Wait a bit before (re)trying.
 		//
 		// We sleep before the first health check as a slightly hacky way to protect against the situation where
-		// another Rill server is already running, which will pass the health check as a false positive.
+		// another Parrot server is already running, which will pass the health check as a false positive.
 		// By sleeping first, the ctx is in practice sure to have been cancelled with a "port taken" error at that point.
 		select {
 		case <-time.After(250 * time.Millisecond):
@@ -513,7 +513,7 @@ func (a *App) PollServer(ctx context.Context, httpPort int, openOnHealthy, secur
 	}
 
 	// Health check succeeded
-	a.Logger.Infof("Serving Rill on: %s", uri)
+	a.Logger.Infof("Serving Parrot on: %s", uri)
 	if openOnHealthy {
 		// Check for cancellation again to be safe
 		if ctx.Err() != nil {
@@ -558,11 +558,11 @@ func (a *App) emitStartEvent(ctx context.Context) error {
 	return nil
 }
 
-// IsProjectInit checks if the project is initialized by checking if rill.yaml exists in the project directory.
+// IsProjectInit checks if the project is initialized by checking if statsparrot.yaml exists in the project directory.
 // It doesn't use any runtime functions since we need the ability to check this before creating the instance.
 func IsProjectInit(projectPath string) bool {
-	rillYAML := filepath.Join(projectPath, "rill.yaml")
-	if _, err := os.Stat(rillYAML); err != nil {
+	statsparrotYAML := filepath.Join(projectPath, "statsparrot.yaml")
+	if _, err := os.Stat(statsparrotYAML); err != nil {
 		return false
 	}
 	return true

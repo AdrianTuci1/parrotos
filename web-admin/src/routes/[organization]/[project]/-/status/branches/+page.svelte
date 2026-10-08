@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import BranchesSection from "@rilldata/web-admin/features/branches/BranchesSection.svelte";
+  import BranchesSection from "@statsparrot/web-admin/features/branches/BranchesSection.svelte";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

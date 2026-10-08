@@ -32,7 +32,7 @@
   export let onmousedown: ((e: MouseEvent) => void) | undefined = undefined;
 
   const tooltipSuppression = getContext<Writable<boolean>>(
-    "rill:app:childRequestedTooltipSuppression",
+    "statsparrot:app:childRequestedTooltipSuppression",
   );
 
   function focusOnRemove() {

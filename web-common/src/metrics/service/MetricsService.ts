@@ -2,9 +2,9 @@ import type {
   ActionServiceBase,
   ExtractActionTypeDefinitions,
   PickActionFunctions,
-} from "@rilldata/web-common/metrics/service/ServiceBase";
-import { getActionMethods } from "@rilldata/web-common/metrics/service/ServiceBase";
-import { GetMetadataResponse } from "@rilldata/web-common/proto/gen/rill/local/v1/api_pb";
+} from "@statsparrot/web-common/metrics/service/ServiceBase";
+import { getActionMethods } from "@statsparrot/web-common/metrics/service/ServiceBase";
+import { GetMetadataResponse } from "@statsparrot/web-common/proto/gen/statsparrot/local/v1/api_pb";
 import MD5 from "crypto-js/md5";
 import { v4 as uuidv4 } from "uuid";
 import type { BehaviourEventFactory } from "./BehaviourEventFactory";
@@ -12,7 +12,7 @@ import type { MetricsEventFactory } from "./MetricsEventFactory";
 import type { ErrorEventFactory } from "./ErrorEventFactory";
 import type { CommonFields, MetricsEvent } from "./MetricsTypes";
 import type { ProductHealthEventFactory } from "./ProductHealthEventFactory";
-import type { TelemetryClient } from "./RillIntakeClient";
+import type { TelemetryClient } from "./ParrotIntakeClient";
 
 export const ClientIDStorageKey = "client_id";
 
@@ -60,7 +60,7 @@ export class MetricsService
     const projectPathParts = localConfig.projectPath.split("/");
     this.commonFields = {
       service_name: "web-local",
-      app_name: "rill-developer",
+      app_name: "statsparrot-developer",
       install_id: localConfig.installId,
       client_id: this.getOrSetClientID(),
       build_id: localConfig.buildCommit,
@@ -76,7 +76,7 @@ export class MetricsService
   public loadCloudFields(fields: CloudMetricsFields) {
     this.commonFields = {
       service_name: "web-admin",
-      app_name: "rill-cloud",
+      app_name: "statsparrot-cloud",
       client_id: this.getOrSetClientID(),
       version: fields.version,
       is_dev: fields.isDev,

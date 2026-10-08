@@ -1,4 +1,4 @@
-import { Throttler } from "@rilldata/web-common/lib/throttler";
+import { Throttler } from "@statsparrot/web-common/lib/throttler";
 
 /**
  * Narrow connection contract needed by SSEConnectionLifecycle.

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/database"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/database"
 	"github.com/riverqueue/river"
 )
 

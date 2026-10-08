@@ -1,11 +1,11 @@
 <script lang="ts">
   import IconButton from "web-common/src/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
   import { Trash2Icon, Pencil } from "lucide-svelte";
-  import DeleteUserGroupConfirmDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/DeleteUserGroupConfirmDialog.svelte";
-  import EditUserGroupDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import DeleteUserGroupConfirmDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/DeleteUserGroupConfirmDialog.svelte";
+  import EditUserGroupDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   export let groupName: string;
   export let currentUserEmail: string;
 

@@ -1,22 +1,22 @@
 <script lang="ts">
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
   import {
     getIsOrgOnTrial,
     getPlanUpgradeUrl,
-  } from "@rilldata/web-common/features/organization/utils.ts";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
+  } from "@statsparrot/web-common/features/organization/utils.ts";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
   import {
     createLocalServiceGetProjectRequest,
     createLocalServiceRedeploy,
-  } from "@rilldata/web-common/runtime-client/local-service.ts";
-  import DeployError from "@rilldata/web-common/features/project/deploy/DeployError.svelte";
-  import CTAHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CTANeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  } from "@statsparrot/web-common/runtime-client/local-service.ts";
+  import DeployError from "@statsparrot/web-common/features/project/deploy/DeployError.svelte";
+  import CTAHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CTANeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import type { PageData } from "./$types";
-  import { getDeployingPageUrl } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
+  import { getDeployingPageUrl } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
 
   export let data: PageData;
 
@@ -50,7 +50,7 @@
       rearchive: $legacyArchiveDeploy,
       createManagedRepo,
     });
-    const projectUrl = resp.frontendUrl; // https://ui.rilldata.com/<org>/<project>
+    const projectUrl = resp.frontendUrl; // https://ui.statsparrot.com/<org>/<project>
     const projectDeployLandingPage = getDeployingPageUrl(projectUrl, false);
     window.open(projectDeployLandingPage, "_self");
   }

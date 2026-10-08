@@ -1,5 +1,5 @@
 import type { afterNavigate } from "$app/navigation";
-import { AD_BIDS_EXPLORE_NAME } from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+import { AD_BIDS_EXPLORE_NAME } from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import type { AfterNavigate, Page } from "@sveltejs/kit";
 import { writable, get, type Readable, type Updater } from "svelte/store";
 import { expect } from "vitest";

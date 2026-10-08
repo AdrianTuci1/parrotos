@@ -1,12 +1,12 @@
 import { expect, type Locator } from "@playwright/test";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions.ts";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions.ts";
 import { test } from "./setup/base";
 import {
   getOpenLinkFromEmail,
   waitForEmail,
-} from "@rilldata/web-common/tests/utils/email-utils.ts";
+} from "@statsparrot/web-common/tests/utils/email-utils.ts";
 
-// These tests are highly dependent on comparisons. So we need to fix that with rill time. Will be in a separate PR
+// These tests are highly dependent on comparisons. So we need to fix that with statsparrot time. Will be in a separate PR
 test.describe.serial("Alerts", () => {
   test.describe.serial("Alerts with filters", () => {
     test("Should create alert with filters", async ({ adminPage }) => {

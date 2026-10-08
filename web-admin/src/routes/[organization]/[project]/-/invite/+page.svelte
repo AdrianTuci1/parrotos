@@ -4,20 +4,20 @@
   import {
     createAdminServiceCreateProjectWhitelistedDomain,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
-  import CopyInviteLinkButton from "@rilldata/web-admin/features/projects/user-management/CopyInviteLinkButton.svelte";
+  } from "@statsparrot/web-admin/client";
+  import CopyInviteLinkButton from "@statsparrot/web-admin/features/projects/user-management/CopyInviteLinkButton.svelte";
   import {
     getUserDomain,
     userDomainIsPublic,
-  } from "@rilldata/web-admin/features/projects/user-management/selectors";
-  import UserInviteForm from "@rilldata/web-admin/features/projects/user-management/UserInviteForm.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  } from "@statsparrot/web-admin/features/projects/user-management/selectors";
+  import UserInviteForm from "@statsparrot/web-admin/features/projects/user-management/UserInviteForm.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
   import type { AxiosError } from "axios";
 
   $: organization = $page.params.organization;
@@ -97,7 +97,7 @@
           })}
           <a
             target="_blank"
-            href="https://docs.rilldata.com/reference/cli/user/whitelist"
+            href="https://docs.statsparrot.com/reference/cli/user/whitelist"
           >
             {m.common_learn_more()}
           </a>

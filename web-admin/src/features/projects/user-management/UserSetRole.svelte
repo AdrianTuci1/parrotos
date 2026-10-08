@@ -4,19 +4,19 @@
     createAdminServiceSetProjectMemberUserRole,
     getAdminServiceListProjectInvitesQueryKey,
     getAdminServiceListProjectMemberUsersQueryKey,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import type {
     V1ProjectMemberUser,
     V1ProjectInvite,
-  } from "@rilldata/web-admin/client";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { capitalize } from "@rilldata/web-common/components/table/utils";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-admin/client";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { capitalize } from "@statsparrot/web-common/components/table/utils";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
 
   type User = V1ProjectMemberUser | V1ProjectInvite;
 

@@ -1,13 +1,13 @@
 <script lang="ts">
-  import RangeDisplay from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components/RangeDisplay.svelte";
-  import { MainLineColor } from "@rilldata/web-common/features/dashboards/time-series/chart-colors";
-  import { portal } from "@rilldata/web-common/lib/actions/portal";
-  import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+  import RangeDisplay from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components/RangeDisplay.svelte";
+  import { MainLineColor } from "@statsparrot/web-common/features/dashboards/time-series/chart-colors";
+  import { portal } from "@statsparrot/web-common/lib/actions/portal";
+  import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
   import {
     V1TimeGrain,
     type V1TimeSeriesValue,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { extent, max, min } from "d3-array";
   import { scaleLinear } from "d3-scale";
   import { DateTime, Interval } from "luxon";

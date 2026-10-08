@@ -9,14 +9,14 @@ import (
 	"net/http"
 	"time"
 
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/server/auth"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -33,9 +33,9 @@ func (s *Server) ListConversations(ctx context.Context, req *runtimev1.ListConve
 	}
 
 	if claims.UserID == "" && !claims.SkipChecks {
-		// This case matches anonymous users on runtimes with auth enabled (i.e. on Rill Cloud).
+		// This case matches anonymous users on runtimes with auth enabled (i.e. on Parrot Cloud).
 		// This prevents anonymous users from seeing previous/other anonymous users' conversations.
-		// (In Rill Developer, auth is disabled so SkipChecks is true for anonymous users.)
+		// (In Parrot Developer, auth is disabled so SkipChecks is true for anonymous users.)
 		return &runtimev1.ListConversationsResponse{}, nil
 	}
 
@@ -163,7 +163,7 @@ func (s *Server) ForkConversation(ctx context.Context, req *runtimev1.ForkConver
 	if version == "" {
 		version = "unknown"
 	}
-	userAgent := fmt.Sprintf("rill/%s", version)
+	userAgent := fmt.Sprintf("statsparrot/%s", version)
 
 	// Open the existing AI session, this will only contain messages the user has access to
 	id, err := s.ai.ForkSession(ctx, &ai.SessionOptions{
@@ -232,7 +232,7 @@ func (s *Server) Complete(ctx context.Context, req *runtimev1.CompleteRequest) (
 	if version == "" {
 		version = "unknown"
 	}
-	userAgent := fmt.Sprintf("rill/%s", version)
+	userAgent := fmt.Sprintf("statsparrot/%s", version)
 
 	// Open the AI session
 	session, err := s.ai.Session(ctx, &ai.SessionOptions{
@@ -351,7 +351,7 @@ func (s *Server) CompleteStreaming(req *runtimev1.CompleteStreamingRequest, stre
 	if version == "" {
 		version = "unknown"
 	}
-	userAgent := fmt.Sprintf("rill/%s", version)
+	userAgent := fmt.Sprintf("statsparrot/%s", version)
 
 	// Open the AI session
 	session, err := s.ai.Session(ctx, &ai.SessionOptions{

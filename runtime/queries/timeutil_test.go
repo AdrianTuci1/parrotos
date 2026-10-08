@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -35,42 +35,42 @@ func TestResolveTimeRange(t *testing.T) {
 		},
 		{
 			"month-to-date",
-			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "rill-MTD"},
+			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "statsparrot-MTD"},
 			"2023-01-01T00:00:00Z",
 			"2023-01-10T00:00:00Z",
 		},
 		{
 			"month-to-date in Kathmandu",
-			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "rill-MTD", TimeZone: "Asia/Kathmandu"},
+			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "statsparrot-MTD", TimeZone: "Asia/Kathmandu"},
 			"2022-12-31T18:15:00Z", // since we truncate to beginning of year this is correct
 			"2023-01-10T00:00:00Z",
 		},
 		{
 			"previous month",
-			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "rill-PM"},
+			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "statsparrot-PM"},
 			"2022-12-10T00:00:00Z",
 			"2023-01-10T00:00:00Z",
 		},
 		{
 			"previous month in Kathmandu",
-			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "rill-PM", TimeZone: "Asia/Kathmandu"},
+			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "statsparrot-PM", TimeZone: "Asia/Kathmandu"},
 			"2022-12-10T00:00:00Z", // there is no truncation so this -1 month exactly
 			"2023-01-10T00:00:00Z",
 		},
 		{
 			"previous month offset",
-			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "P1M", IsoOffset: "rill-PM"},
+			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "P1M", IsoOffset: "statsparrot-PM"},
 			"2022-11-10T00:00:00Z",
 			"2022-12-10T00:00:00Z",
 		},
 		{
 			"previous month offset in Kathmandu",
-			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "P1M", IsoOffset: "rill-PM", TimeZone: "Asia/Kathmandu"},
+			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "P1M", IsoOffset: "statsparrot-PM", TimeZone: "Asia/Kathmandu"},
 			"2022-11-10T00:00:00Z",
 			"2022-12-10T00:00:00Z",
 		},
 		{
-			// Simulates UI filling in duration, offset and round to grain instead of sending rill-PMC (previous month complete)
+			// Simulates UI filling in duration, offset and round to grain instead of sending statsparrot-PMC (previous month complete)
 			"previous complete month",
 			&runtimev1.TimeRange{End: timeToPB("2023-01-10T00:00:00Z"), IsoDuration: "P1M", RoundToGrain: runtimev1.TimeGrain_TIME_GRAIN_MONTH},
 			"2022-12-01T00:00:00Z",

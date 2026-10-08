@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getThemeBoundaryClass } from "@rilldata/web-common/features/themes/theme-boundary";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { getThemeBoundaryClass } from "@statsparrot/web-common/features/themes/theme-boundary";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
   import type { Snippet } from "svelte";
 

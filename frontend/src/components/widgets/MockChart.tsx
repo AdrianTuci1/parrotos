@@ -26,7 +26,7 @@ const ACCENT = "#4f8cff";
 
 /**
  * Lightweight Vega-Lite chart fed with inline mock data. Used by the mock explorer
- * so the dashboard stays visually rich without a live Rill runtime; when a runtime
+ * so the dashboard stays visually rich without a live Parrot runtime; when a runtime
  * is reachable the real `ChartContainer` (which queries the metrics view over the
  * Go Connect transport) takes over via `RuntimeMetricsExplorer`.
  */

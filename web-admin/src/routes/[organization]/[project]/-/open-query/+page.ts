@@ -1,7 +1,7 @@
-import { openQuery } from "@rilldata/web-common/features/explore-mappers/open-query";
-import { getCloudRuntimeClient } from "@rilldata/web-admin/lib/runtime-client";
+import { openQuery } from "@statsparrot/web-common/features/explore-mappers/open-query";
+import { getCloudRuntimeClient } from "@statsparrot/web-admin/lib/runtime-client";
 import type { PageLoad } from "./$types";
-import { getQueryFromUrl } from "@rilldata/web-common/features/chat/core/citation-url-utils.ts";
+import { getQueryFromUrl } from "@statsparrot/web-common/features/chat/core/citation-url-utils.ts";
 
 export const load: PageLoad = async ({ params, url, parent }) => {
   const { runtime } = await parent();

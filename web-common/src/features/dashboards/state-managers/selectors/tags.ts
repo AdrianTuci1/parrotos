@@ -1,7 +1,7 @@
 import {
   buildTagIndex,
   type TagIndex,
-} from "@rilldata/web-common/components/menu/tag-utils";
+} from "@statsparrot/web-common/components/menu/tag-utils";
 import { allDimensions } from "./dimensions";
 import { allMeasures } from "./measures";
 import type { DashboardDataSources } from "./types";

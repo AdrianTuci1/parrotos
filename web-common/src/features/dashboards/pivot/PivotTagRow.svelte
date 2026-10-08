@@ -1,16 +1,16 @@
 <script lang="ts">
-  import type { DimensionTag } from "@rilldata/web-common/components/menu/tag-utils";
-  import Column from "@rilldata/web-common/components/icons/Column.svelte";
-  import Pivot from "@rilldata/web-common/components/icons/Pivot.svelte";
-  import Row from "@rilldata/web-common/components/icons/Row.svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { detectOverflow } from "@rilldata/web-common/lib/actions/detect-overflow";
-  import { modifierHeld } from "@rilldata/web-common/lib/modifier-key";
+  import type { DimensionTag } from "@statsparrot/web-common/components/menu/tag-utils";
+  import Column from "@statsparrot/web-common/components/icons/Column.svelte";
+  import Pivot from "@statsparrot/web-common/components/icons/Pivot.svelte";
+  import Row from "@statsparrot/web-common/components/icons/Row.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { detectOverflow } from "@statsparrot/web-common/lib/actions/detect-overflow";
+  import { modifierHeld } from "@statsparrot/web-common/lib/modifier-key";
   import { dragDataStore } from "./DragList.svelte";
   import PivotPortalItem from "./PivotPortalItem.svelte";
   import { appendChipsToZone, replaceZoneCleaningOther } from "./pivot-utils";
   import { PivotChipType, type PivotChipData } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   type Props = {
     tag: DimensionTag;

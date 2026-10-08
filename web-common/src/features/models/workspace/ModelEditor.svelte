@@ -6,7 +6,7 @@
   } from "@codemirror/lang-sql";
   import { Compartment } from "@codemirror/state";
   import { EditorView } from "@codemirror/view";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import { DuckDBSQL } from "../../../components/editor/presets/duckDBDialect";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import Editor from "../../editor/Editor.svelte";

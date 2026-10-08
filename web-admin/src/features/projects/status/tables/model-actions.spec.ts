@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
-import { getAvailableModelActions } from "@rilldata/web-common/features/projects/status/tables/model-actions";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+import { getAvailableModelActions } from "@statsparrot/web-common/features/projects/status/tables/model-actions";
 
 function makeModel(opts?: {
   incremental?: boolean;
@@ -9,7 +9,7 @@ function makeModel(opts?: {
   partitionsHaveErrors?: boolean;
 }): V1Resource {
   return {
-    meta: { name: { kind: "rill.runtime.v1.Model", name: "test_model" } },
+    meta: { name: { kind: "statsparrot.runtime.v1.Model", name: "test_model" } },
     model: {
       spec: {
         incremental: opts?.incremental,

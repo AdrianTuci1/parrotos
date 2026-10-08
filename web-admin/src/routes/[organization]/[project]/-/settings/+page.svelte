@@ -1,15 +1,15 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
-  import GithubConnectionDialog from "@rilldata/web-admin/features/projects/github/GithubConnectionDialog.svelte";
-  import ProjectGithubConnection from "@rilldata/web-admin/features/projects/github/ProjectGithubConnection.svelte";
-  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
-  import DangerZone from "@rilldata/web-admin/components/settings/DangerZone.svelte";
-  import DeleteProject from "@rilldata/web-admin/features/projects/settings/DeleteProject.svelte";
-  import HibernateProject from "@rilldata/web-admin/features/projects/settings/HibernateProject.svelte";
-  import ProjectNameSettings from "@rilldata/web-admin/features/projects/settings/ProjectNameSettings.svelte";
-  import ProjectVisibilitySettings from "@rilldata/web-admin/features/projects/settings/ProjectVisibilitySettings.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
+  import GithubConnectionDialog from "@statsparrot/web-admin/features/projects/github/GithubConnectionDialog.svelte";
+  import ProjectGithubConnection from "@statsparrot/web-admin/features/projects/github/ProjectGithubConnection.svelte";
+  import SettingsContainer from "@statsparrot/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  import DangerZone from "@statsparrot/web-admin/components/settings/DangerZone.svelte";
+  import DeleteProject from "@statsparrot/web-admin/features/projects/settings/DeleteProject.svelte";
+  import HibernateProject from "@statsparrot/web-admin/features/projects/settings/HibernateProject.svelte";
+  import ProjectNameSettings from "@statsparrot/web-admin/features/projects/settings/ProjectNameSettings.svelte";
+  import ProjectVisibilitySettings from "@statsparrot/web-admin/features/projects/settings/ProjectVisibilitySettings.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let organization = $derived($page.params.organization);
   let project = $derived($page.params.project);

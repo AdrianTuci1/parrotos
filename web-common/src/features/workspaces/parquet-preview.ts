@@ -1,6 +1,6 @@
 import type { PartialMessage, Struct } from "@bufbuild/protobuf";
-import { createRuntimeServiceQueryResolver } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { createRuntimeServiceQueryResolver } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 // Number of rows to preview. Parquet files can be large, so we cap the preview
 // the same way the model results table does.

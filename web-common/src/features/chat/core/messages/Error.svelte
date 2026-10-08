@@ -1,7 +1,7 @@
 <script lang="ts">
   import AlertCircle from "../../../../components/icons/AlertCircle.svelte";
   import ChevronRight from "../../../../components/icons/ChevronRight.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let headline: string;
   export let error: string | null | undefined = undefined;

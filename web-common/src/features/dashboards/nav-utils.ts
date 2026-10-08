@@ -1,11 +1,11 @@
 import { page } from "$app/stores";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 import type { Page } from "@sveltejs/kit";
 import { derived } from "svelte/store";
-import { getExploreValidSpecQueryOptions } from "@rilldata/web-common/features/explores/selectors.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { getExploreValidSpecQueryOptions } from "@statsparrot/web-common/features/explores/selectors.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createQuery } from "@tanstack/svelte-query";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 
 const exploreRouteRegex = /\/explore\/(?:\[name]|\[dashboard])/;
 const canvasRouteRegex = /\/canvas\/(?:\[name]|\[dashboard])/;

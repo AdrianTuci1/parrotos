@@ -1,15 +1,15 @@
 <script lang="ts">
   import type { ColumnDef } from "tanstack-table-8-svelte-5";
   import { renderComponent } from "tanstack-table-8-svelte-5";
-  import type { V1ProjectVariable } from "@rilldata/web-admin/client";
-  import BasicTable from "@rilldata/web-common/components/table/BasicTable.svelte";
-  import KeyIcon from "@rilldata/web-common/components/icons/KeyIcon.svelte";
+  import type { V1ProjectVariable } from "@statsparrot/web-admin/client";
+  import BasicTable from "@statsparrot/web-common/components/table/BasicTable.svelte";
+  import KeyIcon from "@statsparrot/web-common/components/icons/KeyIcon.svelte";
   import ActivityCell from "./ActivityCell.svelte";
   import KeyCell from "./KeyCell.svelte";
   import ValueCell from "./ValueCell.svelte";
   import ActionsCell from "./ActionsCell.svelte";
   import type { VariableNames } from "./types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let data: V1ProjectVariable[];
   export let emptyText: string = "";

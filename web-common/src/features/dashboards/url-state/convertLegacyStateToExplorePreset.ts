@@ -1,41 +1,41 @@
-import { toPivotFormattingParam } from "@rilldata/web-common/features/dashboards/pivot/pivot-formatting-param";
-import { FromProtoTimeGrainMap } from "@rilldata/web-common/features/dashboards/proto-state/enum-maps";
-import { convertFilterToExpression } from "@rilldata/web-common/features/dashboards/proto-state/filter-converter";
+import { toPivotFormattingParam } from "@statsparrot/web-common/features/dashboards/pivot/pivot-formatting-param";
+import { FromProtoTimeGrainMap } from "@statsparrot/web-common/features/dashboards/proto-state/enum-maps";
+import { convertFilterToExpression } from "@statsparrot/web-common/features/dashboards/proto-state/filter-converter";
 import {
   correctComparisonTimeRange,
   fromExpressionProto,
   fromPivotConditionalFormattingProto,
-} from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
+} from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
 import {
   createAndExpression,
   createSubQueryExpression,
   getAllIdentifiers,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { ExploreStateDefaultChartType } from "@rilldata/web-common/features/dashboards/url-state/defaults";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { ExploreStateDefaultChartType } from "@statsparrot/web-common/features/dashboards/url-state/defaults";
 import {
   getMultiFieldError,
   getSingleFieldError,
-} from "@rilldata/web-common/features/dashboards/url-state/error-message-helpers";
+} from "@statsparrot/web-common/features/dashboards/url-state/error-message-helpers";
 import {
   FromLegacySortTypeMap,
   mapLegacyChartType,
-} from "@rilldata/web-common/features/dashboards/url-state/legacyMappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/legacyMappers";
 import {
   FromActivePageMap,
   FromURLParamTimeDimensionMap,
   ToURLParamTimeDimensionMap,
-} from "@rilldata/web-common/features/dashboards/url-state/mappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/mappers";
 import {
   getMapFromArray,
   getMissingValues,
-} from "@rilldata/web-common/lib/arrayUtils";
-import type { TimeGrain } from "@rilldata/web-common/proto/gen/rill/runtime/v1/time_grain_pb";
+} from "@statsparrot/web-common/lib/arrayUtils";
+import type { TimeGrain } from "@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/time_grain_pb";
 import {
   type DashboardState,
   DashboardState_ActivePage,
   DashboardState_LeaderboardSortDirection,
   PivotElement,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
@@ -44,9 +44,9 @@ import {
   type V1ExploreSpec,
   type V1Expression,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
-import { TimeRangePreset } from "@rilldata/web-common/lib/time/types";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/runtime-client";
+import { TimeRangePreset } from "@statsparrot/web-common/lib/time/types";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
 
 export function convertLegacyStateToExplorePreset(
   legacyState: DashboardState,

@@ -1,8 +1,8 @@
 import { readable, writable } from "svelte/store";
-import { getRillDefaultExploreState } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state";
-import { createStateManagerReadables } from "@rilldata/web-common/features/dashboards/state-managers/selectors";
-import { createStateManagerActions } from "@rilldata/web-common/features/dashboards/state-managers/actions";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { getParrotDefaultExploreState } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state";
+import { createStateManagerReadables } from "@statsparrot/web-common/features/dashboards/state-managers/selectors";
+import { createStateManagerActions } from "@statsparrot/web-common/features/dashboards/state-managers/actions";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   DEFAULT_METRICS_VIEW,
   getMockMetricsView,
@@ -15,8 +15,8 @@ const MOCK_TIME_RANGE_SUMMARY = {
 };
 
 /**
- * A `StateManagers` populated entirely from the mock adapter when no Rill runtime
- * is reachable. Reuses the real, framework-agnostic Rill selectors/actions plus the
+ * A `StateManagers` populated entirely from the mock adapter when no Parrot runtime
+ * is reachable. Reuses the real, framework-agnostic Parrot selectors/actions plus the
  * default explore-state builder, so the product `Filters` bar and the explore
  * state-management render against mock data without a live runtime.
  */
@@ -32,7 +32,7 @@ export function createMockStateManagers(
   const exploreSpec = { metricsView: metricsViewName, timeRanges: [] };
 
   const dashboardStore = readable(
-    getRillDefaultExploreState(
+    getParrotDefaultExploreState(
       validSpec,
       exploreSpec,
       MOCK_TIME_RANGE_SUMMARY,

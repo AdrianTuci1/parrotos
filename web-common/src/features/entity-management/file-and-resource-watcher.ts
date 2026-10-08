@@ -1,33 +1,33 @@
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
 import {
   type V1WatchFilesResponse,
   type V1WatchResourcesResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   createFileInvalidatorState,
   handleFileEvent,
   type FileInvalidatorState,
-} from "@rilldata/web-common/runtime-client/invalidation/file-invalidators";
+} from "@statsparrot/web-common/runtime-client/invalidation/file-invalidators";
 import {
   createResourceInvalidatorState,
   handleResourceEvent,
   type ResourceInvalidatorState,
-} from "@rilldata/web-common/runtime-client/invalidation/resource-invalidators";
+} from "@statsparrot/web-common/runtime-client/invalidation/resource-invalidators";
 import {
   ConnectionStatus,
   createSSEStream,
   type SSEStream,
-} from "@rilldata/web-common/runtime-client/sse";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/sse";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
-import { waitForControllerRestart } from "@rilldata/web-common/features/entity-management/actions/actions.ts";
+import { waitForControllerRestart } from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
 
 const MAX_RETRIES = 3;
 
 /**
  * Idle-timeout presets.
  *
- * - `aggressive`: pause the stream quickly when the tab idles. Used by Rill
+ * - `aggressive`: pause the stream quickly when the tab idles. Used by Parrot
  *   Developer where the browser's 6-connection per-host limit bites because
  *   SSE, queries, and dev assets all share `localhost:<port>`.
  * - `none`: don't attach a lifecycle at all. Used by the cloud editor and
@@ -63,14 +63,14 @@ export interface FileAndResourceWatcherOptions {
   /** Lifecycle preset. "none" skips attaching an SSEConnectionLifecycle entirely. */
   lifecycle: LifecyclePreset;
   /** Hook fired before each reconnect attempt. Cloud editor passes a JWT
-   * refresh here; local Rill Developer does not. */
+   * refresh here; local Parrot Developer does not. */
   onBeforeReconnect?: () => Promise<void>;
 }
 
 /**
  * Thin watcher that wires SSE transport → typed subscriber → pure invalidators.
  *
- * One instance per mount: Rill Cloud's editor switches between projects and
+ * One instance per mount: Parrot Cloud's editor switches between projects and
  * branches, each backed by a distinct runtime, so the old singleton no
  * longer matches the semantics of the frontend.
  */

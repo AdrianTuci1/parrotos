@@ -1,29 +1,29 @@
 <script lang="ts">
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import VirtualCanvasEditor from "@rilldata/web-admin/features/personal-files/canvas/VirtualCanvasEditor.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { getPersonalFilteredResourceByName } from "@rilldata/web-admin/features/personal-files/selectors.ts";
-  import CanvasDashboardEmbed from "@rilldata/web-common/features/canvas/CanvasDashboardEmbed.svelte";
-  import CanvasProvider from "@rilldata/web-common/features/canvas/CanvasProvider.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import VirtualCanvasEditor from "@statsparrot/web-admin/features/personal-files/canvas/VirtualCanvasEditor.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { getPersonalFilteredResourceByName } from "@statsparrot/web-admin/features/personal-files/selectors.ts";
+  import CanvasDashboardEmbed from "@statsparrot/web-common/features/canvas/CanvasDashboardEmbed.svelte";
+  import CanvasProvider from "@statsparrot/web-common/features/canvas/CanvasProvider.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { page } from "$app/state";
-  import type { VirtualFileIo } from "@rilldata/web-admin/features/personal-files/virtual-file-io.ts";
+  import type { VirtualFileIo } from "@statsparrot/web-admin/features/personal-files/virtual-file-io.ts";
   import { onMount } from "svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
   import {
     getQueryServiceResolveCanvasQueryKey,
     getRuntimeServiceListResourcesQueryKey,
-  } from "@rilldata/web-common/runtime-client";
-  import AlertDialogGuardedConfirmation from "@rilldata/web-common/components/alert-dialog/alert-dialog-guarded-confirmation.svelte";
+  } from "@statsparrot/web-common/runtime-client";
+  import AlertDialogGuardedConfirmation from "@statsparrot/web-common/components/alert-dialog/alert-dialog-guarded-confirmation.svelte";
   import {
     createAdminServiceDeletePersonalFile,
     getAdminServiceListPersonalFilesQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-admin/client";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { goto } from "$app/navigation";
-  import { getCanvasModeStore } from "@rilldata/web-admin/features/personal-files/canvas/mode-utils.ts";
+  import { getCanvasModeStore } from "@statsparrot/web-admin/features/personal-files/canvas/mode-utils.ts";
 
   let {
     fileArtifact,

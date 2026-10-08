@@ -5,15 +5,15 @@ test.describe("Athena connector", () => {
   test.use({ project: "Blank" });
 
   test("explorer step keeps SQL and Model name empty", async ({ page }) => {
-    const accessKey = process.env.RILL_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID;
+    const accessKey = process.env.STATSPARROT_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID;
     const secretKey =
-      process.env.RILL_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY;
-    const outputLocation = "s3://integration-test.rilldata.com/athena/";
+      process.env.STATSPARROT_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY;
+    const outputLocation = "s3://integration-test.statsparrot.com/athena/";
 
     if (!accessKey || !secretKey) {
       test.skip(
         true,
-        "RILL_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID or RILL_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY is not set",
+        "STATSPARROT_RUNTIME_ATHENA_TEST_AWS_ACCESS_KEY_ID or STATSPARROT_RUNTIME_ATHENA_TEST_AWS_SECRET_ACCESS_KEY is not set",
       );
     }
 

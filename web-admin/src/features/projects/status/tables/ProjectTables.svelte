@@ -1,36 +1,36 @@
 <script lang="ts">
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { TableToolbar } from "@rilldata/web-common/components/table-toolbar";
-  import type { FilterGroup } from "@rilldata/web-common/components/table-toolbar/types";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { TableToolbar } from "@statsparrot/web-common/components/table-toolbar";
+  import type { FilterGroup } from "@statsparrot/web-common/components/table-toolbar/types";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createRuntimeServiceCreateTriggerMutation,
     createRuntimeServiceGetInstance,
     getRuntimeServiceListResourcesQueryKey,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { writable } from "svelte/store";
-  import ModelsTable from "@rilldata/web-common/features/projects/status/tables/ModelsTable.svelte";
-  import ExternalTablesTable from "@rilldata/web-common/features/projects/status/tables/ExternalTablesTable.svelte";
+  import ModelsTable from "@statsparrot/web-common/features/projects/status/tables/ModelsTable.svelte";
+  import ExternalTablesTable from "@statsparrot/web-common/features/projects/status/tables/ExternalTablesTable.svelte";
   import { useInfiniteTablesList, useModelResources } from "../selectors";
   import {
     filterTemporaryTables,
     applyTableFilters,
     applyTagFilter,
     splitTablesByModel,
-  } from "@rilldata/web-common/features/projects/status/tables/utils";
-  import ResourceSpecDialog from "@rilldata/web-common/features/projects/status/ResourceSpecDialog.svelte";
-  import ModelPartitionsDialog from "@rilldata/web-common/features/projects/status/tables/ModelPartitionsDialog.svelte";
-  import RefreshErroredPartitionsDialog from "@rilldata/web-common/features/projects/status/tables/RefreshErroredPartitionsDialog.svelte";
-  import RefreshResourceConfirmDialog from "@rilldata/web-common/features/projects/status/RefreshResourceConfirmDialog.svelte";
-  import { getAllTagsForResources } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
-  import { UrlParamsState } from "@rilldata/web-common/lib/store-utils/url-params-state.svelte.ts";
-  import { DebouncedRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/projects/status/tables/utils";
+  import ResourceSpecDialog from "@statsparrot/web-common/features/projects/status/ResourceSpecDialog.svelte";
+  import ModelPartitionsDialog from "@statsparrot/web-common/features/projects/status/tables/ModelPartitionsDialog.svelte";
+  import RefreshErroredPartitionsDialog from "@statsparrot/web-common/features/projects/status/tables/RefreshErroredPartitionsDialog.svelte";
+  import RefreshResourceConfirmDialog from "@statsparrot/web-common/features/projects/status/RefreshResourceConfirmDialog.svelte";
+  import { getAllTagsForResources } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
+  import { UrlParamsState } from "@statsparrot/web-common/lib/store-utils/url-params-state.svelte.ts";
+  import { DebouncedRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const runtimeClient = useRuntimeClient();
 
@@ -68,7 +68,7 @@
   );
   const tablesList = useInfiniteTablesList(tablesParams);
 
-  // Filter out temporary tables (e.g., __rill_tmp_ prefixed tables)
+  // Filter out temporary tables (e.g., __statsparrot_tmp_ prefixed tables)
   let filteredTables = $derived(
     filterTemporaryTables($tablesList.data?.tables),
   );
@@ -284,7 +284,7 @@
             <span class="text-fg-muted text-sm">
               {m.status_models_created_in_developer()}
               <a
-                href="https://docs.rilldata.com/build/models/"
+                href="https://docs.statsparrot.com/build/models/"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary-500 hover:text-primary-600"
@@ -328,7 +328,7 @@
             </span>
             <span class="text-fg-muted text-sm">
               <a
-                href="https://docs.rilldata.com/developers/build/connectors/olap"
+                href="https://docs.statsparrot.com/developers/build/connectors/olap"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary-500 hover:text-primary-600"

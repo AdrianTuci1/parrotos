@@ -1,19 +1,19 @@
-import { getCompoundQuery } from "@rilldata/web-common/features/compound-query-result";
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+import { getCompoundQuery } from "@statsparrot/web-common/features/compound-query-result";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
 import {
   createInExpression,
   createLikeExpression,
   createAndExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   createQueryServiceMetricsViewAggregation,
   V1BuiltinMeasure,
-} from "@rilldata/web-common/runtime-client";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { mergeDimensionAndMeasureFilters } from "../measure-filters/measure-filter-utils";
 import { getFiltersForOtherDimensions } from "../../selectors";
 

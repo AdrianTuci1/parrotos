@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import { Search } from "@rilldata/web-common/components/search";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-  import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-  import { getNoComparisonLabel } from "@rilldata/web-common/lib/time/config";
-  import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+  import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+  import { getNoComparisonLabel } from "@statsparrot/web-common/lib/time/config";
+  import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
   import { matchSorter } from "match-sorter";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let exploreName: string;
 

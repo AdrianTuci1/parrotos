@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Tabs from "@rilldata/web-common/components/forms/Tabs.svelte";
-  import { TabsContent } from "@rilldata/web-common/components/tabs";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Tabs from "@statsparrot/web-common/components/forms/Tabs.svelte";
+  import { TabsContent } from "@statsparrot/web-common/components/tabs";
   import { slide } from "svelte/transition";
   import SchemaField from "./SchemaField.svelte";
   import type { JSONSchemaField } from "./schemas/types";

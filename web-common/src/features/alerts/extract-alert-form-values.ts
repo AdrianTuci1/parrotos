@@ -1,19 +1,19 @@
-import { getSnoozeValueFromAlertSpec } from "@rilldata/web-common/features/alerts/delivery-tab/snooze.ts";
-import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
+import { getSnoozeValueFromAlertSpec } from "@statsparrot/web-common/features/alerts/delivery-tab/snooze.ts";
+import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
 import {
   getEmptyMeasureFilterEntry,
   mapExprToMeasureFilter,
   type MeasureFilterEntry,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { getExploreName } from "@rilldata/web-common/features/explore-mappers/utils.ts";
-import { getExistingScheduleFormValues } from "@rilldata/web-common/features/scheduled-reports/time-utils.ts";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { getExploreName } from "@statsparrot/web-common/features/explore-mappers/utils.ts";
+import { getExistingScheduleFormValues } from "@statsparrot/web-common/features/scheduled-reports/time-utils.ts";
 import {
   type V1AlertSpec,
   type V1MetricsViewAggregationDimension,
   type V1MetricsViewAggregationMeasure,
   type V1MetricsViewAggregationRequest,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export type AlertFormValuesSubset = Pick<
   AlertFormValues,

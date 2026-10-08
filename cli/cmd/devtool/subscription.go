@@ -10,11 +10,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/rilldata/rill/admin/billing"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/cli/cmd/admin"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/cli/cmd/admin"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 	"github.com/spf13/cobra"
@@ -59,12 +59,12 @@ func AdvanceSubscriptionTimeCmd(ch *cmdutil.Helper) *cobra.Command {
 			// Load .env (note: fails silently if .env has errors)
 			_ = godotenv.Load()
 			var conf admin.Config
-			err = envconfig.Process("rill_admin", &conf)
+			err = envconfig.Process("statsparrot_admin", &conf)
 			if err != nil {
 				return err
 			}
 			if conf.OrbAPIKey == "" {
-				return errors.New("missing orb api key. make sure to run from rill git root to get keys from .env")
+				return errors.New("missing orb api key. make sure to run from statsparrot git root to get keys from .env")
 			}
 
 			orgResp, err := adminClient.GetOrganization(ctx, &adminv1.GetOrganizationRequest{

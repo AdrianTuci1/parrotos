@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { portal } from "@rilldata/web-common/lib/actions/portal";
-  import { formatGrainBucket } from "@rilldata/web-common/lib/time/ranges/formatter";
-  import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { portal } from "@statsparrot/web-common/lib/actions/portal";
+  import { formatGrainBucket } from "@statsparrot/web-common/lib/time/ranges/formatter";
+  import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import { type DateTime, type Interval } from "luxon";
 
   interface DimTooltipEntry {

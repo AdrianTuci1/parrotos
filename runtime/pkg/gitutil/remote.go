@@ -86,7 +86,7 @@ func ExtractRemotes(projectPath string, detectDotGit bool) ([]Remote, error) {
 }
 
 // SetRemote sets the remote named config.RemoteName() for the repository at path to config.Remote.
-// It is a no-op if the remote already has the wanted URL, or if it is not a Rill-managed remote
+// It is a no-op if the remote already has the wanted URL, or if it is not a Parrot-managed remote
 // (a user's own remote must never be overwritten).
 func SetRemote(path string, config *Config) error {
 	if config.Remote == "" {

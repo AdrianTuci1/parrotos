@@ -1,0 +1,19 @@
+# Terraform state holds the generated SSH private key, so it must never be committed.
+# .terraform.lock.hcl is deliberately absent from this list: it pins the provider versions and
+# contains no secrets, so it belongs in version control.
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Real values, including the Cloudflare zone ID and any token put here.
+terraform.tfvars
+*.auto.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Keys written out of `terraform output -raw private_key_pem`.
+*.pem

@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
-  import CreateUserGroupDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/CreateUserGroupDialog.svelte";
-  import EditUserGroupDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
-  import OrgGroupsTable from "@rilldata/web-admin/features/organizations/user-management/table/groups/OrgGroupsTable.svelte";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
+  import CreateUserGroupDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/CreateUserGroupDialog.svelte";
+  import EditUserGroupDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
+  import OrgGroupsTable from "@statsparrot/web-admin/features/organizations/user-management/table/groups/OrgGroupsTable.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
   import { Plus } from "lucide-svelte";
-  import { getOrgUsergroupsInfinite } from "@rilldata/web-admin/features/organizations/user-management/selectors.ts";
+  import { getOrgUsergroupsInfinite } from "@statsparrot/web-admin/features/organizations/user-management/selectors.ts";
 
   let userGroupName = "";
   let isCreateUserGroupDialogOpen = false;

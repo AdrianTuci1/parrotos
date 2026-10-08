@@ -5,9 +5,9 @@ import (
 	"io"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,7 +15,7 @@ func TestProjectStorage(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"druid"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: duckdb",
+			"statsparrot.yaml": "olap_connector: duckdb",
 			"connectors/duckdb.yaml": `
 type: connector
 driver: duckdb

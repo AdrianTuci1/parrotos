@@ -1,11 +1,11 @@
-import { sessionStorageStore } from "@rilldata/web-common/lib/store-utils/session-storage";
+import { sessionStorageStore } from "@statsparrot/web-common/lib/store-utils/session-storage";
 import { get } from "svelte/store";
 import { EmbedStore } from "./embed-store";
 
 function getEmbedThemeStoreKey(): string {
   const embedStore = EmbedStore.getInstance();
   const embedId = embedStore?.embedId ?? "default";
-  return `rill:embed:theme:${embedId}`;
+  return `statsparrot:embed:theme:${embedId}`;
 }
 
 export function getEmbedThemeStore() {

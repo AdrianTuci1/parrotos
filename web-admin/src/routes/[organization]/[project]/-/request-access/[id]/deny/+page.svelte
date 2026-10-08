@@ -4,14 +4,14 @@
   import {
     createAdminServiceDenyProjectAccess,
     createAdminServiceGetProjectAccessRequest,
-  } from "@rilldata/web-admin/client";
-  import { parseAccessRequestError } from "@rilldata/web-admin/features/access-request/utils";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import AccessRequestContainer from "@rilldata/web-admin/features/access-request/AccessRequestContainer.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  } from "@statsparrot/web-admin/client";
+  import { parseAccessRequestError } from "@statsparrot/web-admin/features/access-request/utils";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import AccessRequestContainer from "@statsparrot/web-admin/features/access-request/AccessRequestContainer.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
   import type { AxiosError } from "axios";
 
   $: organization = $page.params.organization;

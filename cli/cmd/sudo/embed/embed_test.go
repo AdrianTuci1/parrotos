@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/rilldata/rill/admin/testadmin"
-	"github.com/rilldata/rill/cli/testcli"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	"github.com/staticlabs/statsparrot/cli/testcli"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,7 +34,7 @@ func TestEmbedOpen(t *testing.T) {
 
 	tempDir := t.TempDir()
 	putFiles(t, tempDir, map[string]string{
-		"rill.yaml": `olap_connector: duckdb`,
+		"statsparrot.yaml": `olap_connector: duckdb`,
 	})
 	res = u2.Run(t, "project", "deploy", "--interactive=false", "--org=embed-test", "--project=embed-project", "--path="+tempDir)
 	require.Equal(t, 0, res.ExitCode, res.Output)

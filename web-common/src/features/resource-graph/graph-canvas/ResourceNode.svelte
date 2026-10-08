@@ -1,19 +1,19 @@
 <script lang="ts">
   import { Handle, Position, NodeToolbar } from "@xyflow/svelte";
-  import { displayResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  import { displayResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     resourceIconMapping,
     resourceShorthandMapping,
-  } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import type { ResourceNodeData } from "../shared/types";
-  import { V1ReconcileStatus } from "@rilldata/web-common/runtime-client";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
+  import { V1ReconcileStatus } from "@statsparrot/web-common/runtime-client";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
   import {
     getFileHref,
     navigateToFile,
-  } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import ExternalLink from "@rilldata/web-common/components/icons/ExternalLink.svelte";
+  } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import ExternalLink from "@statsparrot/web-common/components/icons/ExternalLink.svelte";
 
   export let id: string;
   export let type: string;

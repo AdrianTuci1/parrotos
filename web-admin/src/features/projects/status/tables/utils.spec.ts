@@ -13,20 +13,20 @@ import {
   splitTablesByModel,
   applyTableFilters,
   applyTagFilter,
-} from "@rilldata/web-common/features/projects/status/tables/utils";
+} from "@statsparrot/web-common/features/projects/status/tables/utils";
 import type {
   V1OlapTableInfo,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 describe("tables utils", () => {
   describe("filterTemporaryTables", () => {
-    it("filters out __rill_tmp_ prefixed tables", () => {
+    it("filters out __statsparrot_tmp_ prefixed tables", () => {
       const tables: V1OlapTableInfo[] = [
         { name: "users" },
-        { name: "__rill_tmp_123" },
+        { name: "__statsparrot_tmp_123" },
         { name: "orders" },
-        { name: "__rill_tmp_abc" },
+        { name: "__statsparrot_tmp_abc" },
       ];
 
       const result = filterTemporaryTables(tables);

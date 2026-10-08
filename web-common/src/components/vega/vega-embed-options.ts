@@ -1,12 +1,12 @@
-import type { ColorMapping } from "@rilldata/web-common/features/components/charts/types";
-import { ComparisonDeltaPreviousSuffix } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { ColorMapping } from "@statsparrot/web-common/features/components/charts/types";
+import { ComparisonDeltaPreviousSuffix } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { EmbedOptions } from "svelte-vega";
 import { expressionInterpreter } from "vega-interpreter";
 import type { Config } from "vega-lite";
 import type { ExpressionFunction } from "./types";
 import { sanitizeTitleForVegaTooltip } from "./util";
-import { getRillTheme } from "./vega-config";
+import { getParrotTheme } from "./vega-config";
 
 export interface CreateBaseEmbedOptionsParams {
   client: RuntimeClient;
@@ -41,7 +41,7 @@ export function createBaseEmbedOptions({
   const jwt = client.getJwt();
 
   return {
-    config: config || getRillTheme(themeMode === "dark"),
+    config: config || getParrotTheme(themeMode === "dark"),
     renderer,
     tooltip: {
       theme: themeMode,

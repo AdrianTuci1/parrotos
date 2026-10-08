@@ -44,7 +44,7 @@ export const NODE_CONFIG = {
  *
  * These values were tuned for readability with graphs of 5-50 nodes.
  * Original values (18, 48, 4) were increased by 1.5x to reduce visual density.
- * Tested with real-world Rill projects containing complex dependency chains.
+ * Tested with real-world Parrot projects containing complex dependency chains.
  */
 export const DAGRE_CONFIG = {
   /**
@@ -270,21 +270,21 @@ export const DEBUG_CONFIG = {
 /**
  * Cache namespace for localStorage.
  *
- * Uses `rill:` prefix for namespacing since Rill Developer runs on localhost:9009,
+ * Uses `statsparrot:` prefix for namespacing since Parrot Developer runs on localhost:9009,
  * which may be shared with other applications. This follows the pattern established
- * by `rill:theme` for consistency.
+ * by `statsparrot:theme` for consistency.
  *
  * Cache invalidation is handled via the debug utility `window.__RESOURCE_GRAPH_CACHE.clearAll()`
  * rather than versioning, keeping the key simple and user-friendly.
  */
-export const CACHE_NAMESPACE = "rill:resource-graph" as const;
+export const CACHE_NAMESPACE = "statsparrot:resource-graph" as const;
 
 /**
  * Pattern for matching old cache keys during cleanup.
- * Matches both old versioned keys (rill.resourceGraph.v1, rill.resourceGraph.v2)
+ * Matches both old versioned keys (statsparrot.resourceGraph.v1, statsparrot.resourceGraph.v2)
  * and ensures cleanup during migration to new key format.
  */
-export const CACHE_KEY_PATTERN = /^rill[.:]resource[-.]?[Gg]raph(\.v\d+)?$/;
+export const CACHE_KEY_PATTERN = /^statsparrot[.:]resource[-.]?[Gg]raph(\.v\d+)?$/;
 
 /**
  * Helper to log debug messages only when debug mode is enabled.

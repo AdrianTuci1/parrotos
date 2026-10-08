@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { selectedDimensionValues } from "@rilldata/web-common/features/dashboards/state-managers/selectors/dimension-filters";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { selectedDimensionValues } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/dimension-filters";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
   import type {
     V1Expression,
     V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { DimensionThresholdFilter } from "web-common/src/features/dashboards/stores/explore-state";
-  import { clamp } from "@rilldata/web-common/lib/clamp";
+  import { clamp } from "@statsparrot/web-common/lib/clamp";
   import Leaderboard from "./Leaderboard.svelte";
   import LeaderboardControls from "./LeaderboardControls.svelte";
   import {

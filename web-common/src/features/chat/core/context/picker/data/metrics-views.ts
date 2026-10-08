@@ -1,17 +1,17 @@
-import { getActiveMetricsViewNameStore } from "@rilldata/web-common/features/dashboards/nav-utils.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-import { getValidMetricsViewsQueryOptions } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { getActiveMetricsViewNameStore } from "@statsparrot/web-common/features/dashboards/nav-utils.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+import { getValidMetricsViewsQueryOptions } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, type Readable } from "svelte/store";
 import { createQuery } from "@tanstack/svelte-query";
 import {
   getIdForContext,
   type InlineContext,
   InlineContextType,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-import { MessageType } from "@rilldata/web-common/features/chat/core/types.ts";
-import type { PickerItem } from "@rilldata/web-common/features/chat/core/context/picker/picker-tree.ts";
-import { getLatestConversationQueryOptions } from "@rilldata/web-common/features/chat/core/utils.ts";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+import { MessageType } from "@statsparrot/web-common/features/chat/core/types.ts";
+import type { PickerItem } from "@statsparrot/web-common/features/chat/core/context/picker/picker-tree.ts";
+import { getLatestConversationQueryOptions } from "@statsparrot/web-common/features/chat/core/utils.ts";
 
 /**
  * Creates a store that contains a 2-level list of options for each valid metrics view.

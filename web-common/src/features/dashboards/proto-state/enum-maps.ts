@@ -1,8 +1,8 @@
-import type { PivotTableMode } from "@rilldata/web-common/features/dashboards/pivot/types";
-import { Operation } from "@rilldata/web-common/proto/gen/rill/runtime/v1/expression_pb";
-import { TimeGrain } from "@rilldata/web-common/proto/gen/rill/runtime/v1/time_grain_pb";
-import { DashboardState_PivotTableMode } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
-import { V1Operation, V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import type { PivotTableMode } from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { Operation } from "@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/expression_pb";
+import { TimeGrain } from "@statsparrot/web-common/proto/gen/statsparrot/runtime/v1/time_grain_pb";
+import { DashboardState_PivotTableMode } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
+import { V1Operation, V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 
 // This file should contain all the map from proto and API values.
 // TODO: we should try and find a way to merge these enums

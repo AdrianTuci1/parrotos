@@ -1,4 +1,4 @@
-import type { MetricsViewSpecMeasureFormatD3Locale } from "@rilldata/web-common/runtime-client";
+import type { MetricsViewSpecMeasureFormatD3Locale } from "@statsparrot/web-common/runtime-client";
 import type { FormatLocaleDefinition } from "d3-format";
 
 export function isValidD3Locale(

@@ -13,49 +13,49 @@ project_files:
     materialize: true
     connector: clickhouse
     output: clickhouse
-    sql: "SELECT * FROM gcs('gs://integration-test.rilldata.com/csv_test/all_datatypes.csv', '{{.env.connector.gcs_s3_compat.key_id}}', '{{.env.connector.gcs_s3_compat.secret}}', 'CSVWithNames')"
+    sql: "SELECT * FROM gcs('gs://integration-test.statsparrot.com/csv_test/all_datatypes.csv', '{{.env.connector.gcs_s3_compat.key_id}}', '{{.env.connector.gcs_s3_compat.secret}}', 'CSVWithNames')"
   model_gcs_to_clickhouse_for_glob.yaml:
     type: model
     materialize: true
     connector: clickhouse
     output: clickhouse
-    sql: "SELECT * FROM gcs('gs://integration-test.rilldata.com/glob_test/y=202*/a*.csv', '{{.env.connector.gcs_s3_compat.key_id}}', '{{.env.connector.gcs_s3_compat.secret}}', 'CSVWithNames')"
+    sql: "SELECT * FROM gcs('gs://integration-test.statsparrot.com/glob_test/y=202*/a*.csv', '{{.env.connector.gcs_s3_compat.key_id}}', '{{.env.connector.gcs_s3_compat.secret}}', 'CSVWithNames')"
   model_gcs_to_clickhouse_for_parquet.yaml:
     type: model
     materialize: true
     connector: clickhouse
     output: clickhouse
-    sql: "SELECT * FROM gcs('gs://integration-test.rilldata.com/parquet_test/all_datatypes.parquet', '{{.env.connector.gcs_s3_compat.key_id}}', '{{.env.connector.gcs_s3_compat.secret}}', 'Parquet')"
+    sql: "SELECT * FROM gcs('gs://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet', '{{.env.connector.gcs_s3_compat.key_id}}', '{{.env.connector.gcs_s3_compat.secret}}', 'Parquet')"
   model_gcs_to_duckdb_for_csv.yaml:
     type: model
     connector: duckdb
     materialize: true
     create_secrets_from_connectors: gcs_hmac
-    sql: "select * from read_csv('gs://integration-test.rilldata.com/csv_test/all_datatypes.csv', auto_detect=true, ignore_errors=1, header=true)"
+    sql: "select * from read_csv('gs://integration-test.statsparrot.com/csv_test/all_datatypes.csv', auto_detect=true, ignore_errors=1, header=true)"
   model_gcs_to_duckdb_for_glob.yaml:
     type: model
     connector: duckdb
     materialize: true
     create_secrets_from_connectors: gcs_hmac
-    sql: "select * from read_csv('gs://integration-test.rilldata.com/glob_test/y=202*/a*.csv', auto_detect=true, ignore_errors=1, header=true)"
+    sql: "select * from read_csv('gs://integration-test.statsparrot.com/glob_test/y=202*/a*.csv', auto_detect=true, ignore_errors=1, header=true)"
   model_gcs_to_duckdb_for_parquet.yaml:
     type: model
     connector: duckdb
     materialize: true
     create_secrets_from_connectors: gcs_hmac
-    sql: "select * from read_parquet('gs://integration-test.rilldata.com/parquet_test/all_datatypes.parquet')"
+    sql: "select * from read_parquet('gs://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet')"
   model_gcs_to_duckdb_using_path_for_csv.yaml:
     type: model
     connector: gcs
-    path: "gs://integration-test.rilldata.com/csv_test/all_datatypes.csv"
+    path: "gs://integration-test.statsparrot.com/csv_test/all_datatypes.csv"
   model_gcs_to_duckdb_using_path_for_glob.yaml:
     type: model
     connector: gcs
-    path: "gs://integration-test.rilldata.com/glob_test/y=202*/a*.csv"
+    path: "gs://integration-test.statsparrot.com/glob_test/y=202*/a*.csv"
   model_gcs_to_duckdb_using_path_for_parquet.yaml:
     type: model
     connector: gcs
-    path: "gs://integration-test.rilldata.com/parquet_test/all_datatypes.parquet"
+    path: "gs://integration-test.statsparrot.com/parquet_test/all_datatypes.parquet"
 tests:
   - name: test_all_results_for_model_gcs_to_clickhouse_for_csv
     resolver: sql

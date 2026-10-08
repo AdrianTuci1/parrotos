@@ -1,4 +1,4 @@
-import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
+import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
 import { derived, get, writable, type Writable } from "svelte/store";
 
 type ConnectorExplorerState = {

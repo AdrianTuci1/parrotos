@@ -672,8 +672,8 @@
     - role: tool
       content_type: tool_response
       id: 69151fe9fd734195
-      content: '{"schema":[{"name":"device_country","type":"STRING"},{"name":"requests","type":"INT128"}],"data":[["USA",571021200]],"open_url":"https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/4ca938ba-a6e0-4ea1-bec5-498e70b32bff/message/69151fe9-fd73-4195-bf9d-942058556080/-/open"}'
+      content: '{"schema":[{"name":"device_country","type":"STRING"},{"name":"requests","type":"INT128"}],"data":[["USA",571021200]],"open_url":"https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/4ca938ba-a6e0-4ea1-bec5-498e70b32bff/message/69151fe9-fd73-4195-bf9d-942058556080/-/open"}'
   response:
     - role: assistant
       content_type: text
-      content: The non‑US country with the most auctions (requests) is **USA** with **571,021,200** requests in the available time range. ([Non‑US countries by auction requests](https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/4ca938ba-a6e0-4ea1-bec5-498e70b32bff/message/69151fe9-fd73-4195-bf9d-942058556080/-/open))
+      content: The non‑US country with the most auctions (requests) is **USA** with **571,021,200** requests in the available time range. ([Non‑US countries by auction requests](https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/4ca938ba-a6e0-4ea1-bec5-498e70b32bff/message/69151fe9-fd73-4195-bf9d-942058556080/-/open))

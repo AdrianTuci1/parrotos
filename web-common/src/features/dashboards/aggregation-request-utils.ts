@@ -1,22 +1,22 @@
-import { getAggregationDimensionFromFieldName } from "@rilldata/web-common/features/dashboards/aggregation-request/dimension-utils.ts";
-import { getComparisonRequestMeasures } from "@rilldata/web-common/features/dashboards/dashboard-utils.ts";
-import { MeasureModifierSuffixRegex } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils.ts";
-import { ComparisonModifierSuffixRegex } from "@rilldata/web-common/features/dashboards/pivot/types.ts";
-import { sanitiseExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
-import type { FiltersState } from "@rilldata/web-common/features/dashboards/stores/Filters.ts";
-import type { TimeControlState } from "@rilldata/web-common/features/dashboards/stores/TimeControls.ts";
+import { getAggregationDimensionFromFieldName } from "@statsparrot/web-common/features/dashboards/aggregation-request/dimension-utils.ts";
+import { getComparisonRequestMeasures } from "@statsparrot/web-common/features/dashboards/dashboard-utils.ts";
+import { MeasureModifierSuffixRegex } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry.ts";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils.ts";
+import { ComparisonModifierSuffixRegex } from "@statsparrot/web-common/features/dashboards/pivot/types.ts";
+import { sanitiseExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
+import type { FiltersState } from "@statsparrot/web-common/features/dashboards/stores/Filters.ts";
+import type { TimeControlState } from "@statsparrot/web-common/features/dashboards/stores/TimeControls.ts";
 import {
   mapSelectedComparisonTimeRangeToV1TimeRange,
   mapSelectedTimeRangeToV1TimeRange,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers.ts";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers.ts";
 import type {
   V1ExploreSpec,
   V1MetricsViewAggregationDimension,
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationRequest,
   V1MetricsViewAggregationSort,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export type AggregationRequestUpdater = (
   aggregationRequest: V1MetricsViewAggregationRequest,

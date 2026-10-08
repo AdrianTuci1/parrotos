@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/dotrill"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/filewatcher"
-	rtgitutil "github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/dotstatsparrot"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/filewatcher"
+	rtgitutil "github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -36,7 +36,7 @@ func TestListCommits(t *testing.T) {
 		for _, commit := range commits {
 			require.Len(t, commit.CommitSha, 40, "commit sha should be 40 chars")
 			require.Equal(t, "Test User", commit.AuthorName)
-			require.Equal(t, "test@rilldata.com", commit.AuthorEmail)
+			require.Equal(t, "test@staticlabs.com", commit.AuthorEmail)
 			require.NotNil(t, commit.CommittedOn)
 			require.False(t, commit.CommittedOn.AsTime().IsZero())
 		}
@@ -174,7 +174,7 @@ func TestListGlob(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(parent, "secret.txt"), []byte("secret"), 0644))
 		root := filepath.Join(parent, "repo")
 		require.NoError(t, os.MkdirAll(filepath.Join(root, "sources"), 0755))
-		require.NoError(t, os.WriteFile(filepath.Join(root, "rill.yaml"), []byte("x"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(root, "statsparrot.yaml"), []byte("x"), 0644))
 		return root
 	}
 
@@ -187,7 +187,7 @@ func TestListGlob(t *testing.T) {
 		for i, e := range entries {
 			paths[i] = e.Path
 		}
-		require.Equal(t, []string{"/rill.yaml"}, paths)
+		require.Equal(t, []string{"/statsparrot.yaml"}, paths)
 	})
 
 	t.Run("traversal globs cannot escape the root", func(t *testing.T) {
@@ -308,7 +308,7 @@ func TestCommit(t *testing.T) {
 		_, err := c.Commit(context.Background(), "")
 		require.NoError(t, err)
 		msg := strings.TrimSpace(runGitOutput(t, tempDir, "log", "-1", "--pretty=format:%s"))
-		require.Equal(t, "Auto committed by Rill", msg)
+		require.Equal(t, "Auto committed by Parrot", msg)
 	})
 
 	t.Run("returns empty hash and no error when there is nothing to commit", func(t *testing.T) {
@@ -419,7 +419,7 @@ func initRepo(t *testing.T) string {
 	runGit(t, "", "init", tempDir)
 	runGit(t, tempDir, "checkout", "-b", "main")
 	runGit(t, tempDir, "config", "user.name", "Test User")
-	runGit(t, tempDir, "config", "user.email", "test@rilldata.com")
+	runGit(t, tempDir, "config", "user.email", "test@staticlabs.com")
 	runGit(t, tempDir, "config", "commit.gpgsign", "false")
 	return tempDir
 }
@@ -453,7 +453,7 @@ func newFileConnection(t *testing.T, root string) *connection {
 		root:         root,
 		driverConfig: &configProperties{HomeDir: t.TempDir()},
 		driverName:   "file",
-		dotRill:      dotrill.New(t.TempDir()),
+		dotStatsparrot:      dotstatsparrot.New(t.TempDir()),
 		watcher:      filewatcher.NewLazyWatcher(root, nil, zap.NewNop()),
 	}
 }

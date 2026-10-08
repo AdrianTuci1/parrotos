@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
   import Button from "../../../components/button/Button.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import { createResourceAndNavigate } from "./new-files.ts";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import { ResourceKind } from "../resource-selectors.ts";

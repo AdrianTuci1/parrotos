@@ -3,8 +3,8 @@ import {
   createAndExpression,
   createInExpression,
   sanitiseExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import type { TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import {
   type V1Expression,
   type V1MetricsViewAggregationDimension,
@@ -13,7 +13,7 @@ import {
   type V1MetricsViewAggregationResponseDataItem,
   type V1MetricsViewAggregationSort,
   createQueryServiceMetricsViewAggregation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import {
   type CreateQueryResult,
   keepPreviousData,

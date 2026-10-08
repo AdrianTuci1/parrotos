@@ -1,11 +1,11 @@
 <script lang="ts">
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
   import type {
     MetricsViewSpecDimension,
     MetricsViewSpecMeasure,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import SelectionDropdown from "./SelectionDropdown.svelte";
 
   const fields = ["all", "subset", "expression"];
@@ -76,7 +76,7 @@
     <a
       class="w-fit"
       target="_blank"
-      href="https://docs.rilldata.com/reference/project-files/explore-dashboards"
+      href="https://docs.statsparrot.com/reference/project-files/explore-dashboards"
     >
       See docs
     </a>

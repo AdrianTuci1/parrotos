@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { IconButton } from "@rilldata/web-common/components/button";
-  import InfoCircle from "@rilldata/web-common/components/icons/InfoCircle.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
+  import { IconButton } from "@statsparrot/web-common/components/button";
+  import InfoCircle from "@statsparrot/web-common/components/icons/InfoCircle.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
   import { XIcon } from "lucide-svelte";
   import { slide } from "svelte/transition";
 

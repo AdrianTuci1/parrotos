@@ -1,17 +1,17 @@
 <script lang="ts">
-  import DraggableList from "@rilldata/web-common/components/draggable-list";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import DragHandle from "@rilldata/web-common/components/icons/DragHandle.svelte";
-  import EyeIcon from "@rilldata/web-common/components/icons/Eye.svelte";
-  import EyeOffIcon from "@rilldata/web-common/components/icons/EyeInvisible.svelte";
-  import * as Popover from "@rilldata/web-common/components/popover";
+  import DraggableList from "@statsparrot/web-common/components/draggable-list";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import DragHandle from "@statsparrot/web-common/components/icons/DragHandle.svelte";
+  import EyeIcon from "@statsparrot/web-common/components/icons/Eye.svelte";
+  import EyeOffIcon from "@statsparrot/web-common/components/icons/EyeInvisible.svelte";
+  import * as Popover from "@statsparrot/web-common/components/popover";
   import type {
     MetricsViewSpecDimension,
     MetricsViewSpecMeasure,
-  } from "@rilldata/web-common/runtime-client";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/runtime-client";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { Button } from "../button";
   import Search from "../search/Search.svelte";
   import DashboardMetricsTagRow from "./DashboardMetricsTagRow.svelte";
@@ -19,7 +19,7 @@
   import {
     exploreTagColumnWidth,
     TAG_COLUMN,
-  } from "@rilldata/web-common/features/dashboards/workspace/dashboard-layout-store";
+  } from "@statsparrot/web-common/features/dashboards/workspace/dashboard-layout-store";
   import {
     applyHideAllInTag,
     applyOnlyShowTag,

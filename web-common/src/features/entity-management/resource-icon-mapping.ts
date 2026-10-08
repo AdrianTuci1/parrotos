@@ -1,19 +1,19 @@
-import ApiIcon from "@rilldata/web-common/components/icons/APIIcon.svelte";
-import AlertIcon from "@rilldata/web-common/components/icons/AlertIcon.svelte";
-import CanvasIcon from "@rilldata/web-common/components/icons/CanvasIcon.svelte";
-import Chart from "@rilldata/web-common/components/icons/Chart.svelte";
-import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-import ReportIcon from "@rilldata/web-common/components/icons/ReportIcon.svelte";
-import TableIcon from "@rilldata/web-common/components/icons/TableIcon.svelte";
-import ThemeIcon from "@rilldata/web-common/components/icons/ThemeIcon.svelte";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import ApiIcon from "@statsparrot/web-common/components/icons/APIIcon.svelte";
+import AlertIcon from "@statsparrot/web-common/components/icons/AlertIcon.svelte";
+import CanvasIcon from "@statsparrot/web-common/components/icons/CanvasIcon.svelte";
+import Chart from "@statsparrot/web-common/components/icons/Chart.svelte";
+import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+import ReportIcon from "@statsparrot/web-common/components/icons/ReportIcon.svelte";
+import TableIcon from "@statsparrot/web-common/components/icons/TableIcon.svelte";
+import ThemeIcon from "@statsparrot/web-common/components/icons/ThemeIcon.svelte";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import ConnectorIcon from "../../components/icons/ConnectorIcon.svelte";
 import MetricsViewIcon from "../../components/icons/MetricsViewIcon.svelte";
-import ModelIcon from "@rilldata/web-common/components/icons/ModelIcon.svelte";
-import File from "@rilldata/web-common/components/icons/File.svelte";
-import SettingsIcon from "@rilldata/web-common/components/icons/SettingsIcon.svelte";
-import { isEnvFile } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
-import { extractFileExtension } from "@rilldata/web-common/features/entity-management/file-path-utils";
+import ModelIcon from "@statsparrot/web-common/components/icons/ModelIcon.svelte";
+import File from "@statsparrot/web-common/components/icons/File.svelte";
+import SettingsIcon from "@statsparrot/web-common/components/icons/SettingsIcon.svelte";
+import { isEnvFile } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
+import { extractFileExtension } from "@statsparrot/web-common/features/entity-management/file-path-utils";
 import { Sheet } from "lucide-svelte";
 
 export const resourceIconMapping = {
@@ -65,7 +65,7 @@ export function getIconComponent(
   if (kind) {
     return resourceIconMapping[kind];
   }
-  if (isEnvFile(filePath) || filePath === "/rill.yaml") {
+  if (isEnvFile(filePath) || filePath === "/statsparrot.yaml") {
     return SettingsIcon;
   }
   if (extractFileExtension(filePath) === ".parquet") {

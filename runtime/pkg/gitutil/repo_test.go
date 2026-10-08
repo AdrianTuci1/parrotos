@@ -52,7 +52,7 @@ func TestCloneWithConfig(t *testing.T) {
 	require.NoError(t, CloneWithConfig(ctx, path, config))
 
 	// the remote is named after the config and persists the clean URL
-	url, err := Run(ctx, path, "remote", "get-url", "__rill_remote")
+	url, err := Run(ctx, path, "remote", "get-url", "__statsparrot_remote")
 	require.NoError(t, err)
 	require.Equal(t, baseURL, url)
 

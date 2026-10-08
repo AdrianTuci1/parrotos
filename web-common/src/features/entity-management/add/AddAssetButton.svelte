@@ -8,12 +8,12 @@
     PlusCircleIcon,
     Wand,
   } from "lucide-svelte";
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
   import Button from "../../../components/button/Button.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags.ts";
-  import { getScreenNameFromPage } from "@rilldata/web-common/features/file-explorer/telemetry.ts";
-  import GenerateSampleData from "@rilldata/web-common/features/sample-data/GenerateSampleData.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
+  import { getScreenNameFromPage } from "@statsparrot/web-common/features/file-explorer/telemetry.ts";
+  import GenerateSampleData from "@statsparrot/web-common/features/sample-data/GenerateSampleData.svelte";
   import CaretDownIcon from "../../../components/icons/CaretDownIcon.svelte";
   import { BehaviourEventMedium } from "../../../metrics/service/BehaviourEventTypes.ts";
   import {
@@ -38,9 +38,9 @@
   import { getName } from "../name-utils.ts";
   import { resourceIconMapping } from "../resource-icon-mapping.ts";
   import { ResourceKind, useFilteredResources } from "../resource-selectors.ts";
-  import AddModelSubOption from "@rilldata/web-common/features/entity-management/add/AddModelSubOption.svelte";
-  import AddDataModal from "@rilldata/web-common/features/add-data/AddDataModal.svelte";
-  import AddMetricsViewSubOption from "@rilldata/web-common/features/entity-management/add/AddMetricsViewSubOption.svelte";
+  import AddModelSubOption from "@statsparrot/web-common/features/entity-management/add/AddModelSubOption.svelte";
+  import AddDataModal from "@statsparrot/web-common/features/add-data/AddDataModal.svelte";
+  import AddMetricsViewSubOption from "@statsparrot/web-common/features/entity-management/add/AddMetricsViewSubOption.svelte";
 
   let active = false;
   let showExploreDialog = false;

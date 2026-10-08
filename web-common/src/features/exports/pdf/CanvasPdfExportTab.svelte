@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-  import StaticCanvasRow from "@rilldata/web-common/features/canvas/StaticCanvasRow.svelte";
-  import type { Tab } from "@rilldata/web-common/features/canvas/stores/tab-group";
+  import type { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+  import StaticCanvasRow from "@statsparrot/web-common/features/canvas/StaticCanvasRow.svelte";
+  import type { Tab } from "@statsparrot/web-common/features/canvas/stores/tab-group";
 
   // One exported tab: a label band naming the tab (captured as its own block,
   // see captureTargetsIn) followed by the tab's rows. The idPrefix namespaces

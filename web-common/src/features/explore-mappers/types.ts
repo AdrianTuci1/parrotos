@@ -1,4 +1,4 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import type {
   V1ExploreSpec,
   V1MetricsViewAggregationRequest,
@@ -8,8 +8,8 @@ import type {
   V1MetricsViewTimeSeriesRequest,
   V1MetricsViewToplistRequest,
   V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 
 export type QueryRequests =

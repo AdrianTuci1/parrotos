@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/runtime/parser"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/parser"
 )
 
 func ParseDotenv(ctx context.Context, projectPath string) (map[string]string, error) {
@@ -17,8 +17,8 @@ func ParseDotenv(ctx context.Context, projectPath string) (map[string]string, er
 	if err != nil {
 		return nil, err
 	}
-	if p.RillYAML == nil {
-		return nil, fmt.Errorf("not a valid Rill project (missing a rill.yaml file)")
+	if p.ParrotYAML == nil {
+		return nil, fmt.Errorf("not a valid Parrot project (missing a statsparrot.yaml file)")
 	}
 
 	return p.GetDotEnv(), nil

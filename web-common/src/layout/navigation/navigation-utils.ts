@@ -1,10 +1,10 @@
-import { appScreen } from "@rilldata/web-common/layout/app-store";
-import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+import { appScreen } from "@statsparrot/web-common/layout/app-store";
+import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
 import {
   MetricsEventScreenName,
   MetricsEventSpace,
-} from "@rilldata/web-common/metrics/service/MetricsTypes";
+} from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import type { Page } from "@sveltejs/kit";
 import { get } from "svelte/store";
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { type V1OrganizationPermissions } from "@rilldata/web-admin/client";
-  import Tab from "@rilldata/web-admin/components/nav/Tab.svelte";
+  import { type V1OrganizationPermissions } from "@statsparrot/web-admin/client";
+  import Tab from "@statsparrot/web-admin/components/nav/Tab.svelte";
   import {
     width,
     position,
-  } from "@rilldata/web-admin//components/nav/Tab.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin//components/nav/Tab.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let organizationPermissions: V1OrganizationPermissions;

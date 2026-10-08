@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { updateDevJWT } from "@rilldata/web-common/features/dashboards/granular-access-policies/updateDevJWT";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { updateDevJWT } from "@statsparrot/web-common/features/dashboards/granular-access-policies/updateDevJWT";
 
   import { Chip } from "../../../components/chip";
   import Add from "../../../components/icons/Add.svelte";
@@ -8,13 +8,13 @@
   import Check from "../../../components/icons/Check.svelte";
   import EyeIcon from "../../../components/icons/EyeIcon.svelte";
   import Spacer from "../../../components/icons/Spacer.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { selectedMockUserStore } from "./stores";
   import { useMockUsers } from "./useMockUsers";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
 
   let viewAsMenuOpen = false;
   let open = false;
@@ -84,7 +84,7 @@
     {/if}
     <DropdownMenu.Separator />
     <DropdownMenu.Item
-      href={`${getFileHref("/rill.yaml")}?addMockUser=true`}
+      href={`${getFileHref("/statsparrot.yaml")}?addMockUser=true`}
       class="flex gap-x-2 items-center font-normal"
     >
       <Add size="16px" />

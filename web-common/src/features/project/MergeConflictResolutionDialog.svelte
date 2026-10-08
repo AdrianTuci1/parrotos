@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ConnectError } from "@connectrpc/connect";
-  import * as Alert from "@rilldata/web-common/components/alert-dialog/index.js";
-  import CTACard from "@rilldata/web-common/components/calls-to-action/CTACard.svelte";
+  import * as Alert from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import CTACard from "@statsparrot/web-common/components/calls-to-action/CTACard.svelte";
   import { AlertCircleIcon } from "lucide-svelte";
 
   export let open = false;

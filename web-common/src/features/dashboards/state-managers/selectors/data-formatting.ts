@@ -1,5 +1,5 @@
-import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
+import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
 import { activeMeasure } from "./active-measure";
 import type { DashboardDataSources } from "./types";
 import { visibleMeasures } from "./measures";

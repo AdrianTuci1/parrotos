@@ -4,21 +4,21 @@
     createAdminServiceIssueMagicAuthToken,
     getAdminServiceListMagicAuthTokensQueryKey,
     type AdminServiceIssueMagicAuthTokenBody,
-  } from "@rilldata/web-admin/client";
-  import { isCanvasDashboardPage } from "@rilldata/web-admin/features/navigation/nav-utils";
-  import { Button, IconButton } from "@rilldata/web-common/components/button";
-  import Calendar from "@rilldata/web-common/components/date-picker/Calendar.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
+  } from "@statsparrot/web-admin/client";
+  import { isCanvasDashboardPage } from "@statsparrot/web-admin/features/navigation/nav-utils";
+  import { Button, IconButton } from "@statsparrot/web-common/components/button";
+  import Calendar from "@statsparrot/web-common/components/date-picker/Calendar.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import type { HTTPError } from "@rilldata/web-common/lib/errors";
+  } from "@statsparrot/web-common/components/popover";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import type { HTTPError } from "@statsparrot/web-common/lib/errors";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { Pencil } from "lucide-svelte";
   import { DateTime } from "luxon";
@@ -28,8 +28,8 @@
   import CanvasFiltersSection from "./CanvasFiltersSection.svelte";
   import ExploreFiltersSection from "./ExploreFiltersSection.svelte";
   import { convertDateToMinutes } from "./form-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { getLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { getLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 
   const queryClient = useQueryClient();
 

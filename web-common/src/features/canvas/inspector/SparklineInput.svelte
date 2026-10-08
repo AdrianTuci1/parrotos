@@ -1,8 +1,8 @@
 <script lang="ts">
-  import IconSwitcher from "@rilldata/web-common/components/forms/IconSwitcher.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import IconSwitcher from "@statsparrot/web-common/components/forms/IconSwitcher.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { ArrowDown, ArrowRight } from "lucide-svelte";
 
   export let key: string;

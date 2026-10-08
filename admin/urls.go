@@ -7,20 +7,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
 )
 
 // URLs centralizes parsing and formatting of URLs for the admin service.
 //
-// There are several complexities around URL handling in Rill:
-//  1. The frontend may run on a different host than the admin service (e.g. ui.rilldata.com vs. admin.rilldata.com).
-//  2. We support custom domains for specific orgs (e.g. analytics.mycompany.com instead of ui.rilldata.com/mycompany).
+// There are several complexities around URL handling in Parrot:
+//  1. The frontend may run on a different host than the admin service (e.g. ui.statsparrot.com vs. admin.statsparrot.com).
+//  2. We support custom domains for specific orgs (e.g. analytics.mycompany.com instead of ui.statsparrot.com/mycompany).
 //  3. The admin service sends transactional emails that link to the frontend, such as project invites.
 //  4. The admin service is also responsible for sending transactional emails on behalf of the runtime, which also link to the frontend, such as for alerts and reports.
-//  5. We need to ensure correct redirects and callbacks for the auth service (on auth.rilldata.com) and Github.
+//  5. We need to ensure correct redirects and callbacks for the auth service (on auth.statsparrot.com) and Github.
 //     These services have fixed callback URLs on the admin service's primary external URL, which complicates custom domain handling.
 //
-// For orgs with a custom domain configured (using the CLI command `rill sudo org set-custom-domain`),
+// For orgs with a custom domain configured (using the CLI command `statsparrot sudo org set-custom-domain`),
 // we require the admin service and frontend to be reachable on the custom domain using the following load balancer rules:
 //  1. The admin service must be reachable at the `/api` path prefix on the custom domain.
 //     The `/api` prefix should be removed by the load balancer before proxying to the admin service.
@@ -33,7 +33,7 @@ type URLs struct {
 }
 
 // NewURLs creates a new URLs. The provided URLs should include the scheme, host, optional port, and optional path prefix.
-// The provided URLs should be the primary external and frontend URL for the Rill service. The returned *URLs will rewrite them as needed for custom domains.
+// The provided URLs should be the primary external and frontend URL for the Parrot service. The returned *URLs will rewrite them as needed for custom domains.
 func NewURLs(externalURL, frontendURL string) (*URLs, error) {
 	eu, err := url.Parse(externalURL)
 	if err != nil {
@@ -263,7 +263,7 @@ func (u *URLs) GithubAuthCallback() string {
 	return urlutil.MustJoinURL(u.external, "/github/auth/callback") // NOTE: Always using the primary external URL.
 }
 
-// GithubConnectUI returns the page in the Rill frontend for starting the Github connect flow.
+// GithubConnectUI returns the page in the Parrot frontend for starting the Github connect flow.
 func (u *URLs) GithubConnectUI(redirect string) string {
 	res := urlutil.MustJoinURL(u.frontend, "/-/github/connect") // NOTE: Always using the primary frontend URL.
 	if redirect != "" {
@@ -272,7 +272,7 @@ func (u *URLs) GithubConnectUI(redirect string) string {
 	return res
 }
 
-// GithubConnectRetryUI returns the page in the Rill frontend for retrying the Github connect flow.
+// GithubConnectRetryUI returns the page in the Parrot frontend for retrying the Github connect flow.
 func (u *URLs) GithubConnectRetryUI(remote, redirect string) string {
 	res := urlutil.MustJoinURL(u.frontend, "/-/github/connect/retry-install") // NOTE: Always using the primary frontend URL.
 	if remote != "" {
@@ -284,7 +284,7 @@ func (u *URLs) GithubConnectRetryUI(remote, redirect string) string {
 	return res
 }
 
-// GithubConnectRequestUI returns the page in the Rill frontend for requesting a Github connect.
+// GithubConnectRequestUI returns the page in the Parrot frontend for requesting a Github connect.
 func (u *URLs) GithubConnectRequestUI(remote string) string {
 	res := urlutil.MustJoinURL(u.frontend, "/-/github/connect/request") // NOTE: Always using the primary frontend URL.
 	if remote != "" {
@@ -293,7 +293,7 @@ func (u *URLs) GithubConnectRequestUI(remote string) string {
 	return res
 }
 
-// GithubConnectSuccessUI returns the page in the Rill frontend for a successful Github connect.
+// GithubConnectSuccessUI returns the page in the Parrot frontend for a successful Github connect.
 func (u *URLs) GithubConnectSuccessUI(autoclose bool) string {
 	res := urlutil.MustJoinURL(u.frontend, "/-/github/connect/success") // NOTE: Always using the primary frontend URL.
 	if autoclose {
@@ -302,7 +302,7 @@ func (u *URLs) GithubConnectSuccessUI(autoclose bool) string {
 	return res
 }
 
-// GithubRetryAuthUI returns the page in the Rill frontend for retrying the Github auth flow.
+// GithubRetryAuthUI returns the page in the Parrot frontend for retrying the Github auth flow.
 func (u *URLs) GithubRetryAuthUI(remote, username, redirect string) string {
 	res := urlutil.MustJoinURL(u.frontend, "/-/github/connect/retry-auth") // NOTE: Always using the primary frontend URL.
 	if remote != "" {
@@ -438,7 +438,7 @@ func (u *URLs) PaymentPortal(org string) string {
 
 // OAuthExternalResourceURL returns the external URL for OAuth 2.0 resource access.
 // If a request is provided, it uses the request's Host header to construct the URL to make sure protected resource URLs origin matches with the resource URL being accessed by the client.
-// This helps in cases, for example, where the MCP server url starts with api.rilldata.com instead of admin.rilldata.com.
+// This helps in cases, for example, where the MCP server url starts with api.statsparrot.com instead of admin.statsparrot.com.
 func (u *URLs) OAuthExternalResourceURL(r *http.Request) string {
 	if r != nil {
 		scheme := "http"

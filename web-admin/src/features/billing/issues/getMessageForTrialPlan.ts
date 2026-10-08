@@ -1,10 +1,10 @@
 import {
   type V1BillingIssue,
   V1BillingIssueType,
-} from "@rilldata/web-admin/client";
-import type { BillingIssueMessage } from "@rilldata/web-admin/features/billing/issues/useBillingIssueMessage";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { shiftToLargest } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+} from "@statsparrot/web-admin/client";
+import type { BillingIssueMessage } from "@statsparrot/web-admin/features/billing/issues/useBillingIssueMessage";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { shiftToLargest } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import { DateTime, type Duration } from "luxon";
 
 const WarningPeriodInDays = 7;
@@ -112,7 +112,7 @@ function getMessageForCreditsTrial(trialIssue: V1BillingIssue) {
     };
   } else {
     message.type = "default";
-    message.title = m.billing_welcome_to_rill();
+    message.title = m.billing_welcome_to_statsparrot();
     message.description = m.billing_free_trial_with_credits({
       amount: String(onCreditTrial.creditAllocation ?? 0),
     });

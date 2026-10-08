@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const ReadFileName = "read_file"
@@ -27,7 +27,7 @@ func (t *ReadFile) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        ReadFileName,
 		Title:       "Read file",
-		Description: "Reads the contents of a file in the Rill project",
+		Description: "Reads the contents of a file in the Parrot project",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(false),
 			IdempotentHint:  true,

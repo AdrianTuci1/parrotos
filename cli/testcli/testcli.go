@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/rilldata/rill/admin/testadmin"
-	"github.com/rilldata/rill/cli/cmd"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/dotrill"
-	"github.com/rilldata/rill/cli/pkg/version"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	"github.com/staticlabs/statsparrot/cli/cmd"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/dotstatsparrot"
+	"github.com/staticlabs/statsparrot/cli/pkg/version"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,10 +21,10 @@ type Fixture struct {
 // New creates a new Fixture for the given admin service test fixture and (optional) user access token.
 func New(t *testing.T, adm *testadmin.Fixture, token string) *Fixture {
 	homeDir := t.TempDir()
-	dotRill := dotrill.New(homeDir)
-	require.NoError(t, dotRill.SetDefaultAdminURL(adm.ExternalURL()))
+	dotStatsparrot := dotstatsparrot.New(homeDir)
+	require.NoError(t, dotStatsparrot.SetDefaultAdminURL(adm.ExternalURL()))
 	if token != "" {
-		require.NoError(t, dotRill.SetAccessToken(token))
+		require.NoError(t, dotStatsparrot.SetAccessToken(token))
 	}
 
 	return &Fixture{

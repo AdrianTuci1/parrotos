@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/pgtestcontainer"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/pgtestcontainer"
 	"github.com/stretchr/testify/require"
 )
 
@@ -166,9 +166,9 @@ func testOrganizations(t *testing.T, db database.DB) {
 func testOrgsWithPagination(t *testing.T, db database.DB) {
 	ctx := context.Background()
 
-	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test@rilldata.com"})
+	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test@staticlabs.com"})
 	require.NoError(t, err)
-	require.Equal(t, "test@rilldata.com", user.Email)
+	require.Equal(t, "test@staticlabs.com", user.Email)
 
 	role, err := db.FindOrganizationRole(ctx, database.OrganizationRoleNameAdmin)
 	require.NoError(t, err)
@@ -370,9 +370,9 @@ func testProjectsForUserWithPagination(t *testing.T, db database.DB) {
 	ctx := context.Background()
 
 	// add user
-	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test@rilldata.com"})
+	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test@staticlabs.com"})
 	require.NoError(t, err)
-	require.Equal(t, "test@rilldata.com", user.Email)
+	require.Equal(t, "test@staticlabs.com", user.Email)
 
 	// fetch role
 	role, err := db.FindProjectRole(ctx, database.ProjectRoleNameEditor)
@@ -430,10 +430,10 @@ func testProjectsForUserWithPagination(t *testing.T, db database.DB) {
 func testOrgsMembersPagination(t *testing.T, db database.DB) {
 	ctx := context.Background()
 
-	adminUser, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test1@rilldata.com", DisplayName: "John Admin"})
+	adminUser, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test1@staticlabs.com", DisplayName: "John Admin"})
 	require.NoError(t, err)
 
-	viewerUser, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test2@rilldata.com", DisplayName: "Jane Viewer"})
+	viewerUser, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test2@staticlabs.com", DisplayName: "Jane Viewer"})
 	require.NoError(t, err)
 
 	admin, err := db.FindOrganizationRole(ctx, database.OrganizationRoleNameAdmin)
@@ -448,30 +448,30 @@ func testOrgsMembersPagination(t *testing.T, db database.DB) {
 	require.NoError(t, err)
 	_, err = db.InsertOrganizationMemberUser(ctx, org.ID, viewerUser.ID, viewer.ID, nil, false)
 	require.NoError(t, err)
-	require.NoError(t, db.InsertOrganizationInvite(ctx, &database.InsertOrganizationInviteOptions{Email: "test3@rilldata.com", InviterID: adminUser.ID, OrgID: org.ID, RoleID: viewer.ID}))
+	require.NoError(t, db.InsertOrganizationInvite(ctx, &database.InsertOrganizationInviteOptions{Email: "test3@staticlabs.com", InviterID: adminUser.ID, OrgID: org.ID, RoleID: viewer.ID}))
 
 	// fetch members without name filter
 	users, err := db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 1, "")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test1@rilldata.com", users[0].Email)
+	require.Equal(t, "test1@staticlabs.com", users[0].Email)
 
 	// fetch members with name filter
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, users[0].Email, 1, "")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test2@rilldata.com", users[0].Email)
+	require.Equal(t, "test2@staticlabs.com", users[0].Email)
 
 	// test search pattern functionality
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 10, "test1%")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test1@rilldata.com", users[0].Email)
+	require.Equal(t, "test1@staticlabs.com", users[0].Email)
 
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 10, "test2%")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test2@rilldata.com", users[0].Email)
+	require.Equal(t, "test2@staticlabs.com", users[0].Email)
 
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 10, "test%")
 	require.NoError(t, err)
@@ -485,23 +485,23 @@ func testOrgsMembersPagination(t *testing.T, db database.DB) {
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 10, "John%")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test1@rilldata.com", users[0].Email)
+	require.Equal(t, "test1@staticlabs.com", users[0].Email)
 
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 10, "%Jane%")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test2@rilldata.com", users[0].Email)
+	require.Equal(t, "test2@staticlabs.com", users[0].Email)
 
 	users, err = db.FindOrganizationMemberUsers(ctx, org.ID, "", true, "", 10, "%Admin")
 	require.NoError(t, err)
 	require.Equal(t, len(users), 1)
-	require.Equal(t, "test1@rilldata.com", users[0].Email)
+	require.Equal(t, "test1@staticlabs.com", users[0].Email)
 
 	// fetch invites without name filter
 	invites, err := db.FindOrganizationInvites(ctx, org.ID, "", 1)
 	require.NoError(t, err)
 	require.Equal(t, len(invites), 1)
-	require.Equal(t, "test3@rilldata.com", invites[0].Email)
+	require.Equal(t, "test3@staticlabs.com", invites[0].Email)
 
 	invites, err = db.FindOrganizationInvites(ctx, org.ID, invites[0].Email, 1)
 	require.NoError(t, err)
@@ -577,7 +577,7 @@ func testUpsertProjectVariable(t *testing.T, db database.DB) {
 
 func testManagedGitRepos(t *testing.T, db database.DB) {
 	// create a user with random email id
-	user, err := db.InsertUser(context.Background(), &database.InsertUserOptions{Email: fmt.Sprintf("user%d@rilldata.com", time.Now().UnixNano())})
+	user, err := db.InsertUser(context.Background(), &database.InsertUserOptions{Email: fmt.Sprintf("user%d@staticlabs.com", time.Now().UnixNano())})
 	require.NoError(t, err)
 
 	// add some orgs
@@ -602,14 +602,14 @@ func testManagedGitRepos(t *testing.T, db database.DB) {
 	// insert some repos
 	m1, err := db.InsertManagedGitRepo(context.Background(), &database.InsertManagedGitRepoOptions{
 		OrgID:   org1.ID,
-		Remote:  "https://github.com/rilldata/rill.git",
+		Remote:  "https://github.com/staticlabs/statsparrot.git",
 		OwnerID: user.ID,
 	})
 	require.NoError(t, err)
 
 	m2, err := db.InsertManagedGitRepo(context.Background(), &database.InsertManagedGitRepoOptions{
 		OrgID:   org2.ID,
-		Remote:  "https://github.com/rilldata/rill2.git",
+		Remote:  "https://github.com/staticlabs/statsparrot2.git",
 		OwnerID: user.ID,
 	})
 	require.NoError(t, err)
@@ -621,7 +621,7 @@ func testManagedGitRepos(t *testing.T, db database.DB) {
 
 	m3, err := db.InsertManagedGitRepo(context.Background(), &database.InsertManagedGitRepoOptions{
 		OrgID:   org3.ID,
-		Remote:  "https://github.com/rilldata/rill3.git",
+		Remote:  "https://github.com/staticlabs/statsparrot3.git",
 		OwnerID: user.ID,
 	})
 	require.NoError(t, err)
@@ -657,7 +657,7 @@ func testManagedGitRepos(t *testing.T, db database.DB) {
 	require.NoError(t, db.DeleteOrganization(context.Background(), org3.Name))
 
 	// the mgd repo still exists but org_id is set to null
-	repo, err := db.FindManagedGitRepo(context.Background(), "https://github.com/rilldata/rill3.git")
+	repo, err := db.FindManagedGitRepo(context.Background(), "https://github.com/staticlabs/statsparrot3.git")
 	require.NoError(t, err)
 	var res *string = nil
 	require.Equal(t, repo.OrgID, res)
@@ -693,7 +693,7 @@ func testOrganizationMemberUserAttributes(t *testing.T, db database.DB) {
 	ctx := context.Background()
 
 	// Create test data
-	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test@rilldata.com"})
+	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test@staticlabs.com"})
 	require.NoError(t, err)
 
 	org, err := db.InsertOrganization(ctx, &database.InsertOrganizationOptions{Name: "test-org"})
@@ -756,7 +756,7 @@ func testOrganizationInviteAttributes(t *testing.T, db database.DB) {
 	role, err := db.FindOrganizationRole(ctx, database.OrganizationRoleNameViewer)
 	require.NoError(t, err)
 
-	email := "invitee-attrs@rilldata.com"
+	email := "invitee-attrs@staticlabs.com"
 	attributes := map[string]any{"attr1": "value1", "attr2": "value2"}
 
 	t.Run("InsertOrganizationInvite with attributes", func(t *testing.T) {
@@ -796,7 +796,7 @@ func testOrganizationInviteAttributes(t *testing.T, db database.DB) {
 	})
 
 	t.Run("InsertOrganizationInvite without attributes normalizes to empty map", func(t *testing.T) {
-		email2 := "invitee-no-attrs@rilldata.com"
+		email2 := "invitee-no-attrs@staticlabs.com"
 		err := db.InsertOrganizationInvite(ctx, &database.InsertOrganizationInviteOptions{
 			Email:  email2,
 			OrgID:  org.ID,
@@ -812,7 +812,7 @@ func testOrganizationInviteAttributes(t *testing.T, db database.DB) {
 
 	t.Run("InsertOrganizationInvite rejects invalid attributes", func(t *testing.T) {
 		err := db.InsertOrganizationInvite(ctx, &database.InsertOrganizationInviteOptions{
-			Email:      "invitee-invalid-attrs@rilldata.com",
+			Email:      "invitee-invalid-attrs@staticlabs.com",
 			OrgID:      org.ID,
 			RoleID:     role.ID,
 			Attributes: map[string]any{"invalid-key": "value"},
@@ -828,7 +828,7 @@ func testOrganizationInviteAttributes(t *testing.T, db database.DB) {
 func testAttributeValidation(t *testing.T, db database.DB) {
 	ctx := context.Background()
 
-	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test-validation@rilldata.com"})
+	user, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test-validation@staticlabs.com"})
 	require.NoError(t, err)
 
 	org, err := db.InsertOrganization(ctx, &database.InsertOrganizationOptions{Name: "test-validation-org"})
@@ -843,7 +843,7 @@ func testAttributeValidation(t *testing.T, db database.DB) {
 	require.NoError(t, err)
 
 	t.Run("InsertOrganizationMemberUser validation", func(t *testing.T) {
-		user2, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test2-validation@rilldata.com"})
+		user2, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: "test2-validation@staticlabs.com"})
 		require.NoError(t, err)
 
 		testCases := []struct {
@@ -918,7 +918,7 @@ func seed(t *testing.T, db database.DB) (orgID, projectID, userID string) {
 	ctx := context.Background()
 
 	// create a user with random email id
-	adminUser, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: fmt.Sprintf("user%d@rilldata.com", time.Now().UnixNano())})
+	adminUser, err := db.InsertUser(ctx, &database.InsertUserOptions{Email: fmt.Sprintf("user%d@staticlabs.com", time.Now().UnixNano())})
 	require.NoError(t, err)
 
 	admin, err := db.FindOrganizationRole(ctx, database.OrganizationRoleNameAdmin)

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Tag from "@rilldata/web-common/components/tag/Tag.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Tag from "@statsparrot/web-common/components/tag/Tag.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { themeControl } from "./theme-control";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
 
   $: ({ preference } = themeControl);
 

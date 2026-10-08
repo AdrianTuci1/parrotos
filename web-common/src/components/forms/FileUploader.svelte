@@ -6,7 +6,7 @@
     Upload,
     X,
   } from "lucide-svelte";
-  import { formatMemorySize } from "@rilldata/web-common/lib/number-formatting/memory-size.ts";
+  import { formatMemorySize } from "@statsparrot/web-common/lib/number-formatting/memory-size.ts";
 
   export let files: FileList | undefined;
   export let error: string | Record<string | number, string[]> | undefined =

@@ -4,7 +4,7 @@
 </script>
 
 <script lang="ts">
-  import ProjectGlobalStatusIndicator from "@rilldata/web-admin/features/projects/status/overview/ProjectGlobalStatusIndicator.svelte";
+  import ProjectGlobalStatusIndicator from "@statsparrot/web-admin/features/projects/status/overview/ProjectGlobalStatusIndicator.svelte";
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 

@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { test } from "../setup/base";
 import { clickMenuButton } from "../utils/commonHelpers";
 import { ResourceWatcher } from "../utils/ResourceWatcher";
@@ -50,16 +50,16 @@ available_time_ranges:
   - P4W
   - P3M
   - P12M
-  - rill-TD
-  - rill-WTD
-  - rill-MTD
-  - rill-QTD
-  - rill-YTD
-  - rill-PDC
-  - rill-PWC
-  - rill-PMC
-  - rill-PQC
-  - rill-PYC
+  - statsparrot-TD
+  - statsparrot-WTD
+  - statsparrot-MTD
+  - statsparrot-QTD
+  - statsparrot-YTD
+  - statsparrot-PDC
+  - statsparrot-PWC
+  - statsparrot-PMC
+  - statsparrot-PQC
+  - statsparrot-PYC
 `;
 
 const expectedOneMeasureOneDim = [

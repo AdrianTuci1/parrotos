@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
-import { formatGrainBucket } from "@rilldata/web-common/lib/time/ranges/formatter";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions";
+import { formatGrainBucket } from "@statsparrot/web-common/lib/time/ranges/formatter";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions";
 import { DateTime } from "luxon";
 import { test } from "../setup/base";
 import { waitForReconciliation } from "../utils/wait-for-reconciliation";

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import {
     DATA_TYPE_COLORS,
     INTERVALS,
-  } from "@rilldata/web-common/lib/duckdb-data-types";
+  } from "@statsparrot/web-common/lib/duckdb-data-types";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import ColumnProfileIcon from "../ColumnProfileIcon.svelte";
   import ProfileContainer from "../ProfileContainer.svelte";

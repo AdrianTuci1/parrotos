@@ -2,9 +2,9 @@ import {
   type V1BillingIssue,
   type V1BillingIssueMetadataPaymentFailedMeta,
   V1BillingIssueType,
-} from "@rilldata/web-admin/client";
-import type { BillingIssueMessage } from "@rilldata/web-admin/features/billing/issues/useBillingIssueMessage";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-admin/client";
+import type { BillingIssueMessage } from "@statsparrot/web-admin/features/billing/issues/useBillingIssueMessage";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export const PaymentBillingIssueTypes: Partial<
   Record<V1BillingIssueType, true>

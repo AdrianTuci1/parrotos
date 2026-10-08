@@ -1,8 +1,8 @@
 <script lang="ts">
-  import File from "@rilldata/web-common/components/icons/File.svelte";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import type { NavDragData } from "@rilldata/web-common/features/file-explorer/nav-entry-drag-drop-store";
-  import { portal } from "@rilldata/web-common/lib/actions/portal";
+  import File from "@statsparrot/web-common/components/icons/File.svelte";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import type { NavDragData } from "@statsparrot/web-common/features/file-explorer/nav-entry-drag-drop-store";
+  import { portal } from "@statsparrot/web-common/lib/actions/portal";
   import { Folder } from "lucide-svelte";
 
   export let position = { left: 0, top: 0 };

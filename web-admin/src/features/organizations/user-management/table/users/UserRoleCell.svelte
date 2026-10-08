@@ -1,25 +1,25 @@
 <script lang="ts">
-  import RemoveUserFromOrgConfirmDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/RemoveUserFromOrgConfirmDialog.svelte";
+  import RemoveUserFromOrgConfirmDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/RemoveUserFromOrgConfirmDialog.svelte";
   import {
     canManageOrgUser,
     invalidateAfterUserDelete,
     invalidateOrgInvites,
     invalidateOrgMemberUsers,
-  } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  } from "@statsparrot/web-admin/features/organizations/user-management/utils.ts";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import {
     createAdminServiceRemoveOrganizationMemberUser,
     createAdminServiceSetOrganizationMemberUserRole,
     type V1OrganizationPermissions,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import { page } from "$app/stores";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import OrgUpgradeGuestConfirmDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/OrgUpgradeGuestConfirmDialog.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import OrgUpgradeGuestConfirmDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/OrgUpgradeGuestConfirmDialog.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let email: string;
   export let role: string;

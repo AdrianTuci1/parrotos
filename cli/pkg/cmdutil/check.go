@@ -31,7 +31,7 @@ func CheckAuth(ch *Helper) PreRunCheck {
 
 		// This will just check if token is present in the config
 		if !ch.IsAuthenticated() {
-			return fmt.Errorf("not authenticated, please run 'rill login'")
+			return fmt.Errorf("not authenticated, please run 'statsparrot login'")
 		}
 		return nil
 	}
@@ -49,6 +49,6 @@ func CheckOrganization(ch *Helper) PreRunCheck {
 			return nil
 		}
 
-		return fmt.Errorf("no organization is set, pass `--org` or run `rill org switch`")
+		return fmt.Errorf("no organization is set, pass `--org` or run `statsparrot org switch`")
 	}
 }

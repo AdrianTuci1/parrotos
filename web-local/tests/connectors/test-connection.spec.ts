@@ -69,12 +69,12 @@ test.describe("Test Connection", () => {
   test("GCS connector - HMAC", async ({ page }) => {
     // Skip test if environment variables are not set
     if (
-      !process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY ||
-      !process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY ||
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET
     ) {
       test.skip(
         true,
-        "RILL_RUNTIME_GCS_TEST_HMAC_KEY or RILL_RUNTIME_GCS_TEST_HMAC_SECRET environment variable is not set",
+        "STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY or STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET environment variable is not set",
       );
     }
 
@@ -115,12 +115,12 @@ test.describe("Test Connection", () => {
   }) => {
     // Skip test if environment variables are not set
     if (
-      !process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY ||
-      !process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY ||
+      !process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET
     ) {
       test.skip(
         true,
-        "RILL_RUNTIME_GCS_TEST_HMAC_KEY or RILL_RUNTIME_GCS_TEST_HMAC_SECRET environment variable is not set",
+        "STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY or STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET environment variable is not set",
       );
     }
 
@@ -143,10 +143,10 @@ test.describe("Test Connection", () => {
     // Fill in valid HMAC credentials
     await page
       .getByRole("textbox", { name: "Access Key ID" })
-      .fill(process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY!);
+      .fill(process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY!);
     await page
       .getByRole("textbox", { name: "Secret Access Key" })
-      .fill(process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET!);
+      .fill(process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET!);
 
     // Click the "Test and Connect" button to transition to step 2
     await page
@@ -178,9 +178,9 @@ test.describe("Test Connection", () => {
     // Verify HMAC fields are still filled
     await expect(
       page.getByRole("textbox", { name: "Access Key ID" }),
-    ).toHaveValue(process.env.RILL_RUNTIME_GCS_TEST_HMAC_KEY!);
+    ).toHaveValue(process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_KEY!);
     await expect(
       page.getByRole("textbox", { name: "Secret Access Key" }),
-    ).toHaveValue(process.env.RILL_RUNTIME_GCS_TEST_HMAC_SECRET!);
+    ).toHaveValue(process.env.STATSPARROT_RUNTIME_GCS_TEST_HMAC_SECRET!);
   });
 });

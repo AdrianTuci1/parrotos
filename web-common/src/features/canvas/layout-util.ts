@@ -5,7 +5,7 @@ import type {
   V1MetricsViewSpec,
   V1ResolveCanvasResponseResolvedComponents,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { writable } from "svelte/store";
 import { YAMLMap, YAMLSeq } from "yaml";
 import { ResourceKind } from "../entity-management/resource-selectors";

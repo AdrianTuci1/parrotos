@@ -1,13 +1,13 @@
-import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import { isSimpleMeasure } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures.ts";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
-import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import { useMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import { isSimpleMeasure } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures.ts";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
+import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, type Readable } from "svelte/store";
 
 export class ExploreMetricsViewMetadata {

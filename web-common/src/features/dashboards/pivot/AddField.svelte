@@ -1,24 +1,24 @@
 <script lang="ts" context="module">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import Add from "@rilldata/web-common/components/icons/Add.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import Add from "@statsparrot/web-common/components/icons/Add.svelte";
   import { getStateManagers } from "../state-managers/state-managers";
   import { metricsExplorerStore } from "../stores/dashboard-stores";
-  import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+  import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
   import {
     getAllowedTimeGrains,
     isGrainBigger,
-  } from "@rilldata/web-common/lib/time/grains";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/time/grains";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 
-  import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
-  import SearchableMenuContent from "@rilldata/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
+  import type { SearchableFilterSelectableGroup } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+  import SearchableMenuContent from "@statsparrot/web-common/components/searchable-filter-menu/SearchableMenuContent.svelte";
 
   import { PivotChipType } from "./types";
   import type { PivotChipData } from "./types";
 </script>
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { appendChipsToZone, splitTagItems } from "./pivot-utils";
 
   export let zone: "rows" | "columns" | null = null;

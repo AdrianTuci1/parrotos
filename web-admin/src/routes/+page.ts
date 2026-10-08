@@ -1,4 +1,4 @@
-import { redirectToLogin } from "@rilldata/web-admin/client/redirect-utils";
+import { redirectToLogin } from "@statsparrot/web-admin/client/redirect-utils";
 
 export async function load({ parent }) {
   const { user } = await parent();

@@ -1,4 +1,4 @@
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import type { DashboardMutables } from "./types";
 
 export const setPrimaryDimension = (

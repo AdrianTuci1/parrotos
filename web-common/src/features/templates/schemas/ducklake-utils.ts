@@ -1,7 +1,7 @@
 import { ducklakeSchema } from "./ducklake";
 import type { MultiStepFormSchema } from "./types";
-import type { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
+import type { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
 
 /**
  * Compose a DuckDB `ATTACH` clause string (without the leading `ATTACH`
@@ -373,7 +373,7 @@ const DUCKLAKE_KNOWN_CATALOG_SCHEMES = new Set([
 
 /**
  * Strip the optional `ATTACH [OR REPLACE] [IF NOT EXISTS]` prefix and a
- * trailing `;` from a user-pasted ATTACH statement. Rill emits the keyword
+ * trailing `;` from a user-pasted ATTACH statement. Parrot emits the keyword
  * itself, so the stored form value should be just the clause body. The
  * textarea shows whatever the user typed; the wrapper is removed only when
  * the value flows into YAML, preview, or validation.

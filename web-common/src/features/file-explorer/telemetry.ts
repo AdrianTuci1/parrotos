@@ -1,9 +1,9 @@
 import { page } from "$app/stores";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
 import {
   MetricsEventScreenName,
   ResourceKindToScreenMap,
-} from "@rilldata/web-common/metrics/service/MetricsTypes";
+} from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import { get } from "svelte/store";
 
 export function getScreenNameFromPage() {

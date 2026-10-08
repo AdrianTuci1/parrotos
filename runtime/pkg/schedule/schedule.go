@@ -3,7 +3,7 @@ package schedule
 import (
 	"time"
 
-	"github.com/rilldata/rill/runtime/pkg/priorityqueue"
+	"github.com/staticlabs/statsparrot/runtime/pkg/priorityqueue"
 )
 
 // Schedule tracks unique values ordered by time.

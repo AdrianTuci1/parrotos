@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as Command from "@rilldata/web-common/components/command/index.js";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as Command from "@statsparrot/web-common/components/command/index.js";
   import {
     createAdminServiceSearchProjectUsers,
     type V1User,
@@ -31,7 +31,7 @@
 <div class="px-0.5 pt-1 pb-2 text-[10px] text-fg-secondary text-left">
   {@html m.view_as_user_description({
     docsUrl:
-      "https://docs.rilldata.com/developers/build/metrics-view/security#rill-cloud",
+      "https://docs.statsparrot.com/developers/build/metrics-view/security#statsparrot-cloud",
   })}
 </div>
 

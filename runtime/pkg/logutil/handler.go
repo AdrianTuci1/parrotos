@@ -1,8 +1,8 @@
 package logutil
 
 import (
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/logbuffer"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/logbuffer"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

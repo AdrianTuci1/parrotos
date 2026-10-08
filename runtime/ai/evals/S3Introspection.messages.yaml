@@ -7,7 +7,7 @@
   type: call
   tool: router_agent
   content_type: json
-  content: '{"prompt":"I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?","agent":"developer_agent"}'
+  content: '{"prompt":"I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?","agent":"developer_agent"}'
 - id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   parent_id: 41ec2faf-9f1e-48d3-b5c1-b3c4d493b231
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -17,7 +17,7 @@
   type: call
   tool: developer_agent
   content_type: json
-  content: '{"prompt":"I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.rilldata.com/glob_test/?"}'
+  content: '{"prompt":"I have some data in S3. Can you tell me what buckets are available? And also show me a little preview of what files are available at s3://integration-test.statsparrot.com/glob_test/?"}'
 - id: d9eb2b8f-6493-40a8-8fa4-b15b55a05915
   parent_id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -37,7 +37,7 @@
   type: result
   tool: list_files
   content_type: json
-  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"rill.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/rill.yaml"}]}'
+  content: '{"files":[{"path":"/connectors/duckdb.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/connectors/s3.yaml","resources":[{"kind":"statsparrot.runtime.v1.Connector","name":"s3","reconcile_error":"","reconcile_status":"RECONCILE_STATUS_IDLE"}]},{"path":"/statsparrot.yaml"}]}'
 - id: dd7552a5-45e7-4f67-9067-c2e2485c507f
   parent_id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -57,7 +57,7 @@
   type: result
   tool: project_status
   content_type: json
-  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"rill.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"rill.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
+  content: '{"default_olap_connector":"duckdb","env":["connector.s3.aws_access_key_id","connector.s3.aws_secret_access_key","connector.openai.api_key"],"resources":[{"kind":"statsparrot.runtime.v1.ProjectParser","name":"parser","path":"","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"s3","path":"/connectors/s3.yaml","refs":[],"status":"OK"},{"kind":"statsparrot.runtime.v1.Connector","name":"duckdb","path":"/connectors/duckdb.yaml","refs":[],"status":"OK"}],"parse_errors":[]}'
 - id: 43deeb90-f9cd-4795-b323-5e5d178c9f9d
   parent_id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -77,7 +77,7 @@
   type: result
   tool: list_buckets
   content_type: json
-  content: '{"buckets":["integration-test.rilldata.com"]}'
+  content: '{"buckets":["integration-test.statsparrot.com"]}'
 - id: c533be9b-e423-4b24-a0c1-4227c4f31ce0
   parent_id: c9804acd-747b-44d9-a5c9-3b844c9889b1
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -87,7 +87,7 @@
   type: call
   tool: list_bucket_objects
   content_type: json
-  content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":10,"path":"glob_test/"}'
+  content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":10,"path":"glob_test/"}'
 - id: 43f1e415-9ab1-4a9d-9580-f8b20021f463
   parent_id: c533be9b-e423-4b24-a0c1-4227c4f31ce0
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -107,7 +107,7 @@
   type: call
   tool: list_bucket_objects
   content_type: json
-  content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
+  content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2024/"}'
 - id: 9b63e890-d8c6-4e2a-b3e8-c9bfc82e8942
   parent_id: 63ba378d-dd80-4e3d-9b85-335a4255c77d
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -127,7 +127,7 @@
   type: call
   tool: list_bucket_objects
   content_type: json
-  content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
+  content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2023/"}'
 - id: 99645553-29b6-49b7-98e1-1b389b90cbf0
   parent_id: 58138ec7-c28e-484a-b4d4-7c32f52d017c
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -147,7 +147,7 @@
   type: call
   tool: list_bucket_objects
   content_type: json
-  content: '{"bucket":"integration-test.rilldata.com","connector":"s3","page_size":50,"path":"glob_test/y=2010/"}'
+  content: '{"bucket":"integration-test.statsparrot.com","connector":"s3","page_size":50,"path":"glob_test/y=2010/"}'
 - id: 449b278a-949e-4313-915a-ad8ec7c6fb7f
   parent_id: bbbec00a-5800-4694-9ac5-6af04712596a
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -167,7 +167,7 @@
   type: result
   tool: developer_agent
   content_type: json
-  content: '{"response":"Buckets available via the project’s `s3` connector:\n\n- `integration-test.rilldata.com`\n\nPreview of what’s under `s3://integration-test.rilldata.com/glob_test/`:\n\n**Top-level prefixes**\n- `glob_test/y=2010/`\n- `glob_test/y=2023/`\n- `glob_test/y=2024/`\n\n**Files found**\n- `glob_test/y=2010/aac.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2023/aab.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2024/aaa.csv` (843 bytes, modified 2025-03-11T06:44:28Z)\n- `glob_test/y=2024/bbb.csv` (843 bytes, modified 2025-03-11T06:44:28Z)"}'
+  content: '{"response":"Buckets available via the project’s `s3` connector:\n\n- `integration-test.statsparrot.com`\n\nPreview of what’s under `s3://integration-test.statsparrot.com/glob_test/`:\n\n**Top-level prefixes**\n- `glob_test/y=2010/`\n- `glob_test/y=2023/`\n- `glob_test/y=2024/`\n\n**Files found**\n- `glob_test/y=2010/aac.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2023/aab.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2024/aaa.csv` (843 bytes, modified 2025-03-11T06:44:28Z)\n- `glob_test/y=2024/bbb.csv` (843 bytes, modified 2025-03-11T06:44:28Z)"}'
 - id: bd6e7805-0d26-428d-a3c4-a9f7ec89f31e
   parent_id: 41ec2faf-9f1e-48d3-b5c1-b3c4d493b231
   session_id: e4687080-931b-474b-8517-7fef6b01a9d0
@@ -177,4 +177,4 @@
   type: result
   tool: router_agent
   content_type: json
-  content: '{"response":"Buckets available via the project’s `s3` connector:\n\n- `integration-test.rilldata.com`\n\nPreview of what’s under `s3://integration-test.rilldata.com/glob_test/`:\n\n**Top-level prefixes**\n- `glob_test/y=2010/`\n- `glob_test/y=2023/`\n- `glob_test/y=2024/`\n\n**Files found**\n- `glob_test/y=2010/aac.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2023/aab.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2024/aaa.csv` (843 bytes, modified 2025-03-11T06:44:28Z)\n- `glob_test/y=2024/bbb.csv` (843 bytes, modified 2025-03-11T06:44:28Z)","agent":"developer_agent"}'
+  content: '{"response":"Buckets available via the project’s `s3` connector:\n\n- `integration-test.statsparrot.com`\n\nPreview of what’s under `s3://integration-test.statsparrot.com/glob_test/`:\n\n**Top-level prefixes**\n- `glob_test/y=2010/`\n- `glob_test/y=2023/`\n- `glob_test/y=2024/`\n\n**Files found**\n- `glob_test/y=2010/aac.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2023/aab.csv` (843 bytes, modified 2025-03-11T06:44:29Z)\n- `glob_test/y=2024/aaa.csv` (843 bytes, modified 2025-03-11T06:44:28Z)\n- `glob_test/y=2024/bbb.csv` (843 bytes, modified 2025-03-11T06:44:28Z)","agent":"developer_agent"}'

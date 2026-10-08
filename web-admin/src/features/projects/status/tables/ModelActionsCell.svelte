@@ -1,9 +1,9 @@
 <script lang="ts">
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import {
     RefreshCcwIcon,
     LayoutGridIcon,
@@ -11,9 +11,9 @@
     CodeIcon,
     ScrollTextIcon,
   } from "lucide-svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
-  import { getAvailableModelActions } from "@rilldata/web-common/features/projects/status/tables/model-actions";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+  import { getAvailableModelActions } from "@statsparrot/web-common/features/projects/status/tables/model-actions";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let resource: V1Resource | undefined;
   export let isReconciling: boolean = false;

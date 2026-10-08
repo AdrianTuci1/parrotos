@@ -4,24 +4,24 @@
   Defaults to tealblues scheme but allows switching to custom gradient mode.
 -->
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import ColorInput from "@rilldata/web-common/components/color-picker/ColorInput.svelte";
-  import FieldSwitcher from "@rilldata/web-common/components/forms/FieldSwitcher.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import ColorInput from "@statsparrot/web-common/components/color-picker/ColorInput.svelte";
+  import FieldSwitcher from "@statsparrot/web-common/components/forms/FieldSwitcher.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import type { ChartFieldInput } from "@statsparrot/web-common/features/canvas/inspector/types";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
   import type {
     ColorRangeMapping,
     FieldConfig,
-  } from "@rilldata/web-common/features/components/charts/types";
+  } from "@statsparrot/web-common/features/components/charts/types";
   import {
     defaultPrimaryColors,
     defaultSecondaryColors,
-  } from "@rilldata/web-common/features/themes/color-config";
-  import { themeControl } from "@rilldata/web-common/features/themes/theme-control";
-  import { resolveThemeColors } from "@rilldata/web-common/features/themes/theme-utils";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/themes/color-config";
+  import { themeControl } from "@statsparrot/web-common/features/themes/theme-control";
+  import { resolveThemeColors } from "@statsparrot/web-common/features/themes/theme-utils";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { slide } from "svelte/transition";
   import type { ColorScheme } from "vega";
 

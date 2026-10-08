@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store";
+  import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store";
 
   export let leading: string | undefined = undefined;
 

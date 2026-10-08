@@ -1,8 +1,8 @@
-import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
-import { definedLightModeColors } from "@rilldata/web-common/features/themes/colors";
-import { getSequentialColorsAsHex } from "@rilldata/web-common/features/themes/palette-store";
-import { themeManager } from "@rilldata/web-common/features/themes/theme-manager";
-import { getChroma } from "@rilldata/web-common/features/themes/theme-utils";
+import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
+import { definedLightModeColors } from "@statsparrot/web-common/features/themes/colors";
+import { getSequentialColorsAsHex } from "@statsparrot/web-common/features/themes/palette-store";
+import { themeManager } from "@statsparrot/web-common/features/themes/theme-manager";
+import { getChroma } from "@statsparrot/web-common/features/themes/theme-utils";
 import type { Config } from "vega-lite";
 
 function resolveCSSVariable(
@@ -25,7 +25,7 @@ const colors = {
   },
 };
 
-export const getRillTheme: (
+export const getParrotTheme: (
   isDarkMode?: boolean,
   theme?: Record<string, string>,
 ) => Config = (isDarkMode = false, theme) => {

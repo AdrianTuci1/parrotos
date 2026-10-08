@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import Checkbox from "@rilldata/web-common/components/forms/Checkbox.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Checkbox from "@statsparrot/web-common/components/forms/Checkbox.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { ExportProgress, PdfExportRunOptions } from "./types";
   import type { LocalizedString } from "@inlang/paraglide-js";
 
   // Surface-agnostic PDF export form (title, options, and action). The caller
   // supplies `runExport` (bound to the canvas or explore orchestrator), so this
-  // form is shared across the cloud share modal today and the Rill Developer UI
+  // form is shared across the cloud share modal today and the Parrot Developer UI
   // in the future.
   export let runExport: (opts: PdfExportRunOptions) => Promise<void>;
   export let onComplete: () => void = () => {};

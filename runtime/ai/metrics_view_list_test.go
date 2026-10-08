@@ -4,19 +4,19 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
 // TestListMetricsViewsAIInstructions verifies that the project's ai_instructions are returned
-// to external MCP clients, but not to Rill's own agents (which receive them directly in their prompts).
+// to external MCP clients, but not to Parrot's own agents (which receive them directly in their prompts).
 func TestListMetricsViewsAIInstructions(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			"rill.yaml": `
+			"statsparrot.yaml": `
 ai_instructions: |
   Revenue always refers to net revenue.
 `,
@@ -60,8 +60,8 @@ measures:
 	require.Contains(t, res.AIInstructions, "Revenue always refers to net revenue.")
 	require.Len(t, res.MetricsViews, 1)
 
-	// Rill's own agents: no ai_instructions (they are injected into agent prompts instead)
-	s = newSessionWithUserAgent(t, "rill-web")
+	// Parrot's own agents: no ai_instructions (they are injected into agent prompts instead)
+	s = newSessionWithUserAgent(t, "statsparrot-web")
 	res = nil
 	_, err = s.CallTool(t.Context(), ai.RoleUser, ai.ListMetricsViewsName, &res, &ai.ListMetricsViewsArgs{})
 	require.NoError(t, err)

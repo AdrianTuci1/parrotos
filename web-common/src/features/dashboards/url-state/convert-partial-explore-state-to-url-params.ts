@@ -1,19 +1,19 @@
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { toPivotFormattingParam } from "@rilldata/web-common/features/dashboards/pivot/pivot-formatting-param";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { toPivotFormattingParam } from "@statsparrot/web-common/features/dashboards/pivot/pivot-formatting-param";
 import {
   type PivotChipData,
   PivotChipType,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import type { TimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { cleanUrlParams } from "@rilldata/web-common/features/dashboards/url-state/clean-url-params";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import type { TimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { cleanUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/clean-url-params";
 import {
   compressUrlParams,
   shouldCompressParams,
-} from "@rilldata/web-common/features/dashboards/url-state/compression";
-import { convertExpressionToFilterParam } from "@rilldata/web-common/features/dashboards/url-state/filters/converters";
-import { FromLegacySortTypeMap } from "@rilldata/web-common/features/dashboards/url-state/legacyMappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/compression";
+import { convertExpressionToFilterParam } from "@statsparrot/web-common/features/dashboards/url-state/filters/converters";
+import { FromLegacySortTypeMap } from "@statsparrot/web-common/features/dashboards/url-state/legacyMappers";
 import {
   ExploreUrlWebView,
   FromActivePageMap,
@@ -21,24 +21,24 @@ import {
   ToURLParamTDDChartMap,
   ToURLParamTimeDimensionMap,
   ToURLParamViewMap,
-} from "@rilldata/web-common/features/dashboards/url-state/mappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/mappers";
 import {
   ExploreStateKeyToURLParamMap,
   ExploreStateURLParams,
-} from "@rilldata/web-common/features/dashboards/url-state/url-params";
-import { arrayOrderedEquals } from "@rilldata/web-common/lib/arrayUtils";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+import { arrayOrderedEquals } from "@statsparrot/web-common/lib/arrayUtils";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
 import {
   TimeComparisonOption,
   type TimeRange,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
-import { copyParamsToTarget } from "@rilldata/web-common/lib/url-utils";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/lib/time/types";
+import { copyParamsToTarget } from "@statsparrot/web-common/lib/url-utils";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type V1ExploreSpec,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 /**
  * getCleanedUrlParamsForGoto returns url params with defaults removed.
@@ -415,9 +415,9 @@ function toPivotUrlParams(partialExploreState: Partial<ExploreState>) {
   if (sortId) {
     if (sortId in ToURLParamTimeDimensionMap) {
       sortId = ToURLParamTimeDimensionMap[sortId];
-    } else if (sortId.includes("_rill_")) {
-      // Handle TanStack Table time dimension format: {timeDimension}_rill_{grain}
-      const grain = sortId.split("_rill_")[1];
+    } else if (sortId.includes("_statsparrot_")) {
+      // Handle TanStack Table time dimension format: {timeDimension}_statsparrot_{grain}
+      const grain = sortId.split("_statsparrot_")[1];
       if (grain in ToURLParamTimeDimensionMap) {
         sortId = ToURLParamTimeDimensionMap[grain];
       }

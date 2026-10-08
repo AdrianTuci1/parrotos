@@ -1,6 +1,6 @@
 import Button from "./Button";
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export interface DimensionFilterFooterProps {
   mode: DimensionFilterMode;

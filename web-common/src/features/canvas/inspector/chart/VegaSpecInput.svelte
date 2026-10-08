@@ -2,7 +2,7 @@
   import { json } from "@codemirror/lang-json";
   import { EditorState } from "@codemirror/state";
   import { EditorView, placeholder } from "@codemirror/view";
-  import { base as baseExtensions } from "@rilldata/web-common/components/editor/presets/base";
+  import { base as baseExtensions } from "@statsparrot/web-common/components/editor/presets/base";
 
   export let value: string;
   export let onChange: (updatedSpec: string) => void;

@@ -77,7 +77,7 @@ type DB interface {
 	FindProjectPathsByPattern(ctx context.Context, namePattern, afterName string, limit int) ([]string, error)
 	FindProjectPathsByPatternAndAnnotations(ctx context.Context, namePattern, afterName string, annotationKeys []string, annotationPairs map[string]string, limit int) ([]string, error)
 	FindProjectsForUser(ctx context.Context, userID string) ([]*Project, error)
-	FindProjectsForUserAndFingerprint(ctx context.Context, userID, directoryName, gitRemote, subpath, rillMgdRemote string) ([]*Project, error)
+	FindProjectsForUserAndFingerprint(ctx context.Context, userID, directoryName, gitRemote, subpath, statsparrotMgdRemote string) ([]*Project, error)
 	FindProjectsForOrganization(ctx context.Context, orgID, afterProjectName string, limit int) ([]*Project, error)
 	// FindProjectsForOrgAndUser lists the public projects in the org and the projects where user is added as an external user.
 	// When includeGroups is true, projects accessible through usergroup membership are also included.
@@ -492,7 +492,7 @@ type Project struct {
 	// It is set when the project is connected to a managed git repository.
 	ManagedGitRepoID *string `db:"managed_git_repo_id"`
 	// Subpath is an optional subpath for the project files within the Git repository.
-	// It enables Rill files to be stored in a monorepo.
+	// It enables Parrot files to be stored in a monorepo.
 	Subpath string `db:"subpath"`
 	// ProdVersion is the runtime version to use for the production deployment.
 	ProdVersion string `db:"prod_version"`
@@ -667,7 +667,7 @@ type StaticRuntimeSlotsUsed struct {
 	Slots int    `db:"slots"`
 }
 
-// User is a person registered in Rill.
+// User is a person registered in Parrot.
 // Users may belong to multiple organizations and projects.
 type User struct {
 	ID                    string
@@ -912,11 +912,11 @@ type AuthClient struct {
 
 // Hard-coded auth client IDs (created in the migrations).
 const (
-	AuthClientIDRillWeb      = "12345678-0000-0000-0000-000000000001"
-	AuthClientIDRillCLI      = "12345678-0000-0000-0000-000000000002"
-	AuthClientIDRillSupport  = "12345678-0000-0000-0000-000000000003"
-	AuthClientIDRillWebLocal = "12345678-0000-0000-0000-000000000004"
-	AuthClientIDRillManual   = "12345678-0000-0000-0000-000000000005"
+	AuthClientIDParrotWeb      = "12345678-0000-0000-0000-000000000001"
+	AuthClientIDParrotCLI      = "12345678-0000-0000-0000-000000000002"
+	AuthClientIDParrotSupport  = "12345678-0000-0000-0000-000000000003"
+	AuthClientIDParrotWebLocal = "12345678-0000-0000-0000-000000000004"
+	AuthClientIDParrotManual   = "12345678-0000-0000-0000-000000000005"
 )
 
 // DeviceAuthCodeState is an enum representing the approval state of a DeviceAuthCode
@@ -1478,7 +1478,7 @@ type UpdateProvisionerResourceOptions struct {
 	Config        map[string]any
 }
 
-// ManagedGitRepo represents metadata about a Rill managed Git repository for projects deployed on Rill Cloud.
+// ManagedGitRepo represents metadata about a Parrot managed Git repository for projects deployed on Parrot Cloud.
 type ManagedGitRepo struct {
 	ID        string    `db:"id"`
 	OrgID     *string   `db:"org_id"`
@@ -1527,7 +1527,7 @@ type ProjectMemberServiceWithProject struct {
 }
 
 // GitRepoTransfer tracks a transfer of a project between two Git repositories.
-// This is set when a user switches a rill managed repo to self hosted Git repo.
+// This is set when a user switches a statsparrot managed repo to self hosted Git repo.
 type GitRepoTransfer struct {
 	From string `db:"from_git_remote"`
 	To   string `db:"to_git_remote"`

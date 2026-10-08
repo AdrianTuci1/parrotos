@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
   import {
-    showWelcomeToRillDialog,
-    showWelcomeToRillDialogForPlan,
-  } from "@rilldata/web-admin/features/billing/plans/utils";
-  import WelcomeToRillCloudDialog from "@rilldata/web-admin/features/billing/plans/dialog/WelcomeToRillCloudDialog.svelte";
-  import { getActiveOrgLocalStorageKey } from "@rilldata/web-admin/features/organizations/active-org/local-storage";
+    showWelcomeToParrotDialog,
+    showWelcomeToParrotDialogForPlan,
+  } from "@statsparrot/web-admin/features/billing/plans/utils";
+  import WelcomeToParrotCloudDialog from "@statsparrot/web-admin/features/billing/plans/dialog/WelcomeToParrotCloudDialog.svelte";
+  import { getActiveOrgLocalStorageKey } from "@statsparrot/web-admin/features/organizations/active-org/local-storage";
 
   const user = createAdminServiceGetCurrentUser();
   $: organization = $page.params.organization;
@@ -23,7 +23,7 @@
 
 <slot />
 
-<WelcomeToRillCloudDialog
-  bind:open={$showWelcomeToRillDialog}
-  planName={$showWelcomeToRillDialogForPlan}
+<WelcomeToParrotCloudDialog
+  bind:open={$showWelcomeToParrotDialog}
+  planName={$showWelcomeToParrotDialogForPlan}
 />

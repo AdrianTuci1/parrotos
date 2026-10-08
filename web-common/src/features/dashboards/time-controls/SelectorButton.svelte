@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IconSpaceFixer } from "@rilldata/web-common/components/button";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import { IconSpaceFixer } from "@statsparrot/web-common/components/button";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   export let active = false;
   export let disabled = false;
   export let label: string | undefined = undefined;

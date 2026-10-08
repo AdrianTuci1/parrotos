@@ -2,12 +2,12 @@
   import {
     createLineGenerator,
     createAreaGenerator,
-  } from "@rilldata/web-common/components/data-graphic/utils";
+  } from "@statsparrot/web-common/components/data-graphic/utils";
   import {
     MainAreaColorGradientDark,
     MainAreaColorGradientLight,
     MainLineColor,
-  } from "@rilldata/web-common/features/dashboards/time-series/chart-colors";
+  } from "@statsparrot/web-common/features/dashboards/time-series/chart-colors";
   import type { ScaleLinear } from "d3-scale";
   import type { ChartDataPoint } from "./types";
 

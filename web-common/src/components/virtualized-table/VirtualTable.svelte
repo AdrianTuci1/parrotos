@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  import { VirtualizedTableColumnSizes } from "@rilldata/web-common/components/virtualized-table/columnSizes";
+  import { VirtualizedTableColumnSizes } from "@statsparrot/web-common/components/virtualized-table/columnSizes";
 
   const columnSizes = new VirtualizedTableColumnSizes();
 
@@ -13,16 +13,16 @@
 </script>
 
 <script lang="ts">
-  import { formatDataTypeAsDuckDbQueryString } from "@rilldata/web-common/lib/formatters";
+  import { formatDataTypeAsDuckDbQueryString } from "@statsparrot/web-common/lib/formatters";
   import type {
     V1MetricsViewColumn,
     V1MetricsViewRowsResponseDataItem,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { tick } from "svelte";
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
   import { initColumnWidths } from "./init-widths";
-  import { clamp } from "@rilldata/web-common/lib/clamp";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { clamp } from "@statsparrot/web-common/lib/clamp";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import VirtualTableCell from "./VirtualTableCell.svelte";
   import VirtualTableHeaderCellContent from "./VirtualTableHeaderCellContent.svelte";
   import VirtualTableRowHeader from "./VirtualTableRowHeader.svelte";

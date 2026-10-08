@@ -1,9 +1,9 @@
 <script context="module" lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-  import type { AvailableTimeGrain } from "@rilldata/web-common/lib/time/types";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+  import type { AvailableTimeGrain } from "@statsparrot/web-common/lib/time/types";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import PivotChip from "./PivotChip.svelte";
   import type { PivotChipData } from "./types";
 </script>

@@ -1,12 +1,12 @@
-import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
+import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
 import {
   createSmartRefetchInterval,
   isResourceReconciling,
-} from "@rilldata/web-admin/lib/refetch-interval-store";
-import { useValidExplores } from "@rilldata/web-common/features/dashboards/selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
-import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-admin/lib/refetch-interval-store";
+import { useValidExplores } from "@statsparrot/web-common/features/dashboards/selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
+import { createRuntimeServiceListResources } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 import { derived } from "svelte/store";
 

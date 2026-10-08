@@ -1,4 +1,4 @@
-import type { GithubEventFields } from "@rilldata/web-common/metrics/service/GithubEventTypes";
+import type { GithubEventFields } from "@statsparrot/web-common/metrics/service/GithubEventTypes";
 import {
   type AddDataBehaviourEventFields,
   type BehaviourEvent,

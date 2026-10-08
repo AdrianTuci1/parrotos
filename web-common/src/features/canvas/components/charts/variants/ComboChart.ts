@@ -1,29 +1,29 @@
-import type { ComponentInputParam } from "@rilldata/web-common/features/canvas/inspector/types";
-import type { CanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
+import type { ComponentInputParam } from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { CanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
 import {
   ComboChartProvider,
   type ComboChartSpec as ComboChartSpecBase,
-} from "@rilldata/web-common/features/components/charts/combo/ComboChartProvider";
+} from "@statsparrot/web-common/features/components/charts/combo/ComboChartProvider";
 import {
   ChartSortType,
   type ChartFieldsMap,
   type FieldConfig,
-} from "@rilldata/web-common/features/components/charts/types";
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+} from "@statsparrot/web-common/features/components/charts/types";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
 import {
   PivotChipType,
   type PivotChipData,
   type PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   MetricsViewSpecDimensionType,
   V1TimeGrain,
   type V1MetricsViewSpec,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get, type Readable } from "svelte/store";
 import type { ChartDataQuery } from "../../../../components/charts/types";
 import type {
@@ -32,7 +32,7 @@ import type {
 } from "../../../stores/canvas-entity";
 import { BaseChart, type BaseChartConfig } from "../BaseChart";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export type ComboCanvasChartSpec = BaseChartConfig & ComboChartSpecBase;
 

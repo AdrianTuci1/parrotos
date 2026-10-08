@@ -1,14 +1,14 @@
 <script lang="ts">
-  import ColumnHeaders from "@rilldata/web-common/components/virtualized-table/sections/ColumnHeaders.svelte";
-  import TableCells from "@rilldata/web-common/components/virtualized-table/sections/TableCells.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
-  import type { DimensionTableRow } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-types";
+  import ColumnHeaders from "@statsparrot/web-common/components/virtualized-table/sections/ColumnHeaders.svelte";
+  import TableCells from "@statsparrot/web-common/components/virtualized-table/sections/TableCells.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
+  import type { DimensionTableRow } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-types";
   import {
     estimateColumnCharacterWidths,
     estimateColumnSizes,
-  } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-utils";
-  import { DIMENSION_TABLE_CONFIG as config } from "@rilldata/web-common/features/dashboards/dimension-table/DimensionTableConfig";
+  } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-utils";
+  import { DIMENSION_TABLE_CONFIG as config } from "@statsparrot/web-common/features/dashboards/dimension-table/DimensionTableConfig";
   import { createVirtualizer } from "@tanstack/svelte-virtual";
   import { setContext } from "svelte";
 

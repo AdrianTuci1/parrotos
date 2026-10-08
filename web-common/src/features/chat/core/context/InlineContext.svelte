@@ -1,11 +1,11 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2/index.ts";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2/index.ts";
   import { ChevronDownIcon } from "lucide-svelte";
-  import { getInlineChatContextMetadata } from "@rilldata/web-common/features/chat/core/context/metadata.ts";
-  import { type InlineContext } from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
-  import InlineContextPicker from "@rilldata/web-common/features/chat/core/context/picker/InlineContextPicker.svelte";
-  import { InlineContextConfig } from "@rilldata/web-common/features/chat/core/context/config.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { getInlineChatContextMetadata } from "@statsparrot/web-common/features/chat/core/context/metadata.ts";
+  import { type InlineContext } from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
+  import InlineContextPicker from "@statsparrot/web-common/features/chat/core/context/picker/InlineContextPicker.svelte";
+  import { InlineContextConfig } from "@statsparrot/web-common/features/chat/core/context/config.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   type InlineContextReadonlyProps = {
     mode: "readonly";

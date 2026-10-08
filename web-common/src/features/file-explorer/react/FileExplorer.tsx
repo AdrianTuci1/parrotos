@@ -5,7 +5,7 @@
 // control and the recursive tree from a supplied `Directory`. The loading/error
 // states and the force-delete confirmation mirror the Svelte original.
 import { useState } from "react";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import {
   collectDirectoryPaths,
   findDirectory,
@@ -36,7 +36,7 @@ export interface FileExplorerProps {
 
 export default function FileExplorer({
   fileTree,
-  projectTitle = "Untitled Rill Project",
+  projectTitle = "Untitled Parrot Project",
   hasUnsaved = false,
   isLoading = false,
   isError = false,

@@ -45,7 +45,7 @@ export function DashboardPage() {
   const location = useLocation();
   const { organizations, workspaces, currentOrganization, currentWorkspace, activeSection, setActiveSection, selectOrganization, selectWorkspace, fetchProjects } = useAppStore();
 
-  // The Rill `/files/[...file]` route is matched as a splat (literal `files`
+  // The Parrot `/files/[...file]` route is matched as a splat (literal `files`
   // segment), so `section` is undefined there; derive it from the path.
   const isFileRoute =
     section === undefined &&

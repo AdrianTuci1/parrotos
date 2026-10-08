@@ -1,13 +1,13 @@
 <script lang="ts">
-  import GithubRepoInline from "@rilldata/web-admin/features/projects/github/GithubRepoInline.svelte";
-  import CodeBlockInline from "@rilldata/web-common/components/calls-to-action/CodeBlockInline.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import CtaMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import KeyboardKey from "@rilldata/web-common/components/calls-to-action/KeyboardKey.svelte";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import GithubRepoInline from "@statsparrot/web-admin/features/projects/github/GithubRepoInline.svelte";
+  import CodeBlockInline from "@statsparrot/web-common/components/calls-to-action/CodeBlockInline.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import KeyboardKey from "@statsparrot/web-common/components/calls-to-action/KeyboardKey.svelte";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const remote = new URLSearchParams(window.location.search).get("remote");
 </script>
@@ -29,7 +29,7 @@
       <KeyboardKey label={m.github_control_key()} /> +
       <KeyboardKey label="C" />
       {m.github_and_run()}
-      <CodeBlockInline code="rill deploy" />
+      <CodeBlockInline code="statsparrot deploy" />
       {m.github_again_once_granted()}
     </CtaMessage>
   </CtaContentContainer>

@@ -1,8 +1,8 @@
 import {
   type ChatConfig,
   ToolName,
-} from "@rilldata/web-common/features/chat/core/types.ts";
-import type { RuntimeServiceCompleteBody } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/chat/core/types.ts";
+import type { RuntimeServiceCompleteBody } from "@statsparrot/web-common/runtime-client";
 import { derived, type Readable } from "svelte/store";
 import { page } from "$app/stores";
 

@@ -15,19 +15,19 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/google/uuid"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/server/auth"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
-	"github.com/rilldata/rill/runtime/pkg/middleware"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/middleware"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 )
 
 // mcpInstructions are the instructions advertised to clients of the admin service's MCP server.
 // They are a combination of the admin service's own instructions and the instructions from the runtime's AI tools that we proxy to.
 const mcpInstructions = `
-# Rill Cloud MCP Server
-This server provides access to several Rill projects.
+# Parrot Cloud MCP Server
+This server provides access to several Parrot projects.
 
 1. **List projects:** Use "list_projects" to discover the projects you have access to.
 2. **Target a project:** Pass the "project" argument on every other tool call. Do this before the workflow below.
@@ -79,8 +79,8 @@ func (s *Server) mcpHandler() (http.Handler, error) {
 	return mcp.NewStreamableHTTPHandler(func(r *http.Request) *mcp.Server {
 		srv := mcp.NewServer(
 			&mcp.Implementation{
-				Name:    "rill",
-				Title:   "Rill Cloud MCP Server",
+				Name:    "statsparrot",
+				Title:   "Parrot Cloud MCP Server",
 				Version: s.admin.Version.String(),
 			},
 			&mcp.ServerOptions{
@@ -139,7 +139,7 @@ func (s *Server) mcpAdminTools() []mcpAdminTool {
 			spec: &mcp.Tool{
 				Name:        "list_projects",
 				Title:       "List Projects",
-				Description: `List the Rill projects you have access to. Pass a returned value as the "project" argument of other tools. The list may be incomplete; if you already know a project, you can pass it directly.`,
+				Description: `List the Parrot projects you have access to. Pass a returned value as the "project" argument of other tools. The list may be incomplete; if you already know a project, you can pass it directly.`,
 				Annotations: &mcp.ToolAnnotations{ReadOnlyHint: true},
 				InputSchema: &jsonschema.Schema{Type: "object"},
 			},

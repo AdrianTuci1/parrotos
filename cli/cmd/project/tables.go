@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -38,7 +38,7 @@ func TablesCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			if !local && project == "" {
 				var err error
-				project, err = ch.InferProjectName(cmd.Context(), path, "use --project to specify the name or --local to target a local Rill process")
+				project, err = ch.InferProjectName(cmd.Context(), path, "use --project to specify the name or --local to target a local Parrot process")
 				if err != nil {
 					return err
 				}
@@ -128,7 +128,7 @@ func TablesCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	tablesCmd.Flags().StringVar(&project, "project", "", "Project name")
 	tablesCmd.Flags().StringVar(&path, "path", ".", "Project directory")
-	tablesCmd.Flags().BoolVar(&local, "local", false, "Target local runtime instead of Rill Cloud")
+	tablesCmd.Flags().BoolVar(&local, "local", false, "Target local runtime instead of Parrot Cloud")
 	tablesCmd.Flags().StringVar(&branch, "branch", "", "Target deployment by Git branch (default: primary deployment)")
 
 	return tablesCmd

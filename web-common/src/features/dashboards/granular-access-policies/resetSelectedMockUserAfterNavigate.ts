@@ -1,7 +1,7 @@
 import { beforeNavigate } from "$app/navigation";
-import { selectedMockUserStore } from "@rilldata/web-common/features/dashboards/granular-access-policies/stores";
-import { updateDevJWT } from "@rilldata/web-common/features/dashboards/granular-access-policies/updateDevJWT";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import { selectedMockUserStore } from "@statsparrot/web-common/features/dashboards/granular-access-policies/stores";
+import { updateDevJWT } from "@statsparrot/web-common/features/dashboards/granular-access-policies/updateDevJWT";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { get } from "svelte/store";
 

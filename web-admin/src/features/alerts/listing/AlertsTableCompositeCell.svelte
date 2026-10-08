@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import AlertIcon from "@rilldata/web-common/components/icons/AlertIcon.svelte";
-  import CancelCircleInverse from "@rilldata/web-common/components/icons/CancelCircleInverse.svelte";
-  import CheckCircleOutline from "@rilldata/web-common/components/icons/CheckCircleOutline.svelte";
-  import { timeAgo } from "@rilldata/web-common/lib/time/relative-time";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import AlertIcon from "@statsparrot/web-common/components/icons/AlertIcon.svelte";
+  import CancelCircleInverse from "@statsparrot/web-common/components/icons/CancelCircleInverse.svelte";
+  import CheckCircleOutline from "@statsparrot/web-common/components/icons/CheckCircleOutline.svelte";
+  import { timeAgo } from "@statsparrot/web-common/lib/time/relative-time";
   import ProjectAccessControls from "../../projects/ProjectAccessControls.svelte";
   import AlertOwnerBullet from "./AlertOwnerBullet.svelte";
 

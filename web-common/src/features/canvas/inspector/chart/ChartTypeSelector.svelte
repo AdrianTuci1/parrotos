@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { Button } from "@rilldata/web-common/components/button";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import {
     CANVAS_CHART_CONFIG,
     type CanvasChartSpec,
-  } from "@rilldata/web-common/features/canvas/components/charts";
-  import type { BaseChart } from "@rilldata/web-common/features/canvas/components/charts/BaseChart";
-  import { VISIBLE_CHART_TYPES } from "@rilldata/web-common/features/components/charts/config";
-  import type { ChartType } from "@rilldata/web-common/features/components/charts/types";
+  } from "@statsparrot/web-common/features/canvas/components/charts";
+  import type { BaseChart } from "@statsparrot/web-common/features/canvas/components/charts/BaseChart";
+  import { VISIBLE_CHART_TYPES } from "@statsparrot/web-common/features/components/charts/config";
+  import type { ChartType } from "@statsparrot/web-common/features/components/charts/types";
 
   export let component: BaseChart<CanvasChartSpec>;
 

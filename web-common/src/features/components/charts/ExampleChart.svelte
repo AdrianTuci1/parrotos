@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { ChartContainer } from "@rilldata/web-common/features/components/charts";
-  import type { CartesianChartSpec } from "@rilldata/web-common/features/components/charts/cartesian/CartesianChartProvider";
-  import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
+  import { ChartContainer } from "@statsparrot/web-common/features/components/charts";
+  import type { CartesianChartSpec } from "@statsparrot/web-common/features/components/charts/cartesian/CartesianChartProvider";
+  import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
   import { readable, type Readable } from "svelte/store";
 
   const timeAndFilterStore: Readable<TimeAndFilterStore> = readable({

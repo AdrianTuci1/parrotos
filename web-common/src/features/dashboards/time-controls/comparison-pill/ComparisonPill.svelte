@@ -1,13 +1,13 @@
 <script lang="ts">
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import { getStateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import { getStateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
   import {
     TimeComparisonOption,
     TimeRangePreset,
     type DashboardTimeControls,
     type TimeRange,
-  } from "@rilldata/web-common/lib/time/types";
+  } from "@statsparrot/web-common/lib/time/types";
   import { DateTime, Interval } from "luxon";
   import {
     metricsExplorerStore,
@@ -15,8 +15,8 @@
   } from "web-common/src/features/dashboards/stores/dashboard-stores";
   import { SortType } from "../../proto-state/derived-types";
   import * as Elements from "../super-pill/components";
-  import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let allTimeRange: TimeRange;
   export let selectedTimeRange: DashboardTimeControls | undefined;

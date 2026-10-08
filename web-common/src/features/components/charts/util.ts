@@ -1,7 +1,7 @@
-import { CHART_CONFIG } from "@rilldata/web-common/features/components/charts/config";
-import { COMPARISON_COLORS } from "@rilldata/web-common/features/dashboards/config";
-import { convertISOStringToJSDateWithSameTimeAsSelectedTimeZone } from "@rilldata/web-common/lib/time/timezone";
-import { type V1MetricsViewAggregationResponseDataItem } from "@rilldata/web-common/runtime-client";
+import { CHART_CONFIG } from "@statsparrot/web-common/features/components/charts/config";
+import { COMPARISON_COLORS } from "@statsparrot/web-common/features/dashboards/config";
+import { convertISOStringToJSDateWithSameTimeAsSelectedTimeZone } from "@statsparrot/web-common/lib/time/timezone";
+import { type V1MetricsViewAggregationResponseDataItem } from "@statsparrot/web-common/runtime-client";
 import type { Color } from "chroma-js";
 import chroma from "chroma-js";
 import merge from "deepmerge";
@@ -160,11 +160,11 @@ export function resolveColor(
 
 export function generateSpec(
   chartType: ChartType,
-  rillChartSpec: ChartSpec,
+  statsparrotChartSpec: ChartSpec,
   data: ChartDataResult,
 ) {
   if (data.isFetching || data.error) return {};
-  return CHART_CONFIG[chartType]?.generateSpec(rillChartSpec, data);
+  return CHART_CONFIG[chartType]?.generateSpec(statsparrotChartSpec, data);
 }
 
 export function isDomainStringArray(

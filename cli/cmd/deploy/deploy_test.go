@@ -13,13 +13,13 @@ import (
 
 	"github.com/google/go-github/v71/github"
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/admin/client"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/testadmin"
-	"github.com/rilldata/rill/cli/testcli"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/admin/client"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	"github.com/staticlabs/statsparrot/cli/testcli"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,18 +34,18 @@ func TestManagedDeploy(t *testing.T) {
 	require.Equal(t, 0, result.ExitCode)
 
 	// deploy the project
-	tempDir := initRillProject(t)
+	tempDir := initParrotProject(t)
 
-	result = u1.Run(t, "project", "deploy", "--interactive=false", "--org=github-test", "--project=rill-mgd-deploy", "--skip-deploy=true", "--path="+tempDir)
+	result = u1.Run(t, "project", "deploy", "--interactive=false", "--org=github-test", "--project=statsparrot-mgd-deploy", "--skip-deploy=true", "--path="+tempDir)
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// verify the project is correctly created
 	resp, err := c.GetProject(t.Context(), &adminv1.GetProjectRequest{
 		Org:     "github-test",
-		Project: "rill-mgd-deploy",
+		Project: "statsparrot-mgd-deploy",
 	})
 	require.NoError(t, err)
-	require.Equal(t, "rill-mgd-deploy", resp.Project.Name)
+	require.Equal(t, "statsparrot-mgd-deploy", resp.Project.Name)
 
 	// get a github client
 	installationID, err := adm.Admin.Github.ManagedOrgInstallationID()
@@ -57,13 +57,13 @@ func TestManagedDeploy(t *testing.T) {
 		"models/model.sql": `SELECT 1 AS one`,
 	}
 	putFiles(t, tempDir, changes)
-	result = u1.Run(t, "deploy", "--interactive=false", "--org=github-test", "--project=rill-mgd-deploy", "--skip-deploy=true", "--path="+tempDir)
+	result = u1.Run(t, "deploy", "--interactive=false", "--org=github-test", "--project=statsparrot-mgd-deploy", "--skip-deploy=true", "--path="+tempDir)
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// verify changes are pushed to Github repo
 	verifyGithubRepoContents(t, ghClient, resp.Project.GitRemote, changes)
 
-	// clone the project to an empty directory and remove the __rill_remote to simulate fresh deploys in CI/CD
+	// clone the project to an empty directory and remove the __statsparrot_remote to simulate fresh deploys in CI/CD
 
 	// Get an installation token so we can clone the managed (private) repo without credentials.
 	managedOwner, _, ok := gitutil.SplitGithubRemote(resp.Project.GitRemote)
@@ -76,7 +76,7 @@ func TestManagedDeploy(t *testing.T) {
 	out, err := cmd.CombinedOutput()
 	require.NoError(t, err, "git clone failed: %s", out)
 
-	// remove __rill_remote to simulate fresh deploys in CI/CD where the git history is not preserved
+	// remove __statsparrot_remote to simulate fresh deploys in CI/CD where the git history is not preserved
 	err = os.Remove(filepath.Join(cloneDir, ".git", "refs", "heads", "main"))
 	require.NoError(t, err)
 
@@ -85,7 +85,7 @@ func TestManagedDeploy(t *testing.T) {
 		"models/model.sql": `SELECT 2 AS two`,
 	}
 	putFiles(t, cloneDir, changes2)
-	result = u1.Run(t, "deploy", "--interactive=false", "--org=github-test", "--project=rill-mgd-deploy", "--skip-deploy=true", "--path="+cloneDir)
+	result = u1.Run(t, "deploy", "--interactive=false", "--org=github-test", "--project=statsparrot-mgd-deploy", "--skip-deploy=true", "--path="+cloneDir)
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// verify changes are pushed to Github repo
@@ -106,19 +106,19 @@ func TestManagedDeployWithPrimaryBranch(t *testing.T) {
 	// - main: models/model.sql contains SELECT 'main' AS env
 	// - staging: models/model.sql contains SELECT 'staging' AS env
 	// The repo is left on the staging branch for the deploy.
-	tempDir := initRillProject(t)
+	tempDir := initParrotProject(t)
 	initGitWithTwoBranches(t, tempDir)
 
-	result = u1.Run(t, "project", "deploy", "--interactive=false", "--org=github-branch-test", "--project=rill-mgd-branch", "--skip-deploy=true", "--primary-branch=staging", "--path="+tempDir)
+	result = u1.Run(t, "project", "deploy", "--interactive=false", "--org=github-branch-test", "--project=statsparrot-mgd-branch", "--skip-deploy=true", "--primary-branch=staging", "--path="+tempDir)
 	require.Equal(t, 0, result.ExitCode, result.Output)
 
 	// verify the project is correctly created
 	resp, err := c.GetProject(t.Context(), &adminv1.GetProjectRequest{
 		Org:     "github-branch-test",
-		Project: "rill-mgd-branch",
+		Project: "statsparrot-mgd-branch",
 	})
 	require.NoError(t, err)
-	require.Equal(t, "rill-mgd-branch", resp.Project.Name)
+	require.Equal(t, "statsparrot-mgd-branch", resp.Project.Name)
 
 	// verify the primary branch is set to "staging"
 	require.Equal(t, "staging", resp.Project.PrimaryBranch)
@@ -135,7 +135,7 @@ func TestManagedDeployWithPrimaryBranch(t *testing.T) {
 }
 
 // This test require gh cli to be installed on the system.
-// Alternatively a personal access token can be set via RILL_TEST_GH_TOKEN environment variable.
+// Alternatively a personal access token can be set via STATSPARROT_TEST_GH_TOKEN environment variable.
 func TestGithubDeploy(t *testing.T) {
 	testmode.Expensive(t)
 	personalAccessToken := getGithubAuthToken(t)
@@ -171,8 +171,8 @@ func testSelfHostedDeploy(t *testing.T, adminClient *client.Client, ghClient *gi
 	result := adm.Run(t, "org", "create", "github-test")
 	require.Equal(t, 0, result.ExitCode)
 
-	// create a rill project
-	tempDir := initRillProject(t)
+	// create a statsparrot project
+	tempDir := initParrotProject(t)
 
 	// create a github repo
 	repoName := "self-hosted-git-repo" + uuid.NewString()[:8]
@@ -194,8 +194,8 @@ func testSelfHostedDeploy(t *testing.T, adminClient *client.Client, ghClient *gi
 	waitForGithubRepo(t, ghClient, *repo.Owner.Login, repoName)
 
 	author := gitutil.Signature{
-		Name:  "Rill test user",
-		Email: "test.user@rilldata.com",
+		Name:  "Parrot test user",
+		Email: "test.user@staticlabs.com",
 	}
 	authCloneURL := authGitURL(t, *repo.CloneURL, token)
 	err = gitutil.CommitAndPush(t.Context(), tempDir, &gitutil.Config{
@@ -267,8 +267,8 @@ func testSelfHostedMonorepoDeploy(t *testing.T, adminClient *client.Client, ghCl
 	waitForGithubRepo(t, ghClient, *repo.Owner.Login, repoName)
 
 	author := gitutil.Signature{
-		Name:  "Rill test user",
-		Email: "test.user@rilldata.com",
+		Name:  "Parrot test user",
+		Email: "test.user@staticlabs.com",
 	}
 	err = gitutil.CommitAndPush(t.Context(), tempDir, &gitutil.Config{
 		Remote:        authGitURL(t, *repo.CloneURL, token),
@@ -390,7 +390,7 @@ func verifyGithubRepoBranchContents(t *testing.T, client *github.Client, remote 
 
 func getGithubAuthToken(t *testing.T) string {
 	// check if token is set via environment variable
-	if token := os.Getenv("RILL_TEST_GH_TOKEN"); token != "" {
+	if token := os.Getenv("STATSPARROT_TEST_GH_TOKEN"); token != "" {
 		return token
 	}
 	// exec gh auth token and extract token
@@ -434,10 +434,10 @@ func putFiles(t *testing.T, baseDir string, files map[string]string) {
 	}
 }
 
-func initRillProject(t *testing.T) string {
+func initParrotProject(t *testing.T) string {
 	tempDir := t.TempDir()
-	putFiles(t, tempDir, map[string]string{"rill.yaml": `compiler: rillv1
-display_name: Untitled Rill Project
+	putFiles(t, tempDir, map[string]string{"statsparrot.yaml": `compiler: statsparrotv1
+display_name: Untitled Parrot Project
 olap_connector: duckdb`,
 	})
 	return tempDir
@@ -448,7 +448,7 @@ func initMonorepo(t *testing.T) string {
 
 	// Create project1 in monorepo
 	putFiles(t, tempDir, map[string]string{
-		"project1/rill.yaml": `compiler: rillv1
+		"project1/statsparrot.yaml": `compiler: statsparrotv1
 display_name: Monorepo Project 1
 olap_connector: duckdb`,
 		"project1/models/.gitkeep": "",
@@ -456,7 +456,7 @@ olap_connector: duckdb`,
 
 	// Create project2 in monorepo
 	putFiles(t, tempDir, map[string]string{
-		"project2/rill.yaml": `compiler: rillv1
+		"project2/statsparrot.yaml": `compiler: statsparrotv1
 display_name: Monorepo Project 2
 olap_connector: duckdb`,
 		"project2/models/.gitkeep": "",
@@ -464,7 +464,7 @@ olap_connector: duckdb`,
 
 	// Add root level README for the monorepo
 	putFiles(t, tempDir, map[string]string{
-		"README.md": "# Test Monorepo\nThis is a test monorepo with multiple Rill projects.",
+		"README.md": "# Test Monorepo\nThis is a test monorepo with multiple Parrot projects.",
 	})
 
 	return tempDir
@@ -484,8 +484,8 @@ func initGitWithTwoBranches(t *testing.T, dir string) {
 	}
 
 	runGitCmd("init", "-b", "main")
-	runGitCmd("config", "user.email", "test@rilldata.com")
-	runGitCmd("config", "user.name", "Rill Test User")
+	runGitCmd("config", "user.email", "test@staticlabs.com")
+	runGitCmd("config", "user.name", "Parrot Test User")
 
 	// commit initial content on main
 	putFiles(t, dir, map[string]string{

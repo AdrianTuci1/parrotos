@@ -1,9 +1,9 @@
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 import {
   TargetDashboardUrlParam,
   getTargetDashboard,
-} from "@rilldata/web-common/features/project/deploy/utils.ts";
+} from "@statsparrot/web-common/features/project/deploy/utils.ts";
 import type { Page } from "@sveltejs/kit";
 import { derived, readable } from "svelte/store";
 import { getLocalGitRepoStatus } from "../selectors";
@@ -12,8 +12,8 @@ import { featureFlags } from "../../feature-flags";
 import {
   createRuntimeServiceGitStatus,
   type V1ResourceName,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 /**
  * Returns a {@link Readable} with a route to deploy.
@@ -153,7 +153,7 @@ export function getDeployRouteForProject(
       const hasLocalGitRepo = Boolean(
         $gitStatus.data?.githubUrl && !$gitStatus.data?.managedGit,
       );
-      // Use the rill-managed deploy method if the project folder is not connected to git.
+      // Use the statsparrot-managed deploy method if the project folder is not connected to git.
       if (!hasLocalGitRepo) return getCreateProjectRoute(orgName);
       const deployRoute = getCreateProjectRoute(orgName, true);
 

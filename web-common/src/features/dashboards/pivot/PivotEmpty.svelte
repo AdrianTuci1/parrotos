@@ -1,7 +1,7 @@
 <script>
   import Spinner from "../../entity-management/Spinner.svelte";
   import { EntityStatus } from "../../entity-management/types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import EmptyMeasureIcon from "./EmptyMeasureIcon.svelte";
   import EmptyTableIcon from "./EmptyTableIcon.svelte";
 
@@ -42,7 +42,7 @@
         <a
           target="_blank"
           rel="noopener"
-          href="https://docs.rilldata.com/guide/dashboards/explore/pivot"
+          href="https://docs.statsparrot.com/guide/dashboards/explore/pivot"
           >{m.common_docs()}</a
         >.
       </div>
@@ -67,7 +67,7 @@
         {m.dashboard_pivot_learn_more()}
         <a
           target="_blank"
-          href="https://docs.rilldata.com/guide/dashboards/explore/pivot"
+          href="https://docs.statsparrot.com/guide/dashboards/explore/pivot"
           >{m.common_docs()}</a
         >.
       </div>

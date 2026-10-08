@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
-// IsInit returns true if a Rill project exists in the repo
+// IsInit returns true if a Parrot project exists in the repo
 func IsInit(ctx context.Context, repo drivers.RepoStore, instanceID string) bool {
-	_, err := ParseRillYAML(ctx, repo, instanceID)
+	_, err := ParseParrotYAML(ctx, repo, instanceID)
 	return err == nil
 }
 
@@ -26,16 +26,16 @@ func InitEmpty(ctx context.Context, repo drivers.RepoStore, instanceID, displayN
 		olap = "duckdb"
 	}
 
-	rillYAML := fmt.Sprintf(`compiler: %s
+	statsparrotYAML := fmt.Sprintf(`compiler: %s
 
 display_name: %s
 
 # The project's default OLAP connector.
-# Learn more: https://docs.rilldata.com/reference/olap-engines
+# Learn more: https://docs.statsparrot.com/reference/olap-engines
 olap_connector: %s
 
 # These are example mock users to test your security policies.
-# Learn more: https://docs.rilldata.com/developers/build/rill-project-file#test-access-policies-in-rill-developer
+# Learn more: https://docs.statsparrot.com/developers/build/statsparrot-project-file#test-access-policies-in-statsparrot-developer
 mock_users:
 - email: john@yourcompany.com
 - email: jane@partnercompany.com
@@ -44,7 +44,7 @@ features:
   cloud_editing: true
 `, Version, displayName, olap)
 
-	err := repo.Put(ctx, "rill.yaml", strings.NewReader(rillYAML))
+	err := repo.Put(ctx, "statsparrot.yaml", strings.NewReader(statsparrotYAML))
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ driver: %s
 	if gitignore != "" {
 		gitignore += "\n"
 	}
-	gitignore += ".DS_Store\n\n# Rill\n.env\ntmp\n"
+	gitignore += ".DS_Store\n\n# Parrot\n.env\ntmp\n"
 
 	err = repo.Put(ctx, ".gitignore", strings.NewReader(gitignore))
 	if err != nil {

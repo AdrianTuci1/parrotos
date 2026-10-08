@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/rilldata/rill/runtime/pkg/openapiutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/openapiutil"
 )
 
 // APIYAML is the raw structure of a API resource defined in YAML (does not include common fields)

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { pluralizeKind } from "@rilldata/web-common/features/resources/overview-utils";
-  import type { ResourceCount } from "@rilldata/web-common/features/resources/overview-utils";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { pluralizeKind } from "@statsparrot/web-common/features/resources/overview-utils";
+  import type { ResourceCount } from "@statsparrot/web-common/features/resources/overview-utils";
 
   export let resourceCounts: ResourceCount[];
   export let onViewAll: () => void;

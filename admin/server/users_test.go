@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/testadmin"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -87,7 +87,7 @@ func TestUser(t *testing.T) {
 		// Issue a plain token
 		res, err := c1.IssueUserAuthToken(ctx, &adminv1.IssueUserAuthTokenRequest{
 			UserId:      "current",
-			ClientId:    database.AuthClientIDRillManual,
+			ClientId:    database.AuthClientIDParrotManual,
 			DisplayName: "Foo",
 		})
 		require.NoError(t, err)
@@ -102,7 +102,7 @@ func TestUser(t *testing.T) {
 		// Issue a token with an expiration
 		res3, err := c1.IssueUserAuthToken(ctx, &adminv1.IssueUserAuthTokenRequest{
 			UserId:     "current",
-			ClientId:   database.AuthClientIDRillManual,
+			ClientId:   database.AuthClientIDParrotManual,
 			TtlMinutes: 10,
 		})
 		require.NoError(t, err)

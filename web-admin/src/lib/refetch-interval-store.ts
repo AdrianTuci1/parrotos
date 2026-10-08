@@ -1,7 +1,7 @@
 import type {
   V1ListResourcesResponse,
   V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
 import type { Query } from "@tanstack/svelte-query";
 

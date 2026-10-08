@@ -1,6 +1,6 @@
-import { sanitizeValueForVega } from "@rilldata/web-common/components/vega/util";
-import type { ChartDataResult } from "@rilldata/web-common/features/components/charts";
-import { generateVLLineChartSpec } from "@rilldata/web-common/features/components/charts/cartesian/line-chart/spec";
+import { sanitizeValueForVega } from "@statsparrot/web-common/components/vega/util";
+import type { ChartDataResult } from "@statsparrot/web-common/features/components/charts";
+import { generateVLLineChartSpec } from "@statsparrot/web-common/features/components/charts/cartesian/line-chart/spec";
 import chroma from "chroma-js";
 import { splitAccessPath } from "vega-util";
 import { parseExpression } from "vega-expression";

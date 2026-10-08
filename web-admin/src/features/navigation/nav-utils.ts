@@ -1,4 +1,4 @@
-import { MetricsEventScreenName } from "@rilldata/web-common/metrics/service/MetricsTypes";
+import { MetricsEventScreenName } from "@statsparrot/web-common/metrics/service/MetricsTypes";
 import type { Page } from "@sveltejs/kit";
 
 // TODO: update all methods to use partial Page based on what is needed, so that it can be called in loader functions.
@@ -108,7 +108,7 @@ export function isEditPage({ route }: Pick<Page, "route">): boolean {
 }
 
 /**
- * True when the page is the explore or canvas preview inside Cloud Rill
+ * True when the page is the explore or canvas preview inside Cloud Parrot
  * Developer (`/-/edit/(viz)/{explore,canvas}/[name]`). `isMetricsExplorerPage`
  * and `isCanvasDashboardPage` only match production routes, so this is the
  * editor-side equivalent for surfaces that need to swap chat affordances.
@@ -186,8 +186,8 @@ export function getScreenNameFromPage(page: Page): MetricsEventScreenName {
  * Returns empty strings on pages that aren't showing a named resource, in which case consumers fall
  * back to parsing the resource out of the page URL.
  *
- * The type values are also produced by that URL fallback, which lives in the `rill_ui_telemetry_model`
- * model of the rill-cloud-metrics project. Keep the two vocabularies in step: they land in the same
+ * The type values are also produced by that URL fallback, which lives in the `statsparrot_ui_telemetry_model`
+ * model of the statsparrot-cloud-metrics project. Keep the two vocabularies in step: they land in the same
  * column, so a value only used by one of them reads as two different resource types over time.
  */
 export function getResourceFromPage(page: Page): {

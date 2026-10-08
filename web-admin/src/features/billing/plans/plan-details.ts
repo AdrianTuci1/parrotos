@@ -1,11 +1,11 @@
-import type { PlanTier } from "@rilldata/web-admin/features/billing/plans/types.ts";
-import { formatMemorySize } from "@rilldata/web-common/lib/number-formatting/memory-size.ts";
-import { formatCompactInteger } from "@rilldata/web-common/lib/formatters.ts";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import type { PlanTier } from "@statsparrot/web-admin/features/billing/plans/types.ts";
+import { formatMemorySize } from "@statsparrot/web-common/lib/number-formatting/memory-size.ts";
+import { formatCompactInteger } from "@statsparrot/web-common/lib/formatters.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import type {
   V1OrganizationQuotas,
   V1Quotas,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 
 export type SelfServePlan = {
   tier: Extract<PlanTier, "starter" | "growth">;

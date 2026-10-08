@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import StaticCanvasRow from "@rilldata/web-common/features/canvas/StaticCanvasRow.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import StaticCanvasRow from "@statsparrot/web-common/features/canvas/StaticCanvasRow.svelte";
   import CanvasPdfExportHeader from "./CanvasPdfExportHeader.svelte";
   import CanvasPdfExportTabGroup from "./CanvasPdfExportTabGroup.svelte";
 

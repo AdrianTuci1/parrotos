@@ -1,11 +1,11 @@
-import { getSingleUseUrlParam } from "@rilldata/web-admin/features/navigation/getSingleUseUrlParam";
+import { getSingleUseUrlParam } from "@statsparrot/web-admin/features/navigation/getSingleUseUrlParam";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ params: { organization }, url }) => {
   const showUpgradeDialog = !!getSingleUseUrlParam(
     url,
     "upgrade",
-    "rill:app:showUpgrade",
+    "statsparrot:app:showUpgrade",
   );
   return {
     organization,

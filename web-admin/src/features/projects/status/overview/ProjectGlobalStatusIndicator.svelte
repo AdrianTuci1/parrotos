@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { V1DeploymentStatus } from "@rilldata/web-admin/client";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
-  import CheckCircle from "@rilldata/web-common/components/icons/CheckCircle.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/icons/LoadingSpinner.svelte";
-  import { useProjectParser } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { V1DeploymentStatus } from "@statsparrot/web-admin/client";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
+  import CheckCircle from "@statsparrot/web-common/components/icons/CheckCircle.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/icons/LoadingSpinner.svelte";
+  import { useProjectParser } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { createRuntimeServiceListResources } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { useQueryClient } from "@tanstack/svelte-query";
   import { useProjectDeployment } from "../selectors";
 

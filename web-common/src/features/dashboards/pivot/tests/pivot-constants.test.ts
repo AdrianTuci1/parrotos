@@ -2,7 +2,7 @@ import {
   calculateEffectiveRowLimit,
   getNextRowLimit,
   getNextLimitLabel,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
 import { describe, it, expect } from "vitest";
 
 describe("calculateEffectiveRowLimit", () => {

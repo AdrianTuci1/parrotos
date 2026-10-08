@@ -4,20 +4,20 @@
     createAdminServiceGetProject,
     createAdminServiceGetBillingSubscription,
     V1DeploymentStatus,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     isFreePlan,
     isProPlan,
     isTrialPlan,
-  } from "@rilldata/web-admin/features/billing/plans/utils";
-  import { extractBranchFromPath } from "@rilldata/web-admin/features/branches/branch-utils";
-  import { useDashboardsLastUpdated } from "@rilldata/web-admin/features/dashboards/listing/selectors";
-  import { useGithubLastSynced } from "@rilldata/web-admin/features/projects/selectors";
+  } from "@statsparrot/web-admin/features/billing/plans/utils";
+  import { extractBranchFromPath } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import { useDashboardsLastUpdated } from "@statsparrot/web-admin/features/dashboards/listing/selectors";
+  import { useGithubLastSynced } from "@statsparrot/web-admin/features/projects/selectors";
 
-  import { createRuntimeServiceGetInstance } from "@rilldata/web-common/runtime-client";
-  import { createQueryServiceProjectStorage } from "@rilldata/web-common/runtime-client/v2/gen/query-service";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { formatMemorySize } from "@rilldata/web-common/lib/number-formatting/memory-size";
+  import { createRuntimeServiceGetInstance } from "@statsparrot/web-common/runtime-client";
+  import { createQueryServiceProjectStorage } from "@statsparrot/web-common/runtime-client/v2/gen/query-service";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { formatMemorySize } from "@statsparrot/web-common/lib/number-formatting/memory-size";
   import {
     useParserReconcileError,
     useProjectDeployment,
@@ -27,19 +27,19 @@
     formatEnvironmentName,
     formatConnectorName,
     getOlapEngineLabel,
-  } from "@rilldata/web-common/features/resources/display-utils";
+  } from "@statsparrot/web-common/features/resources/display-utils";
   import {
     getStatusDotClass,
     getStatusLabel,
     isTransitoryStatus,
   } from "../display-utils";
-  import LoadingCircleOutline from "@rilldata/web-common/components/icons/LoadingCircleOutline.svelte";
-  import Callout from "@rilldata/web-common/components/callout/Callout.svelte";
-  import { getGitUrlFromRemote } from "@rilldata/web-common/features/project/deploy/github-utils";
+  import LoadingCircleOutline from "@statsparrot/web-common/components/icons/LoadingCircleOutline.svelte";
+  import Callout from "@statsparrot/web-common/components/callout/Callout.svelte";
+  import { getGitUrlFromRemote } from "@statsparrot/web-common/features/project/deploy/github-utils";
   import ProjectClone from "./ProjectClone.svelte";
-  import OverviewCard from "@rilldata/web-common/features/projects/status/overview/OverviewCard.svelte";
+  import OverviewCard from "@statsparrot/web-common/features/projects/status/overview/OverviewCard.svelte";
   import ClusterSize from "./ClusterSize.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;
@@ -239,7 +239,7 @@
               >({aiConnector.name})</span
             >
           {:else}
-            {m.status_rill_managed()}
+            {m.status_statsparrot_managed()}
           {/if}
         </span>
       </div>

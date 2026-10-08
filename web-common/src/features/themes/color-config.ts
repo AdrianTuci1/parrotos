@@ -43,7 +43,7 @@ export type LightnessMap = { [key: number]: string };
 export type ThemeColorKind = "primary" | "secondary" | "muted";
 
 /**
- * Rill primary brand colors.
+ * Parrot primary brand colors.
  */
 export const defaultPrimaryColors: LightnessMap = {
   50: "227 100% 96%",

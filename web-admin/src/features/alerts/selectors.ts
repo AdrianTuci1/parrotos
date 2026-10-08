@@ -1,19 +1,19 @@
-import { createAdminServiceSearchProjectUsers } from "@rilldata/web-admin/client";
-import { getDashboardStateFromUrl } from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { getExploreName } from "@rilldata/web-common/features/explore-mappers/utils";
+import { createAdminServiceSearchProjectUsers } from "@statsparrot/web-admin/client";
+import { getDashboardStateFromUrl } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { getExploreName } from "@statsparrot/web-common/features/explore-mappers/utils";
 import {
   createRuntimeServiceGetExplore,
   createRuntimeServiceGetResource,
   createRuntimeServiceListResources,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type {
   V1AlertSpec,
   V1ExploreSpec,
-} from "@rilldata/web-common/runtime-client/gen/index.schemas";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { smartRefetchIntervalFunc } from "@rilldata/web-admin/lib/refetch-interval-store";
+} from "@statsparrot/web-common/runtime-client/gen/index.schemas";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { smartRefetchIntervalFunc } from "@statsparrot/web-admin/lib/refetch-interval-store";
 import { derived, type Readable, readable } from "svelte/store";
 
 export function useAlerts(client: RuntimeClient, enabled = true) {

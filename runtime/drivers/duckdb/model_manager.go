@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 type ModelInputProperties struct {
@@ -86,9 +86,9 @@ func (p *ModelOutputProperties) validateAndApplyDefaults(opts *drivers.ModelExec
 		if len(p.UniqueKey) > 0 {
 			p.IncrementalStrategy = drivers.IncrementalStrategyMerge
 		} else if opts.PartitionRun && ip != nil && ip.SQL != "" {
-			ip.SQL = fmt.Sprintf("SELECT %s AS __rill_partition, * FROM (%s\n)", safeSQLString(opts.PartitionKey), ip.SQL)
+			ip.SQL = fmt.Sprintf("SELECT %s AS __statsparrot_partition, * FROM (%s\n)", safeSQLString(opts.PartitionKey), ip.SQL)
 			p.IncrementalStrategy = drivers.IncrementalStrategyPartitionOverwrite
-			p.PartitionBy = "__rill_partition"
+			p.PartitionBy = "__statsparrot_partition"
 		}
 	}
 
@@ -202,7 +202,7 @@ func (c *connection) forceRenameTable(ctx context.Context, fromName string, from
 
 	// Renaming a table to the same name with different casing is not supported. Workaround by renaming to a temporary name first.
 	if strings.EqualFold(fromName, toName) {
-		tmpName := fmt.Sprintf("__rill_tmp_rename_%s_%s", typ, toName)
+		tmpName := fmt.Sprintf("__statsparrot_tmp_rename_%s_%s", typ, toName)
 		err := c.renameTable(ctx, fromName, tmpName)
 		if err != nil {
 			return err
@@ -217,7 +217,7 @@ func (c *connection) forceRenameTable(ctx context.Context, fromName string, from
 // stagingTableName returns a stable temporary table name for a destination table.
 // By using a stable temporary table name, we can ensure proper garbage collection without managing additional state.
 func stagingTableNameFor(table string) string {
-	return "__rill_tmp_model_" + table
+	return "__statsparrot_tmp_model_" + table
 }
 
 func boolPtr(b bool) *bool {

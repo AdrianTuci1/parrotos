@@ -1,27 +1,27 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Calendar from "@rilldata/web-common/components/icons/Calendar.svelte";
-  import Filter from "@rilldata/web-common/components/icons/Filter.svelte";
-  import AdvancedFilter from "@rilldata/web-common/features/dashboards/filters/AdvancedFilter.svelte";
-  import MeasureFilter from "@rilldata/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
-  import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-  import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-  import { DashboardStateSync } from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateSync";
-  import { isExpressionUnsupported } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-  import { isUrlTooLong } from "@rilldata/web-common/features/dashboards/url-state/url-length-limits";
-  import { getMapFromArray } from "@rilldata/web-common/lib/arrayUtils";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import type { TimeRange } from "@rilldata/web-common/lib/time/types";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Calendar from "@statsparrot/web-common/components/icons/Calendar.svelte";
+  import Filter from "@statsparrot/web-common/components/icons/Filter.svelte";
+  import AdvancedFilter from "@statsparrot/web-common/features/dashboards/filters/AdvancedFilter.svelte";
+  import MeasureFilter from "@statsparrot/web-common/features/dashboards/filters/measure-filters/MeasureFilter.svelte";
+  import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+  import { useMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+  import { DashboardStateSync } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateSync";
+  import { isExpressionUnsupported } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+  import { isUrlTooLong } from "@statsparrot/web-common/features/dashboards/url-state/url-length-limits";
+  import { getMapFromArray } from "@statsparrot/web-common/lib/arrayUtils";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import type { TimeRange } from "@statsparrot/web-common/lib/time/types";
   import {
     TimeComparisonOption,
     TimeRangePreset,
     type DashboardTimeControls,
-  } from "@rilldata/web-common/lib/time/types";
+  } from "@statsparrot/web-common/lib/time/types";
   import {
     V1TimeGrain,
     type V1ExploreTimeRange,
-  } from "@rilldata/web-common/runtime-client";
-  import { invalidationForMetricsViewData } from "@rilldata/web-common/runtime-client/invalidation.ts";
+  } from "@statsparrot/web-common/runtime-client";
+  import { invalidationForMetricsViewData } from "@statsparrot/web-common/runtime-client/invalidation.ts";
   import { DateTime, Duration, Interval } from "luxon";
   import { flip } from "svelte/animate";
   import { fly } from "svelte/transition";
@@ -36,22 +36,22 @@
     CUSTOM_TIME_RANGE_ALIAS,
     deriveInterval,
   } from "../time-controls/new-time-controls";
-  import { allowedGrainsForInterval } from "@rilldata/web-common/lib/time/new-grains";
+  import { allowedGrainsForInterval } from "@statsparrot/web-common/lib/time/new-grains";
   import SuperPill from "../time-controls/super-pill/SuperPill.svelte";
   import { useTimeControlStore } from "../time-controls/time-control-store";
   import FilterButton from "./FilterButton.svelte";
   import DimensionFilter from "./dimension-filters/DimensionFilter.svelte";
   import { featureFlags } from "../../feature-flags";
-  import Timestamp from "@rilldata/web-common/features/dashboards/time-controls/super-pill/components/Timestamp.svelte";
-  import { getDefaultTimeGrain } from "@rilldata/web-common/lib/time/grains";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import Timestamp from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/components/Timestamp.svelte";
+  import { getDefaultTimeGrain } from "@statsparrot/web-common/lib/time/grains";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
   import Metadata from "../time-controls/super-pill/components/Metadata.svelte";
   import { getValidComparisonOption } from "../time-controls/time-range-store";
   import { getPinnedTimeZones } from "../url-state/getDefaultExplorePreset";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
-  const { rillTime } = featureFlags;
+  const { statsparrotTime } = featureFlags;
 
   export let readOnly = false;
   export let timeRanges: V1ExploreTimeRange[];
@@ -398,12 +398,12 @@
     metricsExplorerStore.setTimeZone($exploreName, timeZone);
   }
 
-  $: usingRillTime =
+  $: usingParrotTime =
     !selectedRangeAlias?.startsWith("P") &&
-    !selectedRangeAlias?.startsWith("rill-");
+    !selectedRangeAlias?.startsWith("statsparrot-");
 
   function onTimeGrainSelect(timeGrain: V1TimeGrain) {
-    if (usingRillTime && selectedRangeAlias) {
+    if (usingParrotTime && selectedRangeAlias) {
       metricsExplorerStore.setTimeGrain($exploreName, timeGrain);
     } else if (baseTimeRange) {
       makeTimeSeriesTimeRangeAndUpdateAppState(
@@ -489,7 +489,7 @@
         />
       {/if}
 
-      {#if !$rillTime && allTimeRangeInterval?.end?.isValid}
+      {#if !$statsparrotTime && allTimeRangeInterval?.end?.isValid}
         <Tooltip.Root delayDuration={0}>
           <Tooltip.Trigger>
             <span class="text-fg-secondary italic">

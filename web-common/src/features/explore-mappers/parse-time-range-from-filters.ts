@@ -1,12 +1,12 @@
-import { getSmallestUnitInDateTime } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls.ts";
+import { getSmallestUnitInDateTime } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls.ts";
 import {
   type DashboardTimeControls,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types.ts";
+} from "@statsparrot/web-common/lib/time/types.ts";
 import {
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { DateTime } from "luxon";
 
 /**

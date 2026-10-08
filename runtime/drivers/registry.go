@@ -8,7 +8,7 @@ import (
 
 	"github.com/c2h5oh/datasize"
 	"github.com/mitchellh/mapstructure"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 )
 
 // RegistryStore is implemented by drivers capable of storing and looking up instances and repos.
@@ -27,11 +27,11 @@ type Instance struct {
 	ID string
 	// Environment is the environment that the instance represents
 	Environment string
-	// ProjectDisplayName is the display name from rill.yaml
+	// ProjectDisplayName is the display name from statsparrot.yaml
 	ProjectDisplayName string `db:"project_display_name"`
 	// Driver name to connect to for OLAP
 	OLAPConnector string
-	// ProjectOLAPConnector is an override of OLAPConnector that may be set in rill.yaml.
+	// ProjectOLAPConnector is an override of OLAPConnector that may be set in statsparrot.yaml.
 	// NOTE: Hopefully we can merge this with OLAPConnector if/when we remove the ability to set OLAPConnector using flags.
 	ProjectOLAPConnector string
 	// Driver name for reading/editing code artifacts
@@ -40,7 +40,7 @@ type Instance struct {
 	AdminConnector string
 	// Driver name for the AI service (optional)
 	AIConnector string
-	// ProjectAIConnector is an override of AIConnector that may be set in rill.yaml.
+	// ProjectAIConnector is an override of AIConnector that may be set in statsparrot.yaml.
 	ProjectAIConnector string
 	// Driver name for catalog
 	CatalogConnector string
@@ -50,16 +50,16 @@ type Instance struct {
 	UpdatedOn time.Time `db:"updated_on"`
 	// Instance specific connectors
 	Connectors []*runtimev1.Connector `db:"connectors"`
-	// ProjectConnectors contains default connectors from rill.yaml
+	// ProjectConnectors contains default connectors from statsparrot.yaml
 	ProjectConnectors []*runtimev1.Connector `db:"project_connectors"`
 	// Variables contains user-provided variables
 	Variables map[string]string `db:"variables"`
-	// ProjectVariables contains default variables from rill.yaml
-	// (NOTE: This can always be reproduced from rill.yaml, so it's really just a handy cache of the values.)
+	// ProjectVariables contains default variables from statsparrot.yaml
+	// (NOTE: This can always be reproduced from statsparrot.yaml, so it's really just a handy cache of the values.)
 	ProjectVariables map[string]string `db:"project_variables"`
-	// SystemVariables contains variables set by the system (e.g. "rill.watch_repo") that should not be overridden by user.
+	// SystemVariables contains variables set by the system (e.g. "statsparrot.watch_repo") that should not be overridden by user.
 	SystemVariables map[string]string `db:"system_variables"`
-	// FeatureFlags contains feature flags configured in rill.yaml
+	// FeatureFlags contains feature flags configured in statsparrot.yaml
 	FeatureFlags map[string]string `db:"feature_flags"`
 	// Annotations to enrich activity events (like usage tracking)
 	Annotations map[string]string
@@ -76,77 +76,77 @@ type Instance struct {
 }
 
 // InstanceConfig contains dynamic configuration for an instance.
-// It is configured by parsing instance variables prefixed with "rill.".
-// For example, a variable "rill.stage_changes=true" would set the StageChanges field to true.
+// It is configured by parsing instance variables prefixed with "statsparrot.".
+// For example, a variable "statsparrot.stage_changes=true" would set the StageChanges field to true.
 // InstanceConfig should only be used for config that the user is allowed to change dynamically at runtime.
 type InstanceConfig struct {
 	// DownloadLimitBytes is the limit on size of exported file. If set to 0, there is no limit.
-	DownloadLimitBytes int64 `mapstructure:"rill.download_limit_bytes"`
+	DownloadLimitBytes int64 `mapstructure:"statsparrot.download_limit_bytes"`
 	// InteractiveSQLRowLimit is the row limit for interactive SQL queries. It does not apply to exports of SQL queries. If set to 0, there is no limit.
-	InteractiveSQLRowLimit int64 `mapstructure:"rill.interactive_sql_row_limit"`
+	InteractiveSQLRowLimit int64 `mapstructure:"statsparrot.interactive_sql_row_limit"`
 	// StageChanges indicates whether to keep previously ingested tables for sources/models, and only override them if ingestion of a new table is successful.
-	StageChanges bool `mapstructure:"rill.stage_changes"`
+	StageChanges bool `mapstructure:"statsparrot.stage_changes"`
 	// WatchRepo configures the project parser to setup a file watcher to instantly detect and parse changes to the project files.
-	WatchRepo bool `mapstructure:"rill.watch_repo"`
+	WatchRepo bool `mapstructure:"statsparrot.watch_repo"`
 	// ModelDefaultMaterialize indicates whether to materialize models by default.
-	ModelDefaultMaterialize bool `mapstructure:"rill.models.default_materialize"`
+	ModelDefaultMaterialize bool `mapstructure:"statsparrot.models.default_materialize"`
 	// ModelMaterializeDelaySeconds adds a delay before materializing models.
-	ModelMaterializeDelaySeconds uint32 `mapstructure:"rill.models.materialize_delay_seconds"`
+	ModelMaterializeDelaySeconds uint32 `mapstructure:"statsparrot.models.materialize_delay_seconds"`
 	// ModelConcurrentExecutionLimit sets the maximum number of concurrent model executions.
-	ModelConcurrentExecutionLimit uint32 `mapstructure:"rill.models.concurrent_execution_limit"`
+	ModelConcurrentExecutionLimit uint32 `mapstructure:"statsparrot.models.concurrent_execution_limit"`
 	// ModelTimeoutOverride sets a timeout for model reconciliation in seconds (used in validation mode).
-	ModelTimeoutOverride uint32 `mapstructure:"rill.model.timeout_override"`
+	ModelTimeoutOverride uint32 `mapstructure:"statsparrot.model.timeout_override"`
 	// MetricsComparisonsExact indicates whether to rewrite metrics comparison queries to approximately correct queries.
 	// Approximated comparison queries are faster but may not return comparison data points for all values.
-	MetricsApproximateComparisons bool `mapstructure:"rill.metrics.approximate_comparisons"`
+	MetricsApproximateComparisons bool `mapstructure:"statsparrot.metrics.approximate_comparisons"`
 	// MetricsApproximateComparisonsCTE indicates whether to rewrite metrics comparison queries to use a CTE for base query.
-	MetricsApproximateComparisonsCTE bool `mapstructure:"rill.metrics.approximate_comparisons_cte"`
+	MetricsApproximateComparisonsCTE bool `mapstructure:"statsparrot.metrics.approximate_comparisons_cte"`
 	// MetricsApproxComparisonTwoPhaseLimit if query limit is less than this then rewrite metrics comparison queries to use a two-phase comparison approach where first query is used to get the base values and the second query is used to get the comparison values.
-	MetricsApproxComparisonTwoPhaseLimit int64 `mapstructure:"rill.metrics.approximate_comparisons_two_phase_limit"`
+	MetricsApproxComparisonTwoPhaseLimit int64 `mapstructure:"statsparrot.metrics.approximate_comparisons_two_phase_limit"`
 	// MetricsExactifyDruidTopN indicates whether to split Druid TopN queries into two queries to increase the accuracy of the returned measures.
 	// Enabling it reduces the performance of Druid toplist queries.
 	// See runtime/metricsview/executor_rewrite_druid_exactify.go for more details.
-	MetricsExactifyDruidTopN bool `mapstructure:"rill.metrics.exactify_druid_topn"`
+	MetricsExactifyDruidTopN bool `mapstructure:"statsparrot.metrics.exactify_druid_topn"`
 	// MetricsNullFillingImplementation switches between null-filling implementations for timeseries queries.
 	// Can be "", "none", "new", "pushdown".
-	MetricsNullFillingImplementation string `mapstructure:"rill.metrics.timeseries_null_filling_implementation"`
+	MetricsNullFillingImplementation string `mapstructure:"statsparrot.metrics.timeseries_null_filling_implementation"`
 	// MetricsPivotExportColumnLimit caps the number of columns a pivot export may produce.
 	// Pivots are executed in DuckDB and produces one column per combination of the pivoted dimension values, times the number of measures.
 	// so a pivot producing too many columns fails with an opaque error. This is a conservative safety cap
 	// that lets us return a clear error first. If set to 0, there is no limit.
-	MetricsPivotExportColumnLimit int64 `mapstructure:"rill.metrics.pivot_export_column_limit"`
+	MetricsPivotExportColumnLimit int64 `mapstructure:"statsparrot.metrics.pivot_export_column_limit"`
 	// AlertsDefaultStreamingRefreshCron sets a default cron expression for refreshing alerts with streaming refs.
 	// Namely, this is used to check alerts against external tables (e.g. in Druid) where new data may be added at any time (i.e. is considered "streaming").
-	AlertsDefaultStreamingRefreshCron string `mapstructure:"rill.alerts.default_streaming_refresh_cron"`
+	AlertsDefaultStreamingRefreshCron string `mapstructure:"statsparrot.alerts.default_streaming_refresh_cron"`
 	// AlertsFastStreamingRefreshCron is similar to AlertsDefaultStreamingRefreshCron but is used for alerts that are based on always-on OLAP connectors (i.e. that have MayScaleToZero == false).
-	AlertsFastStreamingRefreshCron string `mapstructure:"rill.alerts.fast_streaming_refresh_cron"`
+	AlertsFastStreamingRefreshCron string `mapstructure:"statsparrot.alerts.fast_streaming_refresh_cron"`
 	// ParserSkipUpdatesIfParseErrors short-circuits project parser reconciliation when parse errors exist.
-	ParserSkipUpdatesIfParseErrors bool `mapstructure:"rill.parser.skip_updates_if_parse_errors"`
+	ParserSkipUpdatesIfParseErrors bool `mapstructure:"statsparrot.parser.skip_updates_if_parse_errors"`
 	// AICompletionTimeoutSeconds is the maximum duration of a full AI completion request, which may include multiple LLM requests and tool calls.
-	AICompletionTimeoutSeconds uint32 `mapstructure:"rill.ai.completion_timeout_seconds"`
+	AICompletionTimeoutSeconds uint32 `mapstructure:"statsparrot.ai.completion_timeout_seconds"`
 	// AILLMTimeoutSeconds is the maximum duration of a single LLM completion request.
-	// Note: when using Rill's hosted AI service (i.e. not a self-configured LLM), the admin server enforces a hard upper bound of 10 minutes, so values above that have no effect.
-	AILLMTimeoutSeconds uint32 `mapstructure:"rill.ai.llm_timeout_seconds"`
+	// Note: when using Parrot's hosted AI service (i.e. not a self-configured LLM), the admin server enforces a hard upper bound of 10 minutes, so values above that have no effect.
+	AILLMTimeoutSeconds uint32 `mapstructure:"statsparrot.ai.llm_timeout_seconds"`
 	// AIDefaultQueryLimit is the default row limit applied to AI tool queries when no limit is specified.
-	AIDefaultQueryLimit int64 `mapstructure:"rill.ai.default_query_limit"`
+	AIDefaultQueryLimit int64 `mapstructure:"statsparrot.ai.default_query_limit"`
 	// AIMaxQueryLimit is the maximum row limit allowed for AI tool queries.
-	AIMaxQueryLimit int64 `mapstructure:"rill.ai.max_query_limit"`
+	AIMaxQueryLimit int64 `mapstructure:"statsparrot.ai.max_query_limit"`
 	// AIRequireTimeRange indicates whether to require a time range on AI tool queries. If true, AI tool queries must include a time range filter, and if the query does not include a time range filter, the query will be rejected. Default is true.
-	AIRequireTimeRange bool `mapstructure:"rill.ai.require_time_range"`
+	AIRequireTimeRange bool `mapstructure:"statsparrot.ai.require_time_range"`
 	// AIMaxTimeRangeDays is the maximum time range allowed for AI tool queries, in days. If set to 0, there is no limit.
-	AIMaxTimeRangeDays int64 `mapstructure:"rill.ai.max_time_range_days"`
+	AIMaxTimeRangeDays int64 `mapstructure:"statsparrot.ai.max_time_range_days"`
 	// AIMaxMessageSizeBytes is the maximum allowed size of an AI message's contents (tool call args or results). Exceeding it results in an error.
-	AIMaxMessageSizeBytes int64 `mapstructure:"rill.ai.max_message_size_bytes"`
+	AIMaxMessageSizeBytes int64 `mapstructure:"statsparrot.ai.max_message_size_bytes"`
 	// StrictResolverProps indicates whether to return an error when a resolver contains properties that are not recognized by the resolver implementation.
-	StrictResolverProps bool `mapstructure:"rill.strict_resolver_properties"`
+	StrictResolverProps bool `mapstructure:"statsparrot.strict_resolver_properties"`
 	// StrictModelProps indicates whether to return an error when a model contains unmapped properties.
-	StrictModelProps bool `mapstructure:"rill.strict_model_properties"`
+	StrictModelProps bool `mapstructure:"statsparrot.strict_model_properties"`
 	// ModelPartitionsWarnOnFailure: when true, partition execution failures are surfaced as non-blocking warnings instead of errors.
-	ModelPartitionsWarnOnFailure bool `mapstructure:"rill.model.partitions_warn_on_failure"`
+	ModelPartitionsWarnOnFailure bool `mapstructure:"statsparrot.model.partitions_warn_on_failure"`
 	// ModelTestsWarnOnFailure: when true, model test failures are surfaced as non-blocking warnings instead of errors.
-	ModelTestsWarnOnFailure bool `mapstructure:"rill.model.tests_warn_on_failure"`
-	// DisableModels: when true, model execution is disabled. Useful for stopping any ingestion in Rill temporarily.
-	DisableModels bool `mapstructure:"rill.models.disable"`
+	ModelTestsWarnOnFailure bool `mapstructure:"statsparrot.model.tests_warn_on_failure"`
+	// DisableModels: when true, model execution is disabled. Useful for stopping any ingestion in Parrot temporarily.
+	DisableModels bool `mapstructure:"statsparrot.models.disable"`
 }
 
 // ResolveOLAPConnector resolves the OLAP connector to default to for the instance.
@@ -230,11 +230,11 @@ func (i *Instance) Config() (InstanceConfig, error) {
 	// Resolve variables
 	vars := i.ResolveVariables(true)
 
-	// Backwards compatibility: Use "__materialize_default" as alias for "rill.models.default_materialize".
+	// Backwards compatibility: Use "__materialize_default" as alias for "statsparrot.models.default_materialize".
 	if vars != nil {
 		if v, ok := vars["__materialize_default"]; ok {
-			if _, ok := vars["rill.models.default_materialize"]; !ok {
-				vars["rill.models.default_materialize"] = v
+			if _, ok := vars["statsparrot.models.default_materialize"]; !ok {
+				vars["statsparrot.models.default_materialize"] = v
 			}
 		}
 	}

@@ -1,20 +1,20 @@
-import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
-import { useDimensionSearch } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-filter-values";
-import { getDimensionDisplayName } from "@rilldata/web-common/features/dashboards/filters/getDisplayName";
-import { filterItemsSortFunction } from "@rilldata/web-common/features/dashboards/state-managers/selectors/filters";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
+import { useDimensionSearch } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-filter-values";
+import { getDimensionDisplayName } from "@statsparrot/web-common/features/dashboards/filters/getDisplayName";
+import { filterItemsSortFunction } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/filters";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
 import {
   forEachIdentifier,
   getValuesInExpression,
   isExpressionUnsupported,
   matchExpressionByName,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import type {
   MetricsViewSpecDimension,
   V1Expression,
-} from "@rilldata/web-common/runtime-client";
-import { V1Operation } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { V1Operation } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, readable } from "svelte/store";
 import type { AtLeast } from "../types";
 import type { DashboardDataSources } from "./types";

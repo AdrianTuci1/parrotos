@@ -5,25 +5,25 @@
     createAdminServiceRedeployProject,
     getAdminServiceGetProjectQueryKey,
     getAdminServiceListDeploymentsQueryKey,
-  } from "@rilldata/web-admin/client";
-  import { isActiveDeployment } from "@rilldata/web-admin/features/branches/deployment-utils";
-  import { useParserCommitSha } from "@rilldata/web-admin/features/projects/selectors";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import ChangedFilesList from "@rilldata/web-common/features/project/changes/ChangedFilesList.svelte";
-  import ChangedFilesDialog from "@rilldata/web-common/features/project/changes/ChangedFilesDialog.svelte";
-  import MergeConflictResolutionDialog from "@rilldata/web-common/features/project/MergeConflictResolutionDialog.svelte";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-admin/client";
+  import { isActiveDeployment } from "@statsparrot/web-admin/features/branches/deployment-utils";
+  import { useParserCommitSha } from "@statsparrot/web-admin/features/projects/selectors";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import ChangedFilesList from "@statsparrot/web-common/features/project/changes/ChangedFilesList.svelte";
+  import ChangedFilesDialog from "@statsparrot/web-common/features/project/changes/ChangedFilesDialog.svelte";
+  import MergeConflictResolutionDialog from "@statsparrot/web-common/features/project/MergeConflictResolutionDialog.svelte";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import {
     createRuntimeServiceGitMergeToBranchMutation,
     createRuntimeServiceGitPushMutation,
     type V1GitMergeToBranchResponse,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { ConnectError } from "@connectrpc/connect";
   import { Rocket } from "lucide-svelte";
   import { buildPostMergeUrl } from "./post-merge-url";
@@ -32,8 +32,8 @@
     fetchDeploymentGithubStatusChanges,
     getDeploymentGithubStatus,
     invalidateGitStatusQueries,
-  } from "@rilldata/web-admin/features/edit-session/selectors.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/features/edit-session/selectors.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

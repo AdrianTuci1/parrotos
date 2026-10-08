@@ -1,19 +1,19 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { getRuntimeServiceListFilesQueryOptions } from "@rilldata/web-common/runtime-client";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import { getRuntimeServiceListFilesQueryOptions } from "@statsparrot/web-common/runtime-client";
 import { useQuery } from "@tanstack/react-query";
-import FileExplorer from "@rilldata/web-common/features/file-explorer/react/FileExplorer";
-import { transformFileList } from "@rilldata/web-common/features/file-explorer/react/transform-file-list";
+import FileExplorer from "@statsparrot/web-common/features/file-explorer/react/FileExplorer";
+import { transformFileList } from "@statsparrot/web-common/features/file-explorer/react/transform-file-list";
 import { FileContentView } from "@/components/shell/FileContentView";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 
 /**
- * Rill-style `/files` artifact view.
+ * Parrot-style `/files` artifact view.
  *
  * When a `filePath` segment is present (i.e. a file was clicked in the sidebar file
  * tree) it renders the file's content in an editor chrome (`FileContentView`),
- * mirroring Rill's `/files/{path}` route. Without a path, it queries the runtime
+ * mirroring Parrot's `/files/{path}` route. Without a path, it queries the runtime
  * for the project's file tree (`RuntimeService.ListFiles`), shapes it into the
  * `Directory` tree the ported React `FileExplorer` consumes and mounts it. While a
  * live runtime is reachable the tree is real; when the query has no data (mock/
@@ -47,7 +47,7 @@ const SAMPLE_TREE = {
       files: ["orders_metrics.yaml"],
     },
   ],
-  files: ["rill.yaml"],
+  files: ["statsparrot.yaml"],
 };
 
 export function FilesView() {
@@ -96,7 +96,7 @@ export function FilesView() {
       <div className="rounded-xl border bg-card p-3 shadow-sm">
         <FileExplorer
           fileTree={tree}
-          projectTitle="Rill Project"
+          projectTitle="Parrot Project"
           isLoading={listFiles.isLoading}
           isError={listFiles.isError}
           onRename={() => {}}

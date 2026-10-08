@@ -1,9 +1,9 @@
-import type { LeaderboardSpec } from "@rilldata/web-common/features/canvas/components/leaderboard";
+import type { LeaderboardSpec } from "@statsparrot/web-common/features/canvas/components/leaderboard";
 import {
   validateDimensions,
   validateMeasures,
-} from "@rilldata/web-common/features/canvas/components/validators";
-import type { V1MetricsViewSpec } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/canvas/components/validators";
+import type { V1MetricsViewSpec } from "@statsparrot/web-common/runtime-client";
 
 export function validateLeaderboardSchema(
   leaderboardSpec: LeaderboardSpec,

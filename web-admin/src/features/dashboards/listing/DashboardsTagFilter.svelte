@@ -1,13 +1,13 @@
 <script lang="ts">
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import { useDashboards } from "@rilldata/web-admin/features/dashboards/listing/selectors.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import { useDashboards } from "@statsparrot/web-admin/features/dashboards/listing/selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     getAllTagsForResources,
     getTagFilterLabel,
-  } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
+  } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
   import type { ArrayRuneStore } from "web-common/src/lib/store-utils/types.svelte.ts";
   import {
     getDashboardTagFavouritesStore,

@@ -2,8 +2,8 @@ import {
   V1DeploymentStatus,
   type RpcStatus,
   type V1GetProjectResponse,
-} from "@rilldata/web-admin/client";
-import { RUNTIME_ACCESS_TOKEN_DEFAULT_TTL } from "@rilldata/web-common/runtime-client/constants";
+} from "@statsparrot/web-admin/client";
+import { RUNTIME_ACCESS_TOKEN_DEFAULT_TTL } from "@statsparrot/web-common/runtime-client/constants";
 import type { CreateQueryOptions } from "@tanstack/svelte-query";
 
 const PollTimeWhenProjectDeploymentPending = 1000;

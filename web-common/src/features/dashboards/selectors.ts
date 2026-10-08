@@ -1,18 +1,18 @@
 import {
   createAndExpression,
   matchExpressionByName,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   ResourceKind,
   useClientFilteredResources,
   useFilteredResources,
   useResource,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   getExploreValidSpecQueryOptions,
   useExploreValidSpec,
-} from "@rilldata/web-common/features/explores/selectors.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/explores/selectors.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   createRuntimeServiceListResources,
   getQueryServiceMetricsViewTimeRangeQueryOptions,
@@ -22,9 +22,9 @@ import {
   type V1MetricsViewSpec,
   type V1MetricsViewTimeRangeResponse,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   createQuery,
   type CreateQueryOptions,

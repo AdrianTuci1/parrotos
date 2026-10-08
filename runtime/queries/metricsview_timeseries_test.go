@@ -5,13 +5,13 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/pkg/expressionpb"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/pkg/expressionpb"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -21,8 +21,8 @@ func TestMetricsViewsTimeseriesAgainstClickHouse(t *testing.T) {
 	testmode.Expensive(t)
 	// Create a test ClickHouse cluster
 	dsn := testclickhouse.Start(t)
-	t.Setenv("RILL_RUNTIME_TEST_OLAP_DRIVER", "clickhouse")
-	t.Setenv("RILL_RUNTIME_TEST_OLAP_DSN", dsn)
+	t.Setenv("STATSPARROT_RUNTIME_TEST_OLAP_DRIVER", "clickhouse")
+	t.Setenv("STATSPARROT_RUNTIME_TEST_OLAP_DSN", dsn)
 	rt, instanceID := testruntime.NewInstanceForProject(t, "timeseries_clickhouse")
 	t.Run("testMetricsViewsTimeseries_month_grain", func(t *testing.T) { testMetricsViewsTimeseries_month_grain(t, rt, instanceID) })
 	t.Run("testMetricsViewsTimeseries_month_grain_IST", func(t *testing.T) { testMetricsViewsTimeseries_month_grain_IST(t, rt, instanceID) })
@@ -116,13 +116,13 @@ func TestMetricsViewsTimeseriesAgainstBigQuery(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"bigquery"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: bigquery",
+			"statsparrot.yaml": "olap_connector: bigquery",
 			"metrics/timeseries_dst_backwards.yaml": `version: 1
 type: metrics_view
 
 display_name: timeseries_dst
 table: timeseries_dst_backwards
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: timestamp
 first_day_of_week: 7
@@ -143,7 +143,7 @@ type: metrics_view
 
 display_name: timeseries_dst
 table: timeseries_dst_backwards
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: timestamp
 first_day_of_week: 6
@@ -164,7 +164,7 @@ type: metrics_view
 
 display_name: timeseries_dst
 table: timeseries_dst_forwards
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: timestamp
 first_day_of_week: 7
@@ -185,7 +185,7 @@ type: metrics_view
 
 display_name: Time series gaps
 table: timeseries_gaps
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: time
 
@@ -216,7 +216,7 @@ type: metrics_view
 
 display_name: Year time series
 table: timeseries_year
-database: rilldata
+database: staticlabs
 database_schema: integration_test
 timeseries: timestamp
 
@@ -286,7 +286,7 @@ func TestMetricsViewsTimeseriesAgainstDatabricks(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"databricks"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: databricks",
+			"statsparrot.yaml": "olap_connector: databricks",
 			"metrics/timeseries_dst_backwards.yaml": `version: 1
 type: metrics_view
 
@@ -451,7 +451,7 @@ func TestMetricsViewsTimeseriesAgainstSnowflake(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		TestConnectors: []string{"snowflake"},
 		Files: map[string]string{
-			"rill.yaml": "olap_connector: snowflake",
+			"statsparrot.yaml": "olap_connector: snowflake",
 			"metrics/timeseries_dst_backwards.yaml": `version: 1
 type: metrics_view
 

@@ -2,20 +2,20 @@
   import {
     createAdminServiceGetBillingSubscription,
     V1BillingIssueType,
-  } from "@rilldata/web-admin/client";
-  import { getPlanTierForSubscription } from "@rilldata/web-admin/features/billing/plans/selectors";
+  } from "@statsparrot/web-admin/client";
+  import { getPlanTierForSubscription } from "@statsparrot/web-admin/features/billing/plans/selectors";
   import type {
     PlanTier,
     TeamPlanDialogTypes,
-  } from "@rilldata/web-admin/features/billing/plans/types";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors";
-  import ChoosePlanDialog from "@rilldata/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
-  import ProPlan from "@rilldata/web-admin/features/billing/plans/ProPlan.svelte";
-  import SelfServePlanCard from "@rilldata/web-admin/features/billing/plans/SelfServePlanCard.svelte";
-  import LegacyTeamPlan from "@rilldata/web-admin/features/billing/plans/LegacyTeamPlan.svelte";
-  import FreePlan from "@rilldata/web-admin/features/billing/plans/FreePlan.svelte";
-  import LegacyTrialPlan from "@rilldata/web-admin/features/billing/plans/LegacyTrialPlan.svelte";
-  import EnterprisePlan from "@rilldata/web-admin/features/billing/plans/EnterprisePlan.svelte";
+  } from "@statsparrot/web-admin/features/billing/plans/types";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors";
+  import ChoosePlanDialog from "@statsparrot/web-admin/features/billing/plans/dialog/ChoosePlanDialog.svelte";
+  import ProPlan from "@statsparrot/web-admin/features/billing/plans/ProPlan.svelte";
+  import SelfServePlanCard from "@statsparrot/web-admin/features/billing/plans/SelfServePlanCard.svelte";
+  import LegacyTeamPlan from "@statsparrot/web-admin/features/billing/plans/LegacyTeamPlan.svelte";
+  import FreePlan from "@statsparrot/web-admin/features/billing/plans/FreePlan.svelte";
+  import LegacyTrialPlan from "@statsparrot/web-admin/features/billing/plans/LegacyTrialPlan.svelte";
+  import EnterprisePlan from "@statsparrot/web-admin/features/billing/plans/EnterprisePlan.svelte";
 
   let {
     organization,

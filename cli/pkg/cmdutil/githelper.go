@@ -6,9 +6,9 @@ import (
 	"slices"
 	"strings"
 
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -156,7 +156,7 @@ func SetupGitIgnore(ctx context.Context, repo drivers.RepoStore) error {
 			return err
 		}
 		// Create .gitignore if it does not exist
-		err = repo.Put(ctx, ".gitignore", strings.NewReader(".DS_Store\n\n# Rill\n.env\ntmp\n"))
+		err = repo.Put(ctx, ".gitignore", strings.NewReader(".DS_Store\n\n# Parrot\n.env\ntmp\n"))
 		if err != nil {
 			return err
 		}

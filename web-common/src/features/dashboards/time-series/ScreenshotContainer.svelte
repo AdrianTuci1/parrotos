@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
   import type {
     MetricsViewSpecMeasure,
     V1Expression,
     V1TimeGrain,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { toPng } from "html-to-image";
   import { Interval } from "luxon";
   import MeasureBigNumber from "../big-number/MeasureBigNumber.svelte";
   import MeasureChart from "./measure-chart/MeasureChart.svelte";
   import MeasureChartXAxis from "./measure-chart/MeasureChartXAxis.svelte";
-  import { prettyFormatTimeRange } from "@rilldata/web-common/lib/time/ranges/formatter.ts";
-  import ExploreFilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/ExploreFilterChipsReadOnly.svelte";
-  import ThemeProvider from "@rilldata/web-common/features/dashboards/ThemeProvider.svelte";
-  import { activeDashboardTheme } from "@rilldata/web-common/features/themes/active-dashboard-theme.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { prettyFormatTimeRange } from "@statsparrot/web-common/lib/time/ranges/formatter.ts";
+  import ExploreFilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/ExploreFilterChipsReadOnly.svelte";
+  import ThemeProvider from "@statsparrot/web-common/features/dashboards/ThemeProvider.svelte";
+  import { activeDashboardTheme } from "@statsparrot/web-common/features/themes/active-dashboard-theme.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open = false;
   export let measure: MetricsViewSpecMeasure;
@@ -175,7 +175,7 @@
 
         <footer class="flex items-center justify-between text-xs text-fg-muted">
           <!-- i18n-ignore: standalone product name -->
-          <span>Rill</span>
+          <span>Parrot</span>
           <span>{m.dashboard_generated({ time: generatedTime })}</span>
         </footer>
       </div>

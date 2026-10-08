@@ -1,5 +1,5 @@
 ---
-description: Overview of how to analyze data in a Rill project
+description: Overview of how to analyze data in a Parrot project
 ---
 
 ## Role

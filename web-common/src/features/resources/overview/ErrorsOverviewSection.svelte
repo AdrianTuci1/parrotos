@@ -1,8 +1,8 @@
 <script lang="ts">
-  import AlertCircleOutline from "@rilldata/web-common/components/icons/AlertCircleOutline.svelte";
-  import { resourceIconMapping } from "@rilldata/web-common/features/entity-management/resource-icon-mapping";
-  import { pluralizeKind } from "@rilldata/web-common/features/resources/overview-utils";
-  import type { ResourceCount } from "@rilldata/web-common/features/resources/overview-utils";
+  import AlertCircleOutline from "@statsparrot/web-common/components/icons/AlertCircleOutline.svelte";
+  import { resourceIconMapping } from "@statsparrot/web-common/features/entity-management/resource-icon-mapping";
+  import { pluralizeKind } from "@statsparrot/web-common/features/resources/overview-utils";
+  import type { ResourceCount } from "@statsparrot/web-common/features/resources/overview-utils";
 
   export let parseErrorCount: number;
   export let errorsByKind: ResourceCount[];

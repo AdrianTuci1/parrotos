@@ -5,15 +5,15 @@ import (
 	"strings"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func TestMetricsViewDimensionLookup(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `SELECT 1 AS id`,
 		// model m2
@@ -114,8 +114,8 @@ measures:
 
 func TestMetricsViewDimensionSmallestTimeGrain(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `SELECT 1 AS id, '2025-01-01T00:00:00Z'::TIMESTAMP AS ts1, '2025-01-01'::DATE AS ts2`,
 		// metrics view
@@ -199,8 +199,8 @@ measures:
 
 func TestMetricsViewTags(t *testing.T) {
 	files := map[string]string{
-		// rill.yaml
-		`rill.yaml`: ``,
+		// statsparrot.yaml
+		`statsparrot.yaml`: ``,
 		// model m1
 		`models/m1.sql`: `SELECT 1 AS id, 'test' AS category`,
 		// metrics view with tags
@@ -492,7 +492,7 @@ func TestValidateQueryAttributes(t *testing.T) {
 
 func TestMetricsViewRollups(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`:               ``,
+		`statsparrot.yaml`:               ``,
 		`models/m1.sql`:           `SELECT 1 AS id, 'a' AS publisher, 'b' AS domain`,
 		`models/rollup_daily.sql`: `SELECT 1 AS id`,
 		`metrics_views/mv1.yaml`: `
@@ -550,7 +550,7 @@ rollups:
 
 func TestMetricsViewRollupsStarSelector(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`:               ``,
+		`statsparrot.yaml`:               ``,
 		`models/m1.sql`:           `SELECT 1 AS id, 'a' AS publisher`,
 		`models/rollup_daily.sql`: `SELECT 1 AS id`,
 		`metrics_views/mv1.yaml`: `
@@ -598,7 +598,7 @@ rollups:
 
 func TestMetricsViewRollupsExcludeSelector(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`:               ``,
+		`statsparrot.yaml`:               ``,
 		`models/m1.sql`:           `SELECT 1 AS id, 'a' AS publisher`,
 		`models/rollup_daily.sql`: `SELECT 1 AS id`,
 		`metrics_views/mv1.yaml`: `
@@ -650,7 +650,7 @@ rollups:
 
 func TestMetricsViewRollupsRequiredTimeGrain(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`:               ``,
+		`statsparrot.yaml`:               ``,
 		`models/m1.sql`:           `SELECT 1 AS id, 'a' AS publisher`,
 		`models/rollup_daily.sql`: `SELECT 1 AS id`,
 		`metrics_views/mv1.yaml`: `
@@ -832,7 +832,7 @@ rollups:
     time_grain: day
     measures:
       - count
-    data_time_range: "not a rilltime"
+    data_time_range: "not a statspartime"
 `,
 			wantErr: `invalid "data_time_range"`,
 		},
@@ -914,7 +914,7 @@ rollups:
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			files := map[string]string{
-				`rill.yaml`:              ``,
+				`statsparrot.yaml`:              ``,
 				`models/m1.sql`:          `SELECT 1 AS id`,
 				`metrics_views/mv1.yaml`: tt.yaml,
 			}
@@ -975,7 +975,7 @@ annotations:
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			files := map[string]string{
-				`rill.yaml`:              ``,
+				`statsparrot.yaml`:              ``,
 				`models/m1.sql`:          `SELECT 1 AS id, 'a' AS publisher`,
 				`metrics_views/mv1.yaml`: tt.yaml,
 			}
@@ -993,7 +993,7 @@ func TestMetricsViewAnnotationsOnDerivedMetricsView(t *testing.T) {
 	// Annotations declare their own model/table, so they must be accepted on a
 	// parent-based derived metrics view even though it has no model/table itself.
 	files := map[string]string{
-		`rill.yaml`:     ``,
+		`statsparrot.yaml`:     ``,
 		`models/m1.sql`: `SELECT 1 AS id, 'a' AS publisher`,
 		`models/a1.sql`: `SELECT 1 AS id`,
 		`metrics_views/mv1.yaml`: `
@@ -1054,7 +1054,7 @@ rollups:
     data_time_range: "` + expr + `"
 `
 			files := map[string]string{
-				`rill.yaml`:              ``,
+				`statsparrot.yaml`:              ``,
 				`models/m1.sql`:          `SELECT 1 AS id`,
 				`models/r1.sql`:          `SELECT 1 AS id`,
 				`metrics_views/mv1.yaml`: yaml,
@@ -1087,7 +1087,7 @@ measures:
 
 	t.Run("valid", func(t *testing.T) {
 		files := map[string]string{
-			`rill.yaml`:              ``,
+			`statsparrot.yaml`:              ``,
 			`models/m1.sql`:          `SELECT 1 AS id`,
 			`metrics_views/mv1.yaml`: mvBody("P90D"),
 		}
@@ -1108,10 +1108,10 @@ measures:
 		require.Equal(t, "P90D", mv.MaxQueryTimeRange)
 	})
 
-	for _, bad := range []string{"garbage", "rill-PM", "inf", "PT12H", "PT1H30M", "P1DT6H"} {
+	for _, bad := range []string{"garbage", "statsparrot-PM", "inf", "PT12H", "PT1H30M", "P1DT6H"} {
 		t.Run("invalid_"+bad, func(t *testing.T) {
 			files := map[string]string{
-				`rill.yaml`:              ``,
+				`statsparrot.yaml`:              ``,
 				`models/m1.sql`:          `SELECT 1 AS id`,
 				`metrics_views/mv1.yaml`: mvBody(bad),
 			}
@@ -1127,7 +1127,7 @@ measures:
 
 func TestMetricsViewDataTimeRange(t *testing.T) {
 	files := map[string]string{
-		`rill.yaml`:               ``,
+		`statsparrot.yaml`:               ``,
 		`models/m1.sql`:           `SELECT 1 AS id, 'a' AS publisher`,
 		`models/rollup_daily.sql`: `SELECT 1 AS id`,
 		`metrics_views/mv1.yaml`: `
@@ -1188,7 +1188,7 @@ measures:
 	}
 
 	files := map[string]string{
-		`rill.yaml`:     ``,
+		`statsparrot.yaml`:     ``,
 		`models/m1.sql`: `SELECT 1 AS id`,
 		// No selectors: defaults to all dimensions and measures
 		`metrics_views/mv1.yaml`: mvYAML(`

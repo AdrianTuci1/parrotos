@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { NumberParts } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
+  import type { NumberParts } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
   import Base from "./Base.svelte";
   import { PERC_DIFF, isPercDiff } from "./type-utils";
 

@@ -4,7 +4,7 @@ import {
 } from ".";
 import { TimeComparisonOption } from "../types";
 import { describe, it, expect } from "vitest";
-import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
+import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
 import { DateTime, Interval } from "luxon";
 
 const contiguousAndCustomComparisonRanges = [

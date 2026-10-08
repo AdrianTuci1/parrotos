@@ -25,4 +25,4 @@ export {
   withEditorPrefix,
   navigateToFileHref,
 } from "./editor-routing";
-export { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+export { getPaddingFromPath } from "@statsparrot/web-common/features/file-explorer/nav-tree-spacing";

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import type { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-  import type { ComponentWithMetricsView } from "@rilldata/web-common/features/canvas/components/types";
-  import { useExploreAvailability } from "@rilldata/web-common/features/explore-mappers/explore-validation";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import type { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+  import type { ComponentWithMetricsView } from "@statsparrot/web-common/features/canvas/components/types";
+  import { useExploreAvailability } from "@statsparrot/web-common/features/explore-mappers/explore-validation";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { derived } from "svelte/store";
   import { useTransformCanvasToExploreState } from "./canvas-explore-transformer";
-  import ExploreLink from "@rilldata/web-common/features/explores/explore-link/ExploreLink.svelte";
+  import ExploreLink from "@statsparrot/web-common/features/explores/explore-link/ExploreLink.svelte";
 
   const client = useRuntimeClient();
 

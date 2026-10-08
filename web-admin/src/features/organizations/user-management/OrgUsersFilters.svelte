@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
 
   export let filterSelection: "all" | "members" | "guests" | "pending" = "all";
   export let showMembers = true;

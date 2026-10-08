@@ -15,20 +15,20 @@ import {
   calculateRowDimensionWidth,
   distributeColumnWidthsToFillContainer,
   getNestedRowDimensionWidthKey,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-column-width-utils";
-import { Resizer } from "@rilldata/web-common/features/dashboards/pivot/react/Resizer";
-import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-column-width-utils";
+import { Resizer } from "@statsparrot/web-common/features/dashboards/pivot/react/Resizer";
+import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
 import {
   nestedCellState,
   nestedHeaderState,
   nestedRowState,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-cell-classes";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-cell-classes";
 import {
   dimKeyFromRow,
   nestedDimKeyFromRow,
   type PivotClickSelectionState,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-click-selection";
-import type { PivotRowSelectionState } from "@rilldata/web-common/features/dashboards/pivot/pivot-row-selection";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-click-selection";
+import type { PivotRowSelectionState } from "@statsparrot/web-common/features/dashboards/pivot/pivot-row-selection";
 import {
   computeAncestorRowIds,
   computeCellSelectedColDimGroupIndices,
@@ -39,21 +39,21 @@ import {
   isInCellSelectedColRange,
   isInSelectedColRange,
   type HoveredColRange,
-} from "@rilldata/web-common/features/dashboards/pivot/pivot-selection-indices";
-import { isShowMoreRow } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
-import type { CellFormatter } from "@rilldata/web-common/features/dashboards/pivot/pivot-conditional-formatting";
+} from "@statsparrot/web-common/features/dashboards/pivot/pivot-selection-indices";
+import { isShowMoreRow } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
+import type { CellFormatter } from "@statsparrot/web-common/features/dashboards/pivot/pivot-conditional-formatting";
 import {
   ArrowDown,
   PivotAssembledContext,
   PivotHeaderLabel,
   renderIcon,
-} from "@rilldata/web-common/features/dashboards/pivot/react/CellComponents";
+} from "@statsparrot/web-common/features/dashboards/pivot/react/CellComponents";
 import {
   getRowNestedLabel,
   type DimensionColumnProps,
   type MeasureColumnProps,
-} from "@rilldata/web-common/features/dashboards/pivot/react/pivot-column-definition";
-import type { PivotDataRow } from "@rilldata/web-common/features/dashboards/pivot/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/react/pivot-column-definition";
+import type { PivotDataRow } from "@statsparrot/web-common/features/dashboards/pivot/types";
 
 const HEADER_HEIGHT = 30;
 

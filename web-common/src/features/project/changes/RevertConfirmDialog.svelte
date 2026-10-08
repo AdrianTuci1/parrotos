@@ -6,9 +6,9 @@
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-  } from "@rilldata/web-common/components/alert-dialog/index.js";
-  import { Button } from "@rilldata/web-common/components/button/index.js";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/alert-dialog/index.js";
+  import { Button } from "@statsparrot/web-common/components/button/index.js";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   // files are the subpath-relative paths that will be reverted. loading reflects the in-flight
   // revert so the confirm button shows a spinner and both buttons disable. onConfirm performs the

@@ -1,11 +1,11 @@
-import Filters from "@rilldata/web-common/features/dashboards/filters/Filters.svelte";
-import { DEFAULT_STORE_KEY } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import { AD_BIDS_METRICS_NAME } from "@rilldata/web-common/features/dashboards/stores/test-data/data";
-import { initStateManagers } from "@rilldata/web-common/features/dashboards/stores/test-data/helpers";
+import Filters from "@statsparrot/web-common/features/dashboards/filters/Filters.svelte";
+import { DEFAULT_STORE_KEY } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import { AD_BIDS_METRICS_NAME } from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
+import { initStateManagers } from "@statsparrot/web-common/features/dashboards/stores/test-data/helpers";
 import {
   RUNTIME_CONTEXT_KEY,
   RuntimeClient,
-} from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/v2";
 import { render } from "@testing-library/svelte";
 
 export function renderFilterComponent(hasTimeSeries = false) {

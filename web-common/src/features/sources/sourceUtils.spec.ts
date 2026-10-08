@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
+import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
 import {
   getFileTypeFromPath,
   inferSourceName,
@@ -8,7 +8,7 @@ import {
   generateSourceYAML,
   prepareSourceFormData,
 } from "./sourceUtils";
-import { makeTestEnvEditSession } from "@rilldata/web-common/features/env-management/test/test-env-store.ts";
+import { makeTestEnvEditSession } from "@statsparrot/web-common/features/env-management/test/test-env-store.ts";
 
 const gcsTests = [
   {
@@ -556,7 +556,7 @@ describe("generateSourceYAML", () => {
       { originalDriverName: "s3" },
     );
     expect(result).toContain(
-      "https://docs.rilldata.com/developers/build/connectors/data-source/s3",
+      "https://docs.statsparrot.com/developers/build/connectors/data-source/s3",
     );
   });
 

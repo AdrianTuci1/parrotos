@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +38,7 @@ func StatusCmd(ch *cmdutil.Helper) *cobra.Command {
 				}
 			} else {
 				if name == "" {
-					name, err = ch.InferProjectName(cmd.Context(), path, "use --project to specify the name or --local to target a local Rill process")
+					name, err = ch.InferProjectName(cmd.Context(), path, "use --project to specify the name or --local to target a local Parrot process")
 					if err != nil {
 						return err
 					}
@@ -164,7 +164,7 @@ func StatusCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	statusCmd.Flags().StringVar(&name, "project", "", "Project Name")
 	statusCmd.Flags().StringVar(&path, "path", ".", "Project directory")
-	statusCmd.Flags().BoolVar(&local, "local", false, "Target locally running Rill")
+	statusCmd.Flags().BoolVar(&local, "local", false, "Target locally running Parrot")
 	statusCmd.Flags().StringVar(&branch, "branch", "", "Target deployment by Git branch (default: primary deployment)")
 
 	return statusCmd

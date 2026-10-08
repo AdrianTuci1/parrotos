@@ -1,4 +1,4 @@
-import { getLocale } from "@rilldata/web-common/lib/i18n/gen/runtime";
+import { getLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 import { syncDocumentLocale, syncLuxonLocale } from "./locale-utils";
 
 export function initializeI18n(): void {

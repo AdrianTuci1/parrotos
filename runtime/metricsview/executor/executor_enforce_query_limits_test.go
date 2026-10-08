@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/metricsview"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,7 +45,7 @@ func TestEnforceQueryLimits(t *testing.T) {
 			spec:      "P90D",
 			callerCap: 30,
 			query:     &metricsview.Query{TimeRange: tr(60)},
-			wantErr:   "rill.ai.max_time_range_days",
+			wantErr:   "statsparrot.ai.max_time_range_days",
 		},
 		{
 			name:      "caller cap, range under",

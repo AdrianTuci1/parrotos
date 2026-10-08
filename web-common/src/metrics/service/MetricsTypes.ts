@@ -1,5 +1,5 @@
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { EntityType } from "@rilldata/web-common/features/entity-management/types";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { EntityType } from "@statsparrot/web-common/features/entity-management/types";
 
 export interface CommonFields {
   app_name: string;
@@ -18,7 +18,7 @@ export interface CommonUserFields {
 }
 
 export interface MetricsEvent extends CommonFields, CommonUserFields {
-  // Base fields required by the telemetry service. For details, see rill/runtime/pkg/activity/README.md.
+  // Base fields required by the telemetry service. For details, see statsparrot/runtime/pkg/activity/README.md.
   event_id: string;
   event_time: string;
   event_type: string;

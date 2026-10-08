@@ -1,7 +1,7 @@
 <script lang="ts">
   import Notification from "./Notification.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import type { NotificationMessage } from "@rilldata/web-common/lib/event-bus/events";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import type { NotificationMessage } from "@statsparrot/web-common/lib/event-bus/events";
   import { onMount } from "svelte";
   import { NOTIFICATION_TIMEOUT } from "./constants";
 

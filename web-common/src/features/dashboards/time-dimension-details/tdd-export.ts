@@ -1,11 +1,11 @@
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   type TimeControlState,
   useTimeControlStore,
-} from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { mapSelectedTimeRangeToV1TimeRange } from "@rilldata/web-common/features/dashboards/time-controls/time-range-mappers";
+} from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { mapSelectedTimeRangeToV1TimeRange } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-mappers";
 import type {
   V1ExploreSpec,
   V1MetricsViewAggregationMeasure,
@@ -13,7 +13,7 @@ import type {
   V1MetricsViewSpec,
   V1Query,
   V1TimeRange,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 import { buildWhereParamForDimensionTableAndTDDExports } from "../../exports/export-filters";
 import { dimensionSearchText as dimensionSearchTextStore } from "../stores/dashboard-stores";

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import MultiIconSelector from "@rilldata/web-common/components/forms/MultiIconSelector.svelte";
-  import Delta from "@rilldata/web-common/components/icons/Delta.svelte";
-  import DeltaPercentage from "@rilldata/web-common/components/icons/DeltaPercentage.svelte";
-  import { type ComponentComparisonOptions } from "@rilldata/web-common/features/canvas/components/types";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import MultiIconSelector from "@statsparrot/web-common/components/forms/MultiIconSelector.svelte";
+  import Delta from "@statsparrot/web-common/components/icons/Delta.svelte";
+  import DeltaPercentage from "@statsparrot/web-common/components/icons/DeltaPercentage.svelte";
+  import { type ComponentComparisonOptions } from "@statsparrot/web-common/features/canvas/components/types";
   import type { ComponentType, SvelteComponent } from "svelte";
   import { RotateCcw } from "lucide-svelte";
 

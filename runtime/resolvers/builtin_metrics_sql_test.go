@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -14,7 +14,7 @@ func TestBuiltinMetricsSQL(t *testing.T) {
 	ctx := context.Background()
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: map[string]string{
-			`rill.yaml`:      ``,
+			`statsparrot.yaml`:      ``,
 			`models/foo.sql`: `SELECT 10 AS a, '2024-01-01T00:00:00Z'::TIMESTAMP as time`,
 			`metrics/bar.yaml`: `
 version: 1

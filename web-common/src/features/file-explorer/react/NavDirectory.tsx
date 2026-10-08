@@ -2,7 +2,7 @@
 // renders the directory tree; expansion state comes from the React-safe
 // `directoryState` store. The drag/drop hover highlight is deferred to the
 // runtime-bound phase (shown here as a no-op), and file/dir handlers are props.
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import type { Directory } from "./transform-file-list";
 import { directoryState } from "./directory-state";
 import NavDirectoryEntry from "./NavDirectoryEntry";

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { INTEGERS } from "@rilldata/web-common/lib/duckdb-data-types";
-  import { justEnoughPrecision } from "@rilldata/web-common/lib/formatters";
-  import type { V1NumericStatistics } from "@rilldata/web-common/runtime-client";
+  import { INTEGERS } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import { justEnoughPrecision } from "@statsparrot/web-common/lib/formatters";
+  import type { V1NumericStatistics } from "@statsparrot/web-common/runtime-client";
   import type { ScaleLinear } from "d3-scale";
   import { format } from "d3-format";
   import { tweened } from "svelte/motion";

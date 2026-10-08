@@ -1,9 +1,9 @@
 <script lang="ts">
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import ResourceError from "@rilldata/web-common/features/resources/ResourceError.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import type { V1ListResourcesResponse } from "@rilldata/web-common/runtime-client";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import ResourceError from "@statsparrot/web-common/features/resources/ResourceError.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import type { V1ListResourcesResponse } from "@statsparrot/web-common/runtime-client";
   import type { CreateQueryResult } from "@tanstack/svelte-query";
 
   type ProjectPageKindParam = "report" | "dashboard" | "alert";

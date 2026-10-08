@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import type { SearchableFilterSelectableGroup } from "@rilldata/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import type { SearchableFilterSelectableGroup } from "@statsparrot/web-common/components/searchable-filter-menu/SearchableFilterSelectableItem";
   import { matchSorter } from "match-sorter";
   import Button from "../button/Button.svelte";
   import { Search } from "../search";

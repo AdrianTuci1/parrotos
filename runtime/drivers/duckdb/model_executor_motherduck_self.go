@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
 )
 
 type mdToSelfInputProps struct {
@@ -90,7 +90,7 @@ func (e *mdToSelfExecutor) Execute(ctx context.Context, opts *drivers.ModelExecu
 		token = os.Getenv("motherduck_token")
 	}
 	if token == "" {
-		return nil, fmt.Errorf("no motherduck token found. Refer to this documentation for instructions: https://docs.rilldata.com/developers/build/connectors/olap/motherduck")
+		return nil, fmt.Errorf("no motherduck token found. Refer to this documentation for instructions: https://docs.statsparrot.com/developers/build/connectors/olap/motherduck")
 	}
 
 	clone := *opts

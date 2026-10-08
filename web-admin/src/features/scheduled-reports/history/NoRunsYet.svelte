@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ReportIcon from "@rilldata/web-common/components/icons/ReportIcon.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import ReportIcon from "@statsparrot/web-common/components/icons/ReportIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 </script>
 
 <div

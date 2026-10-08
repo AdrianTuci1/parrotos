@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import { Command as CommandPrimitive } from "bits-ui";
   import Search from "../icons/Search.svelte";
 

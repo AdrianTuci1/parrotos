@@ -1,26 +1,26 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import CTAMessage from "@rilldata/web-common/components/calls-to-action/CTAMessage.svelte";
-  import CancelCircleInverse from "@rilldata/web-common/components/icons/CancelCircleInverse.svelte";
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
+  import CTAMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
+  import CancelCircleInverse from "@statsparrot/web-common/components/icons/CancelCircleInverse.svelte";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
   import {
     getCreateOrganizationRoute,
     getSelectOrganizationRoute,
     getSelectProjectRoute,
     getUpdateProjectRoute,
-  } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import { maybeSetTargetDashboard } from "@rilldata/web-common/features/project/deploy/utils.ts";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils.ts";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-  import { BehaviourEventAction } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import { maybeSetTargetDashboard } from "@statsparrot/web-common/features/project/deploy/utils.ts";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils.ts";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+  import { BehaviourEventAction } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
   import {
     createLocalServiceGetCurrentUser,
     createLocalServiceGetMetadata,
     createLocalServiceListMatchingProjectsRequest,
-  } from "@rilldata/web-common/runtime-client/local-service";
-  import CTAHeader from "@rilldata/web-common/components/calls-to-action/CTAHeader.svelte";
-  import CTANeedHelp from "@rilldata/web-common/components/calls-to-action/CTANeedHelp.svelte";
+  } from "@statsparrot/web-common/runtime-client/local-service";
+  import CTAHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
+  import CTANeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
   import { onMount } from "svelte";
   import { get } from "svelte/store";
 
@@ -63,7 +63,7 @@
     // Cloud project doest exist.
     const projectExists = !!$matchingProjects.data?.projects?.length;
     if (!projectExists) {
-      const isPartOfAtLeastOneOrg = !!$user.data.rillUserOrgs?.length;
+      const isPartOfAtLeastOneOrg = !!$user.data.statsparrotUserOrgs?.length;
       if (isPartOfAtLeastOneOrg) {
         // If the user has at least one org we show the selector.
         // Note: The selector has the option to create a new org, so we show it even when there is only one org.

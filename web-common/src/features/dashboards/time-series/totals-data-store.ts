@@ -1,14 +1,14 @@
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import type { StateManagers } from "@rilldata/web-common/features/dashboards/state-managers/state-managers";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import type { StateManagers } from "@statsparrot/web-common/features/dashboards/state-managers/state-managers";
 import {
   createAndExpression,
   filterExpressions,
   matchExpressionByName,
   sanitiseExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { useTimeControlStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import type { V1MetricsViewAggregationResponse } from "@rilldata/web-common/runtime-client";
-import { createQueryServiceMetricsViewAggregation } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { useTimeControlStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import type { V1MetricsViewAggregationResponse } from "@statsparrot/web-common/runtime-client";
+import { createQueryServiceMetricsViewAggregation } from "@statsparrot/web-common/runtime-client";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 import { derived } from "svelte/store";
 

@@ -1,6 +1,6 @@
 import { get, writable } from "svelte/store";
-import { sessionStorageStore } from "@rilldata/web-common/lib/store-utils/session-storage";
-import { explicitLocalStorageStore } from "@rilldata/web-common/lib/store-utils/local-storage.ts";
+import { sessionStorageStore } from "@statsparrot/web-common/lib/store-utils/session-storage";
+import { explicitLocalStorageStore } from "@statsparrot/web-common/lib/store-utils/local-storage.ts";
 
 export type ThemeMode = "light" | "dark" | "system";
 
@@ -13,8 +13,8 @@ function isEmbedEnvironment(): boolean {
   }
 }
 
-const THEME_LOCAL_STORAGE_KEY = "rill:theme";
-const THEME_SESSION_STORAGE_KEY = "rill:embed:theme-mode";
+const THEME_LOCAL_STORAGE_KEY = "statsparrot:theme";
+const THEME_SESSION_STORAGE_KEY = "statsparrot:embed:theme-mode";
 
 class ThemeControl {
   public current = writable<"light" | "dark">("light");

@@ -4,30 +4,30 @@ import (
 	"context"
 	"testing"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/rilldata/rill/runtime/drivers/druid"
-	_ "github.com/rilldata/rill/runtime/drivers/duckdb"
-	_ "github.com/rilldata/rill/runtime/drivers/gcs"
-	_ "github.com/rilldata/rill/runtime/drivers/s3"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/druid"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/duckdb"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/gcs"
+	_ "github.com/staticlabs/statsparrot/runtime/drivers/s3"
 )
 
 func TestAnalyzeConnectors(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: `
+		`statsparrot.yaml`: `
 olap_connector: druid
 connectors:
 - name: my-s3
   type: s3
 `,
-		// GCS source, not configured with a custom name in rill.yaml
+		// GCS source, not configured with a custom name in statsparrot.yaml
 		`sources/bar.yaml`: `
 connector: gcs
 uri: gs://path/to/bar
 `,
-		// S3 source, with a custom name in rill.yaml
+		// S3 source, with a custom name in statsparrot.yaml
 		`sources/foo.yaml`: `
 connector: my-s3
 uri: s3://path/to/foo
@@ -148,7 +148,7 @@ region: us-west-2
 func TestAnonSlackConnector(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: ``,
+		`statsparrot.yaml`: ``,
 		"/alerts/a1.yaml": `
 type: alert
 display_name: Test Alert
@@ -204,7 +204,7 @@ notify:
 func TestManagedConnectorPropagation(t *testing.T) {
 	ctx := context.Background()
 	repo := makeRepo(t, map[string]string{
-		`rill.yaml`: `
+		`statsparrot.yaml`: `
 olap_connector: managed_duckdb
 `,
 		"/connectors/managed_duckdb.yaml": `

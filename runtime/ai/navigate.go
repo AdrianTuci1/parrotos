@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const NavigateName = "navigate"
@@ -26,7 +26,7 @@ func (t *Navigate) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        NavigateName,
 		Title:       "Navigate UI",
-		Description: "Navigate to a specific UI element in the Rill UI. Supported kinds: 'file', 'explore', 'canvas'.",
+		Description: "Navigate to a specific UI element in the Parrot UI. Supported kinds: 'file', 'explore', 'canvas'.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(false),
 			IdempotentHint:  true,
@@ -47,8 +47,8 @@ func (t *Navigate) CheckAccess(ctx context.Context) (bool, error) {
 		return false, nil
 	}
 
-	// Only allow for rill user agents since it's not functional in MCP contexts.
-	if !strings.HasPrefix(s.CatalogSession().UserAgent, "rill") {
+	// Only allow for statsparrot user agents since it's not functional in MCP contexts.
+	if !strings.HasPrefix(s.CatalogSession().UserAgent, "statsparrot") {
 		return false, nil
 	}
 	return true, nil

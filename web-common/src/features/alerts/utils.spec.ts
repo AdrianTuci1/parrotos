@@ -1,11 +1,11 @@
-import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
-import { generateAlertName } from "@rilldata/web-common/features/alerts/utils";
+import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
+import { generateAlertName } from "@statsparrot/web-common/features/alerts/utils";
 import {
   MeasureFilterOperation,
   MeasureFilterType,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types.ts";
-import type { V1MetricsViewSpec } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-options";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types.ts";
+import type { V1MetricsViewSpec } from "@statsparrot/web-common/runtime-client";
 import { describe, expect, it } from "vitest";
 
 const MetricsView: V1MetricsViewSpec = {
@@ -56,7 +56,7 @@ describe("generateAlertName", () => {
         ],
       },
       selectedComparisonTimeRange: {
-        name: "rill-PW",
+        name: "statsparrot-PW",
       } as DashboardTimeControls,
       expected: "Total records change vs previous week alert",
     },
@@ -75,7 +75,7 @@ describe("generateAlertName", () => {
         ],
       },
       selectedComparisonTimeRange: {
-        name: "rill-PM",
+        name: "statsparrot-PM",
       } as DashboardTimeControls,
       expected: "Total records % change vs previous month alert",
     },

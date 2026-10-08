@@ -1,15 +1,15 @@
-import { categorizeSourceError } from "@rilldata/web-common/features/sources/errors/errors";
-import { getFileTypeFromPath } from "@rilldata/web-common/features/sources/sourceUtils";
+import { categorizeSourceError } from "@statsparrot/web-common/features/sources/errors/errors";
+import { getFileTypeFromPath } from "@statsparrot/web-common/features/sources/sourceUtils";
 import {
   behaviourEvent,
   errorEventHandler,
-} from "@rilldata/web-common/metrics/initMetrics";
-import type { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+} from "@statsparrot/web-common/metrics/initMetrics";
+import type { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
 import type {
   MetricsEventScreenName,
   MetricsEventSpace,
-} from "@rilldata/web-common/metrics/service/MetricsTypes";
-import type { SourceConnectionType } from "@rilldata/web-common/metrics/service/SourceEventTypes";
+} from "@statsparrot/web-common/metrics/service/MetricsTypes";
+import type { SourceConnectionType } from "@statsparrot/web-common/metrics/service/SourceEventTypes";
 
 export function emitSourceErrorTelemetry(
   space: MetricsEventSpace,

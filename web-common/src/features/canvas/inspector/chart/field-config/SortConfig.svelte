@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
-  import DraggableList from "@rilldata/web-common/components/draggable-list";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import DragHandle from "@rilldata/web-common/components/icons/DragHandle.svelte";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import type { ChartFieldInput } from "@rilldata/web-common/features/canvas/inspector/types";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
+  import DraggableList from "@statsparrot/web-common/components/draggable-list";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import DragHandle from "@statsparrot/web-common/components/icons/DragHandle.svelte";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import type { ChartFieldInput } from "@statsparrot/web-common/features/canvas/inspector/types";
   import {
     ChartSortType,
     type ChartSortDirectionOptions,
     type FieldConfig,
-  } from "@rilldata/web-common/features/components/charts/types";
+  } from "@statsparrot/web-common/features/components/charts/types";
   import { List } from "lucide-svelte";
 
   export let fieldConfig: FieldConfig;

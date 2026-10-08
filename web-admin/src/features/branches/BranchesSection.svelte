@@ -10,8 +10,8 @@
     createAdminServiceStartDeployment,
     createAdminServiceStopDeployment,
     type V1Deployment,
-  } from "@rilldata/web-admin/client";
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils";
+  } from "@statsparrot/web-admin/client";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils";
   import {
     branchPathPrefix,
     extractBranchFromPath,
@@ -22,33 +22,33 @@
     getStatusDotClass,
     getStatusLabel,
     isTransitoryStatus,
-  } from "@rilldata/web-admin/features/projects/status/display-utils";
-  import LoadingCircleOutline from "@rilldata/web-common/components/icons/LoadingCircleOutline.svelte";
+  } from "@statsparrot/web-admin/features/projects/status/display-utils";
+  import LoadingCircleOutline from "@statsparrot/web-common/components/icons/LoadingCircleOutline.svelte";
   import {
     optimisticallyRemoveDeployment,
     optimisticallySetStatus,
   } from "./branch-actions";
-  import IconButton from "@rilldata/web-common/components/button/IconButton.svelte";
+  import IconButton from "@statsparrot/web-common/components/button/IconButton.svelte";
   import DeleteBranchConfirmDialog from "./DeleteBranchConfirmDialog.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CopyableCodeBlock from "@rilldata/web-common/components/calls-to-action/CopyableCodeBlock.svelte";
-  import ThreeDot from "@rilldata/web-common/components/icons/ThreeDot.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { TableToolbar } from "@rilldata/web-common/components/table-toolbar";
-  import type { FilterGroup } from "@rilldata/web-common/components/table-toolbar/types";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CopyableCodeBlock from "@statsparrot/web-common/components/calls-to-action/CopyableCodeBlock.svelte";
+  import ThreeDot from "@statsparrot/web-common/components/icons/ThreeDot.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { TableToolbar } from "@statsparrot/web-common/components/table-toolbar";
+  import type { FilterGroup } from "@statsparrot/web-common/components/table-toolbar/types";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
   import {
     GitBranchIcon,
     PlayIcon,
     StopCircleIcon,
     Trash2Icon,
   } from "lucide-svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { UrlParamsState } from "@rilldata/web-common/lib/store-utils/url-params-state.svelte.ts";
-  import { DebouncedRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { UrlParamsState } from "@statsparrot/web-common/lib/store-utils/url-params-state.svelte.ts";
+  import { DebouncedRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization, project }: { organization: string; project: string } =
     $props();
@@ -354,7 +354,7 @@
                     <span>
                       {m.branch_recreate_with()}
                       <code class="font-mono"
-                        ><!-- i18n-ignore: CLI command -->rill project
+                        ><!-- i18n-ignore: CLI command -->statsparrot project
                         deployment create {branchName} --editable</code
                       >.
                     </span>
@@ -473,7 +473,7 @@
         <span class="text-xs text-fg-secondary">
           {m.branch_add_from_cli()}
         </span>
-        <CopyableCodeBlock code="rill project deployment create <branch>" />
+        <CopyableCodeBlock code="statsparrot project deployment create <branch>" />
       </div>
     </div>
   {/if}

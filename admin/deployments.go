@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/provisioner"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/client"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/provisioner"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/client"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
@@ -317,7 +317,7 @@ func (s *Service) StartDeploymentInner(ctx context.Context, depl *database.Deplo
 	_, err = rt.CreateInstance(ctx, &runtimev1.CreateInstanceRequest{
 		InstanceId:      instanceID,
 		Environment:     depl.Environment,
-		OlapConnector:   "duckdb", // Default OLAP connector for backwards compatibility with projects that don't specify olap_connector in rill.yaml
+		OlapConnector:   "duckdb", // Default OLAP connector for backwards compatibility with projects that don't specify olap_connector in statsparrot.yaml
 		RepoConnector:   "admin",
 		AdminConnector:  "admin",
 		AiConnector:     "admin",
@@ -651,7 +651,7 @@ func (s *Service) CheckProvisionerResource(ctx context.Context, pr *database.Pro
 	r, err := p.CheckResource(ctx, r, &provisioner.ResourceOptions{
 		Args:        pr.Args,
 		Annotations: annotations.ToMap(),
-		RillVersion: s.resolveRillVersion(),
+		ParrotVersion: s.resolveParrotVersion(),
 	})
 	if err != nil {
 		// For cancellations, we exit early without updating the status in the DB
@@ -851,7 +851,7 @@ func (s *Service) provisionRuntime(ctx context.Context, opts *provisionRuntimeOp
 	return pr, nil
 }
 
-func (s *Service) resolveRillVersion() string {
+func (s *Service) resolveParrotVersion() string {
 	if s.Version.Number != "" {
 		return s.Version.Number
 	}

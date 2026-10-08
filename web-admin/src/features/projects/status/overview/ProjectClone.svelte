@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import CopyableCodeBlock from "@rilldata/web-common/components/calls-to-action/CopyableCodeBlock.svelte";
-  import * as Popover from "@rilldata/web-common/components/popover";
-  import { getGitUrlFromRemote } from "@rilldata/web-common/features/project/deploy/github-utils";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import CopyableCodeBlock from "@statsparrot/web-common/components/calls-to-action/CopyableCodeBlock.svelte";
+  import * as Popover from "@statsparrot/web-common/components/popover";
+  import { getGitUrlFromRemote } from "@statsparrot/web-common/features/project/deploy/github-utils";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let open = false;
 
@@ -17,8 +17,8 @@
   $: isGithubConnected = !!gitRemote && !managedGitId && !!githubUrl;
 
   // CLI commands
-  $: cloneCommand = `rill project clone --org ${organization} ${project}`;
-  $: rillStartCommand = `rill start ${githubUrl}.git`;
+  $: cloneCommand = `statsparrot project clone --org ${organization} ${project}`;
+  $: statsparrotStartCommand = `statsparrot start ${githubUrl}.git`;
 </script>
 
 <Popover.Root bind:open>
@@ -35,7 +35,7 @@
       <span class="text-sm text-fg-secondary">
         {m.status_clone_description()}
         <a
-          href="https://docs.rilldata.com/developers/tutorials/clone-a-project"
+          href="https://docs.statsparrot.com/developers/tutorials/clone-a-project"
           target="_blank"
           rel="noopener noreferrer"
           class="text-primary-600"
@@ -46,7 +46,7 @@
 
       <div class="flex flex-col gap-y-2">
         {#if isGithubConnected}
-          <CopyableCodeBlock code={rillStartCommand} />
+          <CopyableCodeBlock code={statsparrotStartCommand} />
         {:else}
           <CopyableCodeBlock code={cloneCommand} />
         {/if}

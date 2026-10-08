@@ -1,17 +1,17 @@
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 import {
   openFileUploadDialog,
   uploadFile,
-} from "@rilldata/web-common/features/sources/modal/file-upload";
-import { compileLocalFileSourceYAML } from "@rilldata/web-common/features/sources/sourceUtils";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/sources/modal/file-upload";
+import { compileLocalFileSourceYAML } from "@statsparrot/web-common/features/sources/sourceUtils";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   getRuntimeServiceGetInstanceQueryKey,
   runtimeServiceCreateTrigger,
   runtimeServiceGetInstance,
   runtimeServicePutFile,
-} from "@rilldata/web-common/runtime-client";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/runtime-client";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 
 export async function refreshSource(
   connector: string,

@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -24,7 +24,7 @@ func TestMetricsViewsToplistAgainstBigQuery(t *testing.T) {
 	testmode.Expensive(t)
 	rt, instanceID := newBigQueryInstance(t)
 	t.Run("testMetricsViewsToplist_measure_filters", func(t *testing.T) {
-		testMetricsViewsToplistWithCatalog_measure_filters(t, rt, instanceID, "rilldata", "integration_test")
+		testMetricsViewsToplistWithCatalog_measure_filters(t, rt, instanceID, "staticlabs", "integration_test")
 	})
 }
 

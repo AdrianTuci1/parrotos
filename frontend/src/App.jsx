@@ -42,7 +42,7 @@ export default function App() {
         {/* Artifact routes: /app/:orgSlug/:projectSlug/<section>/<:name> */}
         <Route path="/app/:orgSlug/:projectSlug/:section/:name" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
 
-        {/* File-artifact route (Rill /files/[...file]) */}
+        {/* File-artifact route (Parrot /files/[...file]) */}
         <Route path="/app/:orgSlug/:projectSlug/files/*" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
 
         {/* Global settings */}

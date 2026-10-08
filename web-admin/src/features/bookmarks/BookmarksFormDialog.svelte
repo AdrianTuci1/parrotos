@@ -1,46 +1,46 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     createAdminServiceCreateBookmark,
     createAdminServiceUpdateBookmark,
     getAdminServiceListBookmarksQueryKey,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import {
     type BookmarkEntry,
     formatTimeRange,
     getBookmarkData,
-  } from "@rilldata/web-admin/features/bookmarks/utils.ts";
-  import ProjectAccessControls from "@rilldata/web-admin/features/projects/ProjectAccessControls.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Label from "@rilldata/web-common/components/forms/Label.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { getFiltersFromText } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
-  import ExploreFilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/ExploreFilterChipsReadOnly.svelte";
-  import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-  import { deriveInterval } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
-  import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  } from "@statsparrot/web-admin/features/bookmarks/utils.ts";
+  import ProjectAccessControls from "@statsparrot/web-admin/features/projects/ProjectAccessControls.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Label from "@statsparrot/web-common/components/forms/Label.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { getFiltersFromText } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-search-text-utils";
+  import ExploreFilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/ExploreFilterChipsReadOnly.svelte";
+  import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+  import { deriveInterval } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
+  import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
   import {
     V1TimeGrain,
     type V1TimeRange,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { InfoIcon } from "lucide-svelte";
   import type { Interval } from "luxon";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import CanvasFilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/CanvasFilterChipsReadOnly.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import CanvasFilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/CanvasFilterChipsReadOnly.svelte";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string, boolean } from "yup";
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils.ts";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils.ts";
 
   export let organization: string;
   export let project: string;

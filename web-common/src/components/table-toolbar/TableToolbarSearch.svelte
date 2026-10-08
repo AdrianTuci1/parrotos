@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import SearchIcon from "@rilldata/web-common/components/icons/Search.svelte";
-  import type { RuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import SearchIcon from "@statsparrot/web-common/components/icons/Search.svelte";
+  import type { RuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 
   let {
     searchTextStore,

@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rilldata/rill/admin/billing"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/publicemail"
-	"github.com/rilldata/rill/admin/server/auth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/email"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/admin/billing"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/publicemail"
+	"github.com/staticlabs/statsparrot/admin/server/auth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -78,7 +78,7 @@ func (s *Server) GetOrganization(ctx context.Context, req *adminv1.GetOrganizati
 	}
 
 	// TODO: This is used to update plan name cache and can be removed a few months after Feb 2025 when plans have been cached for most orgs.
-	// after that we can return nil plan name for uncached orgs, discussion - https://github.com/rilldata/rill/pull/6338#discussion_r1952713404
+	// after that we can return nil plan name for uncached orgs, discussion - https://github.com/staticlabs/statsparrot/pull/6338#discussion_r1952713404
 	if org.BillingPlanName == nil && org.BillingCustomerID != "" {
 		_, org, err = s.getSubscriptionAndUpdateOrg(ctx, org)
 		if err != nil {
@@ -513,7 +513,7 @@ func (s *Server) AddOrganizationMemberUser(ctx context.Context, req *adminv1.Add
 		}, nil
 	}
 
-	// Enforce the seat quota (counts billable member users, excluding internal Rill users; invites are limited by QuotaOutstandingInvites above).
+	// Enforce the seat quota (counts billable member users, excluding internal Parrot users; invites are limited by QuotaOutstandingInvites above).
 	seats, err := s.admin.DB.CountOrganizationMemberUsers(ctx, org.ID, "", "%@"+billing.InternalEmailDomain, true)
 	if err != nil {
 		return nil, err
@@ -836,7 +836,7 @@ func (s *Server) CreateWhitelistedDomain(ctx context.Context, req *adminv1.Creat
 			return nil, err
 		}
 		if !strings.HasSuffix(user.Email, "@"+req.Domain) {
-			return nil, status.Error(codes.PermissionDenied, "Domain name doesn’t match verified email domain. Please contact Rill support.")
+			return nil, status.Error(codes.PermissionDenied, "Domain name doesn’t match verified email domain. Please contact Parrot support.")
 		}
 		if publicemail.IsPublic(req.Domain) {
 			return nil, status.Errorf(codes.InvalidArgument, "Public Domain %s cannot be whitelisted", req.Domain)

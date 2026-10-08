@@ -1,8 +1,8 @@
 import {
   V1ReconcileStatus,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
+} from "@statsparrot/web-common/runtime-client";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
 
 export type ResourceStatus = "error" | "warn" | "ok";
 

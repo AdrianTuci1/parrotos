@@ -1,4 +1,4 @@
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   MetricsViewSpecMeasureType,
   type MetricsViewSpecMeasure,
@@ -6,7 +6,7 @@ import {
   V1TimeGrain,
   type V1MetricsViewAggregationMeasure,
   type V1MetricsViewAggregationMeasureComputeExpression,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { DashboardDataSources } from "./types";
 
 /**

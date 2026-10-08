@@ -1,39 +1,39 @@
 <script lang="ts">
-  import { createConnectorForm } from "@rilldata/web-common/features/sources/modal/FormValidation.ts";
+  import { createConnectorForm } from "@statsparrot/web-common/features/sources/modal/FormValidation.ts";
   import {
     runtimeServiceGetInstance,
     getRuntimeServiceGetInstanceQueryKey,
-  } from "@rilldata/web-common/runtime-client";
-  import { getConnectorSchema } from "@rilldata/web-common/features/sources/modal/connector-schemas.ts";
+  } from "@statsparrot/web-common/runtime-client";
+  import { getConnectorSchema } from "@statsparrot/web-common/features/sources/modal/connector-schemas.ts";
   import { onMount } from "svelte";
   import { getSourceYAML } from "./connector-source-yaml-generator.ts";
-  import AddDataFormStructure from "@rilldata/web-common/features/add-data/form/AddDataFormStructure.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { prepareSourceFormData } from "@rilldata/web-common/features/sources/sourceUtils.ts";
+  import AddDataFormStructure from "@statsparrot/web-common/features/add-data/form/AddDataFormStructure.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { prepareSourceFormData } from "@statsparrot/web-common/features/sources/sourceUtils.ts";
   import {
     type AddDataConfig,
     type CreateModelStep,
     type ImportFromConfig,
     type ImportStepConfig,
-  } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { getLabelsForSource } from "@rilldata/web-common/features/add-data/form/form-labels.ts";
-  import { uploadFile } from "@rilldata/web-common/features/sources/modal/file-upload.ts";
-  import { splitFolderFileNameAndExtension } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
-  import { getName } from "@rilldata/web-common/features/entity-management/name-utils.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-  import { getAnalyzedConnectorByName } from "@rilldata/web-common/features/connectors/selectors.ts";
-  import { generateImportToConfig } from "@rilldata/web-common/features/add-data/manager/steps/import.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { getLabelsForSource } from "@statsparrot/web-common/features/add-data/form/form-labels.ts";
+  import { uploadFile } from "@statsparrot/web-common/features/sources/modal/file-upload.ts";
+  import { splitFolderFileNameAndExtension } from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
+  import { getName } from "@statsparrot/web-common/features/entity-management/name-utils.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+  import { getAnalyzedConnectorByName } from "@statsparrot/web-common/features/connectors/selectors.ts";
+  import { generateImportToConfig } from "@statsparrot/web-common/features/add-data/manager/steps/import.ts";
   import {
     getConnectorDriverForSchema,
     getImportStepsForSource,
-  } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-  import { maybeInitProject } from "@rilldata/web-common/features/add-data/manager/steps/connector.ts";
-  import { getEnvFileStore } from "@rilldata/web-common/features/env-management/env-file-store.ts";
-  import { EnvEditSession } from "@rilldata/web-common/features/env-management/env-edit-session.ts";
-  import { setSubmitError } from "@rilldata/web-common/features/add-data/form/errors.ts";
-  import type { AddDataStateManager } from "@rilldata/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+  import { maybeInitProject } from "@statsparrot/web-common/features/add-data/manager/steps/connector.ts";
+  import { getEnvFileStore } from "@statsparrot/web-common/features/env-management/env-file-store.ts";
+  import { EnvEditSession } from "@statsparrot/web-common/features/env-management/env-edit-session.ts";
+  import { setSubmitError } from "@statsparrot/web-common/features/add-data/form/errors.ts";
+  import type { AddDataStateManager } from "@statsparrot/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
   import { setError, type SuperValidated } from "sveltekit-superforms";
 
   export let config: AddDataConfig;

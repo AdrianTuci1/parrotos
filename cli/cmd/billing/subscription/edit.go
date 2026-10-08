@@ -1,8 +1,8 @@
 package subscription
 
 import (
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +39,7 @@ func EditCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			ch.PrintfWarn("\nEditing plan for organization %q. Plan change will take place immediately.\n", ch.Org)
 			if ch.Interactive {
-				ch.PrintfWarn("\nTo renew a cancelled subscription, please use `rill billing subscription renew` command.\n")
+				ch.PrintfWarn("\nTo renew a cancelled subscription, please use `statsparrot billing subscription renew` command.\n")
 
 				if err := cmdutil.ConfirmPrompt("Do you want to continue?", false); err != nil {
 					return err

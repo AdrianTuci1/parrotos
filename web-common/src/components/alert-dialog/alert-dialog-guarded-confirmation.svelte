@@ -7,15 +7,15 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog/index.js";
+  } from "@statsparrot/web-common/components/alert-dialog/index.js";
   import {
     Button,
     type ButtonType,
-  } from "@rilldata/web-common/components/button/index.js";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import AlertCircleOutline from "@rilldata/web-common/components/icons/AlertCircleOutline.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  } from "@statsparrot/web-common/components/button/index.js";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import AlertCircleOutline from "@statsparrot/web-common/components/icons/AlertCircleOutline.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
 
   export let open = false;
 

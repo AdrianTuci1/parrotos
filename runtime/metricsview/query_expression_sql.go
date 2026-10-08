@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/pkg/sqlstring"
+	"github.com/staticlabs/statsparrot/runtime/pkg/sqlstring"
 )
 
 func ExpressionToSQL(e *Expression) (string, error) {

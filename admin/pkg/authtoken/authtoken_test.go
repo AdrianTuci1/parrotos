@@ -28,8 +28,8 @@ func TestReciprocity(t *testing.T) {
 
 func TestValidity(t *testing.T) {
 	valid := []string{
-		"rill_usr_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
-		"rill_svc_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrot_usr_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrot_svc_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
 	}
 	for _, tt := range valid {
 		_, err := FromString(tt)
@@ -37,13 +37,13 @@ func TestValidity(t *testing.T) {
 	}
 
 	invalid := []string{
-		"rill_foo_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrot_foo_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
 		"roll_usr_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
-		"rill_usr_Z2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
-		"rill_usr_",
-		"rill__2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
-		"rill_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
-		"rillusr2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrot_usr_Z2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrot_usr_",
+		"statsparrot__2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrot_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
+		"statsparrotusr2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
 		"_usr_2Dws32dc2FxTThgCQjHerGM1rx9pJLCPQh5QbWjUiwpkZNkCCRrlrK",
 		"",
 		"_",
@@ -133,10 +133,10 @@ func TestMatchByPrefix(t *testing.T) {
 	require.Equal(t, t3.ID, matches[0].ID)
 
 	// Should match nothing for a random prefix
-	matches = MatchByPrefix("rill_usr_abcdefghij", tokens)
+	matches = MatchByPrefix("statsparrot_usr_abcdefghij", tokens)
 	require.Len(t, matches, 0)
 
 	// Should match nothing for a prefix that's too short
-	matches = MatchByPrefix("rill_", tokens)
+	matches = MatchByPrefix("statsparrot_", tokens)
 	require.Len(t, matches, 0)
 }

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/pkg/sqlparse"
+	"github.com/staticlabs/statsparrot/runtime/pkg/sqlparse"
 	"gopkg.in/yaml.v3"
 )
 
@@ -330,15 +330,15 @@ func (p *Parser) parseStem(paths []string, ymlPath, yml, sqlPath, sql string) (*
 
 // decodeNodeYAML decodes a Node into a YAML struct.
 // If knownFields is true, it will return an error if the YAML contains unknown fields.
-// It applies defaults from rill.yaml, then the YAML, then the YAML's environment-specific overrides, and finally the SQL annotations.
+// It applies defaults from statsparrot.yaml, then the YAML, then the YAML's environment-specific overrides, and finally the SQL annotations.
 // If an error is returned, it will be a pathError associated with the node.
 func (p *Parser) decodeNodeYAML(node *Node, knownFields bool, dst any) error {
-	// Apply defaults from rill.yaml
-	if p.RillYAML != nil {
-		defaults := p.RillYAML.Defaults[node.Kind]
+	// Apply defaults from statsparrot.yaml
+	if p.ParrotYAML != nil {
+		defaults := p.ParrotYAML.Defaults[node.Kind]
 		if !defaults.IsZero() {
 			if err := defaults.Decode(dst); err != nil {
-				return pathError{path: node.YAMLPath, err: fmt.Errorf("failed applying defaults from rill.yaml: %w", err)}
+				return pathError{path: node.YAMLPath, err: fmt.Errorf("failed applying defaults from statsparrot.yaml: %w", err)}
 			}
 		}
 	}

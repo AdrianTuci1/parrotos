@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import FormSection from "@rilldata/web-common/components/forms/FormSection.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import MultiInput from "@rilldata/web-common/components/forms/MultiInput.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import { getHasSlackConnection } from "@rilldata/web-common/features/alerts/delivery-tab/notifiers-utils";
-  import { getSnoozeOptions } from "@rilldata/web-common/features/alerts/delivery-tab/snooze";
-  import type { AlertFormValues } from "@rilldata/web-common/features/alerts/form-utils";
-  import ScheduleForm from "@rilldata/web-common/features/scheduled-reports/ScheduleForm.svelte";
-  import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import FormSection from "@statsparrot/web-common/components/forms/FormSection.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import MultiInput from "@statsparrot/web-common/components/forms/MultiInput.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import { getHasSlackConnection } from "@statsparrot/web-common/features/alerts/delivery-tab/notifiers-utils";
+  import { getSnoozeOptions } from "@statsparrot/web-common/features/alerts/delivery-tab/snooze";
+  import type { AlertFormValues } from "@statsparrot/web-common/features/alerts/form-utils";
+  import ScheduleForm from "@statsparrot/web-common/features/scheduled-reports/ScheduleForm.svelte";
+  import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { SuperForm } from "sveltekit-superforms/client";
 
   export let superFormInstance: SuperForm<AlertFormValues>;
@@ -105,7 +105,7 @@
         <span class="text-sm text-fg-secondary">
           {@html m.alert_form_slack_not_configured({
             docsUrl:
-              "https://docs.rilldata.com/guide/alerts#configuring-slack-targets",
+              "https://docs.statsparrot.com/guide/alerts#configuring-slack-targets",
           })}
         </span>
       </svelte:fragment>

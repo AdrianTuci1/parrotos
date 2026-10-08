@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
-	"github.com/rilldata/rill/runtime/pkg/pagination"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pagination"
 )
 
 // ObjectStore is an interface for object storage systems.

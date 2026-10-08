@@ -1,9 +1,9 @@
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import {
   COMPARISON_COLORS,
   SELECTED_NOT_COMPARED_COLOR,
-} from "@rilldata/web-common/features/dashboards/config";
-import { Tooltip } from "@rilldata/web-common/features/dashboards/leaderboard/react/primitives";
+} from "@statsparrot/web-common/features/dashboards/config";
+import { Tooltip } from "@statsparrot/web-common/features/dashboards/leaderboard/react/primitives";
 import type { VirtualItem } from "./useVirtualizer";
 import { StickyHeader } from "./StickyHeader";
 import { Cancel, Check, CheckCircle, Compare, Spacer } from "./icons";

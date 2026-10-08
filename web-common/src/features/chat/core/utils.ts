@@ -4,15 +4,15 @@
  * Common functions used across ConversationManager and Conversation classes to avoid duplication
  * and maintain consistency in ID generation and message content extraction.
  */
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 import {
   getRuntimeServiceGetConversationQueryOptions,
   getRuntimeServiceListConversationsQueryKey,
   getRuntimeServiceListConversationsQueryOptions,
   type V1Message,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { MessageContentType, ToolName } from "./types";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived } from "svelte/store";
 import { createQuery } from "@tanstack/svelte-query";
 
@@ -71,7 +71,7 @@ export function invalidateConversationsList(instanceId: string) {
   const listConversationsKey = getRuntimeServiceListConversationsQueryKey(
     instanceId,
     {
-      userAgentPattern: "rill%",
+      userAgentPattern: "statsparrot%",
     },
   );
   return queryClient.invalidateQueries({ queryKey: listConversationsKey });
@@ -83,14 +83,14 @@ export function invalidateConversationsList(instanceId: string) {
 export function getLatestConversationQueryOptions(client: RuntimeClient) {
   const listConversationsQueryOptions =
     getRuntimeServiceListConversationsQueryOptions(client, {
-      // Filter to only show Rill client conversations, excluding MCP conversations
-      userAgentPattern: "rill%",
+      // Filter to only show Parrot client conversations, excluding MCP conversations
+      userAgentPattern: "statsparrot%",
     });
   const lastConversationId = derived(
     createQuery(listConversationsQueryOptions, queryClient),
     (conversationsResp) => {
       const conversations = conversationsResp?.data?.conversations?.filter(
-        (c) => c.userAgent !== "rill/report",
+        (c) => c.userAgent !== "statsparrot/report",
       );
       return conversations?.[0]?.id;
     },

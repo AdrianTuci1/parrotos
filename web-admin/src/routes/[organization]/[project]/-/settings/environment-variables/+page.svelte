@@ -1,21 +1,21 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { createAdminServiceGetProjectVariables } from "@rilldata/web-admin/client";
-  import AddDialog from "@rilldata/web-admin/features/projects/environment-variables/AddDialog.svelte";
-  import EnvironmentVariablesTable from "@rilldata/web-admin/features/projects/environment-variables/EnvironmentVariablesTable.svelte";
-  import { EnvironmentType } from "@rilldata/web-admin/features/projects/environment-variables/types";
-  import { getEnvironmentType } from "@rilldata/web-admin/features/projects/environment-variables/utils";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
+  import { createAdminServiceGetProjectVariables } from "@statsparrot/web-admin/client";
+  import AddDialog from "@statsparrot/web-admin/features/projects/environment-variables/AddDialog.svelte";
+  import EnvironmentVariablesTable from "@statsparrot/web-admin/features/projects/environment-variables/EnvironmentVariablesTable.svelte";
+  import { EnvironmentType } from "@statsparrot/web-admin/features/projects/environment-variables/types";
+  import { getEnvironmentType } from "@statsparrot/web-admin/features/projects/environment-variables/utils";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
   import {
     type FilterGroup,
     TableToolbar,
-  } from "@rilldata/web-common/components/table-toolbar";
-  import RadixLarge from "@rilldata/web-common/components/typography/RadixLarge.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/components/table-toolbar";
+  import RadixLarge from "@statsparrot/web-common/components/typography/RadixLarge.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { Plus } from "lucide-svelte";
-  import { UrlParamsState } from "@rilldata/web-common/lib/store-utils/url-params-state.svelte.ts";
-  import { DebouncedRuneStore } from "@rilldata/web-common/lib/store-utils/types.svelte.ts";
+  import { UrlParamsState } from "@statsparrot/web-common/lib/store-utils/url-params-state.svelte.ts";
+  import { DebouncedRuneStore } from "@statsparrot/web-common/lib/store-utils/types.svelte.ts";
 
   let open = $state(false);
 
@@ -122,7 +122,7 @@
           <p class="text-sm text-fg-tertiary font-medium">
             {m.env_page_description()}
             <a
-              href="https://docs.rilldata.com/guide/administration/project-settings/variables-and-credentials"
+              href="https://docs.statsparrot.com/guide/administration/project-settings/variables-and-credentials"
               target="_blank"
               class="text-primary-600 hover:text-primary-700 active:text-primary-800"
             >

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog/index";
-  import { Button } from "@rilldata/web-common/components/button";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog/index";
+  import { Button } from "@statsparrot/web-common/components/button";
 
   export let open: boolean;
   export let onDelete: () => void;

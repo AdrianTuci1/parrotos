@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
   import {
     FLOATS,
     INTERVALS,
     isFloat,
-  } from "@rilldata/web-common/lib/duckdb-data-types";
-  import { QueryServiceColumnNumericHistogramHistogramMethod } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import { QueryServiceColumnNumericHistogramHistogramMethod } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     createQueryServiceColumnDescriptiveStatistics,
     createQueryServiceColumnRugHistogram,
-  } from "@rilldata/web-common/runtime-client";
-  import { getPriorityForColumn } from "@rilldata/web-common/runtime-client/v2/request-priorities";
+  } from "@statsparrot/web-common/runtime-client";
+  import { getPriorityForColumn } from "@statsparrot/web-common/runtime-client/v2/request-priorities";
   import { derived } from "svelte/store";
   import ColumnProfileIcon from "../ColumnProfileIcon.svelte";
   import ProfileContainer from "../ProfileContainer.svelte";

@@ -1,8 +1,8 @@
 import {
   DimensionFilterMode,
   DimensionFilterModeOptions,
-} from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 const sizeClasses: Record<"sm" | "md" | "lg", string> = {
   sm: "h-6 text-[11px]",

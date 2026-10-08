@@ -1,24 +1,24 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import CanvasEditor from "@rilldata/web-common/features/canvas/CanvasEditor.svelte";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import VisualCanvasEditing from "@rilldata/web-common/features/canvas/inspector/VisualCanvasEditing.svelte";
-  import { createRootCauseErrorQuery } from "@rilldata/web-common/features/entity-management/error-utils";
-  import { getNameFromFile } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact";
+  import CanvasEditor from "@statsparrot/web-common/features/canvas/CanvasEditor.svelte";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import VisualCanvasEditing from "@statsparrot/web-common/features/canvas/inspector/VisualCanvasEditing.svelte";
+  import { createRootCauseErrorQuery } from "@statsparrot/web-common/features/entity-management/error-utils";
+  import { getNameFromFile } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact";
   import {
     resourceIsLoading,
     ResourceKind,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { handleEntityRename } from "@rilldata/web-common/features/entity-management/actions/ui-actions.ts";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { handleEntityRename } from "@statsparrot/web-common/features/entity-management/actions/ui-actions.ts";
   import {
     WorkspaceContainer,
     WorkspaceHeader,
-  } from "@rilldata/web-common/layout/workspace";
-  import { workspaces } from "@rilldata/web-common/layout/workspace/workspace-stores";
-  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/layout/workspace";
+  import { workspaces } from "@statsparrot/web-common/layout/workspace/workspace-stores";
+  import WorkspaceEditorContainer from "@statsparrot/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import ReconcileWarningPanel from "../entity-management/ReconcileWarningPanel.svelte";
   import PreviewButton from "../explores/PreviewButton.svelte";
   import CanvasBuilder from "../canvas/CanvasBuilder.svelte";

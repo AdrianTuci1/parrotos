@@ -25,11 +25,11 @@ export function useDashboardPolicyCheck(
   );
 }
 
-export function useRillYamlPolicyCheck(client: RuntimeClient) {
+export function useParrotYamlPolicyCheck(client: RuntimeClient) {
   return createRuntimeServiceGetFile(
     client,
     {
-      path: "rill.yaml",
+      path: "statsparrot.yaml",
     },
     {
       query: {

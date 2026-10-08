@@ -9,16 +9,16 @@ import (
 	"time"
 
 	"github.com/dgraph-io/ristretto"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/pkg/singleflight"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/singleflight"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 )
 
 var (
-	meter                        = otel.Meter("github.com/rilldata/rill/runtime")
+	meter                        = otel.Meter("github.com/staticlabs/statsparrot/runtime")
 	queryCacheHitsCounter        = observability.Must(meter.Int64ObservableCounter("query_cache.hits"))
 	queryCacheMissesCounter      = observability.Must(meter.Int64ObservableCounter("query_cache.misses"))
 	queryCacheItemCountGauge     = observability.Must(meter.Int64ObservableGauge("query_cache.items"))

@@ -1,5 +1,5 @@
-import { EmbedStorageNamespacePrefix } from "@rilldata/web-admin/features/embeds/constants.ts";
-import { clearExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
+import { EmbedStorageNamespacePrefix } from "@statsparrot/web-admin/features/embeds/constants.ts";
+import { clearExploreSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
 
 export const load = async ({ params, parent }) => {
   const exploreName = params.name;

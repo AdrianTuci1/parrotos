@@ -1,8 +1,8 @@
 import {
   ResourceKind,
   prettyResourceKind,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 
 export type ResourceCount = { kind: string; label: string; count: number };
 

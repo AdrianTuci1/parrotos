@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -26,11 +26,11 @@ func UnassumeCmd(ch *cmdutil.Helper) *cobra.Command {
 func UnassumeUser(ctx context.Context, ch *cmdutil.Helper) error {
 	// we reverted to original user first because we want to call RevokeRepresentativeAuthTokens api with Original User
 	// Fetch the original token
-	originalToken, err := ch.DotRill.GetBackupToken()
+	originalToken, err := ch.DotStatsparrot.GetBackupToken()
 	if err != nil {
 		return err
 	}
-	representingUser, err := ch.DotRill.GetRepresentingUser()
+	representingUser, err := ch.DotStatsparrot.GetRepresentingUser()
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func UnassumeUser(ctx context.Context, ch *cmdutil.Helper) error {
 	}
 
 	// Restore the original token as the access token
-	err = ch.DotRill.SetAccessToken(originalToken)
+	err = ch.DotStatsparrot.SetAccessToken(originalToken)
 	if err != nil {
 		return err
 	}
@@ -56,38 +56,38 @@ func UnassumeUser(ctx context.Context, ch *cmdutil.Helper) error {
 	}
 
 	// Clear local token and expiry
-	err = ch.DotRill.SetRepresentingUserAccessTokenExpiry(time.Time{})
+	err = ch.DotStatsparrot.SetRepresentingUserAccessTokenExpiry(time.Time{})
 	if err != nil {
 		return err
 	}
 
 	// Fetch the original default org
-	originalDefaultOrg, err := ch.DotRill.GetBackupDefaultOrg()
+	originalDefaultOrg, err := ch.DotStatsparrot.GetBackupDefaultOrg()
 	if err != nil {
 		return err
 	}
 
 	// Restore the original default org as default org
-	err = ch.DotRill.SetDefaultOrg(originalDefaultOrg)
+	err = ch.DotStatsparrot.SetDefaultOrg(originalDefaultOrg)
 	if err != nil {
 		return err
 	}
 	ch.Org = originalDefaultOrg
 
 	// Clear backup token
-	err = ch.DotRill.SetBackupToken("")
+	err = ch.DotStatsparrot.SetBackupToken("")
 	if err != nil {
 		return err
 	}
 
 	// Set email for representing user as empty
-	err = ch.DotRill.SetRepresentingUser("")
+	err = ch.DotStatsparrot.SetRepresentingUser("")
 	if err != nil {
 		return err
 	}
 
 	// Clear backup default org
-	err = ch.DotRill.SetBackupDefaultOrg("")
+	err = ch.DotStatsparrot.SetBackupDefaultOrg("")
 	if err != nil {
 		return err
 	}

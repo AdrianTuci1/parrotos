@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
   import FormattingRulesEditor from "./FormattingRulesEditor.svelte";
   import {
     getSchemeStops,

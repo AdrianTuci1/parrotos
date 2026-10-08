@@ -13,9 +13,9 @@ export function setConnectClientContext(context: ConnectClientContext): void {
 
 /**
  * Returns the connect-client context, or undefined if no provider is an ancestor.
- * The context is set only on Rill Cloud chat surfaces that own an MCPConnectDialog
+ * The context is set only on Parrot Cloud chat surfaces that own an MCPConnectDialog
  * (the AI chat page and dashboard/canvas layouts); chat surfaces without a
- * provider (Rill Developer, embeds, edit mode) render no connect CTA.
+ * provider (Parrot Developer, embeds, edit mode) render no connect CTA.
  */
 export function getConnectClientContext(): ConnectClientContext | undefined {
   return getContext<ConnectClientContext | undefined>(

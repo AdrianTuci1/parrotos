@@ -1,10 +1,10 @@
 import { expect } from "@playwright/test";
-import { interactWithTimeRangeMenu } from "@rilldata/web-common/tests/utils/explore-interactions.ts";
+import { interactWithTimeRangeMenu } from "@statsparrot/web-common/tests/utils/explore-interactions.ts";
 import { test } from "./setup/base";
 import {
   getOpenLinkFromEmail,
   waitForEmail,
-} from "@rilldata/web-common/tests/utils/email-utils.ts";
+} from "@statsparrot/web-common/tests/utils/email-utils.ts";
 
 test.describe.serial("Reports", () => {
   test("Should create report", async ({ adminPage }) => {

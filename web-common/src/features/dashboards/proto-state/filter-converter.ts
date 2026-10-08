@@ -4,12 +4,12 @@ import {
   createInExpression,
   createLikeExpression,
   createOrExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import type {
   MetricsViewFilterCond,
   V1Expression,
   V1MetricsViewFilter,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 /**
  * Converts older {@link V1MetricsViewFilter} filter format to the newer {@link V1Expression}

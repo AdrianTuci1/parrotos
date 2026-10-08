@@ -11,9 +11,9 @@ import {
  * Single source of truth for how the BI UI receives its data.
  *
  * The product can run in one of two modes:
- *   - `runtime` — a Rill runtime_url is configured (VITE_RILL_RUNTIME_URL /
+ *   - `runtime` — a Parrot runtime_url is configured (VITE_STATSPARROT_RUNTIME_URL /
  *     VITE_RUNTIME_HOST, or the local dev fallback). The app-root provider mounts
- *     the Rill RuntimeClientProvider + a TanStack React QueryClientProvider, and
+ *     the Parrot RuntimeClientProvider + a TanStack React QueryClientProvider, and
  *     the UI queries a real metrics view (`orders_metrics`) over the Go Connect
  *     transport.
  *   - `mock` — no runtime_url is configured. The dashboard and chat areas import
@@ -24,9 +24,9 @@ import {
  * host/instance/metrics-view to target and what the mock fallback looks like.
  */
 
-// Local dev escape hatch: when Rill is run directly with `rill start` the runtime
+// Local dev escape hatch: when Parrot is run directly with `statsparrot start` the runtime
 // is reachable at localhost:9009 on the `default` instance. Point production at a
-// real runtime via VITE_RILL_RUNTIME_URL / VITE_RILL_RUNTIME_INSTANCE_ID.
+// real runtime via VITE_STATSPARROT_RUNTIME_URL / VITE_STATSPARROT_RUNTIME_INSTANCE_ID.
 const DEV_RUNTIME_HOST = "http://localhost:9009";
 const DEV_RUNTIME_INSTANCE_ID = "default";
 

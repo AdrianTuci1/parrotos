@@ -14,10 +14,10 @@ import (
 	"github.com/XSAM/otelsql"
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/priorityqueue"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/priorityqueue"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.uber.org/atomic"
@@ -38,7 +38,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "ClickHouse",
 	Description: "Connect to ClickHouse.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/olap/clickhouse",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/olap/clickhouse",
 	// Important: Any edits to the below properties must be accompanied by changes to the client-side form validation schemas.
 	ConfigProperties: []*drivers.PropertySpec{
 		{
@@ -123,7 +123,7 @@ var spec = drivers.Spec{
 			Type:        drivers.StringPropertyType,
 			Required:    false,
 			DisplayName: "Cluster",
-			Description: "Cluster name. If set, Rill will create all models in the cluster as distributed tables.",
+			Description: "Cluster name. If set, Parrot will create all models in the cluster as distributed tables.",
 			Placeholder: "Cluster name",
 			Hint:        "Cluster name (required for some self-hosted ClickHouse setups)",
 		},
@@ -171,7 +171,7 @@ type configProperties struct {
 	DatabaseWhitelist string `mapstructure:"database_whitelist"`
 	// SSL determines whether secured connection need to be established. Should not be set if DSN is set.
 	SSL bool `mapstructure:"ssl"`
-	// Cluster name. If a cluster is configured, Rill will create all models in the cluster as distributed tables.
+	// Cluster name. If a cluster is configured, Parrot will create all models in the cluster as distributed tables.
 	Cluster string `mapstructure:"cluster"`
 	// SyncReplicas controls whether to run `SYSTEM SYNC REPLICA` before replacing partitions on a replicated table in a cluster.
 	// This ensures all inserted parts are visible across replicas before the partition swap. Defaults to true.
@@ -547,7 +547,7 @@ func (c *Connection) AsModelExecutor(instanceID string, opts *drivers.ModelExecu
 		return nil, drivers.ErrNotImplemented
 	}
 	if c.config.Mode != modeReadWrite {
-		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this ClickHouse database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Rill to create and overwrite tables in your database")
+		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this ClickHouse database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Parrot to create and overwrite tables in your database")
 	}
 	if opts.InputHandle == c {
 		return &selfToSelfExecutor{c}, nil
@@ -564,7 +564,7 @@ func (c *Connection) AsModelExecutor(instanceID string, opts *drivers.ModelExecu
 // AsModelManager implements drivers.Handle.
 func (c *Connection) AsModelManager(instanceID string) (drivers.ModelManager, error) {
 	if c.config.Mode != modeReadWrite {
-		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this ClickHouse database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Rill to create and overwrite tables in your database")
+		return nil, fmt.Errorf("model execution is disabled. To enable modeling on this ClickHouse database, set 'mode: readwrite' in your connector configuration. WARNING: This will allow Parrot to create and overwrite tables in your database")
 	}
 	return c, nil
 }

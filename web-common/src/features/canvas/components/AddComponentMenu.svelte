@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import type { CanvasComponentType } from "@rilldata/web-common/features/canvas/components/types";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import type { CanvasComponentType } from "@statsparrot/web-common/features/canvas/components/types";
   import { ChevronDown, Plus } from "lucide-svelte";
   import { menuItems } from "./menu-items.svelte";
 

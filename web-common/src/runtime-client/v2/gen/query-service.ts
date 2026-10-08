@@ -47,7 +47,7 @@ import {
   TableCardinalityRequest,
   TableColumnsRequest,
   TableRowsRequest,
-} from "../../../proto/gen/rill/runtime/v1/queries_pb";
+} from "../../../proto/gen/statsparrot/runtime/v1/queries_pb";
 import type {
   V1ColumnCardinalityRequest,
   V1ColumnCardinalityResponse,

@@ -1,5 +1,5 @@
-import { sanitizeValueForVega } from "@rilldata/web-common/components/vega/util";
-import type { ChartDataResult } from "@rilldata/web-common/features/components/charts";
+import { sanitizeValueForVega } from "@statsparrot/web-common/components/vega/util";
+import type { ChartDataResult } from "@statsparrot/web-common/features/components/charts";
 import {
   buildHoverRuleLayer,
   createCartesianMultiValueTooltipChannel,
@@ -9,12 +9,12 @@ import {
   createMultiLayerBaseSpec,
   createPositionEncoding,
   createStackOverride,
-} from "@rilldata/web-common/features/components/charts/builder";
+} from "@statsparrot/web-common/features/components/charts/builder";
 import {
   createComparisonOpacityEncoding,
   createComparisonTransforms,
   createComparisonXOffsetEncoding,
-} from "@rilldata/web-common/features/components/charts/comparison-builder";
+} from "@statsparrot/web-common/features/components/charts/comparison-builder";
 import type { VisualizationSpec } from "svelte-vega";
 import type { Field } from "vega-lite/types_unstable/channeldef.js";
 import type { UnitSpec } from "vega-lite/types_unstable/spec/unit.js";

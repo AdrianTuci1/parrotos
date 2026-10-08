@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rilldata/rill/admin"
-	"github.com/rilldata/rill/admin/pkg/oauth"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/pkg/oauth"
 	"github.com/stretchr/testify/require"
 )
 

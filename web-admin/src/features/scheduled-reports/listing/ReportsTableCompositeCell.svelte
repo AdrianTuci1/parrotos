@@ -1,12 +1,12 @@
 <script lang="ts">
-  import CancelCircleInverse from "@rilldata/web-common/components/icons/CancelCircleInverse.svelte";
-  import CheckCircleOutline from "@rilldata/web-common/components/icons/CheckCircleOutline.svelte";
-  import ReportIcon from "@rilldata/web-common/components/icons/ReportIcon.svelte";
+  import CancelCircleInverse from "@statsparrot/web-common/components/icons/CancelCircleInverse.svelte";
+  import CheckCircleOutline from "@statsparrot/web-common/components/icons/CheckCircleOutline.svelte";
+  import ReportIcon from "@statsparrot/web-common/components/icons/ReportIcon.svelte";
   import cronstrue from "cronstrue";
   import ProjectAccessControls from "../../projects/ProjectAccessControls.svelte";
   import { formatRunDate } from "../tableUtils";
   import ReportOwnerBullet from "./ReportOwnerBullet.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

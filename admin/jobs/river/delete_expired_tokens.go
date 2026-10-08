@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/rilldata/rill/admin"
+	"github.com/staticlabs/statsparrot/admin"
 	"github.com/riverqueue/river"
 )
 

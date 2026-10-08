@@ -1,5 +1,5 @@
-import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export function getProjectRolesOptions() {
   return [

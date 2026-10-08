@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    // The Rill React port reuses framework-agnostic modules from web-common that
+    // The Parrot React port reuses framework-agnostic modules from web-common that
     // still reference a few Svelte components (only the chart-type icon metadata
     // in the chart config). This host is a React-only app, so we shim those
     // `.svelte` imports with a no-op component rather than pulling in a Svelte
@@ -30,19 +30,19 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // Fixture the Rill source packages into the standalone React app so the BI
+      // Fixture the Parrot source packages into the standalone React app so the BI
       // query path can reuse the framework-agnostic runtime-client verbatim.
-      '@rilldata/web-admin': path.resolve(__dirname, '../web-admin/src'),
+      '@statsparrot/web-admin': path.resolve(__dirname, '../web-admin/src'),
       // SvelteKit virtual modules imported by web-common helpers; shimmed for the
-      // browser-only React host so the Rill code compiles without a Kit app.
+      // browser-only React host so the Parrot code compiles without a Kit app.
       '$app/environment': path.resolve(__dirname, './src/shims/sveltekit-environment.js'),
       '$app/stores': path.resolve(__dirname, './src/shims/sveltekit-stores.js'),
       '$app/navigation': path.resolve(__dirname, './src/shims/sveltekit-navigation.js'),
-      // Rill's Paraglide message bundle is generated at build time and absent in
+      // Parrot's Paraglide message bundle is generated at build time and absent in
       // this host; point it at a React-safe label shim instead. Must precede the
-      // broad `@rilldata/web-common` prefix so the more specific path wins.
-      '@rilldata/web-common/lib/i18n/gen/messages': path.resolve(__dirname, './src/shims/rill-i18n-messages.js'),
-      '@rilldata/web-common': path.resolve(__dirname, '../web-common/src'),
+      // broad `@statsparrot/web-common` prefix so the more specific path wins.
+      '@statsparrot/web-common/lib/i18n/gen/messages': path.resolve(__dirname, './src/shims/statsparrot-i18n-messages.js'),
+      '@statsparrot/web-common': path.resolve(__dirname, '../web-common/src'),
     }
   },
   server: {

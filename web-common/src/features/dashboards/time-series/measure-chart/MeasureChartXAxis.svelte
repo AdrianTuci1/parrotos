@@ -1,11 +1,11 @@
 <script lang="ts">
   import { scaleLinear } from "d3-scale";
   import { type DateTime, type Interval } from "luxon";
-  import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import {
     V1TimeGrainToOrder,
     V1TimeGrainToDateTimeUnit,
-  } from "@rilldata/web-common/lib/time/new-grains";
+  } from "@statsparrot/web-common/lib/time/new-grains";
   import {
     LINE_MODE_MIN_POINTS,
     X_PAD,

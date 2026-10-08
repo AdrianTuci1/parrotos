@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { RillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/RillTime";
+import type { ParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/ParrotTime";
 import { TimeRangeMenuItem } from "./TimeRangeMenuItem";
 
 /**
@@ -9,7 +9,7 @@ import { TimeRangeMenuItem } from "./TimeRangeMenuItem";
  */
 export interface TimeRangeOptionGroupProps {
   filter: string;
-  options: RillTime[];
+  options: ParrotTime[];
   timeString?: string | undefined;
   hideDivider?: boolean;
   onClick: (range: string) => void;
@@ -44,7 +44,7 @@ export function TimeRangeOptionGroup({
         <div className="h-px w-full bg-border my-1"></div>
       ) : null}
       {filtered.map((option, i) => (
-        <TimeRangeMenuItem key={i} rillTime={option} timeString={timeString} onClick={onClick} />
+        <TimeRangeMenuItem key={i} statsparrotTime={option} timeString={timeString} onClick={onClick} />
       ))}
       {!hideDivider ? <div className="h-px w-full bg-border my-1"></div> : null}
     </div>

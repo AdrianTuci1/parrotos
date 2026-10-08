@@ -1,8 +1,8 @@
 # Events telemetry
 
-## Types of telemetry in Rill
+## Types of telemetry in Parrot
 
-In Rill, we have two kinds of telemetry:
+In Parrot, we have two kinds of telemetry:
 
 - OpenTelemetry: Used for emitting and collecting traditional logging, tracing, and metrics in a hosted setting. Encapsulated in the `runtime/pkg/observability` package.
 - Events telemetry: Used for event telemetry, such as user behavior, browser errors, system metrics, billing events, etc. Encapsulated in `runtime/pkg/activity` (this package).
@@ -17,9 +17,9 @@ Event telemetry propagate in various ways depending on the source service and en
 1. The cloud admin server sends events directly to Kafka.
 2. The cloud runtime sends events directly to Kafka.
 3. The cloud admin UI sends events to the cloud admin server, which proxies them to Kafka.
-4. The local CLI sends events to Rill's intake API.
-5. The local UI sends events to the local server hosted by the CLI, which proxies them to Rill's intake API.
-6. The local runtime sends events to Rill's intake API (using the same client as the CLI).
+4. The local CLI sends events to Parrot's intake API.
+5. The local UI sends events to the local server hosted by the CLI, which proxies them to Parrot's intake API.
+6. The local runtime sends events to Parrot's intake API (using the same client as the CLI).
 
 ## Required event format
 

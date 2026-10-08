@@ -1,15 +1,15 @@
-/** Utility functions for using time grains within a Rill dashboard.
+/** Utility functions for using time grains within a Parrot dashboard.
  * Most of these functions utilize the TIME_GRAIN object defined in config.ts
  * to generate either a subset of time grains or a single time grain.
  */
 
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import { Duration, Interval } from "luxon";
 import { TIME_GRAIN } from "../config";
 import type { AvailableTimeGrain, TimeGrain } from "../types";
-import { allowedGrainsForInterval } from "@rilldata/web-common/lib/time/new-grains";
-import { getRangePrecision } from "@rilldata/web-common/lib/time/rill-time-grains";
-import type { RillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/RillTime";
+import { allowedGrainsForInterval } from "@statsparrot/web-common/lib/time/new-grains";
+import { getRangePrecision } from "@statsparrot/web-common/lib/time/statsparrot-time-grains";
+import type { ParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/ParrotTime";
 
 export function unitToTimeGrain(unit: string): V1TimeGrain {
   return (
@@ -185,7 +185,7 @@ export function getValidatedTimeGrain(
   interval: Interval | undefined,
   minTimeGrain: V1TimeGrain,
   requestedPrecision: V1TimeGrain | undefined,
-  parsed: RillTime | undefined,
+  parsed: ParrotTime | undefined,
 ): V1TimeGrain | undefined {
   if (!interval || !interval.isValid) {
     return undefined;

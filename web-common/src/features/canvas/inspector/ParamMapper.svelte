@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Select from "@rilldata/web-common/components/forms/Select.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import ChevronRight from "@rilldata/web-common/components/icons/ChevronRight.svelte";
-  import { BaseChart } from "@rilldata/web-common/features/canvas/components/charts/BaseChart";
-  import VegaSpecInput from "@rilldata/web-common/features/canvas/inspector/chart/VegaSpecInput.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Select from "@statsparrot/web-common/components/forms/Select.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import ChevronRight from "@statsparrot/web-common/components/icons/ChevronRight.svelte";
+  import { BaseChart } from "@statsparrot/web-common/features/canvas/components/charts/BaseChart";
+  import VegaSpecInput from "@statsparrot/web-common/features/canvas/inspector/chart/VegaSpecInput.svelte";
   import type { BaseCanvasComponent } from "../components/BaseCanvasComponent";
   import { PivotCanvasComponent } from "../components/pivot";
   import type { ComponentSpec } from "../components/types";
@@ -81,8 +81,8 @@
         {#if config.type === "ai_generate"}
           <AIGenerateButton {component} />
 
-          <!-- TEXT, NUMBER, RILL_TIME -->
-        {:else if config.type === "text" || config.type === "number" || config.type === "rill_time"}
+          <!-- TEXT, NUMBER, STATSPARROT_TIME -->
+        {:else if config.type === "text" || config.type === "number" || config.type === "statsparrot_time"}
           <Input
             inputType={config.type === "number" ? "number" : "text"}
             capitalizeLabel={false}

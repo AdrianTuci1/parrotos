@@ -4,33 +4,33 @@ import type {
   ISODurationString,
   NamedRange,
   RangeBuckets,
-} from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
+} from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
 import {
   ALL_TIME_RANGE_ALIAS,
   constructAsOfString,
   constructNewString,
   getRangeLabel,
-  RILL_TO_LABEL,
-} from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  STATSPARROT_TO_LABEL,
+} from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import {
-  overrideRillTimeRef,
-  parseRillTime,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
+  overrideParrotTimeRef,
+  parseParrotTime,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
 import {
-  RillAllTimeInterval,
-  RillIsoInterval,
-  RillPeriodToGrainInterval,
-  RillTimeLabel,
-  type RillTime,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/RillTime";
+  ParrotAllTimeInterval,
+  ParrotIsoInterval,
+  ParrotPeriodToGrainInterval,
+  ParrotTimeLabel,
+  type ParrotTime,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/ParrotTime";
 import {
   getGrainOrder,
   V1TimeGrainToDateTimeUnit,
-} from "@rilldata/web-common/lib/time/new-grains";
-import { getTruncationGrain } from "@rilldata/web-common/lib/time/rill-time-grains";
-import { getAbbreviationForIANA } from "@rilldata/web-common/lib/time/timezone";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-common/lib/time/new-grains";
+import { getTruncationGrain } from "@statsparrot/web-common/lib/time/statsparrot-time-grains";
+import { getAbbreviationForIANA } from "@statsparrot/web-common/lib/time/timezone";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import { CaretDownIcon, CalendarIcon, GlobeIcon, CheckIcon } from "./icons";
 import { RangeDisplay } from "./RangeDisplay";
 import { SyntaxElement } from "./SyntaxElement";
@@ -46,8 +46,8 @@ import { PrimaryRangeTooltip } from "./PrimaryRangeTooltip";
  * time-range picker. Renders the trigger chip, the search/list dropdown, the custom date
  * picker, the time-zone picker, the time-axis picker, and the truncation selector.
  *
- * Reuses the framework-agnostic `new-time-controls` utilities, the Rill time range
- * parser/RillTime model, and the grain helpers verbatim. Popover / Tooltip / DropdownMenu
+ * Reuses the framework-agnostic `new-time-controls` utilities, the Parrot time range
+ * parser/ParrotTime model, and the grain helpers verbatim. Popover / Tooltip / DropdownMenu
  * Svelte primitives are replaced by React stand-ins.
  */
 export interface RangePickerV2Props {
@@ -158,24 +158,24 @@ export default function RangePickerV2({
     maxQueryTimeRange && maxQueryTimeRange.as("milliseconds") > 0
   );
 
-  let parsedTime: RillTime | undefined = undefined;
+  let parsedTime: ParrotTime | undefined = undefined;
   if (timeString) {
     try {
-      parsedTime = parseRillTime(timeString);
+      parsedTime = parseParrotTime(timeString);
     } catch {
       parsedTime = undefined;
     }
   }
 
   const hideTruncationSelector =
-    parsedTime?.interval instanceof RillIsoInterval ||
-    parsedTime?.interval instanceof RillAllTimeInterval;
+    parsedTime?.interval instanceof ParrotIsoInterval ||
+    parsedTime?.interval instanceof ParrotAllTimeInterval;
 
   const usingLegacyTime = parsedTime?.isOldFormat;
   const hasAsOfClause = !!parsedTime?.asOfLabel;
 
   const snapToEnd = usingLegacyTime ? true : !!parsedTime?.asOfLabel?.offset;
-  const ref = usingLegacyTime ? RillTimeLabel.Latest : parsedTime?.asOfLabel?.label;
+  const ref = usingLegacyTime ? ParrotTimeLabel.Latest : parsedTime?.asOfLabel?.label;
 
   const baseTruncationGrain = getTruncationGrain(parsedTime);
   const truncationGrain = flexTruncationGrain ?? baseTruncationGrain;
@@ -195,9 +195,9 @@ export default function RangePickerV2({
 
   function handleRangeSelect(range: string, ignoreSnap?: boolean) {
     try {
-      const parsed = parseRillTime(range);
+      const parsed = parseParrotTime(range);
 
-      const isPeriodToDate = parsed.interval instanceof RillPeriodToGrainInterval;
+      const isPeriodToDate = parsed.interval instanceof ParrotPeriodToGrainInterval;
 
       const rangeGrainOrder =
         getGrainOrder(parsed.rangeGrain) - (isPeriodToDate ? 1 : 0);
@@ -206,7 +206,7 @@ export default function RangePickerV2({
       const asOfGrainOrder = getGrainOrder(activeTruncationGrain);
 
       const shouldAppendAsOfString =
-        !parsed.asOfLabel && !(parsed.interval instanceof RillIsoInterval);
+        !parsed.asOfLabel && !(parsed.interval instanceof ParrotIsoInterval);
 
       if (asOfGrainOrder > rangeGrainOrder && parsed.rangeGrain) {
         activeTruncationGrain = parsed.rangeGrain;
@@ -217,7 +217,7 @@ export default function RangePickerV2({
         const isTruncationGrainAllowed =
           getGrainOrder(activeTruncationGrain) >= smallestTimeGrainOrder;
         const newAsOfString = constructAsOfString(
-          ref ?? RillTimeLabel.Latest,
+          ref ?? ParrotTimeLabel.Latest,
           ignoreSnap
             ? undefined
             : activeTruncationGrain
@@ -228,7 +228,7 @@ export default function RangePickerV2({
           hasAsOfClause || snapToEnd ? snapToEnd : true,
         );
 
-        overrideRillTimeRef(parsed, newAsOfString);
+        overrideParrotTimeRef(parsed, newAsOfString);
       }
 
       onSelectRange(parsed.toString());
@@ -252,7 +252,7 @@ export default function RangePickerV2({
   }
 
   function onSelectAsOfOption(
-    asOfRef: RillTimeLabel | string | undefined,
+    asOfRef: ParrotTimeLabel | string | undefined,
     inclusive: boolean,
   ) {
     if (!timeString) return;
@@ -355,7 +355,7 @@ export default function RangePickerV2({
                   <TimeRangeOptionGroup
                     filter={filter}
                     timeString={timeString}
-                    options={[parseRillTime(defaultTimeRange)]}
+                    options={[parseParrotTime(defaultTimeRange)]}
                     onClick={handleRangeSelect}
                   />
                 ) : null}
@@ -397,7 +397,7 @@ export default function RangePickerV2({
                       onClick={() => handleRangeSelect("inf")}
                     >
                       <span className={timeString === ALL_TIME_RANGE_ALIAS ? "font-bold" : ""}>
-                        {RILL_TO_LABEL[ALL_TIME_RANGE_ALIAS]}
+                        {STATSPARROT_TO_LABEL[ALL_TIME_RANGE_ALIAS]}
                       </span>
                     </button>
                   </div>
@@ -560,7 +560,7 @@ export default function RangePickerV2({
             dateTimeAnchor={dateTimeAnchor}
             grain={truncationGrain}
             rangeGrain={parsedTime?.rangeGrain ?? truncationGrain}
-            isPeriodToDate={parsedTime?.interval instanceof RillPeriodToGrainInterval}
+            isPeriodToDate={parsedTime?.interval instanceof ParrotPeriodToGrainInterval}
             watermark={watermark}
             latest={maxDate}
             smallestTimeGrain={smallestTimeGrain}

@@ -1,9 +1,9 @@
-import { forEachIdentifier } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { BinaryOperationReverseMap } from "@rilldata/web-common/features/dashboards/url-state/filters/post-processors";
+import { forEachIdentifier } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { BinaryOperationReverseMap } from "@statsparrot/web-common/features/dashboards/url-state/filters/post-processors";
 import {
   type V1Expression,
   V1Operation,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import nearley from "nearley";
 import { isNonStandardIdentifier } from "../../../entity-management/name-utils";
 import grammar from "./expression.js";

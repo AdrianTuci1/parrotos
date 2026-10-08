@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
   import { User } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     name,

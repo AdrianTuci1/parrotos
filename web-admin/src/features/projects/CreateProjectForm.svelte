@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     createAdminServiceCreateDeployment,
     createAdminServiceCreateManagedGitRepo,
@@ -11,9 +11,9 @@
     getAdminServiceListDeploymentsQueryKey,
     getAdminServiceListProjectsForOrganizationQueryKey,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
+  } from "@statsparrot/web-admin/client";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
@@ -21,10 +21,10 @@
   import {
     type DeployError,
     getPrettyDeployError,
-  } from "@rilldata/web-common/features/project/deploy/deploy-errors.ts";
-  import { useCategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { CreateProjectBranchName } from "@rilldata/web-admin/features/projects/publish-project.ts";
+  } from "@statsparrot/web-common/features/project/deploy/deploy-errors.ts";
+  import { useCategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { CreateProjectBranchName } from "@statsparrot/web-admin/features/projects/publish-project.ts";
 
   const {
     organization,
@@ -163,7 +163,7 @@
     alwaysShowError
     width="500px"
     size="xl"
-    textInputPrefix="https://ui.rilldata.com/{organization}/"
+    textInputPrefix="https://ui.statsparrot.com/{organization}/"
   />
   <div class="w-full flex justify-end">
     <Button

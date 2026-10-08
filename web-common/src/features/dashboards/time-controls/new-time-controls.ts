@@ -4,19 +4,19 @@
 // IntervalStore and MetricsTimeControls are WIP references, but are not currently being used
 // The functions below UTILS are being used
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { fetchTimeRanges } from "@rilldata/web-common/features/dashboards/time-controls/rill-time-ranges.ts";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { fetchTimeRanges } from "@statsparrot/web-common/features/dashboards/time-controls/statsparrot-time-ranges.ts";
 import {
-  overrideRillTimeRef,
-  parseRillTime,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser";
-import { humaniseISODuration } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+  overrideParrotTimeRef,
+  parseParrotTime,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
+import { humaniseISODuration } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import type {
   V1ExploreTimeRange,
   V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   DateTime,
   type DateTimeUnit,
@@ -30,24 +30,24 @@ import { get, writable, type Writable } from "svelte/store";
 
 // CONSTANTS -> time-control-constants.ts
 
-export const RILL_TO_UNIT: Record<
-  RillPeriodToDate | RillPreviousPeriod,
+export const STATSPARROT_TO_UNIT: Record<
+  ParrotPeriodToDate | ParrotPreviousPeriod,
   DateTimeUnit
 > = {
-  "rill-PDC": "day",
-  "rill-PWC": "week",
-  "rill-PMC": "month",
-  "rill-PQC": "quarter",
-  "rill-PYC": "year",
-  "rill-TD": "day",
-  "rill-WTD": "week",
-  "rill-MTD": "month",
-  "rill-QTD": "quarter",
-  "rill-YTD": "year",
+  "statsparrot-PDC": "day",
+  "statsparrot-PWC": "week",
+  "statsparrot-PMC": "month",
+  "statsparrot-PQC": "quarter",
+  "statsparrot-PYC": "year",
+  "statsparrot-TD": "day",
+  "statsparrot-WTD": "week",
+  "statsparrot-MTD": "month",
+  "statsparrot-QTD": "quarter",
+  "statsparrot-YTD": "year",
 };
 
-export const RILL_TO_LABEL: Record<
-  RillPeriodToDate | RillPreviousPeriod | AllTime | CustomRange,
+export const STATSPARROT_TO_LABEL: Record<
+  ParrotPeriodToDate | ParrotPreviousPeriod | AllTime | CustomRange,
   string
 > = {
   get inf() {
@@ -56,55 +56,55 @@ export const RILL_TO_LABEL: Record<
   get CUSTOM() {
     return m.time_custom();
   },
-  get "rill-PDC"() {
+  get "statsparrot-PDC"() {
     return m.time_yesterday();
   },
-  get "rill-PWC"() {
+  get "statsparrot-PWC"() {
     return m.time_previous_week();
   },
-  get "rill-PMC"() {
+  get "statsparrot-PMC"() {
     return m.time_previous_month();
   },
-  get "rill-PQC"() {
+  get "statsparrot-PQC"() {
     return m.time_previous_quarter();
   },
-  get "rill-PYC"() {
+  get "statsparrot-PYC"() {
     return m.time_previous_year();
   },
-  get "rill-TD"() {
+  get "statsparrot-TD"() {
     return m.time_today();
   },
-  get "rill-WTD"() {
+  get "statsparrot-WTD"() {
     return m.time_week_to_date();
   },
-  get "rill-MTD"() {
+  get "statsparrot-MTD"() {
     return m.time_month_to_date();
   },
-  get "rill-QTD"() {
+  get "statsparrot-QTD"() {
     return m.time_quarter_to_date();
   },
-  get "rill-YTD"() {
+  get "statsparrot-YTD"() {
     return m.time_year_to_date();
   },
 } as any;
 
-export const RILL_PERIOD_TO_DATE = [
-  "rill-TD",
-  "rill-WTD",
-  "rill-MTD",
-  "rill-QTD",
-  "rill-YTD",
+export const STATSPARROT_PERIOD_TO_DATE = [
+  "statsparrot-TD",
+  "statsparrot-WTD",
+  "statsparrot-MTD",
+  "statsparrot-QTD",
+  "statsparrot-YTD",
 ] as const;
 
-export const RILL_PREVIOUS_PERIOD = [
-  "rill-PDC",
-  "rill-PWC",
-  "rill-PMC",
-  "rill-PQC",
-  "rill-PYC",
+export const STATSPARROT_PREVIOUS_PERIOD = [
+  "statsparrot-PDC",
+  "statsparrot-PWC",
+  "statsparrot-PMC",
+  "statsparrot-PQC",
+  "statsparrot-PYC",
 ] as const;
 
-export const RILL_LATEST = [
+export const STATSPARROT_LATEST = [
   "PT6H",
   "PT24H",
   "P7D",
@@ -128,14 +128,14 @@ export const TIME_GRAIN_TO_SHORTHAND: Record<V1TimeGrain, string> = {
 
 // TYPES -> time-control-types.ts
 
-type RillPeriodToDateTuple = typeof RILL_PERIOD_TO_DATE;
-export type RillPeriodToDate = RillPeriodToDateTuple[number];
+type ParrotPeriodToDateTuple = typeof STATSPARROT_PERIOD_TO_DATE;
+export type ParrotPeriodToDate = ParrotPeriodToDateTuple[number];
 
-type RillPreviousPeriodTuple = typeof RILL_PREVIOUS_PERIOD;
-export type RillPreviousPeriod = RillPreviousPeriodTuple[number];
+type ParrotPreviousPeriodTuple = typeof STATSPARROT_PREVIOUS_PERIOD;
+export type ParrotPreviousPeriod = ParrotPreviousPeriodTuple[number];
 
-type RillLatestTuple = typeof RILL_LATEST;
-export type RillLatest = RillLatestTuple[number];
+type ParrotLatestTuple = typeof STATSPARROT_LATEST;
+export type ParrotLatest = ParrotLatestTuple[number];
 
 export const CUSTOM_TIME_RANGE_ALIAS = "CUSTOM";
 export const ALL_TIME_RANGE_ALIAS = "inf";
@@ -144,8 +144,8 @@ export type CustomRange = typeof CUSTOM_TIME_RANGE_ALIAS;
 export type ISODurationString = string;
 
 export type NamedRange =
-  | RillPeriodToDate
-  | RillPreviousPeriod
+  | ParrotPeriodToDate
+  | ParrotPreviousPeriod
   | AllTime
   | CustomRange;
 
@@ -258,7 +258,7 @@ class MetricsTimeControls {
 
     if (string === ALL_TIME_RANGE_ALIAS) {
       this.applyAllTime();
-    } else if (isRillPeriodToDate(string) || isRillPreviousPeriod(string)) {
+    } else if (isParrotPeriodToDate(string) || isParrotPreviousPeriod(string)) {
       this.applyNamedRange(string);
     } else if (isValidISODuration(string)) {
       this.applyISODuration(string);
@@ -345,34 +345,34 @@ export const timeControls = new TimeControls();
 
 // UTILS -> time-control-utils.ts
 
-export function isRillPreviousPeriod(
+export function isParrotPreviousPeriod(
   value: string,
-): value is RillPreviousPeriod {
-  return RILL_PREVIOUS_PERIOD.includes(value as RillPreviousPeriod);
+): value is ParrotPreviousPeriod {
+  return STATSPARROT_PREVIOUS_PERIOD.includes(value as ParrotPreviousPeriod);
 }
 
-export function isRillPeriodToDate(value: string): value is RillPeriodToDate {
-  return RILL_PERIOD_TO_DATE.includes(value as RillPeriodToDate);
+export function isParrotPeriodToDate(value: string): value is ParrotPeriodToDate {
+  return STATSPARROT_PERIOD_TO_DATE.includes(value as ParrotPeriodToDate);
 }
 
 import {
   getAllowedGrains,
   GrainAliasToV1TimeGrain,
   V1TimeGrainToAlias,
-} from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/lib/time/new-grains";
 import {
-  RillLegacyDaxInterval,
-  RillLegacyIsoInterval,
-  RillPeriodToGrainInterval,
-  RillShorthandInterval,
-  RillTimeLabel,
-  RillTimeStartEndInterval,
-  type RillTime,
-} from "../url-state/time-ranges/RillTime";
-import { getDefaultRangeBuckets } from "@rilldata/web-common/lib/time/defaults";
+  ParrotLegacyDaxInterval,
+  ParrotLegacyIsoInterval,
+  ParrotPeriodToGrainInterval,
+  ParrotShorthandInterval,
+  ParrotTimeLabel,
+  ParrotTimeStartEndInterval,
+  type ParrotTime,
+} from "../url-state/time-ranges/ParrotTime";
+import { getDefaultRangeBuckets } from "@statsparrot/web-common/lib/time/defaults";
 
 export async function deriveInterval(
-  name: RillPeriodToDate | RillPreviousPeriod | ISODurationString | string,
+  name: ParrotPeriodToDate | ParrotPreviousPeriod | ISODurationString | string,
   client: RuntimeClient,
   metricsViewName: string,
   activeTimeZone: string,
@@ -394,15 +394,15 @@ export async function deriveInterval(
   }
 
   try {
-    const parsed = parseRillTime(name);
+    const parsed = parseParrotTime(name);
 
-    // We have a RillTime string
+    // We have a ParrotTime string
     const cacheBust = name.includes("now");
 
     const response = await fetchTimeRanges({
       client,
       metricsViewName,
-      rillTimes: [name],
+      statsparrotTimes: [name],
       timeZone: activeTimeZone,
       timeDimension,
       executionTime,
@@ -533,12 +533,12 @@ export function getDurationLabel(isoDuration: string): string {
 
 export function getRangeLabel(range: string | undefined): string {
   if (!range) return m.time_custom();
-  if (isRillPeriodToDate(range) || isRillPreviousPeriod(range)) {
-    return RILL_TO_LABEL[range];
+  if (isParrotPeriodToDate(range) || isParrotPreviousPeriod(range)) {
+    return STATSPARROT_TO_LABEL[range];
   }
 
   if (range === ALL_TIME_RANGE_ALIAS || range === CUSTOM_TIME_RANGE_ALIAS) {
-    return RILL_TO_LABEL[range];
+    return STATSPARROT_TO_LABEL[range];
   }
 
   if (isValidISODuration(range)) {
@@ -546,29 +546,29 @@ export function getRangeLabel(range: string | undefined): string {
   }
 
   try {
-    const rt = parseRillTime(range);
+    const rt = parseParrotTime(range);
 
     const label = rt.getLabel();
 
     return label;
   } catch (e) {
-    console.error("Error parsing RillTime", e);
+    console.error("Error parsing ParrotTime", e);
     return m.time_custom();
   }
 }
 
 export type RangeBuckets = {
-  custom: RillTime[];
-  latest: RillTime[];
-  periodToDate: RillTime[];
-  previous: RillTime[];
+  custom: ParrotTime[];
+  latest: ParrotTime[];
+  periodToDate: ParrotTime[];
+  previous: ParrotTime[];
   allTime: boolean;
 };
 
 const defaultBuckets: RangeBuckets = {
-  latest: RILL_LATEST.map((r) => parseRillTime(r)),
-  periodToDate: RILL_PERIOD_TO_DATE.map((r) => parseRillTime(r)),
-  previous: RILL_PREVIOUS_PERIOD.map((r) => parseRillTime(r)),
+  latest: STATSPARROT_LATEST.map((r) => parseParrotTime(r)),
+  periodToDate: STATSPARROT_PERIOD_TO_DATE.map((r) => parseParrotTime(r)),
+  previous: STATSPARROT_PREVIOUS_PERIOD.map((r) => parseParrotTime(r)),
   custom: [],
   allTime: false,
 };
@@ -577,7 +577,7 @@ const previousPeriodRegex =
   /-\d+[sSmMhHdDwWqQYy]\/[sSmMhHdDwWqQYy]\s+to\s+ref\/[sSmMhHdDwWqQYy]/;
 
 // rangeWithinCap returns true unless the range can be statically sized to more than maxRange.
-// rill-time expressions and unparseable inputs pass through; the backend has the final say.
+// statsparrot-time expressions and unparseable inputs pass through; the backend has the final say.
 function rangeWithinCap(range: string, maxRange: Duration): boolean {
   if (range === "inf") return false;
   if (!range.startsWith("P") && !range.startsWith("p")) return true;
@@ -589,7 +589,7 @@ function rangeWithinCap(range: string, maxRange: Duration): boolean {
 export function bucketYamlRanges(
   yamlRanges: V1ExploreTimeRange[],
   minTimeGrain: V1TimeGrain | undefined,
-  usingRillTime: boolean,
+  usingParrotTime: boolean,
   maxQueryTimeRange?: Duration,
 ): RangeBuckets {
   const capped = maxQueryTimeRange
@@ -603,13 +603,13 @@ export function bucketYamlRanges(
   }
 
   if (showDefaults) {
-    if (!usingRillTime) {
+    if (!usingParrotTime) {
       if (!capped) return defaultBuckets;
       return {
         ...defaultBuckets,
-        latest: RILL_LATEST.filter((r) =>
+        latest: STATSPARROT_LATEST.filter((r) =>
           rangeWithinCap(r, maxQueryTimeRange!),
-        ).map((r) => parseRillTime(r)),
+        ).map((r) => parseParrotTime(r)),
         allTime: false,
       };
     }
@@ -646,27 +646,27 @@ export function bucketYamlRanges(
     if (capped && !rangeWithinCap(range, maxQueryTimeRange!)) return;
 
     try {
-      const parsed = parseRillTime(range);
+      const parsed = parseParrotTime(range);
 
       const { interval } = parsed;
 
       if (
-        interval instanceof RillLegacyIsoInterval ||
-        interval instanceof RillShorthandInterval
+        interval instanceof ParrotLegacyIsoInterval ||
+        interval instanceof ParrotShorthandInterval
       ) {
         skeleton.latest.push(parsed);
-      } else if (interval instanceof RillTimeStartEndInterval) {
+      } else if (interval instanceof ParrotTimeStartEndInterval) {
         if (previousPeriodRegex.test(range)) {
           skeleton.previous.push(parsed);
         } else {
           skeleton.custom.push(parsed);
         }
-      } else if (interval instanceof RillPeriodToGrainInterval) {
+      } else if (interval instanceof ParrotPeriodToGrainInterval) {
         skeleton.periodToDate.push(parsed);
-      } else if (interval instanceof RillLegacyDaxInterval) {
-        if (isRillPreviousPeriod(range)) {
+      } else if (interval instanceof ParrotLegacyDaxInterval) {
+        if (isParrotPreviousPeriod(range)) {
           skeleton.previous.push(parsed);
-        } else if (isRillPeriodToDate(range)) {
+        } else if (isParrotPeriodToDate(range)) {
           skeleton.periodToDate.push(parsed);
         } else {
           skeleton.custom.push(parsed);
@@ -675,14 +675,14 @@ export function bucketYamlRanges(
         skeleton.custom.push(parsed);
       }
     } catch (e) {
-      console.error("Error parsing RillTime", e);
+      console.error("Error parsing ParrotTime", e);
     }
   });
 
   return skeleton;
 }
 
-function convertIsoToRillTime(iso: string): string {
+function convertIsoToParrotTime(iso: string): string {
   const upper = iso.toUpperCase();
 
   if (!upper.startsWith("P")) {
@@ -708,14 +708,14 @@ function convertIsoToRillTime(iso: string): string {
     S: "S",
   };
 
-  for (const [unit, rill] of Object.entries(dateUnits)) {
+  for (const [unit, statsparrot] of Object.entries(dateUnits)) {
     const match = datePart.match(new RegExp(`(\\d+(\\.\\d+)?)${unit}`));
-    if (match) result.push(`${match[1]}${rill}`);
+    if (match) result.push(`${match[1]}${statsparrot}`);
   }
 
-  for (const [unit, rill] of Object.entries(timeUnits)) {
+  for (const [unit, statsparrot] of Object.entries(timeUnits)) {
     const match = timePart.match(new RegExp(`(\\d+(\\.\\d+)?)${unit}`));
-    if (match) result.push(`${match[1]}${rill}`);
+    if (match) result.push(`${match[1]}${statsparrot}`);
   }
 
   return result.join("");
@@ -731,35 +731,35 @@ const previousCompleteMap = {
 };
 
 export function convertLegacyTime(timeString: string) {
-  if (timeString.startsWith("rill-")) {
-    const stripped = timeString.replace("rill-", "");
-    if (timeString === "rill-TD") return "DTD";
+  if (timeString.startsWith("statsparrot-")) {
+    const stripped = timeString.replace("statsparrot-", "");
+    if (timeString === "statsparrot-TD") return "DTD";
     if (previousCompleteMap[stripped]) return previousCompleteMap[stripped];
-    return timeString.replace("rill-", "");
+    return timeString.replace("statsparrot-", "");
   } else if (timeString.startsWith("P") || timeString.startsWith("p")) {
-    return convertIsoToRillTime(timeString);
+    return convertIsoToParrotTime(timeString);
   }
   return timeString;
 }
 
 export function constructAsOfString(
-  asOf: RillTimeLabel | string | undefined,
+  asOf: ParrotTimeLabel | string | undefined,
   grain: V1TimeGrain | undefined | null,
   pad: boolean,
 ): string {
   if (!grain) {
-    return asOf ?? RillTimeLabel.Now;
+    return asOf ?? ParrotTimeLabel.Now;
   }
 
   const alias = V1TimeGrainToAlias[grain];
 
   let base: string;
 
-  if (asOf === RillTimeLabel.Latest || asOf === undefined) {
+  if (asOf === ParrotTimeLabel.Latest || asOf === undefined) {
     base = `latest/${alias}`;
-  } else if (asOf === RillTimeLabel.Watermark) {
+  } else if (asOf === ParrotTimeLabel.Watermark) {
     base = `watermark/${alias}`;
-  } else if (asOf === RillTimeLabel.Now) {
+  } else if (asOf === ParrotTimeLabel.Now) {
     base = `now/${alias}`;
   } else {
     base = `${asOf}/${alias}`;
@@ -774,7 +774,7 @@ export function constructAsOfString(
 
 export function isUsingLegacyTime(timeString: string | undefined): boolean {
   return (
-    timeString?.startsWith("rill") ||
+    timeString?.startsWith("statsparrot") ||
     timeString?.startsWith("P") ||
     timeString?.startsWith("p") ||
     false
@@ -790,17 +790,17 @@ export function constructNewString({
   currentString: string;
   truncationGrain: V1TimeGrain | undefined | null;
   snapToEnd: boolean;
-  ref: RillTimeLabel | string | undefined;
+  ref: ParrotTimeLabel | string | undefined;
 }): string {
   const legacy = isUsingLegacyTime(currentString);
 
-  const rillTime = parseRillTime(
+  const statsparrotTime = parseParrotTime(
     legacy ? convertLegacyTime(currentString) : currentString,
   );
 
   const newAsOfString = constructAsOfString(ref, truncationGrain, snapToEnd);
 
-  overrideRillTimeRef(rillTime, newAsOfString);
+  overrideParrotTimeRef(statsparrotTime, newAsOfString);
 
-  return rillTime.toString();
+  return statsparrotTime.toString();
 }

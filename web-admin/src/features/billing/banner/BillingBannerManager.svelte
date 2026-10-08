@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onNavigate } from "$app/navigation";
-  import type { V1OrganizationPermissions } from "@rilldata/web-admin/client";
-  import BillingBannerManagerForAdmins from "@rilldata/web-admin/features/billing/banner/BillingBannerManagerForAdmins.svelte";
-  import { BillingBannerID } from "@rilldata/web-common/components/banner/constants";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import type { V1OrganizationPermissions } from "@statsparrot/web-admin/client";
+  import BillingBannerManagerForAdmins from "@statsparrot/web-admin/features/billing/banner/BillingBannerManagerForAdmins.svelte";
+  import { BillingBannerID } from "@statsparrot/web-common/components/banner/constants";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 
   export let organization: string;
   export let organizationPermissions: V1OrganizationPermissions;

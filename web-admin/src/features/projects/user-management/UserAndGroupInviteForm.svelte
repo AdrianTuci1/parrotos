@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import {
     createAdminServiceAddProjectMemberUser,
     createAdminServiceAddProjectMemberUsergroup,
@@ -8,13 +8,13 @@
     getAdminServiceListProjectMemberUsersQueryKey,
     getAdminServiceListProjectMemberUsergroupsQueryKey,
     createAdminServiceGetCurrentUser,
-  } from "@rilldata/web-admin/client";
-  import { invalidateOrgMemberUsers } from "@rilldata/web-admin/features/organizations/user-management/utils";
-  import { RFC5322EmailRegex } from "@rilldata/web-common/components/forms/validation";
-  import { ProjectUserRoles } from "@rilldata/web-common/features/users/roles.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-admin/client";
+  import { invalidateOrgMemberUsers } from "@statsparrot/web-admin/features/organizations/user-management/utils";
+  import { RFC5322EmailRegex } from "@statsparrot/web-common/components/forms/validation";
+  import { ProjectUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { useQueryClient } from "@tanstack/svelte-query";
-  import SearchAndInviteInput from "@rilldata/web-admin/features/projects/user-management/SearchAndInviteInput.svelte";
+  import SearchAndInviteInput from "@statsparrot/web-admin/features/projects/user-management/SearchAndInviteInput.svelte";
 
   export let organization: string;
   export let project: string;

@@ -1,8 +1,8 @@
 import Mention, { type MentionOptions } from "@tiptap/extension-mention";
 import { Extension } from "@tiptap/core";
-import InlineContextPicker from "@rilldata/web-common/features/chat/core/context/picker/InlineContextPicker.svelte";
-import type { ConversationManager } from "@rilldata/web-common/features/chat/core/conversation-manager.ts";
-import InlineContextComponent from "@rilldata/web-common/features/chat/core/context/InlineContext.svelte";
+import InlineContextPicker from "@statsparrot/web-common/features/chat/core/context/picker/InlineContextPicker.svelte";
+import type { ConversationManager } from "@statsparrot/web-common/features/chat/core/conversation-manager.ts";
+import InlineContextComponent from "@statsparrot/web-common/features/chat/core/context/InlineContext.svelte";
 import type { EditorView } from "@tiptap/pm/view";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
@@ -15,7 +15,7 @@ import {
   type InlineContext,
   normalizeInlineContext,
   parseInlineAttr,
-} from "@rilldata/web-common/features/chat/core/context/inline-context.ts";
+} from "@statsparrot/web-common/features/chat/core/context/inline-context.ts";
 
 export function getEditorPlugins({
   placeholder,

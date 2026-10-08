@@ -1,5 +1,5 @@
-import { clamp } from "@rilldata/web-common/lib/clamp";
-import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
+import { clamp } from "@statsparrot/web-common/lib/clamp";
+import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
 import { get, writable, type Writable } from "svelte/store";
 
 export const DEFAULT_COLUMN_WIDTH = 110;

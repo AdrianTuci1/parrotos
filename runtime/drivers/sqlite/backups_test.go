@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/jmoiron/sqlx"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"gocloud.dev/blob/fileblob"
@@ -132,7 +132,7 @@ func TestDBFilePath(t *testing.T) {
 		expected string
 	}{
 		{":memory:", ""},
-		{"file:rill?mode=memory&cache=shared", ""},
+		{"file:statsparrot?mode=memory&cache=shared", ""},
 		{"file::memory:?cache=shared", ""},
 		{filepath.Join(tmpDir, "data.sqlite"), filepath.Join(tmpDir, "data.sqlite")},
 		{"file:" + filepath.Join(tmpDir, "data.sqlite"), filepath.Join(tmpDir, "data.sqlite")},

@@ -1,20 +1,20 @@
-import { getConversationManager } from "@rilldata/web-common/features/chat/core/conversation-manager";
-import { ToolName } from "@rilldata/web-common/features/chat/core/types";
-import { developerChatActions } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store";
-import { pollForFileCreation } from "@rilldata/web-common/features/entity-management/actions/actions.ts";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import { getConversationManager } from "@statsparrot/web-common/features/chat/core/conversation-manager";
+import { ToolName } from "@statsparrot/web-common/features/chat/core/types";
+import { developerChatActions } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store";
+import { pollForFileCreation } from "@statsparrot/web-common/features/entity-management/actions/actions.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import {
   runtimeServiceGenerateCanvasFile,
   runtimeServiceGenerateMetricsViewFile,
   runtimeServicePutFile,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { get, writable } from "svelte/store";
 import { overlay } from "../../../layout/overlay-store";
 import { queryClient } from "../../../lib/svelte-query/globalQueryClient";

@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/archive"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/archive"
 )
 
-// UploadRepo uploads a local project files to rill managed store.
+// UploadRepo uploads a local project files to statsparrot managed store.
 // Internally it creates an asset object on admin service and returns its id which can be supplied while creating/updating project.
 func UploadRepo(ctx context.Context, repo drivers.RepoStore, ch *Helper, org, name string) (string, error) {
 	// list files

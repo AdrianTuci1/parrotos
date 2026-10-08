@@ -5,10 +5,10 @@ import (
 	"errors"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	rillblob "github.com/rilldata/rill/runtime/pkg/blob"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	statsparrotblob "github.com/staticlabs/statsparrot/runtime/pkg/blob"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 
@@ -174,7 +174,7 @@ func (h *handle) ListBuckets(ctx context.Context, pageSize uint32, pageToken str
 
 // ListObjects implements drivers.ObjectStore.
 func (h *handle) ListObjects(ctx context.Context, bucket, path, delimiter string, pageSize uint32, pageToken string) ([]drivers.ObjectStoreEntry, string, error) {
-	blobBucket, err := rillblob.NewBucket(h.bucket, h.logger)
+	blobBucket, err := statsparrotblob.NewBucket(h.bucket, h.logger)
 	if err != nil {
 		return nil, "", err
 	}
@@ -184,7 +184,7 @@ func (h *handle) ListObjects(ctx context.Context, bucket, path, delimiter string
 
 // ListObjectsForGlob implements drivers.ObjectStore.
 func (h *handle) ListObjectsForGlob(ctx context.Context, bucket, glob string, pageSize uint32, pageToken, start, end string) ([]drivers.ObjectStoreEntry, string, error) {
-	blobBucket, err := rillblob.NewBucket(h.bucket, h.logger)
+	blobBucket, err := statsparrotblob.NewBucket(h.bucket, h.logger)
 	if err != nil {
 		return nil, "", err
 	}

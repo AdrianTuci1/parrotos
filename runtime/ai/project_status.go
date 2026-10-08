@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const ProjectStatusName = "project_status"
@@ -31,7 +31,7 @@ type ProjectStatusArgs struct {
 }
 
 type ProjectStatusResult struct {
-	DefaultOLAPConnector string           `json:"default_olap_connector,omitempty" jsonschema:"The default OLAP connector configured in rill.yaml. May or may not exist as an explicit connector resource."`
+	DefaultOLAPConnector string           `json:"default_olap_connector,omitempty" jsonschema:"The default OLAP connector configured in statsparrot.yaml. May or may not exist as an explicit connector resource."`
 	Env                  []string         `json:"env,omitempty" jsonschema:"List of environment variable names present in the project. Their values are omitted for security."`
 	Resources            []map[string]any `json:"resources" jsonschema:"List of resources and their status."`
 	ParseErrors          []map[string]any `json:"parse_errors" jsonschema:"List of parse errors encountered when parsing project files."`
@@ -42,7 +42,7 @@ func (t *ProjectStatus) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        ProjectStatusName,
 		Title:       "Get project status",
-		Description: "Returns the reconcile status of resources in the Rill project, including any parse errors and optionally recent logs. If you have recently updated a resource in the project, it can optionally wait until all resources have finished reconciling before returning. Warning: If you retrieve logs, note they are append-only, so you may see old issues that have already been resolved; always cross-reference logs with the resource-level status, parse errors and later logs to get the full picture.",
+		Description: "Returns the reconcile status of resources in the Parrot project, including any parse errors and optionally recent logs. If you have recently updated a resource in the project, it can optionally wait until all resources have finished reconciling before returning. Warning: If you retrieve logs, note they are append-only, so you may see old issues that have already been resolved; always cross-reference logs with the resource-level status, parse errors and later logs to get the full picture.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(false),
 			IdempotentHint:  true,
@@ -187,7 +187,7 @@ func (t *ProjectStatus) Handler(ctx context.Context, args *ProjectStatusArgs) (*
 	var varNames []string
 	for k, v := range instance.ResolveVariables(false) {
 		// Skip empty variables and internal ones
-		if v == "" || strings.HasPrefix(k, "rill.") {
+		if v == "" || strings.HasPrefix(k, "statsparrot.") {
 			continue
 		}
 		varNames = append(varNames, k)

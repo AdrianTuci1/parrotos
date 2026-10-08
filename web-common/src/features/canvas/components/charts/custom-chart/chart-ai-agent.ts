@@ -1,8 +1,8 @@
-import type { Conversation } from "@rilldata/web-common/features/chat/core/conversation";
-import { getConversationManager } from "@rilldata/web-common/features/chat/core/conversation-manager";
-import { ToolName } from "@rilldata/web-common/features/chat/core/types";
-import { developerChatActions } from "@rilldata/web-common/features/chat/layouts/sidebar/sidebar-store";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { Conversation } from "@statsparrot/web-common/features/chat/core/conversation";
+import { getConversationManager } from "@statsparrot/web-common/features/chat/core/conversation-manager";
+import { ToolName } from "@statsparrot/web-common/features/chat/core/types";
+import { developerChatActions } from "@statsparrot/web-common/features/chat/layouts/sidebar/sidebar-store";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived, get, type Readable } from "svelte/store";
 import type { CustomChartComponent } from "./index";
 

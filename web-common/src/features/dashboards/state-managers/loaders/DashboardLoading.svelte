@@ -1,8 +1,8 @@
 <script lang="ts">
-  import LoadingSpinner from "@rilldata/web-common/components/LoadingSpinner.svelte";
-  import CtaContentContainer from "@rilldata/web-common/components/calls-to-action/CTAContentContainer.svelte";
-  import CtaLayoutContainer from "@rilldata/web-common/components/calls-to-action/CTALayoutContainer.svelte";
-  import { LoadingTracker } from "@rilldata/web-common/lib/LoadingTracker";
+  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
+  import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
+  import { LoadingTracker } from "@statsparrot/web-common/lib/LoadingTracker";
   import { fade } from "svelte/transition";
 
   export let isLoading: boolean;

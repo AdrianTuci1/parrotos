@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
-import type { FilterManager } from "@rilldata/web-common/features/canvas/stores/filter-manager";
-import type { MeasureFilterEntry } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import type { MeasureFilterItem } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measure-filters";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
+import type { FilterManager } from "@statsparrot/web-common/features/canvas/stores/filter-manager";
+import type { MeasureFilterEntry } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import type { MeasureFilterItem } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measure-filters";
 import MeasureFilterBody from "./MeasureFilterBody";
 import MeasureFilterForm from "./MeasureFilterForm";
 import MeasureChip from "./Chip";

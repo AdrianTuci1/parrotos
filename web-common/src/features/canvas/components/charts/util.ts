@@ -1,5 +1,5 @@
-import { isFieldConfig } from "@rilldata/web-common/features/components/charts/util";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
+import { isFieldConfig } from "@statsparrot/web-common/features/components/charts/util";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
 import { type ChartType } from "../../../components/charts/types";
 import { type CanvasChartSpec } from "./";
 

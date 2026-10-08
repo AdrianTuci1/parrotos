@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 )
 
 type CheckFunc func(req *http.Request) error

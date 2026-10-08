@@ -1,4 +1,4 @@
-import { splitDimensionsAndMeasuresAsRowsAndColumns } from "@rilldata/web-common/features/dashboards/aggregation-request-utils.ts";
+import { splitDimensionsAndMeasuresAsRowsAndColumns } from "@statsparrot/web-common/features/dashboards/aggregation-request-utils.ts";
 import {
   ComparisonDeltaAbsoluteSuffix,
   ComparisonDeltaPreviousSuffix,
@@ -6,9 +6,9 @@ import {
   ComparisonPercentOfTotal,
   mapExprToMeasureFilter,
   measureHasSuffix,
-} from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { mergeFilters } from "@rilldata/web-common/features/dashboards/pivot/pivot-merge-filters";
+} from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-entry";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { mergeFilters } from "@statsparrot/web-common/features/dashboards/pivot/pivot-merge-filters";
 import {
   COMPARISON_DELTA,
   COMPARISON_PERCENT,
@@ -16,27 +16,27 @@ import {
   type PivotChipData,
   PivotChipType,
   type PivotState,
-} from "@rilldata/web-common/features/dashboards/pivot/types.ts";
+} from "@statsparrot/web-common/features/dashboards/pivot/types.ts";
 import {
   SortDirection,
   SortType,
-} from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import { getDashboardStateFromUrl } from "@rilldata/web-common/features/dashboards/proto-state/fromProto";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+} from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import { getDashboardStateFromUrl } from "@statsparrot/web-common/features/dashboards/proto-state/fromProto";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   createAndExpression,
   createSubQueryExpression,
   forEachIdentifier,
   getAllIdentifiers,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import type { TransformerArgs } from "@rilldata/web-common/features/explore-mappers/types";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import type { TransformerArgs } from "@statsparrot/web-common/features/explore-mappers/types";
 import {
   convertQueryFilterToToplistQuery,
   fillTimeRange,
-} from "@rilldata/web-common/features/explore-mappers/utils";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config.ts";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/features/explore-mappers/utils";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config.ts";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type V1ExploreSpec,
   type V1Expression,
@@ -45,7 +45,7 @@ import {
   type V1MetricsViewAggregationRequest,
   type V1MetricsViewSpec,
   V1TimeGrain,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryClient } from "@tanstack/svelte-query";
 import type { SortingState } from "tanstack-table-8-svelte-5";
 

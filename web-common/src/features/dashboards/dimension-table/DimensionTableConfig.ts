@@ -1,4 +1,4 @@
-import type { VirtualizedTableConfig } from "@rilldata/web-common/components/virtualized-table/types";
+import type { VirtualizedTableConfig } from "@statsparrot/web-common/components/virtualized-table/types";
 
 export type DimensionTableConfig = VirtualizedTableConfig & {
   comparisonColumnWidth: number;

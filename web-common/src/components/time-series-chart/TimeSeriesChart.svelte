@@ -2,12 +2,12 @@
   import {
     createAreaGenerator,
     createLineGenerator,
-  } from "@rilldata/web-common/components/data-graphic/utils";
+  } from "@statsparrot/web-common/components/data-graphic/utils";
   import type {
     ChartScales,
     ChartSeries,
-  } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/types";
-  import { clampToRange } from "@rilldata/web-common/features/dashboards/time-series/measure-chart/utils";
+  } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/types";
+  import { clampToRange } from "@statsparrot/web-common/features/dashboards/time-series/measure-chart/utils";
   import { bridgeGaps } from "./sparse-data-utils";
 
   const numAccessor = (d: number | null) => d;

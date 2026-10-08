@@ -1,11 +1,11 @@
 <script lang="ts">
-  import ParseErrorsSection from "@rilldata/web-common/features/resources/ParseErrorsSection.svelte";
+  import ParseErrorsSection from "@statsparrot/web-common/features/resources/ParseErrorsSection.svelte";
   import {
     ResourceKind,
     SingletonProjectParserName,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
-  import { createRuntimeServiceGetResource } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+  import { createRuntimeServiceGetResource } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
 

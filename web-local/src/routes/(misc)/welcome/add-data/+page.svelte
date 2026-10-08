@@ -1,12 +1,12 @@
 <script lang="ts">
-  import AddDataManager from "@rilldata/web-common/features/add-data/manager/AddDataManager.svelte";
-  import { AddDataStep } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { WelcomeStatus } from "@rilldata/web-common/features/welcome/status.ts";
+  import AddDataManager from "@statsparrot/web-common/features/add-data/manager/AddDataManager.svelte";
+  import { AddDataStep } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { WelcomeStatus } from "@statsparrot/web-common/features/welcome/status.ts";
   import {
     MetricsEventScreenName,
     MetricsEventSpace,
-  } from "@rilldata/web-common/metrics/service/MetricsTypes.ts";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes.ts";
+  } from "@statsparrot/web-common/metrics/service/MetricsTypes.ts";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes.ts";
 
   export let data;
 

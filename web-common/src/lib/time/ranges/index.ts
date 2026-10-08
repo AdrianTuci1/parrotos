@@ -5,13 +5,13 @@
  * - there's some legacy stuff that needs to get deprecated out of this.
  * - we need tests for this.
  */
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { getSmallestTimeGrain } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { getSmallestTimeGrain } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import {
   addZoneOffset,
   removeLocalTimezoneOffset,
-} from "@rilldata/web-common/lib/time/timezone";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client/gen/index.schemas";
+} from "@statsparrot/web-common/lib/time/timezone";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client/gen/index.schemas";
 import { DEFAULT_TIME_RANGES, TIME_GRAIN } from "../config";
 import {
   durationToMillis,

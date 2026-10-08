@@ -1,21 +1,21 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import BookmarksMenuItem from "@rilldata/web-admin/features/bookmarks/BookmarksMenuItem.svelte";
-  import type { BookmarkEntry } from "@rilldata/web-admin/features/bookmarks/utils.ts";
-  import { Button } from "@rilldata/web-common/components/button";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import BookmarksMenuItem from "@statsparrot/web-admin/features/bookmarks/BookmarksMenuItem.svelte";
+  import type { BookmarkEntry } from "@statsparrot/web-admin/features/bookmarks/utils.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-  } from "@rilldata/web-common/components/dropdown-menu";
-  import HomeBookmark from "@rilldata/web-common/components/icons/HomeBookmark.svelte";
-  import HomeBookmarkPlus from "@rilldata/web-common/components/icons/HomeBookmarkPlus.svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { clearExploreSessionStore } from "@rilldata/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  } from "@statsparrot/web-common/components/dropdown-menu";
+  import HomeBookmark from "@statsparrot/web-common/components/icons/HomeBookmark.svelte";
+  import HomeBookmarkPlus from "@statsparrot/web-common/components/icons/HomeBookmarkPlus.svelte";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { clearExploreSessionStore } from "@statsparrot/web-common/features/dashboards/state-managers/loaders/explore-web-view-store.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 
   export let organization: string;
   export let project: string;
@@ -28,7 +28,7 @@
 
   $: ({ name: resourceName, kind: resourceKind } = resource);
 
-  // fullHomeBookmarkUrl contains every param where as homeBookmarkUrl will have params that are equal to rill defaults removed.
+  // fullHomeBookmarkUrl contains every param where as homeBookmarkUrl will have params that are equal to statsparrot defaults removed.
   // EG: in explore if all dimensions are shown, fullHomeBookmarkUrl will have `dims=*` where as this will be skipped from homeBookmarkUrl
   $: fullHomeBookmarkUrl =
     homeBookmark?.fullUrl ?? defaultHomeBookmarkUrl ?? "";

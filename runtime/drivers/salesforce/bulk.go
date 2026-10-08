@@ -15,7 +15,7 @@ import (
 
 	force "github.com/ForceCLI/force/lib"
 	"github.com/ForceCLI/force/lib/record_reader"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 )
 

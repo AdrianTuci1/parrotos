@@ -10,14 +10,14 @@ export const clickhouseSchema: MultiStepFormSchema = {
   "x-button-labels": {
     deployment_type: {
       playground: { idle: "Connect", loading: "Connecting..." },
-      "rill-managed": { idle: "Connect", loading: "Connecting..." },
+      "statsparrot-managed": { idle: "Connect", loading: "Connecting..." },
     },
   },
   properties: {
     deployment_type: {
       type: "string",
       title: "Connection type",
-      enum: ["cloud", "playground", "self-managed"], // removed rill-managed until SQL support is ready
+      enum: ["cloud", "playground", "self-managed"], // removed statsparrot-managed until SQL support is ready
       default: "cloud",
       "x-display": "select",
       "x-select-style": "rich",
@@ -36,7 +36,7 @@ export const clickhouseSchema: MultiStepFormSchema = {
         cloud: ["connection_mode"],
         playground: ["playground_info"],
         "self-managed": ["connection_mode"],
-        "rill-managed": ["managed"],
+        "statsparrot-managed": ["managed"],
       },
       "x-step": "connector",
     },
@@ -82,11 +82,11 @@ export const clickhouseSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Managed",
       description:
-        "This option uses ClickHouse as an OLAP engine with Rill-managed infrastructure. No additional configuration is required - Rill will handle the setup and management of your ClickHouse instance.",
+        "This option uses ClickHouse as an OLAP engine with Parrot-managed infrastructure. No additional configuration is required - Parrot will handle the setup and management of your ClickHouse instance.",
       default: true,
       "x-informational": true,
       "x-visible-if": {
-        deployment_type: "rill-managed",
+        deployment_type: "statsparrot-managed",
       },
       "x-step": "connector",
     },
@@ -94,7 +94,7 @@ export const clickhouseSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Playground",
       description:
-        'Connect to ClickHouse\'s free public <a href="https://play.clickhouse.com/play?user=play" target="_blank" class="text-primary-600 hover:underline">playground instance</a>. This is a read-only demo environment with sample datasets, perfect for testing Rill\'s ClickHouse integration without any setup. No credentials required.',
+        'Connect to ClickHouse\'s free public <a href="https://play.clickhouse.com/play?user=play" target="_blank" class="text-primary-600 hover:underline">playground instance</a>. This is a read-only demo environment with sample datasets, perfect for testing Parrot\'s ClickHouse integration without any setup. No credentials required.',
       default: true,
       "x-informational": true,
       "x-ui-only": true,
@@ -187,7 +187,7 @@ export const clickhouseSchema: MultiStepFormSchema = {
       type: "boolean",
       title: "Enable write mode",
       description:
-        "Read-write mode allows Rill to drop, create, and modify tables, not just query them",
+        "Read-write mode allows Parrot to drop, create, and modify tables, not just query them",
       default: false,
       "x-display": "toggle",
       "x-yaml-value": "readwrite",
@@ -290,7 +290,7 @@ export const clickhouseSchema: MultiStepFormSchema = {
   required: ["deployment_type"],
   allOf: [
     {
-      if: { properties: { deployment_type: { const: "rill-managed" } } },
+      if: { properties: { deployment_type: { const: "statsparrot-managed" } } },
       then: {
         required: ["managed"],
         properties: {

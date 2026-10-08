@@ -1,6 +1,6 @@
 <script lang="ts">
   import { AlertCircleIcon } from "lucide-svelte";
-  import ExplainAndFixErrorButton from "@rilldata/web-common/features/chat/ExplainAndFixErrorButton.svelte";
+  import ExplainAndFixErrorButton from "@statsparrot/web-common/features/chat/ExplainAndFixErrorButton.svelte";
 
   export let message: string;
   export let details: string | undefined = undefined;

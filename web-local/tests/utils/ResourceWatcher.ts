@@ -1,8 +1,8 @@
-import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
+import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
 import type { Page } from "playwright";
 import { updateCodeEditor } from "web-local/tests/utils/commonHelpers";
 
-const ResourceWatcherLogRegex = /^\[(.*)] rill\.runtime\.v1\.(.*)\/(.*)$/;
+const ResourceWatcherLogRegex = /^\[(.*)] statsparrot\.runtime\.v1\.(.*)\/(.*)$/;
 
 export class ResourceWatcher {
   private statuses = new Map<string, string>();
@@ -30,10 +30,10 @@ export class ResourceWatcher {
     code: string,
     name = "AdBids_model_metrics_explore",
   ) {
-    this.statuses.delete(`rill.runtime.v1.Explore__${name}`);
+    this.statuses.delete(`statsparrot.runtime.v1.Explore__${name}`);
     return Promise.all([
       updateCodeEditor(this.page, code),
-      this.waitForResource("rill.runtime.v1.Explore", name),
+      this.waitForResource("statsparrot.runtime.v1.Explore", name),
     ]);
   }
 
@@ -41,10 +41,10 @@ export class ResourceWatcher {
     code: string,
     name = "AdBids_model_metrics",
   ) {
-    this.statuses.delete(`rill.runtime.v1.MetricsView__${name}`);
+    this.statuses.delete(`statsparrot.runtime.v1.MetricsView__${name}`);
     return Promise.all([
       updateCodeEditor(this.page, code),
-      this.waitForResource("rill.runtime.v1.MetricsView", name),
+      this.waitForResource("statsparrot.runtime.v1.MetricsView", name),
     ]);
   }
 }

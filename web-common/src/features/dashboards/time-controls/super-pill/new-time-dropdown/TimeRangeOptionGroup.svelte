@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { RillTime } from "../../../url-state/time-ranges/RillTime";
+  import type { ParrotTime } from "../../../url-state/time-ranges/ParrotTime";
   import TimeRangeMenuItem from "../components/TimeRangeMenuItem.svelte";
 
   export let filter = "";
-  export let options: RillTime[];
+  export let options: ParrotTime[];
   export let timeString: string | undefined = undefined;
   export let hideDivider = false;
 
@@ -23,7 +23,7 @@
       <div class="h-px w-full bg-border my-1"></div>
     {/if}
     {#each filtered as option, i (i)}
-      <TimeRangeMenuItem rillTime={option} {timeString} {onClick} />
+      <TimeRangeMenuItem statsparrotTime={option} {timeString} {onClick} />
     {/each}
 
     {#if !hideDivider}

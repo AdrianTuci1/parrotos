@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Label as LabelPrimitive } from "bits-ui";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
 
   type $$Props = LabelPrimitive.RootProps;
 

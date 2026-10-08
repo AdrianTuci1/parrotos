@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import EmbeddedBillingPage from "@rilldata/web-admin/features/billing/EmbeddedBillingPage.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import EmbeddedBillingPage from "@statsparrot/web-admin/features/billing/EmbeddedBillingPage.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { data }: { data: PageData } = $props();
 </script>

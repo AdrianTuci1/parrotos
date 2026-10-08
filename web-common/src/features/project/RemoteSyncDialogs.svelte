@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { ConnectError } from "@connectrpc/connect";
-  import MergeConflictResolutionDialog from "@rilldata/web-common/features/project/MergeConflictResolutionDialog.svelte";
-  import ProjectContainsRemoteChangesDialog from "@rilldata/web-common/features/project/ProjectContainsRemoteChangesDialog.svelte";
-  import { debounce } from "@rilldata/web-common/lib/create-debouncer";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  import MergeConflictResolutionDialog from "@statsparrot/web-common/features/project/MergeConflictResolutionDialog.svelte";
+  import ProjectContainsRemoteChangesDialog from "@statsparrot/web-common/features/project/ProjectContainsRemoteChangesDialog.svelte";
+  import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
   import {
     createRuntimeServiceGitPullMutation,
     createRuntimeServiceGitPushMutation,
     getRuntimeServiceGitStatusQueryKey,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onDestroy } from "svelte";
   import type { Readable } from "svelte/store";
 

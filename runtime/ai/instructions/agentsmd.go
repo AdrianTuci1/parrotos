@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"gopkg.in/yaml.v3"
 )
 
-// InitAgentsMD generates tool-agnostic AGENTS.md instruction files from Rill instruction files.
+// InitAgentsMD generates tool-agnostic AGENTS.md instruction files from Parrot instruction files.
 // The entry point is written to /AGENTS.md.
 // All other instructions (including development.md) are written as skills to /.agents/skills/<name>/SKILL.md.
 // MCP server config is written to /.mcp.json.
@@ -52,7 +52,7 @@ func InitAgentsMD(ctx context.Context, repo drivers.RepoStore, force bool) error
 	return nil
 }
 
-// convertToAgentsMDFile transforms a Rill instruction to AGENTS.md format.
+// convertToAgentsMDFile transforms a Parrot instruction to AGENTS.md format.
 // AGENTS.md becomes the main /AGENTS.md file.
 // Other files become skills at /.agents/skills/<name>/SKILL.md.
 func convertToAgentsMDFile(path string, inst *Instruction) (outputPath, content string) {
@@ -62,7 +62,7 @@ func convertToAgentsMDFile(path string, inst *Instruction) (outputPath, content 
 	}
 
 	// Other files become skills
-	name := fmt.Sprintf("rill-%s", strings.ReplaceAll(inst.Name, "_", "-"))
+	name := fmt.Sprintf("statsparrot-%s", strings.ReplaceAll(inst.Name, "_", "-"))
 	outputPath = "/.agents/skills/" + name + "/SKILL.md"
 
 	// Serialize front matter to YAML

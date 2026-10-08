@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Back from "@rilldata/web-common/components/icons/Back.svelte";
-  import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
+  import Back from "@statsparrot/web-common/components/icons/Back.svelte";
+  import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
   import { Button } from "../../../components/button";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 </script>
 
 <a class="flex items-center" href="?{ExploreStateURLParams.WebView}=explore">

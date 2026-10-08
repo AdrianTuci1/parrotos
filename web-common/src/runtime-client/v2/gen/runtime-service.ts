@@ -71,7 +71,7 @@ import {
   SkipModelPartitionsResponse,
   UnpackEmptyRequest,
   UnpackExampleRequest,
-} from "../../../proto/gen/rill/runtime/v1/api_pb";
+} from "../../../proto/gen/statsparrot/runtime/v1/api_pb";
 import type {
   V1AnalyzeConnectorsResponse,
   V1AnalyzeVariablesResponse,

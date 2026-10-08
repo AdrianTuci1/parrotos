@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import type { Readable } from "svelte/store";
 import { readable } from "svelte/store";
-import type { TimeAndFilterStore } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { MetricsViewSelectors } from "@rilldata/web-common/features/metrics-views/metrics-view-selectors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import type { CanvasChartSpec } from "@rilldata/web-common/features/canvas/components/charts";
-import type { Theme } from "@rilldata/web-common/features/themes/theme";
+import type { TimeAndFilterStore } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { MetricsViewSelectors } from "@statsparrot/web-common/features/metrics-views/metrics-view-selectors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import type { CanvasChartSpec } from "@statsparrot/web-common/features/canvas/components/charts";
+import type { Theme } from "@statsparrot/web-common/features/themes/theme";
 import { CHART_CONFIG } from "../config";
 import { getChartData } from "../data-provider";
 import type {
@@ -16,10 +16,10 @@ import type {
 } from "../types";
 import Chart from "./Chart";
 import { useReadable } from "./useReadable";
-import FilterChipsReadOnly from "@rilldata/web-common/features/dashboards/filters/react/FilterChipsReadOnly";
+import FilterChipsReadOnly from "@statsparrot/web-common/features/dashboards/filters/react/FilterChipsReadOnly";
 
 export interface ChartContainerProps {
-  /** Runtime client forwarded to Chart/RillChart (Svelte context is unavailable in React). */
+  /** Runtime client forwarded to Chart/ParrotChart (Svelte context is unavailable in React). */
   runtimeClient: RuntimeClient;
   chartType: ChartType;
   spec: Readable<ChartSpec>;

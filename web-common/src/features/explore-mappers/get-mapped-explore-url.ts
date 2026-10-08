@@ -1,15 +1,15 @@
 import { page } from "$app/stores";
-import { useMetricsViewTimeRange } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
+import { useMetricsViewTimeRange } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
 import {
   type MapQueryRequest,
   type MapQueryStateOptions,
   mapQueryToDashboard,
-} from "@rilldata/web-common/features/explore-mappers/map-to-explore.ts";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/explore-mappers/map-to-explore.ts";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import { derived, readable } from "svelte/store";
 
 export type MapExploreUrlContext = {

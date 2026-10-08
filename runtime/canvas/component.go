@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/pathutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pathutil"
 )
 
 // ValidateRendererProperties validates the renderer properties for a component.
@@ -484,7 +484,7 @@ func validateOptionalMeasureField(mv *runtimev1.MetricsViewSpec, mvName string, 
 
 // validateOptionalColorDimensionField handles the special case where "color" can be:
 //   - a plain string (e.g. "primary", "stage"): skip validation
-//   - a map with type "value" (e.g. {field: "rill_measures", type: "value"}): skip validation; this is a virtual field for multi-measure mode
+//   - a map with type "value" (e.g. {field: "statsparrot_measures", type: "value"}): skip validation; this is a virtual field for multi-measure mode
 //   - a map with a "field" key: validate color.field as a dimension
 //
 // This pattern is used by cartesian charts, scatter plots, and combo charts.
@@ -497,7 +497,7 @@ func validateOptionalColorDimensionField(mv *runtimev1.MetricsViewSpec, mvName s
 	if _, isString := raw.(string); isString {
 		return nil
 	}
-	// If color has type "value", it's a virtual field (e.g. rill_measures or measures for multi-measure mode); skip validation
+	// If color has type "value", it's a virtual field (e.g. statsparrot_measures or measures for multi-measure mode); skip validation
 	if colorType, ok := pathutil.GetPathString(props, "color.type"); ok && colorType == "value" {
 		return nil
 	}
@@ -572,7 +572,7 @@ func metricsViewHasDimension(mv *runtimev1.MetricsViewSpec, fieldName string) bo
 }
 
 // isEncodedTimeDimension reports whether fieldName is an encoded time-grain dimension of the
-// form "{timeDimension}_rill_{GRAIN}" (e.g. "ts_rill_TIME_GRAIN_MONTH"). The canvas pivot and
+// form "{timeDimension}_statsparrot_{GRAIN}" (e.g. "ts_statsparrot_TIME_GRAIN_MONTH"). The canvas pivot and
 // table frontends encode a time dimension at a chosen grain this way; it is decoded back into
 // a proper aggregation dimension at query time on the client.
 //
@@ -584,7 +584,7 @@ func isEncodedTimeDimension(mv *runtimev1.MetricsViewSpec, fieldName string) boo
 	if mv.TimeDimension == "" {
 		return false
 	}
-	grain, ok := strings.CutPrefix(fieldName, mv.TimeDimension+"_rill_")
+	grain, ok := strings.CutPrefix(fieldName, mv.TimeDimension+"_statsparrot_")
 	if !ok {
 		return false
 	}

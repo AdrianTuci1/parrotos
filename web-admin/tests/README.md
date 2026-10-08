@@ -8,8 +8,8 @@ Our Playwright test suite encompasses three main projects – `setup`, `e2e`, an
 
 Playwright recommends that global setup takes place in a dedicated Playwright "project" ([docs](https://playwright.dev/docs/test-global-setup-teardown#option-1-project-dependencies)). This project:
 
-1. Starts a fresh instance of Rill Cloud
-2. Logs-in via the e2e-admin@rilldata.com user (which has been pre-populated in our Auth0 staging database)
+1. Starts a fresh instance of Parrot Cloud
+2. Logs-in via the e2e-admin@staticlabs.com user (which has been pre-populated in our Auth0 staging database)
 3. Creates an organization named `e2e`
 4. Deploys the OpenRTB and AdBids projects
 5. Waits for data ingestion and asserts when the primary dashboard is ready-to-go
@@ -79,4 +79,4 @@ When developing and debugging tests, follow this workflow to avoid repeatedly ru
    ```bash
    npm run test:teardown
    ```
-   > **Important:** Always run teardown before using `rill devtool start cloud` to prevent port conflicts.
+   > **Important:** Always run teardown before using `statsparrot devtool start cloud` to prevent port conflicts.

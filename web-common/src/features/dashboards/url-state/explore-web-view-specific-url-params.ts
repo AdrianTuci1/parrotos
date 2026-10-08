@@ -1,5 +1,5 @@
-import { ExploreUrlWebView } from "@rilldata/web-common/features/dashboards/url-state/mappers";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
+import { ExploreUrlWebView } from "@statsparrot/web-common/features/dashboards/url-state/mappers";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
 
 export const ExploreWebViewSpecificURLParams: Record<
   ExploreUrlWebView,

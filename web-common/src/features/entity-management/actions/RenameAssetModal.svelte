@@ -5,16 +5,16 @@
   import {
     getFileHref,
     navigateToFile,
-  } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
-  import * as Dialog from "@rilldata/web-common/components/dialog";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import SubmissionError from "@rilldata/web-common/components/forms/SubmissionError.svelte";
-  import { splitFolderAndFileName } from "@rilldata/web-common/features/entity-management/file-path-utils.ts";
+  } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
+  import * as Dialog from "@statsparrot/web-common/components/dialog";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import SubmissionError from "@statsparrot/web-common/components/forms/SubmissionError.svelte";
+  import { splitFolderAndFileName } from "@statsparrot/web-common/features/entity-management/file-path-utils.ts";
   import {
     useDirectoryNamesInDirectory,
     useFileNamesInDirectory,
-  } from "@rilldata/web-common/features/entity-management/file-selectors.ts";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors.ts";
+  } from "@statsparrot/web-common/features/entity-management/file-selectors.ts";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors.ts";
   import { defaults, setError, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
@@ -29,7 +29,7 @@
   import {
     isPinned,
     isManaged,
-  } from "@rilldata/web-common/features/entity-management/actions/protected-files.ts";
+  } from "@statsparrot/web-common/features/entity-management/actions/protected-files.ts";
 
   export let closeModal: () => void;
   export let filePath: string;

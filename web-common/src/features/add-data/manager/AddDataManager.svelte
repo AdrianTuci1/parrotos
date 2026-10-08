@@ -1,8 +1,8 @@
 <script lang="ts">
-  import SourceSelector from "@rilldata/web-common/features/add-data/manager/SourceSelector.svelte";
-  import SourceForm from "@rilldata/web-common/features/add-data/form/SourceForm.svelte";
-  import ImportTableForm from "@rilldata/web-common/features/add-data/form/ImportTableForm.svelte";
-  import GenerateDashboardStatus from "@rilldata/web-common/features/add-data/manager/GenerateDashboardStatus.svelte";
+  import SourceSelector from "@statsparrot/web-common/features/add-data/manager/SourceSelector.svelte";
+  import SourceForm from "@statsparrot/web-common/features/add-data/form/SourceForm.svelte";
+  import ImportTableForm from "@statsparrot/web-common/features/add-data/form/ImportTableForm.svelte";
+  import GenerateDashboardStatus from "@statsparrot/web-common/features/add-data/manager/GenerateDashboardStatus.svelte";
   import {
     type AddDataConfig,
     AddDataStep,
@@ -10,23 +10,23 @@
     ImportDataStep,
     type AddDataStepWithSchema,
     type AddDataStepWithConnector,
-  } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import ConnectorHeader from "@rilldata/web-common/features/add-data/manager/ConnectorHeader.svelte";
-  import ImportDataStatus from "@rilldata/web-common/features/add-data/manager/ImportDataStatus.svelte";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import ConnectorHeader from "@statsparrot/web-common/features/add-data/manager/ConnectorHeader.svelte";
+  import ImportDataStatus from "@statsparrot/web-common/features/add-data/manager/ImportDataStatus.svelte";
   import {
     AddDataStateManager,
     TransitionEventType,
-  } from "@rilldata/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
+  } from "@statsparrot/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
   import {
     getConnectorDriverForConnector,
     getConnectorDriverForSchema,
-  } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-  import type { V1ConnectorDriver } from "@rilldata/web-common/runtime-client";
-  import { getAddDataClass } from "@rilldata/web-common/features/add-data/class-utils.ts";
-  import { inferSchemaForConnector } from "@rilldata/web-common/features/entity-management/add/selectors.ts";
-  import ConnectorForm from "@rilldata/web-common/features/add-data/form/ConnectorForm.svelte";
-  import EnvStoreReady from "@rilldata/web-common/features/env-management/EnvStoreReady.svelte";
+  } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+  import type { V1ConnectorDriver } from "@statsparrot/web-common/runtime-client";
+  import { getAddDataClass } from "@statsparrot/web-common/features/add-data/class-utils.ts";
+  import { inferSchemaForConnector } from "@statsparrot/web-common/features/entity-management/add/selectors.ts";
+  import ConnectorForm from "@statsparrot/web-common/features/add-data/form/ConnectorForm.svelte";
+  import EnvStoreReady from "@statsparrot/web-common/features/env-management/EnvStoreReady.svelte";
 
   const {
     config,

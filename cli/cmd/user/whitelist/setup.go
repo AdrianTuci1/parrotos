@@ -1,8 +1,8 @@
 package whitelist
 
 import (
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -24,9 +24,9 @@ func SetupCmd(ch *cmdutil.Helper) *cobra.Command {
 
 			if ch.Interactive {
 				if project != "" {
-					ch.PrintfWarn("If you confirm, new and existing users with email addresses ending in %q will automatically be added to project %q of %q with role %q.\n\nTo whitelist another email domain than your own, reach out to support: https://docs.rilldata.com/contact#contacting-support\n", domain, project, ch.Org, role)
+					ch.PrintfWarn("If you confirm, new and existing users with email addresses ending in %q will automatically be added to project %q of %q with role %q.\n\nTo whitelist another email domain than your own, reach out to support: https://docs.statsparrot.com/contact#contacting-support\n", domain, project, ch.Org, role)
 				} else {
-					ch.PrintfWarn("If you confirm, new and existing users with email addresses ending in %q will automatically be added to organization %q with role %q.\n\nTo whitelist another email domain than your own, reach out to support: https://docs.rilldata.com/contact#contacting-support\n", domain, ch.Org, role)
+					ch.PrintfWarn("If you confirm, new and existing users with email addresses ending in %q will automatically be added to organization %q with role %q.\n\nTo whitelist another email domain than your own, reach out to support: https://docs.statsparrot.com/contact#contacting-support\n", domain, ch.Org, role)
 				}
 
 				if err := cmdutil.ConfirmPrompt("Do you confirm?", false); err != nil {
@@ -44,7 +44,7 @@ func SetupCmd(ch *cmdutil.Helper) *cobra.Command {
 				if err != nil {
 					return err
 				}
-				ch.PrintfSuccess("Whitelisted %q for project %q of organization %q (to remove it, use `rill user whitelist remove`).\n", domain, project, ch.Org)
+				ch.PrintfSuccess("Whitelisted %q for project %q of organization %q (to remove it, use `statsparrot user whitelist remove`).\n", domain, project, ch.Org)
 			} else {
 				_, err = client.CreateWhitelistedDomain(cmd.Context(), &adminv1.CreateWhitelistedDomainRequest{
 					Org:    ch.Org,
@@ -54,7 +54,7 @@ func SetupCmd(ch *cmdutil.Helper) *cobra.Command {
 				if err != nil {
 					return err
 				}
-				ch.PrintfSuccess("Whitelisted %q for organization %q (to remove it, use `rill user whitelist remove`).\n", domain, ch.Org)
+				ch.PrintfSuccess("Whitelisted %q for organization %q (to remove it, use `statsparrot user whitelist remove`).\n", domain, ch.Org)
 			}
 
 			return nil

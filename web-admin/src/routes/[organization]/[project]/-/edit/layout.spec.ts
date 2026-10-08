@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { isRedirect } from "@sveltejs/kit";
-import { CreateProjectBranchName } from "@rilldata/web-admin/features/projects/publish-project";
+import { CreateProjectBranchName } from "@statsparrot/web-admin/features/projects/publish-project";
 import { load } from "./+layout";
 
 const { isProjectWelcomeStepMock } = vi.hoisted(() => ({
@@ -8,13 +8,13 @@ const { isProjectWelcomeStepMock } = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  "@rilldata/web-admin/features/welcome/project/welcome-status.ts",
+  "@statsparrot/web-admin/features/welcome/project/welcome-status.ts",
   () => ({
     projectWelcomeStatus: { isProjectWelcomeStep: isProjectWelcomeStepMock },
   }),
 );
 
-const ORG = "rilldata";
+const ORG = "staticlabs";
 const PROJECT = "openrtb";
 
 async function callLoad(routeId: string): Promise<unknown> {

@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button/index.ts";
-  import AlertDialogGuardedConfirmation from "@rilldata/web-common/components/alert-dialog/alert-dialog-guarded-confirmation.svelte";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { Button } from "@statsparrot/web-common/components/button/index.ts";
+  import AlertDialogGuardedConfirmation from "@statsparrot/web-common/components/alert-dialog/alert-dialog-guarded-confirmation.svelte";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
   import {
     createAdminServiceDeleteProject,
     getAdminServiceGetProjectQueryKey,
     getAdminServiceListProjectsForOrganizationQueryKey,
-  } from "@rilldata/web-admin/client/index.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
+  } from "@statsparrot/web-admin/client/index.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
   import { goto } from "$app/navigation";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     organization,

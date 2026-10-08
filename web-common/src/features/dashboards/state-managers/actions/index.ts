@@ -1,5 +1,5 @@
-import { filterActions } from "@rilldata/web-common/features/dashboards/state-managers/actions/filters";
-import { measureFilterActions } from "@rilldata/web-common/features/dashboards/state-managers/actions/measure-filters";
+import { filterActions } from "@statsparrot/web-common/features/dashboards/state-managers/actions/filters";
+import { measureFilterActions } from "@statsparrot/web-common/features/dashboards/state-managers/actions/measure-filters";
 import type { ExploreState } from "web-common/src/features/dashboards/stores/explore-state";
 import { comparisonActions } from "./comparison";
 import { contextColActions } from "./context-columns";

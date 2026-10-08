@@ -1,5 +1,5 @@
-import type { CanvasEntity } from "@rilldata/web-common/features/canvas/stores/canvas-entity";
-import type { V1Expression } from "@rilldata/web-common/runtime-client";
+import type { CanvasEntity } from "@statsparrot/web-common/features/canvas/stores/canvas-entity";
+import type { V1Expression } from "@statsparrot/web-common/runtime-client";
 import { get } from "svelte/store";
 
 /**

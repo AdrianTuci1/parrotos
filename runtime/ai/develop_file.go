@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai/instructions"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai/instructions"
 )
 
 const DevelopFileName = "develop_file"
@@ -23,7 +23,7 @@ var _ Tool[*DevelopFileArgs, *DevelopFileResult] = (*DevelopFile)(nil)
 
 type DevelopFileArgs struct {
 	Path   string `json:"path" jsonschema:"The path of a .yaml or .sql file to create, update or delete."`
-	Type   string `json:"type,omitempty" jsonschema:"Type of Rill file to develop (optional, but recommended if known). Options: rill.yaml, .env, connector, model, metrics_view, explore, canvas, theme, api, alert, report."`
+	Type   string `json:"type,omitempty" jsonschema:"Type of Parrot file to develop (optional, but recommended if known). Options: statsparrot.yaml, .env, connector, model, metrics_view, explore, canvas, theme, api, alert, report."`
 	Prompt string `json:"prompt" jsonschema:"A detailed description of how to develop the file. Include any relevant details assuming no prior context except the path's current content and status (if any)."`
 }
 
@@ -35,7 +35,7 @@ func (t *DevelopFile) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        DevelopFileName,
 		Title:       "Develop file",
-		Description: "Developer agent that creates, edits or deletes a single Rill project file based on a prompt. It has no prior context from the conversation, but has deep knowledge of Rill project development and best practices.",
+		Description: "Developer agent that creates, edits or deletes a single Parrot project file based on a prompt. It has no prior context from the conversation, but has deep knowledge of Parrot project development and best practices.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(true),
 			IdempotentHint:  false,
@@ -73,8 +73,8 @@ func (t *DevelopFile) Handler(ctx context.Context, args *DevelopFileArgs) (*Deve
 	switch args.Type {
 	case "", ".env", "api", "alert", "report":
 		// These types currently don't have additional resource-specific instructions
-	case "rill.yaml":
-		resourceInstructions, err = instructions.Load("resources/rillyaml.md", instructions.Options{})
+	case "statsparrot.yaml":
+		resourceInstructions, err = instructions.Load("resources/statsparrotyaml.md", instructions.Options{})
 		if err != nil {
 			return nil, fmt.Errorf("failed to load developer agent resource-specific system prompt: %w", err)
 		}
@@ -175,7 +175,7 @@ func (t *DevelopFile) userPrompt(ctx context.Context, args *DevelopFileArgs) (st
 
 	// Generate the user prompt
 	return executeTemplate(`
-You should develop a Rill project file based on the following task description:
+You should develop a Parrot project file based on the following task description:
 - Develop file at path: {{ .path }}
 {{ if .type }}- The file should be of type: {{ .type }}{{ end }}
 - Task description: {{ .prompt }}

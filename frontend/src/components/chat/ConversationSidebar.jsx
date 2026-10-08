@@ -3,9 +3,9 @@ import { Plus, PanelLeftClose, PanelLeftOpen, MessageSquare } from "lucide-react
 import { cn } from "@/lib/utils";
 
 /**
- * Rill `/ai` conversation rail. Lists the project's chat sessions, lets you start a
+ * Parrot `/ai` conversation rail. Lists the project's chat sessions, lets you start a
  * new conversation, and highlights the active one. Collapsible (280px ↔ 56px) like
- * Rill's `ConversationSidebar`.
+ * Parrot's `ConversationSidebar`.
  *
  * When `embedded` is set it renders inside the main project sidebar (in place of the
  * file tree on the AI menu): it fills the container, drops its own collapse toggle and

@@ -1,10 +1,10 @@
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getRuntimeServiceListConversationsQueryOptions,
   type V1ListConversationsResponse,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { createQuery, type CreateQueryResult } from "@tanstack/svelte-query";
 import { derived, get, type Readable } from "svelte/store";
 import { Conversation } from "./conversation";
@@ -15,7 +15,7 @@ import {
 } from "./conversation-selector";
 import type { ChatSurface } from "./types";
 import { invalidateConversationsList, NEW_CONVERSATION_ID } from "./utils";
-import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store.ts";
+import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store.ts";
 
 export type ConversationStateType = "url" | "browserStorage";
 
@@ -108,8 +108,8 @@ export class ConversationManager {
   > {
     return createQuery(
       getRuntimeServiceListConversationsQueryOptions(this.client, {
-        // Filter to only show Rill client conversations, excluding MCP conversations
-        userAgentPattern: "rill%",
+        // Filter to only show Parrot client conversations, excluding MCP conversations
+        userAgentPattern: "statsparrot%",
       }),
       queryClient,
     );

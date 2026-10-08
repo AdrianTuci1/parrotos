@@ -1,10 +1,10 @@
-import { getAvailableComparisonsForTimeRange } from "@rilldata/web-common/lib/time/comparisons";
+import { getAvailableComparisonsForTimeRange } from "@statsparrot/web-common/lib/time/comparisons";
 import {
   TimeComparisonOption,
   TimeRangePreset,
   type DashboardTimeControls,
-} from "@rilldata/web-common/lib/time/types";
-import { getComparisonInterval } from "@rilldata/web-common/lib/time/comparisons";
+} from "@statsparrot/web-common/lib/time/types";
+import { getComparisonInterval } from "@statsparrot/web-common/lib/time/comparisons";
 import { DateTime, Interval } from "luxon";
 
 export function getComparisonOptionsForCanvas(

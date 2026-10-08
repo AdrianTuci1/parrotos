@@ -1,5 +1,5 @@
-import { mergeDimensionAndMeasureFilters } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import type { DimensionThresholdFilter } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { mergeDimensionAndMeasureFilters } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import type { DimensionThresholdFilter } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   V1Operation,
   type MetricsViewSpecDimension,
@@ -7,7 +7,7 @@ import {
   type V1Condition,
   type V1Expression,
   type V1Subquery,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 export function createLikeExpression(
   ident: string,

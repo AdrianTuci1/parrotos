@@ -1,6 +1,6 @@
-import { getToolConfig } from "@rilldata/web-common/features/chat/core/messages/tools/tool-registry.ts";
-import { EventEmitter } from "@rilldata/web-common/lib/event-emitter.ts";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { getToolConfig } from "@statsparrot/web-common/features/chat/core/messages/tools/tool-registry.ts";
+import { EventEmitter } from "@statsparrot/web-common/lib/event-emitter.ts";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getRuntimeServiceGetConversationQueryKey,
   getRuntimeServiceGetConversationQueryOptions,
@@ -9,14 +9,14 @@ import {
   type V1CompleteStreamingResponse,
   type V1GetConversationResponse,
   type V1Message,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { ConnectError } from "@connectrpc/connect";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import {
   SSEHttpError,
   createSSEStream,
   type SSEStream,
-} from "@rilldata/web-common/runtime-client/sse";
+} from "@statsparrot/web-common/runtime-client/sse";
 import { createQuery, type CreateQueryResult } from "@tanstack/svelte-query";
 import {
   derived,

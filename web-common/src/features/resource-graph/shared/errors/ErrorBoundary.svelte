@@ -49,7 +49,7 @@
         }
 
         // Also try localStorage directly
-        const cacheKey = "rill.resourceGraph.v2";
+        const cacheKey = "statsparrot.resourceGraph.v2";
         localStorage.removeItem(cacheKey);
 
         // Reset error and reload

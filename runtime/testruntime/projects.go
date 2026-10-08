@@ -2,7 +2,7 @@ package testruntime
 
 import "fmt"
 
-// ProjectOpenRTB returns project files that resemble our public rill-openrtb-prog-ads example project.
+// ProjectOpenRTB returns project files that resemble our public statsparrot-openrtb-prog-ads example project.
 // Unlike the example project, it:
 // 1. uses local cached copies of the datasets for faster and more reliable tests.
 // 2. has been trimmed to the essential resources and properties.

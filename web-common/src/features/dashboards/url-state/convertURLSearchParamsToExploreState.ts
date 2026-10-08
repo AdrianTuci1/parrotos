@@ -1,11 +1,11 @@
-import { convertPresetToExploreState } from "@rilldata/web-common/features/dashboards/url-state/convertPresetToExploreState";
-import { convertURLToExplorePreset } from "@rilldata/web-common/features/dashboards/url-state/convertURLToExplorePreset";
+import { convertPresetToExploreState } from "@statsparrot/web-common/features/dashboards/url-state/convertPresetToExploreState";
+import { convertURLToExplorePreset } from "@statsparrot/web-common/features/dashboards/url-state/convertURLToExplorePreset";
 import type {
   V1ExplorePreset,
   V1ExploreSpec,
   V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params.ts";
+} from "@statsparrot/web-common/runtime-client";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params.ts";
 
 export function convertURLSearchParamsToExploreState(
   searchParams: URLSearchParams,

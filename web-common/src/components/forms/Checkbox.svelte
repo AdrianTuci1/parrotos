@@ -1,7 +1,7 @@
 <script lang="ts">
   import DOMPurify from "dompurify";
   import { Checkbox as CheckboxPrimitive } from "bits-ui";
-  import { cn } from "@rilldata/web-common/lib/shadcn";
+  import { cn } from "@statsparrot/web-common/lib/shadcn";
   import { Check } from "lucide-svelte";
   import InfoCircle from "../icons/InfoCircle.svelte";
   import Tooltip from "../tooltip/Tooltip.svelte";

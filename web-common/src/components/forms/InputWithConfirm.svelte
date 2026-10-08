@@ -1,8 +1,8 @@
 <script lang="ts">
   import { scale } from "svelte/transition";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Input from "@rilldata/web-common/components/forms/Input.svelte";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Input from "@statsparrot/web-common/components/forms/Input.svelte";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
   import { Pencil } from "lucide-svelte";
   import { cubicOut } from "svelte/easing";
 

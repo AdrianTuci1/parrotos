@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	parserpkg "github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/arrayutil"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	parserpkg "github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/arrayutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -115,7 +115,7 @@ func (r *ProjectParserReconciler) Reconcile(ctx context.Context, n *runtimev1.Re
 	}
 	defer release()
 	// Pull the latest changes
-	// on rill developer do not pull latest changes, all pulls should be user triggered
+	// on statsparrot developer do not pull latest changes, all pulls should be user triggered
 	err = repo.Pull(ctx, &drivers.PullOptions{UserTriggered: !r.C.Runtime.AllowHostAccess()})
 	if err != nil {
 		return runtime.ReconcileResult{Err: fmt.Errorf("failed to pull repo: %w", err)}
@@ -154,7 +154,7 @@ func (r *ProjectParserReconciler) Reconcile(ctx context.Context, n *runtimev1.Re
 	}
 
 	// Parse the project
-	// NOTE: Explicitly passing inst.OLAPConnector instead of inst.ResolveOLAPConnector() since the parser expects the base name to use if not overridden in rill.yaml.
+	// NOTE: Explicitly passing inst.OLAPConnector instead of inst.ResolveOLAPConnector() since the parser expects the base name to use if not overridden in statsparrot.yaml.
 	parser, err := parserpkg.Parse(ctx, repo, r.C.InstanceID, inst.Environment, inst.OLAPConnector, instCfg.StrictResolverProps)
 	if err != nil {
 		return runtime.ReconcileResult{Err: fmt.Errorf("failed to parse: %w", err)}
@@ -277,14 +277,14 @@ func (r *ProjectParserReconciler) reconcileParser(ctx context.Context, inst *dri
 
 	// Log parse errors
 	if diff == nil {
-		// This handles a very specific case - when opening the application on an uninitialized directory, we do not want to print an error for "rill.yaml not found".
-		// But if the user subsequently in the session, after initializing the project, breaks rill.yaml, then we DO want to log the error.
+		// This handles a very specific case - when opening the application on an uninitialized directory, we do not want to print an error for "statsparrot.yaml not found".
+		// But if the user subsequently in the session, after initializing the project, breaks statsparrot.yaml, then we DO want to log the error.
 		// So we rely on StateVersion == 1 on the first call to the reconciler.
 		// (The UpdateState calls above do not mutate `self`, which is a cloned object, so the starting StateVersion is preserved here. Also quite hacky.)
-		skipRillYAMLErr := inst.IgnoreInitialInvalidProjectError && self.Meta.StateVersion == 1
+		skipParrotYAMLErr := inst.IgnoreInitialInvalidProjectError && self.Meta.StateVersion == 1
 
 		for _, e := range parser.Errors {
-			if skipRillYAMLErr && e.FilePath == "/rill.yaml" {
+			if skipParrotYAMLErr && e.FilePath == "/statsparrot.yaml" {
 				continue
 			}
 			if e.Warning {
@@ -294,7 +294,7 @@ func (r *ProjectParserReconciler) reconcileParser(ctx context.Context, inst *dri
 			}
 		}
 	} else if diff.Skipped {
-		r.C.Logger.Warn("Not parsing changed paths due to missing or broken rill.yaml", observability.ZapCtx(ctx))
+		r.C.Logger.Warn("Not parsing changed paths due to missing or broken statsparrot.yaml", observability.ZapCtx(ctx))
 	} else {
 		for _, e := range parser.Errors {
 			if slices.Contains(changedPaths, e.FilePath) {
@@ -335,8 +335,8 @@ func (r *ProjectParserReconciler) reconcileParser(ctx context.Context, inst *dri
 		return parseErrsErr
 	}
 
-	// If RillYAML is missing, don't reconcile anything
-	if parser.RillYAML == nil {
+	// If ParrotYAML is missing, don't reconcile anything
+	if parser.ParrotYAML == nil {
 		return parseErrsErr
 	}
 
@@ -373,9 +373,9 @@ func (r *ProjectParserReconciler) reconcileParser(ctx context.Context, inst *dri
 	return parseErrsErr // Keep the parseErrsErr in this case
 }
 
-// reconcileProjectConfig updates instance config derived from rill.yaml and .env
+// reconcileProjectConfig updates instance config derived from statsparrot.yaml and .env
 func (r *ProjectParserReconciler) reconcileProjectConfig(ctx context.Context, parser *parserpkg.Parser, restartController bool) error {
-	return r.C.Runtime.UpdateInstanceWithRillYAML(ctx, r.C.InstanceID, parser, restartController)
+	return r.C.Runtime.UpdateInstanceWithParrotYAML(ctx, r.C.InstanceID, parser, restartController)
 }
 
 // reconcileResources creates, updates and deletes resources as necessary to match the parser's output with the current resources in the catalog.

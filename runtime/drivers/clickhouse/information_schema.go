@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/pagination"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/pagination"
 )
 
 func (c *Connection) ListDatabaseSchemas(ctx context.Context, pageSize uint32, pageToken string) ([]*drivers.DatabaseSchemaInfo, string, error) {
@@ -313,7 +313,7 @@ func (c *Connection) LoadPhysicalSize(ctx context.Context, tables []*drivers.Ola
 	}
 	defer func() { _ = release() }()
 
-	// On a cluster, data is sharded across replicas and Rill-created tables are Distributed tables whose data lives in `<name>_local`.
+	// On a cluster, data is sharded across replicas and Parrot-created tables are Distributed tables whose data lives in `<name>_local`.
 	// Use cluster() (one replica per shard) so SUM(bytes_on_disk) totals every shard without double-counting replicas,
 	// and look up the `_local` name alongside the original so Distributed tables resolve to their backing storage.
 	partsExpr := "system.parts"

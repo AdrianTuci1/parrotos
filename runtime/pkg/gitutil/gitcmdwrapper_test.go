@@ -242,7 +242,7 @@ func TestCommitAll(t *testing.T) {
 	t.Run("returns ErrEmptyCommit when there are no changes", func(t *testing.T) {
 		tempDir := setupTestRepository(t)
 
-		_, err := CommitAll(context.Background(), tempDir, "", "noop", Signature{Name: "Rill", Email: "noreply@rilldata.com"})
+		_, err := CommitAll(context.Background(), tempDir, "", "noop", Signature{Name: "Parrot", Email: "noreply@staticlabs.com"})
 		require.ErrorIs(t, err, ErrEmptyCommit)
 	})
 
@@ -258,7 +258,7 @@ func TestCommitAll(t *testing.T) {
 		// Introduce a change *outside* the pathspec.
 		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "outside.txt"), []byte("outside"), 0644))
 
-		_, err := CommitAll(context.Background(), tempDir, "sub", "noop", Signature{Name: "Rill", Email: "noreply@rilldata.com"})
+		_, err := CommitAll(context.Background(), tempDir, "sub", "noop", Signature{Name: "Parrot", Email: "noreply@staticlabs.com"})
 		require.ErrorIs(t, err, ErrEmptyCommit)
 
 		// The outside file must not have been committed.
@@ -274,7 +274,7 @@ func TestCommitAll(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "sub", "inside.txt"), []byte("inside"), 0644))
 		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "outside.txt"), []byte("outside"), 0644))
 
-		hash, err := CommitAll(context.Background(), tempDir, "sub", "scoped commit", Signature{Name: "Rill", Email: "noreply@rilldata.com"})
+		hash, err := CommitAll(context.Background(), tempDir, "sub", "scoped commit", Signature{Name: "Parrot", Email: "noreply@staticlabs.com"})
 		require.NoError(t, err)
 		require.NotEmpty(t, hash)
 
@@ -296,16 +296,16 @@ func TestCommitAll(t *testing.T) {
 
 		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "new.txt"), []byte("hello"), 0644))
 
-		_, err := CommitAll(context.Background(), tempDir, "", "msg", Signature{Name: "Rill Bot", Email: "bot@rilldata.com"})
+		_, err := CommitAll(context.Background(), tempDir, "", "msg", Signature{Name: "Parrot Bot", Email: "bot@staticlabs.com"})
 		require.NoError(t, err)
 
 		name, err := Run(context.Background(), tempDir, "log", "-1", "--format=%an")
 		require.NoError(t, err)
-		require.Equal(t, "Rill Bot", name)
+		require.Equal(t, "Parrot Bot", name)
 
 		email, err := Run(context.Background(), tempDir, "log", "-1", "--format=%ae")
 		require.NoError(t, err)
-		require.Equal(t, "bot@rilldata.com", email)
+		require.Equal(t, "bot@staticlabs.com", email)
 	})
 }
 
@@ -471,7 +471,7 @@ func setupGitConfig(t *testing.T, repoPath string) {
 	err := cmd.Run()
 	require.NoError(t, err, "failed to set user name in git config")
 
-	cmd = exec.Command("git", "-C", repoPath, "config", "user.email", "test@rilldata.com")
+	cmd = exec.Command("git", "-C", repoPath, "config", "user.email", "test@staticlabs.com")
 	err = cmd.Run()
 	require.NoError(t, err, "failed to set user email in git config")
 }

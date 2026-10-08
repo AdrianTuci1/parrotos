@@ -1,6 +1,6 @@
 import { get, writable } from "svelte/store";
 import { Row } from "./row";
-import type { V1CanvasRow } from "@rilldata/web-common/runtime-client";
+import type { V1CanvasRow } from "@statsparrot/web-common/runtime-client";
 import { COLUMN_COUNT } from "../layout-util";
 import type { CanvasEntity } from "./canvas-entity";
 

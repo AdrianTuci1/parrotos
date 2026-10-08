@@ -1,24 +1,24 @@
 <script lang="ts">
-  import CanvasInitialization from "@rilldata/web-common/features/canvas/CanvasInitialization.svelte";
-  import WorkspaceEditorContainer from "@rilldata/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
+  import CanvasInitialization from "@statsparrot/web-common/features/canvas/CanvasInitialization.svelte";
+  import WorkspaceEditorContainer from "@statsparrot/web-common/layout/workspace/WorkspaceEditorContainer.svelte";
   import {
     WorkspaceContainer,
     WorkspaceHeader,
-  } from "@rilldata/web-common/layout/workspace";
-  import ReconcileWarningPanel from "@rilldata/web-common/features/entity-management/ReconcileWarningPanel.svelte";
-  import VisualCanvasEditing from "@rilldata/web-common/features/canvas/inspector/VisualCanvasEditing.svelte";
-  import SaveDefaultsButton from "@rilldata/web-common/features/canvas/components/SaveDefaultsButton.svelte";
-  import CanvasLoadingState from "@rilldata/web-common/features/canvas/CanvasLoadingState.svelte";
-  import CanvasBuilder from "@rilldata/web-common/features/canvas/CanvasBuilder.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import type { FileArtifact } from "@rilldata/web-common/features/entity-management/file-artifact.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { getNameFromFile } from "@rilldata/web-common/features/entity-management/entity-mappers.ts";
-  import { createRootCauseErrorQuery } from "@rilldata/web-common/features/entity-management/error-utils.ts";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { getPersonalFilteredResourceByName } from "@rilldata/web-admin/features/personal-files/selectors.ts";
+  } from "@statsparrot/web-common/layout/workspace";
+  import ReconcileWarningPanel from "@statsparrot/web-common/features/entity-management/ReconcileWarningPanel.svelte";
+  import VisualCanvasEditing from "@statsparrot/web-common/features/canvas/inspector/VisualCanvasEditing.svelte";
+  import SaveDefaultsButton from "@statsparrot/web-common/features/canvas/components/SaveDefaultsButton.svelte";
+  import CanvasLoadingState from "@statsparrot/web-common/features/canvas/CanvasLoadingState.svelte";
+  import CanvasBuilder from "@statsparrot/web-common/features/canvas/CanvasBuilder.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import type { FileArtifact } from "@statsparrot/web-common/features/entity-management/file-artifact.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { getNameFromFile } from "@statsparrot/web-common/features/entity-management/entity-mappers.ts";
+  import { createRootCauseErrorQuery } from "@statsparrot/web-common/features/entity-management/error-utils.ts";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { getPersonalFilteredResourceByName } from "@statsparrot/web-admin/features/personal-files/selectors.ts";
   import { parseDocument } from "yaml";
-  import { Button } from "@rilldata/web-common/components/button/index.ts";
+  import { Button } from "@statsparrot/web-common/components/button/index.ts";
   import { Play, Trash } from "lucide-svelte";
 
   let {

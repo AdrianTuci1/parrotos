@@ -6,9 +6,9 @@
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-  } from "@rilldata/web-common/components/alert-dialog";
-  import { Button } from "@rilldata/web-common/components/button";
-  import AlertCircle from "@rilldata/web-common/components/icons/AlertCircle.svelte";
+  } from "@statsparrot/web-common/components/alert-dialog";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import AlertCircle from "@statsparrot/web-common/components/icons/AlertCircle.svelte";
   import { Dialog } from "./index";
 
   export let title: string;

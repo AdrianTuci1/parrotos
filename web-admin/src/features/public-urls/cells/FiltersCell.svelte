@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import type { V1Expression } from "@rilldata/web-admin/client";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import type { V1Expression } from "@statsparrot/web-admin/client";
 
   let {
     metricsViewFilters,

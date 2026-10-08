@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createRuntimeServiceListResources } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { createRuntimeServiceListResources } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
   import ResourceGraph from "../embedding/ResourceGraph.svelte";

@@ -3,8 +3,8 @@ package admin
 import (
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +35,7 @@ func PingCmd(ch *cmdutil.Helper) *cobra.Command {
 		},
 	}
 
-	pingCmd.Flags().StringVar(&adminURL, "url", "https://admin.rilldata.com", "Base URL for the admin API")
+	pingCmd.Flags().StringVar(&adminURL, "url", "https://admin.statsparrot.com", "Base URL for the admin API")
 
 	return pingCmd
 }

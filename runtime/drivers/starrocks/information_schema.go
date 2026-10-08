@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 )
 
 // StarRocks Uses fully qualified names (catalog.information_schema.tables) instead of SET CATALOG/USE
@@ -296,8 +296,8 @@ func (c *connection) All(ctx context.Context, like string, pageSize uint32, page
 		}
 
 		tables = append(tables, &drivers.OlapTable{
-			Database:       catalog, // StarRocks catalog -> Rill database
-			DatabaseSchema: schema,  // StarRocks database -> Rill databaseSchema
+			Database:       catalog, // StarRocks catalog -> Parrot database
+			DatabaseSchema: schema,  // StarRocks database -> Parrot databaseSchema
 			Name:           name,
 			View:           isView,
 		})

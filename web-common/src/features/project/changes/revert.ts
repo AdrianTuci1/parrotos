@@ -1,10 +1,10 @@
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getRuntimeServiceGitDiffQueryKey,
   getRuntimeServiceGitStatusQueryKey,
   runtimeServiceGitRevert,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 /**
  * revertFiles discards local changes for the given subpath-relative paths (empty paths reverts all

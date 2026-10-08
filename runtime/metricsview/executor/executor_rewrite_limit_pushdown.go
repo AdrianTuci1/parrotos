@@ -1,6 +1,6 @@
 package executor
 
-import "github.com/rilldata/rill/runtime/metricsview"
+import "github.com/staticlabs/statsparrot/runtime/metricsview"
 
 // rewriteLimitsIntoSubqueries rewrites the AST pushing limits and sorts into subqueries where possible.
 // It only pushes into sub-queries that make up the "spine" of the query result, i.e. where it does not impact correctness.

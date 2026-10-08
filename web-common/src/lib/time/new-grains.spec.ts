@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { DateTime, Interval } from "luxon";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { allowedGrainsForInterval } from "./new-grains";
 
 function createInterval(start: string, end: string): Interval<true> {

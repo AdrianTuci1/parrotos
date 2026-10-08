@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import WelcomeMessage from "../features/home/WelcomeMessage.svelte";
   import OrganizationRedirect from "../features/organizations/active-org/OrganizationRedirect.svelte";
   import type { PageData } from "./$types";

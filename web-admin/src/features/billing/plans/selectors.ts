@@ -9,12 +9,12 @@ import {
   type V1BillingIssue,
   V1BillingPlanType,
   type V1Subscription,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import {
   getDeploymentsForProjectsInOrg,
   isActiveDeployment,
   isProdDeployment,
-} from "@rilldata/web-admin/features/branches/deployment-utils";
+} from "@statsparrot/web-admin/features/branches/deployment-utils";
 import {
   isEnterprisePlan,
   isFreePlan,
@@ -23,16 +23,16 @@ import {
   isProPlan,
   isStarterPlan,
   isTeamPlan,
-} from "@rilldata/web-admin/features/billing/plans/utils";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+} from "@statsparrot/web-admin/features/billing/plans/utils";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 import type { Page } from "@sveltejs/kit";
 import type { CreateQueryResult } from "@tanstack/svelte-query";
 import { DateTime } from "luxon";
 import { derived, type Readable } from "svelte/store";
-import type { PlanTier } from "@rilldata/web-admin/features/billing/plans/types.ts";
-import type { CategorisedOrganizationBillingIssues } from "@rilldata/web-admin/features/billing/selectors.ts";
-import { SELF_SERVE_PLANS_BY_NAME } from "@rilldata/web-admin/features/billing/plans/plan-details.ts";
+import type { PlanTier } from "@statsparrot/web-admin/features/billing/plans/types.ts";
+import type { CategorisedOrganizationBillingIssues } from "@statsparrot/web-admin/features/billing/selectors.ts";
+import { SELF_SERVE_PLANS_BY_NAME } from "@statsparrot/web-admin/features/billing/plans/plan-details.ts";
 
 export async function maybeFetchPublicPlanByName(planName: string) {
   const staticPlan = SELF_SERVE_PLANS_BY_NAME[planName];

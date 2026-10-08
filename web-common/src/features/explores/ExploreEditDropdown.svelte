@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import ExploreIcon from "@rilldata/web-common/components/icons/ExploreIcon.svelte";
-  import MetricsViewIcon from "@rilldata/web-common/components/icons/MetricsViewIcon.svelte";
-  import { useExplore } from "@rilldata/web-common/features/explores/selectors";
-  import { getFileHref } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import ExploreIcon from "@statsparrot/web-common/components/icons/ExploreIcon.svelte";
+  import MetricsViewIcon from "@statsparrot/web-common/components/icons/MetricsViewIcon.svelte";
+  import { useExplore } from "@statsparrot/web-common/features/explores/selectors";
+  import { getFileHref } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   let { exploreName }: { exploreName: string } = $props();
 

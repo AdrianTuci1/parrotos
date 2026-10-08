@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { generateSampleData } from "@rilldata/web-common/features/sample-data/generate-sample-data.ts";
+  import { generateSampleData } from "@statsparrot/web-common/features/sample-data/generate-sample-data.ts";
   import { SparklesIcon, ArrowUpIcon } from "lucide-svelte";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";
   import { object, string } from "yup";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { Button } from "@rilldata/web-common/components/button";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { Button } from "@statsparrot/web-common/components/button";
 
   export let open = false;
   export let onGenerate: () => void;

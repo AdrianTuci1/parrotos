@@ -49,7 +49,7 @@ func (f *intervalFormatter) StringFormat(x any) (string, error) {
 // - show two digits of precision
 // - prefer to show two integer digits in a smaller unit
 // - if that is not possible, show a floating point number in a larger unit with one digit of precision (e.g. 1.2 days)
-// see https://www.notion.so/rilldata/Support-display-of-intervals-and-formatting-of-intervals-e-g-25-days-in-dashboardsal-data-t-8720522eded648f58f35421ebc28ee2f
+// see https://www.notion.so/staticlabs/Support-display-of-intervals-and-formatting-of-intervals-e-g-25-days-in-dashboardsal-data-t-8720522eded648f58f35421ebc28ee2f
 func formatMsInterval(ms float64) string {
 	var neg string
 	if ms < 0 {

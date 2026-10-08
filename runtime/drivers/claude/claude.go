@@ -9,10 +9,10 @@ import (
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/anthropics/anthropic-sdk-go/option"
 	"github.com/mitchellh/mapstructure"
-	aiv1 "github.com/rilldata/rill/proto/gen/rill/ai/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	aiv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/ai/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -27,7 +27,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "Claude",
 	Description: "Connect to Anthropic's Claude API for language models.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/services/claude",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/services/claude",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "api_key",
@@ -312,7 +312,7 @@ func (h *handle) Complete(ctx context.Context, opts *drivers.CompleteOptions) (*
 	}, nil
 }
 
-// convertMessages converts Rill messages to Claude beta message format.
+// convertMessages converts Parrot messages to Claude beta message format.
 // It returns system blocks separately because Claude's API treats them differently.
 func convertMessages(msgs []*aiv1.CompletionMessage) ([]anthropic.BetaTextBlockParam, []anthropic.BetaMessageParam, error) {
 	var system []anthropic.BetaTextBlockParam
@@ -341,7 +341,7 @@ func convertMessages(msgs []*aiv1.CompletionMessage) ([]anthropic.BetaTextBlockP
 	return system, other, nil
 }
 
-// convertMessage converts a single Rill message to Claude beta messages.
+// convertMessage converts a single Parrot message to Claude beta messages.
 // Tool results become separate user messages per Claude's API requirements.
 func convertMessage(msg *aiv1.CompletionMessage) ([]anthropic.BetaMessageParam, error) {
 	var result []anthropic.BetaMessageParam
@@ -382,7 +382,7 @@ func convertMessage(msg *aiv1.CompletionMessage) ([]anthropic.BetaMessageParam, 
 	return result, nil
 }
 
-// convertToolCall converts a Rill tool call to a Claude beta tool use block.
+// convertToolCall converts a Parrot tool call to a Claude beta tool use block.
 func convertToolCall(tc *aiv1.ToolCall) anthropic.BetaContentBlockParamUnion {
 	input := make(map[string]any)
 	if tc.Input != nil {
@@ -391,7 +391,7 @@ func convertToolCall(tc *aiv1.ToolCall) anthropic.BetaContentBlockParamUnion {
 	return anthropic.NewBetaToolUseBlock(tc.Id, input, tc.Name)
 }
 
-// convertToolResult converts a Rill tool result to a Claude beta tool result block.
+// convertToolResult converts a Parrot tool result to a Claude beta tool result block.
 func convertToolResult(tr *aiv1.ToolResult) anthropic.BetaContentBlockParamUnion {
 	block := anthropic.NewBetaToolResultBlock(tr.Id)
 	block.OfToolResult.Content = []anthropic.BetaToolResultBlockParamContentUnion{
@@ -401,7 +401,7 @@ func convertToolResult(tr *aiv1.ToolResult) anthropic.BetaContentBlockParamUnion
 	return block
 }
 
-// convertTools converts Rill tools to Claude beta tool union params.
+// convertTools converts Parrot tools to Claude beta tool union params.
 func convertTools(tools []*aiv1.Tool) ([]anthropic.BetaToolUnionParam, error) {
 	if len(tools) == 0 {
 		return nil, nil
@@ -418,7 +418,7 @@ func convertTools(tools []*aiv1.Tool) ([]anthropic.BetaToolUnionParam, error) {
 	return result, nil
 }
 
-// convertTool converts a single Rill tool to a Claude beta tool union param.
+// convertTool converts a single Parrot tool to a Claude beta tool union param.
 func convertTool(tool *aiv1.Tool) (anthropic.BetaToolUnionParam, error) {
 	inputSchema := anthropic.BetaToolInputSchemaParam{}
 	if tool.InputSchema == "" {
@@ -438,7 +438,7 @@ func convertTool(tool *aiv1.Tool) (anthropic.BetaToolUnionParam, error) {
 	return result, nil
 }
 
-// convertResponseMessage converts a Claude beta message to a Rill completion message.
+// convertResponseMessage converts a Claude beta message to a Parrot completion message.
 func convertResponseMessage(msg *anthropic.BetaMessage) (*aiv1.CompletionMessage, error) {
 	var blocks []*aiv1.ContentBlock
 
@@ -470,7 +470,7 @@ func convertResponseMessage(msg *anthropic.BetaMessage) (*aiv1.CompletionMessage
 	}, nil
 }
 
-// convertResponseToolUse converts a Claude beta tool use block to a Rill content block.
+// convertResponseToolUse converts a Claude beta tool use block to a Parrot content block.
 func convertResponseToolUse(block anthropic.BetaContentBlockUnion) (*aiv1.ContentBlock, error) {
 	inputMap := make(map[string]any)
 	if len(block.Input) > 0 {

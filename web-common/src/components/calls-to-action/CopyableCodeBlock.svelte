@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import CopyIcon from "@rilldata/web-common/components/icons/CopyIcon.svelte";
-  import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import CopyIcon from "@statsparrot/web-common/components/icons/CopyIcon.svelte";
+  import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
 
   export let code: string;
   export let message: string = "Copied to clipboard";

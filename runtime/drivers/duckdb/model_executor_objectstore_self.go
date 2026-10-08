@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
 )
 
 var errGCSUsesNativeCreds = errors.New("GCS uses native credentials")
@@ -94,7 +94,7 @@ func (e *objectStoreToSelfExecutor) modelInputProperties(ctx context.Context, op
 }
 
 // objectStoreToSelfExecutorNonNative is a non-native implementation of objectStoreToSelfExecutor.
-// It uses Rill's own connectors instead of duckdb's native connectors.
+// It uses Parrot's own connectors instead of duckdb's native connectors.
 type objectStoreToSelfExecutorNonNative struct {
 	c *connection
 }

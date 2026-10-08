@@ -1,8 +1,8 @@
 import {
   PossibleFileExtensions,
   PossibleZipExtensions,
-} from "@rilldata/web-common/features/sources/modal/possible-file-extensions";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/sources/modal/possible-file-extensions";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
 export const FileTooLargeError = new Error(
   "File exceeds the maximum size. Please choose a smaller file to continue.",

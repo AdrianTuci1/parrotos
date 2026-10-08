@@ -2,7 +2,7 @@
   import type {
     Alignment,
     Location,
-  } from "@rilldata/web-common/lib/place-element";
+  } from "@statsparrot/web-common/lib/place-element";
   import Tooltip from "../tooltip/Tooltip.svelte";
   import TooltipContent from "../tooltip/TooltipContent.svelte";
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/pmezard/go-difflib/difflib"
-	"github.com/rilldata/rill/runtime"
+	"github.com/staticlabs/statsparrot/runtime"
 )
 
 const WriteFileName = "write_file"
@@ -28,7 +28,7 @@ type WriteFileArgs struct {
 type WriteFileResult struct {
 	Diff          string           `json:"diff,omitempty" jsonschema:"Diff of the file contents."`
 	IsNewFile     bool             `json:"is_new_file,omitempty" jsonschema:"Indicates if the tool created a new file."`
-	Resources     []map[string]any `json:"resources,omitempty" jsonschema:"The Rill resources declared in the file, if any."`
+	Resources     []map[string]any `json:"resources,omitempty" jsonschema:"The Parrot resources declared in the file, if any."`
 	ParseError    string           `json:"parse_error,omitempty" jsonschema:"Parse error encountered when parsing the file, if any."`
 	ParseWarnings []string         `json:"parse_warnings,omitempty" jsonschema:"Parse warnings encountered when parsing the file, if any. The file may still be successfully reconciled if there are warnings."`
 }
@@ -37,7 +37,7 @@ func (t *WriteFile) Spec() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        WriteFileName,
 		Title:       "Write file",
-		Description: "Creates, updates or deletes a file in a Rill project. If the file already exists, it will be overwritten. If the file declares a Rill resource, it will wait for the resource to reconcile and return its kind, name and any errors encountered.",
+		Description: "Creates, updates or deletes a file in a Parrot project. If the file already exists, it will be overwritten. If the file declares a Parrot resource, it will wait for the resource to reconcile and return its kind, name and any errors encountered.",
 		Annotations: &mcp.ToolAnnotations{
 			DestructiveHint: boolPtr(true),
 			IdempotentHint:  true,

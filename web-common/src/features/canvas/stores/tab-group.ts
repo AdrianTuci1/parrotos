@@ -1,7 +1,7 @@
 import type {
   V1CanvasRow,
   V1CanvasTab,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { get, writable } from "svelte/store";
 import type { CanvasEntity } from "./canvas-entity";
 import { Grid } from "./grid";

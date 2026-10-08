@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/drivers/druid"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/parser"
-	"github.com/rilldata/rill/runtime/pkg/jsonval"
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers/druid"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/parser"
+	"github.com/staticlabs/statsparrot/runtime/pkg/jsonval"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
 )
 
 const (
@@ -119,7 +119,7 @@ func (e *Executor) CacheKey(ctx context.Context) ([]byte, bool, error) {
 
 	if spec.CacheKeySql == "" {
 		if !e.streaming {
-			// for metrics views on rill managed tables, we can cache forever
+			// for metrics views on statsparrot managed tables, we can cache forever
 			// (until the metrics view is refreshed/edited, which always leads to cache invalidations)
 			return []byte(""), true, nil
 		}
@@ -234,16 +234,16 @@ func (e *Executor) Timestamps(ctx context.Context, timeDim string) (metricsview.
 	return res, nil
 }
 
-// resolveDeclaredTimestamps evaluates a rilltime expression against synthetic
+// resolveDeclaredTimestamps evaluates a statspartime expression against synthetic
 // anchors (now=time.Now(), earliest=zero, latest/watermark=time.Now()) so that
 // a declared data_time_range can supply table bounds without probing the OLAP.
 func (e *Executor) resolveDeclaredTimestamps(expr string) (metricsview.TimestampsResult, error) {
-	rt, err := rilltime.Parse(expr, rilltime.ParseOptions{})
+	rt, err := statspartime.Parse(expr, statspartime.ParseOptions{})
 	if err != nil {
 		return metricsview.TimestampsResult{}, err
 	}
 	now := time.Now()
-	start, end, _ := rt.Eval(rilltime.EvalOptions{
+	start, end, _ := rt.Eval(statspartime.EvalOptions{
 		Now:        now,
 		MinTime:    time.Time{},
 		MaxTime:    now,
@@ -930,7 +930,7 @@ func (e *Executor) executeAnnotationsQuery(ctx context.Context, qry *metricsview
   WHEN duration = 'quarter' THEN 8
   WHEN duration = 'year' THEN 9
   ELSE 0
-END) as __rill_time_grain`)
+END) as __statsparrot_time_grain`)
 	}
 
 	b.WriteString(" FROM ")
@@ -947,7 +947,7 @@ END) as __rill_time_grain`)
 	}
 
 	if annotation.HasDuration && qry.TimeGrain != metricsview.TimeGrainUnspecified {
-		b.WriteString(" AND (__rill_time_grain == 0 OR __rill_time_grain <= ?)")
+		b.WriteString(" AND (__statsparrot_time_grain == 0 OR __statsparrot_time_grain <= ?)")
 		args = append(args, int(qry.TimeGrain.ToTimeutil()))
 	}
 

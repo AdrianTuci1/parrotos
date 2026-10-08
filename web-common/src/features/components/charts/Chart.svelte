@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { sanitizeFieldName } from "@rilldata/web-common/components/vega/util";
-  import { getRillTheme } from "@rilldata/web-common/components/vega/vega-config";
+  import { sanitizeFieldName } from "@statsparrot/web-common/components/vega/util";
+  import { getParrotTheme } from "@statsparrot/web-common/components/vega/vega-config";
   import {
     resolveSignalField,
     resolveSignalIntervalField,
     resolveSignalTimeField,
-  } from "@rilldata/web-common/components/vega/vega-signals";
-  import VegaLiteRenderer from "@rilldata/web-common/components/vega/VegaLiteRenderer.svelte";
-  import type { CanvasChartSpec } from "@rilldata/web-common/features/canvas/components/charts";
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
+  } from "@statsparrot/web-common/components/vega/vega-signals";
+  import VegaLiteRenderer from "@statsparrot/web-common/components/vega/VegaLiteRenderer.svelte";
+  import type { CanvasChartSpec } from "@statsparrot/web-common/features/canvas/components/charts";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
   import {
     createMeasureValueFormatter,
     humanizeDataType,
-  } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-  import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-  import type { TimeRange } from "@rilldata/web-common/lib/time/types";
-  import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+  import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+  import type { TimeRange } from "@statsparrot/web-common/lib/time/types";
+  import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
   import { onDestroy } from "svelte";
   import type { SignalListeners, View } from "svelte-vega";
   import type { Readable } from "svelte/store";
@@ -269,7 +269,7 @@
       renderer="canvas"
       {expressionFunctions}
       {hasComparison}
-      config={getRillTheme(isThemeModeDark, theme)}
+      config={getParrotTheme(isThemeModeDark, theme)}
     />
   </div>
 {/if}

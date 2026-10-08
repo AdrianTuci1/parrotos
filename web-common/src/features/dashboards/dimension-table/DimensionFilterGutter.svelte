@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Cancel from "@rilldata/web-common/components/icons/Cancel.svelte";
-  import Check from "@rilldata/web-common/components/icons/Check.svelte";
-  import CheckCircle from "@rilldata/web-common/components/icons/CheckCircle.svelte";
-  import Spacer from "@rilldata/web-common/components/icons/Spacer.svelte";
+  import Cancel from "@statsparrot/web-common/components/icons/Cancel.svelte";
+  import Check from "@statsparrot/web-common/components/icons/Check.svelte";
+  import CheckCircle from "@statsparrot/web-common/components/icons/CheckCircle.svelte";
+  import Spacer from "@statsparrot/web-common/components/icons/Spacer.svelte";
   import {
     COMPARISON_COLORS,
     SELECTED_NOT_COMPARED_COLOR,
-  } from "@rilldata/web-common/features/dashboards/config";
-  import StickyHeader from "@rilldata/web-common/components/virtualized-table/core/StickyHeader.svelte";
-  import DimensionCompareMenu from "@rilldata/web-common/features/dashboards/leaderboard/DimensionCompareMenu.svelte";
+  } from "@statsparrot/web-common/features/dashboards/config";
+  import StickyHeader from "@statsparrot/web-common/components/virtualized-table/core/StickyHeader.svelte";
+  import DimensionCompareMenu from "@statsparrot/web-common/features/dashboards/leaderboard/DimensionCompareMenu.svelte";
   import { getContext } from "svelte";
   import type { VirtualizedTableConfig } from "../../../components/virtualized-table/types";
 

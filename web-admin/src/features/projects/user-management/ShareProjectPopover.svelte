@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import ShareProjectForm from "@rilldata/web-admin/features/projects/user-management/ShareProjectForm.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
+  import ShareProjectForm from "@statsparrot/web-admin/features/projects/user-management/ShareProjectForm.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@rilldata/web-common/components/popover";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { copyWithAdditionalArguments } from "@rilldata/web-common/lib/url-utils.ts";
+  } from "@statsparrot/web-common/components/popover";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { copyWithAdditionalArguments } from "@statsparrot/web-common/lib/url-utils.ts";
   import { onMount } from "svelte";
 
   export let organization: string;

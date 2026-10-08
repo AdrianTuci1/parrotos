@@ -2,10 +2,10 @@
   import DOMPurify from "dompurify";
   import { marked } from "marked";
   import { createQuery } from "@tanstack/svelte-query";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { MarkdownCanvasComponent } from "./";
-  import { extractErrorMessage } from "@rilldata/web-common/lib/errors";
+  import { extractErrorMessage } from "@statsparrot/web-common/lib/errors";
   import {
     getPositionClasses,
     hasTemplatingSyntax,

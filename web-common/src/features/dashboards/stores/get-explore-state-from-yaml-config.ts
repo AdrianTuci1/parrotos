@@ -1,33 +1,33 @@
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import { getMetricsViewTimeRangeFromExploreQueryOptions } from "@rilldata/web-common/features/dashboards/selectors.ts";
-import { getGrainForRange } from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store";
-import { getValidComparisonOption } from "@rilldata/web-common/features/dashboards/time-controls/time-range-store";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
-import { ToLegacySortTypeMap } from "@rilldata/web-common/features/dashboards/url-state/legacyMappers";
-import { getExploreValidSpecQueryOptions } from "@rilldata/web-common/features/explores/selectors";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { arrayUnorderedEquals } from "@rilldata/web-common/lib/arrayUtils";
-import { ISODurationToTimePreset } from "@rilldata/web-common/lib/time/ranges";
-import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import { getMetricsViewTimeRangeFromExploreQueryOptions } from "@statsparrot/web-common/features/dashboards/selectors.ts";
+import { getGrainForRange } from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store";
+import { getValidComparisonOption } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-store";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params";
+import { ToLegacySortTypeMap } from "@statsparrot/web-common/features/dashboards/url-state/legacyMappers";
+import { getExploreValidSpecQueryOptions } from "@statsparrot/web-common/features/explores/selectors";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { arrayUnorderedEquals } from "@statsparrot/web-common/lib/arrayUtils";
+import { ISODurationToTimePreset } from "@statsparrot/web-common/lib/time/ranges";
+import { isoDurationToFullTimeRange } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import {
   type DashboardTimeControls,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/lib/time/types";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   V1ExploreComparisonMode,
   V1TimeGrain,
   type V1ExploreSpec,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { createQuery } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 import {
   DateTimeUnitToV1TimeGrain,
   isGrainAllowed,
-} from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/lib/time/new-grains";
 
 export function getExploreStateFromYAMLConfig(
   exploreSpec: V1ExploreSpec,

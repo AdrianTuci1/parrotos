@@ -1,6 +1,6 @@
 <script lang="ts">
   import { useReportOwnerName } from "../selectors";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;

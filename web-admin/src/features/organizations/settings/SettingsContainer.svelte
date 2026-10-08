@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import InfoCircleFilled from "@rilldata/web-common/components/icons/InfoCircleFilled.svelte";
-  import CancelCircle from "@rilldata/web-common/components/icons/CancelCircle.svelte";
+  import InfoCircleFilled from "@statsparrot/web-common/components/icons/InfoCircleFilled.svelte";
+  import CancelCircle from "@statsparrot/web-common/components/icons/CancelCircle.svelte";
 
   let {
     title,

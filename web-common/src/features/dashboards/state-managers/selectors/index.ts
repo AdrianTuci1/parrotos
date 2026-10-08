@@ -1,7 +1,7 @@
-import { chartSelectors } from "@rilldata/web-common/features/dashboards/state-managers/selectors/charts";
-import { measureFilterSelectors } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measure-filters";
-import type { ExploreValidSpecResponse } from "@rilldata/web-common/features/explores/selectors";
-import type { V1MetricsViewTimeRangeResponse } from "@rilldata/web-common/runtime-client";
+import { chartSelectors } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/charts";
+import { measureFilterSelectors } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measure-filters";
+import type { ExploreValidSpecResponse } from "@statsparrot/web-common/features/explores/selectors";
+import type { V1MetricsViewTimeRangeResponse } from "@statsparrot/web-common/runtime-client";
 import type { QueryClient, QueryObserverResult } from "@tanstack/svelte-query";
 import { derived, type Readable } from "svelte/store";
 import type { ExploreState } from "web-common/src/features/dashboards/stores/explore-state";

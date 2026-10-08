@@ -1,9 +1,9 @@
-import type { PathOption } from "@rilldata/web-common/components/navigation/breadcrumbs/types";
+import type { PathOption } from "@statsparrot/web-common/components/navigation/breadcrumbs/types";
 import {
   createAdminServiceListOrganizations,
   type V1Organization,
 } from "../../client";
-import { listProjectsForOrgQueryOptions } from "@rilldata/web-admin/features/projects/list-projects-query-options";
+import { listProjectsForOrgQueryOptions } from "@statsparrot/web-admin/features/projects/list-projects-query-options";
 import { createQuery } from "@tanstack/svelte-query";
 
 /**

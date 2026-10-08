@@ -17,8 +17,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rilldata/rill/admin/pkg/urlutil"
-	"github.com/rilldata/rill/runtime/pkg/retrier"
+	"github.com/staticlabs/statsparrot/admin/pkg/urlutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/retrier"
 )
 
 var (

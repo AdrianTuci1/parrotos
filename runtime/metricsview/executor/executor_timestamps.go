@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 	"golang.org/x/sync/errgroup"
 )
 

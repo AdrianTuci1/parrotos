@@ -1,20 +1,20 @@
 import {
-  parseRillTime,
-  validateRillTime,
-} from "@rilldata/web-common/features/dashboards/url-state/time-ranges/parser.ts";
-import { TIME_COMPARISON } from "@rilldata/web-common/lib/time/config.ts";
-import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
+  parseParrotTime,
+  validateParrotTime,
+} from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser.ts";
+import { TIME_COMPARISON } from "@statsparrot/web-common/lib/time/config.ts";
+import { isoDurationToFullTimeRange } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   type V1ExploreSpec,
   V1TimeGrain,
   type V1TimeRange,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 
 // Temporary fix to split previous complete ranges to duration and round to grain to get it working on backend
 // TODO: Eventually we should support this in the backend.
@@ -59,7 +59,7 @@ export function mapSelectedTimeRangeToV1TimeRange(
   explore: V1ExploreSpec,
 ): V1TimeRange | undefined {
   if (!selectedTimeRange?.name) return undefined;
-  if (!validateRillTime(selectedTimeRange.name)) {
+  if (!validateParrotTime(selectedTimeRange.name)) {
     return {
       expression: selectedTimeRange.name,
       timeZone,
@@ -111,15 +111,15 @@ export function mapSelectedComparisonTimeRangeToV1TimeRange(
 
   if (
     timeRange.expression &&
-    TIME_COMPARISON[selectedComparisonTimeRange.name]?.rillTimeOffset
+    TIME_COMPARISON[selectedComparisonTimeRange.name]?.statsparrotTimeOffset
   ) {
-    const rt = parseRillTime(timeRange.expression);
+    const rt = parseParrotTime(timeRange.expression);
     if (!rt.isOldFormat) {
       return {
         expression:
           rt.toString() +
           " offset " +
-          TIME_COMPARISON[selectedComparisonTimeRange.name]?.rillTimeOffset,
+          TIME_COMPARISON[selectedComparisonTimeRange.name]?.statsparrotTimeOffset,
       };
     } else {
       // Handle old syntax differently until we have the backend parser updated.
@@ -168,7 +168,7 @@ export function mapV1TimeRangeToSelectedTimeRange(
     };
   } else if (timeRange.expression) {
     try {
-      const rt = parseRillTime(timeRange.expression);
+      const rt = parseParrotTime(timeRange.expression);
       selectedTimeRange = {
         name: rt.toString(),
         interval: rt.byGrain ?? rt.rangeGrain,

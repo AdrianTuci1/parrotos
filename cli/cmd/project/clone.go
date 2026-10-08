@@ -7,10 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/rilldata/rill/cli/cmd/env"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/cmd/env"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/spf13/cobra"
 )
 
@@ -89,7 +89,7 @@ func CloneCmd(ch *cmdutil.Helper) *cobra.Command {
 				return fmt.Errorf("failed to download variables: %w", err)
 			}
 
-			ch.Printf("Start Rill with: rill start %s\n", subpath)
+			ch.Printf("Start Parrot with: statsparrot start %s\n", subpath)
 
 			return nil
 		},

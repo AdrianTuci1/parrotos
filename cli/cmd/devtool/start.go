@@ -20,10 +20,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )
@@ -33,7 +33,7 @@ const (
 	minGoVersion   = "1.25"
 	minNodeVersion = "18"
 	stateDirLocal  = "dev-project"
-	rillGitRemote  = "https://github.com/rilldata/rill.git"
+	statsparrotGitRemote  = "https://github.com/staticlabs/statsparrot.git"
 )
 
 var (
@@ -48,7 +48,7 @@ var (
 		"cloud",
 		// Minimal cloud setup (no Clickhouse, no telemetry)
 		"minimal",
-		// Rill Developer setup (equivalent to `rill start`)
+		// Parrot Developer setup (equivalent to `statsparrot start`)
 		"local",
 		// Cloud setup for e2e tests
 		"e2e",
@@ -103,7 +103,7 @@ func start(ch *cmdutil.Helper, preset string, verbose, reset, refreshDotenv bool
 		checkGoVersion(),
 		checkNodeVersion(ctx),
 		checkDocker(ctx),
-		checkRillRepo(),
+		checkParrotRepo(),
 	)
 	if err != nil {
 		return err
@@ -172,10 +172,10 @@ func checkDocker(ctx context.Context) error {
 	return nil
 }
 
-func checkRillRepo() error {
+func checkParrotRepo() error {
 	_, err := os.Stat(".git")
 	if err != nil {
-		return fmt.Errorf("you must run `rill devtool` from the root of the rill repository")
+		return fmt.Errorf("you must run `statsparrot devtool` from the root of the statsparrot repository")
 	}
 
 	remote, err := gitutil.ExtractGitRemote("", "", false)
@@ -184,8 +184,8 @@ func checkRillRepo() error {
 	}
 	githubRemote, _ := remote.Github()
 
-	if githubRemote != rillGitRemote {
-		return fmt.Errorf("you must run `rill devtool` from the rill repository (expected remote %q, got %q)", rillGitRemote, githubRemote)
+	if githubRemote != statsparrotGitRemote {
+		return fmt.Errorf("you must run `statsparrot devtool` from the statsparrot repository (expected remote %q, got %q)", statsparrotGitRemote, githubRemote)
 	}
 
 	return nil
@@ -443,7 +443,7 @@ func (s cloud) runDeps(ctx context.Context, verbose bool, preset string) error {
 func (s cloud) awaitPostgres(ctx context.Context, preset string) error {
 	logInfo.Printf("Waiting for Postgres (%s)\n", preset)
 
-	dbURL := lookupDotenv("RILL_ADMIN_DATABASE_URL")
+	dbURL := lookupDotenv("STATSPARROT_ADMIN_DATABASE_URL")
 	for {
 		conn, err := pgx.Connect(ctx, dbURL)
 		if err == nil {
@@ -461,7 +461,7 @@ func (s cloud) awaitPostgres(ctx context.Context, preset string) error {
 }
 
 func (s cloud) awaitRedis(ctx context.Context) error {
-	dbURL := lookupDotenv("RILL_ADMIN_REDIS_URL")
+	dbURL := lookupDotenv("STATSPARROT_ADMIN_REDIS_URL")
 	if dbURL == "" {
 		return nil
 	}
@@ -499,15 +499,15 @@ func (s cloud) runAdmin(ctx context.Context, verbose bool, preset string) (err e
 		cmd.Env = append(
 			cmd.Env,
 			// This differs from the usual dev provisioner set in not having a Clickhouse provisioner.
-			`RILL_ADMIN_PROVISIONER_SET_JSON={"static":{"type":"static","spec":{"runtimes":[{"host":"http://localhost:8081","slots":50,"data_dir":"dev-cloud-state","audience_url":"http://localhost:8081"}]}}}`,
+			`STATSPARROT_ADMIN_PROVISIONER_SET_JSON={"static":{"type":"static","spec":{"runtimes":[{"host":"http://localhost:8081","slots":50,"data_dir":"dev-cloud-state","audience_url":"http://localhost:8081"}]}}}`,
 			// Disable traces
-			"RILL_ADMIN_TRACES_EXPORTER="+string(observability.NoopExporter),
+			"STATSPARROT_ADMIN_TRACES_EXPORTER="+string(observability.NoopExporter),
 			// Change metrics to Prometheus, which unlike Otel doesn't require an external collector.
-			"RILL_ADMIN_METRICS_EXPORTER="+string(observability.PrometheusExporter),
+			"STATSPARROT_ADMIN_METRICS_EXPORTER="+string(observability.PrometheusExporter),
 		)
 	}
 	if verbose {
-		cmd.Env = append(cmd.Env, "RILL_ADMIN_LOG_LEVEL=debug")
+		cmd.Env = append(cmd.Env, "STATSPARROT_ADMIN_LOG_LEVEL=debug")
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
@@ -515,7 +515,7 @@ func (s cloud) runAdmin(ctx context.Context, verbose bool, preset string) (err e
 }
 
 func (s cloud) awaitAdmin(ctx context.Context) error {
-	pingURL := lookupDotenv("RILL_ADMIN_EXTERNAL_URL")
+	pingURL := lookupDotenv("STATSPARROT_ADMIN_EXTERNAL_URL")
 	pingURL, err := url.JoinPath(pingURL, "/v1/ping")
 	if err != nil {
 		return fmt.Errorf("failed to parse admin url: %w", err)
@@ -549,13 +549,13 @@ func (s cloud) runRuntime(ctx context.Context, verbose bool, preset string) (err
 		cmd.Env = append(
 			cmd.Env,
 			// Disable traces
-			"RILL_RUNTIME_TRACES_EXPORTER="+string(observability.NoopExporter),
+			"STATSPARROT_RUNTIME_TRACES_EXPORTER="+string(observability.NoopExporter),
 			// Change metrics to Prometheus, which unlike Otel doesn't require an external collector.
-			"RILL_RUNTIME_METRICS_EXPORTER="+string(observability.PrometheusExporter),
+			"STATSPARROT_RUNTIME_METRICS_EXPORTER="+string(observability.PrometheusExporter),
 		)
 	}
 	if verbose {
-		cmd.Env = append(cmd.Env, "RILL_RUNTIME_LOG_LEVEL=debug")
+		cmd.Env = append(cmd.Env, "STATSPARROT_RUNTIME_LOG_LEVEL=debug")
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
@@ -563,7 +563,7 @@ func (s cloud) runRuntime(ctx context.Context, verbose bool, preset string) (err
 }
 
 func (s cloud) awaitRuntime(ctx context.Context) error {
-	pingURL := lookupDotenv("RILL_RUNTIME_AUTH_AUDIENCE_URL") // TODO: This is a proxy for the runtime's external URL. Should be less implicit.
+	pingURL := lookupDotenv("STATSPARROT_RUNTIME_AUTH_AUDIENCE_URL") // TODO: This is a proxy for the runtime's external URL. Should be less implicit.
 	pingURL, err := url.JoinPath(pingURL, "/v1/ping")
 	if err != nil {
 		return fmt.Errorf("failed to parse admin url: %w", err)
@@ -611,7 +611,7 @@ func (s cloud) runUI(ctx context.Context) (err error) {
 }
 
 func (s cloud) awaitUI(ctx context.Context) error {
-	uiURL := lookupDotenv("RILL_ADMIN_FRONTEND_URL") // TODO: This is a proxy for the frontend's external URL. Should be less implicit.
+	uiURL := lookupDotenv("STATSPARROT_ADMIN_FRONTEND_URL") // TODO: This is a proxy for the frontend's external URL. Should be less implicit.
 
 	for {
 		resp, err := http.Get(uiURL)
@@ -780,7 +780,7 @@ func prepareStripeConfig() error {
 	templateFile := "cli/cmd/devtool/data/stripe-config.template"
 	outputFile := filepath.Join(stateDirectory(), "stripe-config.toml")
 
-	apiKey := lookupDotenv("RILL_DEVTOOL_STRIPE_CLI_API_KEY")
+	apiKey := lookupDotenv("STATSPARROT_DEVTOOL_STRIPE_CLI_API_KEY")
 	if apiKey == "" {
 		logWarn.Printf("No Stripe API key found in .env, Stripe webhook events will not be processed\n")
 	}
@@ -842,7 +842,7 @@ func lookupDotenv(key string) string {
 // stateDirectory returns the directory where the devtool's state is stored.
 // Deleting this directory will reset the state of the local development environment.
 func stateDirectory() string {
-	dir := lookupDotenv("RILL_DEVTOOL_STATE_DIRECTORY")
+	dir := lookupDotenv("STATSPARROT_DEVTOOL_STATE_DIRECTORY")
 	if dir == "" {
 		dir = "dev-cloud-state"
 	}

@@ -1,13 +1,13 @@
-import { getDimensionFilterWithSearch } from "@rilldata/web-common/features/dashboards/dimension-table/dimension-table-utils";
-import { calculateEffectiveRowLimit } from "@rilldata/web-common/features/dashboards/pivot/pivot-constants";
-import { NUM_ROWS_PER_PAGE } from "@rilldata/web-common/features/dashboards/pivot/pivot-infinite-scroll";
+import { getDimensionFilterWithSearch } from "@statsparrot/web-common/features/dashboards/dimension-table/dimension-table-utils";
+import { calculateEffectiveRowLimit } from "@statsparrot/web-common/features/dashboards/pivot/pivot-constants";
+import { NUM_ROWS_PER_PAGE } from "@statsparrot/web-common/features/dashboards/pivot/pivot-infinite-scroll";
 import type {
   V1Expression,
   V1MetricsViewAggregationMeasure,
   V1MetricsViewAggregationResponseDataItem,
   V1MetricsViewAggregationSort,
-} from "@rilldata/web-common/runtime-client";
-import type { TimeRangeString } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/runtime-client";
+import type { TimeRangeString } from "@statsparrot/web-common/lib/time/types";
 import {
   getPivotConfigKey,
   getSortFilteredMeasureBody,

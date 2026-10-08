@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This directory contains files describing test cases for resolvers. They provide a concise way to initialize a Rill project with connectors, and then run a series of resolvers against it and testing that they produce an expected output.
+This directory contains files describing test cases for resolvers. They provide a concise way to initialize a Parrot project with connectors, and then run a series of resolvers against it and testing that they produce an expected output.
 
 Each file in this directory is executed against a freshly initialized runtime instance and when possible a freshly initialized connector (with the exception of readonly external connectors that are pre-populated with test data).
 

@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/benbjohnson/clock"
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/oauth"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/oauth"
 )
 
 // Most parts of this file are copied from https://github.com/planetscale/cli/blob/main/internal/auth/authenticator.go
@@ -70,7 +70,7 @@ func New(authURL string) (*DeviceAuthenticator, error) {
 		client:   http.DefaultClient,
 		BaseURL:  baseURL,
 		Clock:    clock.New(),
-		ClientID: database.AuthClientIDRillCLI,
+		ClientID: database.AuthClientIDParrotCLI,
 	}
 
 	return authenticator, nil
@@ -155,7 +155,7 @@ func (d *DeviceAuthenticator) requestToken(ctx context.Context, deviceCode, clie
 		"grant_type":             []string{"urn:ietf:params:oauth:grant-type:device_code"},
 		"device_code":            []string{deviceCode},
 		"client_id":              []string{clientID},
-		"token_response_version": []string{"standard"}, // For backward compatibility with older Rill CLI, see utils.go in oauth pkg
+		"token_response_version": []string{"standard"}, // For backward compatibility with older Parrot CLI, see utils.go in oauth pkg
 	})
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)

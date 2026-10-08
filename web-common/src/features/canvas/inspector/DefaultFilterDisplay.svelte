@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { getCanvasStore } from "../state-managers/state-managers";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import Trash from "@rilldata/web-common/components/icons/Trash.svelte";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import Trash from "@statsparrot/web-common/components/icons/Trash.svelte";
   import CanvasFilterChipsReadOnly from "../../dashboards/filters/CanvasFilterChipsReadOnly.svelte";
 
   export let canvasName: string;
@@ -34,7 +34,7 @@
   <div class="page-param">
     <p class="text-fg-secondary mb-4">
       The filters listed below are saved as your default view and will
-      automatically apply each time you open this dashboard in Rill Cloud.
+      automatically apply each time you open this dashboard in Parrot Cloud.
     </p>
 
     <CanvasFilterChipsReadOnly

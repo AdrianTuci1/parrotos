@@ -2,13 +2,11 @@ package river
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/url"
-	"strings"
 
-	"cloud.google.com/go/storage"
-	"github.com/rilldata/rill/admin"
+	"github.com/staticlabs/statsparrot/admin"
+	"github.com/staticlabs/statsparrot/admin/assetstore"
 	"github.com/riverqueue/river"
 	"golang.org/x/sync/errgroup"
 )
@@ -49,8 +47,8 @@ func (w *DeleteUnusedAssetsWorker) Work(ctx context.Context, job *river.Job[Dele
 				if err != nil {
 					return fmt.Errorf("failed to parse asset path %q: %w", asset.Path, err)
 				}
-				err = w.admin.Assets.Object(strings.TrimPrefix(parsed.Path, "/")).Delete(cctx)
-				if err != nil && !errors.Is(err, storage.ErrObjectNotExist) {
+				err = w.admin.Assets.Delete(cctx, assetstore.ObjectPath(parsed))
+				if err != nil {
 					return fmt.Errorf("failed to delete asset %q: %w", asset.Path, err)
 				}
 				return nil

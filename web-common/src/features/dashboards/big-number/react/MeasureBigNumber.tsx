@@ -1,25 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ElementType, MouseEvent, ReactNode } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { measureSupportsTotalsQuery } from "@rilldata/web-common/features/dashboards/state-managers/selectors/measures";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
-import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-import { copyToClipboard } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-import { createMeasureValueFormatter } from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-import type { NumberParts } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
-import { isPercDiff } from "@rilldata/web-common/components/data-types/type-utils";
-import type { PERC_DIFF } from "@rilldata/web-common/components/data-types/type-utils";
-import { cellInspectorStore } from "@rilldata/web-common/features/dashboards/stores/cell-inspector-store";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { measureSupportsTotalsQuery } from "@statsparrot/web-common/features/dashboards/state-managers/selectors/measures";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
+import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+import { copyToClipboard } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+import { createMeasureValueFormatter } from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+import type { NumberParts } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
+import { isPercDiff } from "@statsparrot/web-common/components/data-types/type-utils";
+import type { PERC_DIFF } from "@statsparrot/web-common/components/data-types/type-utils";
+import { cellInspectorStore } from "@statsparrot/web-common/features/dashboards/stores/cell-inspector-store";
 import {
   getQueryServiceMetricsViewAggregationQueryOptions,
   type MetricsViewSpecMeasure,
   type V1Expression,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import BigNumberTooltipContent from "./BigNumberTooltipContent";
 
 export interface MeasureBigNumberProps {

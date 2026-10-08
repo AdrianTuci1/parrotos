@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Button } from "@rilldata/web-common/components/button";
-  import IconSpaceFixer from "@rilldata/web-common/components/button/IconSpaceFixer.svelte";
-  import ResponsiveButtonText from "@rilldata/web-common/components/panel/ResponsiveButtonText.svelte";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
-  import { MetricsEventSpace } from "@rilldata/web-common/metrics/service/MetricsTypes";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import IconSpaceFixer from "@statsparrot/web-common/components/button/IconSpaceFixer.svelte";
+  import ResponsiveButtonText from "@statsparrot/web-common/components/panel/ResponsiveButtonText.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
+  import { MetricsEventSpace } from "@statsparrot/web-common/metrics/service/MetricsTypes";
   import { Wand } from "lucide-svelte";
   import { V1ReconcileStatus } from "../../../runtime-client";
   import { useRuntimeClient } from "../../../runtime-client/v2";

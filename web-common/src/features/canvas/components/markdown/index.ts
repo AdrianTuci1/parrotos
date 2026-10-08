@@ -1,6 +1,6 @@
-import { BaseCanvasComponent } from "@rilldata/web-common/features/canvas/components/BaseCanvasComponent";
-import type { InputParams } from "@rilldata/web-common/features/canvas/inspector/types";
-import type { V1Resource } from "@rilldata/web-common/runtime-client";
+import { BaseCanvasComponent } from "@statsparrot/web-common/features/canvas/components/BaseCanvasComponent";
+import type { InputParams } from "@statsparrot/web-common/features/canvas/inspector/types";
+import type { V1Resource } from "@statsparrot/web-common/runtime-client";
 import type { CanvasEntity, ComponentPath } from "../../stores/canvas-entity";
 import {
   type CanvasComponentType,
@@ -11,7 +11,7 @@ import Markdown from "./Markdown.svelte";
 
 export { default as Markdown } from "./Markdown.svelte";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 export const defaultMarkdownAlignment: ComponentAlignment = {
   vertical: "middle",

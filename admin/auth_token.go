@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/pkg/authtoken"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/pkg/authtoken"
 )
 
 // Cache settings for s.authCache.
@@ -226,14 +226,14 @@ func (s *Service) IssueMagicAuthToken(ctx context.Context, opts *IssueMagicAuthT
 	return &magicAuthToken{model: dat, token: tkn}, nil
 }
 
-// ExtendBrowserSessionAuthToken extends a Rill web browser session token when its
+// ExtendBrowserSessionAuthToken extends a Parrot web browser session token when its
 // remaining lifetime is at or below refreshThreshold.
 func (s *Service) ExtendBrowserSessionAuthToken(ctx context.Context, authTok AuthToken, fullTTL, refreshThreshold time.Duration) error {
 	uat, ok := authTok.TokenModel().(*database.UserAuthToken)
 	if !ok {
 		return nil
 	}
-	if uat.AuthClientID == nil || *uat.AuthClientID != database.AuthClientIDRillWeb {
+	if uat.AuthClientID == nil || *uat.AuthClientID != database.AuthClientIDParrotWeb {
 		return nil
 	}
 	if uat.RepresentingUserID != nil || uat.Refresh {

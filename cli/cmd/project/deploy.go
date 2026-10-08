@@ -9,15 +9,15 @@ import (
 	"time"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/rilldata/rill/cli/cmd/org"
-	"github.com/rilldata/rill/cli/pkg/browser"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/local"
-	"github.com/rilldata/rill/cli/pkg/printer"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/cmd/org"
+	"github.com/staticlabs/statsparrot/cli/pkg/browser"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/local"
+	"github.com/staticlabs/statsparrot/cli/pkg/printer"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -41,7 +41,7 @@ type DeployOpts struct {
 	ForcePush     bool
 
 	ArchiveUpload bool
-	// Managed indicates if the project should be deployed using Rill Managed Git.
+	// Managed indicates if the project should be deployed using Parrot Managed Git.
 	Managed bool
 	// Github indicates if the project should be connected to GitHub for automatic deploys.
 	Github bool
@@ -65,7 +65,7 @@ func (o *DeployOpts) LocalProjectPath() string {
 func (o *DeployOpts) ValidateAndApplyDefaults(ctx context.Context, ch *cmdutil.Helper) error {
 	if o.remoteURL != "" {
 		// already validated
-		// just a hack to avoid re-validation when `rill project deploy` internally calls `rill project connect-github`
+		// just a hack to avoid re-validation when `statsparrot project deploy` internally calls `statsparrot project connect-github`
 		return nil
 	}
 	// expand project directory and get absolute path
@@ -142,8 +142,8 @@ func (o *DeployOpts) ValidateAndApplyDefaults(ctx context.Context, ch *cmdutil.H
 			}
 		}
 		if o.pushToProject.ManagedGitId != "" && o.Github {
-			ch.Printf("Found another rill managed project %s/%s connected to this folder\n", o.pushToProject.OrgName, o.pushToProject.Name)
-			ch.PrintfBold("Run `rill project edit --remote-url <github_remote>` to tranfer the project to GitHub.\n")
+			ch.Printf("Found another statsparrot managed project %s/%s connected to this folder\n", o.pushToProject.OrgName, o.pushToProject.Name)
+			ch.PrintfBold("Run `statsparrot project edit --remote-url <github_remote>` to tranfer the project to GitHub.\n")
 			return fmt.Errorf("aborting deploy")
 		}
 		if o.pushToProject.OrgName != ch.Org {
@@ -152,7 +152,7 @@ func (o *DeployOpts) ValidateAndApplyDefaults(ctx context.Context, ch *cmdutil.H
 		}
 		if subpath != "" && o.pushToProject.Subpath != subpath {
 			// just for verification confirm that subpath matches the one stored in project
-			return fmt.Errorf("current project subpath %q does not match the one stored in rill %q. Try doing deploy using rill cli from github repo root by passing explicit subpath using `rill deploy --subpath %s`", subpath, o.pushToProject.Subpath, o.pushToProject.Subpath)
+			return fmt.Errorf("current project subpath %q does not match the one stored in statsparrot %q. Try doing deploy using statsparrot cli from github repo root by passing explicit subpath using `statsparrot deploy --subpath %s`", subpath, o.pushToProject.Subpath, o.pushToProject.Subpath)
 		}
 		// set flags based on existing project
 		o.Managed = o.pushToProject.ManagedGitId != ""
@@ -184,14 +184,14 @@ func (o *DeployOpts) ValidateAndApplyDefaults(ctx context.Context, ch *cmdutil.H
 	}
 	if o.Managed {
 		// if user explicitly wants managed deploys confirm if they want to really skip github connection
-		ok, err := cmdutil.YesNoPrompt("Do you want to skip connecting to GitHub and use Rill managed deploys? (Note: Subsequent deploys/push from Rill will not push changes to your GitHub repo)", true)
+		ok, err := cmdutil.YesNoPrompt("Do you want to skip connecting to GitHub and use Parrot managed deploys? (Note: Subsequent deploys/push from Parrot will not push changes to your GitHub repo)", true)
 		if err != nil {
 			return err
 		}
 		connectToGithub = !ok
 	} else if !o.Github && ch.Interactive {
 		// still confirm if user wants to connect to github
-		connectToGithub, err = cmdutil.YesNoPrompt("Enable automatic deploys to Rill Cloud from GitHub?", true)
+		connectToGithub, err = cmdutil.YesNoPrompt("Enable automatic deploys to Parrot Cloud from GitHub?", true)
 		if err != nil {
 			return err
 		}
@@ -223,8 +223,8 @@ func (o *DeployOpts) detectGitRemoteAndProject(ctx context.Context, ch *cmdutil.
 	}
 	for _, remote := range remotes {
 		switch remote.Name {
-		case "__rill_remote":
-			req.RillMgdGitRemote = remote.URL
+		case "__statsparrot_remote":
+			req.StatsparrotMgdGitRemote = remote.URL
 		case o.RemoteName:
 			gitremote, err := remote.Github()
 			if err == nil {
@@ -238,7 +238,7 @@ func (o *DeployOpts) detectGitRemoteAndProject(ctx context.Context, ch *cmdutil.
 		return err
 	}
 	if resp.UnauthorizedProject != "" {
-		ch.PrintfWarn("You do not have access to the project %q which is connected to this repository. Please reach out to your Rill admin\n", resp.UnauthorizedProject)
+		ch.PrintfWarn("You do not have access to the project %q which is connected to this repository. Please reach out to your Parrot admin\n", resp.UnauthorizedProject)
 		return fmt.Errorf("aborting deploy")
 	}
 	for _, p := range resp.Projects {
@@ -253,7 +253,7 @@ func (o *DeployOpts) detectGitRemoteAndProject(ctx context.Context, ch *cmdutil.
 		// this is not possible with new flow but keeping it for consistency
 	}
 
-	if len(resp.Projects) == 1 && resp.Projects[0].ManagedGitId == "" && req.RillMgdGitRemote != "" {
+	if len(resp.Projects) == 1 && resp.Projects[0].ManagedGitId == "" && req.StatsparrotMgdGitRemote != "" {
 		err = ch.HandleRepoTransfer(repoRoot, req.GitRemote)
 		if err != nil {
 			return err
@@ -272,7 +272,7 @@ func DeployCmd(ch *cmdutil.Helper) *cobra.Command {
 
 	deployCmd := &cobra.Command{
 		Use:   "deploy [<path>]",
-		Short: "Deploy project to Rill Cloud by using a Rill Managed Git repo",
+		Short: "Deploy project to Parrot Cloud by using a Parrot Managed Git repo",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 {
 				opts.GitPath = args[0]
@@ -306,7 +306,7 @@ func DeployCmd(ch *cmdutil.Helper) *cobra.Command {
 		}
 	}
 
-	deployCmd.Flags().BoolVar(&opts.PushEnv, "push-env", true, "Push local .env file to Rill Cloud")
+	deployCmd.Flags().BoolVar(&opts.PushEnv, "push-env", true, "Push local .env file to Parrot Cloud")
 	deployCmd.Flags().BoolVar(&opts.ForcePush, "force-push", false, "Force push local changes")
 	deployCmd.Flags().BoolVar(&opts.SkipDeploy, "skip-deploy", false, "Skip the runtime deployment step (for testing only)")
 	if !ch.IsDev() {
@@ -327,14 +327,14 @@ func ValidateLocalProject(ch *cmdutil.Helper, localGitPath, subPath string) (str
 		localProjectPath = filepath.Join(localGitPath, subPath)
 	}
 
-	// Verify that localProjectPath contains a Rill project.
-	if cmdutil.HasRillProject(localProjectPath) {
+	// Verify that localProjectPath contains a Parrot project.
+	if cmdutil.HasParrotProject(localProjectPath) {
 		return localGitPath, localProjectPath, nil
 	}
 
-	ch.PrintfWarn("Directory %q doesn't contain a valid Rill project.\n", localProjectPath)
-	ch.PrintfWarn("Run `rill project deploy` from a Rill project directory or use `--path` to pass a project path.\n")
-	ch.PrintfWarn("Run `rill start` to initialize a new Rill project.\n")
+	ch.PrintfWarn("Directory %q doesn't contain a valid Parrot project.\n", localProjectPath)
+	ch.PrintfWarn("Run `statsparrot project deploy` from a Parrot project directory or use `--path` to pass a project path.\n")
+	ch.PrintfWarn("Run `statsparrot start` to initialize a new Parrot project.\n")
 	return "", "", ErrInvalidProject
 }
 
@@ -368,7 +368,7 @@ func DeployWithUploadFlow(ctx context.Context, ch *cmdutil.Helper, opts *DeployO
 		if err != nil {
 			return fmt.Errorf("org creation failed with error: %w", err)
 		}
-		ch.PrintfSuccess("Created org %q. Run `rill org edit` to change name if required.\n\n", ch.Org)
+		ch.PrintfSuccess("Created org %q. Run `statsparrot org edit` to change name if required.\n\n", ch.Org)
 	} else {
 		ch.PrintfBold("Using org %q.\n\n", ch.Org)
 	}
@@ -424,14 +424,14 @@ func DeployWithUploadFlow(ctx context.Context, ch *cmdutil.Helper, opts *DeployO
 	res, err := adminClient.CreateProject(ctx, req)
 	if err != nil {
 		if s, ok := status.FromError(err); ok && s.Code() == codes.PermissionDenied {
-			ch.PrintfError("You do not have the permissions needed to create a project in org %q. Please reach out to your Rill admin.\n", ch.Org)
+			ch.PrintfError("You do not have the permissions needed to create a project in org %q. Please reach out to your Parrot admin.\n", ch.Org)
 			return nil
 		}
 		return fmt.Errorf("create project failed with error %w", err)
 	}
 
 	// Success!
-	ch.PrintfSuccess("Created project \"%s/%s\". Use `rill project rename` to change name if required.\n\n", ch.Org, res.Project.Name)
+	ch.PrintfSuccess("Created project \"%s/%s\". Use `statsparrot project rename` to change name if required.\n\n", ch.Org, res.Project.Name)
 
 	// Upload .env
 	if opts.PushEnv {
@@ -486,7 +486,7 @@ func redeployProject(ctx context.Context, ch *cmdutil.Helper, opts *DeployOpts) 
 		}
 		// Verify subpath matches the one stored in the project
 		if subpath != proj.Subpath {
-			return fmt.Errorf("current project subpath %q does not match the one stored in rill %q. Run rill cli from github repo root and pass explicit subpath using `rill deploy --subpath %s`", subpath, proj.Subpath, proj.Subpath)
+			return fmt.Errorf("current project subpath %q does not match the one stored in statsparrot %q. Run statsparrot cli from github repo root and pass explicit subpath using `statsparrot deploy --subpath %s`", subpath, proj.Subpath, proj.Subpath)
 		}
 		config := &gitutil.Config{
 			Remote:        opts.pushToProject.GitRemote,
@@ -519,7 +519,7 @@ func redeployProject(ctx context.Context, ch *cmdutil.Helper, opts *DeployOpts) 
 				ArchiveAssetId: &assetID,
 			}
 		} else {
-			// need to migrate to rill managed git
+			// need to migrate to statsparrot managed git
 			gitRepo, err := ch.GitHelper(ch.Org, opts.Name, opts.LocalProjectPath()).PushToNewManagedRepo(ctx, opts.PrimaryBranch)
 			if err != nil {
 				return err
@@ -536,7 +536,7 @@ func redeployProject(ctx context.Context, ch *cmdutil.Helper, opts *DeployOpts) 
 		_, err = c.UpdateProject(ctx, updateProjReq)
 		if err != nil {
 			if s, ok := status.FromError(err); ok && s.Code() == codes.PermissionDenied {
-				ch.PrintfError("You do not have the permissions needed to update a project in org %q. Please reach out to your Rill admin.\n", ch.Org)
+				ch.PrintfError("You do not have the permissions needed to update a project in org %q. Please reach out to your Parrot admin.\n", ch.Org)
 				return nil
 			}
 			return fmt.Errorf("update project failed with error %w", err)
@@ -586,7 +586,7 @@ func createOrgFlow(ctx context.Context, ch *cmdutil.Helper) error {
 
 	// Switching to the created org
 	ch.Org = res.Organization.Name
-	err = ch.DotRill.SetDefaultOrg(ch.Org)
+	err = ch.DotStatsparrot.SetDefaultOrg(ch.Org)
 	if err != nil {
 		return err
 	}

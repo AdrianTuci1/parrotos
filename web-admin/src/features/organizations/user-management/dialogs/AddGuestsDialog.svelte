@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
   import {
     createAdminServiceAddProjectMemberUser,
     type V1Project,
-  } from "@rilldata/web-admin/client";
-  import { getRpcErrorMessage } from "@rilldata/web-admin/components/errors/error-utils";
-  import { getOrgRolesOptions } from "@rilldata/web-admin/features/organizations/constants";
+  } from "@statsparrot/web-admin/client";
+  import { getRpcErrorMessage } from "@statsparrot/web-admin/components/errors/error-utils";
+  import { getOrgRolesOptions } from "@statsparrot/web-admin/features/organizations/constants";
   import {
     buildInviteAttributes,
     invalidateOrgInvites,
     invalidateOrgMemberUsers,
     type AttributeRow,
-  } from "@rilldata/web-admin/features/organizations/user-management/utils";
-  import { listProjectsForOrgQueryOptions } from "@rilldata/web-admin/features/projects/list-projects-query-options";
-  import { Button } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-admin/features/organizations/user-management/utils";
+  import { listProjectsForOrgQueryOptions } from "@statsparrot/web-admin/features/projects/list-projects-query-options";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     Dialog,
     DialogContent,
@@ -23,16 +23,16 @@
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@rilldata/web-common/components/dialog";
-  import * as Dropdown from "@rilldata/web-common/components/dropdown-menu";
-  import KeyValueInput from "@rilldata/web-common/components/forms/KeyValueInput.svelte";
-  import MultiInput from "@rilldata/web-common/components/forms/MultiInput.svelte";
-  import { RFC5322EmailRegex } from "@rilldata/web-common/components/forms/validation";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  } from "@statsparrot/web-common/components/dialog";
+  import * as Dropdown from "@statsparrot/web-common/components/dropdown-menu";
+  import KeyValueInput from "@statsparrot/web-common/components/forms/KeyValueInput.svelte";
+  import MultiInput from "@statsparrot/web-common/components/forms/MultiInput.svelte";
+  import { RFC5322EmailRegex } from "@statsparrot/web-common/components/forms/validation";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { createQuery, useQueryClient } from "@tanstack/svelte-query";
   import { defaults, superForm } from "sveltekit-superforms";
   import { yup } from "sveltekit-superforms/adapters";

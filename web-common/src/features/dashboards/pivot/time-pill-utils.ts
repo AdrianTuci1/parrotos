@@ -1,12 +1,12 @@
-import type { PivotChipData } from "@rilldata/web-common/features/dashboards/pivot/types";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+import type { PivotChipData } from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
 import {
   getLargestGrain,
   getNextSmallerGrain,
   isAvailableTimeGrain,
-} from "@rilldata/web-common/lib/time/grains";
-import type { AvailableTimeGrain } from "@rilldata/web-common/lib/time/types";
-import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/grains";
+import type { AvailableTimeGrain } from "@statsparrot/web-common/lib/time/types";
+import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { PivotChipType } from "./types";
 
 /**

@@ -351,12 +351,12 @@ export const grayDark = {
 };
 
 /**
- * Default Rill primary color palette as Color array
+ * Default Parrot primary color palette as Color array
  */
 export const defaultPrimaryPalette = Object.values(primary);
 
 /**
- * Default Rill secondary color palette as Color array
+ * Default Parrot secondary color palette as Color array
  */
 export const defaultSecondaryPalette = Object.values(secondary);
 

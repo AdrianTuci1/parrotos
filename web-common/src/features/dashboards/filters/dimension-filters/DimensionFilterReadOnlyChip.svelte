@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Chip } from "@rilldata/web-common/components/chip";
-  import { DimensionFilterMode } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/constants";
+  import { Chip } from "@statsparrot/web-common/components/chip";
+  import { DimensionFilterMode } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/constants";
   import {
     useAllSearchResultsCount,
     useDimensionSearch,
-  } from "@rilldata/web-common/features/dashboards/filters/dimension-filters/dimension-filter-values";
-  import DimensionFilterChipBody from "@rilldata/web-common/features/dashboards/filters/dimension-filters/DimensionFilterChipBody.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/dimension-filter-values";
+  import DimensionFilterChipBody from "@statsparrot/web-common/features/dashboards/filters/dimension-filters/DimensionFilterChipBody.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let name: string;
   export let metricsViewNames: string[];

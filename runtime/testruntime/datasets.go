@@ -16,8 +16,8 @@ type Dataset string
 
 const (
 	DatasetAdbids          Dataset = "./testdata/adbids/data/AdBids.csv.gz"
-	DatasetOpenRTBAuctions Dataset = "https://storage.googleapis.com/rilldata-public/auction_data.parquet"
-	DatasetOpenRTBBids     Dataset = "https://storage.googleapis.com/rilldata-public/bids_data.parquet"
+	DatasetOpenRTBAuctions Dataset = "https://storage.googleapis.com/staticlabs-public/auction_data.parquet"
+	DatasetOpenRTBBids     Dataset = "https://storage.googleapis.com/staticlabs-public/bids_data.parquet"
 )
 
 // DatasetPath returns a local path to the given dataset.

@@ -6,10 +6,10 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/testadmin"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/email"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/testadmin"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/email"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -1823,8 +1823,8 @@ func TestRBAC(t *testing.T) {
 
 		// directly update deployment to running with runtime info especially audience for correct jwt generation
 		_, err = fix.Admin.DB.UpdateDeploymentUnsafe(ctx, depl.Deployment.Id, &database.UpdateDeploymentUnsafeOptions{
-			RuntimeHost:       "rill-example-host",
-			RuntimeInstanceID: "rill-example-instance",
+			RuntimeHost:       "statsparrot-example-host",
+			RuntimeInstanceID: "statsparrot-example-instance",
 			RuntimeAudience:   "http://example.org",
 			Status:            database.DeploymentStatusRunning,
 			StatusMessage:     "Running",
@@ -1838,7 +1838,7 @@ func TestRBAC(t *testing.T) {
 			Email:             user.Email,
 			Role:              database.ProjectRoleNameEditor,
 			RestrictResources: &restrict,
-			Resources:         []*adminv1.ResourceName{{Type: "rill.runtime.v1.Explore", Name: "explore"}},
+			Resources:         []*adminv1.ResourceName{{Type: "statsparrot.runtime.v1.Explore", Name: "explore"}},
 		})
 		require.NoError(t, err)
 
@@ -1850,7 +1850,7 @@ func TestRBAC(t *testing.T) {
 		require.NoError(t, err)
 		require.True(t, member.Member.RestrictResources)
 		require.NotEmpty(t, member.Member.Resources)
-		require.Equal(t, "rill.runtime.v1.Explore", member.Member.Resources[0].Type)
+		require.Equal(t, "statsparrot.runtime.v1.Explore", member.Member.Resources[0].Type)
 		require.Equal(t, "explore", member.Member.Resources[0].Name)
 
 		role := database.ProjectRoleNameViewer
@@ -1871,7 +1871,7 @@ func TestRBAC(t *testing.T) {
 		require.Equal(t, database.ProjectRoleNameViewer, member.Member.RoleName)
 		require.True(t, member.Member.RestrictResources)
 		require.NotEmpty(t, member.Member.Resources)
-		require.Equal(t, "rill.runtime.v1.Explore", member.Member.Resources[0].Type)
+		require.Equal(t, "statsparrot.runtime.v1.Explore", member.Member.Resources[0].Type)
 		require.Equal(t, "explore", member.Member.Resources[0].Name)
 
 		proj, err := userClient.GetProject(ctx, &adminv1.GetProjectRequest{
@@ -1887,7 +1887,7 @@ func TestRBAC(t *testing.T) {
 		rules := claims.Claims("").AdditionalRules
 		require.Len(t, rules, 1)
 		require.NotNil(t, rules[0].GetTransitiveAccess())
-		require.Equal(t, "rill.runtime.v1.Explore", rules[0].GetTransitiveAccess().Resource.Kind)
+		require.Equal(t, "statsparrot.runtime.v1.Explore", rules[0].GetTransitiveAccess().Resource.Kind)
 		require.Equal(t, "explore", rules[0].GetTransitiveAccess().Resource.Name)
 	})
 
@@ -1914,8 +1914,8 @@ func TestRBAC(t *testing.T) {
 
 		// directly update deployment to running with runtime info especially audience for correct jwt generation
 		_, err = fix.Admin.DB.UpdateDeploymentUnsafe(ctx, depl.Deployment.Id, &database.UpdateDeploymentUnsafeOptions{
-			RuntimeHost:       "rill-example-host",
-			RuntimeInstanceID: "rill-example-instance",
+			RuntimeHost:       "statsparrot-example-host",
+			RuntimeInstanceID: "statsparrot-example-instance",
 			RuntimeAudience:   "http://example.org",
 			Status:            database.DeploymentStatusRunning,
 			StatusMessage:     "Running",
@@ -2059,8 +2059,8 @@ func TestRBAC(t *testing.T) {
 
 		// directly update deployment to running with runtime info especially audience for correct jwt generation
 		_, err = fix.Admin.DB.UpdateDeploymentUnsafe(ctx, depl.Deployment.Id, &database.UpdateDeploymentUnsafeOptions{
-			RuntimeHost:       "rill-example-host",
-			RuntimeInstanceID: "rill-example-instance",
+			RuntimeHost:       "statsparrot-example-host",
+			RuntimeInstanceID: "statsparrot-example-instance",
 			RuntimeAudience:   "http://example.org",
 			Status:            database.DeploymentStatusRunning,
 			StatusMessage:     "Running",
@@ -2090,7 +2090,7 @@ func TestRBAC(t *testing.T) {
 			Project:           project.Project.Name,
 			Email:             user.Email,
 			RestrictResources: &restrictParam,
-			Resources:         []*adminv1.ResourceName{{Type: "rill.runtime.v1.Explore", Name: "orders"}},
+			Resources:         []*adminv1.ResourceName{{Type: "statsparrot.runtime.v1.Explore", Name: "orders"}},
 		})
 		require.NoError(t, err)
 
@@ -2116,7 +2116,7 @@ func TestRBAC(t *testing.T) {
 		rules := claims.Claims("").AdditionalRules
 		require.Len(t, rules, 1)
 		require.NotNil(t, rules[0].GetTransitiveAccess())
-		require.Equal(t, "rill.runtime.v1.Explore", rules[0].GetTransitiveAccess().Resource.Kind)
+		require.Equal(t, "statsparrot.runtime.v1.Explore", rules[0].GetTransitiveAccess().Resource.Kind)
 		require.Equal(t, "orders", rules[0].GetTransitiveAccess().Resource.Name)
 
 		restrictParam = false
@@ -2175,8 +2175,8 @@ func TestRBAC(t *testing.T) {
 
 		// directly update deployment to running with runtime info especially audience for correct jwt generation
 		_, err = fix.Admin.DB.UpdateDeploymentUnsafe(ctx, depl.Deployment.Id, &database.UpdateDeploymentUnsafeOptions{
-			RuntimeHost:       "rill-example-host",
-			RuntimeInstanceID: "rill-example-instance",
+			RuntimeHost:       "statsparrot-example-host",
+			RuntimeInstanceID: "statsparrot-example-instance",
 			RuntimeAudience:   "http://example.org",
 			Status:            database.DeploymentStatusRunning,
 			StatusMessage:     "Running",
@@ -2252,8 +2252,8 @@ func TestRBAC(t *testing.T) {
 
 		// directly update deployment to running with runtime info especially audience for correct jwt generation
 		_, err = fix.Admin.DB.UpdateDeploymentUnsafe(ctx, depl.Deployment.Id, &database.UpdateDeploymentUnsafeOptions{
-			RuntimeHost:       "rill-example-host",
-			RuntimeInstanceID: "rill-example-instance",
+			RuntimeHost:       "statsparrot-example-host",
+			RuntimeInstanceID: "statsparrot-example-instance",
 			RuntimeAudience:   "http://example.org",
 			Status:            database.DeploymentStatusRunning,
 			StatusMessage:     "Running",

@@ -1,6 +1,6 @@
--- Removed interval datatype(INTERVAL_MONTH_DAY_NANO) as is not supported by arrow to parquet code. https://github.com/rilldata/arrow/blob/v15.0.2/go/parquet/pqarrow/schema.go#L406
+-- Removed interval datatype(INTERVAL_MONTH_DAY_NANO) as is not supported by arrow to parquet code. https://github.com/staticlabs/arrow/blob/v15.0.2/go/parquet/pqarrow/schema.go#L406
 -- Removed range datatype from struct because range inside struct is not supported https://github.com/googleapis/google-cloud-go/blob/main/bigquery/value.go#L899
-CREATE OR REPLACE TABLE  `rilldata.integration_test.all_datatypes` (
+CREATE OR REPLACE TABLE  `staticlabs.integration_test.all_datatypes` (
     int_col INT64,
     float_col FLOAT64,
     numeric_col NUMERIC,
@@ -79,7 +79,7 @@ CREATE OR REPLACE TABLE  `rilldata.integration_test.all_datatypes` (
 );
 
 
-INSERT INTO `rilldata.integration_test.all_datatypes` VALUES
+INSERT INTO `staticlabs.integration_test.all_datatypes` VALUES
     (1, 1.1, Cast(123.45 as NUMERIC), Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC), TRUE, 'sample1', b'abc', DATE(2023,1,1), DATETIME(2023,1,1,12,34,56), TIME(12,34,56), TIMESTAMP("2023-01-01 12:34:56 UTC"), PARSE_JSON('{"key": "value1"}'), ST_GEOGPOINT(1, 2), Range(DATE(2023,1,1),DATE(2023,2,1)), Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56)), Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC")), [1], [1.1], [Cast(123.45 as NUMERIC)], [Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC)], [TRUE], ['sample1'], [b'abc'], [DATE(2023,1,1)], [DATETIME(2023,1,1,12,34,56)], [TIME(12,34,56)], [TIMESTAMP("2023-01-01 12:34:56 UTC")], [PARSE_JSON('{"key": "value1"}')], [ST_GEOGPOINT(1, 2)], [Range(DATE(2023,1,1),DATE(2023,2,1))], [Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56))], [Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC"))], [(1, 1.1, Cast(123.45 as NUMERIC), Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC), TRUE, 'sample1', b'abc', DATE(2023,1,1), DATETIME(2023,1,1,12,34,56), TIME(12,34,56), TIMESTAMP("2023-01-01 12:34:56 UTC"), PARSE_JSON('{"key": "value1"}'), ST_GEOGPOINT(1, 2))],(1, 1.1, Cast(123.45 as NUMERIC), Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC), TRUE, 'sample1', b'abc', DATE(2023,1,1), DATETIME(2023,1,1,12,34,56), TIME(12,34,56), TIMESTAMP("2023-01-01 12:34:56 UTC"), PARSE_JSON('{"key": "value1"}'), ST_GEOGPOINT(1, 2), [1], [1.1], [Cast(123.45 as NUMERIC)], [Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC)], [TRUE], ['sample1'], [b'abc'], [DATE(2023,1,1)], [DATETIME(2023,1,1,12,34,56)], [TIME(12,34,56)], [TIMESTAMP("2023-01-01 12:34:56 UTC")], [PARSE_JSON('{"key": "value1"}')], [ST_GEOGPOINT(1, 2)] )),
     (0, 0.0, Cast(0.0 as NUMERIC), Cast(0.0 as BIGNUMERIC), FALSE, '', b'', DATE(1970,1,1), DATETIME(1970,1,1,00,00,00), TIME(00,00,00), TIMESTAMP("1970-01-01 00:00:00 UTC"), PARSE_JSON('{}'), ST_GEOGPOINT(0, 0), Range(DATE(1970,1,1),DATE(1970,1,2)), Range(DATETIME(1970,1,1,00,00,00),DATETIME(1970,1,1,00,00,01)), Range(TIMESTAMP("1970-01-01 00:00:00 UTC"),TIMESTAMP("1970-01-01 00:00:01 UTC")), [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],(0, 0.0, Cast(0.0 as NUMERIC), Cast(0.0 as BIGNUMERIC), FALSE, '', b'', DATE(1970,1,1), DATETIME(1970,1,1,00,00,00), TIME(00,00,00), TIMESTAMP("1970-01-01 00:00:00 UTC"), PARSE_JSON('{}'), ST_GEOGPOINT(0, 0), [], [], [], [], [], [], [], [], [], [], [], [], [])),
     (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL);
@@ -87,7 +87,7 @@ INSERT INTO `rilldata.integration_test.all_datatypes` VALUES
 
 
 -- Below is for all datatype but some of them is not supported so not using it for now.
-CREATE OR REPLACE TABLE  `rilldata.integration_test.all_datatypes` (
+CREATE OR REPLACE TABLE  `staticlabs.integration_test.all_datatypes` (
     int_col INT64,
     float_col FLOAT64,
     numeric_col NUMERIC,
@@ -180,7 +180,7 @@ CREATE OR REPLACE TABLE  `rilldata.integration_test.all_datatypes` (
 );
 
 
-INSERT INTO `rilldata.integration_test.all_datatypes` VALUES
+INSERT INTO `staticlabs.integration_test.all_datatypes` VALUES
     (1, 1.1, Cast(123.45 as NUMERIC), Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC), TRUE, 'sample1', b'abc', DATE(2023,1,1), DATETIME(2023,1,1,12,34,56), TIME(12,34,56), TIMESTAMP("2023-01-01 12:34:56 UTC"), PARSE_JSON('{"key": "value1"}'), ST_GEOGPOINT(1, 2), INTERVAL 1 DAY, Range(DATE(2023,1,1),DATE(2023,2,1)), Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56)), Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC")), [1], [1.1], [Cast(123.45 as NUMERIC)], [Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC)], [TRUE], ['sample1'], [b'abc'], [DATE(2023,1,1)], [DATETIME(2023,1,1,12,34,56)], [TIME(12,34,56)], [TIMESTAMP("2023-01-01 12:34:56 UTC")], [PARSE_JSON('{"key": "value1"}')], [ST_GEOGPOINT(1, 2)], [INTERVAL 1 DAY], [Range(DATE(2023,1,1),DATE(2023,2,1))], [Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56))], [Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC"))], [(1, 1.1, Cast(123.45 as NUMERIC), Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC), TRUE, 'sample1', b'abc', DATE(2023,1,1), DATETIME(2023,1,1,12,34,56), TIME(12,34,56), TIMESTAMP("2023-01-01 12:34:56 UTC"), PARSE_JSON('{"key": "value1"}'), ST_GEOGPOINT(1, 2), INTERVAL 1 DAY, Range(DATE(2023,1,1),DATE(2023,2,1)), Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56)), Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC")))],(1, 1.1, Cast(123.45 as NUMERIC), Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC), TRUE, 'sample1', b'abc', DATE(2023,1,1), DATETIME(2023,1,1,12,34,56), TIME(12,34,56), TIMESTAMP("2023-01-01 12:34:56 UTC"), PARSE_JSON('{"key": "value1"}'), ST_GEOGPOINT(1, 2), INTERVAL 1 DAY, Range(DATE(2023,1,1),DATE(2023,2,1)), Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56)), Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC")), [1], [1.1], [Cast(123.45 as NUMERIC)], [Cast(99999999999999999999999999999999999999.99 as BIGNUMERIC)], [TRUE], ['sample1'], [b'abc'], [DATE(2023,1,1)], [DATETIME(2023,1,1,12,34,56)], [TIME(12,34,56)], [TIMESTAMP("2023-01-01 12:34:56 UTC")], [PARSE_JSON('{"key": "value1"}')], [ST_GEOGPOINT(1, 2)], [INTERVAL 1 DAY], [Range(DATE(2023,1,1),DATE(2023,2,1))], [Range(DATETIME(2023,1,1,12,34,56),DATETIME(2024,1,1,12,34,56))], [Range(TIMESTAMP("2023-01-01 12:34:56 UTC"),TIMESTAMP("2024-01-01 12:34:56 UTC"))])),
     (0, 0.0, Cast(0.0 as NUMERIC), Cast(0.0 as BIGNUMERIC), FALSE, '', b'', DATE(1970,1,1), DATETIME(1970,1,1,00,00,00), TIME(00,00,00), TIMESTAMP("1970-01-01 00:00:00 UTC"), PARSE_JSON('{}'), ST_GEOGPOINT(0, 0), INTERVAL 0 DAY, Range(DATE(1970,1,1),DATE(1970,1,2)), Range(DATETIME(1970,1,1,00,00,00),DATETIME(1970,1,1,00,00,01)), Range(TIMESTAMP("1970-01-01 00:00:00 UTC"),TIMESTAMP("1970-01-01 00:00:01 UTC")), [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],(0, 0.0, Cast(0.0 as NUMERIC), Cast(0.0 as BIGNUMERIC), FALSE, '', b'', DATE(1970,1,1), DATETIME(1970,1,1,00,00,00), TIME(00,00,00), TIMESTAMP("1970-01-01 00:00:00 UTC"), PARSE_JSON('{}'), ST_GEOGPOINT(0, 0), INTERVAL 0 DAY, Range(DATE(1970,1,1),DATE(1970,1,2)), Range(DATETIME(1970,1,1,00,00,00),DATETIME(1970,1,1,00,00,01)), Range(TIMESTAMP("1970-01-01 00:00:00 UTC"),TIMESTAMP("1970-01-01 00:00:01 UTC")), [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [])),
     (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL);
@@ -193,11 +193,11 @@ INSERT INTO `rilldata.integration_test.all_datatypes` VALUES
 -- Run the following command from the repository root to load the data (after creating the table below):
 --
 --   bq load --source_format=CSV --skip_leading_rows=1 --replace \
---     rilldata:integration_test.ad_bids \
+--     staticlabs:integration_test.ad_bids \
 --     runtime/testruntime/testdata/ad_bids/data/AdBids.csv.gz \
 --     id:INTEGER,timestamp:TIMESTAMP,publisher:STRING,domain:STRING,bid_price:FLOAT64
 --
-CREATE OR REPLACE TABLE `rilldata.integration_test.ad_bids` (
+CREATE OR REPLACE TABLE `staticlabs.integration_test.ad_bids` (
     id        INT64,
     timestamp TIMESTAMP,
     publisher STRING,
@@ -206,7 +206,7 @@ CREATE OR REPLACE TABLE `rilldata.integration_test.ad_bids` (
 );
 
 -- timeseries_year table: monthly data from 2022-01 to 2025-12 used by timeseries year/IST/quarter grain tests.
-CREATE OR REPLACE TABLE `rilldata.integration_test.timeseries_year` AS
+CREATE OR REPLACE TABLE `staticlabs.integration_test.timeseries_year` AS
 SELECT ts AS timestamp, 1.0 AS clicks, 'android' AS device, 'Google' AS publisher, 'Canada' AS country
 FROM UNNEST(GENERATE_TIMESTAMP_ARRAY(
     TIMESTAMP '2022-01-01 00:00:00 UTC',
@@ -215,7 +215,7 @@ FROM UNNEST(GENERATE_TIMESTAMP_ARRAY(
 )) AS ts;
 
 -- timeseries_dst_backwards table: 10-minute intervals around DST fall-back (Nov 2023) used by DST backwards tests.
-CREATE OR REPLACE TABLE `rilldata.integration_test.timeseries_dst_backwards` AS
+CREATE OR REPLACE TABLE `staticlabs.integration_test.timeseries_dst_backwards` AS
 WITH continuous AS (
     SELECT 'continuous' AS label, ts AS timestamp
     FROM UNNEST(GENERATE_TIMESTAMP_ARRAY(
@@ -252,7 +252,7 @@ UNION ALL SELECT * FROM sparse_hour
 UNION ALL SELECT * FROM sparse_day;
 
 -- timeseries_dst_forwards table: intervals around DST spring-forward (Mar 2023) used by DST forwards tests.
-CREATE OR REPLACE TABLE `rilldata.integration_test.timeseries_dst_forwards` AS
+CREATE OR REPLACE TABLE `staticlabs.integration_test.timeseries_dst_forwards` AS
 WITH continuous AS (
     SELECT 'continuous' AS label, ts AS timestamp
     FROM UNNEST(GENERATE_TIMESTAMP_ARRAY(
@@ -289,7 +289,7 @@ UNION ALL SELECT * FROM sparse_hour
 UNION ALL SELECT * FROM sparse_day;
 
 -- timeseries_gaps table: sparse 2019 data with gaps used by the having_clause timeseries test.
-CREATE OR REPLACE TABLE `rilldata.integration_test.timeseries_gaps` AS
+CREATE OR REPLACE TABLE `staticlabs.integration_test.timeseries_gaps` AS
 SELECT 1.0 AS clicks, 3 AS imps, TIMESTAMP '2019-01-01 00:00:00 UTC' AS time, DATE '2019-01-01' AS day,
     'android' AS device, 'Google' AS publisher, 'google.com' AS domain, 25 AS latitude, 'Canada' AS country
 UNION ALL

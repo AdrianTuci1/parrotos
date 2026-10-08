@@ -222,7 +222,7 @@ tests:
       - country: US
         sum: 7
         sum_prev: 2
-  - name: rill_time_ranges_duckdb
+  - name: time_ranges_duckdb
     resolver: metrics
     properties:
       metrics_view: duckdb_metrics
@@ -247,7 +247,7 @@ tests:
       - country: US
         sum: 7
         sum_prev: 2
-  - name: rill_time_ranges_clickhouse
+  - name: time_ranges_clickhouse
     resolver: metrics
     properties:
       metrics_view: clickhouse_metrics

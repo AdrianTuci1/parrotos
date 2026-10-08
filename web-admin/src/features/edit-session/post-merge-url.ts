@@ -1,10 +1,10 @@
 import {
   TargetDashboardUrlParam,
   PreCommitShaUrlParam,
-} from "@rilldata/web-common/features/project/deploy/utils";
+} from "@statsparrot/web-common/features/project/deploy/utils";
 import type { Page } from "@sveltejs/kit";
-import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts.ts";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts.ts";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
 import { get } from "svelte/store";
 
 // /-/invite for the first deploy; /-/deploying when prod already exists.

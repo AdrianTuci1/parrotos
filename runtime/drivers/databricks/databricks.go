@@ -10,9 +10,9 @@ import (
 	dbsqllog "github.com/databricks/databricks-sql-go/logger"
 	"github.com/jmoiron/sqlx"
 	"github.com/mitchellh/mapstructure"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
 	"go.uber.org/zap"
 	"golang.org/x/sync/semaphore"
 
@@ -30,7 +30,7 @@ func init() {
 var spec = drivers.Spec{
 	DisplayName: "Databricks",
 	Description: "Connect to Databricks.",
-	DocsURL:     "https://docs.rilldata.com/developers/build/connectors/data-source/databricks",
+	DocsURL:     "https://docs.statsparrot.com/developers/build/connectors/data-source/databricks",
 	ConfigProperties: []*drivers.PropertySpec{
 		{
 			Key:         "dsn",

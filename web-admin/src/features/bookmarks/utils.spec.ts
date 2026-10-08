@@ -1,33 +1,33 @@
-import { exploreBookmarkDataTransformer } from "@rilldata/web-admin/features/bookmarks/explore-bookmark-legacy-data-transformer.ts";
+import { exploreBookmarkDataTransformer } from "@statsparrot/web-admin/features/bookmarks/explore-bookmark-legacy-data-transformer.ts";
 import {
   getBookmarkData,
   parseBookmarks,
-} from "@rilldata/web-admin/features/bookmarks/utils.ts";
-import { getProtoFromDashboardState } from "@rilldata/web-common/features/dashboards/proto-state/toProto.ts";
+} from "@statsparrot/web-admin/features/bookmarks/utils.ts";
+import { getProtoFromDashboardState } from "@statsparrot/web-common/features/dashboards/proto-state/toProto.ts";
 import {
   type HoistedPageForExploreTests,
   PageMockForExploreTests,
-} from "@rilldata/web-common/features/dashboards/state-managers/loaders/test/PageMockForExploreTests.ts";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state.ts";
+} from "@statsparrot/web-common/features/dashboards/state-managers/loaders/test/PageMockForExploreTests.ts";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state.ts";
 import {
   createAndExpression,
   createInExpression,
-} from "@rilldata/web-common/features/dashboards/stores/filter-utils.ts";
+} from "@statsparrot/web-common/features/dashboards/stores/filter-utils.ts";
 import {
   AD_BIDS_BID_PRICE_MEASURE,
   AD_BIDS_DOMAIN_DIMENSION,
   AD_BIDS_EXPLORE_WITH_3_MEASURES_DIMENSIONS,
   AD_BIDS_METRICS_3_MEASURES_DIMENSIONS_WITH_TIME,
   AD_BIDS_PUBLISHER_DIMENSION,
-  AD_BIDS_RILL_DEFAULT_EXPLORE_STATE,
-  AD_BIDS_RILL_DEFAULT_EXPLORE_URL_PARAMS,
+  AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_STATE,
+  AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_URL_PARAMS,
   AD_BIDS_TIME_RANGE_SUMMARY,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data.ts";
-import { getTimeControlState } from "@rilldata/web-common/features/dashboards/time-controls/time-control-store.ts";
-import { convertPartialExploreStateToUrlParams } from "@rilldata/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
-import type { DashboardTimeControls } from "@rilldata/web-common/lib/time/types.ts";
-import { DashboardState_ActivePage } from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb.ts";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data.ts";
+import { getTimeControlState } from "@statsparrot/web-common/features/dashboards/time-controls/time-control-store.ts";
+import { convertPartialExploreStateToUrlParams } from "@statsparrot/web-common/features/dashboards/url-state/convert-partial-explore-state-to-url-params.ts";
+import type { DashboardTimeControls } from "@statsparrot/web-common/lib/time/types.ts";
+import { DashboardState_ActivePage } from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb.ts";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const hoistedPage: HoistedPageForExploreTests = vi.hoisted(() => ({}) as any);
@@ -71,7 +71,7 @@ describe("getBookmarkData and parseBookmarks", () => {
         } as DashboardTimeControls,
         showTimeComparison: true,
         selectedComparisonTimeRange: {
-          name: "rill-PP",
+          name: "statsparrot-PP",
         } as DashboardTimeControls,
         visibleMeasures: [AD_BIDS_BID_PRICE_MEASURE],
         allMeasuresVisible: false,
@@ -84,23 +84,23 @@ describe("getBookmarkData and parseBookmarks", () => {
           subTitle: "Empty url",
           curUrlSearch: "",
           expectedFullUrlSearch:
-            "view=explore&tr=P7D&tz=UTC&grain=hour&compare_tr=rill-PP&f=publisher+IN+('Facebook','Yahoo')&compare_dim=&measures=bid_price&dims=*&expand_dim=domain&sort_by=bid_price&sort_dir=DESC&sort_type=value&leaderboard_measures=bid_price",
+            "view=explore&tr=P7D&tz=UTC&grain=hour&compare_tr=statsparrot-PP&f=publisher+IN+('Facebook','Yahoo')&compare_dim=&measures=bid_price&dims=*&expand_dim=domain&sort_by=bid_price&sort_dir=DESC&sort_type=value&leaderboard_measures=bid_price",
           isActive: false,
         },
         {
           subTitle: "Filter only equal",
           curUrlSearch:
-            "view=tdd&tr=P7D&compare_tr=rill-PW&f=publisher+IN+('Facebook','Yahoo')&measure=impressions&chart_type=stacked_bar",
+            "view=tdd&tr=P7D&compare_tr=statsparrot-PW&f=publisher+IN+('Facebook','Yahoo')&measure=impressions&chart_type=stacked_bar",
           expectedFullUrlSearch:
-            "view=explore&tr=P7D&tz=UTC&grain=hour&compare_tr=rill-PP&f=publisher+IN+('Facebook','Yahoo')&compare_dim=&measures=bid_price&dims=*&expand_dim=domain&sort_by=bid_price&sort_dir=DESC&sort_type=value&leaderboard_measures=bid_price",
+            "view=explore&tr=P7D&tz=UTC&grain=hour&compare_tr=statsparrot-PP&f=publisher+IN+('Facebook','Yahoo')&compare_dim=&measures=bid_price&dims=*&expand_dim=domain&sort_by=bid_price&sort_dir=DESC&sort_type=value&leaderboard_measures=bid_price",
           isActive: false,
         },
         {
           subTitle: "Same url",
           curUrlSearch:
-            "tr=P7D&compare_tr=rill-PP&f=publisher+IN+('Facebook','Yahoo')&measures=bid_price&expand_dim=domain&sort_by=bid_price&leaderboard_measures=bid_price",
+            "tr=P7D&compare_tr=statsparrot-PP&f=publisher+IN+('Facebook','Yahoo')&measures=bid_price&expand_dim=domain&sort_by=bid_price&leaderboard_measures=bid_price",
           expectedFullUrlSearch:
-            "view=explore&tr=P7D&tz=UTC&grain=hour&compare_tr=rill-PP&f=publisher+IN+('Facebook','Yahoo')&compare_dim=&measures=bid_price&dims=*&expand_dim=domain&sort_by=bid_price&sort_dir=DESC&sort_type=value&leaderboard_measures=bid_price",
+            "view=explore&tr=P7D&tz=UTC&grain=hour&compare_tr=statsparrot-PP&f=publisher+IN+('Facebook','Yahoo')&compare_dim=&measures=bid_price&dims=*&expand_dim=domain&sort_by=bid_price&sort_dir=DESC&sort_type=value&leaderboard_measures=bid_price",
           isActive: true,
         },
       ],
@@ -139,17 +139,17 @@ describe("getBookmarkData and parseBookmarks", () => {
         {
           subTitle: "Filter only equal",
           curUrlSearch:
-            "view=tdd&tr=P7D&compare_tr=rill-PW&f=publisher+IN+('Facebook','Yahoo')&measure=impressions&chart_type=stacked_bar",
+            "view=tdd&tr=P7D&compare_tr=statsparrot-PW&f=publisher+IN+('Facebook','Yahoo')&measure=impressions&chart_type=stacked_bar",
           expectedFullUrlSearch:
-            "view=tdd&tr=P7D&grain=hour&compare_tr=rill-PW&f=publisher+IN+('Facebook','Yahoo')&measure=impressions&chart_type=stacked_bar",
+            "view=tdd&tr=P7D&grain=hour&compare_tr=statsparrot-PW&f=publisher+IN+('Facebook','Yahoo')&measure=impressions&chart_type=stacked_bar",
           isActive: true,
         },
         {
           subTitle: "Same url",
           curUrlSearch:
-            "tr=P7D&compare_tr=rill-PP&f=publisher+IN+('Facebook','Yahoo')&measures=bid_price&expand_dim=domain&sort_by=bid_price&leaderboard_measures=bid_price",
+            "tr=P7D&compare_tr=statsparrot-PP&f=publisher+IN+('Facebook','Yahoo')&measures=bid_price&expand_dim=domain&sort_by=bid_price&leaderboard_measures=bid_price",
           expectedFullUrlSearch:
-            "tr=P7D&grain=hour&compare_tr=rill-PP&f=publisher+IN+('Facebook','Yahoo')&measures=bid_price&expand_dim=domain&sort_by=bid_price&leaderboard_measures=bid_price",
+            "tr=P7D&grain=hour&compare_tr=statsparrot-PP&f=publisher+IN+('Facebook','Yahoo')&measures=bid_price&expand_dim=domain&sort_by=bid_price&leaderboard_measures=bid_price",
           isActive: true,
         },
       ],
@@ -158,7 +158,7 @@ describe("getBookmarkData and parseBookmarks", () => {
 
   for (const { title, filtersOnly, partialExploreState, urls } of TestCases) {
     const fullExploreState = {
-      ...AD_BIDS_RILL_DEFAULT_EXPLORE_STATE,
+      ...AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_STATE,
       ...partialExploreState,
     };
     // Generate the bookmark url from the default explore state + modified partial explore state
@@ -176,7 +176,7 @@ describe("getBookmarkData and parseBookmarks", () => {
     // Generate the bookmark data as base64 of the url search
     const bookmarkUrlData = getBookmarkData({
       curUrlParams,
-      defaultUrlParams: AD_BIDS_RILL_DEFAULT_EXPLORE_URL_PARAMS,
+      defaultUrlParams: AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_URL_PARAMS,
       filtersOnly,
     });
     // Generate the bookmark data as proto state for legacy parsing test
@@ -207,7 +207,7 @@ describe("getBookmarkData and parseBookmarks", () => {
               { data: bookmarkProtoData, displayName: "old" },
             ],
             new URLSearchParams(curUrlSearch),
-            AD_BIDS_RILL_DEFAULT_EXPLORE_URL_PARAMS,
+            AD_BIDS_STATSPARROT_DEFAULT_EXPLORE_URL_PARAMS,
             (data) =>
               // Use the explore transformer to match the ExploreBookmarks components and to parse legacy proto state
               exploreBookmarkDataTransformer({

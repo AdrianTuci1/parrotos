@@ -1,18 +1,18 @@
-import { getProtoFromDashboardState } from "@rilldata/web-common/features/dashboards/proto-state/toProto";
-import { getFullInitExploreState } from "@rilldata/web-common/features/dashboards/stores/dashboard-store-defaults";
-import { metricsExplorerStore } from "@rilldata/web-common/features/dashboards/stores/dashboard-stores";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
+import { getProtoFromDashboardState } from "@statsparrot/web-common/features/dashboards/proto-state/toProto";
+import { getFullInitExploreState } from "@statsparrot/web-common/features/dashboards/stores/dashboard-store-defaults";
+import { metricsExplorerStore } from "@statsparrot/web-common/features/dashboards/stores/dashboard-stores";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
 import {
   AD_BIDS_EXPLORE_INIT,
   AD_BIDS_EXPLORE_NAME,
   AD_BIDS_METRICS_INIT,
   AD_BIDS_TIME_RANGE_SUMMARY,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/data";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/data";
 import {
   getInitExploreStateForTest,
   getPartialDashboard,
   resetDashboardStore,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/helpers";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/helpers";
 import {
   AD_BIDS_APPLY_BP_MEASURE_FILTER,
   AD_BIDS_APPLY_DOM_DIMENSION_FILTER,
@@ -30,7 +30,7 @@ import {
   AD_BIDS_SET_P7D_TIME_RANGE_FILTER,
   applyMutationsToDashboard,
   type TestDashboardMutation,
-} from "@rilldata/web-common/features/dashboards/stores/test-data/store-mutations";
+} from "@statsparrot/web-common/features/dashboards/stores/test-data/store-mutations";
 import { deepClone } from "@vitest/utils/helpers";
 import { get } from "svelte/store";
 import { beforeEach, describe, expect, it } from "vitest";

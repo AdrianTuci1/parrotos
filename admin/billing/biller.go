@@ -5,16 +5,16 @@ import (
 	"errors"
 	"time"
 
-	"github.com/rilldata/rill/admin/database"
-	"github.com/rilldata/rill/admin/jobs"
-	"github.com/rilldata/rill/runtime/pkg/httputil"
+	"github.com/staticlabs/statsparrot/admin/database"
+	"github.com/staticlabs/statsparrot/admin/jobs"
+	"github.com/staticlabs/statsparrot/runtime/pkg/httputil"
 )
 
 const (
-	SupportEmail    = "support@rilldata.com"
+	SupportEmail    = "support@staticlabs.com"
 	DefaultTimeZone = "UTC"
-	// InternalEmailDomain is excluded from billable seat counts so internal Rill users don't count against an org's seats.
-	InternalEmailDomain = "rilldata.com"
+	// InternalEmailDomain is excluded from billable seat counts so internal Parrot users don't count against an org's seats.
+	InternalEmailDomain = "staticlabs.com"
 )
 
 // CreditsCurrency is the pricing-unit used for trial credit balance/alerts/grants. Its a non-monetary custom pricing unit, so trial usage never produces USD invoice line items.
@@ -43,7 +43,7 @@ type Biller interface {
 	GetPublicPlans(ctx context.Context) ([]*Plan, error)
 	// GetPlan returns the plan with the given biller plan ID.
 	GetPlan(ctx context.Context, id string) (*Plan, error)
-	// GetPlanByName returns the plan with the given Rill plan name.
+	// GetPlanByName returns the plan with the given Parrot plan name.
 	GetPlanByName(ctx context.Context, name string) (*Plan, error)
 	// GetPlanByType returns the plan with the given PlanType. Returns ErrNotFound if no plan matches.
 	GetPlanByType(ctx context.Context, planType PlanType) (*Plan, error)
@@ -115,7 +115,7 @@ const (
 
 type Plan struct {
 	ID              string // ID of the plan in the external billing system
-	Name            string // Unique name of the plan in Rill, can be empty if biller does not support it
+	Name            string // Unique name of the plan in Parrot, can be empty if biller does not support it
 	PlanType        PlanType
 	DisplayName     string
 	Description     string

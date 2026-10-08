@@ -1,8 +1,8 @@
 <script lang="ts">
-  import PinOff from "@rilldata/web-common/components/icons/PinOff.svelte";
-  import Pin from "@rilldata/web-common/components/icons/Pin.svelte";
-  import * as BitsTooltip from "@rilldata/web-common/components/tooltip-v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import PinOff from "@statsparrot/web-common/components/icons/PinOff.svelte";
+  import Pin from "@statsparrot/web-common/components/icons/Pin.svelte";
+  import * as BitsTooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let pinned: boolean;
   export let onTogglePin: () => void;

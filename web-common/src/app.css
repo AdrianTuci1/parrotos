@@ -113,7 +113,7 @@
     --measure-foreground: var(--color-secondary-800);
     --measure-border: var(--color-secondary-800);
 
-    --tooltip: var(--color-rill-gray-dark-500);
+    --tooltip: var(--color-statsparrot-gray-dark-500);
 
     --destructive: var(--color-red-600);
     --destructive-foreground: var(--color-red-50);
@@ -294,15 +294,15 @@
      * Palette-derived tokens here mirror the `dark` shade in PALETTE_DERIVED_TOKENS in
      * web-common/src/features/themes/theme.ts. Keep them in sync.
      */
-    --surface-background: var(--color-rill-gray-dark-300);
-    --surface-base: var(--color-rill-gray-dark-50);
-    --surface-subtle: var(--color-rill-gray-dark-200);
-    --surface-hover: var(--color-rill-gray-dark-800);
-    --surface-active: var(--color-rill-gray-dark-500);
-    --surface-overlay: var(--color-rill-gray-dark-400);
-    --surface-muted: var(--color-rill-gray-dark-500);
+    --surface-background: var(--color-statsparrot-gray-dark-300);
+    --surface-base: var(--color-statsparrot-gray-dark-50);
+    --surface-subtle: var(--color-statsparrot-gray-dark-200);
+    --surface-hover: var(--color-statsparrot-gray-dark-800);
+    --surface-active: var(--color-statsparrot-gray-dark-500);
+    --surface-overlay: var(--color-statsparrot-gray-dark-400);
+    --surface-muted: var(--color-statsparrot-gray-dark-500);
 
-    --surface-card: var(--color-rill-gray-dark-300);
+    --surface-card: var(--color-statsparrot-gray-dark-300);
 
     --fg-primary: var(--color-neutral-light-200);
     --fg-secondary: var(--color-gray-light-300);
@@ -338,7 +338,7 @@
     /* These don't match Figma directly, but are visually close */
     --input: color-mix(
       in oklab,
-      var(--color-rill-gray-dark-600) calc(0.5 * 100%),
+      var(--color-statsparrot-gray-dark-600) calc(0.5 * 100%),
       transparent
     );
     --border: color-mix(in oklab, var(--white) calc(0.08 * 100%), transparent);
@@ -354,7 +354,7 @@
     --measure-foreground: var(--color-secondary-light-100);
     --measure-border: var(--color-secondary-light-800);
 
-    --tooltip: var(--color-rill-gray-dark-500);
+    --tooltip: var(--color-statsparrot-gray-dark-500);
 
     /* This is not exactly as designed */
     --destructive: color-mix(
@@ -367,10 +367,10 @@
     --kpi-positive: var(--fg-secondary);
     --kpi-negative: var(--color-red-500);
 
-    --popover: var(--color-rill-gray-dark-400);
+    --popover: var(--color-statsparrot-gray-dark-400);
     --popover-accent: var(--surface-hover);
     --popover-foreground: var(--color-neutral-light-50);
-    --popover-footer: var(--color-rill-gray-dark-400);
+    --popover-footer: var(--color-statsparrot-gray-dark-400);
 
     /* Theme declaration */
     --color-theme-50: var(--color-theme-dark-50, var(--color-primary-dark-50));

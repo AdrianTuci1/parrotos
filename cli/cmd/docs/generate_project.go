@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -32,10 +32,10 @@ func GenerateProjectDocsCmd(rootCmd *cobra.Command, ch *cmdutil.Helper) *cobra.C
 				return fmt.Errorf("project schema error: %w", err)
 			}
 
-			rillyamlPath := "runtime/parser/schema/rillyaml.schema.yaml"
-			rillYamlSchema, err := parseSchemaYAML(rillyamlPath)
+			statsparrotyamlPath := "runtime/parser/schema/statsparrotyaml.schema.yaml"
+			statsparrotYamlSchema, err := parseSchemaYAML(statsparrotyamlPath)
 			if err != nil {
-				return fmt.Errorf("rillyaml schema error: %w", err)
+				return fmt.Errorf("statsparrotyaml schema error: %w", err)
 			}
 
 			var projectFilesbuf strings.Builder
@@ -60,7 +60,7 @@ func GenerateProjectDocsCmd(rootCmd *cobra.Command, ch *cmdutil.Helper) *cobra.C
 				return fmt.Errorf("no oneOf found in project schema")
 			}
 
-			oneOfNode.Content = append(oneOfNode.Content, rillYamlSchema)
+			oneOfNode.Content = append(oneOfNode.Content, statsparrotYamlSchema)
 
 			for _, resource := range oneOfNode.Content {
 				sidebarPosition++

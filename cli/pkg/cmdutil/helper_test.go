@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rilldata/rill/cli/pkg/printer"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/printer"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -409,7 +409,7 @@ func setupGitConfig(t *testing.T, repoPath string) {
 	err := cmd.Run()
 	require.NoError(t, err, "failed to set user name in git config")
 
-	cmd = exec.Command("git", "-C", repoPath, "config", "user.email", "test@rilldata.com")
+	cmd = exec.Command("git", "-C", repoPath, "config", "user.email", "test@staticlabs.com")
 	err = cmd.Run()
 	require.NoError(t, err, "failed to set user email in git config")
 }
@@ -439,5 +439,5 @@ func readFile(t *testing.T, repoPath, relativePath string) string {
 
 var author = gitutil.Signature{
 	Name:  "Test User",
-	Email: "test@rilldata.com",
+	Email: "test@staticlabs.com",
 }

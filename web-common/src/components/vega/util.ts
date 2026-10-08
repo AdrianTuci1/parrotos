@@ -1,4 +1,4 @@
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import type { TimeUnit } from "vega-lite/types_unstable/timeunit.js";
 
 export const timeGrainToVegaTimeUnitMap: Record<V1TimeGrain, TimeUnit> = {
@@ -48,5 +48,5 @@ export function sanitizeFieldName(fieldName: string) {
    * Keep this value to a JavaScript/Vega identifier-safe subset so measure
    * names with spaces or operators can still be used as formatter names.
    */
-  return `rill_${sanitizedFieldName || "field"}`;
+  return `statsparrot_${sanitizedFieldName || "field"}`;
 }

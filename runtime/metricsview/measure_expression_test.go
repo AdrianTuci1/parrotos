@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rilldata/rill/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
 	"github.com/stretchr/testify/require"
 )
 

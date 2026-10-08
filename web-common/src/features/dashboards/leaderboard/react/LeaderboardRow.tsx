@@ -13,11 +13,11 @@
  */
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
-import { clamp } from "@rilldata/web-common/lib/clamp";
-import { makeHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
-import { formatMeasurePercentageDifference } from "@rilldata/web-common/lib/number-formatting/percentage-formatter";
-import { numberPartsToString } from "@rilldata/web-common/lib/number-formatting/utils/number-parts-utils";
-import { useReadable } from "@rilldata/web-common/features/components/charts/react/useReadable";
+import { clamp } from "@statsparrot/web-common/lib/clamp";
+import { makeHref } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
+import { formatMeasurePercentageDifference } from "@statsparrot/web-common/lib/number-formatting/percentage-formatter";
+import { numberPartsToString } from "@statsparrot/web-common/lib/number-formatting/utils/number-parts-utils";
+import { useReadable } from "@statsparrot/web-common/features/components/charts/react/useReadable";
 import type { LeaderboardItemData } from "../leaderboard-utils";
 import {
   COMPARISON_COLUMN_WIDTH,

@@ -1,15 +1,15 @@
-import { createAndExpression } from "@rilldata/web-common/features/dashboards/stores/filter-utils";
+import { createAndExpression } from "@statsparrot/web-common/features/dashboards/stores/filter-utils";
 import {
   getDefaultTimeRange,
   getDefaultTimeZone,
-} from "@rilldata/web-common/features/dashboards/stores/get-rill-default-explore-state";
-import { getValidComparisonOption } from "@rilldata/web-common/features/dashboards/time-controls/time-range-store";
-import { getDefaultTimeGrain } from "@rilldata/web-common/features/dashboards/time-controls/time-range-utils";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
-import { ToURLParamTDDChartMap } from "@rilldata/web-common/features/dashboards/url-state/mappers";
-import { ISODurationToTimePreset } from "@rilldata/web-common/lib/time/ranges";
-import { isoDurationToFullTimeRange } from "@rilldata/web-common/lib/time/ranges/iso-ranges";
-import { TimeRangePreset } from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/features/dashboards/stores/get-statsparrot-default-explore-state";
+import { getValidComparisonOption } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-store";
+import { getDefaultTimeGrain } from "@statsparrot/web-common/features/dashboards/time-controls/time-range-utils";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
+import { ToURLParamTDDChartMap } from "@statsparrot/web-common/features/dashboards/url-state/mappers";
+import { ISODurationToTimePreset } from "@statsparrot/web-common/lib/time/ranges";
+import { isoDurationToFullTimeRange } from "@statsparrot/web-common/lib/time/ranges/iso-ranges";
+import { TimeRangePreset } from "@statsparrot/web-common/lib/time/types";
 import {
   V1ExploreComparisonMode,
   V1ExploreSortType,
@@ -18,10 +18,10 @@ import {
   type V1ExploreSpec,
   type V1MetricsViewSpec,
   type V1TimeRangeSummary,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import { ALL_TIME_RANGE_ALIAS } from "../time-controls/new-time-controls";
-import { DEFAULT_TIMEZONES } from "@rilldata/web-common/lib/time/config";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
+import { DEFAULT_TIMEZONES } from "@statsparrot/web-common/lib/time/config";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
 
 export function getDefaultExplorePreset(
   explore: V1ExploreSpec,

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 
   export let key: "command" | "shift";
 

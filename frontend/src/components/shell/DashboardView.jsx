@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useRuntimeClient } from "@rilldata/web-common/runtime-client/react";
-import { getRuntimeServiceListResourcesQueryOptions } from "@rilldata/web-common/runtime-client";
+import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/react";
+import { getRuntimeServiceListResourcesQueryOptions } from "@statsparrot/web-common/runtime-client";
 import { useQuery } from "@tanstack/react-query";
-import { StateManagersProvider } from "@rilldata/web-common/features/dashboards/state-managers/react";
+import { StateManagersProvider } from "@statsparrot/web-common/features/dashboards/state-managers/react";
 import { ViewFrame } from "@/components/shell/ViewFrame";
 import {
   DEFAULT_METRICS_VIEW,
@@ -15,9 +15,9 @@ import { useAppStore } from "@/stores/useAppStore";
 import { MockMetricsExplorer, RuntimeMetricsExplorer } from "@/components/shell/MetricsExploreView";
 
 /**
- * Rill-style `/dashboard` artifact view.
+ * Parrot-style `/dashboard` artifact view.
  *
- * With a `:name` it renders a real Rill dashboard (charts fed from the runtime
+ * With a `:name` it renders a real Parrot dashboard (charts fed from the runtime
  * metrics view named `name`). Without one it lists the project's dashboards
  * (Explore/Canvas resources from the runtime, falling back to the registered mock
  * metrics views) and links through to the per-artifact `/dashboard/:name` route.
@@ -34,7 +34,7 @@ export function DashboardView() {
   const dashboardsQuery = useQuery(
     getRuntimeServiceListResourcesQueryOptions(runtimeClient, {}, {
       query: {
-        // Fail fast when no Rill runtime is reachable so the mock list renders
+        // Fail fast when no Parrot runtime is reachable so the mock list renders
         // instead of retrying a connection-refused request in the background.
         retry: false,
         select: (data) =>
@@ -111,7 +111,7 @@ export function DashboardView() {
  * explorer surface that powers the Explore route (filters, KPI cards, charts,
  * leaderboard / dimension table / pivot). In runtime mode the live explorer is
  * used; otherwise the mock explorer keeps the dashboard populated without a
- * running Rill runtime.
+ * running Parrot runtime.
  */
 function DashboardDetail({ metricsView }) {
   const viewName = metricsView || DEFAULT_METRICS_VIEW;

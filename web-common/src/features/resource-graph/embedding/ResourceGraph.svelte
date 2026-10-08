@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import type { V1Resource } from "@rilldata/web-common/runtime-client";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import type { V1Resource } from "@statsparrot/web-common/runtime-client";
   import GraphCanvas from "../graph-canvas/GraphCanvas.svelte";
   import GraphOverlay from "./GraphOverlay.svelte";
   import {
@@ -11,7 +11,7 @@
   import {
     coerceResourceKind,
     ResourceKind,
-  } from "@rilldata/web-common/features/entity-management/resource-selectors";
+  } from "@statsparrot/web-common/features/entity-management/resource-selectors";
   import {
     expandSeedsByKind,
     isKindToken,
@@ -20,7 +20,7 @@
   } from "../navigation/seed-parser";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
-  import { copyWithAdditionalArguments } from "@rilldata/web-common/lib/url-utils";
+  import { copyWithAdditionalArguments } from "@statsparrot/web-common/lib/url-utils";
   import SummaryGraph from "../summary/SummaryGraph.svelte";
   import { onDestroy } from "svelte";
   import { UI_CONFIG, FIT_VIEW_CONFIG } from "../shared/config";

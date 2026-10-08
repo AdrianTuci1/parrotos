@@ -18,7 +18,7 @@ export interface VirtualizedTableConfig {
   headerBgColorHighlightClass?: string;
 }
 
-import type { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
+import type { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
 import type { SvelteComponent } from "svelte";
 
 export interface VirtualizedTableColumns {

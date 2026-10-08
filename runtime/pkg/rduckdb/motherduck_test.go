@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -40,7 +40,7 @@ func TestMotherDuck(t *testing.T) {
 
 	tempDir := t.TempDir()
 	db, err := NewGeneric(context.Background(), &GenericOptions{
-		DBInitQueries:      []string{"INSTALL motherduck; LOAD motherduck; SET motherduck_token = '" + os.Getenv("RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN") + "'"},
+		DBInitQueries:      []string{"INSTALL motherduck; LOAD motherduck; SET motherduck_token = '" + os.Getenv("STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN") + "'"},
 		Path:               fmt.Sprintf("md:%s", randomDB),
 		LocalDataDir:       tempDir,
 		LocalMemoryLimitGB: 2,
@@ -219,7 +219,7 @@ func testMotherDuckMutateTable(t *testing.T, db DB) {
 func testOtherSchema(t *testing.T, randomDB string) {
 	tempDir := t.TempDir()
 	db, err := NewGeneric(context.Background(), &GenericOptions{
-		DBInitQueries:      []string{"INSTALL motherduck; LOAD motherduck; SET motherduck_token = '" + os.Getenv("RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN") + "'"},
+		DBInitQueries:      []string{"INSTALL motherduck; LOAD motherduck; SET motherduck_token = '" + os.Getenv("STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN") + "'"},
 		Path:               fmt.Sprintf("md:%s", randomDB),
 		LocalDataDir:       tempDir,
 		LocalMemoryLimitGB: 2,
@@ -246,7 +246,7 @@ func testOtherSchema(t *testing.T, randomDB string) {
 }
 
 func provisionDatabase(t *testing.T) string {
-	db, err := sql.Open("duckdb", "md:my_db?motherduck_token="+os.Getenv("RILL_RUNTIME_MOTHERDUCK_TEST_TOKEN"))
+	db, err := sql.Open("duckdb", "md:my_db?motherduck_token="+os.Getenv("STATSPARROT_RUNTIME_MOTHERDUCK_TEST_TOKEN"))
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, db.Close())

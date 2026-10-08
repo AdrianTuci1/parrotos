@@ -1,7 +1,7 @@
 import {
   getLastConversationId,
   setLastConversationId,
-} from "@rilldata/web-common/features/chat/layouts/fullpage/fullpage-store";
+} from "@statsparrot/web-common/features/chat/layouts/fullpage/fullpage-store";
 import { redirect } from "@sveltejs/kit";
 
 export const load = async ({ params, route, url }) => {

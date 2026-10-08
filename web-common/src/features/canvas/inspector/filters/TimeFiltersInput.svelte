@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import InputLabel from "@rilldata/web-common/components/forms/InputLabel.svelte";
-  import Switch from "@rilldata/web-common/components/forms/Switch.svelte";
-  import CanvasComparisonPill from "@rilldata/web-common/features/canvas/filters/CanvasComparisonPill.svelte";
-  import { getCanvasStore } from "@rilldata/web-common/features/canvas/state-managers/state-managers";
-  import SuperPill from "@rilldata/web-common/features/dashboards/time-controls/super-pill/SuperPill.svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import InputLabel from "@statsparrot/web-common/components/forms/InputLabel.svelte";
+  import Switch from "@statsparrot/web-common/components/forms/Switch.svelte";
+  import CanvasComparisonPill from "@statsparrot/web-common/features/canvas/filters/CanvasComparisonPill.svelte";
+  import { getCanvasStore } from "@statsparrot/web-common/features/canvas/state-managers/state-managers";
+  import SuperPill from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/SuperPill.svelte";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { TimeState } from "../../stores/time-state";
-  import { ALL_TIME_RANGE_ALIAS } from "@rilldata/web-common/features/dashboards/time-controls/new-time-controls";
+  import { ALL_TIME_RANGE_ALIAS } from "@statsparrot/web-common/features/dashboards/time-controls/new-time-controls";
 
   export let id: string;
   export let localTimeControls: TimeState;

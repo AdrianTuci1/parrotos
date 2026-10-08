@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import type { V1OrganizationInvite } from "@rilldata/web-admin/client";
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
-  import ChangeBillingContactDialog from "@rilldata/web-admin/features/billing/contact/ChangeBillingContactDialog.svelte";
-  import { getOrganizationBillingContactUser } from "@rilldata/web-admin/features/billing/contact/selectors";
-  import AddUsersDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/AddUsersDialog.svelte";
-  import ChangingBillingContactRoleDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/ChangingBillingContactRoleDialog.svelte";
-  import EditUserGroupDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
-  import OrgUsersFilters from "@rilldata/web-admin/features/organizations/user-management/OrgUsersFilters.svelte";
-  import OrgUsersTable from "@rilldata/web-admin/features/organizations/user-management/table/users/OrgUsersTable.svelte";
-  import RemovingBillingContactDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/RemovingBillingContactDialog.svelte";
+  import type { V1OrganizationInvite } from "@statsparrot/web-admin/client";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
+  import ChangeBillingContactDialog from "@statsparrot/web-admin/features/billing/contact/ChangeBillingContactDialog.svelte";
+  import { getOrganizationBillingContactUser } from "@statsparrot/web-admin/features/billing/contact/selectors";
+  import AddUsersDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/AddUsersDialog.svelte";
+  import ChangingBillingContactRoleDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/ChangingBillingContactRoleDialog.svelte";
+  import EditUserGroupDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
+  import OrgUsersFilters from "@statsparrot/web-admin/features/organizations/user-management/OrgUsersFilters.svelte";
+  import OrgUsersTable from "@statsparrot/web-admin/features/organizations/user-management/table/users/OrgUsersTable.svelte";
+  import RemovingBillingContactDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/RemovingBillingContactDialog.svelte";
   import {
     getOrgUserInvites,
     getOrgUserMembers,
-  } from "@rilldata/web-admin/features/organizations/user-management/selectors.ts";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  } from "@statsparrot/web-admin/features/organizations/user-management/selectors.ts";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
   import { Plus } from "lucide-svelte";
   import type { PageData } from "./$types";
 

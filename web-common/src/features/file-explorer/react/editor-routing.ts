@@ -1,7 +1,7 @@
 // React-port of `layout/navigation/editor-routing.ts`. The Svelte original uses
 // SvelteKit's `goto`/`$app/navigation`; the React port keeps the pure path
 // builders so the file-explorer tree can navigate without a SvelteKit router.
-// `editorRoutePrefix` is empty in the web-local (Rill Developer) context, which
+// `editorRoutePrefix` is empty in the web-local (Parrot Developer) context, which
 // is the configuration the sentry-data React app uses.
 
 export const editorRoutePrefix = "";

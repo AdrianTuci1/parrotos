@@ -1,6 +1,6 @@
-import type { MultiStepFormSchema } from "@rilldata/web-common/features/templates/schemas/types.ts";
-import { getSchemaButtonLabels } from "@rilldata/web-common/features/templates/schema-utils.ts";
-import { ImportDataStep } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+import type { MultiStepFormSchema } from "@statsparrot/web-common/features/templates/schemas/types.ts";
+import { getSchemaButtonLabels } from "@statsparrot/web-common/features/templates/schema-utils.ts";
+import { ImportDataStep } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
 
 export type AddDataFormLabels = {
   primaryLoadingCopy: string;

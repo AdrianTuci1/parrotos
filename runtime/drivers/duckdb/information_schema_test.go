@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,7 +57,7 @@ func TestInformationSchemaMotherduck(t *testing.T) {
 type: connector
 driver: motherduck
 token: "{{ .env.motherduck_token }}"
-path: md:rilldata
+path: md:staticlabs
 schema_name: integration_test
 `,
 		},
@@ -70,7 +70,7 @@ schema_name: integration_test
 	require.True(t, ok)
 	infoSchema, ok := conn.AsInformationSchema()
 	require.True(t, ok)
-	database := "rilldata"
+	database := "staticlabs"
 	databaseSchema := "integration_test"
 	t.Run("testInformationSchemaAll", func(t *testing.T) { testInformationSchemaAll(t, olap) })
 	t.Run("testInformationSchemaAllLike", func(t *testing.T) { testInformationSchemaAllLike(t, olap) })

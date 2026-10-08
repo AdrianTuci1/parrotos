@@ -1,11 +1,11 @@
-// React stand-ins for the Svelte icon components used by the Rill layout shell.
-// Each SVG is reproduced from its Svelte source (icons/Rill.svelte,
+// React stand-ins for the Svelte icon components used by the Parrot layout shell.
+// Each SVG is reproduced from its Svelte source (icons/Parrot.svelte,
 // icons/HideSidebar.svelte, icons/SurfaceView.svelte, icons/Github.svelte,
 // icons/InfoCircle.svelte). The animated tween in SurfaceView.svelte is dropped
 // and only the static `hamburger` form is transferred, matching the rest of the
 // port.
 
-export function RillLogoIcon({
+export function ParrotLogoIcon({
   width = "27",
   height = "16",
   mode = "adapt",
@@ -173,4 +173,4 @@ export function InfoCircleIcon({
   );
 }
 
-export { CaretDownIcon } from "@rilldata/web-common/features/dashboards/time-controls/super-pill/new-time-dropdown/react/icons";
+export { CaretDownIcon } from "@statsparrot/web-common/features/dashboards/time-controls/super-pill/new-time-dropdown/react/icons";

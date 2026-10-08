@@ -1,14 +1,14 @@
-import type { FieldType } from "@rilldata/web-common/features/canvas/inspector/types.ts";
+import type { FieldType } from "@statsparrot/web-common/features/canvas/inspector/types.ts";
 import {
   getMeasureDisplayName,
   getDimensionDisplayName,
-} from "@rilldata/web-common/features/dashboards/filters/getDisplayName.ts";
-import { useExploreValidSpec } from "@rilldata/web-common/features/explores/selectors.ts";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config.ts";
-import { isGrainBigger } from "@rilldata/web-common/lib/time/grains";
-import { V1TimeGrainToDateTimeUnit } from "@rilldata/web-common/lib/time/new-grains";
-import { V1TimeGrain } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/features/dashboards/filters/getDisplayName.ts";
+import { useExploreValidSpec } from "@statsparrot/web-common/features/explores/selectors.ts";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config.ts";
+import { isGrainBigger } from "@statsparrot/web-common/lib/time/grains";
+import { V1TimeGrainToDateTimeUnit } from "@statsparrot/web-common/lib/time/new-grains";
+import { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 import { derived } from "svelte/store";
 
 export function getFieldsForExplore(
@@ -61,7 +61,7 @@ export function getFieldsForExplore(
     });
 
     allowedTimeGrains.forEach((grain) => {
-      const id = `${metricsViewSpec.timeDimension}_rill_${grain}`;
+      const id = `${metricsViewSpec.timeDimension}_statsparrot_${grain}`;
       displayMap[id] = {
         label: `Time ${V1TimeGrainToDateTimeUnit[grain]}`,
         type: "time",

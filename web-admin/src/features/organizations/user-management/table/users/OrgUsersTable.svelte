@@ -6,20 +6,20 @@
     V1OrganizationMemberUser,
     V1OrganizationInvite,
     V1OrganizationPermissions,
-  } from "@rilldata/web-admin/client";
-  import UserCompositeCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserCompositeCell.svelte";
-  import UserActionsCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserActionsCell.svelte";
-  import UserRoleCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserRoleCell.svelte";
-  import UserGroupsCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserGroupsCell.svelte";
-  import UserProjectsCell from "@rilldata/web-admin/features/organizations/user-management/table/users/UserProjectsCell.svelte";
+  } from "@statsparrot/web-admin/client";
+  import UserCompositeCell from "@statsparrot/web-admin/features/organizations/user-management/table/users/UserCompositeCell.svelte";
+  import UserActionsCell from "@statsparrot/web-admin/features/organizations/user-management/table/users/UserActionsCell.svelte";
+  import UserRoleCell from "@statsparrot/web-admin/features/organizations/user-management/table/users/UserRoleCell.svelte";
+  import UserGroupsCell from "@statsparrot/web-admin/features/organizations/user-management/table/users/UserGroupsCell.svelte";
+  import UserProjectsCell from "@statsparrot/web-admin/features/organizations/user-management/table/users/UserProjectsCell.svelte";
   import { renderComponent, type ColumnDef } from "tanstack-table-8-svelte-5";
   import type {
     InfiniteData,
     InfiniteQueryObserverResult,
   } from "@tanstack/svelte-query";
   import { ExternalLinkIcon } from "lucide-svelte";
-  import InfiniteScrollTable from "@rilldata/web-common/components/table/InfiniteScrollTable.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import InfiniteScrollTable from "@statsparrot/web-common/components/table/InfiniteScrollTable.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   interface OrgUser extends V1OrganizationMemberUser, V1OrganizationInvite {
     invitedBy?: string;
@@ -150,7 +150,7 @@
   const headerIcons = {
     roleName: {
       icon: ExternalLinkIcon,
-      href: "https://docs.rilldata.com/guide/administration/users-and-access/roles-permissions#organization-level-permissions",
+      href: "https://docs.statsparrot.com/guide/administration/users-and-access/roles-permissions#organization-level-permissions",
     },
   };
 </script>

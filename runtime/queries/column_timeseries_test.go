@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers/clickhouse/testclickhouse"
-	"github.com/rilldata/rill/runtime/queries"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers/clickhouse/testclickhouse"
+	"github.com/staticlabs/statsparrot/runtime/queries"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/stretchr/testify/assert"
@@ -22,8 +22,8 @@ func TestAgainstClickHouse(t *testing.T) {
 	testmode.Expensive(t)
 	// Create a test ClickHouse cluster
 	dsn := testclickhouse.Start(t)
-	t.Setenv("RILL_RUNTIME_TEST_OLAP_DRIVER", "clickhouse")
-	t.Setenv("RILL_RUNTIME_TEST_OLAP_DSN", dsn)
+	t.Setenv("STATSPARROT_RUNTIME_TEST_OLAP_DRIVER", "clickhouse")
+	t.Setenv("STATSPARROT_RUNTIME_TEST_OLAP_DSN", dsn)
 	t.Run("TestTimeseries_normaliseTimeRange", func(t *testing.T) { TestTimeseries_normaliseTimeRange(t) })
 	t.Run("TestTimeseries_normaliseTimeRange_NoEnd", func(t *testing.T) { TestTimeseries_normaliseTimeRange_NoEnd(t) })
 	t.Run("TestTimeseries_normaliseTimeRange_Specified", func(t *testing.T) { TestTimeseries_normaliseTimeRange_Specified(t) })

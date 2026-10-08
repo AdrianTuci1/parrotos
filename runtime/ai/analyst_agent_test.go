@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -73,7 +73,7 @@ func TestAnalystOpenRTB(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		AIConnector: "openai",
 		Files:       files,
-		FrontendURL: "https://ui.rilldata.com/-/dashboards/bids_metrics",
+		FrontendURL: "https://ui.statsparrot.com/-/dashboards/bids_metrics",
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, n, 0, 0)
 
@@ -165,7 +165,7 @@ func TestAnalystOpenRTB(t *testing.T) {
 		var agentRes ai.AnalystAgentResult
 		err = mapstructureutil.WeakDecode(rawRes, &agentRes)
 		require.NoError(t, err)
-		expectedCitationUrl := fmt.Sprintf(`https://ui.rilldata.com/-/dashboards/bids_metrics/-/ai/%s/message/%s/-/open`, s.ID(), calls[2].ID)
+		expectedCitationUrl := fmt.Sprintf(`https://ui.statsparrot.com/-/dashboards/bids_metrics/-/ai/%s/message/%s/-/open`, s.ID(), calls[2].ID)
 		require.Contains(t, agentRes.Response, expectedCitationUrl)
 	})
 
@@ -227,7 +227,7 @@ func TestAnalystCharts(t *testing.T) {
 	rt, instanceID := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		AIConnector: "openai",
 		Files:       files,
-		FrontendURL: "https://ui.rilldata.com/-/dashboards/bids_metrics",
+		FrontendURL: "https://ui.statsparrot.com/-/dashboards/bids_metrics",
 	})
 	testruntime.RequireReconcileState(t, rt, instanceID, n, 0, 0)
 

@@ -1,33 +1,33 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { sanitizeFieldName } from "@rilldata/web-common/components/vega/util";
-import { useRillTheme } from "@rilldata/web-common/components/vega/react/useRillTheme";
+import { sanitizeFieldName } from "@statsparrot/web-common/components/vega/util";
+import { useParrotTheme } from "@statsparrot/web-common/components/vega/react/useParrotTheme";
 import {
   resolveSignalField,
   resolveSignalIntervalField,
   resolveSignalTimeField,
-} from "@rilldata/web-common/components/vega/vega-signals";
+} from "@statsparrot/web-common/components/vega/vega-signals";
 import type { SignalListeners, View, VisualizationSpec } from "svelte-vega";
 import type { Readable } from "svelte/store";
-import type { ExpressionFunction } from "@rilldata/web-common/components/vega/types";
-import type { CanvasChartSpec } from "@rilldata/web-common/features/canvas/components/charts";
+import type { ExpressionFunction } from "@statsparrot/web-common/components/vega/types";
+import type { CanvasChartSpec } from "@statsparrot/web-common/features/canvas/components/charts";
 import {
   createMeasureValueFormatter,
   humanizeDataType,
-} from "@rilldata/web-common/lib/number-formatting/format-measure-value";
-import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-import type { TimeRange } from "@rilldata/web-common/lib/time/types";
-import type { MetricsViewSpecMeasure } from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { getChroma } from "@rilldata/web-common/features/themes/theme-utils";
+} from "@statsparrot/web-common/lib/number-formatting/format-measure-value";
+import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+import type { TimeRange } from "@statsparrot/web-common/lib/time/types";
+import type { MetricsViewSpecMeasure } from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { getChroma } from "@statsparrot/web-common/features/themes/theme-utils";
 import { discoverTemporalBrushSignal } from "../brush-builder";
 import { clearExternalBrush, setExternalBrush } from "../highlight-controller";
 import type { ChartDataResult, ChartType } from "../types";
 import { generateSpec, getColorMappingForChart } from "../util";
-import RillChart from "./RillChart";
+import ParrotChart from "./ParrotChart";
 import { useReadable } from "./useReadable";
 
 export interface ChartProps {
-  /** Runtime client forwarded to RillChart (Svelte context is unavailable in React). */
+  /** Runtime client forwarded to ParrotChart (Svelte context is unavailable in React). */
   runtimeClient: RuntimeClient;
   chartType: ChartType;
   chartSpec: CanvasChartSpec;
@@ -70,7 +70,7 @@ function buildHoverListeners(
 }
 
 /**
- * React translation of `Chart.svelte`. Renders the RillChart renderer and owns the
+ * React translation of `Chart.svelte`. Renders the ParrotChart renderer and owns the
  * brush/hover wiring that manipulates the live vega View.
  */
 export default function Chart(props: ChartProps) {
@@ -121,7 +121,7 @@ export default function Chart(props: ChartProps) {
     return generateSpec(chartType, chartSpec, chartDataWithTheme);
   }, [chartType, chartSpec, chartDataWithTheme]);
 
-  // Memoize the spec with deep equality so RillChart does not recreate the view (and
+  // Memoize the spec with deep equality so ParrotChart does not recreate the view (and
   // kill brush state) on store re-emissions that produce the same spec.
   const [spec, setSpec] = useState<ReturnType<typeof generateSpec>>({});
   useEffect(() => {
@@ -268,7 +268,7 @@ export default function Chart(props: ChartProps) {
 
   // Always keep the internal view state in sync (brush logic depends on it) while
   // also forwarding the view up to the parent when requested.
-  const handleRillView = useCallback(
+  const handleParrotView = useCallback(
     (v: View | undefined) => {
       setView(v);
       onView?.(v);
@@ -277,7 +277,7 @@ export default function Chart(props: ChartProps) {
   );
 
   const chartDataProp = useMemo(() => ({ "metrics-view": data }), [data]);
-  const config = useRillTheme(isThemeModeDark, theme);
+  const config = useParrotTheme(isThemeModeDark, theme);
 
   if (!chartDataValue) {
     return <SpinnerPlaceholder />;
@@ -298,9 +298,9 @@ export default function Chart(props: ChartProps) {
 
   return (
     <div className="size-full" onPointerDown={handleLocalPointerDown}>
-      <RillChart
+      <ParrotChart
         runtimeClient={runtimeClient}
-        onView={handleRillView}
+        onView={handleParrotView}
         canvasDashboard={isCanvas}
         data={chartDataProp}
         themeMode={themeMode}

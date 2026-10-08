@@ -1,4 +1,4 @@
-import { debounce } from "@rilldata/web-common/lib/create-debouncer.ts";
+import { debounce } from "@statsparrot/web-common/lib/create-debouncer.ts";
 
 export interface RuneStore<Val, DefaultVal = Val> {
   value: Val | DefaultVal;

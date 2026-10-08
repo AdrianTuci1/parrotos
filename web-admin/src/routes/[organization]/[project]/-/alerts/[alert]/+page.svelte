@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import AlertHistoryTable from "@rilldata/web-admin/features/alerts/history/AlertHistoryTable.svelte";
-  import AlertMetadata from "@rilldata/web-admin/features/alerts/metadata/AlertMetadata.svelte";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import AlertHistoryTable from "@statsparrot/web-admin/features/alerts/history/AlertHistoryTable.svelte";
+  import AlertMetadata from "@statsparrot/web-admin/features/alerts/metadata/AlertMetadata.svelte";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

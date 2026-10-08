@@ -57,7 +57,7 @@ export const s3Schema: MultiStepFormSchema = {
       type: "string",
       title: "Region",
       description:
-        "Rill uses your default AWS region unless you set it explicitly.",
+        "Parrot uses your default AWS region unless you set it explicitly.",
       "x-placeholder": "us-east-1",
       "x-step": "connector",
       "x-visible-if": { auth_method: "access_keys" },
@@ -87,7 +87,7 @@ export const s3Schema: MultiStepFormSchema = {
       type: "string",
       title: "Role Session Name",
       description: "Session name for STS AssumeRole",
-      "x-placeholder": "rill-session",
+      "x-placeholder": "statsparrot-session",
       "x-step": "connector",
       "x-visible-if": { auth_method: "access_keys" },
       "x-advanced": true,

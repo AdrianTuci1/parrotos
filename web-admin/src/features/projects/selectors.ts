@@ -10,25 +10,25 @@ import {
   getAdminServiceGetProjectQueryKey,
   getAdminServiceGetProjectQueryOptions,
   type V1Deployment,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import {
   adminServiceGetMagicAuthToken,
   getAdminServiceGetMagicAuthTokenQueryKey,
-} from "@rilldata/web-admin/features/public-urls/get-magic-auth-token";
+} from "@statsparrot/web-admin/features/public-urls/get-magic-auth-token";
 import {
   adminServiceGetProjectWithBearerToken,
   getAdminServiceGetProjectWithBearerTokenQueryKey,
-} from "@rilldata/web-admin/features/public-urls/get-project-with-bearer-token";
+} from "@statsparrot/web-admin/features/public-urls/get-project-with-bearer-token";
 import {
   ResourceKind,
   SingletonProjectParserName,
   useResourceV2,
-} from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 import {
   getRuntimeClient,
   type RuntimeClient,
-} from "@rilldata/web-common/runtime-client/v2";
+} from "@statsparrot/web-common/runtime-client/v2";
 import { derived, type Readable } from "svelte/store";
 
 export function getProjectPermissions(orgName: string, projName: string) {

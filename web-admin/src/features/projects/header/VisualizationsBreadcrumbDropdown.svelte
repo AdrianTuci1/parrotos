@@ -1,17 +1,17 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import type { BreadcrumbItemDropdownProps } from "@rilldata/web-common/components/navigation/breadcrumbs/types.ts";
-  import BreadcrumbDropdownItem from "@rilldata/web-common/components/navigation/breadcrumbs/BreadcrumbDropdownItem.svelte";
-  import { getAllTagsForResources } from "@rilldata/web-common/features/resources/resource-tag-utils.ts";
-  import { useDashboards } from "@rilldata/web-admin/features/dashboards/listing/selectors.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import DashboardsTagFilter from "@rilldata/web-admin/features/dashboards/listing/DashboardsTagFilter.svelte";
-  import { Search } from "@rilldata/web-common/components/search";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import type { BreadcrumbItemDropdownProps } from "@statsparrot/web-common/components/navigation/breadcrumbs/types.ts";
+  import BreadcrumbDropdownItem from "@statsparrot/web-common/components/navigation/breadcrumbs/BreadcrumbDropdownItem.svelte";
+  import { getAllTagsForResources } from "@statsparrot/web-common/features/resources/resource-tag-utils.ts";
+  import { useDashboards } from "@statsparrot/web-admin/features/dashboards/listing/selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import DashboardsTagFilter from "@statsparrot/web-admin/features/dashboards/listing/DashboardsTagFilter.svelte";
+  import { Search } from "@statsparrot/web-common/components/search";
   import {
     ArrayRuneStore,
     InMemoryRuneStore,
   } from "web-common/src/lib/store-utils/types.svelte.ts";
-  import { filterResources } from "@rilldata/web-common/features/resources/resource-filter-utils.ts";
+  import { filterResources } from "@statsparrot/web-common/features/resources/resource-filter-utils.ts";
   import {
     getDashboardFavouritesStore,
     sortByFavourites,

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import * as Dropdown from "@rilldata/web-common/components/dropdown-menu";
+  import * as Dropdown from "@statsparrot/web-common/components/dropdown-menu";
   import {
     createAdminServiceListProjectsForOrganizationAndUser,
     type V1Project,
-  } from "@rilldata/web-admin/client";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let userId: string;

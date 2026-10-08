@@ -1,6 +1,6 @@
 <script lang="ts">
   import { beforeNavigate } from "$app/navigation";
-  import { Search } from "@rilldata/web-common/components/search";
+  import { Search } from "@statsparrot/web-common/components/search";
   import type { Table } from "tanstack-table-8-svelte-5";
   import { getContext } from "svelte";
   import type { Readable } from "svelte/store";

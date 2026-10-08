@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/graceful"
-	"github.com/rilldata/rill/runtime/pkg/rduckdb"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/graceful"
+	"github.com/staticlabs/statsparrot/runtime/pkg/rduckdb"
 	"go.uber.org/zap"
 )
 
@@ -133,7 +133,7 @@ func (c *connection) insertTableAsSelect(ctx context.Context, name, sql string, 
 			}
 
 			// Create a temporary table with the new data
-			tmp := fmt.Sprintf("__rill_temp_%s", name)
+			tmp := fmt.Sprintf("__statsparrot_temp_%s", name)
 			_, err := conn.ExecContext(ctx, fmt.Sprintf("CREATE OR REPLACE TABLE %s AS (%s\n)", safeSQLName(tmp), sql))
 			if err != nil {
 				return err

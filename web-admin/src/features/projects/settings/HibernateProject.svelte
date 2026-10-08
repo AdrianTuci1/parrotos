@@ -4,9 +4,9 @@
     createAdminServiceHibernateProject,
     getAdminServiceGetProjectQueryKey,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
-  import SettingsContainer from "@rilldata/web-admin/features/organizations/settings/SettingsContainer.svelte";
-  import { Button } from "@rilldata/web-common/components/button";
+  } from "@statsparrot/web-admin/client";
+  import SettingsContainer from "@statsparrot/web-admin/features/organizations/settings/SettingsContainer.svelte";
+  import { Button } from "@statsparrot/web-common/components/button";
   import {
     AlertDialog,
     AlertDialogContent,
@@ -15,11 +15,11 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  } from "@statsparrot/web-common/components/alert-dialog";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import type { AxiosError } from "axios";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let { organization, project }: { organization: string; project: string } =
     $props();

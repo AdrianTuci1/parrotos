@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import ContextButton from "@rilldata/web-common/components/button/ContextButton.svelte";
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu/";
-  import MoreHorizontal from "@rilldata/web-common/components/icons/MoreHorizontal.svelte";
+  import ContextButton from "@statsparrot/web-common/components/button/ContextButton.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu/";
+  import MoreHorizontal from "@statsparrot/web-common/components/icons/MoreHorizontal.svelte";
   import CaretDownIcon from "../../../components/icons/CaretDownIcon.svelte";
   import TableIcon from "../../../components/icons/TableIcon.svelte";
   import TableMenuItems from "./TableMenuItems.svelte";

@@ -1,5 +1,5 @@
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { OrgUserRoles } from "@rilldata/web-common/features/users/roles";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles";
 
 export function getOrgRolesOptions() {
   return [

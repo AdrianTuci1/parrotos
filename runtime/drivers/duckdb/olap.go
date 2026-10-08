@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
@@ -20,8 +20,8 @@ import (
 
 // Create instruments
 var (
-	tracer                = otel.Tracer("github.com/rilldata/rill/runtime/drivers/duckdb")
-	meter                 = otel.Meter("github.com/rilldata/rill/runtime/drivers/duckdb")
+	tracer                = otel.Tracer("github.com/staticlabs/statsparrot/runtime/drivers/duckdb")
+	meter                 = otel.Meter("github.com/staticlabs/statsparrot/runtime/drivers/duckdb")
 	queriesCounter        = observability.Must(meter.Int64Counter("queries"))
 	queueLatencyHistogram = observability.Must(meter.Int64Histogram("queue_latency", metric.WithUnit("ms")))
 	queryLatencyHistogram = observability.Must(meter.Int64Histogram("query_latency", metric.WithUnit("ms")))

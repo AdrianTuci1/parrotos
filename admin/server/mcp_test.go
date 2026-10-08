@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/google/jsonschema-go/jsonschema"
-	"github.com/rilldata/rill/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/ai"
 	"github.com/stretchr/testify/require"
 )
 

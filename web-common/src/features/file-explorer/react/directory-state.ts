@@ -3,7 +3,7 @@
 // `typeof window` instead. The API surface (expand/collapse/toggle/expandAll/
 // collapseAll/setProjectScope/reset) is preserved so React components can bridge
 // it with `useReadable()` and the frontend build resolves it without SvelteKit.
-import { debounce } from "@rilldata/web-common/lib/create-debouncer";
+import { debounce } from "@statsparrot/web-common/lib/create-debouncer";
 import { type Writable, writable } from "svelte/store";
 
 interface DirectoryState {

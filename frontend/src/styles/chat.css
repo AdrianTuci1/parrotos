@@ -1256,17 +1256,17 @@ main:has(.chat-active-mode),
    ═══════════════════════════════════════════════ */
 
 /* Wrapper around the ported <Messages> stream (only chart tool calls live here). */
-.chat-rill-chart-blocks {
+.chat-statsparrot-chart-blocks {
   width: 100%;
   margin-top: 4px;
 }
 
-.chat-rill-chart-blocks .messages {
+.chat-statsparrot-chart-blocks .messages {
   width: 100%;
 }
 
-/* Rill ChartBlock: collapsible tool-call header + chart. */
-.chat-rill-chart-blocks .chart-block {
+/* Parrot ChartBlock: collapsible tool-call header + chart. */
+.chat-statsparrot-chart-blocks .chart-block {
   width: 100%;
   max-width: 100%;
   align-self: start;
@@ -1274,7 +1274,7 @@ main:has(.chat-active-mode),
 
 /* React ChartBlock doesn't carry over the Svelte style block, so the chart
    container needs its own height/background to render the Vega chart. */
-.chat-rill-chart-blocks .chart-block .chart-container {
+.chat-statsparrot-chart-blocks .chart-block .chart-container {
   width: 100%;
   height: 400px;
   border: 1px solid #25282C;
@@ -1284,15 +1284,15 @@ main:has(.chat-active-mode),
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Tool-call collapsible header (Rill ToolCall React port). */
-.chat-rill-chart-blocks .tool-call {
+/* Tool-call collapsible header (Parrot ToolCall React port). */
+.chat-statsparrot-chart-blocks .tool-call {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 10px;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-button {
+.chat-statsparrot-chart-blocks .tool-call .tool-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1308,22 +1308,22 @@ main:has(.chat-active-mode),
   transition: border-color 0.2s, color 0.2s;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-button:hover {
+.chat-statsparrot-chart-blocks .tool-call .tool-button:hover {
   border-color: #A8C7FA;
   color: #E3E3E3;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-icon {
+.chat-statsparrot-chart-blocks .tool-call .tool-icon {
   display: inline-flex;
   align-items: center;
   color: #A8C7FA;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-caret {
+.chat-statsparrot-chart-blocks .tool-call .tool-caret {
   font-size: 10px;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-loading-spinner {
+.chat-statsparrot-chart-blocks .tool-call .tool-loading-spinner {
   width: 10px;
   height: 10px;
   border: 2px solid #3A3C3F;
@@ -1332,25 +1332,25 @@ main:has(.chat-active-mode),
   animation: spin 0.8s linear infinite;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-name {
+.chat-statsparrot-chart-blocks .tool-call .tool-name {
   font-weight: 600;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-content {
+.chat-statsparrot-chart-blocks .tool-call .tool-content {
   border: 1px solid #25282C;
   border-radius: 10px;
   background: #0D0E10;
   overflow: hidden;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-tabs {
+.chat-statsparrot-chart-blocks .tool-call .tool-tabs {
   display: flex;
   gap: 2px;
   padding: 4px 6px 0 6px;
   border-bottom: 1px solid #1E1F20;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-tab {
+.chat-statsparrot-chart-blocks .tool-call .tool-tab {
   padding: 6px 12px;
   border: none;
   border-bottom: 2px solid transparent;
@@ -1361,16 +1361,16 @@ main:has(.chat-active-mode),
   cursor: pointer;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-tab.active {
+.chat-statsparrot-chart-blocks .tool-call .tool-tab.active {
   color: #E3E3E3;
   border-bottom-color: #A8C7FA;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-tab-content {
+.chat-statsparrot-chart-blocks .tool-call .tool-tab-content {
   padding: 8px 12px;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-code {
+.chat-statsparrot-chart-blocks .tool-call .tool-code {
   margin: 0;
   padding: 8px 10px;
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -1383,7 +1383,7 @@ main:has(.chat-active-mode),
   overflow-y: auto;
 }
 
-.chat-rill-chart-blocks .tool-call .tool-loading {
+.chat-statsparrot-chart-blocks .tool-call .tool-loading {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1392,7 +1392,7 @@ main:has(.chat-active-mode),
   font-size: 12px;
 }
 
-/* ── AI full-page chat (Rill /ai) ─────────────────────────────────────────── */
+/* ── AI full-page chat (Parrot /ai) ─────────────────────────────────────────── */
 
 .ai-full-page {
   height: 100%;

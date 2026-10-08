@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { createAdminServiceGetProject } from "@rilldata/web-admin/client";
-  import { useDashboardsLastUpdated } from "@rilldata/web-admin/features/dashboards/listing/selectors";
-  import { useGithubLastSynced } from "@rilldata/web-admin/features/projects/selectors";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
+  import { createAdminServiceGetProject } from "@statsparrot/web-admin/client";
+  import { useDashboardsLastUpdated } from "@statsparrot/web-admin/features/dashboards/listing/selectors";
+  import { useGithubLastSynced } from "@statsparrot/web-admin/features/projects/selectors";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
   import {
     getRepoNameFromGitRemote,
     getGitUrlFromRemote,
-  } from "@rilldata/web-common/features/project/deploy/github-utils";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/project/deploy/github-utils";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let organization: string;
   export let project: string;
@@ -72,7 +72,7 @@
         {m.github_unlock_bi_as_code()}
         <span class="whitespace-nowrap">
           <a
-            href="https://docs.rilldata.com/developers/deploy/deploy-dashboard/github-101"
+            href="https://docs.statsparrot.com/developers/deploy/deploy-dashboard/github-101"
             target="_blank"
             class="text-primary-600"
           >

@@ -6,19 +6,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rilldata/rill/cli/pkg/browser"
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	"github.com/rilldata/rill/cli/pkg/deviceauth"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
-	"github.com/rilldata/rill/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/cli/pkg/browser"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	"github.com/staticlabs/statsparrot/cli/pkg/deviceauth"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
+	"github.com/staticlabs/statsparrot/runtime/pkg/activity"
 	"github.com/spf13/cobra"
 )
 
-// LoginCmd is the command for logging into a Rill account.
+// LoginCmd is the command for logging into a Parrot account.
 func LoginCmd(ch *cmdutil.Helper) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "login",
-		Short: "Authenticate with the Rill API",
+		Short: "Authenticate with the Parrot API",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 
@@ -76,7 +76,7 @@ func Login(ctx context.Context, ch *cmdutil.Helper, redirectURL string) error {
 		return err
 	}
 
-	err = ch.DotRill.SetAccessToken(res1.AccessToken)
+	err = ch.DotStatsparrot.SetAccessToken(res1.AccessToken)
 	if err != nil {
 		return err
 	}
@@ -86,12 +86,12 @@ func Login(ctx context.Context, ch *cmdutil.Helper, redirectURL string) error {
 		return err
 	}
 
-	ch.PrintfBold("Successfully logged in. Welcome to Rill!\n")
+	ch.PrintfBold("Successfully logged in. Welcome to Parrot!\n")
 	return nil
 }
 
 func LoginWithTelemetry(ctx context.Context, ch *cmdutil.Helper, redirectURL string) error {
-	ch.PrintfBold("Please log in or sign up for Rill. Opening browser...\n")
+	ch.PrintfBold("Please log in or sign up for Parrot. Opening browser...\n")
 	select {
 	case <-time.After(2 * time.Second):
 	case <-ctx.Done():
@@ -102,7 +102,7 @@ func LoginWithTelemetry(ctx context.Context, ch *cmdutil.Helper, redirectURL str
 
 	if err := Login(ctx, ch, redirectURL); err != nil {
 		if errors.Is(err, deviceauth.ErrAuthenticationTimedout) {
-			ch.PrintfWarn("Rill login has timed out as the code was not confirmed in the browser.\n")
+			ch.PrintfWarn("Parrot login has timed out as the code was not confirmed in the browser.\n")
 			ch.PrintfWarn("Run the command again.\n")
 			return nil
 		} else if errors.Is(err, deviceauth.ErrCodeRejected) {
@@ -134,7 +134,7 @@ func SelectOrgFlow(ctx context.Context, ch *cmdutil.Helper, forceNoninteractive 
 	}
 
 	if len(res.Organizations) == 0 {
-		ch.PrintfWarn("You are not part of an org. Run `rill org create` to create one.\n")
+		ch.PrintfWarn("You are not part of an org. Run `statsparrot org create` to create one.\n")
 		return nil
 	}
 
@@ -151,12 +151,12 @@ func SelectOrgFlow(ctx context.Context, ch *cmdutil.Helper, forceNoninteractive 
 		}
 	}
 
-	err = ch.DotRill.SetDefaultOrg(defaultOrg)
+	err = ch.DotStatsparrot.SetDefaultOrg(defaultOrg)
 	if err != nil {
 		return err
 	}
 	ch.Org = defaultOrg
 
-	ch.Printf("Set default org to %q (hint: to change, run `rill org switch`).\n", defaultOrg)
+	ch.Printf("Set default org to %q (hint: to change, run `statsparrot org switch`).\n", defaultOrg)
 	return nil
 }

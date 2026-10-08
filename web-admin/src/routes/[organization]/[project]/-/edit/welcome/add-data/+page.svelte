@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import AddDataManager from "@rilldata/web-common/features/add-data/manager/AddDataManager.svelte";
-  import { AddDataStep } from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { projectWelcomeStatus } from "@rilldata/web-admin/features/welcome/project/welcome-status.ts";
-  import { checkpointProject } from "@rilldata/web-admin/features/projects/publish-project.ts";
+  import AddDataManager from "@statsparrot/web-common/features/add-data/manager/AddDataManager.svelte";
+  import { AddDataStep } from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { projectWelcomeStatus } from "@statsparrot/web-admin/features/welcome/project/welcome-status.ts";
+  import { checkpointProject } from "@statsparrot/web-admin/features/projects/publish-project.ts";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();

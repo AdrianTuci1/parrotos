@@ -1,4 +1,4 @@
-const targetDashboardKey = "rill:app:targetDashboard";
+const targetDashboardKey = "statsparrot:app:targetDashboard";
 export const TargetDashboardUrlParam = "target_dashboard";
 export const PreCommitShaUrlParam = "pre_commit_sha";
 

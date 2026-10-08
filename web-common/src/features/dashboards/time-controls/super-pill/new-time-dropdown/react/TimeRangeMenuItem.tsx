@@ -1,4 +1,4 @@
-import type { RillTime } from "@rilldata/web-common/features/dashboards/url-state/time-ranges/RillTime";
+import type { ParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/ParrotTime";
 import { SyntaxElement } from "./SyntaxElement";
 
 /**
@@ -6,19 +6,19 @@ import { SyntaxElement } from "./SyntaxElement";
  * option row in the time-range picker. Displays the human label and the syntax on hover.
  */
 export interface TimeRangeMenuItemProps {
-  rillTime: RillTime;
+  statsparrotTime: ParrotTime;
   timeString: string | undefined;
   onClick: (range: string) => void;
 }
 
 export function TimeRangeMenuItem({
-  rillTime,
+  statsparrotTime,
   timeString,
   onClick,
 }: TimeRangeMenuItemProps) {
-  const label = rillTime.getLabel();
+  const label = statsparrotTime.getLabel();
   // If there is as of baked into the range then use it.
-  const range = rillTime.asOfLabel ? rillTime.toString() : rillTime.interval.toString();
+  const range = statsparrotTime.asOfLabel ? statsparrotTime.toString() : statsparrotTime.interval.toString();
   const selected = !!timeString?.startsWith(range);
 
   return (

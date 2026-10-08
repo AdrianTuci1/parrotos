@@ -2,7 +2,7 @@ import {
   type AddDataState,
   AddDataStep,
   type AddDataStepWithSchema,
-} from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
+} from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
 
 const AddDataClassByStepMap: Partial<Record<AddDataStep, string>> = {
   [AddDataStep.SelectConnector]: "h-fit md:w-[900px] w-[550px]",

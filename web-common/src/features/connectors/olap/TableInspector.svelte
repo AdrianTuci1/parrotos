@@ -1,16 +1,16 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import ColumnProfile from "@rilldata/web-common/features/column-profile/ColumnProfile.svelte";
-  import ReconcilingSpinner from "@rilldata/web-common/features/entity-management/ReconcilingSpinner.svelte";
-  import CollapsibleSectionTitle from "@rilldata/web-common/layout/CollapsibleSectionTitle.svelte";
-  import { LIST_SLIDE_DURATION } from "@rilldata/web-common/layout/config";
-  import InspectorHeaderGrid from "@rilldata/web-common/layout/inspector/InspectorHeaderGrid.svelte";
-  import { formatInteger } from "@rilldata/web-common/lib/formatters";
+  import ColumnProfile from "@statsparrot/web-common/features/column-profile/ColumnProfile.svelte";
+  import ReconcilingSpinner from "@statsparrot/web-common/features/entity-management/ReconcilingSpinner.svelte";
+  import CollapsibleSectionTitle from "@statsparrot/web-common/layout/CollapsibleSectionTitle.svelte";
+  import { LIST_SLIDE_DURATION } from "@statsparrot/web-common/layout/config";
+  import InspectorHeaderGrid from "@statsparrot/web-common/layout/inspector/InspectorHeaderGrid.svelte";
+  import { formatInteger } from "@statsparrot/web-common/lib/formatters";
   import {
     createQueryServiceTableCardinality,
     createQueryServiceTableColumns,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   export let connector: string;
   export let database: string;

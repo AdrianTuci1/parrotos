@@ -1,17 +1,17 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { Button } from "@rilldata/web-common/components/button";
+  import { Button } from "@statsparrot/web-common/components/button";
   import CreateNewOrgForm, {
     CreateNewOrgFormId,
-  } from "@rilldata/web-common/features/organization/CreateNewOrgForm.svelte";
-  import RillLogoSquareNegative from "@rilldata/web-common/components/icons/RillLogoSquareNegative.svelte";
+  } from "@statsparrot/web-common/features/organization/CreateNewOrgForm.svelte";
+  import ParrotLogoSquareNegative from "@statsparrot/web-common/components/icons/ParrotLogoSquareNegative.svelte";
   import {
     createAdminServiceCreateOrganization,
     getAdminServiceListOrganizationsQueryKey,
     type RpcStatus,
-  } from "@rilldata/web-admin/client";
+  } from "@statsparrot/web-admin/client";
   import type { AxiosError } from "axios";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
 
   const createOrgMutation = createAdminServiceCreateOrganization();
   $: ({ isPending, error } = $createOrgMutation);
@@ -38,7 +38,7 @@
 </script>
 
 <div class="flex flex-col gap-4 mx-auto w-fit">
-  <RillLogoSquareNegative size="36px" />
+  <ParrotLogoSquareNegative size="36px" />
   <div class="text-2xl font-extrabold text-fg-accent text-center">
     Create an organization
   </div>

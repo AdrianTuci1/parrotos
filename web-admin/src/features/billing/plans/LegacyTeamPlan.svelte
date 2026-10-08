@@ -1,7 +1,7 @@
 <script lang="ts">
-  import PlanContainer from "@rilldata/web-admin/features/billing/plans/PlanContainer.svelte";
-  import DetailedUsageLink from "@rilldata/web-admin/features/billing/plans/modules/DetailedUsageLink.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import PlanContainer from "@statsparrot/web-admin/features/billing/plans/PlanContainer.svelte";
+  import DetailedUsageLink from "@statsparrot/web-admin/features/billing/plans/modules/DetailedUsageLink.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   let {
     billingPortalUrl,

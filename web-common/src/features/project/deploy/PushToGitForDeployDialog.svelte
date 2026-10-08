@@ -2,7 +2,7 @@
   import {
     getGitUrlFromRemote,
     getRepoNameFromGitRemote,
-  } from "@rilldata/web-common/features/project/deploy/github-utils";
+  } from "@statsparrot/web-common/features/project/deploy/github-utils";
   import {
     AlertDialog,
     AlertDialogContent,
@@ -11,9 +11,9 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@rilldata/web-common/components/alert-dialog";
-  import { Button } from "@rilldata/web-common/components/button";
-  import Github from "@rilldata/web-common/components/icons/Github.svelte";
+  } from "@statsparrot/web-common/components/alert-dialog";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import Github from "@statsparrot/web-common/components/icons/Github.svelte";
 
   export let open = false;
   export let gitRemote: string;
@@ -34,10 +34,10 @@
       <AlertDialogDescription class="flex flex-col gap-y-4 pt-2">
         <div>
           This project has already been connected to a GitHub repo. Please push
-          changes directly to GitHub and the project in Rill Cloud will
+          changes directly to GitHub and the project in Parrot Cloud will
           automatically be updated.
           <a
-            href="https://docs.rilldata.com/developers/deploy/deploy-dashboard/github-101"
+            href="https://docs.statsparrot.com/developers/deploy/deploy-dashboard/github-101"
             target="_blank"
           >
             Learn more ->

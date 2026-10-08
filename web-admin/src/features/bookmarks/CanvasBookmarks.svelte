@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Bookmarks from "@rilldata/web-admin/features/bookmarks/Bookmarks.svelte";
-  import { getCanvasCategorisedBookmarks } from "@rilldata/web-admin/features/bookmarks/selectors.ts";
-  import { useCanvas } from "@rilldata/web-common/features/canvas/selector";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import Bookmarks from "@statsparrot/web-admin/features/bookmarks/Bookmarks.svelte";
+  import { getCanvasCategorisedBookmarks } from "@statsparrot/web-admin/features/bookmarks/selectors.ts";
+  import { useCanvas } from "@statsparrot/web-common/features/canvas/selector";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { writable } from "svelte/store";
 
   export let organization: string;

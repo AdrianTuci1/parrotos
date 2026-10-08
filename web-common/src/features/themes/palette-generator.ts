@@ -1,4 +1,4 @@
-import { TailwindColorPresetsConverted } from "@rilldata/web-common/features/themes/color-config";
+import { TailwindColorPresetsConverted } from "@statsparrot/web-common/features/themes/color-config";
 import chroma, { type Color } from "chroma-js";
 
 export type ThemeColorShift = [hueShift: number, saturationShift: number];

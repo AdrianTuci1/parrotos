@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
-  import Resizer from "@rilldata/web-common/layout/Resizer.svelte";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
+  import Resizer from "@statsparrot/web-common/layout/Resizer.svelte";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
   import { writable } from "svelte/store";
   import type { Cell, HeaderGroup, Row } from "tanstack-table-8-svelte-5";
   import { flexRender } from "tanstack-table-8-svelte-5";

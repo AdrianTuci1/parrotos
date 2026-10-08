@@ -12,9 +12,9 @@ import (
 	"strconv"
 	"strings"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/fileutil"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/fileutil"
 )
 
 // Built-in parser limits
@@ -24,10 +24,10 @@ const (
 )
 
 // ignorePathPrefixes are prefixes of paths that should be ignored by the parser.
-// Note: Generally these ignores should be applied at the repo level (through the defaults for ignore_paths in rill.yaml).
+// Note: Generally these ignores should be applied at the repo level (through the defaults for ignore_paths in statsparrot.yaml).
 // This is only for files we DO want to list and show in the UI, but don't want to parse.
 var ignorePathPrefixes = []string{
-	"/.rillcloud/",
+	"/.statsparrotcloud/",
 	"/.github/",
 }
 
@@ -170,7 +170,7 @@ type Diff struct {
 	Deleted        []ResourceName
 }
 
-// Parser parses a Rill project directory into a set of resources.
+// Parser parses a Parrot project directory into a set of resources.
 // After the initial parse, the parser can be used to incrementally reparse a subset of files.
 // Parser is not concurrency safe.
 type Parser struct {
@@ -182,7 +182,7 @@ type Parser struct {
 	StrictResolverProps  bool
 
 	// Output
-	RillYAML  *RillYAML
+	ParrotYAML  *ParrotYAML
 	DotEnv    map[string]map[string]string // Map of .env file paths to their key-value pairs
 	Resources map[ResourceName]*Resource
 	Errors    []*runtimev1.ParseError
@@ -206,9 +206,9 @@ func (p *Parser) HasParseErrors() bool {
 	return false
 }
 
-// ParseRillYAML parses only the project's rill.yaml (or rill.yml) file.
-func ParseRillYAML(ctx context.Context, repo drivers.RepoStore, instanceID string) (*RillYAML, error) {
-	files, err := repo.ListGlob(ctx, "rill.{yaml,yml}", true)
+// ParseParrotYAML parses only the project's statsparrot.yaml (or statsparrot.yml) file.
+func ParseParrotYAML(ctx context.Context, repo drivers.RepoStore, instanceID string) (*ParrotYAML, error) {
+	files, err := repo.ListGlob(ctx, "statsparrot.{yaml,yml}", true)
 	if err != nil {
 		return nil, fmt.Errorf("could not list project files: %w", err)
 	}
@@ -224,11 +224,11 @@ func ParseRillYAML(ctx context.Context, repo drivers.RepoStore, instanceID strin
 		return nil, err
 	}
 
-	if p.RillYAML == nil {
-		return nil, ErrRillYAMLNotFound
+	if p.ParrotYAML == nil {
+		return nil, ErrParrotYAMLNotFound
 	}
 
-	return p.RillYAML, nil
+	return p.ParrotYAML, nil
 }
 
 // Parse creates a new parser and parses the entire project.
@@ -250,28 +250,28 @@ func Parse(ctx context.Context, repo drivers.RepoStore, instanceID, environment,
 }
 
 // Reparse re-parses the indicated file paths, updating the Parser's state.
-// If rill.yaml has previously errored, or if rill.yaml is included in paths, it will reload the entire project.
+// If statsparrot.yaml has previously errored, or if statsparrot.yaml is included in paths, it will reload the entire project.
 // If a previous call to Reparse has returned an error, the Parser may not be accessed or called again.
 func (p *Parser) Reparse(ctx context.Context, paths []string) (*Diff, error) {
-	var changedRillYAML bool
+	var changedParrotYAML bool
 	for _, path := range paths {
-		if !pathIsRillYAML(path) {
+		if !pathIsParrotYAML(path) {
 			continue
 		}
-		oldRillYAML := p.RillYAML
-		err := p.parseRillYAML(ctx, path)
+		oldParrotYAML := p.ParrotYAML
+		err := p.parseParrotYAML(ctx, path)
 		if err == nil {
-			// Watcher sends multiple events for a single edit. We want to only restart the controller when rill.yaml actually changes.
-			// So we check the new rill.yaml contents against the contents stored in parser state.
-			changedRillYAML = !reflect.DeepEqual(oldRillYAML, p.RillYAML)
+			// Watcher sends multiple events for a single edit. We want to only restart the controller when statsparrot.yaml actually changes.
+			// So we check the new statsparrot.yaml contents against the contents stored in parser state.
+			changedParrotYAML = !reflect.DeepEqual(oldParrotYAML, p.ParrotYAML)
 		} else {
-			// any error including parse error means rill.yaml changed
-			changedRillYAML = true
+			// any error including parse error means statsparrot.yaml changed
+			changedParrotYAML = true
 		}
 		break
 	}
 
-	if changedRillYAML {
+	if changedParrotYAML {
 		err := p.reload(ctx)
 		if err != nil {
 			return nil, err
@@ -279,12 +279,12 @@ func (p *Parser) Reparse(ctx context.Context, paths []string) (*Diff, error) {
 		return &Diff{Reloaded: true}, nil
 	}
 
-	// If rill.yaml previously errored, we're not going to reparse anything until it's changed, at which point we'll reload the entire project.
-	if p.RillYAML == nil {
+	// If statsparrot.yaml previously errored, we're not going to reparse anything until it's changed, at which point we'll reload the entire project.
+	if p.ParrotYAML == nil {
 		return &Diff{Skipped: true}, nil
 	}
 
-	return p.reparseExceptRillYAML(ctx, paths)
+	return p.reparseExceptParrotYAML(ctx, paths)
 }
 
 // IsSkippable returns true if the path will be skipped by Reparse.
@@ -361,7 +361,7 @@ func (p *Parser) GetDotEnvPerEnvironment() map[string]map[string]string {
 // reload resets the parser's state and then parses the entire project.
 func (p *Parser) reload(ctx context.Context) error {
 	// Reset state
-	p.RillYAML = nil
+	p.ParrotYAML = nil
 	p.DotEnv = make(map[string]map[string]string)
 	p.Resources = make(map[ResourceName]*Resource)
 	p.Errors = nil
@@ -398,9 +398,9 @@ func (p *Parser) reload(ctx context.Context) error {
 	return nil
 }
 
-// reparseExceptRillYAML re-parses the indicated file paths, updating the Parser's state.
-// It assumes that p.RillYAML is valid and does not need to be reloaded.
-func (p *Parser) reparseExceptRillYAML(ctx context.Context, paths []string) (*Diff, error) {
+// reparseExceptParrotYAML re-parses the indicated file paths, updating the Parser's state.
+// It assumes that p.ParrotYAML is valid and does not need to be reloaded.
+func (p *Parser) reparseExceptParrotYAML(ctx context.Context, paths []string) (*Diff, error) {
 	// The logic here is slightly tricky because the relationship between files and resources can vary:
 	//
 	// - Case 1: one file created one resource
@@ -609,29 +609,29 @@ func (p *Parser) parsePaths(ctx context.Context, paths []string) error {
 		return fmt.Errorf("project exceeds file limit of %d", maxFiles)
 	}
 
-	// Sort paths such that a) we always parse rill.yaml first (to pick up defaults),
+	// Sort paths such that a) we always parse statsparrot.yaml first (to pick up defaults),
 	// and b) we align files with the same name but different extensions next to each other.
 	slices.SortFunc(paths, func(a, b string) int {
-		if pathIsRillYAML(a) {
+		if pathIsParrotYAML(a) {
 			return -1
 		}
-		if pathIsRillYAML(b) {
+		if pathIsParrotYAML(b) {
 			return 1
 		}
 		return strings.Compare(a, b)
 	})
 
 	// Iterate over the sorted paths, processing all paths with the same stem at once (stem = path without extension).
-	sawRillYAML := false
+	sawParrotYAML := false
 	for i := 0; i < len(paths); {
-		// Handle rill.yaml and .env separately
+		// Handle statsparrot.yaml and .env separately
 		path := paths[i]
-		if pathIsRillYAML(path) {
-			err := p.parseRillYAML(ctx, path)
+		if pathIsParrotYAML(path) {
+			err := p.parseParrotYAML(ctx, path)
 			if err != nil {
 				p.addParseError(path, err, false)
 			}
-			sawRillYAML = true
+			sawParrotYAML = true
 			i++
 			continue
 		} else if pathIsDotEnv(path) {
@@ -660,9 +660,9 @@ func (p *Parser) parsePaths(ctx context.Context, paths []string) error {
 		i = j
 	}
 
-	// If we didn't encounter rill.yaml (in this run or a previous run), that's a breaking error
-	if !sawRillYAML && p.RillYAML == nil {
-		p.addParseError("/rill.yaml", errors.New("rill.yaml not found"), false)
+	// If we didn't encounter statsparrot.yaml (in this run or a previous run), that's a breaking error
+	if !sawParrotYAML && p.ParrotYAML == nil {
+		p.addParseError("/statsparrot.yaml", errors.New("statsparrot.yaml not found"), false)
 	}
 
 	// As a special case, we need to check that there aren't any sources and models with the same name.
@@ -1043,12 +1043,12 @@ func (p *Parser) addParseWarning(path, warning string) {
 }
 
 // driverForConnector resolves a connector name to a connector driver.
-// It should not be invoked until after rill.yaml has been parsed.
+// It should not be invoked until after statsparrot.yaml has been parsed.
 func (p *Parser) driverForConnector(name string) (string, drivers.Driver, error) {
-	// Search rill.yaml and Connector resources for the connector's driver
+	// Search statsparrot.yaml and Connector resources for the connector's driver
 	var driver string
-	if p.RillYAML != nil {
-		for _, c := range p.RillYAML.Connectors {
+	if p.ParrotYAML != nil {
+		for _, c := range p.ParrotYAML.Connectors {
 			if c.Name == name {
 				driver = c.Type
 				break
@@ -1080,16 +1080,16 @@ func (p *Parser) driverForConnector(name string) (string, drivers.Driver, error)
 }
 
 // defaultOLAPConnector resolves the project's default OLAP connector.
-// It should not be invoked until after rill.yaml has been parsed.
+// It should not be invoked until after statsparrot.yaml has been parsed.
 func (p *Parser) defaultOLAPConnector() string {
-	if p.RillYAML != nil && p.RillYAML.OLAPConnector != "" {
-		return p.RillYAML.OLAPConnector
+	if p.ParrotYAML != nil && p.ParrotYAML.OLAPConnector != "" {
+		return p.ParrotYAML.OLAPConnector
 	}
 	return p.DefaultOLAPConnector
 }
 
 // isDev returns true if the parser's instance's environment is "dev".
-// Usually this means it's running on localhost with "rill start".
+// Usually this means it's running on localhost with "statsparrot start".
 func (p *Parser) isDev() bool {
 	return strings.EqualFold(p.Environment, "dev")
 }
@@ -1104,9 +1104,9 @@ func pathIsYAML(path string) bool {
 	return strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")
 }
 
-// pathIsRillYAML returns true if the path is rill.yaml
-func pathIsRillYAML(path string) bool {
-	return path == "/rill.yaml" || path == "/rill.yml"
+// pathIsParrotYAML returns true if the path is statsparrot.yaml
+func pathIsParrotYAML(path string) bool {
+	return path == "/statsparrot.yaml" || path == "/statsparrot.yml"
 }
 
 // pathIsDotEnv returns true if the path is a .env file (in any directory).

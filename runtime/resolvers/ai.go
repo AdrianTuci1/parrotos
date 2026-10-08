@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/metricsview"
-	"github.com/rilldata/rill/runtime/metricsview/executor"
-	"github.com/rilldata/rill/runtime/pkg/mapstructureutil"
-	"github.com/rilldata/rill/runtime/pkg/rilltime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
+	"github.com/staticlabs/statsparrot/runtime/metricsview/executor"
+	"github.com/staticlabs/statsparrot/runtime/pkg/mapstructureutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/statspartime"
 	"golang.org/x/exp/maps"
 )
 
@@ -27,7 +27,7 @@ func init() {
 type aiProps struct {
 	Agent               string                 `mapstructure:"agent"`
 	Prompt              string                 `mapstructure:"prompt"`
-	TimeRange           *metricsview.TimeRange `mapstructure:"time_range"` // Time range for analysis (supports rilltime expressions, or fixed start/end)
+	TimeRange           *metricsview.TimeRange `mapstructure:"time_range"` // Time range for analysis (supports statspartime expressions, or fixed start/end)
 	ComparisonTimeRange *metricsview.TimeRange `mapstructure:"comparison_time_range"`
 	TimeZone            string                 `mapstructure:"time_zone"`
 	// optional dashboard context for the agent
@@ -84,11 +84,11 @@ func newAI(ctx context.Context, opts *runtime.ResolverOptions) (runtime.Resolver
 	}
 
 	if props.TimeRange.IsoDuration != "" || props.TimeRange.IsoOffset != "" {
-		return nil, errors.New("iso_duration and iso_offset are deprecated in favor of rilltime expressions")
+		return nil, errors.New("iso_duration and iso_offset are deprecated in favor of statspartime expressions")
 	}
 
 	if props.ComparisonTimeRange.IsoDuration != "" || props.ComparisonTimeRange.IsoOffset != "" {
-		return nil, errors.New("iso_duration and iso_offset are deprecated in favor of rilltime expressions")
+		return nil, errors.New("iso_duration and iso_offset are deprecated in favor of statspartime expressions")
 	}
 
 	// Get metrics view if explore is provided
@@ -202,7 +202,7 @@ func (r *aiResolver) ResolveInteractive(ctx context.Context) (runtime.ResolverRe
 		InstanceID:        r.instanceID,
 		CreateIfNotExists: true,
 		Claims:            r.claims,
-		UserAgent:         "rill/report", //  rill/report agent will be filtered in the UI conversation listing
+		UserAgent:         "statsparrot/report", //  statsparrot/report agent will be filtered in the UI conversation listing
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create AI session: %w", err)
@@ -285,7 +285,7 @@ func (r *aiResolver) InferRequiredSecurityRules() ([]*runtimev1.SecurityRule, er
 	return nil, nil
 }
 
-// resolveTimeRange resolves and rewrites the time range to actual timestamps using rilltime.
+// resolveTimeRange resolves and rewrites the time range to actual timestamps using statspartime.
 func (r *aiResolver) resolveTimeRange(ctx context.Context, tr *metricsview.TimeRange, tz string) error {
 	// if time range is not provided, or already has start and end, do nothing
 	if tr == nil || tr.IsZero() || (!tr.Start.IsZero() && !tr.End.IsZero()) {
@@ -320,16 +320,16 @@ func (r *aiResolver) resolveTimeRange(ctx context.Context, tr *metricsview.TimeR
 		return errors.New("execution_time is required to evaluate time ranges without explore context")
 	}
 
-	// Use expression if provided (rilltime syntax)
+	// Use expression if provided (statspartime syntax)
 	if tr.Expression != "" {
-		rt, err := rilltime.Parse(tr.Expression, rilltime.ParseOptions{
+		rt, err := statspartime.Parse(tr.Expression, statspartime.ParseOptions{
 			DefaultTimeZone: timezone,
 		})
 		if err != nil {
 			return fmt.Errorf("invalid time range expression %q: %w", tr.Expression, err)
 		}
 
-		start, end, _ := rt.Eval(rilltime.EvalOptions{
+		start, end, _ := rt.Eval(statspartime.EvalOptions{
 			Now:       time.Now(),
 			Watermark: r.args.ExecutionTime,
 			MinTime:   time.Time{},

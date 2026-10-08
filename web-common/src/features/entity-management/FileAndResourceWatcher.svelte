@@ -1,18 +1,18 @@
 <script lang="ts">
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
-  import { fileArtifacts } from "@rilldata/web-common/features/entity-management/file-artifacts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
+  import { fileArtifacts } from "@statsparrot/web-common/features/entity-management/file-artifacts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onDestroy, setContext } from "svelte";
   import {
     ConnectionStatus,
     FileAndResourceWatcher,
   } from "./file-and-resource-watcher";
   import { WATCHER_CONTEXT_KEY } from "./watcher-context";
-  import { RuntimeFileIO } from "@rilldata/web-common/features/entity-management/file-io.ts";
+  import { RuntimeFileIO } from "@statsparrot/web-common/features/entity-management/file-io.ts";
 
-  export let errorBody = "Try restarting the Rill via the CLI";
-  /** Idle lifecycle strategy. "aggressive" is right for Rill Developer
+  export let errorBody = "Try restarting the Parrot via the CLI";
+  /** Idle lifecycle strategy. "aggressive" is right for Parrot Developer
    *  (browser HTTP-connection limit bites); "none" keeps the connection
    *  open and is right for consumers that need long-lived streams. */
   export let lifecycle: "aggressive" | "none";

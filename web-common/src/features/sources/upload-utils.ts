@@ -1,6 +1,6 @@
 // TODO: Use this to block deploy
-import type { JSONSchemaField } from "@rilldata/web-common/features/templates/schemas/types.ts";
-import { formatMemorySize } from "@rilldata/web-common/lib/number-formatting/memory-size.ts";
+import type { JSONSchemaField } from "@statsparrot/web-common/features/templates/schemas/types.ts";
+import { formatMemorySize } from "@statsparrot/web-common/lib/number-formatting/memory-size.ts";
 
 export const UploadFileSizeLimitInBytes = 100 * 1024 * 1024; // 100MB limit
 

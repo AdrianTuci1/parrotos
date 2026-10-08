@@ -1,38 +1,38 @@
-import { splitWhereFilter } from "@rilldata/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
-import { fromPivotFormattingParam } from "@rilldata/web-common/features/dashboards/pivot/pivot-formatting-param";
+import { splitWhereFilter } from "@statsparrot/web-common/features/dashboards/filters/measure-filters/measure-filter-utils";
+import { fromPivotFormattingParam } from "@statsparrot/web-common/features/dashboards/pivot/pivot-formatting-param";
 import {
   type PivotChipData,
   PivotChipType,
   type PivotTableMode,
-} from "@rilldata/web-common/features/dashboards/pivot/types";
-import { SortDirection } from "@rilldata/web-common/features/dashboards/proto-state/derived-types";
-import type { ExploreState } from "@rilldata/web-common/features/dashboards/stores/explore-state";
-import { TDDChart } from "@rilldata/web-common/features/dashboards/time-dimension-details/types";
+} from "@statsparrot/web-common/features/dashboards/pivot/types";
+import { SortDirection } from "@statsparrot/web-common/features/dashboards/proto-state/derived-types";
+import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
+import { TDDChart } from "@statsparrot/web-common/features/dashboards/time-dimension-details/types";
 import {
   getMultiFieldError,
   getSingleFieldError,
-} from "@rilldata/web-common/features/dashboards/url-state/error-message-helpers";
-import { ToLegacySortTypeMap } from "@rilldata/web-common/features/dashboards/url-state/legacyMappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/error-message-helpers";
+import { ToLegacySortTypeMap } from "@statsparrot/web-common/features/dashboards/url-state/legacyMappers";
 import {
   FromURLParamTDDChartMap,
   FromURLParamTimeDimensionMap,
   ToActivePageViewMap,
-} from "@rilldata/web-common/features/dashboards/url-state/mappers";
+} from "@statsparrot/web-common/features/dashboards/url-state/mappers";
 import {
   getMapFromArray,
   getMissingValues,
-} from "@rilldata/web-common/lib/arrayUtils";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
-import { DateTimeUnitToV1TimeGrain } from "@rilldata/web-common/lib/time/new-grains";
+} from "@statsparrot/web-common/lib/arrayUtils";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
+import { DateTimeUnitToV1TimeGrain } from "@statsparrot/web-common/lib/time/new-grains";
 import {
   type DashboardTimeControls,
   TimeComparisonOption,
   TimeRangePreset,
-} from "@rilldata/web-common/lib/time/types";
+} from "@statsparrot/web-common/lib/time/types";
 import {
   DashboardState_ActivePage,
   DashboardState_LeaderboardSortType,
-} from "@rilldata/web-common/proto/gen/rill/ui/v1/dashboard_pb";
+} from "@statsparrot/web-common/proto/gen/statsparrot/ui/v1/dashboard_pb";
 import {
   type MetricsViewSpecDimension,
   type MetricsViewSpecMeasure,
@@ -42,7 +42,7 @@ import {
   type V1ExploreSpec,
   V1ExploreWebView,
   type V1MetricsViewSpec,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { SortingState } from "tanstack-table-8-svelte-5";
 
 /**
@@ -487,9 +487,9 @@ function fromPivotUrlParams(
     const isTimeDim = preset.pivotSortBy in FromURLParamTimeDimensionMap;
     let sortById: string;
     if (isTimeDim) {
-      // Reconstruct TanStack Table format: {timeDimension}_rill_{grain}
+      // Reconstruct TanStack Table format: {timeDimension}_statsparrot_{grain}
       const grain = FromURLParamTimeDimensionMap[preset.pivotSortBy];
-      sortById = timeDimension ? `${timeDimension}_rill_${grain}` : grain;
+      sortById = timeDimension ? `${timeDimension}_statsparrot_${grain}` : grain;
     } else {
       sortById = preset.pivotSortBy;
     }

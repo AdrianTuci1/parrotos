@@ -4,7 +4,7 @@ import {
   V1FileEvent,
   V1ReconcileStatus,
   V1ResourceEvent,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { writable } from "svelte/store";
@@ -57,10 +57,10 @@ class FakeSSEStream {
 
 const fakeStreams: FakeSSEStream[] = [];
 
-vi.mock("@rilldata/web-common/runtime-client/sse", async (importOriginal) => {
+vi.mock("@statsparrot/web-common/runtime-client/sse", async (importOriginal) => {
   const actual =
     await importOriginal<
-      typeof import("@rilldata/web-common/runtime-client/sse")
+      typeof import("@statsparrot/web-common/runtime-client/sse")
     >();
   return {
     ...actual,
@@ -76,7 +76,7 @@ vi.mock("@rilldata/web-common/runtime-client/sse", async (importOriginal) => {
 // production surface imports these directly, so replacing the modules is the
 // test seam; keeps the watcher's constructor free of test-only plumbing.
 vi.mock(
-  "@rilldata/web-common/features/entity-management/file-artifacts",
+  "@statsparrot/web-common/features/entity-management/file-artifacts",
   () => ({
     fileArtifacts: {
       getFileArtifact: vi.fn(() => ({
@@ -91,18 +91,18 @@ vi.mock(
   }),
 );
 
-vi.mock("@rilldata/web-common/lib/event-bus/event-bus", () => ({
+vi.mock("@statsparrot/web-common/lib/event-bus/event-bus", () => ({
   eventBus: { emit: vi.fn() },
 }));
 
 vi.mock(
-  "@rilldata/web-common/features/connectors/explorer/connector-explorer-store",
+  "@statsparrot/web-common/features/connectors/explorer/connector-explorer-store",
   () => ({
     connectorExplorerStore: { deleteItem: vi.fn() },
   }),
 );
 
-vi.mock("@rilldata/web-common/features/sources/sources-store", () => ({
+vi.mock("@statsparrot/web-common/features/sources/sources-store", () => ({
   sourceIngestionTracker: {
     isPending: vi.fn(() => false),
     trackIngested: vi.fn(),
@@ -113,7 +113,7 @@ vi.mock("$app/navigation", () => ({
   invalidate: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus";
+import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
 import { FileAndResourceWatcher } from "./file-and-resource-watcher";
 
 const INSTANCE_ID = "inst-1";
@@ -162,7 +162,7 @@ describe("FileAndResourceWatcher", () => {
 
     const stream = fakeStreams[0];
     stream.fire("file", {
-      path: "/rill.yaml",
+      path: "/statsparrot.yaml",
       event: V1FileEvent.FILE_EVENT_WRITE,
       isDir: false,
     });
@@ -173,7 +173,7 @@ describe("FileAndResourceWatcher", () => {
     expect(qc.invalidateQueries).toHaveBeenCalledWith({
       queryKey: getRuntimeServiceIssueDevJWTQueryKey(INSTANCE_ID),
     });
-    expect(eventBus.emit).toHaveBeenCalledWith("rill-yaml-updated");
+    expect(eventBus.emit).toHaveBeenCalledWith("statsparrot-yaml-updated");
   });
 
   it("routes resource messages through handleResourceEvent", async () => {
@@ -187,7 +187,7 @@ describe("FileAndResourceWatcher", () => {
     const stream = fakeStreams[0];
     stream.fire("resource", {
       event: V1ResourceEvent.RESOURCE_EVENT_WRITE,
-      name: { name: "mv", kind: "rill.runtime.v1.MetricsView" },
+      name: { name: "mv", kind: "statsparrot.runtime.v1.MetricsView" },
       resource: {
         meta: {
           reconcileStatus: V1ReconcileStatus.RECONCILE_STATUS_IDLE,
@@ -200,7 +200,7 @@ describe("FileAndResourceWatcher", () => {
     // setQueryData was called with the resource key — the dispatcher ran.
     expect(qc.setQueryData).toHaveBeenCalledWith(
       getRuntimeServiceGetResourceQueryKey(INSTANCE_ID, {
-        name: { name: "mv", kind: "rill.runtime.v1.MetricsView" },
+        name: { name: "mv", kind: "statsparrot.runtime.v1.MetricsView" },
       }),
       expect.objectContaining({ resource: expect.any(Object) }),
     );
@@ -220,7 +220,7 @@ describe("FileAndResourceWatcher", () => {
     const stream = fakeStreams[0];
     stream.fire("resource", {
       event: V1ResourceEvent.RESOURCE_EVENT_WRITE,
-      name: { name: "mv", kind: "rill.runtime.v1.MetricsView" },
+      name: { name: "mv", kind: "statsparrot.runtime.v1.MetricsView" },
       resource: {
         meta: {
           reconcileStatus: V1ReconcileStatus.RECONCILE_STATUS_IDLE,
@@ -231,7 +231,7 @@ describe("FileAndResourceWatcher", () => {
     await new Promise((r) => setTimeout(r, 0));
 
     expect(logSpy).toHaveBeenCalledWith(
-      "[RECONCILE_STATUS_IDLE] rill.runtime.v1.MetricsView/mv",
+      "[RECONCILE_STATUS_IDLE] statsparrot.runtime.v1.MetricsView/mv",
     );
   });
 

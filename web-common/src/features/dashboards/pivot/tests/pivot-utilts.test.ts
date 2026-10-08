@@ -1,4 +1,4 @@
-import { sortAcessors } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
+import { sortAcessors } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
 import { describe, expect, it } from "vitest";
 
 describe("sortAcessors function", () => {

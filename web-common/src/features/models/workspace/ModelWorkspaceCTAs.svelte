@@ -1,19 +1,19 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import Add from "@rilldata/web-common/components/icons/Add.svelte";
-  import MetricsViewIcon from "@rilldata/web-common/components/icons/MetricsViewIcon.svelte";
-  import { removeLeadingSlash } from "@rilldata/web-common/features/entity-management/entity-mappers";
-  import { navigateToFile } from "@rilldata/web-common/layout/navigation/editor-routing";
-  import { BehaviourEventMedium } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
-  import { MetricsEventSpace } from "@rilldata/web-common/metrics/service/MetricsTypes";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import Add from "@statsparrot/web-common/components/icons/Add.svelte";
+  import MetricsViewIcon from "@statsparrot/web-common/components/icons/MetricsViewIcon.svelte";
+  import { removeLeadingSlash } from "@statsparrot/web-common/features/entity-management/entity-mappers";
+  import { navigateToFile } from "@statsparrot/web-common/layout/navigation/editor-routing";
+  import { BehaviourEventMedium } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
+  import { MetricsEventSpace } from "@statsparrot/web-common/metrics/service/MetricsTypes";
   import {
     V1ReconcileStatus,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
+  } from "@statsparrot/web-common/runtime-client";
   import { useRuntimeClient } from "../../../runtime-client/v2";
   import { useGetMetricsViewsForModel } from "../../dashboards/selectors";
   import ExportMenu from "../../exports/ExportMenu.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { useCreateMetricsViewFromTableUIAction } from "../../metrics-views/ai-generation/generateMetricsView";
   import NavigateOrDropdown from "../../metrics-views/NavigateOrDropdown.svelte";
   import ModelRefreshButton from "../incremental/ModelRefreshButton.svelte";

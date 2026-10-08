@@ -1,5 +1,5 @@
-import { getPdfOptionsFromWebOpenState } from "@rilldata/web-common/features/scheduled-reports/utils";
-import { V1ExportFormat } from "@rilldata/web-common/runtime-client";
+import { getPdfOptionsFromWebOpenState } from "@statsparrot/web-common/features/scheduled-reports/utils";
+import { V1ExportFormat } from "@statsparrot/web-common/runtime-client";
 import { redirect } from "@sveltejs/kit";
 
 export async function load({ parent, url }) {

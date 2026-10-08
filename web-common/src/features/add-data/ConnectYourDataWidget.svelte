@@ -3,12 +3,12 @@
   import {
     connectorIconMapping,
     connectorLabelMapping,
-  } from "@rilldata/web-common/features/connectors/connector-metadata.ts";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-  import { getSupportedTopConnectors } from "@rilldata/web-common/features/add-data/manager/selectors.ts";
-  import { withEditorPrefix } from "@rilldata/web-common/layout/navigation/editor-routing.ts";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
+  } from "@statsparrot/web-common/features/connectors/connector-metadata.ts";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+  import { getSupportedTopConnectors } from "@statsparrot/web-common/features/add-data/manager/selectors.ts";
+  import { withEditorPrefix } from "@statsparrot/web-common/layout/navigation/editor-routing.ts";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
 
   export let startConnectorSelection: (name: string | null) => void = () => {};
   export let onWelcomeScreen = false;

@@ -4,22 +4,22 @@ import {
   getAdminServiceListOrganizationBillingIssuesQueryKey,
   type V1BillingIssue,
   V1BillingIssueType,
-} from "@rilldata/web-admin/client";
+} from "@statsparrot/web-admin/client";
 import {
   getPaymentIssues,
   needsPaymentSetup,
-} from "@rilldata/web-admin/features/billing/issues/getMessageForPaymentIssues";
+} from "@statsparrot/web-admin/features/billing/issues/getMessageForPaymentIssues";
 import {
   cancelledSubscriptionHasEnded,
   getCancelledIssue,
   getNeverSubscribedIssue,
-} from "@rilldata/web-admin/features/billing/issues/getMessageForCancelledIssue";
-import { getCustomMessageIssue } from "@rilldata/web-admin/features/billing/issues/getMessageForCustomMessage";
+} from "@statsparrot/web-admin/features/billing/issues/getMessageForCancelledIssue";
+import { getCustomMessageIssue } from "@statsparrot/web-admin/features/billing/issues/getMessageForCustomMessage";
 import {
   getTrialIssue,
   trialHasPastGracePeriod,
-} from "@rilldata/web-admin/features/billing/issues/getMessageForTrialPlan";
-import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+} from "@statsparrot/web-admin/features/billing/issues/getMessageForTrialPlan";
+import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
 
 export async function fetchOrganizationBillingIssues(organization: string) {
   const resp = await queryClient.fetchQuery({

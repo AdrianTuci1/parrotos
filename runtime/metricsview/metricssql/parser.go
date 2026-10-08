@@ -12,9 +12,9 @@ import (
 	"github.com/pingcap/tidb/pkg/parser/format"
 	"github.com/pingcap/tidb/pkg/parser/mysql"
 	"github.com/pingcap/tidb/pkg/parser/opcode"
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/metricsview"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/metricsview"
 
 	// need to import parser driver as well
 	_ "github.com/pingcap/tidb/pkg/parser/test_driver"
@@ -36,8 +36,8 @@ type CompilerOptions struct {
 	// It is required for parsing full queries, but optional when parsing only filters.
 	GetMetricsView func(ctx context.Context, name string) (*runtimev1.Resource, error)
 	// GetTimestamps is a callback to resolve timestamps for a given time dimension.
-	// It is optional, but if not provided, queries that use rilltime expressions will error.
-	// TODO: Ideally we should replace this with support for rilltime expressions in *metricsview.Expression itself, so evaluation can be delayed until query execution.
+	// It is optional, but if not provided, queries that use statspartime expressions will error.
+	// TODO: Ideally we should replace this with support for statspartime expressions in *metricsview.Expression itself, so evaluation can be delayed until query execution.
 	GetTimestamps func(ctx context.Context, mv *runtimev1.Resource, timeDim string) (metricsview.TimestampsResult, error)
 }
 

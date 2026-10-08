@@ -1,9 +1,9 @@
 /**
  * Mock Scheduled Reports adapter.
  *
- * Rill's Scheduled Reports feature is a project-level resource: a report runs a
+ * Parrot's Scheduled Reports feature is a project-level resource: a report runs a
  * query (or renders a canvas) on a schedule and delivers the result as an export
- * (CSV / XLSX / Parquet) or PDF to email / Slack recipients. Without a live Rill
+ * (CSV / XLSX / Parquet) or PDF to email / Slack recipients. Without a live Parrot
  * runtime the Reports view renders from this in-memory adapter so the listing +
  * create/edit form are demonstrable end-to-end.
  *
@@ -21,14 +21,14 @@ export const REPORT_TYPE_OPTIONS = [
   { value: "pdf", label: "PDF", description: "Render a snapshot as a PDF" },
 ];
 
-/** File formats for a query report (mirrors Rill's V1ExportFormat). */
+/** File formats for a query report (mirrors Parrot's V1ExportFormat). */
 export const REPORT_FORMAT_OPTIONS = [
   { value: "csv", label: "CSV" },
   { value: "xlsx", label: "XLSX" },
   { value: "parquet", label: "Parquet" },
 ];
 
-/** Run frequency options, mirroring Rill's ScheduleForm. */
+/** Run frequency options, mirroring Parrot's ScheduleForm. */
 export const REPORT_FREQUENCY_OPTIONS = [
   { value: "Daily", label: "Daily" },
   { value: "Weekdays", label: "Weekdays" },
@@ -61,7 +61,7 @@ export const MOCK_REPORT_MEASURES = [
   { name: "aov", displayName: "Avg Order Value" },
 ];
 
-/** Dimensions available to a report (time included, as in Rill). */
+/** Dimensions available to a report (time included, as in Parrot). */
 export const MOCK_REPORT_DIMENSIONS = [
   { name: "channel", displayName: "Channel" },
   { name: "country", displayName: "Country" },
@@ -76,14 +76,14 @@ export const MOCK_FILTERABLE_DIMENSIONS = [
   { name: "customer", displayName: "Customer" },
 ];
 
-/** Sample values per dimension, parallel to Rill's sample orders project. */
+/** Sample values per dimension, parallel to Parrot's sample orders project. */
 export const MOCK_DIMENSION_VALUES = {
   channel: ["Online", "Retail", "Partner"],
   country: ["US", "DE", "GB", "FR"],
   customer: ["Acme", "Globex", "Initech", "Umbrella"],
 };
 
-/** Report run status, mirroring Rill's report state (created at run time). */
+/** Report run status, mirroring Parrot's report state (created at run time). */
 export const REPORT_STATUS = {
   OK: "ok",
   ERROR: "error",
@@ -91,7 +91,7 @@ export const REPORT_STATUS = {
 };
 
 /** Fields a report can aggregate over, split into rows (dimensions) and
- *  columns (dimensions + measures), matching Rill's RowsAndColumnsForm. */
+ *  columns (dimensions + measures), matching Parrot's RowsAndColumnsForm. */
 export function getReportFieldOptions() {
   const measures = MOCK_REPORT_MEASURES.map((m) => ({
     value: m.name,
@@ -375,7 +375,7 @@ const weekDayMap = {
 };
 
 /**
- * Build a cron expression from the schedule form values (mirrors Rill's
+ * Build a cron expression from the schedule form values (mirrors Parrot's
  * `convertFormValuesToCronExpression`).
  */
 export function convertFormValuesToCron(frequency, dayOfWeek, timeOfDay, dayOfMonth) {

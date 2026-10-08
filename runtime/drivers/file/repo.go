@@ -16,9 +16,9 @@ import (
 	"time"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"github.com/rilldata/rill/runtime/drivers"
-	"github.com/rilldata/rill/runtime/pkg/filewatcher"
-	"github.com/rilldata/rill/runtime/pkg/gitutil"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	"github.com/staticlabs/statsparrot/runtime/pkg/filewatcher"
+	"github.com/staticlabs/statsparrot/runtime/pkg/gitutil"
 	"golang.org/x/exp/maps"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -251,7 +251,7 @@ func (c *connection) ListBranches(ctx context.Context) ([]string, string, error)
 			return nil, "", err
 		}
 	} else {
-		// No admin config: pick a remote name from the local config. Prefer "__rill_remote" if present.
+		// No admin config: pick a remote name from the local config. Prefer "__statsparrot_remote" if present.
 		out, err := gitutil.Run(ctx, gitPath, "remote")
 		if err != nil {
 			return nil, "", err
@@ -261,7 +261,7 @@ func (c *connection) ListBranches(ctx context.Context) ([]string, string, error)
 			if r == "" {
 				continue
 			}
-			if r == "__rill_remote" {
+			if r == "__statsparrot_remote" {
 				remoteName = r
 				break
 			}
@@ -396,7 +396,7 @@ func (c *connection) Status(ctx context.Context, remoteBranch string) (*drivers.
 	config, err := c.loadGitConfig(ctx)
 	if err != nil {
 		if errors.Is(err, errProjectNotFound) || errors.Is(err, drivers.ErrNotAuthenticated) {
-			// not connected to a rill project or not authenticated, return minimal status
+			// not connected to a statsparrot project or not authenticated, return minimal status
 			st, err := gitutil.Status(ctx, gitPath, subPath, "origin", remoteBranch)
 			if err != nil {
 				return nil, err
@@ -566,7 +566,7 @@ func (c *connection) Commit(ctx context.Context, message string) (string, error)
 	}
 
 	if message == "" {
-		message = "Auto committed by Rill"
+		message = "Auto committed by Parrot"
 	}
 	hash, err := gitutil.CommitAll(ctx, gitPath, subpath, message, author)
 	if err != nil {

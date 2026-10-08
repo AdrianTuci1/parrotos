@@ -3,8 +3,8 @@ package canvas_test
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 )
 
 // metricsViewFiles returns the standard model and metrics view fixture for chart tests.
@@ -222,19 +222,19 @@ bar_chart:
 	testruntime.RequireReconcileErrorContains(t, rt, id, runtime.ResourceKindComponent, "c1", "is not a dimension")
 }
 
-func TestValidateCartesianRillMeasures(t *testing.T) {
+func TestValidateCartesianParrotMeasures(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
 		Files: metricsViewFiles(),
 	})
 
-	// Valid: color with rill_measures (virtual field for multi-measure mode).
+	// Valid: color with statsparrot_measures (virtual field for multi-measure mode).
 	testruntime.PutFiles(t, rt, id, map[string]string{
 		"c1.yaml": `
 type: component
 stacked_bar:
   metrics_view: mv1
   color:
-    field: rill_measures
+    field: statsparrot_measures
     type: value
     legendOrientation: top
   x:
@@ -771,14 +771,14 @@ table:
 	testruntime.RequireReconcileErrorContains(t, rt, id, runtime.ResourceKindComponent, "c1", "is not a dimension or measure")
 
 	// Valid: encoded time-grain column (the flat table frontend encodes a time dimension at a
-	// chosen grain as "{timeDimension}_rill_{GRAIN}").
+	// chosen grain as "{timeDimension}_statsparrot_{GRAIN}").
 	testruntime.PutFiles(t, rt, id, map[string]string{
 		"c1.yaml": `
 type: component
 table:
   metrics_view: mv1
   columns:
-  - ts_rill_TIME_GRAIN_MONTH
+  - ts_statsparrot_TIME_GRAIN_MONTH
   - y
 `})
 	testruntime.ReconcileParserAndWait(t, rt, id)
@@ -868,7 +868,7 @@ pivot:
 	testruntime.RequireReconcileErrorContains(t, rt, id, runtime.ResourceKindComponent, "c1", "is not a dimension")
 
 	// Valid: encoded time-grain dimensions (the canvas pivot frontend encodes a time
-	// dimension at a chosen grain as "{timeDimension}_rill_{GRAIN}").
+	// dimension at a chosen grain as "{timeDimension}_statsparrot_{GRAIN}").
 	testruntime.PutFiles(t, rt, id, map[string]string{
 		"c1.yaml": `
 type: component
@@ -877,9 +877,9 @@ pivot:
   measures:
   - y
   row_dimensions:
-  - ts_rill_TIME_GRAIN_DAY
+  - ts_statsparrot_TIME_GRAIN_DAY
   col_dimensions:
-  - ts_rill_TIME_GRAIN_MONTH
+  - ts_statsparrot_TIME_GRAIN_MONTH
 `})
 	testruntime.ReconcileParserAndWait(t, rt, id)
 	testruntime.RequireReconcileState(t, rt, id, 4, 0, 0)
@@ -891,7 +891,7 @@ type: component
 pivot:
   metrics_view: mv1
   col_dimensions:
-  - ts_rill_TIME_GRAIN_BOGUS
+  - ts_statsparrot_TIME_GRAIN_BOGUS
 `})
 	testruntime.ReconcileParserAndWait(t, rt, id)
 	testruntime.RequireReconcileState(t, rt, id, 4, 1, 0)

@@ -1,12 +1,12 @@
 <script lang="ts">
   /** provides the formatting for data types */
-  import type { PERC_DIFF } from "@rilldata/web-common/components/data-types/type-utils";
+  import type { PERC_DIFF } from "@statsparrot/web-common/components/data-types/type-utils";
   import {
     INTERVALS,
     NUMERICS,
     TIMESTAMPS,
-  } from "@rilldata/web-common/lib/duckdb-data-types";
-  import type { NumberParts } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
+  } from "@statsparrot/web-common/lib/duckdb-data-types";
+  import type { NumberParts } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
   import Interval from "./Interval.svelte";
   import MeasureChange from "./MeasureChange.svelte";
   import Number from "./Number.svelte";
@@ -51,7 +51,7 @@ PercentageChange  and MeasureChange don't take a `type` prop,
 so instantiating these directly clears a ton of warnings
 about unknown props.
 -->
-{#if type === "RILL_PERCENTAGE_CHANGE" && typeof value !== "boolean"}
+{#if type === "STATSPARROT_PERCENTAGE_CHANGE" && typeof value !== "boolean"}
   <PercentageChange
     {value}
     {isNull}
@@ -60,7 +60,7 @@ about unknown props.
     {color}
     {lowerIsBetter}
   />
-{:else if type === "RILL_CHANGE" && typeof value !== "boolean"}
+{:else if type === "STATSPARROT_CHANGE" && typeof value !== "boolean"}
   <MeasureChange {value} {inTable} {customStyle} {color} {lowerIsBetter} />
 {:else}
   <svelte:component

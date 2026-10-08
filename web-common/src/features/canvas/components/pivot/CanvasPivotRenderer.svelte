@@ -1,15 +1,15 @@
 <script lang="ts">
-  import ComponentError from "@rilldata/web-common/features/components/ComponentError.svelte";
-  import { splitPivotChips } from "@rilldata/web-common/features/dashboards/pivot/pivot-utils";
-  import PivotEmpty from "@rilldata/web-common/features/dashboards/pivot/PivotEmpty.svelte";
-  import PivotError from "@rilldata/web-common/features/dashboards/pivot/PivotError.svelte";
-  import PivotTable from "@rilldata/web-common/features/dashboards/pivot/PivotTable.svelte";
-  import { EmbedStore } from "@rilldata/web-common/features/embeds/embed-store";
+  import ComponentError from "@statsparrot/web-common/features/components/ComponentError.svelte";
+  import { splitPivotChips } from "@statsparrot/web-common/features/dashboards/pivot/pivot-utils";
+  import PivotEmpty from "@statsparrot/web-common/features/dashboards/pivot/PivotEmpty.svelte";
+  import PivotError from "@statsparrot/web-common/features/dashboards/pivot/PivotError.svelte";
+  import PivotTable from "@statsparrot/web-common/features/dashboards/pivot/PivotTable.svelte";
+  import { EmbedStore } from "@statsparrot/web-common/features/embeds/embed-store";
   import type {
     PivotDataStore,
     PivotDataStoreConfig,
     PivotState,
-  } from "@rilldata/web-common/features/dashboards/pivot/types";
+  } from "@statsparrot/web-common/features/dashboards/pivot/types";
   import type { PivotCanvasComponent } from "./index";
   import {
     createPivotClickToFilter,

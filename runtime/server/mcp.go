@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/ai"
-	"github.com/rilldata/rill/runtime/pkg/middleware"
-	"github.com/rilldata/rill/runtime/pkg/observability"
-	"github.com/rilldata/rill/runtime/server/auth"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/ai"
+	"github.com/staticlabs/statsparrot/runtime/pkg/middleware"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/server/auth"
 	"go.uber.org/zap"
 )
 
@@ -23,7 +23,7 @@ func (s *Server) mcpHandler() http.Handler {
 		// Extract instance ID from the request path
 		instanceID := r.PathValue("instance_id")
 		if instanceID == "" {
-			// We also mount the MCP server on <root>/mcp to make it easier to use in Rill Developer (on localhost).
+			// We also mount the MCP server on <root>/mcp to make it easier to use in Parrot Developer (on localhost).
 			// In those settings, we pick the default instance ID.
 			// This is safe because if there is no default instance, it'll just be the empty string and requests will error with "not found".
 			instanceID, _ = s.runtime.DefaultInstanceID()

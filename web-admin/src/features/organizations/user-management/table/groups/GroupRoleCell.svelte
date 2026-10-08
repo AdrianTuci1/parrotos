@@ -1,19 +1,19 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretUpIcon from "@rilldata/web-common/components/icons/CaretUpIcon.svelte";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretUpIcon from "@statsparrot/web-common/components/icons/CaretUpIcon.svelte";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import { page } from "$app/stores";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
   import { useQueryClient } from "@tanstack/svelte-query";
   import {
     createAdminServiceAddOrganizationMemberUsergroup,
     createAdminServiceRemoveOrganizationMemberUsergroup,
     createAdminServiceSetOrganizationMemberUsergroupRole,
-  } from "@rilldata/web-admin/client";
-  import { invalidateOrgUsergroups } from "@rilldata/web-admin/features/organizations/user-management/utils.ts";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { capitalize } from "@rilldata/web-common/components/table/utils.ts";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import { invalidateOrgUsergroups } from "@statsparrot/web-admin/features/organizations/user-management/utils.ts";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { capitalize } from "@statsparrot/web-common/components/table/utils.ts";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let name: string;
   export let role: string | undefined = undefined;

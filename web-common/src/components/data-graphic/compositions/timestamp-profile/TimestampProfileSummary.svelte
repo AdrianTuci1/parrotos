@@ -4,10 +4,10 @@
    * This component provides summary information about the
    * timestamp profile at the top of the detail plot.
    */
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import { datesToFormattedTimeRange } from "@rilldata/web-common/lib/formatters";
-  import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import { datesToFormattedTimeRange } from "@statsparrot/web-common/lib/formatters";
+  import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
   import { GridCell, LeftRightGrid } from "../../../grid";
 
   export let start: Date;

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import ReconcilingSpinner from "@rilldata/web-common/features/entity-management/ReconcilingSpinner.svelte";
+  import ReconcilingSpinner from "@statsparrot/web-common/features/entity-management/ReconcilingSpinner.svelte";
   import {
     type V1TableRowsResponseDataItem,
     createQueryServiceTableColumns,
     createQueryServiceTableRows,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
 
   const runtimeClient = useRuntimeClient();
   import WorkspaceError from "../WorkspaceError.svelte";

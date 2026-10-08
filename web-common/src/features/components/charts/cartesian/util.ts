@@ -1,7 +1,7 @@
 import {
   ColorWithComparisonField,
   MeasureKeyField,
-} from "@rilldata/web-common/features/components/charts/comparison-builder";
+} from "@statsparrot/web-common/features/components/charts/comparison-builder";
 
 /**
  * Determines the pivot configuration for the bar chart based on the presence of

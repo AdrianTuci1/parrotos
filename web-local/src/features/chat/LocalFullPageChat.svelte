@@ -1,19 +1,19 @@
 <script lang="ts">
   import { beforeNavigate } from "$app/navigation";
   import { onMount, tick } from "svelte";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import {
     getConversationManager,
     cleanupConversationManager,
-  } from "@rilldata/web-common/features/chat/core/conversation-manager";
-  import ChatInput from "@rilldata/web-common/features/chat/core/input/ChatInput.svelte";
-  import Messages from "@rilldata/web-common/features/chat/core/messages/Messages.svelte";
-  import ConversationSidebar from "@rilldata/web-common/features/chat/layouts/fullpage/ConversationSidebar.svelte";
+  } from "@statsparrot/web-common/features/chat/core/conversation-manager";
+  import ChatInput from "@statsparrot/web-common/features/chat/core/input/ChatInput.svelte";
+  import Messages from "@statsparrot/web-common/features/chat/core/messages/Messages.svelte";
+  import ConversationSidebar from "@statsparrot/web-common/features/chat/layouts/fullpage/ConversationSidebar.svelte";
   import {
     conversationSidebarCollapsed,
     toggleConversationSidebar,
-  } from "@rilldata/web-common/features/chat/layouts/fullpage/fullpage-store";
-  import { projectChat } from "@rilldata/web-common/features/project/chat-context";
+  } from "@statsparrot/web-common/features/chat/layouts/fullpage/fullpage-store";
+  import { projectChat } from "@statsparrot/web-common/features/project/chat-context";
 
   const runtimeClient = useRuntimeClient();
 

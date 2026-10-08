@@ -11,9 +11,9 @@ import {
   type V1ProfileColumn,
   type V1TableColumnsResponse,
   type V1TimeSeriesValue,
-} from "@rilldata/web-common/runtime-client";
-import type { RuntimeClient } from "@rilldata/web-common/runtime-client/v2";
-import { getPriorityForColumn } from "@rilldata/web-common/runtime-client/v2/request-priorities";
+} from "@statsparrot/web-common/runtime-client";
+import type { RuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
+import { getPriorityForColumn } from "@statsparrot/web-common/runtime-client/v2/request-priorities";
 import {
   keepPreviousData,
   type QueryObserverResult,

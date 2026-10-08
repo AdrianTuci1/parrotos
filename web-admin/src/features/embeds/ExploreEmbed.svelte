@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { Dashboard } from "@rilldata/web-common/features/dashboards";
-  import StateManagersProvider from "@rilldata/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
-  import DashboardStateManager from "@rilldata/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
+  import { Dashboard } from "@statsparrot/web-common/features/dashboards";
+  import StateManagersProvider from "@statsparrot/web-common/features/dashboards/state-managers/StateManagersProvider.svelte";
+  import DashboardStateManager from "@statsparrot/web-common/features/dashboards/state-managers/loaders/DashboardStateManager.svelte";
   import { derived } from "svelte/store";
-  import { isNotFoundError } from "@rilldata/web-common/lib/errors";
-  import { createRuntimeServiceGetExplore } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  import { isNotFoundError } from "@statsparrot/web-common/lib/errors";
+  import { createRuntimeServiceGetExplore } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { errorStore } from "../../components/errors/error-store";
-  import { EmbedStorageNamespacePrefix } from "@rilldata/web-admin/features/embeds/constants.ts";
+  import { EmbedStorageNamespacePrefix } from "@statsparrot/web-admin/features/embeds/constants.ts";
   import {
     getEmbedThemeStoreInstance,
     resolveEmbedTheme,
-  } from "@rilldata/web-common/features/embeds/embed-theme";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-common/features/embeds/embed-theme";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let exploreName: string;
 

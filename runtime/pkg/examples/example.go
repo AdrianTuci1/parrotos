@@ -34,7 +34,7 @@ func List() ([]Example, error) {
 			continue
 		}
 
-		rillYamlContents, err := examplesFS.ReadFile(filepath.Join("embed", "dist", entry.Name(), "rill.yaml"))
+		statsparrotYamlContents, err := examplesFS.ReadFile(filepath.Join("embed", "dist", entry.Name(), "statsparrot.yaml"))
 		if err != nil {
 			return nil, err
 		}
@@ -45,7 +45,7 @@ func List() ([]Example, error) {
 			Description   string `yaml:"description"`
 			OLAPConnector string `yaml:"olap_connector"`
 		}{}
-		if err := yaml.Unmarshal(rillYamlContents, &contents); err != nil {
+		if err := yaml.Unmarshal(statsparrotYamlContents, &contents); err != nil {
 			return nil, err
 		}
 		if contents.DisplayName == "" { // Backwards compatibility
@@ -72,7 +72,7 @@ func Get(name string) (fs.FS, error) {
 		return nil, err
 	}
 
-	_, err = fs.Stat(exampleFS, "rill.yaml")
+	_, err = fs.Stat(exampleFS, "statsparrot.yaml")
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ErrExampleNotFound

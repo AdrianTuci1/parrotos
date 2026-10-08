@@ -1,18 +1,18 @@
 <script lang="ts">
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import Button from "@rilldata/web-common/components/button/Button.svelte";
-  import { portal } from "@rilldata/web-common/lib/actions/portal";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import Button from "@statsparrot/web-common/components/button/Button.svelte";
+  import { portal } from "@statsparrot/web-common/lib/actions/portal";
   import {
     type V1CanvasRow,
     type V1Resource,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import { onDestroy } from "svelte";
   import { get, writable } from "svelte/store";
   import { parseDocument } from "yaml";
   import ComponentError from "../components/ComponentError.svelte";
   import type { FileArtifact } from "../entity-management/file-artifact";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import ReconcilingSpinner from "../entity-management/ReconcilingSpinner.svelte";
   import AddComponentDropdown from "./AddComponentDropdown.svelte";
   import CanvasComponent from "./CanvasComponent.svelte";
@@ -227,7 +227,7 @@
     dragComponent = null;
     // Safety net: remove portal ghost if Svelte 5's {#if} cleanup didn't
     document
-      .querySelectorAll("#rill-portal .drag-container")
+      .querySelectorAll("#statsparrot-portal .drag-container")
       .forEach((el) => el.remove());
   }
 

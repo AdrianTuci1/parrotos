@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
-  import LeftNav from "@rilldata/web-admin/components/nav/LeftNav.svelte";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import { getUserCounts } from "@rilldata/web-admin/features/organizations/user-management/selectors.ts";
+  import LeftNav from "@statsparrot/web-admin/components/nav/LeftNav.svelte";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import { getUserCounts } from "@statsparrot/web-admin/features/organizations/user-management/selectors.ts";
 
   export let data;
 
@@ -12,7 +12,7 @@
   $: organization = $page.params.organization;
   $: basePage = `/${organization}/-/users`;
 
-  // https://docs.rilldata.com/guide/administration/users-and-access/roles-permissions#organization-level-permissions
+  // https://docs.statsparrot.com/guide/administration/users-and-access/roles-permissions#organization-level-permissions
   // org admin and editor can manage org members
   $: hasManageOrgMembers = organizationPermissions?.manageOrgMembers;
 

@@ -2,7 +2,7 @@
 
 ## Adding a new resource type
 
-1. Define spec and state schemas in `proto/rill/runtime/v1/resource.proto`
+1. Define spec and state schemas in `proto/statsparrot/runtime/v1/resource.proto`
 2. Define a reconciler for it in `runtime/reconcilers/`
 3. If the resource should be defined in code files,
     - Define parser logic for it in `runtime/parser`

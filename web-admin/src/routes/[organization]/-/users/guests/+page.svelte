@@ -1,26 +1,26 @@
 <script lang="ts">
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import { page } from "$app/stores";
   import type {
     V1OrganizationInvite,
     V1OrganizationMemberUser,
-  } from "@rilldata/web-admin/client";
-  import { createAdminServiceGetCurrentUser } from "@rilldata/web-admin/client";
-  import { getOrganizationBillingContactUser } from "@rilldata/web-admin/features/billing/contact/selectors";
-  import AddUsersDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/AddUsersDialog.svelte";
-  import AddGuestsDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/AddGuestsDialog.svelte";
-  import ConvertGuestToMemberDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/ConvertGuestToMemberDialog.svelte";
-  import EditUserGroupDialog from "@rilldata/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
-  import OrgUsersFilters from "@rilldata/web-admin/features/organizations/user-management/OrgUsersFilters.svelte";
-  import OrgUsersTable from "@rilldata/web-admin/features/organizations/user-management/table/users/OrgUsersTable.svelte";
+  } from "@statsparrot/web-admin/client";
+  import { createAdminServiceGetCurrentUser } from "@statsparrot/web-admin/client";
+  import { getOrganizationBillingContactUser } from "@statsparrot/web-admin/features/billing/contact/selectors";
+  import AddUsersDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/AddUsersDialog.svelte";
+  import AddGuestsDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/AddGuestsDialog.svelte";
+  import ConvertGuestToMemberDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/ConvertGuestToMemberDialog.svelte";
+  import EditUserGroupDialog from "@statsparrot/web-admin/features/organizations/user-management/dialogs/EditUserGroupDialog.svelte";
+  import OrgUsersFilters from "@statsparrot/web-admin/features/organizations/user-management/OrgUsersFilters.svelte";
+  import OrgUsersTable from "@statsparrot/web-admin/features/organizations/user-management/table/users/OrgUsersTable.svelte";
   import {
     getOrgUserInvites,
     getOrgUserMembers,
-  } from "@rilldata/web-admin/features/organizations/user-management/selectors.ts";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { Search } from "@rilldata/web-common/components/search";
-  import DelayedSpinner from "@rilldata/web-common/features/entity-management/DelayedSpinner.svelte";
-  import { OrgUserRoles } from "@rilldata/web-common/features/users/roles.ts";
+  } from "@statsparrot/web-admin/features/organizations/user-management/selectors.ts";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { Search } from "@statsparrot/web-common/components/search";
+  import DelayedSpinner from "@statsparrot/web-common/features/entity-management/DelayedSpinner.svelte";
+  import { OrgUserRoles } from "@statsparrot/web-common/features/users/roles.ts";
   import { Plus } from "lucide-svelte";
   import type { PageData } from "./$types";
 

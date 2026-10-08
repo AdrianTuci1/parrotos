@@ -1,18 +1,18 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { getRandomBgColor } from "@rilldata/web-common/features/themes/color-config.ts";
-  import { cn } from "@rilldata/web-common/lib/shadcn.ts";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import Avatar from "@rilldata/web-common/components/avatar/Avatar.svelte";
+  import { getRandomBgColor } from "@statsparrot/web-common/features/themes/color-config.ts";
+  import { cn } from "@statsparrot/web-common/lib/shadcn.ts";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import Avatar from "@statsparrot/web-common/components/avatar/Avatar.svelte";
   import {
     createAdminServiceListUsergroupMemberUsers,
     adminServiceListUsergroupMemberUsers,
-  } from "@rilldata/web-admin/client";
-  import type { V1UsergroupMemberUser } from "@rilldata/web-admin/client";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  } from "@statsparrot/web-admin/client";
+  import type { V1UsergroupMemberUser } from "@statsparrot/web-admin/client";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let name: string;
   export let usersCount: number;

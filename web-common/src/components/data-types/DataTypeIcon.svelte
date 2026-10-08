@@ -1,17 +1,17 @@
 <script lang="ts">
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
   import {
     copyToClipboard,
     isClipboardApiSupported,
-  } from "@rilldata/web-common/lib/actions/copy-to-clipboard";
-  import { fieldTypeToSymbol } from "@rilldata/web-common/lib/duckdb-data-types";
+  } from "@statsparrot/web-common/lib/actions/copy-to-clipboard";
+  import { fieldTypeToSymbol } from "@statsparrot/web-common/lib/duckdb-data-types";
   import ShiftKey from "../tooltip/ShiftKey.svelte";
   import Shortcut from "../tooltip/Shortcut.svelte";
   import StackingWord from "../tooltip/StackingWord.svelte";
   import TooltipShortcutContainer from "../tooltip/TooltipShortcutContainer.svelte";
   import TooltipTitle from "../tooltip/TooltipTitle.svelte";
-  import { modified } from "@rilldata/web-common/lib/actions/modified-click";
+  import { modified } from "@statsparrot/web-common/lib/actions/modified-click";
 
   export let color = "text-fg-secondary";
   export let type: string;

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ConnectClientProvider from "@rilldata/web-admin/features/ai/mcp/ConnectClientProvider.svelte";
-  import DashboardChat from "@rilldata/web-common/features/chat/DashboardChat.svelte";
-  import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors.ts";
+  import ConnectClientProvider from "@statsparrot/web-admin/features/ai/mcp/ConnectClientProvider.svelte";
+  import DashboardChat from "@statsparrot/web-common/features/chat/DashboardChat.svelte";
+  import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors.ts";
   import { RecentlyUsedDashboards } from "../../../../../features/dashboards/listing/dashboard-favourites.ts";
   import { page } from "$app/stores";
 

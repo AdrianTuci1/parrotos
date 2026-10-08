@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/rilldata/rill/runtime/pkg/observability"
+	"github.com/staticlabs/statsparrot/runtime/pkg/observability"
 	"go.opentelemetry.io/otel/trace"
 )
 

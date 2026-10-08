@@ -1,29 +1,29 @@
 <script lang="ts">
   import { dev } from "$app/environment";
   import { page } from "$app/stores";
-  import BannerCenter from "@rilldata/web-common/components/banner/BannerCenter.svelte";
-  import NotificationCenter from "@rilldata/web-common/components/notifications/NotificationCenter.svelte";
-  import RepresentingUserBanner from "@rilldata/web-common/features/authentication/RepresentingUserBanner.svelte";
-  import FileAndResourceWatcher from "@rilldata/web-common/features/entity-management/FileAndResourceWatcher.svelte";
-  import { featureFlags } from "@rilldata/web-common/features/feature-flags";
-  import { initPylonWidget } from "@rilldata/web-common/features/help/initPylonWidget";
-  import RemoteProjectManager from "@rilldata/web-common/features/project/RemoteProjectManager.svelte";
-  import ApplicationHeader from "@rilldata/web-common/layout/ApplicationHeader.svelte";
-  import BlockingOverlayContainer from "@rilldata/web-common/layout/BlockingOverlayContainer.svelte";
-  import { overlay } from "@rilldata/web-common/layout/overlay-store";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient";
+  import BannerCenter from "@statsparrot/web-common/components/banner/BannerCenter.svelte";
+  import NotificationCenter from "@statsparrot/web-common/components/notifications/NotificationCenter.svelte";
+  import RepresentingUserBanner from "@statsparrot/web-common/features/authentication/RepresentingUserBanner.svelte";
+  import FileAndResourceWatcher from "@statsparrot/web-common/features/entity-management/FileAndResourceWatcher.svelte";
+  import { featureFlags } from "@statsparrot/web-common/features/feature-flags";
+  import { initPylonWidget } from "@statsparrot/web-common/features/help/initPylonWidget";
+  import RemoteProjectManager from "@statsparrot/web-common/features/project/RemoteProjectManager.svelte";
+  import ApplicationHeader from "@statsparrot/web-common/layout/ApplicationHeader.svelte";
+  import BlockingOverlayContainer from "@statsparrot/web-common/layout/BlockingOverlayContainer.svelte";
+  import { overlay } from "@statsparrot/web-common/layout/overlay-store";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient";
   import {
     errorEventHandler,
     initMetrics,
-  } from "@rilldata/web-common/metrics/initMetrics";
-  import { isDeployPage } from "@rilldata/web-common/layout/navigation/route-utils";
-  import { previewModeStore } from "@rilldata/web-common/layout/preview-mode-store";
+  } from "@statsparrot/web-common/metrics/initMetrics";
+  import { isDeployPage } from "@statsparrot/web-common/layout/navigation/route-utils";
+  import { previewModeStore } from "@statsparrot/web-common/layout/preview-mode-store";
   import { LOCAL_HOST, LOCAL_INSTANCE_ID } from "../lib/runtime-client";
-  import RuntimeProvider from "@rilldata/web-common/runtime-client/v2/RuntimeProvider.svelte";
+  import RuntimeProvider from "@statsparrot/web-common/runtime-client/v2/RuntimeProvider.svelte";
   import type { Query } from "@tanstack/query-core";
   import { QueryClientProvider } from "@tanstack/svelte-query";
   import { onMount } from "svelte";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
   import type { LayoutData } from "./$types";
   import PreviewModeNav from "../features/preview/PreviewModeNav.svelte";
   import {
@@ -31,7 +31,7 @@
     isDeveloperRoute,
     showPreviewNav,
   } from "./route-constants";
-  import "@rilldata/web-common/app.css";
+  import "@statsparrot/web-common/app.css";
 
   export let data: LayoutData;
 
@@ -64,7 +64,7 @@
       config.analyticsEnabled && !import.meta.env.VITE_PLAYWRIGHT_TEST && !dev;
 
     if (shouldSendAnalytics) {
-      await initMetrics(config, host); // Proxies events through the Rill "intake" service
+      await initMetrics(config, host); // Proxies events through the Parrot "intake" service
 
       removeJavascriptListeners =
         errorEventHandler.addJavascriptErrorListeners();

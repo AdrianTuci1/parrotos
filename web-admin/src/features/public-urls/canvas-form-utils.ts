@@ -1,8 +1,8 @@
 export {
   getCanvasFilters,
   hasCanvasFilters,
-} from "@rilldata/web-common/features/canvas/filters/canvas-filter-expressions";
-import { ExploreStateURLParams } from "@rilldata/web-common/features/dashboards/url-state/url-params";
+} from "@statsparrot/web-common/features/canvas/filters/canvas-filter-expressions";
+import { ExploreStateURLParams } from "@statsparrot/web-common/features/dashboards/url-state/url-params";
 
 /**
  * Returns the sanitized canvas state from the URL.

@@ -2,12 +2,12 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
-  import { extractBranchFromPath } from "@rilldata/web-admin/features/branches/branch-utils";
-  import ContentContainer from "@rilldata/web-common/components/layout/ContentContainer.svelte";
-  import LeftNav from "@rilldata/web-admin/components/nav/LeftNav.svelte";
-  import Callout from "@rilldata/web-common/components/callout/Callout.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-  import { escapeHtml } from "@rilldata/web-common/lib/i18n";
+  import { extractBranchFromPath } from "@statsparrot/web-admin/features/branches/branch-utils";
+  import ContentContainer from "@statsparrot/web-common/components/layout/ContentContainer.svelte";
+  import LeftNav from "@statsparrot/web-admin/components/nav/LeftNav.svelte";
+  import Callout from "@statsparrot/web-common/components/callout/Callout.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+  import { escapeHtml } from "@statsparrot/web-common/lib/i18n";
 
   $: organization = $page.params.organization;
   $: project = $page.params.project;

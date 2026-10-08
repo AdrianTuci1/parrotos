@@ -1,7 +1,7 @@
 <script lang="ts">
-  import * as AlertDialog from "@rilldata/web-common/components/alert-dialog";
-  import { Button } from "@rilldata/web-common/components/button";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import * as AlertDialog from "@statsparrot/web-common/components/alert-dialog";
+  import { Button } from "@statsparrot/web-common/components/button";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   export let open;
   export let onCancel: () => void;

@@ -1,21 +1,21 @@
 import {
   getCanvasChartComponent,
   type CanvasChartSpec,
-} from "@rilldata/web-common/features/canvas/components/charts";
-import { CustomChartComponent } from "@rilldata/web-common/features/canvas/components/charts/custom-chart";
-import { CartesianChartComponent } from "@rilldata/web-common/features/canvas/components/charts/variants/CartesianChart";
-import { KPIGridComponent } from "@rilldata/web-common/features/canvas/components/kpi-grid";
+} from "@statsparrot/web-common/features/canvas/components/charts";
+import { CustomChartComponent } from "@statsparrot/web-common/features/canvas/components/charts/custom-chart";
+import { CartesianChartComponent } from "@statsparrot/web-common/features/canvas/components/charts/variants/CartesianChart";
+import { KPIGridComponent } from "@statsparrot/web-common/features/canvas/components/kpi-grid";
 import type {
   ComponentInputParam,
   FilterInputParam,
   FilterInputTypes,
-} from "@rilldata/web-common/features/canvas/inspector/types";
+} from "@statsparrot/web-common/features/canvas/inspector/types";
 import {
   type V1ComponentSpec,
   type V1MetricsViewSpec,
   type V1ResolveCanvasResponseResolvedComponents,
   type V1Resource,
-} from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/runtime-client";
 import type { CanvasEntity, ComponentPath } from "../stores/canvas-entity";
 import type { BaseCanvasComponent } from "./BaseCanvasComponent";
 import { ImageComponent } from "./image";
@@ -27,20 +27,20 @@ import type {
   ComponentCommonProperties,
   ComponentSpec,
 } from "./types";
-import ChartIcon from "@rilldata/web-common/features/canvas/icons/ChartIcon.svelte";
-import TableIcon from "@rilldata/web-common/features/canvas/icons/TableIcon.svelte";
-import TextIcon from "@rilldata/web-common/features/canvas/icons/TextIcon.svelte";
-import BigNumberIcon from "@rilldata/web-common/features/canvas/icons/BigNumberIcon.svelte";
-import LeaderboardIcon from "@rilldata/web-common/features/canvas/icons/LeaderboardIcon.svelte";
+import ChartIcon from "@statsparrot/web-common/features/canvas/icons/ChartIcon.svelte";
+import TableIcon from "@statsparrot/web-common/features/canvas/icons/TableIcon.svelte";
+import TextIcon from "@statsparrot/web-common/features/canvas/icons/TextIcon.svelte";
+import BigNumberIcon from "@statsparrot/web-common/features/canvas/icons/BigNumberIcon.svelte";
+import LeaderboardIcon from "@statsparrot/web-common/features/canvas/icons/LeaderboardIcon.svelte";
 import {
   CHART_CONFIG,
   type ChartMetadataConfig,
-} from "@rilldata/web-common/features/components/charts/config.ts";
+} from "@statsparrot/web-common/features/components/charts/config.ts";
 import { readable } from "svelte/store";
-import { getFieldsForSpec } from "@rilldata/web-common/features/components/charts/data-provider.ts";
-import type { ChartSpec } from "@rilldata/web-common/features/components/charts/types.ts";
+import { getFieldsForSpec } from "@statsparrot/web-common/features/components/charts/data-provider.ts";
+import type { ChartSpec } from "@statsparrot/web-common/features/components/charts/types.ts";
 
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
 /**
  * Returns the common component options.

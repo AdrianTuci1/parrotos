@@ -13,16 +13,16 @@ import {
 const notice = (() => {}) as unknown as Snippet;
 
 describe("isPinned", () => {
-  it("matches /rill.yaml exactly", () => {
-    expect(isPinned("/rill.yaml")).toBe(true);
+  it("matches /statsparrot.yaml exactly", () => {
+    expect(isPinned("/statsparrot.yaml")).toBe(true);
   });
 
-  it("does not match rill.yaml in a subdirectory", () => {
-    expect(isPinned("/foo/rill.yaml")).toBe(false);
+  it("does not match statsparrot.yaml in a subdirectory", () => {
+    expect(isPinned("/foo/statsparrot.yaml")).toBe(false);
   });
 
-  it("does not match a path that merely starts with /rill.yaml", () => {
-    expect(isPinned("/rill.yaml.bak")).toBe(false);
+  it("does not match a path that merely starts with /statsparrot.yaml", () => {
+    expect(isPinned("/statsparrot.yaml.bak")).toBe(false);
   });
 
   it("does not match unrelated yaml files", () => {

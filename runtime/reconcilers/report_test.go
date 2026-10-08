@@ -3,15 +3,15 @@ package reconcilers_test
 import (
 	"testing"
 
-	runtimev1 "github.com/rilldata/rill/proto/gen/rill/runtime/v1"
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/testruntime"
+	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
 	"github.com/stretchr/testify/require"
 )
 
 func TestReportCanvasResolveTransitiveAccess(t *testing.T) {
 	rt, id := testruntime.NewInstanceWithOptions(t, testruntime.InstanceOptions{
-		Files: map[string]string{"rill.yaml": ""},
+		Files: map[string]string{"statsparrot.yaml": ""},
 	})
 
 	// Create a canvas with components referencing mv1 and mv2, an unrelated metrics view mv3,

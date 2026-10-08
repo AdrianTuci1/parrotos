@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ArrowDown from "@rilldata/web-common/components/icons/ArrowDown.svelte";
+  import ArrowDown from "@statsparrot/web-common/components/icons/ArrowDown.svelte";
   import type {
     ColumnDef,
     OnChangeFn,

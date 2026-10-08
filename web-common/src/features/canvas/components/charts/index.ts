@@ -1,9 +1,9 @@
-import type { BaseCanvasComponentConstructor } from "@rilldata/web-common/features/canvas/components/util";
+import type { BaseCanvasComponentConstructor } from "@statsparrot/web-common/features/canvas/components/util";
 import {
   CHART_CONFIG,
   type ChartMetadataConfig,
-} from "@rilldata/web-common/features/components/charts/config";
-import type { ChartType } from "@rilldata/web-common/features/components/charts/types";
+} from "@statsparrot/web-common/features/components/charts/config";
+import type { ChartType } from "@statsparrot/web-common/features/components/charts/types";
 import {
   CartesianChartComponent,
   type CartesianCanvasChartSpec,

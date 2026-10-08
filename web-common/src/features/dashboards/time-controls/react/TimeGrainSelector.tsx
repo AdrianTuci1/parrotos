@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { TIME_GRAIN } from "@rilldata/web-common/lib/time/config";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { TIME_GRAIN } from "@statsparrot/web-common/lib/time/config";
 import {
   getAllowedTimeGrains,
   isGrainBigger,
-} from "@rilldata/web-common/lib/time/grains";
-import { translateGrainName } from "@rilldata/web-common/lib/time/new-grains";
-import type { AvailableTimeGrain } from "@rilldata/web-common/lib/time/types";
-import type { V1TimeGrain } from "@rilldata/web-common/runtime-client";
+} from "@statsparrot/web-common/lib/time/grains";
+import { translateGrainName } from "@statsparrot/web-common/lib/time/new-grains";
+import type { AvailableTimeGrain } from "@statsparrot/web-common/lib/time/types";
+import type { V1TimeGrain } from "@statsparrot/web-common/runtime-client";
 import { CaretDownIcon } from "../super-pill/new-time-dropdown/react/icons";
 
 /**

@@ -1,6 +1,6 @@
-import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
-import { makeDimensionHref } from "@rilldata/web-common/features/dashboards/dashboard-utils";
-import type { VirtualizedTableColumns } from "@rilldata/web-common/components/virtualized-table/types";
+import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
+import { makeDimensionHref } from "@statsparrot/web-common/features/dashboards/dashboard-utils";
+import type { VirtualizedTableColumns } from "@statsparrot/web-common/components/virtualized-table/types";
 import type { DimensionTableRow } from "../dimension-table-types";
 import type { VirtualItem } from "./useVirtualizer";
 import { StickyHeader } from "./StickyHeader";

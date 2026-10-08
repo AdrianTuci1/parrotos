@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { SelectSeparator } from "@rilldata/web-common/components/select";
-  import * as Select from "@rilldata/web-common/components/select";
-  import * as Tooltip from "@rilldata/web-common/components/tooltip-v2";
-  import Spinner from "@rilldata/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@rilldata/web-common/features/entity-management/types.ts";
+  import { SelectSeparator } from "@statsparrot/web-common/components/select";
+  import * as Select from "@statsparrot/web-common/components/select";
+  import * as Tooltip from "@statsparrot/web-common/components/tooltip-v2";
+  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
+  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types.ts";
   import { InfoIcon, X } from "lucide-svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import DataTypeIcon from "../data-types/DataTypeIcon.svelte";
   import Search from "../search/Search.svelte";
   import type { ComponentType, SvelteComponent } from "svelte";
@@ -234,7 +234,7 @@
           {#if onAddNew}
             <SelectSeparator />
             <Select.Item
-              value="__rill_add_option__"
+              value="__statsparrot_add_option__"
               onclick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();

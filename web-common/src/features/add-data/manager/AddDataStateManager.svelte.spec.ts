@@ -3,15 +3,15 @@ import {
   AddDataStateManager,
   type TransitionEvent,
   TransitionEventType,
-} from "@rilldata/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
+} from "@statsparrot/web-common/features/add-data/manager/AddDataStateManager.svelte.ts";
 import {
   type AddDataState,
   AddDataStep,
   ImportDataStep,
   type ImportStepConfig,
-} from "@rilldata/web-common/features/add-data/manager/steps/types.ts";
-import { getConnectorDriverForSchema } from "@rilldata/web-common/features/add-data/manager/steps/utils.ts";
-import { connectorFormCache } from "@rilldata/web-common/features/add-data/manager/steps/connector.ts";
+} from "@statsparrot/web-common/features/add-data/manager/steps/types.ts";
+import { getConnectorDriverForSchema } from "@statsparrot/web-common/features/add-data/manager/steps/utils.ts";
+import { connectorFormCache } from "@statsparrot/web-common/features/add-data/manager/steps/connector.ts";
 
 const ClickhouseSchema = "clickhouse";
 const ClickhouseConnector = "clickhouse_conn";

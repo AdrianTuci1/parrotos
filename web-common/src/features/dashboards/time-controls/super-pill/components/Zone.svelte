@@ -1,17 +1,17 @@
 <script lang="ts">
-  import * as DropdownMenu from "@rilldata/web-common/components/dropdown-menu";
-  import CaretDownIcon from "@rilldata/web-common/components/icons/CaretDownIcon.svelte";
+  import * as DropdownMenu from "@statsparrot/web-common/components/dropdown-menu";
+  import CaretDownIcon from "@statsparrot/web-common/components/icons/CaretDownIcon.svelte";
   import {
     allTimeZones,
     formatIANAs,
     getAbbreviationForIANA,
     getLocalIANA,
-  } from "@rilldata/web-common/lib/time/timezone";
+  } from "@statsparrot/web-common/lib/time/timezone";
   import type { DateTime } from "luxon";
-  import { localStorageStore } from "@rilldata/web-common/lib/store-utils";
+  import { localStorageStore } from "@statsparrot/web-common/lib/store-utils";
   import ZoneDisplay from "./ZoneDisplay.svelte";
-  import Search from "@rilldata/web-common/components/search/Search.svelte";
-  import { m } from "@rilldata/web-common/lib/i18n/gen/messages";
+  import Search from "@statsparrot/web-common/components/search/Search.svelte";
+  import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
   const browserIANA = getLocalIANA();
 

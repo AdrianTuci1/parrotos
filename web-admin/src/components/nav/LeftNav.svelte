@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import LeftNavItem from "@rilldata/web-admin/components/nav/LeftNavItem.svelte";
+  import LeftNavItem from "@statsparrot/web-admin/components/nav/LeftNavItem.svelte";
 
   export let basePage: string;
   export let baseRoute: string;

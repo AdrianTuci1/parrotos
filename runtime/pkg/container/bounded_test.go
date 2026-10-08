@@ -3,7 +3,7 @@ package container
 import (
 	"testing"
 
-	"github.com/rilldata/rill/runtime/pkg/arrayutil"
+	"github.com/staticlabs/statsparrot/runtime/pkg/arrayutil"
 	"github.com/stretchr/testify/require"
 )
 

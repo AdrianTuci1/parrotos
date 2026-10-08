@@ -5,23 +5,23 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
-  import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
-  import TrialDetailsDialog from "@rilldata/web-common/features/billing/TrialDetailsDialog.svelte";
-  import { getDeployRoute } from "@rilldata/web-common/features/project/deploy/route-utils.ts";
-  import UpdateProjectPopup from "@rilldata/web-common/features/project/deploy/UpdateProjectPopup.svelte";
-  import { copyWithAdditionalArguments } from "@rilldata/web-common/lib/url-utils";
-  import { waitUntil } from "@rilldata/web-common/lib/waitUtils";
-  import ProjectContainsRemoteChangesDialog from "@rilldata/web-common/features/project/ProjectContainsRemoteChangesDialog.svelte";
-  import { eventBus } from "@rilldata/web-common/lib/event-bus/event-bus.ts";
-  import { queryClient } from "@rilldata/web-common/lib/svelte-query/globalQueryClient.ts";
-  import { behaviourEvent } from "@rilldata/web-common/metrics/initMetrics";
-  import { BehaviourEventAction } from "@rilldata/web-common/metrics/service/BehaviourEventTypes";
+  import Tooltip from "@statsparrot/web-common/components/tooltip/Tooltip.svelte";
+  import TooltipContent from "@statsparrot/web-common/components/tooltip/TooltipContent.svelte";
+  import TrialDetailsDialog from "@statsparrot/web-common/features/billing/TrialDetailsDialog.svelte";
+  import { getDeployRoute } from "@statsparrot/web-common/features/project/deploy/route-utils.ts";
+  import UpdateProjectPopup from "@statsparrot/web-common/features/project/deploy/UpdateProjectPopup.svelte";
+  import { copyWithAdditionalArguments } from "@statsparrot/web-common/lib/url-utils";
+  import { waitUntil } from "@statsparrot/web-common/lib/waitUtils";
+  import ProjectContainsRemoteChangesDialog from "@statsparrot/web-common/features/project/ProjectContainsRemoteChangesDialog.svelte";
+  import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus.ts";
+  import { queryClient } from "@statsparrot/web-common/lib/svelte-query/globalQueryClient.ts";
+  import { behaviourEvent } from "@statsparrot/web-common/metrics/initMetrics";
+  import { BehaviourEventAction } from "@statsparrot/web-common/metrics/service/BehaviourEventTypes";
   import {
     createLocalServiceGetCurrentUser,
     createLocalServiceGetMetadata,
     createLocalServiceListMatchingProjectsRequest,
-  } from "@rilldata/web-common/runtime-client/local-service";
+  } from "@statsparrot/web-common/runtime-client/local-service";
   import { onMount } from "svelte";
   import { Rocket } from "lucide-svelte";
   import { writable, get, derived } from "svelte/store";
@@ -30,8 +30,8 @@
     createRuntimeServiceGitPullMutation,
     createRuntimeServiceGitStatus,
     getRuntimeServiceGitStatusQueryKey,
-  } from "@rilldata/web-common/runtime-client";
-  import { useRuntimeClient } from "@rilldata/web-common/runtime-client/v2";
+  } from "@statsparrot/web-common/runtime-client";
+  import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
   import type { ConnectError } from "@connectrpc/connect";
 
   export let hasValidDashboard: boolean;
@@ -108,7 +108,7 @@
       return;
     }
 
-    if (!userResp.rillUserOrgs?.length) {
+    if (!userResp.statsparrotUserOrgs?.length) {
       // 1st time user. show a modal explaining the trial period.
       deployConfirmOpen = true;
       return;
@@ -173,7 +173,7 @@
       Deploy
     </Button>
     <TooltipContent slot="tooltip-content">
-      Deploy this project to Rill Cloud
+      Deploy this project to Parrot Cloud
     </TooltipContent>
   </Tooltip>
 {/if}

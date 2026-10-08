@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rilldata/rill/runtime"
-	"github.com/rilldata/rill/runtime/drivers"
-	activity "github.com/rilldata/rill/runtime/pkg/activity"
-	"github.com/rilldata/rill/runtime/storage"
-	"github.com/rilldata/rill/runtime/testruntime"
-	"github.com/rilldata/rill/runtime/testruntime/testmode"
+	"github.com/staticlabs/statsparrot/runtime"
+	"github.com/staticlabs/statsparrot/runtime/drivers"
+	activity "github.com/staticlabs/statsparrot/runtime/pkg/activity"
+	"github.com/staticlabs/statsparrot/runtime/storage"
+	"github.com/staticlabs/statsparrot/runtime/testruntime"
+	"github.com/staticlabs/statsparrot/runtime/testruntime/testmode"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -35,7 +35,7 @@ type: model
 sql: SELECT * FROM range(16)
 output:
   connector: s3
-  path: s3://integration-test.rilldata.com/export_test
+  path: s3://integration-test.statsparrot.com/export_test
 `,
 		},
 	})
@@ -63,7 +63,7 @@ type: model
 sql: SELECT * FROM range(16)
 output:
   connector: s3
-  path: s3://integration-test.rilldata.com/export_test/fixed.parquet
+  path: s3://integration-test.statsparrot.com/export_test/fixed.parquet
 `,
 		},
 	})
@@ -90,7 +90,7 @@ type: model
 sql: SELECT * FROM range(16)
 output:
   connector: gcs
-  path: gs://integration-test.rilldata.com/export_test
+  path: gs://integration-test.statsparrot.com/export_test
 `,
 		},
 	})

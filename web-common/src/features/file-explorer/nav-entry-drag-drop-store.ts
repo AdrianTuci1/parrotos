@@ -1,7 +1,7 @@
-import { splitFolderAndFileName } from "@rilldata/web-common/features/entity-management/file-path-utils";
-import { ResourceKind } from "@rilldata/web-common/features/entity-management/resource-selectors";
-import { directoryState } from "@rilldata/web-common/features/file-explorer/directory-store";
-import { getPaddingFromPath } from "@rilldata/web-common/features/file-explorer/nav-tree-spacing";
+import { splitFolderAndFileName } from "@statsparrot/web-common/features/entity-management/file-path-utils";
+import { ResourceKind } from "@statsparrot/web-common/features/entity-management/resource-selectors";
+import { directoryState } from "@statsparrot/web-common/features/file-explorer/directory-store";
+import { getPaddingFromPath } from "@statsparrot/web-common/features/file-explorer/nav-tree-spacing";
 import { get, writable } from "svelte/store";
 
 export type NavDragData = {

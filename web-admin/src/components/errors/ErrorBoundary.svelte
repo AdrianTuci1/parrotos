@@ -5,7 +5,7 @@
    */
 
   import { afterNavigate } from "$app/navigation";
-  import ErrorPage from "@rilldata/web-common/components/ErrorPage.svelte";
+  import ErrorPage from "@statsparrot/web-common/components/ErrorPage.svelte";
   import { errorStore, isErrorStoreEmpty } from "./error-store";
 
   $: ({ statusCode, header, body, detail, fatal } = $errorStore);

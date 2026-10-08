@@ -1,5 +1,5 @@
-import { FormatPreset } from "@rilldata/web-common/lib/number-formatting/humanizer-types";
-import type { MetricsViewSpecDimension } from "@rilldata/web-common/runtime-client";
+import { FormatPreset } from "@statsparrot/web-common/lib/number-formatting/humanizer-types";
+import type { MetricsViewSpecDimension } from "@statsparrot/web-common/runtime-client";
 import { writable } from "svelte/store";
 import { YAMLMap, YAMLSeq } from "yaml";
 

@@ -3,16 +3,16 @@ package auth
 import (
 	"context"
 
-	"github.com/rilldata/rill/cli/pkg/cmdutil"
-	adminv1 "github.com/rilldata/rill/proto/gen/rill/admin/v1"
+	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
+	adminv1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/admin/v1"
 	"github.com/spf13/cobra"
 )
 
-// LogoutCmd is the command for logging out of a Rill account.
+// LogoutCmd is the command for logging out of a Parrot account.
 func LogoutCmd(ch *cmdutil.Helper) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logout",
-		Short: "Logout of the Rill API",
+		Short: "Logout of the Parrot API",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 
@@ -49,25 +49,25 @@ func Logout(ctx context.Context, ch *cmdutil.Helper) error {
 		ch.Printf("Failed to revoke token (did you revoke it manually?). Clearing local token anyway.\n")
 	}
 
-	err = ch.DotRill.SetAccessToken("")
+	err = ch.DotStatsparrot.SetAccessToken("")
 	if err != nil {
 		return err
 	}
 
 	// Set original_token as empty
-	err = ch.DotRill.SetBackupToken("")
+	err = ch.DotStatsparrot.SetBackupToken("")
 	if err != nil {
 		return err
 	}
 
 	// Set representing user email as empty
-	err = ch.DotRill.SetRepresentingUser("")
+	err = ch.DotStatsparrot.SetRepresentingUser("")
 	if err != nil {
 		return err
 	}
 
 	// Clear the state during logout
-	err = ch.DotRill.SetDefaultOrg("")
+	err = ch.DotStatsparrot.SetDefaultOrg("")
 	if err != nil {
 		return err
 	}

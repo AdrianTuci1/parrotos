@@ -369,7 +369,7 @@ Only Sources, Models, MetricsView, Explore, and Canvas are shown. Hidden resourc
 
 **Layout issues?**
 
-1. Clear cache: `localStorage.removeItem('rill.resourceGraph.v2')`
+1. Clear cache: `localStorage.removeItem('statsparrot.resourceGraph.v2')`
 2. Or use cache manager: `window.__RESOURCE_GRAPH_CACHE.clearAll()`
 3. Refresh page
 
@@ -405,14 +405,14 @@ if (id) {
 Old:
 
 ```typescript
-localStorage.removeItem("rill.resourceGraph.v1");
+localStorage.removeItem("statsparrot.resourceGraph.v1");
 ```
 
 New:
 
 ```typescript
 window.__RESOURCE_GRAPH_CACHE.clearAll();
-// Or: localStorage.removeItem('rill.resourceGraph.v2');
+// Or: localStorage.removeItem('statsparrot.resourceGraph.v2');
 ```
 
 **Step 2: Initialize cache manager**

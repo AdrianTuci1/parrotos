@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
-	"github.com/rilldata/rill/cli/pkg/dotrill"
+	"github.com/staticlabs/statsparrot/cli/pkg/dotstatsparrot"
 	"go.uber.org/zap"
 )
 
@@ -52,13 +52,13 @@ func newEmbedClickHouse(tcpPort int, dataDir, tempDir string, logger *zap.Logger
 		embed = &embedClickHouse{tcpPort: tcpPort, dataDir: dataDir, tempDir: tempDir, logger: logger}
 	})
 	if tcpPort != 0 && tcpPort != embed.tcpPort {
-		return nil, fmt.Errorf("change of `embed_port` is not allowed while the application is running, please restart Rill")
+		return nil, fmt.Errorf("change of `embed_port` is not allowed while the application is running, please restart Parrot")
 	}
 	return embed, nil
 }
 
 // start installs (depending on OS and platform) and starts ClickHouse server.
-// The destination directory for the ClickHouse binary is .rill/clickhouse.
+// The destination directory for the ClickHouse binary is .statsparrot/clickhouse.
 // The function returns the DSN for the ClickHouse server and close function.
 //
 // TODO: Since this can be a long-running process, we should accept a `ctx`,
@@ -71,8 +71,8 @@ func (e *embedClickHouse) start() (*clickhouse.Options, error) {
 		return e.opts, nil
 	}
 
-	// Store the ClickHouse binary under .rill/clickhouse so that every project can use the same binary
-	destDir, err := dotrill.New("").ResolveFilename("clickhouse", true)
+	// Store the ClickHouse binary under .statsparrot/clickhouse so that every project can use the same binary
+	destDir, err := dotstatsparrot.New("").ResolveFilename("clickhouse", true)
 	if err != nil {
 		return nil, err
 	}
