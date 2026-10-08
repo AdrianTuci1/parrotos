@@ -10,6 +10,9 @@ on:
 
 env:
   DOMAIN: ${{ vars.DOMAIN || 'statsparrot.com' }}
+  # Where the landing page sends visitors. Keep it in step with the hosted app: with
+  # deploy/terraform/lightsail it is `https://<subdomain>.<domain>`, and the default subdomain is `bi`.
+  APP_URL: ${{ vars.APP_URL || 'https://bi.statsparrot.com' }}
 
 jobs:
   deploy-landing:
@@ -30,6 +33,8 @@ jobs:
 
       - name: 🔨 Build Landing Page
         id: build
+        env:
+          VITE_APP_URL: ${{ env.APP_URL }}
         run: |
           cd landing
           npm ci
@@ -46,13 +51,11 @@ jobs:
 
       - name: 🚀 Deploy Landing Page to Cloudflare Pages
         id: deploy
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: statsparrot-landing
-          directory: landing/dist
-          branch: main
+          command: pages deploy landing/dist --project-name=statsparrot-landing --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📝 Log Result
@@ -61,6 +64,7 @@ jobs:
           if [ "${{ steps.build.outcome }}" == "success" ] && \
              [ "${{ steps.deploy.outcome }}" == "success" ]; then
             echo "✅ Landing page deployed to https://${{ env.DOMAIN }}"
+            echo "   App links point at ${{ env.APP_URL }}"
           else
             echo "❌ Landing page deploy failed"
             exit 1

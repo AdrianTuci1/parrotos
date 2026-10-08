@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CustomLink } from "../components/CustomLink.jsx";
+import { APP_URL, SIGN_IN_URL } from "../config.js";
 import "./SiteHeader.css";
 
 export function SiteHeader() {
@@ -30,7 +31,7 @@ export function SiteHeader() {
         <div className={`announcement-banner ${isScrolled ? "hidden" : ""}`}>
           <div className="banner-content">
             <span>🚀 Now live: Real-time Sentry data orchestration & AI analytics.</span>
-            <a href="https://app.statsparrot.com/signup" className="banner-link">Try for free →</a>
+            <a href={APP_URL} className="banner-link">Try for free →</a>
           </div>
           <button className="banner-close" onClick={() => setShowBanner(false)} aria-label="Close announcement">
             ✕
@@ -46,8 +47,8 @@ export function SiteHeader() {
           </CustomLink>
 
           <div className="header-right-actions">
-            <a className="btn-signin" href="https://app.statsparrot.com/signin">Sign In</a>
-            <a className="btn-signup" href="https://app.statsparrot.com/signup">Sign Up</a>
+            <a className="btn-signin" href={SIGN_IN_URL}>Sign In</a>
+            <a className="btn-signup" href={APP_URL}>Sign Up</a>
           </div>
         </div>
       </header>

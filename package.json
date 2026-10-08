@@ -4,10 +4,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "docs",
     "web-admin",
     "web-common",
-    "web-integration",
     "web-local"
   ],
   "scripts": {
