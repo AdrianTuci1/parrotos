@@ -38,7 +38,7 @@ func (s *Server) GetRepoMeta(ctx context.Context, req *adminv1.GetRepoMetaReques
 			return nil, err
 		}
 
-		downloadURL, err := s.generateSignedDownloadURL(asset)
+		downloadURL, err := s.generateSignedDownloadURL(ctx, asset)
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}

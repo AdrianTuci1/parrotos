@@ -1,0 +1,35 @@
+# Caddy obtains and renews the TLS certificate for {$STATSPARROT_DOMAIN} automatically.
+#
+# This file deliberately does no routing beyond a single reverse proxy: the admin server serves
+# the API, the web app and every project's runtime on one origin and under one path space, so
+# there is nothing for the proxy to split.
+
+{$STATSPARROT_DOMAIN} {
+	# The application compresses its own responses (the web app assets are the bulk of the
+	# traffic), so there is no "encode" here: compressing twice would waste CPU and could
+	# double-encode.
+	reverse_proxy app:8080 {
+		# Server-sent events and streaming query results must not be buffered.
+		flush_interval -1
+	}
+
+	header {
+		# The app sends its own Content-Security-Policy (with hashes for its inline scripts)
+		# and the other security headers, so only add what a proxy is responsible for.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	log {
+		output stdout
+		format json
+	}
+
+	# Supporting a custom domain (an org's own domain pointing at this deployment) additionally
+	# requires the /api path prefix, because the web app contacts /api on a domain whose
+	# second-level domain differs from the one it was built with. Uncomment to enable:
+	#
+	# handle_path /api/* {
+	# 	reverse_proxy app:8080
+	# }
+}

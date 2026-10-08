@@ -1,0 +1,66 @@
+#cloud-config
+# First-boot setup for the hosted Parrot deployment. Installs Docker and creates the directory
+# the deploy script copies docker-compose.yml, Caddyfile and .env into. It deliberately writes no
+# secrets: the .env is pushed over SSH by deploy/hosted/deploy.sh, so nothing sensitive ends up in
+# Terraform state.
+
+package_update: true
+package_upgrade: false
+
+packages:
+  - ca-certificates
+  - curl
+  - docker.io
+  - docker-compose-v2
+  - unattended-upgrades
+
+write_files:
+  # Container logs would otherwise grow until the disk fills.
+  - path: /etc/docker/daemon.json
+    owner: root:root
+    permissions: "0644"
+    content: |
+      {
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+
+  - path: /etc/statsparrot/README
+    owner: root:root
+    permissions: "0644"
+    content: |
+      This host runs the hosted Statsparrot deployment.
+
+      ${host_dir}/docker-compose.yml  the stack: the app container and Caddy
+      ${host_dir}/Caddyfile           TLS and the reverse proxy
+      ${host_dir}/.env                configuration and secrets
+
+      Deploy or update it from a development machine with:
+        ./deploy/hosted/deploy.sh --host <this host>
+
+      Start, stop and inspect it with:
+        cd ${host_dir} && docker compose ps / logs -f app / up -d --no-build / down
+
+      Nothing else is installed on this host on purpose.
+
+runcmd:
+  - [systemctl, enable, --now, docker]
+  - [usermod, -aG, docker, ${ssh_user}]
+  - [mkdir, -p, ${host_dir}]
+  - [chown, "${ssh_user}:${ssh_user}", ${host_dir}]
+  # Swap keeps the container comfortable on a small plan and absorbs the spike while an image is
+  # loaded. Set swap_size_mb to 0 to skip it.
+  - |
+    set -e
+    if [ "${swap_size_mb}" -gt 0 ] && [ ! -f /swapfile ]; then
+      fallocate -l ${swap_size_mb}M /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=${swap_size_mb}
+      chmod 600 /swapfile
+      mkswap /swapfile
+      swapon /swapfile
+      grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+      sysctl -w vm.swappiness=10
+      grep -q '^vm.swappiness' /etc/sysctl.conf || echo 'vm.swappiness=10' >> /etc/sysctl.conf
+    fi

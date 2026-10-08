@@ -21,6 +21,7 @@ import (
 	"github.com/staticlabs/statsparrot/cli/cmd/publicurl"
 	"github.com/staticlabs/statsparrot/cli/cmd/query"
 	"github.com/staticlabs/statsparrot/cli/cmd/runtime"
+	"github.com/staticlabs/statsparrot/cli/cmd/serve"
 	"github.com/staticlabs/statsparrot/cli/cmd/service"
 	"github.com/staticlabs/statsparrot/cli/cmd/start"
 	"github.com/staticlabs/statsparrot/cli/cmd/sudo"
@@ -174,6 +175,7 @@ func RootCmd(ch *cmdutil.Helper) *cobra.Command {
 		verifyInstallCmd(ch),
 		admin.AdminCmd(ch),
 		runtime.RuntimeCmd(ch),
+		serve.ServeCmd(ch),
 	)
 
 	// Additional sub-commands

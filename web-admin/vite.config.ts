@@ -23,7 +23,7 @@ export default defineConfig({
     strictPort: true,
   },
   define: {
-    RillPublicEmailDomains: readPublicEmailDomains(),
+    StatsparrotPublicEmailDomains: readPublicEmailDomains(),
   },
   optimizeDeps: {
     include: [

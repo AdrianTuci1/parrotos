@@ -1,3 +1,3 @@
-import { rillCloud } from "@statsparrot/web-common/tests/fixtures/statsparrot-cloud-fixtures";
+import { statsparrotCloud } from "@statsparrot/web-common/tests/fixtures/statsparrot-cloud-fixtures";
 
-export const test = rillCloud;
+export const test = statsparrotCloud;

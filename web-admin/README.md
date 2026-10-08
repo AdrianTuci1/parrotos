@@ -1,6 +1,6 @@
 # web-admin
 
-This folder contains the control plane frontend for the managed, multi-user Parrot (available on `ui.rillcloud.com`). It's implemented with TypeScript and [SvelteKit](https://kit.svelte.dev).
+This folder contains the control plane frontend for the managed, multi-user Statsparrot. It's implemented with TypeScript and [SvelteKit](https://kit.svelte.dev).
 
 ## Running in development
 

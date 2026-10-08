@@ -18,6 +18,15 @@ gcp-sa-key.json
 vps-key*
 
 # Local statsparrot runtime dev scratch
-.statsparrot-demo/
+statsparrot-demo/
 statsparrot-linux-arm64
 statsparrot-runtime.Dockerfile
+
+# State of the local development services (Postgres data directory) started by
+# cli/cmd/devtool, and the dev database the "serve" flow points at.
+/tmp/
+
+# DuckDB extensions are downloaded at build time by scripts/embed_duckdb_ext.
+# Keep the .gitkeep files so the go:embed directives always have a matching directory.
+/runtime/drivers/duckdb/extensions/embed/*/*
+!/runtime/drivers/duckdb/extensions/embed/**/.gitkeep
