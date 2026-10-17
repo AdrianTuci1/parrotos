@@ -137,7 +137,7 @@
       {m.avatar_documentation()}
     </DropdownMenu.Item>
     <DropdownMenu.Item
-      href="https://discord.gg/2ubRfjC7Rh"
+      href="https://staticlabs.ro"
       target="_blank"
       rel="noreferrer noopener"
     >
