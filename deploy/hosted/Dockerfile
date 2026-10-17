@@ -70,9 +70,10 @@ RUN CGO_ENABLED=1 go build -trimpath \
 FROM debian:bookworm-slim
 
 # ca-certificates for outbound TLS to warehouses and identity providers; tzdata so that
-# report schedules and cron expressions resolve in the intended zone.
+# report schedules and cron expressions resolve in the intended zone; git because the
+# runtime shells out to it to pull project repositories.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends ca-certificates tzdata \
+ && apt-get install -y --no-install-recommends ca-certificates tzdata git \
  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /out/statsparrot /usr/local/bin/statsparrot
