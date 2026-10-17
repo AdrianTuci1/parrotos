@@ -20,9 +20,9 @@
     {#if !isEmbedded}
       <div class="text-fg-secondary">
         {m.dashboard_pivot_need_help_discord()}
-        <a target="_blank" rel="noopener" href="https://discord.gg/2ubRfjC7Rh">
+        <a target="_blank" rel="noopener" href="https://staticlabs.ro">
           <!-- i18n-ignore: standalone product name -->
-          Discord</a
+          staticlabs.ro</a
         >
       </div>
     {/if}

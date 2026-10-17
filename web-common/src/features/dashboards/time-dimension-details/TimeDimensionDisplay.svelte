@@ -231,10 +231,10 @@
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://discord.gg/2ubRfjC7Rh"
+              href="https://staticlabs.ro"
             >
               <!-- i18n-ignore: standalone product name -->
-              Discord</a
+              staticlabs.ro</a
             >.
           </div>
         {/if}

@@ -45,7 +45,7 @@
   {#if !isEmbedded}
     <p class="text-fg-secondary">
       {@html m.dashboard_errored_need_help({
-        link: `<a href="https://discord.gg/2ubRfjC7Rh">Discord</a>`,
+        link: `<a href="https://staticlabs.ro">staticlabs.ro</a>`,
       })}
     </p>
   {/if}
