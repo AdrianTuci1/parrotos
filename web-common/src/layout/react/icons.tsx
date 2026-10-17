@@ -7,36 +7,50 @@
 
 export function ParrotLogoIcon({
   width = "27",
-  height = "16",
+  height = "21",
   mode = "adapt",
 }: {
   width?: string;
   height?: string;
   mode?: "light" | "dark" | "adapt";
 }) {
-  const color =
-    mode === "adapt"
-      ? "fill-primary-700 dark:fill-neutral-900"
-      : mode === "dark"
-        ? "fill-neutral-900"
-        : "fill-primary-700";
+  // Same rules as `components/icons/Parrot.svelte`: the supplied mark is
+  // near-black, with a light fallback so it stays visible on dark surfaces.
+  const fillA =
+    mode === "dark"
+      ? "fill-neutral-100"
+      : mode === "light"
+        ? "fill-[#0E0E0E]"
+        : "fill-[#0E0E0E] dark:fill-neutral-100";
+  const fillB =
+    mode === "dark"
+      ? "fill-neutral-100"
+      : mode === "light"
+        ? "fill-[#101010]"
+        : "fill-[#101010] dark:fill-neutral-100";
+  const stroke =
+    mode === "dark"
+      ? "stroke-neutral-100"
+      : mode === "light"
+        ? "stroke-black"
+        : "stroke-black dark:stroke-neutral-100";
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 27 16"
+      viewBox="0 0 504 385"
       className="mb-[1px] flex-none"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M17.3382 0H14.0645V2.98905H17.3382V0Z" className={color} />
-      <path d="M23.0244 0L23.0361 16H26.323V0H23.0244Z" className={color} />
-      <path d="M18.5432 16H21.8308V0H18.5322L18.5432 16Z" className={color} />
       <path
-        d="M11.7685 8.63081C12.5616 7.68896 12.9585 6.58723 12.9585 5.32563C12.9585 3.73705 12.4558 2.45303 11.4511 1.47138C10.4457 0.490461 9.09525 0 7.39892 0H0L1.69998 3.31676H6.85682C7.64188 3.31676 8.24235 3.51569 8.65895 3.91211C9.07483 4.30926 9.28349 4.82721 9.28349 5.46524C9.28349 6.10327 9.05585 6.59808 8.60058 6.99522C8.14458 7.39236 7.52441 7.59057 6.73936 7.59057H1.1287V10.5572V15.9993H4.17115V10.5572L8.92963 15.9993H13.6881L8.55242 10.44C9.90292 10.1753 10.9747 9.57195 11.7678 8.63009L11.7685 8.63081Z"
-        className={color}
+        d="M196 126.484L503 0.483887C456.167 12.6506 359.2 37.9839 346 41.9839C238.8 -0.0161133 201.333 80.8172 196 126.484Z"
+        className={`${fillA} ${stroke}`}
       />
-      <path d="M17.3382 4.17285H14.0645V15.9996H17.3382V4.17285Z" className={color} />
+      <path
+        d="M327.5 107.484L138.5 384.984L152 233.984L0 195.984L327.5 107.484Z"
+        className={fillB}
+      />
     </svg>
   );
 }

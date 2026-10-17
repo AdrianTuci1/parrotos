@@ -1,37 +1,43 @@
 <script lang="ts">
   export let width = "27";
-  export let height = "18";
+  export let height = "21";
   export let mode: "light" | "dark" | "adapt" = "adapt";
 
-  $: color =
-    mode === "adapt"
-      ? "fill-primary-700 dark:fill-neutral-900"
-      : mode === "dark"
-        ? "fill-neutral-900"
-        : "fill-primary-700";
+  // The supplied mark is near-black. Keep that in light mode and switch to a light
+  // neutral in dark mode, where a black shape would disappear into the header.
+  $: fillA =
+    mode === "dark"
+      ? "fill-neutral-100"
+      : mode === "light"
+        ? "fill-[#0E0E0E]"
+        : "fill-[#0E0E0E] dark:fill-neutral-100";
+  $: fillB =
+    mode === "dark"
+      ? "fill-neutral-100"
+      : mode === "light"
+        ? "fill-[#101010]"
+        : "fill-[#101010] dark:fill-neutral-100";
+  $: stroke =
+    mode === "dark"
+      ? "stroke-neutral-100"
+      : mode === "light"
+        ? "stroke-black"
+        : "stroke-black dark:stroke-neutral-100";
 </script>
 
 <svg
   {width}
   {height}
-  viewBox="0 0 1176 804"
+  viewBox="0 0 504 385"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
   <path
-    d="M224.625 434.468L669.732 36.9207L1175.96 39.1459L438.242 619.909L224.625 434.468Z"
-    class={color}
+    d="M196 126.484L503 0.483887C456.167 12.6506 359.2 37.9839 346 41.9839C238.8 -0.0161133 201.333 80.8172 196 126.484Z"
+    class={`${fillA} ${stroke}`}
   />
   <path
-    d="M172.447 168.063L33.9461 171.095L170.772 32.7484L172.447 168.063Z"
-    class={color}
-  />
-  <path
-    d="M480.044 665.726L612.036 545.79L613.919 783.655L480.044 665.726Z"
-    class={color}
-  />
-  <path
-    d="M403.636 204.715L198.465 382.94L195.155 30.193L403.636 204.715Z"
-    class={color}
+    d="M327.5 107.484L138.5 384.984L152 233.984L0 195.984L327.5 107.484Z"
+    class={fillB}
   />
 </svg>
