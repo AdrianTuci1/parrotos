@@ -739,10 +739,17 @@ let ParserRules = [
   {
     name: "dax_time$string$1",
     symbols: [
+      { literal: "s" },
+      { literal: "t" },
+      { literal: "a" },
+      { literal: "t" },
+      { literal: "s" },
+      { literal: "p" },
+      { literal: "a" },
       { literal: "r" },
-      { literal: "i" },
-      { literal: "l" },
-      { literal: "l" },
+      { literal: "r" },
+      { literal: "o" },
+      { literal: "t" },
       { literal: "-" },
     ],
     postprocess: function joiner(d) {
