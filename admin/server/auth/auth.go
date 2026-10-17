@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/staticlabs/statsparrot/admin"
@@ -38,7 +39,10 @@ type Authenticator struct {
 
 // NewAuthenticator creates an Authenticator.
 func NewAuthenticator(logger *zap.Logger, adm *admin.Service, cookieStore *cookies.Store, opts *AuthenticatorOptions) (*Authenticator, error) {
-	oidcProvider, err := oidc.NewProvider(context.Background(), "https://"+opts.AuthDomain+"/")
+	// The issuer is compared byte-for-byte with the provider's `issuer`. Cloudflare
+	// Access publishes it without a trailing slash, while Auth0 tolerates either, so
+	// trim the slash here rather than forcing every deployment to carry one.
+	oidcProvider, err := oidc.NewProvider(context.Background(), "https://"+strings.TrimRight(opts.AuthDomain, "/"))
 	if err != nil {
 		return nil, err
 	}
