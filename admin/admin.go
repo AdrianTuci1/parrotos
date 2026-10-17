@@ -25,6 +25,10 @@ type Options struct {
 	DatabaseDSN                string
 	DatabaseEncryptionKeyring  string
 	ExternalURL                string
+	// RuntimeAdminURL is the admin address handed to runtime instances. It defaults to
+	// ExternalURL, but a split deployment behind an identity-aware proxy sets it to the
+	// private service address so runtimes do not have to pass through that proxy.
+	RuntimeAdminURL            string
 	FrontendURL                string
 	ProvisionerSetJSON         string
 	DefaultProvisioner         string
