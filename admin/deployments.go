@@ -267,8 +267,12 @@ func (s *Service) StartDeploymentInner(ctx context.Context, depl *database.Deplo
 	}
 
 	// Prepare connectors
+	adminURL := s.opts.RuntimeAdminURL
+	if adminURL == "" {
+		adminURL = s.opts.ExternalURL
+	}
 	adminConfig, err := structpb.NewStruct(map[string]any{
-		"admin_url":    s.opts.ExternalURL,
+		"admin_url":    adminURL,
 		"access_token": dat.Token().String(),
 		"project_id":   depl.ProjectID,
 	})

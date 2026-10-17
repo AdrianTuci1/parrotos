@@ -73,6 +73,8 @@ type Config struct {
 	RuntimePublicURL          string                 `split_words:"true"`
 	ExternalURL               string                 `default:"http://localhost:8080" split_words:"true"`
 	ExternalGRPCURL           string                 `envconfig:"external_grpc_url"`
+	// RuntimeAdminURL is how runtime instances reach the admin. Empty means ExternalURL.
+	RuntimeAdminURL           string                 `split_words:"true"`
 	FrontendURL               string                 `default:"http://localhost:3000" split_words:"true"`
 	AllowedOrigins            []string               `default:"*" split_words:"true"`
 	SessionKeyPairs           []string               `split_words:"true"`
@@ -362,6 +364,7 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				DatabaseDSN:                conf.DatabaseURL,
 				DatabaseEncryptionKeyring:  conf.DatabaseEncryptionKeyring,
 				ExternalURL:                conf.ExternalGRPCURL, // NOTE: using gRPC url
+				RuntimeAdminURL:            conf.RuntimeAdminURL,
 				FrontendURL:                conf.FrontendURL,
 				ProvisionerSetJSON:         conf.ProvisionerSetJSON,
 				DefaultProvisioner:         conf.DefaultProvisioner,
