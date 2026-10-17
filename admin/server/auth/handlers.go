@@ -284,30 +284,30 @@ func (a *Authenticator) authLoginCallback(w http.ResponseWriter, r *http.Request
 		http.Error(w, "claim 'email' not found", http.StatusInternalServerError)
 		return
 	}
-	emailVerified, ok := profile["email_verified"].(bool)
-	if !ok {
-		// For SAML flows, it is passed as a string
-		emailVerifiedStr, ok := profile["email_verified"].(string)
-		if !ok {
-			http.Error(w, "claim 'email_verified' not found", http.StatusInternalServerError)
-			return
-		}
-		emailVerified, err = strconv.ParseBool(emailVerifiedStr)
+	// Cloudflare Access omits `email_verified` for identities it authenticated
+	// itself, so an absent claim is treated as verified; an explicit `false` still
+	// sends the user through the verify-email flow. SAML providers send a string.
+	emailVerified := true
+	switch v := profile["email_verified"].(type) {
+	case bool:
+		emailVerified = v
+	case string:
+		emailVerified, err = strconv.ParseBool(v)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("claim 'email_verified' could not be parsed as a boolean (got %q)", emailVerifiedStr), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("claim 'email_verified' could not be parsed as a boolean (got %q)", v), http.StatusInternalServerError)
 			return
 		}
-	}
-	name, ok := profile["name"].(string)
-	if !ok {
-		http.Error(w, "claim 'name' not found", http.StatusInternalServerError)
+	case nil:
+		// Claim absent: rely on the identity provider's own verification.
+	default:
+		http.Error(w, "claim 'email_verified' has an unsupported type", http.StatusInternalServerError)
 		return
 	}
-	photoURL, ok := profile["picture"].(string)
-	if !ok {
-		http.Error(w, "claim 'picture' not found", http.StatusInternalServerError)
-		return
+	name, _ := profile["name"].(string)
+	if name == "" {
+		name = email
 	}
+	photoURL, _ := profile["picture"].(string)
 
 	// Get redirect destination
 	redirect, ok := sess.Values[cookieFieldRedirect].(string)
