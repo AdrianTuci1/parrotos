@@ -44,8 +44,10 @@
   }
 </script>
 
-<div class="background">
-  <div class="flex flex-col gap-4 mx-auto w-fit pt-48">
+<div
+  class="flex min-h-screen w-full items-center justify-center bg-surface-subtle px-6 py-16"
+>
+  <div class="flex flex-col gap-4 mx-auto w-fit">
     {#if deployError && isQuotaDeployError(deployError)}
       <CTAHeader variant="bold">{deployError.title}</CTAHeader>
       <p class="text-base text-fg-secondary text-left w-[500px]">
@@ -103,13 +105,3 @@
   {organization}
 />
 
-<style lang="postcss">
-  .background {
-    @apply flex flex-col w-full h-fit min-h-screen bg-no-repeat bg-cover;
-    background-image: url("/img/welcome-bg-art.jpg");
-  }
-
-  :global(.dark) .background {
-    background-image: url("/img/welcome-bg-art-dark.jpg");
-  }
-</style>

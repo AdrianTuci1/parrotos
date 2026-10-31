@@ -42,7 +42,7 @@
     </div>
 
     <p class="text-base font-normal text-fg-secondary text-center">
-      Or jump right into an example project.
+      Or jump right into one of our demo projects.
     </p>
 
     <ProjectCards isLocal />
