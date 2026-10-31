@@ -5,8 +5,7 @@
   import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
   import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
   import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import Spinner from "@statsparrot/web-common/features/entity-management/Spinner.svelte";
-  import { EntityStatus } from "@statsparrot/web-common/features/entity-management/types";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import { isEmbedPage } from "@statsparrot/web-common/layout/navigation/navigation-utils.ts";
 
   export let branch: string | undefined = undefined;
@@ -16,8 +15,8 @@
 
 <CtaLayoutContainer>
   <CtaContentContainer>
-    <div class="h-36">
-      <Spinner status={EntityStatus.Running} size="7rem" duration={725} />
+    <div class="flex h-36 items-center">
+      <BrandedLoader size="72px" label={m.project_deploying()} />
     </div>
     <CtaHeader variant="bold">
       {#if branch}
