@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import CtaContentContainer from "@statsparrot/web-common/components/calls-to-action/CTAContentContainer.svelte";
   import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
   import { LoadingTracker } from "@statsparrot/web-common/lib/LoadingTracker";
@@ -17,7 +17,9 @@
 {#if $loadingForShortTime}
   <CtaLayoutContainer>
     <CtaContentContainer>
-      <LoadingSpinner />
+      <div class="flex h-36 items-center">
+        <BrandedLoader size="72px" label="Loading your dashboard" />
+      </div>
       {#if $loadingForLongTime}
         <h1
           class="text-lg font-semibold text-fg-primary text-center"

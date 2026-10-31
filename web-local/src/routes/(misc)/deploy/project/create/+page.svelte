@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ConnectError } from "@connectrpc/connect";
-  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import { featureFlags } from "@statsparrot/web-common/features/feature-flags.ts";
   import {
     getIsOrgOnTrial,
@@ -115,7 +115,9 @@
 </script>
 
 {#if loading}
-  <LoadingSpinner />
+  <div class="flex h-36 items-center">
+    <BrandedLoader size="72px" label="Deploying your project" />
+  </div>
   <CTAHeader variant="bold">
     Hang tight! We're deploying your project...
   </CTAHeader>
