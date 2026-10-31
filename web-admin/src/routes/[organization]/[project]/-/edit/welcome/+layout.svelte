@@ -18,7 +18,7 @@
 <!-- Trigger load with hidden div so query is fired -->
 <div class="hidden">${$connectorsQuery.data}</div>
 
-<div class="flex size-full overflow-hidden">
+<div class="flex size-full overflow-hidden bg-surface-subtle">
   <div class="scroll">
     <div class="wrapper column p-10 2xl:py-16">
       <div class="mx-auto my-auto">
@@ -34,12 +34,7 @@
   }
 
   .wrapper {
-    @apply w-full h-fit min-h-screen bg-no-repeat bg-cover;
-    background-image: url("/img/welcome-bg-art.jpg");
-  }
-
-  :global(.dark) .wrapper {
-    background-image: url("/img/welcome-bg-art-dark.jpg");
+    @apply w-full h-fit min-h-screen;
   }
 
   .column {
