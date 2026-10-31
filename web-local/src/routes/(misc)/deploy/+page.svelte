@@ -3,7 +3,7 @@
   import { page } from "$app/stores";
   import CTAMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
   import CancelCircleInverse from "@statsparrot/web-common/components/icons/CancelCircleInverse.svelte";
-  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import {
     getCreateOrganizationRoute,
     getSelectOrganizationRoute,
@@ -107,7 +107,9 @@
 </div>
 
 {#if loading}
-  <LoadingSpinner />
+  <div class="flex h-36 items-center">
+    <BrandedLoader size="72px" label="Deploying your project" />
+  </div>
   <CTAHeader variant="bold">
     Hang tight! We're deploying your project...
   </CTAHeader>

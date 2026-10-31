@@ -24,7 +24,7 @@
   import CtaHeader from "@statsparrot/web-common/components/calls-to-action/CTAHeader.svelte";
   import CtaLayoutContainer from "@statsparrot/web-common/components/calls-to-action/CTALayoutContainer.svelte";
   import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import { eventBus } from "@statsparrot/web-common/lib/event-bus/event-bus";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
@@ -111,7 +111,9 @@
 
 <CtaLayoutContainer>
   <CtaContentContainer>
-    <LoadingSpinner />
+    <div class="flex h-36 items-center">
+      <BrandedLoader size="72px" label="Upgrading your plan" />
+    </div>
     <CtaHeader variant="bold">
       {#if cancelled}
         {m.billing_renewing_plan({ plan: planDisplayName })}

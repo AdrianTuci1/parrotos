@@ -6,7 +6,7 @@
   import CtaMessage from "@statsparrot/web-common/components/calls-to-action/CTAMessage.svelte";
   import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import type { ExploreState } from "@statsparrot/web-common/features/dashboards/stores/explore-state";
-  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import { mapQueryToDashboard } from "@statsparrot/web-common/features/explore-mappers/map-to-explore";
   import { getExplorePageUrlSearchParams } from "@statsparrot/web-common/features/explore-mappers/utils";
   import { useRuntimeClient } from "@statsparrot/web-common/runtime-client/v2";
@@ -89,8 +89,8 @@
 <CtaLayoutContainer>
   <CtaContentContainer>
     {#if $dashboardStateForReport.isLoading}
-      <div class="mt-10">
-        <LoadingSpinner />
+      <div class="mt-10 flex h-36 items-center">
+        <BrandedLoader size="72px" label="Loading report" />
       </div>
     {:else if $dashboardStateForReport.error}
       <div class="flex flex-col gap-y-2">
