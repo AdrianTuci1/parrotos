@@ -1,0 +1,26 @@
+type: model
+connector: duckdb
+
+sql: |
+  with days as (
+    select
+      range as n,
+      current_date - range * interval 1 day as day
+    from range(0, 90)
+  )
+  select
+    d.day,
+    a.author,
+    a.repo,
+    cast((d.n * 7 + a.seed) % 13 + 1 as integer) as commits,
+    cast((d.n * 41 + a.seed * 13) % 420 + 40 as integer) as additions,
+    cast((d.n * 17 + a.seed * 7) % 180 + 10 as integer) as deletions
+  from days d
+  cross join (values
+    ('Ada Lovelace', 'parrot-core', 3),
+    ('Grace Hopper', 'parrot-core', 7),
+    ('Alan Turing', 'parrot-core', 11),
+    ('Katherine Johnson', 'parrot-web', 5),
+    ('Linus Torvalds', 'parrot-web', 13),
+    ('Margaret Hamilton', 'parrot-docs', 2)
+  ) as a(author, repo, seed)

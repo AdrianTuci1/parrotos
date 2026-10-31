@@ -1,0 +1,21 @@
+version: 1
+type: metrics_view
+
+display_name: Orders
+model: orders
+timeseries: time
+
+dimensions:
+  - name: channel
+    display_name: Sales channel
+    column: channel
+
+measures:
+  - name: total_revenue
+    display_name: Total revenue
+    expression: sum(revenue)
+    format_preset: humanize
+  - name: order_count
+    display_name: Orders
+    expression: count(*)
+    format_preset: humanize

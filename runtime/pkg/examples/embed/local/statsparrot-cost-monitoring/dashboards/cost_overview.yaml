@@ -1,0 +1,74 @@
+type: canvas
+display_name: Cost Overview
+
+defaults:
+  time_range: P4W
+  comparison_mode: time
+
+rows:
+  - items:
+      - kpi_grid:
+          metrics_view: costs_metrics
+          measures:
+            - total_cost
+            - avg_daily_cost
+          comparison:
+            - delta
+            - percent_change
+        width: 12
+    height: 128px
+  - items:
+      - stacked_bar:
+          metrics_view: costs_metrics
+          title: Daily spend
+          x:
+            type: temporal
+            field: day
+            sort: -y
+            limit: 30
+          y:
+            type: quantitative
+            field: total_cost
+            zeroBasedOrigin: true
+          color: hsl(240,100%,67%)
+        width: 12
+    height: 320px
+  - items:
+      - stacked_bar:
+          metrics_view: costs_metrics
+          title: Spend by service
+          x:
+            field: service
+            limit: 20
+            sort: -y
+            type: nominal
+          y:
+            field: total_cost
+            type: quantitative
+            zeroBasedOrigin: true
+        width: 6
+      - stacked_bar:
+          metrics_view: costs_metrics
+          title: Spend by account
+          x:
+            field: account
+            limit: 20
+            sort: -y
+            type: nominal
+          y:
+            field: total_cost
+            type: quantitative
+            zeroBasedOrigin: true
+        width: 6
+    height: 320px
+  - items:
+      - table:
+          metrics_view: costs_metrics
+          title: Cost breakdown
+          columns:
+            - service
+            - account
+            - total_cost
+            - avg_daily_cost
+        width: 12
+    height: 280px

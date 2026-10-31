@@ -1,0 +1,10 @@
+type: model
+connector: duckdb
+
+sql: |
+  select
+    current_date - range * interval 1 day as time,
+    case when range % 3 = 0 then 'email' else 'web' end as channel,
+    100 + (29 - range) * 6 as revenue,
+    10 + (29 - range) as orders
+  from range(0, 30)

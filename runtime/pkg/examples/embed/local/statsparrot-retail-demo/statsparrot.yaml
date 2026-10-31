@@ -1,0 +1,9 @@
+compiler: statsparrotv1
+
+display_name: Retail Orders Demo
+description: Revenue and orders by sales channel, generated locally on DuckDB.
+
+olap_connector: duckdb
+
+features:
+  chat: false

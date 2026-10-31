@@ -1,0 +1,9 @@
+compiler: statsparrotv1
+
+display_name: GitHub Analytics
+description: A Git project's commit activity
+
+olap_connector: duckdb
+
+features:
+  chat: false
