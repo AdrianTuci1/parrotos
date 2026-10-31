@@ -36,7 +36,7 @@
       ><div
         class="flex flex-row items-center px-4 py-1 gap-x-2 text-fg-secondary font-normal hover:bg-popover-accent"
       >
-        <!-- workaround to resize the github and discord icons to match -->
+        <!-- workaround to resize the GitHub icon to match -->
         <div
           class="grid place-content-center"
           style:width="16px"

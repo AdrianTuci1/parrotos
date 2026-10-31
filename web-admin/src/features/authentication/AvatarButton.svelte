@@ -25,7 +25,6 @@
     createAdminServiceGetCurrentUser,
     type V1ProjectPermissions,
   } from "../../client";
-  import LanguageSwitcher from "@statsparrot/web-common/components/i18n/LanguageSwitcher.svelte";
   import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
   import ViewAsUserPopover from "../view-as-user/ViewAsUserPopover.svelte";
   import ThemeToggle from "@statsparrot/web-common/features/themes/ThemeToggle.svelte";
@@ -126,7 +125,6 @@
     {/if}
 
     <ThemeToggle />
-    <LanguageSwitcher />
     <DropdownMenu.Separator />
 
     <DropdownMenu.Item
@@ -135,13 +133,6 @@
       rel="noreferrer noopener"
     >
       {m.avatar_documentation()}
-    </DropdownMenu.Item>
-    <DropdownMenu.Item
-      href="https://staticlabs.ro"
-      target="_blank"
-      rel="noreferrer noopener"
-    >
-      {m.avatar_join_discord()}
     </DropdownMenu.Item>
     <DropdownMenu.Item onclick={handlePylon}>
       {m.avatar_contact_support()}

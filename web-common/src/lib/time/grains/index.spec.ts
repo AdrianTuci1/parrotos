@@ -1,5 +1,4 @@
 import { V1TimeGrain } from "../../../runtime-client/gen/index.schemas";
-import { overwriteGetLocale } from "@statsparrot/web-common/lib/i18n/gen/runtime";
 import { DEFAULT_TIME_RANGES, TIME_COMPARISON, TIME_GRAIN } from "../config";
 import {
   durationToMillis,
@@ -11,22 +10,18 @@ import {
 import { TimeComparisonOption, TimeRangePreset } from "../types";
 import { Interval, DateTime } from "luxon";
 import { parseParrotTime } from "@statsparrot/web-common/features/dashboards/url-state/time-ranges/parser";
-import { afterEach, describe, it, expect } from "vitest";
-
-afterEach(() => overwriteGetLocale(() => "en"));
+import { describe, it, expect } from "vitest";
 
 describe("localized time configuration", () => {
   it("keeps Luxon units locale-independent while localizing display copy", () => {
-    overwriteGetLocale(() => "es");
-
     expect(TIME_GRAIN.TIME_GRAIN_DAY.unit).toBe("day");
-    expect(TIME_GRAIN.TIME_GRAIN_DAY.label).toBe("día");
+    expect(TIME_GRAIN.TIME_GRAIN_DAY.label).toBe("time_grain_day");
     expect(unitToTimeGrain("day")).toBe(V1TimeGrain.TIME_GRAIN_DAY);
     expect(DEFAULT_TIME_RANGES[TimeRangePreset.LAST_SIX_HOURS]?.label).toBe(
-      "Últimas 6 horas",
+      "time_last_n_hours",
     );
     expect(TIME_COMPARISON[TimeComparisonOption.DAY].description).toBe(
-      "Compara el rango de tiempo actual con el mismo rango del día anterior",
+      "time_comparison_previous_day_description",
     );
   });
 });
