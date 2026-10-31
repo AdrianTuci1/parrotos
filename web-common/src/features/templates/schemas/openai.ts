@@ -19,6 +19,14 @@ export const openaiSchema: MultiStepFormSchema = {
       description: "The OpenAI model to use",
       "x-placeholder": "gpt-4o",
     },
+    base_url: {
+      type: "string",
+      title: "Base URL",
+      description: "Use an OpenAI-compatible API on another domain",
+      "x-placeholder": "https://api.openai.com/v1",
+      "x-hint":
+        "Leave empty for OpenAI. Works with OpenRouter, vLLM, LiteLLM and other OpenAI-compatible gateways.",
+    },
   },
   required: ["api_key"],
 };
