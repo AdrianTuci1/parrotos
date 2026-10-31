@@ -2,7 +2,7 @@
   import { V1DeploymentStatus } from "@statsparrot/web-admin/client";
   import { Button } from "@statsparrot/web-common/components/button";
   import CtaNeedHelp from "@statsparrot/web-common/components/calls-to-action/CTANeedHelp.svelte";
-  import LoadingSpinner from "@statsparrot/web-common/components/LoadingSpinner.svelte";
+  import BrandedLoader from "@statsparrot/web-common/components/BrandedLoader.svelte";
   import { onDestroy, onMount } from "svelte";
   import { m } from "@statsparrot/web-common/lib/i18n/gen/messages";
 
@@ -38,7 +38,7 @@
 
 <div class="loading-container">
   <div class="loading-content">
-    <LoadingSpinner />
+    <BrandedLoader size="56px" label={getHeading(status)} />
     <h2 class="text-lg font-semibold">{getHeading(status)}</h2>
     {#if showSlowNotice}
       <CtaNeedHelp leading={m.edit_taking_longer()} />
