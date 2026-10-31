@@ -1,0 +1,50 @@
+type: canvas
+display_name: Orders Overview
+
+defaults:
+  time_range: P4W
+  comparison_mode: time
+
+rows:
+  - items:
+      - kpi_grid:
+          metrics_view: orders_metrics
+          measures:
+            - total_revenue
+            - order_count
+          comparison:
+            - delta
+            - percent_change
+        width: 12
+    height: 128px
+  - items:
+      - stacked_bar:
+          metrics_view: orders_metrics
+          title: Revenue by day
+          x:
+            type: temporal
+            field: time
+            sort: -y
+            limit: 30
+          y:
+            type: quantitative
+            field: total_revenue
+            zeroBasedOrigin: true
+          color: hsl(240,100%,67%)
+        width: 12
+    height: 320px
+  - items:
+      - stacked_bar:
+          metrics_view: orders_metrics
+          title: Orders by channel
+          x:
+            field: channel
+            limit: 20
+            sort: -y
+            type: nominal
+          y:
+            field: order_count
+            type: quantitative
+            zeroBasedOrigin: true
+        width: 12
+    height: 320px

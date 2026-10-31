@@ -1,0 +1,28 @@
+version: 1
+type: metrics_view
+
+display_name: GitHub Commits
+model: commits
+timeseries: day
+
+dimensions:
+  - name: author
+    display_name: Author
+    column: author
+  - name: repo
+    display_name: Repository
+    column: repo
+
+measures:
+  - name: total_commits
+    display_name: Commits
+    expression: sum(commits)
+    format_preset: humanize
+  - name: total_additions
+    display_name: Additions
+    expression: sum(additions)
+    format_preset: humanize
+  - name: total_deletions
+    display_name: Deletions
+    expression: sum(deletions)
+    format_preset: humanize

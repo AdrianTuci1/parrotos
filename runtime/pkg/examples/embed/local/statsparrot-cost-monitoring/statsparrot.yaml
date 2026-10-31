@@ -1,0 +1,9 @@
+compiler: statsparrotv1
+
+display_name: Cost Monitoring
+description: Monitoring cloud infrastructure
+
+olap_connector: duckdb
+
+features:
+  chat: false

@@ -1,0 +1,16 @@
+type: explore
+
+display_name: Commit Explorer
+metrics_view: commits_metrics
+dimensions: "*"
+measures: "*"
+
+time_ranges:
+  - P7D
+  - P14D
+  - P4W
+  - P12M
+  - statsparrot-TD
+  - statsparrot-WTD
+  - statsparrot-MTD
+  - statsparrot-YTD

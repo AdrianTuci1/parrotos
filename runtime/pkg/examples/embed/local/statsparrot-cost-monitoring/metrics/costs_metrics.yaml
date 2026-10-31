@@ -1,0 +1,24 @@
+version: 1
+type: metrics_view
+
+display_name: Cloud Costs
+model: cloud_costs
+timeseries: day
+
+dimensions:
+  - name: service
+    display_name: Service
+    column: service
+  - name: account
+    display_name: Account
+    column: account
+
+measures:
+  - name: total_cost
+    display_name: Total cost
+    expression: sum(cost)
+    format_preset: currency_usd
+  - name: avg_daily_cost
+    display_name: Avg daily cost
+    expression: avg(cost)
+    format_preset: currency_usd

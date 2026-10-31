@@ -1,0 +1,27 @@
+type: model
+connector: duckdb
+
+sql: |
+  with days as (
+    select
+      range as n,
+      current_date - range * interval 1 day as day
+    from range(0, 90)
+  )
+  select
+    d.day,
+    s.service,
+    s.account,
+    round(
+      s.base_cost * (1 + s.variance * sin(d.n / 6.0)) + (d.n % 5) * 1.7,
+      2
+    ) as cost
+  from days d
+  cross join (values
+    ('Compute', 'prod-us-east', 420.0, 0.18),
+    ('Storage', 'prod-us-east', 180.0, 0.08),
+    ('Database', 'prod-us-east', 310.0, 0.12),
+    ('Compute', 'staging-eu-west', 140.0, 0.22),
+    ('Storage', 'staging-eu-west', 60.0, 0.10),
+    ('Database', 'analytics-us-east', 260.0, 0.15)
+  ) as s(service, account, base_cost, variance)
