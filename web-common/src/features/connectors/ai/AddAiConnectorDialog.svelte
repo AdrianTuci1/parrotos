@@ -57,6 +57,7 @@
   let schemaName = "claude";
   let apiKey = "";
   let model = "";
+  let baseUrl = "";
   let saving = false;
   let error = "";
   let existingAiConnector = "";
@@ -64,6 +65,7 @@
   $: schema = schemaName ? getConnectorSchema(schemaName) : null;
   $: apiKeyProp = schema?.properties?.api_key;
   $: modelProp = schema?.properties?.model;
+  $: baseUrlProp = schema?.properties?.base_url;
   $: selectedOption = providerOptions.find((o) => o.value === schemaName);
   $: docsUrl = schemaName
     ? `https://docs.statsparrot.com/developers/build/connectors/services/${getBackendConnectorName(schemaName)}`
@@ -71,8 +73,11 @@
 
   $: envEditSession = new EnvEditSession(envStore, schemaName, schema);
 
-  // Soft validation: warn when the API key doesn't match the expected prefix
-  $: apiKeyWarning = getApiKeyWarning(schemaName, apiKey);
+  // Soft validation: warn when the API key doesn't match the expected prefix.
+  // Custom OpenAI-compatible endpoints issue their own keys, so skip it there.
+  $: apiKeyWarning = baseUrl.trim()
+    ? ""
+    : getApiKeyWarning(schemaName, apiKey);
 
   function getApiKeyWarning(provider: string, key: string): string {
     if (!key) return "";
@@ -100,6 +105,7 @@
     schemaName = "claude";
     apiKey = "";
     model = "";
+    baseUrl = "";
     saving = false;
     error = "";
     existingAiConnector = "";
@@ -117,6 +123,7 @@
     schemaName = value;
     apiKey = "";
     model = "";
+    baseUrl = "";
     error = "";
   }
 
@@ -145,6 +152,7 @@
       await envStore.whenReady();
       const formValues: Record<string, string> = { api_key: apiKey };
       if (model) formValues.model = model;
+      if (baseUrl.trim()) formValues.base_url = baseUrl.trim();
       await saveAiConnector(
         runtimeClient,
         queryClient,
@@ -243,6 +251,17 @@
       />
       {#if apiKeyWarning}
         <p class="text-sm text-red-500">{apiKeyWarning}</p>
+      {/if}
+
+      {#if baseUrlProp}
+        <Input
+          id="ai-connector-base-url"
+          label={baseUrlProp?.title ?? "Base URL"}
+          placeholder={baseUrlProp?.["x-placeholder"] ?? "https://api.openai.com/v1"}
+          hint={baseUrlProp?.["x-hint"] ?? baseUrlProp?.description ?? ""}
+          optional
+          bind:value={baseUrl}
+        />
       {/if}
 
       <Input
