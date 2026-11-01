@@ -1,21 +1,25 @@
 <script lang="ts">
-  export let width = "27";
-  export let height = "21";
-  // The mark keeps the app's accent color in every theme, so it stays legible on
-  // light and dark surfaces. `mode` stays in the signature for callers that
-  // render the mark in both theme previews.
+  export let width = "28";
+  export let height = "28";
+  // The badge carries its own blue surface in every theme, so `mode` stays in
+  // the signature for callers that render the mark in both theme previews.
   export let mode: "light" | "dark" | "adapt" = "adapt";
 </script>
 
 <svg
   {width}
   {height}
-  viewBox="0 0 48 46"
+  viewBox="0 0 550 550"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
+  <rect width="550" height="550" rx="82" fill="var(--accent-primary, #0079c2)" />
   <path
-    d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"
-    fill="var(--color-primary-500, #0079c2)"
+    d="M217 226L524 100C477.167 112.167 380.2 137.5 367 141.5C259.8 99.5 222.333 180.333 217 226Z"
+    fill="#EFEFEF"
+  />
+  <path
+    d="M348.5 207L159.5 484.5L173 333.5L21 295.5L348.5 207Z"
+    fill="#F0ECEC"
   />
 </svg>
