@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	versionCheckURI = "https://api.github.com/repos/staticlabs/statsparrot/releases/latest"
+	versionCheckURI = "https://api.github.com/repos/staticlabsro/parrotos/releases/latest"
 	versionCheckTTL = 24 * time.Hour
 )
 
