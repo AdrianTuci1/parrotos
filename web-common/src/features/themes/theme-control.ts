@@ -2,7 +2,9 @@ import { get, writable } from "svelte/store";
 import { sessionStorageStore } from "@statsparrot/web-common/lib/store-utils/session-storage";
 import { explicitLocalStorageStore } from "@statsparrot/web-common/lib/store-utils/local-storage.ts";
 
-export type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = "graphite" | "light" | "dark" | "system";
+
+const DEFAULT_THEME_MODE: ThemeMode = "graphite";
 
 function isEmbedEnvironment(): boolean {
   if (typeof window === "undefined") return false;
@@ -21,7 +23,10 @@ class ThemeControl {
   private darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
   private preferenceStore = isEmbedEnvironment()
     ? sessionStorageStore<ThemeMode>(THEME_SESSION_STORAGE_KEY, "light")
-    : explicitLocalStorageStore<ThemeMode>(THEME_LOCAL_STORAGE_KEY, "light");
+    : explicitLocalStorageStore<ThemeMode>(
+        THEME_LOCAL_STORAGE_KEY,
+        DEFAULT_THEME_MODE,
+      );
 
   public subscribe = this.current.subscribe;
   public preference = { subscribe: this.preferenceStore.subscribe };
@@ -33,7 +38,9 @@ class ThemeControl {
   init = () => {
     const currentPreference = get(this.preferenceStore);
 
-    if (
+    if (currentPreference === "graphite") {
+      this.setGraphite();
+    } else if (
       currentPreference === "dark" ||
       (currentPreference === "system" && this.darkQuery.matches)
     ) {
@@ -52,6 +59,10 @@ class ThemeControl {
   };
 
   public set: Record<ThemeMode, () => void> = {
+    graphite: () => {
+      this.preferenceStore.set("graphite");
+      this.setGraphite();
+    },
     light: () => {
       this.preferenceStore.set("light");
       this.removeDark();
@@ -71,14 +82,22 @@ class ThemeControl {
     },
   };
 
+  private setGraphite() {
+    this.current.set("dark");
+    document.documentElement.classList.add("dark");
+    document.documentElement.classList.add("graphite");
+  }
+
   private setDark() {
     this.current.set("dark");
+    document.documentElement.classList.remove("graphite");
     document.documentElement.classList.add("dark");
   }
 
   private removeDark() {
     this.current.set("light");
     document.documentElement.classList.remove("dark");
+    document.documentElement.classList.remove("graphite");
   }
 }
 

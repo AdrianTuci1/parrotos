@@ -308,18 +308,22 @@ const stone = {
   950: chroma.oklch(0.147, 0.004, 49.25),
 };
 
+/**
+ * Ocean blue accent. The hue sits between sky and blue so the accent reads
+ * as deep water rather than electric indigo.
+ */
 export const primary = {
-  50: chroma.oklch(0.96, 0.0206, 274.04),
-  100: chroma.oklch(0.92, 0.0375, 274.1),
-  200: chroma.oklch(0.86, 0.0707, 275.12),
-  300: chroma.oklch(0.76, 0.1218, 275.41),
-  400: chroma.oklch(0.65, 0.188451, 276.7938),
-  500: chroma.oklch(0.56, 0.2439, 275.39),
-  600: chroma.oklch(0.5, 0.2657, 275.04),
-  700: chroma.oklch(0.42, 0.2319, 274.45),
-  800: chroma.oklch(0.39, 0.2033, 275.31),
-  900: chroma.oklch(0.35, 0.1574, 277.12),
-  950: chroma.oklch(0.25, 0.1016, 280.81),
+  50: chroma.oklch(0.97, 0.018, 235),
+  100: chroma.oklch(0.94, 0.035, 235),
+  200: chroma.oklch(0.89, 0.07, 237),
+  300: chroma.oklch(0.8, 0.11, 238),
+  400: chroma.oklch(0.7, 0.14, 238),
+  500: chroma.oklch(0.55, 0.155, 241),
+  600: chroma.oklch(0.49, 0.14, 242),
+  700: chroma.oklch(0.43, 0.12, 243),
+  800: chroma.oklch(0.38, 0.105, 243),
+  900: chroma.oklch(0.33, 0.085, 242),
+  950: chroma.oklch(0.23, 0.06, 241),
 };
 
 export const secondary = {

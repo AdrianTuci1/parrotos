@@ -14,42 +14,21 @@ export function ParrotLogoIcon({
   height?: string;
   mode?: "light" | "dark" | "adapt";
 }) {
-  // Same rules as `components/icons/Parrot.svelte`: the supplied mark is
-  // near-black, with a light fallback so it stays visible on dark surfaces.
-  const fillA =
-    mode === "dark"
-      ? "fill-neutral-100"
-      : mode === "light"
-        ? "fill-[#0E0E0E]"
-        : "fill-[#0E0E0E] dark:fill-neutral-100";
-  const fillB =
-    mode === "dark"
-      ? "fill-neutral-100"
-      : mode === "light"
-        ? "fill-[#101010]"
-        : "fill-[#101010] dark:fill-neutral-100";
-  const stroke =
-    mode === "dark"
-      ? "stroke-neutral-100"
-      : mode === "light"
-        ? "stroke-black"
-        : "stroke-black dark:stroke-neutral-100";
+  // Same rules as `components/icons/Parrot.svelte`: the mark carries the app's
+  // accent color, so `mode` only changes the surface it is placed on.
+  void mode;
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 504 385"
+      viewBox="0 0 48 46"
       className="mb-[1px] flex-none"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M196 126.484L503 0.483887C456.167 12.6506 359.2 37.9839 346 41.9839C238.8 -0.0161133 201.333 80.8172 196 126.484Z"
-        className={`${fillA} ${stroke}`}
-      />
-      <path
-        d="M327.5 107.484L138.5 384.984L152 233.984L0 195.984L327.5 107.484Z"
-        className={fillB}
+        d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"
+        fill="var(--color-primary-500, #0079c2)"
       />
     </svg>
   );
