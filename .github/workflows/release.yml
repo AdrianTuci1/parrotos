@@ -126,6 +126,8 @@ jobs:
       - name: 🏷️ Create or update the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No checkout in this job, so gh needs to be told which repository to talk to.
+          GH_REPO: ${{ github.repository }}
           VERSION: ${{ inputs.tag }}
         run: |
           set -euo pipefail
