@@ -19,8 +19,23 @@ and get dashboards, an OLAP query engine and an AI agent that can explore the da
 
 ## Use it locally
 
-Requires Go 1.26 or newer, Node 20 or newer, and a C toolchain (DuckDB is a C library linked into
-the binary).
+```bash
+curl -fsSL https://get.statsparrot.com | sh
+statsparrot init my-project
+statsparrot start my-project
+```
+
+The script installs the latest release: macOS on arm64, Linux on amd64 and arm64. It writes the
+binary to `/usr/local/bin` when that directory is writable and to `~/.local/bin` otherwise, and
+prints the `PATH` line when the directory is not on it yet. `STATSPARROT_VERSION` picks a tag,
+`STATSPARROT_INSTALL_DIR` picks the directory, and `statsparrot upgrade` runs the same script.
+
+Prebuilt binaries for macOS (arm64), Linux (amd64) and Windows (amd64) are attached to the GitHub
+releases. They are built by **Actions → 📦 Release Local Binaries**, which runs when started by hand
+and does nothing on its own.
+
+Building from a checkout instead requires Go 1.26 or newer, Node 20 or newer, and a C toolchain
+(DuckDB is a C library linked into the binary):
 
 ```bash
 make local-bin
@@ -30,10 +45,6 @@ make local-bin
 
 `make cli` builds the same binary and additionally fetches the DuckDB extensions for every platform,
 which only a release build needs.
-
-Prebuilt binaries for macOS (arm64), Linux (amd64) and Windows (amd64) are attached to the GitHub
-releases. They are built by **Actions → 📦 Release Local Binaries**, which runs when started by hand
-and does nothing on its own.
 
 `start` builds the project and serves the web app on <http://localhost:9009>. Add `--port` to change
 the port, `--no-open` to skip opening a browser, `--reset` to re-ingest the sources. From the same
@@ -56,6 +67,10 @@ copy plus `statsparrot deploy`.
 
 The image is built without a hostname baked in, so the same image runs on Lightsail, on a PaaS and on
 your own machine: the web app calls the origin it was loaded from.
+
+The published image lives at `ghcr.io/staticlabsro/parrot`, and `get.statsparrot.com` proxies pulls
+for it, so `docker pull get.statsparrot.com/parrot` works without a registry login. The install
+script above comes from the same host.
 
 ### What you need
 
