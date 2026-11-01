@@ -514,6 +514,65 @@
     --line-highlight: #afafaf33;
   }
 
+  /*
+   * Graphite keeps the dark color scheme but swaps the blue-gray surfaces for
+   * neutral graphite and gives the blue accent more room. It is applied on top
+   * of `.dark`, so it only overrides the neutral and accent tokens.
+   */
+  :root.graphite {
+    --surface-base: #0f1113;
+    --surface-subtle: #131518;
+    --surface-background: #16181b;
+    --surface-hover: #23262b;
+    --surface-active: #2c3037;
+    --surface-overlay: #1b1e22;
+    --surface-muted: #22252a;
+
+    --surface-card: #1b1e22;
+
+    --fg-primary: #e8eaed;
+    --fg-secondary: #c3c8cf;
+    --fg-tertiary: #979da6;
+    --fg-inverse: #101214;
+    --fg-muted: #7e848d;
+    --fg-disabled: #5c626b;
+    --fg-accent: var(--color-primary-light-200);
+
+    --accent-primary: var(--color-primary-light-500);
+    --accent-primary-action: var(--color-primary-light-400);
+    --accent-secondary: var(--color-primary-light-600);
+    --accent-secondary-action: var(--color-secondary-light-400);
+
+    --icon-default: #d4d8dd;
+    --icon-muted: #8d939c;
+    --icon-disabled: #62686f;
+    --icon-accent: var(--color-primary-light-400);
+
+    --input: color-mix(in oklab, var(--white) calc(0.06 * 100%), transparent);
+    --border: color-mix(in oklab, var(--white) calc(0.09 * 100%), transparent);
+
+    --ring-focus: var(--color-primary-light-400);
+    --ring-offset: #16181b;
+
+    --dimension: var(--color-primary-light-950);
+    --dimension-foreground: var(--color-primary-light-100);
+    --dimension-border: var(--color-primary-light-800);
+
+    --measure: var(--color-secondary-light-950);
+    --measure-foreground: var(--color-secondary-light-100);
+    --measure-border: var(--color-secondary-light-800);
+
+    --tooltip: #2a2e34;
+
+    --popover: #1e2126;
+    --popover-accent: var(--surface-hover);
+    --popover-foreground: #e8eaed;
+    --popover-footer: #1b1e22;
+
+    --editor-selection: #123a55;
+    --line-highlight: #afafaf33;
+  }
+
   h1,
   h2,
   h3,

@@ -17,6 +17,11 @@
     image: string;
   }[] = [
     {
+      label: m.theme_graphite(),
+      value: "graphite",
+      image: "/img/theme/graphite-mode.svg",
+    },
+    {
       label: m.theme_light(),
       value: "light",
       image: "/img/theme/light-mode.svg",
@@ -53,7 +58,7 @@
   <div class="text-2xl font-extrabold text-fg-accent text-center">
     {m.welcome_theme_heading()}
   </div>
-  <div class="flex flex-row gap-8 pt-6 mx-auto">
+  <div class="flex flex-row flex-wrap justify-center gap-8 pt-6 mx-auto">
     {#each ThemeOptions as themeOption (themeOption.value)}
       {@const isSelected = selectedPreference === themeOption.value}
       <button

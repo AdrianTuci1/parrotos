@@ -59,6 +59,34 @@
     />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     %sveltekit.head%
+    <script>
+      // Apply the stored theme before the first paint so a graphite session
+      // never flashes the light palette while the app boots.
+      (function () {
+        try {
+          if (location.pathname.indexOf("/-/embed") !== -1) return;
+          var raw = localStorage.getItem("statsparrot:theme");
+          var preference = "graphite";
+          if (raw !== null) {
+            try {
+              preference = JSON.parse(raw) || "graphite";
+            } catch (error) {
+              preference = raw;
+            }
+          }
+          var isDark =
+            preference === "graphite" ||
+            preference === "dark" ||
+            (preference === "system" &&
+              matchMedia("(prefers-color-scheme: dark)").matches);
+          if (isDark) document.documentElement.classList.add("dark");
+          if (preference === "graphite")
+            document.documentElement.classList.add("graphite");
+        } catch (error) {
+          // localStorage can be unavailable in privacy modes.
+        }
+      })();
+    </script>
   </head>
   <body data-sveltekit-preload-data="hover">
     <div id="svelte">%sveltekit.body%</div>

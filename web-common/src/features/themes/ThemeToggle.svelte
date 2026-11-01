@@ -14,6 +14,13 @@
   <DropdownMenu.SubContent>
     <DropdownMenu.CheckboxItem
       checkRight
+      checked={preferenceValue === "graphite"}
+      onclick={themeControl.set.graphite}
+    >
+      {m.theme_graphite()}
+    </DropdownMenu.CheckboxItem>
+    <DropdownMenu.CheckboxItem
+      checkRight
       checked={preferenceValue === "light"}
       onclick={themeControl.set.light}
     >
