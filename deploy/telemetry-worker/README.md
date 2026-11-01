@@ -21,11 +21,15 @@ prefix and writes nothing else in it.
 | Encryption | SSE-S3 (bucket-level) |
 | Retention | needs its own lifecycle rule, see below |
 
-The Worker authenticates with SigV4 (`aws4fetch`) as an IAM writer whose policy
-allows `s3:PutObject` on `arn:aws:s3:::staticlabs-data/statsparrot/telemetry/*`
-and nothing else. The key lives in the Worker secrets `AWS_ACCESS_KEY_ID` and
-`AWS_SECRET_ACCESS_KEY`; it can neither read nor list, which is why querying
-uses the operator profile.
+The Worker authenticates with SigV4 (`aws4fetch`) as the IAM user
+`statsparrot-telemetry-writer`, whose inline policy
+`StatsparrotTelemetryWrite` allows `s3:PutObject` on
+`arn:aws:s3:::staticlabs-data/statsparrot/telemetry/*` and nothing else. The key
+lives in the Worker secrets `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`; it
+can neither read nor list, which is why querying uses the operator profile.
+
+The lifecycle rule `statsparrot-telemetry-retention` is applied on the bucket
+next to `octomus-telemetry-retention`; both filter on their own prefix.
 
 ## Protocol
 
