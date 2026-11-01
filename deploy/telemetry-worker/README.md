@@ -1,11 +1,31 @@
 # Telemetry ingest
 
 The Worker behind `https://telemetry.statsparrot.com`. It receives the batches
-the CLI drains from its on-disk telemetry queue and writes them to R2.
+the CLI drains from its on-disk telemetry queue and writes them to S3.
 
 There is one request per batch and one object per batch. That is the whole cost
 story: at 30 million events a month, 100 events per request is 300,000 requests
 and 300,000 objects, instead of 30 million of each.
+
+## Storage
+
+The bucket is shared with the other staticlabs projects. Statsparrot owns one
+prefix and writes nothing else in it.
+
+| Field | Value |
+|---|---|
+| Bucket | `staticlabs-data` |
+| Region | `eu-central-1` |
+| Project prefix | `statsparrot/telemetry` |
+| Public access | blocked (bucket-level) |
+| Encryption | SSE-S3 (bucket-level) |
+| Retention | needs its own lifecycle rule, see below |
+
+The Worker authenticates with SigV4 (`aws4fetch`) as an IAM writer whose policy
+allows `s3:PutObject` on `arn:aws:s3:::staticlabs-data/statsparrot/telemetry/*`
+and nothing else. The key lives in the Worker secrets `AWS_ACCESS_KEY_ID` and
+`AWS_SECRET_ACCESS_KEY`; it can neither read nor list, which is why querying
+uses the operator profile.
 
 ## Protocol
 
@@ -28,35 +48,19 @@ and 300,000 objects, instead of 30 million of each.
 ```
 
 A single item is accepted too, so a client that does not batch yet keeps
-working. A batch carries at most 200 events and a body at most 1 MiB.
+working. `kind` is the discriminator: an item that is not a `kind:"event"` is
+counted as `dropped`, never stored. Statsparrot has no crash reports, so there
+is no `/v1/crashes`.
 
-`kind` is the discriminator. Only `kind:"event"` items are stored; anything else
-(including a `kind:"crash"`) is counted in `dropped`. Statsparrot has no crash
-reports, so there is no `/v1/crashes` endpoint.
-
-Every `value` needs four fields:
-
-| Field | Type | Notes |
-|---|---|---|
-| `event_id` | string | canonical UUID, used for the object key |
-| `event_type` | string | `log`, `metric`, `behavioral`, … |
-| `event_name` | string | `app-start`, `deploy-success`, … |
-| `event_time` | string | RFC3339/ISO8601 with an offset, drives the partition |
-
-Anything else in `value` is payload and is stored verbatim. A malformed item is
-dropped and counted, never a reason to fail the batch.
-
-Responses:
-
-| Status | When |
+| Answer | Meaning |
 |---|---|
-| `202` | `{"accepted":n,"dropped":m}` — the batch is in R2 |
+| `202` | `{"accepted":n,"dropped":m}` — the batch is in S3 |
 | `400` | the body is not JSON |
-| `401` | a token is configured and the request carries the wrong one |
-| `404` | an unknown path (including `/v1/crashes`) |
-| `405` | not a `GET` or `POST` |
-| `413` | the body is over 1 MiB, or the batch has more than 200 items |
-| `503` | the bucket write failed; `retry-after: 5`, the client retries the batch |
+| `401` | the collector token is required and missing or wrong |
+| `404` | unknown path |
+| `405` | not `GET` or `POST` |
+| `413` | more than 200 events or more than 1 MiB (`retry-after: 5`) |
+| `503` | the S3 write failed; `retry-after: 5`, the client retries the batch |
 
 Authentication is optional. If the `STATSPARROT_TELEMETRY_TOKEN` secret is set,
 a request must carry it as `x-statsparrot-token: <token>` or
@@ -66,15 +70,15 @@ accepted, which is the default today.
 `GET /` and `GET /v1/health` answer without touching the bucket:
 
 ```json
-{"status":"ok","schema":2,"service":"statsparrot-telemetry","batch_max":200,"bucket":"configured"}
+{"status":"ok","schema":2,"service":"statsparrot-telemetry","batch_max":200,"storage":"s3","bucket":"staticlabs-data","prefix":"statsparrot/telemetry"}
 ```
 
-`bucket` is `missing` (with a `500`) when the R2 binding is absent.
+`bucket` is `missing` (with a `500`) when the credentials are absent.
 
 ## Layout
 
 ```
-raw/events/dt=YYYY-MM-DD/hour=HH/batch-<first-id>-<last-id>.jsonl
+statsparrot/telemetry/events/dt=YYYY-MM-DD/hour=HH/batch-<first-id>-<last-id>.jsonl
 ```
 
 Each line is the item's `value` with one extra field, `received_at`. The day and
@@ -89,8 +93,9 @@ retried batch never double-counts.
 ## Deploy
 
 ```sh
-npx wrangler r2 bucket create statsparrot-telemetry   # once
 npx wrangler deploy
+npx wrangler secret put AWS_ACCESS_KEY_ID
+npx wrangler secret put AWS_SECRET_ACCESS_KEY
 npx wrangler secret put STATSPARROT_TELEMETRY_TOKEN   # optional: reject anonymous posts
 ```
 
@@ -98,12 +103,25 @@ The custom domain is declared in `wrangler.toml`; Wrangler creates the DNS
 record in the `statsparrot.com` zone. `workers_dev` and `preview_urls` are off,
 so the custom domain is the only way in and the bucket stays private.
 
-The bucket carries a 400-day lifecycle rule, so telemetry does not accumulate
-forever:
+The bucket-level lifecycle rules match a prefix, so retention for Statsparrot is
+its own rule. Add it once, and do not widen the existing `octomus/telemetry/`
+rule:
 
 ```sh
-npx wrangler r2 bucket lifecycle add statsparrot-telemetry raw-telemetry \
-  --expire-days 400 --prefix raw/
+aws s3api put-bucket-lifecycle-configuration --bucket staticlabs-data \
+  --region eu-central-1 --lifecycle-configuration file:///tmp/lifecycle.json
+```
+
+with the existing rules plus:
+
+```json
+{
+  "ID": "statsparrot-telemetry-retention",
+  "Status": "Enabled",
+  "Filter": { "Prefix": "statsparrot/telemetry/" },
+  "Expiration": { "Days": 400 },
+  "AbortIncompleteMultipartUpload": { "DaysAfterInitiation": 1 }
+}
 ```
 
 ## Cost
@@ -112,38 +130,36 @@ A CLI session emits a handful of events (install, app-start, login,
 deploy-success), so a session produces a couple of objects, not a couple of
 dozen requests.
 
-| Item | Price | At Statsparrot's volume |
+| Item | Price (eu-central-1) | At Statsparrot's volume |
 |---|---|---|
-| R2 storage | $0.015/GB-month | a few MB, well under a cent |
-| R2 Class A (writes) | $4.50/million | a few thousand objects/month, cents |
-| R2 Class B (reads) | $0.36/million | only when queried, cents |
-| Egress | $0.00 | free |
+| S3 storage | $0.0245/GB-month | a few MB, well under a cent |
+| S3 PUT | $0.0054/1,000 | a few thousand objects/month, cents |
+| S3 GET | $0.00043/1,000 | only when queried, cents |
+| Worker requests | free under 100,000/day | far below the free plan |
+| Transfer into S3 | $0.00 | free |
 
-A few events per CLI session is cents per month, most of it a rounding error
-next to the Workers paid plan. The batching is still what keeps it there: one
-object per event instead of one per batch would multiply the Class A line by the
-batch size, and the 400-day rule is what keeps storage from growing with the
-install base.
-
-R2's Infrequent Access class applies to a whole bucket, not to individual
-objects, so there is no per-object transition: Standard is $0.015/GB-month and
-Infrequent Access is $0.01/GB-month if the data is rarely read.
+The batching is what keeps it there: one object per event instead of one per
+batch would multiply the PUT line by the batch size, and the 400-day rule is
+what keeps storage from growing with the install base.
 
 ## Querying
 
-R2 is S3-compatible, so DuckDB reads the layout directly:
+Query with the operator profile, not the writer key:
+
+```sh
+aws s3 ls s3://staticlabs-data/statsparrot/telemetry/events/dt=2026-11-01/
+```
+
+DuckDB reads the layout in place:
 
 ```sql
 INSTALL httpfs;
 LOAD httpfs;
-SET s3_endpoint = '<account-id>.r2.cloudflarestorage.com';
-SET s3_access_key_id = '…';
-SET s3_secret_access_key = '…';
-SET s3_region = 'auto';
+SET s3_region = 'eu-central-1';
 
 SELECT event_type, event_name, count(*) AS events
 FROM read_json_auto(
-  's3://statsparrot-telemetry/raw/events/dt=2026-11-*/*/*.jsonl',
+  's3://staticlabs-data/statsparrot/telemetry/events/dt=2026-11-*/*/*.jsonl',
   hive_partitioning = true
 )
 GROUP BY event_type, event_name
@@ -152,4 +168,4 @@ ORDER BY events DESC;
 
 With `hive_partitioning` on, `dt` and `hour` come from the path without parsing
 the key, and `event_time` gives the exact timestamp. The prefix in the query
-matches `RAW_PREFIX` in `wrangler.toml`; change both together.
+matches `S3_PREFIX` in `wrangler.toml`; change both together.

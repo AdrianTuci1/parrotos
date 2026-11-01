@@ -2,7 +2,7 @@
 //
 // The CLI keeps events on disk and drains them in batches: one request carries
 // up to `MAX_BATCH` events, and the Worker writes one NDJSON object per batch
-// into R2. That keeps both halves of the bill small — one request per drain
+// into S3. That keeps both halves of the bill small — one request per drain
 // instead of one per event, and one object per batch instead of one object per
 // event.
 //
@@ -19,6 +19,9 @@
 // item that is not a `kind:"event"` is counted as `dropped`, never stored.
 // Statsparrot has no crash reports, so there is no `/v1/crashes`.
 //
+// The bucket is shared with the other staticlabs projects, so Statsparrot owns
+// one prefix and writes nothing else in it.
+//
 // Layout in the bucket:
 //
 //   <prefix>/events/dt=YYYY-MM-DD/hour=HH/batch-<first-id>-<last-id>.jsonl
@@ -28,8 +31,16 @@
 // and hour come from the event's `event_time`, never from the Worker's clock:
 // an event queued offline for two days lands in the partition it happened in.
 
+import { AwsClient } from "aws4fetch";
+
 const MAX_BODY_BYTES = 1024 * 1024;
 const MAX_BATCH = 200;
+
+// The bucket is shared; the prefix is this project's namespace, and the IAM
+// writer is scoped to exactly it.
+const DEFAULT_REGION = "eu-central-1";
+const DEFAULT_BUCKET = "staticlabs-data";
+const DEFAULT_PREFIX = "statsparrot/telemetry";
 
 // Canonical UUIDs only: eight hex digits, three groups of four, twelve. The CLI
 // generates `uuid.New().String()`, so nothing else should reach the bucket.
@@ -74,7 +85,7 @@ export default {
     } catch (error) {
       // A storage failure is retryable: the client keeps the batch and sends it
       // again, and the deterministic key makes the retry idempotent.
-      console.error("telemetry: the bucket write failed", error);
+      console.error("telemetry: the S3 write failed", error);
       return json({ error: "could not store the batch" }, 503, { "retry-after": "5" });
     }
   },
@@ -138,12 +149,7 @@ async function ingestEvents(payload, env) {
     const ids = events.map((event) => event.event_id);
     const key = eventKey(prefix(env), day, hour, ids);
     const body = events.map((event) => JSON.stringify(event)).join("\n") + "\n";
-    await env.TELEMETRY.put(key, body, {
-      httpMetadata: {
-        contentType: "application/x-ndjson",
-        contentDisposition: "attachment",
-      },
-    });
+    await putObject(env, key, body, "application/x-ndjson");
     written += events.length;
   }
 
@@ -154,19 +160,61 @@ async function ingestEvents(payload, env) {
   return json({ accepted: written, dropped }, 202);
 }
 
+// Put one object with SigV4. `aws4fetch` signs the request in the Worker; the
+// credentials are secrets and never appear in a key or a response.
+async function putObject(env, key, body, contentType) {
+  const region = env.AWS_REGION || DEFAULT_REGION;
+  const bucket = env.S3_BUCKET || DEFAULT_BUCKET;
+
+  if (!env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY) {
+    throw new Error("the S3 credentials are not configured");
+  }
+
+  const client = new AwsClient({
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+    service: "s3",
+    region,
+  });
+
+  // Encode each segment, keep the slashes that make the partitions.
+  const path = key.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+  const url = `https://${bucket}.s3.${region}.amazonaws.com/${path}`;
+  const response = await client.fetch(url, {
+    method: "PUT",
+    headers: {
+      "content-type": contentType,
+      "cache-control": "no-store",
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    // The body can carry a request id, never a credential.
+    const detail = await response.text();
+    console.error(`telemetry: s3 answered ${response.status}`, detail.slice(0, 200));
+    throw new Error(`s3 answered ${response.status}`);
+  }
+}
+
 function health(env) {
-  const configured = Boolean(env.TELEMETRY);
+  const bucket = env.S3_BUCKET || DEFAULT_BUCKET;
+  const configured = Boolean(
+    env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && bucket,
+  );
   return json({
-    status: "ok",
+    status: configured ? "ok" : "unconfigured",
     schema: 2,
     service: "statsparrot-telemetry",
     batch_max: MAX_BATCH,
-    bucket: configured ? "configured" : "missing",
+    storage: "s3",
+    bucket: configured ? bucket : "missing",
+    prefix: prefix(env),
   }, configured ? 200 : 500);
 }
 
 export function prefix(env) {
-  return String(env.RAW_PREFIX ?? "raw").trim().replace(/^\/+|\/+$/g, "");
+  return String(env.S3_PREFIX ?? DEFAULT_PREFIX).trim().replace(/^\/+|\/+$/g, "");
 }
 
 export function eventKey(root, day, hour, ids) {
