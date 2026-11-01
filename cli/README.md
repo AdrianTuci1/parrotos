@@ -30,4 +30,5 @@ go run ./cli start dev-project
 
 ## Generating CLI reference docs
 
-See `../docs/README.md` for details about the generated CLI reference docs.
+`statsparrot docs generate-cli <dir>` writes the command reference, and
+`statsparrot docs generate-project <dir>` writes the project-file reference.
