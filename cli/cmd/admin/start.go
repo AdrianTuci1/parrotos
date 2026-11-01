@@ -74,22 +74,22 @@ type Config struct {
 	ExternalURL               string                 `default:"http://localhost:8080" split_words:"true"`
 	ExternalGRPCURL           string                 `envconfig:"external_grpc_url"`
 	// RuntimeAdminURL is how runtime instances reach the admin. Empty means ExternalURL.
-	RuntimeAdminURL           string                 `split_words:"true"`
-	FrontendURL               string                 `default:"http://localhost:3000" split_words:"true"`
-	AllowedOrigins            []string               `default:"*" split_words:"true"`
-	SessionKeyPairs           []string               `split_words:"true"`
-	SigningJWKS               string                 `split_words:"true"`
-	SigningKeyID              string                 `split_words:"true"`
-	AuthDomain                string                 `split_words:"true"`
-	AuthClientID              string                 `split_words:"true"`
-	AuthClientSecret          string                 `split_words:"true"`
-	GithubAppID               int64                  `split_words:"true"`
-	GithubAppName             string                 `split_words:"true"`
-	GithubAppPrivateKey       string                 `split_words:"true"`
-	GithubAppWebhookSecret    string                 `split_words:"true"`
-	GithubClientID            string                 `split_words:"true"`
-	GithubClientSecret        string                 `split_words:"true"`
-	GithubManagedAccount      string                 `split_words:"true"`
+	RuntimeAdminURL        string   `split_words:"true"`
+	FrontendURL            string   `default:"http://localhost:3000" split_words:"true"`
+	AllowedOrigins         []string `default:"*" split_words:"true"`
+	SessionKeyPairs        []string `split_words:"true"`
+	SigningJWKS            string   `split_words:"true"`
+	SigningKeyID           string   `split_words:"true"`
+	AuthDomain             string   `split_words:"true"`
+	AuthClientID           string   `split_words:"true"`
+	AuthClientSecret       string   `split_words:"true"`
+	GithubAppID            int64    `split_words:"true"`
+	GithubAppName          string   `split_words:"true"`
+	GithubAppPrivateKey    string   `split_words:"true"`
+	GithubAppWebhookSecret string   `split_words:"true"`
+	GithubClientID         string   `split_words:"true"`
+	GithubClientSecret     string   `split_words:"true"`
+	GithubManagedAccount   string   `split_words:"true"`
 	// AssetsDriver selects the object storage for organization assets: "gcs" or "s3".
 	// "s3" works with AWS S3, Cloudflare R2 and MinIO.
 	AssetsDriver string `envconfig:"assets_driver" default:"gcs"`
@@ -116,9 +116,12 @@ type Config struct {
 	ActivitySinkType                  string `default:"" split_words:"true"`
 	ActivitySinkKafkaBrokers          string `default:"" split_words:"true"`
 	ActivityUISinkKafkaTopic          string `default:"" split_words:"true"`
-	MetricsProject                    string `default:"" split_words:"true"`
-	AutoscalerCron                    string `default:"CRON_TZ=America/Los_Angeles 0 0 * * 1" split_words:"true"`
-	ScaleDownConstraint               int    `default:"0" split_words:"true"`
+	// Intake activity sink: a queue sink that drains events to ActivitySinkIntakeURL.
+	ActivitySinkIntakeURL   string `envconfig:"activity_intake_url" default:""`
+	ActivitySinkIntakeToken string `envconfig:"activity_intake_token" default:""`
+	MetricsProject          string `default:"" split_words:"true"`
+	AutoscalerCron          string `default:"CRON_TZ=America/Los_Angeles 0 0 * * 1" split_words:"true"`
+	ScaleDownConstraint     int    `default:"0" split_words:"true"`
 	// StoppedDeploymentRetention is how long a stopped (hibernated) deployment is kept around before its persistent state is fully deleted.
 	StoppedDeploymentRetention time.Duration `default:"168h" split_words:"true"`
 	OrbAPIKey                  string        `split_words:"true"`
@@ -210,6 +213,23 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				sink, err := activity.NewKafkaSink(conf.ActivitySinkKafkaBrokers, conf.ActivityUISinkKafkaTopic, logger)
 				if err != nil {
 					logger.Fatal("error creating kafka sink", zap.Error(err))
+				}
+				activityClient = activity.NewClient(sink, logger)
+			case "intake":
+				if conf.ActivitySinkIntakeURL == "" {
+					logger.Fatal("activity sink type intake requires STATSPARROT_ADMIN_ACTIVITY_INTAKE_URL")
+				}
+				queueDir, err := cmdutil.TelemetryQueueDir(ch.DotStatsparrot)
+				if err != nil {
+					logger.Fatal("error resolving the activity intake queue directory", zap.Error(err))
+				}
+				sink, err := activity.NewQueueSink(logger, activity.QueueSinkOptions{
+					Dir:   queueDir,
+					URL:   conf.ActivitySinkIntakeURL,
+					Token: conf.ActivitySinkIntakeToken,
+				})
+				if err != nil {
+					logger.Fatal("error creating intake sink", zap.Error(err))
 				}
 				activityClient = activity.NewClient(sink, logger)
 			default:

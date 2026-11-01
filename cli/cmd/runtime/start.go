@@ -6,11 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
+	"github.com/spf13/cobra"
 	"github.com/staticlabs/statsparrot/cli/pkg/cmdutil"
 	runtimev1 "github.com/staticlabs/statsparrot/proto/gen/statsparrot/runtime/v1"
 	"github.com/staticlabs/statsparrot/runtime"
@@ -22,7 +24,6 @@ import (
 	"github.com/staticlabs/statsparrot/runtime/pkg/ratelimit"
 	"github.com/staticlabs/statsparrot/runtime/server"
 	"github.com/staticlabs/statsparrot/runtime/storage"
-	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
@@ -99,12 +100,15 @@ type Config struct {
 	// DataBucket is a common GCS bucket to store data for all instances. This data is expected to be persisted across resets.
 	DataBucket                string `split_words:"true"`
 	DataBucketCredentialsJSON string `split_words:"true"`
-	// Sink type of activity client: noop (or empty string), kafka
+	// Sink type of activity client: noop (or empty string), kafka, console, intake
 	ActivitySinkType string `default:"" split_words:"true"`
 	// Kafka brokers of an activity client's sink
 	ActivitySinkKafkaBrokers string `default:"" split_words:"true"`
 	// Kafka topic of an activity client's sink
 	ActivitySinkKafkaTopic string `default:"" split_words:"true"`
+	// Intake activity sink: a queue sink that drains events to ActivitySinkIntakeURL.
+	ActivitySinkIntakeURL   string `envconfig:"activity_intake_url" default:""`
+	ActivitySinkIntakeToken string `envconfig:"activity_intake_token" default:""`
 }
 
 // StartCmd starts a stand-alone runtime server. It only allows configuration using environment variables.
@@ -198,6 +202,32 @@ func StartCmd(ch *cmdutil.Helper) *cobra.Command {
 				activityClient = activity.NewClient(sink, logger)
 			case "console":
 				sink := activity.NewLoggerSink(logger, zapcore.InfoLevel)
+				activityClient = activity.NewClient(sink, logger)
+			case "intake":
+				if conf.ActivitySinkIntakeURL == "" {
+					logger.Fatal("activity sink type intake requires STATSPARROT_RUNTIME_ACTIVITY_INTAKE_URL")
+				}
+				queueDir := ""
+				if conf.DataDir != "" {
+					queueDir = filepath.Join(conf.DataDir, "telemetry-queue")
+					if err := os.MkdirAll(queueDir, 0o755); err != nil {
+						logger.Fatal("error creating the activity intake queue directory", zap.Error(err))
+					}
+				} else {
+					var err error
+					queueDir, err = cmdutil.TelemetryQueueDir(ch.DotStatsparrot)
+					if err != nil {
+						logger.Fatal("error resolving the activity intake queue directory", zap.Error(err))
+					}
+				}
+				sink, err := activity.NewQueueSink(logger, activity.QueueSinkOptions{
+					Dir:   queueDir,
+					URL:   conf.ActivitySinkIntakeURL,
+					Token: conf.ActivitySinkIntakeToken,
+				})
+				if err != nil {
+					logger.Fatal("error creating intake sink", zap.Error(err))
+				}
 				activityClient = activity.NewClient(sink, logger)
 			default:
 				logger.Fatal("unknown activity sink type", zap.String("type", conf.ActivitySinkType))
