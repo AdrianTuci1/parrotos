@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // The public site at statsparrot.com. The Worker name is the one that already owns the
+  // custom domain, so a deploy replaces the page in place and leaves DNS alone.
+  "name": "statsparrot-landing",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
