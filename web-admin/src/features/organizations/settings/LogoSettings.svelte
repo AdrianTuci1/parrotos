@@ -120,7 +120,7 @@
           onSave={onSaveLight}
           onRemove={onRemoveLight}
         >
-          <Parrot width="64" height="40" mode="light" />
+          <Parrot width="64" height="64" mode="light" />
         </UploadImagePopover>
         {#if organizationLogoUrl}
           <Button
@@ -155,7 +155,7 @@
           onSave={onSaveDark}
           onRemove={onRemoveDark}
         >
-          <Parrot width="64" height="40" mode="dark" />
+          <Parrot width="64" height="64" mode="dark" />
         </UploadImagePopover>
         {#if organizationLogoDarkUrl}
           <Button
