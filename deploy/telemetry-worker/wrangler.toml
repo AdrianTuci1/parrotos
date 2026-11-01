@@ -1,0 +1,37 @@
+# Cloudflare Worker for Statsparrot's telemetry ingest.
+#
+#   npx wrangler deploy            # from this directory
+#   npx wrangler dev               # local worker with an emulated R2 bucket
+#   npx wrangler tail              # watch rejected batches in production
+#
+# The client batches events on disk and posts them here; the Worker writes one
+# NDJSON object per batch into R2. There is no server to run and no request per
+# event.
+
+name = "statsparrot-telemetry"
+main = "src/index.mjs"
+compatibility_date = "2026-11-01"
+workers_dev = false
+preview_urls = false
+
+# Raw telemetry. The bucket is private; only this Worker writes to it.
+#   npx wrangler r2 bucket create statsparrot-telemetry
+[[r2_buckets]]
+binding = "TELEMETRY"
+bucket_name = "statsparrot-telemetry"
+
+[vars]
+# Everything the Worker writes starts under this prefix, so a bucket can hold
+# more than one dataset without the layouts colliding.
+RAW_PREFIX = "raw"
+
+# The ingest host. `telemetry.` is a new name in the `statsparrot.com` zone, so a
+# custom domain claims it without a competing route.
+[[routes]]
+pattern = "telemetry.statsparrot.com"
+custom_domain = true
+
+# STATSPARROT_TELEMETRY_TOKEN is optional. Set it only if the endpoint needs to
+# reject anonymous posts; the CLI sends no token today, so the endpoint accepts
+# anonymous batches until the secret exists.
+#   npx wrangler secret put STATSPARROT_TELEMETRY_TOKEN

@@ -1,0 +1,11 @@
+{
+  "name": "statsparrot-telemetry-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  }
+}

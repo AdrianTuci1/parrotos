@@ -30,10 +30,13 @@ import (
 const (
 	defaultAdminURL = "https://admin.statsparrot.com"
 
-	telemetryServiceName    = "cli"
-	telemetryIntakeURL      = "https://intake.staticlabs.io/events/data-modeler-metrics"
-	telemetryIntakeUser     = "data-modeler"
-	telemetryIntakePassword = "lkh8T90ozWJP/KxWnQ81PexRzpdghPdzuB0ly2/86TeUU8q/bKiVug==" // nolint:gosec // secret is safe for public use
+	telemetryServiceName = "cli"
+	telemetryIntakeURL   = "https://telemetry.statsparrot.com/v1/events"
+
+	// telemetryTokenEnv carries the intake token when set.
+	telemetryTokenEnv = "STATSPARROT_TELEMETRY_TOKEN"
+	// telemetryQueueDirEnv overrides the queue location, which tests rely on.
+	telemetryQueueDirEnv = "STATSPARROT_TELEMETRY_QUEUE_DIR"
 )
 
 var ErrInferProjectFailed = fmt.Errorf("could not infer project")
@@ -41,7 +44,7 @@ var ErrInferProjectFailed = fmt.Errorf("could not infer project")
 type Helper struct {
 	*printer.Printer
 	Version            version.Version
-	DotStatsparrot            dotstatsparrot.DotStatsparrot
+	DotStatsparrot     dotstatsparrot.DotStatsparrot
 	HomeDir            string
 	Interactive        bool
 	Org                string
@@ -62,11 +65,11 @@ type Helper struct {
 func NewHelper(ver version.Version, homeDir string) (*Helper, error) {
 	// Create it
 	ch := &Helper{
-		Printer:     printer.NewPrinter(printer.FormatHuman),
-		DotStatsparrot:     dotstatsparrot.New(homeDir),
-		HomeDir:     homeDir,
-		Version:     ver,
-		Interactive: isTerminal(),
+		Printer:        printer.NewPrinter(printer.FormatHuman),
+		DotStatsparrot: dotstatsparrot.New(homeDir),
+		HomeDir:        homeDir,
+		Version:        ver,
+		Interactive:    isTerminal(),
 	}
 
 	// Load base admin config from ~/.statsparrot
@@ -204,6 +207,26 @@ func (h *Helper) Client() (*client.Client, error) {
 	return h.adminClient, nil
 }
 
+// TelemetryQueueDir returns the directory that holds the events waiting to be sent,
+// creating it if needed. STATSPARROT_TELEMETRY_QUEUE_DIR overrides the location.
+func TelemetryQueueDir(dotStatsparrot dotstatsparrot.DotStatsparrot) (string, error) {
+	dir := os.Getenv(telemetryQueueDirEnv)
+	if dir == "" {
+		var err error
+		dir, err = dotStatsparrot.ResolveFilename("telemetry-queue", true)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	err := os.MkdirAll(dir, 0o755)
+	if err != nil {
+		return "", err
+	}
+
+	return dir, nil
+}
+
 // Telemetry returns a client for recording events.
 // Note: It should only be used for parts of the CLI that run on users' local computer because:
 // a) it accesses ~/.statsparrot and adds information about the current user,
@@ -237,18 +260,27 @@ func (h *Helper) Telemetry(ctx context.Context) *activity.Client {
 			return h.activityClient
 		}
 
-		// Create a sink that sends events to the intake server.
-		intakeSink := activity.NewIntakeSink(zap.NewNop(), activity.IntakeSinkOptions{
-			IntakeURL:      telemetryIntakeURL,
-			IntakeUser:     telemetryIntakeUser,
-			IntakePassword: telemetryIntakePassword,
-			BufferSize:     50,
-			SinkInterval:   time.Second,
-		})
+		// Queue events on disk so a short CLI run does not lose them and a failed
+		// send is retried on the next run.
+		queueDir, err := TelemetryQueueDir(h.DotStatsparrot)
+		if err != nil {
+			h.activityClient = activity.NewNoopClient()
+			return h.activityClient
+		}
 
-		// Wrap the intake sink in a filter sink that omits events we don't want to send from local.
+		queueSink, err := activity.NewQueueSink(zap.NewNop(), activity.QueueSinkOptions{
+			Dir:   queueDir,
+			URL:   telemetryIntakeURL,
+			Token: os.Getenv(telemetryTokenEnv),
+		})
+		if err != nil {
+			h.activityClient = activity.NewNoopClient()
+			return h.activityClient
+		}
+
+		// Wrap the queue sink in a filter sink that omits events we don't want to send from local.
 		// (Remember, this telemetry client will only be used on local.)
-		sink := activity.NewFilterSink(intakeSink, func(e activity.Event) bool {
+		sink := activity.NewFilterSink(queueSink, func(e activity.Event) bool {
 			// Omit metrics events (since they are quite chatty and potentially sensitive).
 			return e.EventType != activity.EventTypeMetric
 		})
