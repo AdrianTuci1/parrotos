@@ -1,0 +1,169 @@
+# Publish the Statsparrot image to GHCR.
+#
+# One image serves both roles: `admin` and `runtime` are the same binary, chosen with
+# `statsparrot serve --role=`, so the Swarm stack pulls `ghcr.io/staticlabsro/parrot` twice
+# with a different command.
+#
+# This workflow lives in the application repository, which is public, so the package it
+# publishes is linked to a public repository and can stay public. It used to live in the
+# private `staticlabsro/core-infra` repository, and a package linked to a private
+# repository cannot be made public — that is why `get.statsparrot.com` could not proxy
+# anonymous pulls.
+#
+# Multi-arch on purpose: the two cluster nodes are amd64, but the same image is what a
+# self-hoster pulls. The arm64 leg runs under QEMU and is by far the slow one; the
+# `platforms` input narrows a run to `linux/amd64` when only our nodes need it.
+#
+# HARD RULE: `workflow_dispatch` is the single trigger — no `push`, no `pull_request`, no
+# `schedule`.
+name: parrot-image
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: >-
+          Platforms buildx builds for. The arm64 leg is emulated and slow.
+        required: true
+        default: linux/amd64,linux/arm64
+        type: string
+      tag:
+        description: >-
+          Extra tag besides `latest` and the short commit, for example a version.
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+  # Pushing to GHCR with the run's own token; no repository secret is involved.
+  packages: write
+
+concurrency:
+  group: parrot-image
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build and push
+    # Only from main, so a dispatch on another branch cannot publish an image the stack
+    # would then pull.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      PLATFORMS: ${{ inputs.platforms }}
+      EXTRA_TAG: ${{ inputs.tag }}
+      IMAGE: ghcr.io/staticlabsro/parrot
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # The Go link step needs several GB of scratch space (DuckDB's static libs are
+      # large), and a stock ubuntu-latest runner has too little free disk. Remove the
+      # preinstalled toolchains this build does not use before pulling the builder
+      # images. Verified: an early run failed at link with "No space left on device".
+      - name: Free disk space
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /opt/hostedtoolcache/CodeQL /usr/local/share/boost /usr/share/swift
+          sudo docker image prune -af || true
+          sudo apt-get clean
+          df -h /
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute source metadata
+        id: src
+        run: |
+          set -euo pipefail
+          {
+            echo "commit=$(git rev-parse HEAD)"
+            echo "short=$(git rev-parse --short HEAD)"
+            echo "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "subject=$(git log -1 --format=%s | sed 's/%/%25/g')"
+          } >> "$GITHUB_OUTPUT"
+
+      # The tag list is built here rather than in the `with:` block: an input that is empty
+      # still has to vanish, not become an empty line.
+      #
+      # `latest` moves with every run, so a service that pins it needs
+      # `docker service update --force` to pick the new one up; the stack pins the
+      # short-commit tag instead.
+      - name: Compute tags
+        id: tags
+        env:
+          SHORT: ${{ steps.src.outputs.short }}
+        run: |
+          set -euo pipefail
+          {
+            echo "tags<<__TAGS__"
+            printf '%s\n' "$IMAGE:latest"
+            printf '%s\n' "$IMAGE:$SHORT"
+            [ -n "$EXTRA_TAG" ] && printf '%s\n' "$IMAGE:$EXTRA_TAG"
+            echo "__TAGS__"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        id: push
+        uses: docker/build-push-action@v6
+        env:
+          COMMIT: ${{ steps.src.outputs.commit }}
+        with:
+          # The Dockerfile is written to build from the repository root.
+          context: .
+          file: deploy/hosted/Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          # The CLI sends this value as `statsparrot-cli/<version>` on every gRPC call,
+          # and the server parses it as semver and rejects anything below 0.20.0. A bare
+          # short SHA is not semver (healthchecks failed with "malformed version"), so
+          # keep the SHA in build metadata after a version above the server minimum.
+          build-args: |
+            VERSION=0.21.0+${{ steps.src.outputs.short }}
+            COMMIT=${{ env.COMMIT }}
+            BUILD_DATE=${{ steps.src.outputs.built_at }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/staticlabsro/parrotos
+            org.opencontainers.image.revision=${{ env.COMMIT }}
+          # The Go build compiles DuckDB's cgo glue and the arm64 leg runs emulated, so a
+          # cold build is long. The cache lives in the Actions cache and needs no secret.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        if: always()
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+          SHORT: ${{ steps.src.outputs.short }}
+          SUBJECT: ${{ steps.src.outputs.subject }}
+          COMMIT: ${{ steps.src.outputs.commit }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## parrot image"
+            echo
+            echo "- source: \`staticlabsro/parrotos\` @ \`$GITHUB_SHA\` ($SHORT)"
+            echo "- commit: \`$COMMIT\`"
+            echo "- subject: $SUBJECT"
+            echo "- image: \`$IMAGE\`"
+            echo "- tags: \`latest\`, \`$SHORT\`${EXTRA_TAG:+ , \`$EXTRA_TAG\`}"
+            echo "- platforms: \`$PLATFORMS\`"
+            echo "- digest: \`$DIGEST\`"
+            echo
+            echo "Deploy with: \`gh workflow run infra.yml -f stacks=parrot -f dry_run=false\`"
+          } >> "$GITHUB_STEP_SUMMARY"

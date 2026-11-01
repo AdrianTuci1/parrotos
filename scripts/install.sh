@@ -14,7 +14,7 @@
 
 set -eu
 
-REPO="AdrianTuci1/parrotos"
+REPO="staticlabsro/parrotos"
 BINARY="statsparrot"
 VERSION="${STATSPARROT_VERSION:-}"
 UNINSTALL=""
