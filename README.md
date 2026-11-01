@@ -5,9 +5,8 @@ get dashboards, an OLAP engine and an agent that explains what moved.
 
 ## Use it locally
 
-Prebuilt binaries exist for macOS (arm64), Linux (amd64) and Windows (amd64). Building from a
-checkout needs Go 1.26, Node 20 and a C toolchain, because DuckDB is a C library linked into the
-binary.
+Prebuilt binaries exist for macOS (arm64) and Linux (amd64). Building from a checkout needs Go 1.26,
+Node 20 and a C toolchain, because DuckDB is a C library linked into the binary.
 
 ```bash
 curl -fsSL https://get.statsparrot.com | sh
