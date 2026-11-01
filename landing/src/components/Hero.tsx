@@ -1,5 +1,5 @@
 import { CommandBox } from "./CommandBox";
-import { LOCAL_URL, SETUP_URL } from "./TopBar";
+import { HOSTED_URL, LOCAL_URL } from "./TopBar";
 
 const TRY_CHIPS = ["Revenue", "Churn", "Retention", "Cohorts", "Inventory", "1998"];
 
@@ -21,7 +21,7 @@ export function Hero() {
           <a className="btn-primary" href={LOCAL_URL} target="_blank" rel="noreferrer">
             Try it locally
           </a>
-          <a className="btn-secondary" href={SETUP_URL} target="_blank" rel="noreferrer">
+          <a className="btn-secondary" href={HOSTED_URL} target="_blank" rel="noreferrer">
             Deploy on a server
           </a>
         </div>

@@ -1,4 +1,4 @@
-import { DOCS_URL, GITHUB_URL, LICENSE_URL } from "./TopBar";
+import { GITHUB_URL, LICENSE_URL, LOCAL_URL } from "./TopBar";
 
 export function Footer() {
   return (
@@ -9,8 +9,8 @@ export function Footer() {
           <a href={GITHUB_URL} target="_blank" rel="noreferrer">
             GitHub
           </a>
-          <a href={DOCS_URL} target="_blank" rel="noreferrer">
-            Docs
+          <a href={LOCAL_URL} target="_blank" rel="noreferrer">
+            Setup
           </a>
           <a href={LICENSE_URL} target="_blank" rel="noreferrer">
             License

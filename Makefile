@@ -96,18 +96,6 @@ coverage.go:
 		go test ./... -short -v -coverprofile ./coverage/go.out -coverpkg $$PACKAGES
 	go tool cover -func coverage/go.out
 
-.PHONY: docs.generate
-docs.generate: runtime.examples.embed
-	# Temporarily replaces ~/.statsparrot/config.yaml to avoid including user-defined defaults in generated docs.
-	#
-	# Sets main.Version to a fixed tag to simulate a production build, where certain commands are hidden.
-	# Not using scripts/versiontag.sh since the actual version should not be emitted to the generated files as it would go stale on the next release.
-	rm -rf docs/docs/reference/cli/*.md docs/docs/reference/project-files/*.md
-	if [ -f ~/.statsparrot/config.yaml ]; then mv ~/.statsparrot/config.yaml ~/.statsparrot/config.yaml.tmp; fi;
-	STATSPARROT_DOCS_GENERATE=true go run -ldflags="-X main.Version=1.0.0" ./cli docs generate-cli docs/docs/reference/cli/
-	STATSPARROT_DOCS_GENERATE=true go run -ldflags="-X main.Version=1.0.0" ./cli docs generate-project docs/docs/reference/project-files/
-	if [ -f ~/.statsparrot/config.yaml.tmp ]; then mv ~/.statsparrot/config.yaml.tmp ~/.statsparrot/config.yaml; fi;
-
 .PHONY: proto.generate
 proto.generate:
 	cd proto && buf generate --exclude-path statsparrot/ui

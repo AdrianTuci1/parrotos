@@ -1,9 +1,8 @@
 import { Logo } from "./Logo";
 
 export const GITHUB_URL = "https://github.com/staticlabsro/parrotos";
-export const DOCS_URL = `${GITHUB_URL}/tree/main/docs`;
-export const SETUP_URL = `${GITHUB_URL}#launch-it-hosted`;
 export const LOCAL_URL = `${GITHUB_URL}#use-it-locally`;
+export const HOSTED_URL = `${GITHUB_URL}#launch-it-hosted`;
 export const LICENSE_URL = `${GITHUB_URL}/blob/main/LICENSE.md`;
 
 function GitHubIcon() {
@@ -20,8 +19,8 @@ export function TopBar() {
       <div className="container topbar-inner">
         <Logo />
         <nav className="topbar-links" aria-label="Primary">
-          <a href={DOCS_URL} target="_blank" rel="noreferrer">
-            Docs
+          <a href={LOCAL_URL} target="_blank" rel="noreferrer">
+            Setup
           </a>
           <a
             className="icon-link"
