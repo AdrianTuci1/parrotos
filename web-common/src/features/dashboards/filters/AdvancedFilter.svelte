@@ -10,7 +10,7 @@
 </script>
 
 <div
-  class="flex flex-none px-2 py-[3px] max-h-[26px] border bg-surface-subtle border-gray-200 text-fg-primary rounded-2xl"
+  class="flex flex-none px-2 py-[3px] max-h-[26px] border bg-surface-subtle border-gray-200 text-fg-primary"
 >
   <Tooltip.Root>
     <Tooltip.Trigger>

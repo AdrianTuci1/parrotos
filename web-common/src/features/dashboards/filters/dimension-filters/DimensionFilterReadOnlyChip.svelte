@@ -71,6 +71,7 @@
 
 <Chip
   type="dimension"
+  square
   theme
   label={effectiveLabel}
   readOnly

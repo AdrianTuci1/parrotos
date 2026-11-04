@@ -12,6 +12,7 @@
 
 <Chip
   type="measure"
+  square
   theme
   {label}
   readOnly

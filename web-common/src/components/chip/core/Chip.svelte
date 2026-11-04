@@ -27,6 +27,8 @@
   export let allowPointerEvents = false;
   export let theme = false;
   export let showPinnedIcon = false;
+  /** Square corners, for the dashboard filter bar */
+  export let square = false;
   export let onRemove: () => void = () => {};
   export let onclick: ((e: MouseEvent) => void) | undefined = undefined;
   export let onmousedown: ((e: MouseEvent) => void) | undefined = undefined;
@@ -55,6 +57,7 @@
     class:exclude
     class:compact
     class:fullWidth
+    class:square
     class:pointer-events-none={readOnly && !allowPointerEvents}
     aria-label={label}
   >
@@ -141,6 +144,13 @@
     @apply flex gap-x-1;
     @apply items-center justify-center;
     @apply px-2 py-[3px] border w-full max-w-fit truncate;
+  }
+
+  .square,
+  .square.dimension,
+  .square.measure,
+  .square.time {
+    @apply rounded-none;
   }
 
   .dimension {

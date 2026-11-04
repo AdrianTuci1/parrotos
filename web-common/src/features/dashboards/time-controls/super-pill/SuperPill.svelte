@@ -162,7 +162,7 @@
 <style lang="postcss">
   .wrapper {
     @apply flex w-fit;
-    @apply h-[26px] rounded-full;
+    @apply h-[26px];
     @apply overflow-hidden;
   }
 
@@ -175,12 +175,12 @@
 
   :global(.wrapper > button:first-child),
   :global(.wrapper > :first-child > button:first-child) {
-    @apply ml-0 pl-2.5 rounded-l-full;
+    @apply ml-0 pl-2.5;
   }
 
   :global(.wrapper > button:last-child),
   :global(.wrapper > :last-child > button:last-child) {
-    @apply pr-2.5 rounded-r-full;
+    @apply pr-2.5;
   }
 
   :global(.wrapper > button:focus),

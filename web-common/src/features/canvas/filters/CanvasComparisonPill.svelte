@@ -121,7 +121,7 @@
 <style lang="postcss">
   .wrapper {
     @apply flex w-fit;
-    @apply h-[26px] rounded-full;
+    @apply h-[26px];
     @apply overflow-hidden select-none;
   }
 </style>

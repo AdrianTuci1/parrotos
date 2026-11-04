@@ -71,6 +71,7 @@
         <Chip
           {...props}
           type="measure"
+          square
           active={open}
           {label}
           gray={!filter}

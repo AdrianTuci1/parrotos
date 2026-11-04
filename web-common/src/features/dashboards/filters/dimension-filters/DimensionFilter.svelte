@@ -451,6 +451,7 @@
         <Chip
           {...props}
           type="dimension"
+          square
           gray={selectedValues.length === 0 && !inputText}
           error={!!missingRequired}
           active={open}
