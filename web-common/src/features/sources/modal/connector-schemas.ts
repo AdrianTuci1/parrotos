@@ -13,6 +13,7 @@ import { gcsSchema } from "../../templates/schemas/gcs";
 import { geminiSchema } from "../../templates/schemas/gemini";
 import { mysqlSchema } from "../../templates/schemas/mysql";
 import { openaiSchema } from "../../templates/schemas/openai";
+import { openaiCompatibleSchema } from "../../templates/schemas/openai_compatible";
 import { postgresSchema } from "../../templates/schemas/postgres";
 import { redshiftSchema } from "../../templates/schemas/redshift";
 import { salesforceSchema } from "../../templates/schemas/salesforce";
@@ -60,6 +61,7 @@ export const multiStepFormSchemas: Record<string, MultiStepFormSchema> = {
   claude: claudeSchema,
   databricks: databricksSchema,
   openai: openaiSchema,
+  openai_compatible: openaiCompatibleSchema,
   gemini: geminiSchema,
 };
 

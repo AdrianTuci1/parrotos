@@ -52,6 +52,11 @@
     { value: "claude", label: "Claude", icon: ClaudeIcon },
     { value: "gemini", label: "Gemini", icon: GeminiIcon },
     { value: "openai", label: "OpenAI", icon: OpenAIIcon },
+    {
+      value: "openai_compatible",
+      label: "OpenAI-compatible",
+      icon: OpenAIIcon,
+    },
   ];
 
   let schemaName = "claude";
@@ -75,9 +80,12 @@
 
   // Soft validation: warn when the API key doesn't match the expected prefix.
   // Custom OpenAI-compatible endpoints issue their own keys, so skip it there.
-  $: apiKeyWarning = baseUrl.trim()
-    ? ""
-    : getApiKeyWarning(schemaName, apiKey);
+  $: apiKeyWarning = baseUrl.trim() ? "" : getApiKeyWarning(schemaName, apiKey);
+
+  // Endpoints such as OpenRouter or Ollama have no default host, so the form
+  // cannot save without the one the user typed.
+  $: baseUrlRequired = schema?.required?.includes("base_url") ?? false;
+  $: missingBaseUrl = baseUrlRequired && !baseUrl.trim();
 
   function getApiKeyWarning(provider: string, key: string): string {
     if (!key) return "";
@@ -257,7 +265,8 @@
         <Input
           id="ai-connector-base-url"
           label={baseUrlProp?.title ?? "Base URL"}
-          placeholder={baseUrlProp?.["x-placeholder"] ?? "https://api.openai.com/v1"}
+          placeholder={baseUrlProp?.["x-placeholder"] ??
+            "https://api.openai.com/v1"}
           hint={baseUrlProp?.["x-hint"] ?? baseUrlProp?.description ?? ""}
           optional
           bind:value={baseUrl}
@@ -294,7 +303,7 @@
       <!-- Use a plain button instead of AlertDialog.Action to prevent
            the dialog from auto-closing before the async save completes. -->
       <Button
-        disabled={!apiKey || saving}
+        disabled={!apiKey || missingBaseUrl || saving}
         large
         type="primary"
         onClick={handleSave}

@@ -45,6 +45,7 @@ export const connectorIconMapping = {
   iceberg: ApacheIcebergIcon,
   mysql: MySqlIcon,
   openai: OpenAIIcon,
+  openai_compatible: OpenAIIcon,
   pinot: ApachePinotIcon,
   postgres: PostgresIcon,
   redshift: RedshiftIcon,
@@ -73,6 +74,7 @@ export const connectorLabelMapping = {
   snowflake: "Snowflake",
   druid: "Druid",
   starrocks: "StarRocks",
+  openai_compatible: "OpenAI-compatible",
 };
 
 export const connectorKeywordMapping = {
@@ -103,5 +105,15 @@ export const connectorKeywordMapping = {
   starrocks: ["olap", "columnar", "mpp"],
   supabase: ["postgres", "baas", "firebase alternative"],
   https: ["url", "api", "remote", "endpoint"],
+  openai_compatible: [
+    "openrouter",
+    "ollama",
+    "vllm",
+    "groq",
+    "deepseek",
+    "mistral",
+    "together",
+    "litellm",
+  ],
   local_file: ["upload", "csv", "parquet", "json", "import"],
 };

@@ -12,6 +12,15 @@ import {
   makeTestEnvEditSession,
 } from "@statsparrot/web-common/features/env-management/test/test-env-store.ts";
 import { getGenericEnvVarName } from "@statsparrot/web-common/features/connectors/env-utils.ts";
+import {
+  getConnectorSchema,
+  toConnectorDriver,
+} from "@statsparrot/web-common/features/sources/modal/connector-schemas";
+import {
+  getSchemaFieldMetaList,
+  getSchemaSecretKeys,
+  getSchemaStringKeys,
+} from "@statsparrot/web-common/features/templates/schema-utils";
 import type { JSONSchemaObject } from "@statsparrot/web-common/features/templates/schemas/types.ts";
 
 // Import the template for testing
@@ -723,5 +732,42 @@ describe("generateYAML", () => {
     expect(result).toContain("type: connector");
     expect(result).toContain("driver: clickhouse");
     expect(result).not.toContain("host:");
+  });
+});
+
+describe("OpenAI-compatible connector YAML", () => {
+  it("writes the openai driver with the endpoint from the form", async () => {
+    const connector = toConnectorDriver("openai_compatible");
+    const schema = getConnectorSchema("openai");
+    if (!connector?.name || !schema) {
+      throw new Error("the OpenAI-compatible connector is not registered");
+    }
+
+    const { envEditSession } = await makeTestEnvEditSession(
+      connector.name,
+      schema,
+    );
+    const result = generateYAML(
+      connector,
+      {
+        api_key: "sk-gateway-key",
+        model: "deepseek-chat",
+        base_url: "https://openrouter.ai/api/v1",
+      },
+      envEditSession,
+      {
+        orderedProperties: getSchemaFieldMetaList(schema, {
+          step: "connector",
+        }),
+        secretKeys: getSchemaSecretKeys(schema, { step: "connector" }),
+        stringKeys: getSchemaStringKeys(schema, { step: "connector" }),
+        schema,
+      },
+    );
+
+    expect(result).toContain("driver: openai");
+    expect(result).toContain('base_url: "https://openrouter.ai/api/v1"');
+    expect(result).toContain('model: "deepseek-chat"');
+    expect(result).not.toContain("sk-gateway-key");
   });
 });

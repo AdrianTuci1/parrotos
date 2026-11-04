@@ -171,6 +171,25 @@ describe("connector-schemas", () => {
     });
   });
 
+  describe("OpenAI-compatible connector", () => {
+    it("uses the openai driver so any compatible gateway works", () => {
+      expect(getBackendConnectorName("openai_compatible")).toBe("openai");
+
+      const driver = toConnectorDriver("openai_compatible");
+      expect(driver).not.toBeNull();
+      expect(driver!.name).toBe("openai");
+      expect(driver!.displayName).toBe("OpenAI-compatible");
+      expect(driver!.implementsAi).toBe(true);
+    });
+
+    it("asks for the endpoint and requires it", () => {
+      const schema = getConnectorSchema("openai_compatible");
+      expect(schema?.properties?.base_url).toBeDefined();
+      expect(schema?.required).toContain("base_url");
+      expect(schema?.required).toContain("api_key");
+    });
+  });
+
   describe("toConnectorDriver", () => {
     it("returns null for unknown schema names", () => {
       expect(toConnectorDriver("nonexistent")).toBeNull();
