@@ -59,7 +59,7 @@ func (c *Connection) Query(ctx context.Context, stmt *drivers.Statement) (*drive
 	}
 	params := make([]string, len(stmt.Args))
 	for i, v := range stmt.Args {
-		params[i] = fmt.Sprint(v)
+		params[i] = formatExecutionParameter(v)
 	}
 	queryID, err := c.executeQuery(ctx, client, stmt.Query, c.config.Workgroup, c.config.OutputLocation, params)
 	if err != nil {
@@ -100,12 +100,61 @@ func (c *Connection) Head(ctx context.Context, db, schema, table string, limit i
 
 // QuerySchema implements drivers.OLAPStore.
 func (c *Connection) QuerySchema(ctx context.Context, query string, args []any) (*runtimev1.StructType, error) {
-	return nil, drivers.ErrNotImplemented
+	client, err := c.getClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	params := make([]string, len(args))
+	for i, v := range args {
+		params[i] = formatExecutionParameter(v)
+	}
+
+	queryID, err := c.executeQuery(ctx, client, query, c.config.Workgroup, c.config.OutputLocation, params)
+	if err != nil {
+		return nil, err
+	}
+
+	// The schema comes from the result metadata, so a caller that wants only the
+	// types passes a query that returns no rows (the metrics view validator uses
+	// LIMIT 0). One result is requested because the metadata travels with it.
+	results, err := client.GetQueryResults(ctx, &athena.GetQueryResultsInput{
+		QueryExecutionId: queryID,
+		MaxResults:       aws.Int32(1),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get query schema: %w", err)
+	}
+	if results.ResultSet == nil || results.ResultSet.ResultSetMetadata == nil {
+		return nil, fmt.Errorf("no column info found in query results")
+	}
+
+	colInfo := results.ResultSet.ResultSetMetadata.ColumnInfo
+	fields := make([]*runtimev1.StructType_Field, 0, len(colInfo))
+	for _, col := range colInfo {
+		fields = append(fields, &runtimev1.StructType_Field{
+			Name: aws.ToString(col.Name),
+			Type: athenaTypeToRuntimeType(aws.ToString(col.Type)),
+		})
+	}
+	return &runtimev1.StructType{Fields: fields}, nil
 }
 
 // WithConnection implements drivers.OLAPStore.
 func (c *Connection) WithConnection(ctx context.Context, priority int, fn drivers.WithConnectionFunc) error {
 	return drivers.ErrNotImplemented
+}
+
+// formatExecutionParameter renders a query argument as the string Athena
+// substitutes for a "?" placeholder. Athena passes execution parameters to the
+// engine as text rather than binding them, so a Go time has to arrive in a
+// format the engine parses; the dialect casts the placeholder back to the
+// column's type.
+func formatExecutionParameter(v any) string {
+	if t, ok := v.(time.Time); ok {
+		return t.UTC().Format("2006-01-02 15:04:05.999999999")
+	}
+	return fmt.Sprint(v)
 }
 
 type rows struct {
