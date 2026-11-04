@@ -432,6 +432,12 @@ func (r *repo) Watch(ctx context.Context, cb drivers.WatchCallback) error {
 	if err != nil {
 		return fmt.Errorf("failed to create file watcher: %w", err)
 	}
+	// Watch creates one watcher per call, and Subscribe blocks until the context is
+	// cancelled. Without this, the inotify instance outlives the watch: the parser
+	// retries on every parse error, and a retry loop exhausts
+	// fs.inotify.max_user_instances, after which every new watch fails and the SSE
+	// streams in the UI die as soon as they open.
+	defer w.Close()
 
 	return w.Subscribe(ctx, func(events []filewatcher.WatchEvent) {
 		if len(events) == 0 {
