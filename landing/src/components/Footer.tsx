@@ -12,6 +12,7 @@ export function Footer() {
           <a href={LOCAL_URL} target="_blank" rel="noreferrer">
             Setup
           </a>
+          <a href="/docs">Docs</a>
           <a href={LICENSE_URL} target="_blank" rel="noreferrer">
             License
           </a>

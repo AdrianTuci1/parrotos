@@ -1075,6 +1075,17 @@ button {
   color: var(--muted);
 }
 
+.faq-docs-link {
+  align-self: flex-start;
+  font-size: 14px;
+  color: var(--accent-soft);
+  text-decoration: none;
+}
+
+.faq-docs-link:hover {
+  text-decoration: underline;
+}
+
 /* ------------------------------------------------------------------ *
  * Closing CTA
  * ------------------------------------------------------------------ */

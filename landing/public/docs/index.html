@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0A0A0B" />
+    <title>Docs — Statsparrot</title>
+    <meta
+      name="description"
+      content="Statsparrot documentation: install the CLI, write a project as files, connect a warehouse, and run the hosted deployment."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0b;
+        --panel: #111113;
+        --surface: #16161a;
+        --hairline: rgba(255, 255, 255, 0.08);
+        --text: #f5f5f6;
+        --muted: #8a8a90;
+        --accent: #0079c2;
+        --accent-soft: #4fa3d1;
+        --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        --topbar: 60px;
+        color-scheme: dark;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+        scroll-padding-top: calc(var(--topbar) + 24px);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+        letter-spacing: -0.011em;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      code,
+      pre {
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+
+      /* ---------- top bar ---------- */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: var(--topbar);
+        background: rgba(10, 10, 11, 0.86);
+        border-bottom: 1px solid var(--hairline);
+        backdrop-filter: blur(14px);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+      }
+
+      .brand span {
+        font-size: 15px;
+      }
+
+      .brand .tag {
+        color: var(--muted);
+        font-weight: 400;
+        font-size: 13px;
+        padding-left: 2px;
+      }
+
+      .topbar-links {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        font-size: 14px;
+      }
+
+      .topbar-links a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.15s ease;
+      }
+
+      .topbar-links a:hover,
+      .topbar-links a[aria-current="page"] {
+        color: var(--text);
+      }
+
+      /* ---------- layout ---------- */
+
+      .shell {
+        display: grid;
+        grid-template-columns: 232px minmax(0, 1fr);
+        gap: 56px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 32px 96px;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: calc(var(--topbar) + 32px);
+        align-self: start;
+        max-height: calc(100vh - var(--topbar) - 64px);
+        overflow-y: auto;
+        font-size: 14px;
+      }
+
+      .sidebar-group + .sidebar-group {
+        margin-top: 26px;
+      }
+
+      .sidebar-title {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .sidebar a {
+        display: block;
+        padding: 4px 0;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.15s ease;
+      }
+
+      .sidebar a:hover,
+      .sidebar a.active {
+        color: var(--text);
+      }
+
+      .sidebar a.active {
+        color: var(--accent-soft);
+      }
+
+      .sidebar .sub a {
+        padding-left: 14px;
+        font-size: 13px;
+      }
+
+      main {
+        min-width: 0;
+        max-width: 760px;
+      }
+
+      section + section {
+        margin-top: 64px;
+        padding-top: 40px;
+        border-top: 1px solid var(--hairline);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        font-weight: 600;
+      }
+
+      h2 {
+        margin: 0 0 14px;
+        font-size: 24px;
+        line-height: 1.25;
+        letter-spacing: -0.025em;
+        font-weight: 600;
+      }
+
+      h3 {
+        margin: 34px 0 10px;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        margin: 24px 0 8px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0 0 14px;
+        color: #d7d7db;
+      }
+
+      .lede {
+        color: var(--muted);
+        font-size: 16px;
+        margin-bottom: 26px;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 16px;
+        padding-left: 20px;
+        color: #d7d7db;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      a.link {
+        color: var(--accent-soft);
+        text-decoration: none;
+      }
+
+      a.link:hover {
+        text-decoration: underline;
+      }
+
+      /* ---------- code ---------- */
+
+      .code {
+        position: relative;
+        margin: 0 0 18px;
+      }
+
+      .code pre {
+        margin: 0;
+        padding: 14px 16px;
+        overflow-x: auto;
+        background: var(--panel);
+        border: 1px solid var(--hairline);
+        border-radius: 8px;
+        line-height: 1.6;
+        color: #e6e6e9;
+      }
+
+      .code .copy {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        font-family: inherit;
+        font-size: 11px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 6px;
+        cursor: pointer;
+        opacity: 0;
+        transition:
+          opacity 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .code:hover .copy,
+      .code .copy:focus-visible {
+        opacity: 1;
+      }
+
+      .code .copy:hover {
+        color: var(--text);
+      }
+
+      p code,
+      li code,
+      td code {
+        padding: 1px 5px;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 4px;
+        font-size: 12.5px;
+      }
+
+      /* ---------- tables ---------- */
+
+      table {
+        width: 100%;
+        margin: 0 0 18px;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 9px 12px;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--hairline);
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      td {
+        color: #d7d7db;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* ---------- callout ---------- */
+
+      .note {
+        margin: 0 0 18px;
+        padding: 12px 16px;
+        background: rgba(0, 121, 194, 0.08);
+        border: 1px solid rgba(0, 121, 194, 0.28);
+        border-radius: 8px;
+        color: #d7d7db;
+        font-size: 14px;
+      }
+
+      .note strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 12px;
+        margin: 0 0 22px;
+      }
+
+      .card {
+        display: block;
+        padding: 16px;
+        background: var(--panel);
+        border: 1px solid var(--hairline);
+        border-radius: 10px;
+        text-decoration: none;
+        transition: border-color 0.15s ease;
+      }
+
+      .card:hover {
+        border-color: rgba(0, 121, 194, 0.5);
+      }
+
+      .card b {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+      }
+
+      .card span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .anchor {
+        color: var(--muted);
+        text-decoration: none;
+        opacity: 0;
+        margin-left: 8px;
+        font-weight: 400;
+      }
+
+      h2:hover .anchor,
+      h3:hover .anchor {
+        opacity: 1;
+      }
+
+      footer.docs-footer {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px 32px 48px;
+        border-top: 1px solid var(--hairline);
+        color: var(--muted);
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      footer.docs-footer a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      footer.docs-footer a:hover {
+        color: var(--text);
+      }
+
+      .nav-toggle {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        .shell {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 24px;
+          padding: 20px 20px 64px;
+        }
+
+        .topbar-inner,
+        footer.docs-footer {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        .sidebar {
+          position: static;
+          max-height: none;
+          padding: 16px;
+          background: var(--panel);
+          border: 1px solid var(--hairline);
+          border-radius: 10px;
+        }
+
+        .nav-toggle {
+          display: inline-block;
+          margin-left: auto;
+          padding: 6px 10px;
+          font-family: inherit;
+          font-size: 13px;
+          color: var(--muted);
+          background: var(--surface);
+          border: 1px solid var(--hairline);
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .topbar-links {
+          display: none;
+        }
+
+        .sidebar[hidden] {
+          display: none;
+        }
+
+        h1 {
+          font-size: 28px;
+        }
+
+        h2 {
+          font-size: 21px;
+        }
+      }
+
+      @media (min-width: 901px) {
+        .sidebar {
+          display: block !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/">
+          <svg width="24" height="24" viewBox="0 0 550 550" fill="none" aria-hidden="true">
+            <rect width="550" height="550" rx="82" fill="#0079C2" />
+            <path d="M217 226L524 100C477.167 112.167 380.2 137.5 367 141.5C259.8 99.5 222.333 180.333 217 226Z" fill="#EFEFEF" />
+            <path d="M348.5 207L159.5 484.5L173 333.5L21 295.5L348.5 207Z" fill="#F0ECEC" />
+          </svg>
+          <span>Statsparrot</span>
+          <span class="tag">Docs</span>
+        </a>
+        <nav class="topbar-links" aria-label="Primary">
+          <a href="/" >Landing</a>
+          <a href="/docs/" aria-current="page">Docs</a>
+          <a href="https://github.com/staticlabsro/parrotos" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">
+          Contents
+        </button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-group">
+          <span class="sidebar-title">Start</span>
+          <a href="#overview">Overview</a>
+          <a href="#install">Install</a>
+          <a href="#quickstart">Quickstart</a>
+        </div>
+        <div class="sidebar-group">
+          <span class="sidebar-title">Project</span>
+          <a href="#project-files">Project files</a>
+          <div class="sub">
+            <a href="#project-config">statsparrot.yaml</a>
+            <a href="#models">Models</a>
+            <a href="#metrics-views">Metrics views</a>
+            <a href="#canvases">Canvases</a>
+          </div>
+          <a href="#connectors">Connectors</a>
+        </div>
+        <div class="sidebar-group">
+          <span class="sidebar-title">Operate</span>
+          <a href="#hosted">Hosted deployment</a>
+          <a href="#cli">CLI reference</a>
+          <a href="#troubleshooting">Troubleshooting</a>
+        </div>
+      </aside>
+
+      <main>
+        <section id="overview">
+          <h1>Documentation</h1>
+          <p class="lede">
+            Statsparrot is an analytics app for your warehouse and your files. You describe
+            metrics as YAML in a folder you own, and you get dashboards, an OLAP engine, and an
+            agent that explains what moved.
+          </p>
+
+          <p>There are two ways to run it, and they share the same project files:</p>
+
+          <div class="cards">
+            <a class="card" href="#quickstart">
+              <b>Locally</b>
+              <span>One binary: <code>statsparrot start</code> serves the app on localhost.</span>
+            </a>
+            <a class="card" href="#hosted">
+              <b>Hosted</b>
+              <span>One container: users sign in, each project gets a runtime.</span>
+            </a>
+          </div>
+
+          <p>
+            The project is the unit of work. It is a directory of YAML and SQL that you keep in
+            git, review in a pull request, and roll back like any other code.
+          </p>
+        </section>
+
+        <section id="install">
+          <h2>Install <a class="anchor" href="#install">#</a></h2>
+
+          <p>
+            Prebuilt binaries exist for macOS (arm64) and Linux (amd64). The install script
+            downloads the right one and puts <code>statsparrot</code> on your path.
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>curl -fsSL https://get.statsparrot.com | sh
+statsparrot version</code></pre>
+          </div>
+
+          <p>
+            The same binary runs in a container. It needs a C toolchain at build time because
+            DuckDB is a C library linked into it, but the published image is self-contained:
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>docker run --rm -p 9009:9009 -v "$PWD:/project" \
+  ghcr.io/staticlabsro/parrot:latest start /project</code></pre>
+          </div>
+
+          <p>Building from a checkout needs Go 1.26, Node 20 and a C toolchain:</p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>git clone https://github.com/staticlabsro/parrotos
+cd parrotos
+make local-bin   # writes ./statsparrot</code></pre>
+          </div>
+        </section>
+
+        <section id="quickstart">
+          <h2>Quickstart <a class="anchor" href="#quickstart">#</a></h2>
+
+          <p>
+            <code>init</code> writes a starter project, including the agent instructions the
+            local app reads. <code>start</code> builds it and opens the app on port 9009.
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>statsparrot init my-project
+statsparrot start my-project</code></pre>
+          </div>
+
+          <p>A minimal project is three files:</p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>my-project/
+├── statsparrot.yaml     # project settings
+├── orders.yaml          # a model: SQL over a connector
+└── orders_metrics.yaml  # a metrics view: dimensions and measures</code></pre>
+          </div>
+
+          <p>
+            <code>statsparrot validate my-project</code> parses the project and reports errors
+            without starting anything — useful in CI.
+          </p>
+        </section>
+
+        <section id="project-files">
+          <h2>Project files <a class="anchor" href="#project-files">#</a></h2>
+
+          <p>
+            Every file is a YAML document with a <code>type</code>, except
+            <code>statsparrot.yaml</code>, which configures the project itself. The file name is
+            the resource name: <code>orders.yaml</code> defines <code>orders</code>.
+          </p>
+
+          <h3 id="project-config">
+            statsparrot.yaml <a class="anchor" href="#project-config">#</a>
+          </h3>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>display_name: Orders
+olap_connector: duckdb
+
+# Project variables. Values written here are visible in the project settings;
+# anything secret belongs in the environment, not in this file.
+env:
+  AWS_REGION: eu-central-1
+
+# Directories the parser must not read as resources. SQL DDL that you run by
+# hand lives here.
+ignore_paths:
+  - /athena</code></pre>
+          </div>
+
+          <p>
+            <code>olap_connector</code> picks the engine that answers queries. DuckDB is the
+            default and needs no configuration; the warehouse connectors are below.
+          </p>
+
+          <h3 id="models">Models <a class="anchor" href="#models">#</a></h3>
+
+          <p>
+            A model is SQL over a connector, materialized as a view. Metrics views read models,
+            so a number is defined in one place.
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>type: model
+connector: duckdb
+sql: |
+  select TIMESTAMP '2026-01-01 00:00:00' as time, 'web' as channel,
+         100 as revenue, 12 as orders
+  union all
+  select TIMESTAMP '2026-01-01 00:00:00', 'email', 60, 6</code></pre>
+          </div>
+
+          <h3 id="metrics-views">
+            Metrics views <a class="anchor" href="#metrics-views">#</a>
+          </h3>
+
+          <p>
+            A metrics view names a model, its time column, the dimensions you can slice by and
+            the measures the dashboards and the agent can ask for.
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>type: metrics_view
+model: orders
+timeseries: time
+dimensions:
+  - column: channel
+measures:
+  - name: total_revenue
+    expression: sum(revenue)
+  - name: order_count
+    expression: count(*)</code></pre>
+          </div>
+
+          <p>
+            On a warehouse connector, add <code>connector</code>, <code>database</code> and
+            <code>table</code> to read a table in place instead of a model:
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>type: metrics_view
+connector: athena
+database: AwsDataCatalog
+database_schema: analytics
+table: behavioral_events
+timeseries: event_ts
+smallest_time_grain: hour</code></pre>
+          </div>
+
+          <h3 id="canvases">Canvases <a class="anchor" href="#canvases">#</a></h3>
+
+          <p>
+            A canvas is a dashboard: a list of rows, and in each row a list of items that point
+            at a metrics view.
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>type: canvas
+display_name: Overview
+
+defaults:
+  time_range: P4W
+
+rows:
+  - items:
+      - kpi_grid:
+          metrics_view: orders_metrics
+          measures:
+            - total_revenue
+            - order_count</code></pre>
+          </div>
+        </section>
+
+        <section id="connectors">
+          <h2>Connectors <a class="anchor" href="#connectors">#</a></h2>
+
+          <p>
+            The connector is chosen per project (<code>olap_connector</code>) and, for
+            warehouse-backed metrics views, per file. Each connector reads its credentials from
+            the environment, so the same project runs locally and hosted.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Engine</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DuckDB</td>
+                <td>The default. Reads local files and object storage; no credentials needed.</td>
+              </tr>
+              <tr>
+                <td>Postgres, MySQL, SQLite</td>
+                <td>Point at a database and query it directly.</td>
+              </tr>
+              <tr>
+                <td>ClickHouse, Druid, Pinot, StarRocks</td>
+                <td>Columnar engines for larger volumes.</td>
+              </tr>
+              <tr>
+                <td>BigQuery, Athena, Snowflake, Redshift, Databricks</td>
+                <td>Warehouses. Credentials and, where relevant, a role to assume.</td>
+              </tr>
+              <tr>
+                <td>S3, GCS, Azure Blob, local files, HTTPS</td>
+                <td>Object stores and flat files as sources.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            A connector that needs credentials is a file next to the project. The values come
+            from the environment, never from the file:
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>type: connector
+driver: athena
+
+region: "{{ .env.AWS_REGION }}"
+workgroup: "{{ .env.ATHENA_WORKGROUP }}"
+output_location: "{{ .env.ATHENA_OUTPUT_LOCATION }}"
+
+aws_access_key_id: "{{ .env.AWS_ACCESS_KEY_ID }}"
+aws_secret_access_key: "{{ .env.AWS_SECRET_ACCESS_KEY }}"
+role_arn: "{{ .env.ATHENA_ROLE_ARN }}"
+role_session_name: statsparrot-dashboards</code></pre>
+          </div>
+
+          <p>
+            Those variables are project variables. Locally they come from a <code>.env</code> in
+            the project directory; hosted, from the project's settings, which the CLI writes with
+            <code>statsparrot env set</code>.
+          </p>
+        </section>
+
+        <section id="hosted">
+          <h2>Hosted deployment <a class="anchor" href="#hosted">#</a></h2>
+
+          <p>
+            One container runs <code>statsparrot serve</code>: the admin API, the web app, and a
+            runtime that serves every project under <code>/runtime</code>, on a single origin.
+          </p>
+
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>cd deploy/hosted
+cp .env.example .env
+# fill in the values below
+docker compose up -d --build</code></pre>
+          </div>
+
+          <p>These are required. The three secrets are checked at boot.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>STATSPARROT_SERVE_PUBLIC_URL</code>, <code>STATSPARROT_DOMAIN</code></td>
+                <td>
+                  The origin users open and its host. Register
+                  <code>${STATSPARROT_SERVE_PUBLIC_URL}/auth/login/callback</code> as a redirect
+                  URI in the OIDC provider.
+                </td>
+              </tr>
+              <tr>
+                <td><code>STATSPARROT_ADMIN_DATABASE_URL</code></td>
+                <td>An empty Postgres 14+; the admin runs its migrations on boot.</td>
+              </tr>
+              <tr>
+                <td>
+                  <code>STATSPARROT_ADMIN_SESSION_KEY_PAIRS</code>,
+                  <code>STATSPARROT_RUNTIME_SESSION_KEY_PAIRS</code>
+                </td>
+                <td><code>openssl rand -hex 32</code></td>
+              </tr>
+              <tr>
+                <td>
+                  <code>STATSPARROT_ADMIN_SIGNING_JWKS</code>,
+                  <code>STATSPARROT_ADMIN_SIGNING_KEY_ID</code>
+                </td>
+                <td><code>statsparrot admin generate-signing-key</code> prints both lines.</td>
+              </tr>
+              <tr>
+                <td>
+                  <code>STATSPARROT_ADMIN_AUTH_DOMAIN</code>,
+                  <code>STATSPARROT_ADMIN_AUTH_CLIENT_ID</code>,
+                  <code>STATSPARROT_ADMIN_AUTH_CLIENT_SECRET</code>
+                </td>
+                <td>Your OIDC tenant.</td>
+              </tr>
+              <tr>
+                <td>
+                  <code>STATSPARROT_ADMIN_ASSETS_DRIVER</code>,
+                  <code>STATSPARROT_ADMIN_ASSETS_BUCKET</code>
+                </td>
+                <td>
+                  <code>gcs</code> or <code>s3</code>, plus that bucket's credentials, for
+                  branding images and project archives.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            <code>STATSPARROT_SERVE_ROLE</code> splits the deployment when one process should
+            serve only part of it: <code>all</code> (the default), <code>admin</code> or
+            <code>runtime</code>. The admin keeps its state in Postgres; the runtime keeps
+            per-project data in <code>STATSPARROT_SERVE_RUNTIME_DATA_DIR</code>, which must be on
+            persistent storage.
+          </p>
+
+          <p>
+            The first user to sign in has no organization. Create one, then create a project and
+            connect it to a git repository; pushes to the watched branch redeploy it.
+          </p>
+
+          <div class="note">
+            <strong>Running behind an access proxy.</strong> The CLI talks to the admin over
+            gRPC-web at the same origin. A proxy that answers unauthenticated requests with an
+            HTML login page (Cloudflare Access, an SSO gateway) breaks the CLI's JSON parsing, so
+            give the CLI a service token for that origin or run it inside the network and pass
+            <code>--api-url</code>.
+          </div>
+        </section>
+
+        <section id="cli">
+          <h2>CLI reference <a class="anchor" href="#cli">#</a></h2>
+
+          <p>
+            <code>statsparrot &lt;command&gt; --help</code> is authoritative for flags. These are
+            the commands you will use day to day.
+          </p>
+
+          <h3>Local</h3>
+          <table>
+            <tbody>
+              <tr>
+                <td><code>statsparrot init &lt;path&gt;</code></td>
+                <td>Create a project, including agent instructions.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot start [&lt;path&gt;]</code></td>
+                <td>Build the project and serve the app on port 9009.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot validate &lt;path&gt;</code></td>
+                <td>Parse the project and report errors without starting it.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot serve</code></td>
+                <td>Run the hosted admin and runtime together.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Account</h3>
+          <table>
+            <tbody>
+              <tr>
+                <td><code>statsparrot login</code></td>
+                <td>
+                  Device authorization: prints a code and a URL, then stores the token in
+                  <code>~/.statsparrot</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>statsparrot whoami</code>, <code>logout</code>, <code>token issue</code></td>
+                <td>Inspect the session, end it, or mint a token for automation.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Projects</h3>
+          <table>
+            <tbody>
+              <tr>
+                <td><code>statsparrot project connect-github</code></td>
+                <td>Deploy a project from a git repository and redeploy on push.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot project deploy</code></td>
+                <td>Upload the local files to a managed repository.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot project status</code>, <code>logs</code>, <code>refresh</code></td>
+                <td>Deployment status, runtime logs, and a manual re-reconcile.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot project edit</code>, <code>rename</code>, <code>hibernate</code>, <code>delete</code></td>
+                <td>Change settings, name, or lifecycle.</td>
+              </tr>
+              <tr>
+                <td><code>statsparrot env set &lt;key&gt; &lt;value&gt;</code>, <code>env show</code></td>
+                <td>Project variables, used by connectors at query time.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            Every cloud command takes <code>--org</code> and <code>--api-url</code>. The second
+            one is how you point the CLI at a self-hosted admin instead of the public one.
+          </p>
+        </section>
+
+        <section id="troubleshooting">
+          <h2>Troubleshooting <a class="anchor" href="#troubleshooting">#</a></h2>
+
+          <h3>“yaml: control characters are not allowed”</h3>
+          <p>
+            The copy of the project the runtime is reading contains macOS metadata files
+            (<code>._statsparrot.yaml</code> and friends), which are binary, not YAML. They are
+            created when a folder is zipped, copied to a non-Apple filesystem, or uploaded from a
+            Mac with extended attributes. Ignore them in git:
+          </p>
+          <div class="code">
+            <button class="copy" type="button">Copy</button>
+            <pre><code>printf '._*\n.DS_Store\n' &gt;&gt; .gitignore</code></pre>
+          </div>
+
+          <h3>“failed to pull repo: Repository not found”</h3>
+          <p>
+            The project points at a git remote that no longer exists, or the GitHub App no longer
+            has access to it. Reconnect it, or re-point the project at a repository the app can
+            read.
+          </p>
+
+          <h3>Dashboards load but every tile is empty</h3>
+          <p>
+            The connector cannot authenticate. Check the project variables the connector reads,
+            then refresh the project. The runtime logs name the missing or rejected credential.
+          </p>
+
+          <h3>The CLI cannot reach a self-hosted admin</h3>
+          <p>
+            Pass <code>--api-url</code>, and make sure nothing between the CLI and the admin
+            rewrites the response. The CLI expects JSON from the admin's own origin.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <footer class="docs-footer">
+      <span>Statsparrot is Apache-2.0.</span>
+      <nav aria-label="Footer">
+        <a href="/">Landing</a> ·
+        <a href="https://github.com/staticlabsro/parrotos" target="_blank" rel="noreferrer">GitHub</a> ·
+        <a href="https://github.com/staticlabsro/parrotos/blob/main/LICENSE.md" target="_blank" rel="noreferrer">License</a>
+      </nav>
+    </footer>
+
+    <script>
+      // Copy buttons: the code block is the button's sibling so no per-block wiring.
+      document.querySelectorAll(".code .copy").forEach(function (button) {
+        button.addEventListener("click", function () {
+          var code = button.parentElement.querySelector("code");
+          var text = code ? code.textContent : "";
+          var done = function () {
+            button.textContent = "Copied";
+            setTimeout(function () {
+              button.textContent = "Copy";
+            }, 1400);
+          };
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(done, done);
+          } else {
+            var area = document.createElement("textarea");
+            area.value = text;
+            document.body.appendChild(area);
+            area.select();
+            document.execCommand("copy");
+            document.body.removeChild(area);
+            done();
+          }
+        });
+      });
+
+      // Highlight the section in view in the sidebar.
+      var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+      var targets = links
+        .map(function (link) {
+          var id = link.getAttribute("href").slice(1);
+          var el = document.getElementById(id);
+          return el ? { link: link, el: el } : null;
+        })
+        .filter(Boolean);
+
+      if ("IntersectionObserver" in window && targets.length) {
+        var visible = new Map();
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              visible.set(entry.target.id, entry.isIntersecting);
+            });
+            var current = null;
+            for (var i = 0; i < targets.length; i++) {
+              if (visible.get(targets[i].el.id)) current = targets[i];
+            }
+            links.forEach(function (link) {
+              link.classList.toggle("active", current ? link === current.link : false);
+            });
+          },
+          { rootMargin: "-72px 0px -70% 0px", threshold: 0 }
+        );
+        targets.forEach(function (t) {
+          observer.observe(t.el);
+        });
+      }
+
+      // Collapse the contents list on narrow screens.
+      var toggle = document.querySelector(".nav-toggle");
+      var sidebar = document.getElementById("sidebar");
+      if (toggle && sidebar) {
+        if (window.matchMedia("(max-width: 900px)").matches) {
+          sidebar.hidden = true;
+        }
+        toggle.addEventListener("click", function () {
+          var open = sidebar.hidden;
+          sidebar.hidden = !open;
+          toggle.setAttribute("aria-expanded", String(open));
+        });
+        sidebar.addEventListener("click", function (event) {
+          if (event.target.tagName === "A" && window.matchMedia("(max-width: 900px)").matches) {
+            sidebar.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

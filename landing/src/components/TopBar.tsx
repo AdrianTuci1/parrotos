@@ -22,6 +22,7 @@ export function TopBar() {
           <a href={LOCAL_URL} target="_blank" rel="noreferrer">
             Setup
           </a>
+          <a href="/docs">Docs</a>
           <a
             className="icon-link"
             href={GITHUB_URL}

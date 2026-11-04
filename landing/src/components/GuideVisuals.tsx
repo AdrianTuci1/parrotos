@@ -221,6 +221,9 @@ export function FaqPanel() {
           <p className="faq-answer">{item.answer}</p>
         </div>
       ))}
+      <a className="faq-docs-link" href="/docs">
+        Read the docs →
+      </a>
     </div>
   );
 }
