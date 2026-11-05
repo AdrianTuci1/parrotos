@@ -39,12 +39,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias,
     },
-    // The React port components live as .tsx alongside the Svelte sources. Enable
-    // the automatic JSX runtime so vitest can compile them; the `/test` project
-    // below is the only consumer, the Svelte build is unaffected.
-    esbuild: {
-      jsx: "automatic",
-    },
     plugins: [sveltekit()],
     test: {
       projects: [

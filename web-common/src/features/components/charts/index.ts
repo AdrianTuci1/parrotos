@@ -2,12 +2,6 @@
 export { default as Chart } from "./Chart.svelte";
 export { default as ChartContainer } from "./ChartContainer.svelte";
 
-// React chart components (Svelte -> React port, Phase 2)
-export { default as ParrotChart } from "./react/ParrotChart";
-export { default as ReactChart } from "./react/Chart";
-export { default as ReactChartContainer } from "./react/ChartContainer";
-export { useReadable } from "./react/useReadable";
-
 // Providers
 export { CartesianChartProvider } from "./cartesian/CartesianChartProvider";
 export type {

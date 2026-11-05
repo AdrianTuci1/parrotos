@@ -102,9 +102,8 @@ export function useDimensionSearch(
 }
 
 /**
- * Framework-agnostic merge of the "above the fold" search results with any selected
- * values (the "below the fold" behavior). Shared by the Svelte `useDimensionSearch`
- * query and the React renderer so both apply identical deduplication logic.
+ * Merges the "above the fold" search results with any selected values
+ * (the "below the fold" behavior), deduplicating the result.
  */
 export function combineDimensionSearchResults(
   mainValues: Array<string | null | undefined>,
@@ -207,10 +206,7 @@ export function useAllSearchResultsCount(
   });
 }
 
-/**
- * Framework-agnostic sum of per-metrics-view distinct counts. Shared by the Svelte
- * `useAllSearchResultsCount` query and the React renderer so both apply identical logic.
- */
+/** Sums the per-metrics-view distinct counts. */
 export function combineDimensionSearchCounts(counts: number[]): number {
   return counts.reduce((s, v) => s + v, 0);
 }

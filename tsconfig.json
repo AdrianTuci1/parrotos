@@ -4,7 +4,6 @@
     "module": "esnext",
     "lib": ["esnext", "DOM", "DOM.Iterable"],
     "target": "esnext",
-    "jsx": "react-jsx",
 
     /**
       ignoreDeprecations is recommended by the SvelteKit maintainers until SvelteKit 2.0.
