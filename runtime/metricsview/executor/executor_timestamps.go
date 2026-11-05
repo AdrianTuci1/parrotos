@@ -18,7 +18,7 @@ const (
 // resolveTimestampsForTable dispatches to the appropriate dialect-specific method.
 func (e *Executor) resolveTimestampsForTable(ctx context.Context, database, databaseSchema, table, timeExpr, watermarkExpr string) (metricsview.TimestampsResult, error) {
 	switch e.olap.Dialect().String() {
-	case drivers.DialectNameDuckDB, drivers.DialectNameSnowflake, drivers.DialectNameDatabricks, drivers.DialectNameStarRocks:
+	case drivers.DialectNameAthena, drivers.DialectNameDuckDB, drivers.DialectNameSnowflake, drivers.DialectNameDatabricks, drivers.DialectNameStarRocks:
 		return e.resolveWithTimestampQuery(ctx, database, databaseSchema, table, timeExpr, watermarkExpr)
 	case drivers.DialectNameClickHouse:
 		return e.resolveClickHouse(ctx, database, databaseSchema, table, timeExpr, watermarkExpr)
